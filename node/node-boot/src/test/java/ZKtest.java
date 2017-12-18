@@ -11,6 +11,7 @@ import org.apache.zookeeper.*;
 import org.apache.zookeeper.data.Stat;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * TODO
@@ -31,6 +32,7 @@ public class ZKtest {
                             System.out.println(event);
                         }
                     });
+                    List<String> children = zk.getChildren("/datas",false);
                     zk.exists("/datas",true);
                     zk.exists("/datas/999",true);
                     zk.exists("/datas/999",true);

@@ -16,6 +16,7 @@ import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.Stat;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -57,15 +58,28 @@ public class ZookeeperClient extends AbstractClient {
         this.watcher = watcher;
     }
 
-    public List<String> getChildren(String path) throws KeeperException, InterruptedException {
-        List<String> children = zk.getChildren(path,true);
+    public List<String> getChildren(String path){
+        List<String> children = null;
+        try {
+            children = zk.getChildren(path, true);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            children = new ArrayList<>();
+        } catch (KeeperException e) {
+            e.printStackTrace();
+            children = new ArrayList<>();
+        }
         return children;
     }
-    public String getData(String path) throws KeeperException, InterruptedException {
-        byte[] dataBytes = zk.getData(path, true, new Stat());
-        if (null != dataBytes) {
-            return  new String(dataBytes);
+    public String getData(String path)  {
+        byte[] dataBytes = new byte[0];
+        try {
+            dataBytes = zk.getData(path, true, new Stat());
+        } catch (KeeperException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-        return null;
+        return  new String(dataBytes);
     }
 }

@@ -1,0 +1,6 @@
+group 'com.suixingpay.datas'
+
+
+dependencies {
+    compile 'org.apache.kafka:kafka-clients:1.0.0'
+}

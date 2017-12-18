@@ -1,0 +1,3 @@
+archivesBaseName = 'datas-commons'
+dependencies {
+}

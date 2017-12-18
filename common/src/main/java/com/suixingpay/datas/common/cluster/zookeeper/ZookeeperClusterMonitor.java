@@ -99,11 +99,13 @@ public class ZookeeperClusterMonitor implements ClusterMonitor, Watcher {
 
                 //判断是否新节点创建
                 for (String child : remoteChildren) {
+                    String childFullPath = path + "/" +child;
                      //new node
-                     if (! localChildren.contains(child)) {
-                         localChildren.add(child);
-                         localEvent.add(new ClusterEvent(EventType.ONLINE,client.getData(path)));
-                         //trigger watcher getData、getChildren
+                     if (! localChildren.contains(childFullPath)) {
+                         localChildren.add(childFullPath);
+                         //only for trigger watcher "getChildren"
+                         client.getChildren(childFullPath);
+                         localEvent.add(new ClusterEvent(EventType.ONLINE,client.getData(childFullPath)));
                      }
                 }
 
