@@ -49,4 +49,8 @@ public class ClusterDriver {
     public void setExtendAttr(Map<String, String> extendAttr) {
         this.extendAttr = extendAttr;
     }
+
+    public static boolean error(ClusterDriver config){
+        return null == config || config.getType() == null || config.getType() == ClusterType.UNKNOWN;
+    }
 }

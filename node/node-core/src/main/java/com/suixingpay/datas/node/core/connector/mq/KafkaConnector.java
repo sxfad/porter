@@ -9,8 +9,9 @@ package com.suixingpay.datas.node.core.connector.mq;/**
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.suixingpay.datas.node.core.connector.AbstractConnector;
-import com.suixingpay.datas.node.core.connector.DataDriver;
+import com.suixingpay.datas.common.connector.AbstractConnector;
+import com.suixingpay.datas.common.connector.DataDriver;
+import com.suixingpay.datas.common.connector.meta.KafkaDriverMeta;
 import com.suixingpay.datas.node.core.event.EventFetcher;
 import com.suixingpay.datas.node.core.event.EventHeader;
 import com.suixingpay.datas.node.core.event.EventType;

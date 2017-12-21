@@ -32,13 +32,8 @@ public class ZKtest {
                             System.out.println(event);
                         }
                     });
-                    List<String> children = zk.getChildren("/datas",false);
-                    zk.exists("/datas",true);
-                    zk.exists("/datas/999",true);
-                    zk.exists("/datas/999",true);
-                    zk.getChildren("/datas",true);
-                    zk.getData("/datas/2", true, new Stat());
-                   // zk.create("/tmp","{ts:1111111}".getBytes(),ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
+
+                    zk.create("/suixingpay","{}".getBytes(),ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (InterruptedException e) {

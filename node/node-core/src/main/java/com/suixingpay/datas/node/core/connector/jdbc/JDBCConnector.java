@@ -9,10 +9,12 @@ package com.suixingpay.datas.node.core.connector.jdbc;/**
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.util.HexBin;
-import com.suixingpay.datas.node.core.connector.AbstractConnector;
-import com.suixingpay.datas.node.core.connector.DataDriver;
-import com.suixingpay.datas.node.core.connector.DataDriverType;
+import com.suixingpay.datas.common.connector.AbstractConnector;
+import com.suixingpay.datas.common.connector.DataDriver;
+import com.suixingpay.datas.common.connector.DataDriverType;
+import com.suixingpay.datas.common.connector.meta.JDBCDriverMeta;
 import com.suixingpay.datas.node.core.event.SQLExecutor;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 
@@ -37,6 +39,14 @@ public class JDBCConnector extends AbstractConnector implements SQLExecutor {
         super(driver);
         JDBCDriverMeta meta = (JDBCDriverMeta) driver.getType().getMeta();
         String maxWaitStr = driver.getExtendAttr().getOrDefault(meta.MAX_WAIT,"10000");
+        //默认driver class name
+        if (StringUtils.isBlank(driver.getDriverClassName())) {
+            if (driver.getType() == DataDriverType.MYSQL) {
+                driver.setDriverClassName("com.mysql.jdbc.Driver");
+            } else if (driver.getType() == DataDriverType.ORACLE) {
+                driver.setDriverClassName("oracle.jdbc.driver.OracleDriver");
+            }
+        }
         maxWait = Long.parseLong(maxWaitStr);
     }
 
@@ -66,6 +76,11 @@ public class JDBCConnector extends AbstractConnector implements SQLExecutor {
             dataSource.setValidationQuery("select 1 from dual");
         }
         dataSource.setDefaultAutoCommit(false);
+        try {
+            dataSource.getConnection();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

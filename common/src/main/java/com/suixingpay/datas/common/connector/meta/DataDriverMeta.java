@@ -1,4 +1,4 @@
-package com.suixingpay.datas.node.core.connector.jdbc;/**
+package com.suixingpay.datas.common.connector.meta;/**
  * All rights Reserved, Designed By Suixingpay.
  *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -7,16 +7,12 @@ package com.suixingpay.datas.node.core.connector.jdbc;/**
  * 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
  */
 
-import com.suixingpay.datas.node.core.connector.DataDriverMeta;
-
 /**
- * TODO
+ *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月14日 11:24
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月14日 11:24
  */
-public enum JDBCDriverMeta implements DataDriverMeta {
-    INSTANCE();
-    public  final String MAX_WAIT="maxWait";
+public interface   DataDriverMeta {
 }

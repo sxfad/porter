@@ -7,7 +7,10 @@ package com.suixingpay.datas.common.cluster;/**
  * 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
  */
 
-import java.util.Iterator;
+import com.suixingpay.datas.common.cluster.command.ClusterCommand;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ServiceLoader;
 import java.util.function.Consumer;
 
@@ -19,10 +22,17 @@ import java.util.function.Consumer;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月14日 16:32
  */
 public abstract class ClusterProvider {
+    private static final List<ClusterProvider> CLUSTER_PROVIDERS = new ArrayList<>();
     protected abstract void addListener(ClusterListener listener);
-    protected abstract void initialize(ClusterDriver driver);
+    protected abstract void doInitialize(ClusterDriver driver);
     protected abstract void start();
-    protected final void afterInitialize(){
+    protected abstract void stop();
+    protected abstract void distributeCommand(ClusterCommand command) throws Exception;
+    private void initialize(ClusterDriver driver) {
+        doInitialize(driver);
+        afterInitialize();
+    }
+    private final void afterInitialize(){
         //获取ClusterListener SPI
         ServiceLoader<ClusterListener> listeners = ServiceLoader.load(ClusterListener.class);
         //添加SPI到监听器
@@ -34,7 +44,6 @@ public abstract class ClusterProvider {
         });
     }
 
-    protected abstract void stop();
 
     public static final void load(ClusterDriver driver) {
         //集群组件初始化, 一般情况下只有一个.
@@ -44,6 +53,7 @@ public abstract class ClusterProvider {
             public void accept(ClusterProvider clusterProvider) {
                 clusterProvider.initialize(driver);
                 clusterProvider.start();
+                CLUSTER_PROVIDERS.add(clusterProvider);
                 //进程退出Hook
                 Runtime.getRuntime().addShutdownHook(new Thread("datas-ClusterProviderShutdownHook-"+clusterProvider.hashCode()){
                     @Override
@@ -53,5 +63,10 @@ public abstract class ClusterProvider {
                 });
             }
         });
+    }
+    public static final void sendCommand (ClusterCommand command) throws Exception {
+        for (ClusterProvider provider : CLUSTER_PROVIDERS) {
+            provider.distributeCommand(command);
+        }
     }
 }

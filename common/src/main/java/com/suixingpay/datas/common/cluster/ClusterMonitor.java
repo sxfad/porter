@@ -9,6 +9,8 @@ package com.suixingpay.datas.common.cluster;/**
 
 import com.suixingpay.datas.common.cluster.event.ClusterEvent;
 
+import java.util.Map;
+
 /**
  * 某一个路径监听
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -20,4 +22,7 @@ public interface ClusterMonitor {
     void addListener(ClusterListener listener);
     void setClient(Client client);
     void onEvent(ClusterEvent e);
+    Map<String, ClusterListener> getListener();
+    void start();
+    void stop() throws Exception;
 }

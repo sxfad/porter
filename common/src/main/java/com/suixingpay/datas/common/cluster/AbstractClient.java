@@ -32,7 +32,7 @@ public abstract class AbstractClient implements Client {
         }
     }
 
-    public abstract void doConnect() throws IOException;
+    protected abstract void doConnect() throws IOException;
     @Override
     public void disconnect() {
         if (connected.compareAndSet(true, false)) {
@@ -46,7 +46,7 @@ public abstract class AbstractClient implements Client {
         }
     }
 
-    public abstract void doDisconnect() throws InterruptedException;
+    protected abstract void doDisconnect() throws InterruptedException;
 
     @Override
     public boolean isConnected() {

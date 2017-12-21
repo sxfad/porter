@@ -1,4 +1,4 @@
-package com.suixingpay.datas.node.core.connector;/**
+package com.suixingpay.datas.common.connector;/**
  * All rights Reserved, Designed By Suixingpay.
  *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -23,6 +23,9 @@ public abstract  class AbstractConnector  implements DataConnector {
     private static final Logger logger = LoggerFactory.getLogger(AbstractConnector.class);
     private AtomicBoolean connected = new AtomicBoolean(false);
     protected DataDriver driver;
+    //默认为任务私有连接池
+    private boolean privatePool = true;
+
     public AbstractConnector(DataDriver driver) {
         this.driver = driver;
     }
@@ -67,5 +70,13 @@ public abstract  class AbstractConnector  implements DataConnector {
 
     protected abstract void doConnect();
 
+    @Override
+    public void setPrivatePool(boolean isPrivate) {
+        this.privatePool = isPrivate;
+    }
 
+    @Override
+    public boolean isPrivatePool() {
+        return privatePool;
+    }
 }

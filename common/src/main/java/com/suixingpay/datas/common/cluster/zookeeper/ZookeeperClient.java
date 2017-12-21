@@ -7,12 +7,9 @@ package com.suixingpay.datas.common.cluster.zookeeper;/**
  * 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
  */
 
-import com.alibaba.fastjson.JSON;
 import com.suixingpay.datas.common.cluster.AbstractClient;
 import com.suixingpay.datas.common.cluster.ClusterDriver;
-import org.apache.zookeeper.KeeperException;
-import org.apache.zookeeper.Watcher;
-import org.apache.zookeeper.ZooKeeper;
+import org.apache.zookeeper.*;
 import org.apache.zookeeper.data.Stat;
 
 import java.io.IOException;
@@ -40,12 +37,12 @@ public class ZookeeperClient extends AbstractClient {
 
 
     @Override
-    public void doConnect() throws IOException {
+    protected void doConnect() throws IOException {
         zk = new ZooKeeper(driver.getUrl(), sessionTimeout, watcher);
     }
 
     @Override
-    public void doDisconnect() throws InterruptedException {
+    protected void doDisconnect() throws InterruptedException {
         zk.close();
     }
 
@@ -54,7 +51,7 @@ public class ZookeeperClient extends AbstractClient {
         return null != zk;
     }
 
-    public void setWatcher(Watcher watcher) {
+    protected void setWatcher(Watcher watcher) {
         this.watcher = watcher;
     }
 
@@ -81,5 +78,25 @@ public class ZookeeperClient extends AbstractClient {
             e.printStackTrace();
         }
         return  new String(dataBytes);
+    }
+
+    public String  create(String path, boolean isTemp, String data) throws KeeperException, InterruptedException {
+       return zk.create(path, data.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, isTemp ? CreateMode.EPHEMERAL : CreateMode.PERSISTENT);
+    }
+    public Stat setData(String path, String data, int version) throws KeeperException, InterruptedException {
+        return zk.setData(path, data.getBytes(), version);
+    }
+    public Stat exists(String path, boolean watch) throws KeeperException, InterruptedException {
+        return zk.exists(path, watch);
+    }
+    public void delete(String path) throws KeeperException, InterruptedException {
+        try {
+            Stat stat = zk.exists(path, false);
+            if (null != stat) {
+                zk.delete(path, stat.getVersion());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

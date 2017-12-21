@@ -1,4 +1,4 @@
-package com.suixingpay.datas.node.core.connector;/**
+package com.suixingpay.datas.common.connector;/**
  * All rights Reserved, Designed By Suixingpay.
  *
  * @author: zhangkewei[zhang_kw@suixingpay.com]

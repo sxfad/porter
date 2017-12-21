@@ -3,6 +3,7 @@ apply plugin: 'application'
 mainClassName = "com.suixingpay.datas.node.boot.DatasNodeBootApplication"
 dependencies {
     compile(
-            project(":node:node-cluster")
+            project(":node:node-cluster"),
+            project(":node:node-core")
     )
 }

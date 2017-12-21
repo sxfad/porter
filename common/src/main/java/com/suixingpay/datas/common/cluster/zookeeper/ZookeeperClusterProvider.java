@@ -8,6 +8,7 @@ package com.suixingpay.datas.common.cluster.zookeeper;/**
  */
 
 import com.suixingpay.datas.common.cluster.*;
+import com.suixingpay.datas.common.cluster.command.ClusterCommand;
 
 import java.util.ServiceLoader;
 
@@ -27,24 +28,35 @@ public class ZookeeperClusterProvider extends ClusterProvider{
 
     @Override
     protected void addListener(ClusterListener listener) {
+        listener.setClient(client);
         zkMonitor.addListener(listener);
     }
 
     @Override
-    public void initialize(ClusterDriver driver) {
+    public void doInitialize(ClusterDriver driver) {
         client = new ZookeeperClient(driver);
         zkMonitor = new ZookeeperClusterMonitor();
         zkMonitor.setClient(client);
-        afterInitialize();
     }
 
     @Override
     public void start() {
-        if( null != client) client.connect();
+        if( null != client) {
+            client.connect();
+        }
+        zkMonitor.start();
     }
 
     @Override
     public void stop() {
+        zkMonitor.stop();
         if( null != client) client.disconnect();
+    }
+
+    @Override
+    protected void distributeCommand(ClusterCommand command) throws Exception {
+        for (ClusterListener listener : zkMonitor.getListener().values()) {
+            listener.hobby(command);
+        }
     }
 }

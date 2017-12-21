@@ -1,6 +1,11 @@
 group 'com.suixingpay.datas'
 
+repositories {
+    maven{url "https://mvnrepository.com/artifact/oracle/ojdbc14"}
+}
 
 dependencies {
-    compile 'org.apache.kafka:kafka-clients:1.0.0'
+    compile(
+            project(':common')
+    )
 }

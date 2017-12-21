@@ -1,4 +1,4 @@
-package com.suixingpay.datas.node.core.connector;/**
+package com.suixingpay.datas.common.connector;/**
  * All rights Reserved, Designed By Suixingpay.
  *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -7,7 +7,10 @@ package com.suixingpay.datas.node.core.connector;/**
  * 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
  */
 
-import com.suixingpay.datas.node.core.connector.mq.KafkaDriverMeta;
+
+import com.suixingpay.datas.common.connector.meta.DataDriverMeta;
+import com.suixingpay.datas.common.connector.meta.JDBCDriverMeta;
+import com.suixingpay.datas.common.connector.meta.KafkaDriverMeta;
 
 /**
  * TODO
@@ -18,8 +21,8 @@ import com.suixingpay.datas.node.core.connector.mq.KafkaDriverMeta;
  */
 public enum  DataDriverType {
     KAFKA(0, 1, KafkaDriverMeta.INSTANCE),
-    MYSQL(1, 2, null),
-    ORACLE(2, 3, null);
+    MYSQL(1, 2, JDBCDriverMeta.INSTANCE),
+    ORACLE(2, 3, JDBCDriverMeta.INSTANCE);
     private final int index;
     private final int value;
     private final DataDriverMeta meta;

@@ -1,2 +1,2 @@
-com.suixingpay.datas.node.cluster.zookeeper.ZKClusterManagerListener
 com.suixingpay.datas.node.cluster.zookeeper.ZKClusterTaskListener
+com.suixingpay.datas.node.cluster.zookeeper.ZKClusterNodeListener
