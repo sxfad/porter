@@ -8,6 +8,7 @@ package com.suixingpay.datas.common.cluster;/**
  */
 
 import com.suixingpay.datas.common.cluster.command.ClusterCommand;
+import com.suixingpay.datas.common.task.TaskEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,7 @@ import java.util.function.Consumer;
 public abstract class ClusterProvider {
     private static final List<ClusterProvider> CLUSTER_PROVIDERS = new ArrayList<>();
     protected abstract void addListener(ClusterListener listener);
+    public abstract void addTaskEventListener(TaskEventListener listener);
     protected abstract void doInitialize(ClusterDriver driver);
     protected abstract void start();
     protected abstract void stop();
@@ -67,6 +69,16 @@ public abstract class ClusterProvider {
     public static final void sendCommand (ClusterCommand command) throws Exception {
         for (ClusterProvider provider : CLUSTER_PROVIDERS) {
             provider.distributeCommand(command);
+        }
+    }
+    public static final void sendCommand (List<ClusterCommand> command) throws Exception {
+        for (ClusterCommand c : command) {
+            sendCommand(c);
+        }
+    }
+    public static final void addTaskListener (TaskEventListener listener){
+        for (ClusterProvider provider : CLUSTER_PROVIDERS) {
+            provider.addTaskEventListener(listener);
         }
     }
 }

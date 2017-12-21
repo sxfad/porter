@@ -7,6 +7,8 @@ package com.suixingpay.datas.node.boot.config;/**
  * 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
  */
 
+import com.suixingpay.datas.common.cluster.command.ClusterCommand;
+import com.suixingpay.datas.common.cluster.command.TaskRegisterCommand;
 import com.suixingpay.datas.common.task.Task;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -34,5 +36,20 @@ public class TaskConfig {
 
     public void setItems(List<Task> items) {
         this.items = items;
+    }
+
+    public List<ClusterCommand> convert2RegisterCmd() {
+        List<ClusterCommand> cmdList = new ArrayList<>();
+        if (null != items && ! items.isEmpty()) {
+            for (Task t : items) {
+                String[] topics = t.listTopic();
+                if (null != topics && topics.length > 0) {
+                    for (String topic : topics) {
+                        cmdList.add(new TaskRegisterCommand(t.getTaskId(), topic));
+                    }
+                }
+            }
+        }
+        return cmdList;
     }
 }

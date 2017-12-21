@@ -4,6 +4,6 @@ mainClassName = "com.suixingpay.datas.node.boot.DatasNodeBootApplication"
 dependencies {
     compile(
             project(":node:node-cluster"),
-            project(":node:node-core")
+            project(":node:node-task")
     )
 }

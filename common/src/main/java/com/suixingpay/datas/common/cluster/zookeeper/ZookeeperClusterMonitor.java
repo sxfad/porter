@@ -128,9 +128,9 @@ public class ZookeeperClusterMonitor implements ClusterMonitor, Watcher {
             } else if (eventType == Event.EventType.NodeDeleted) {
                 localEvent.add(new ZookeeperClusterEvent(EventType.OFFLINE, null, path));
             } else if (eventType == Event.EventType.NodeCreated) {
-                localEvent.add(new ZookeeperClusterEvent(EventType.ONLINE, client.getData(path), path));
+                localEvent.add(new ZookeeperClusterEvent(EventType.ONLINE, client.getData(path).getLeft(), path));
             } else if (eventType == Event.EventType.NodeDataChanged) {
-                localEvent.add(new ZookeeperClusterEvent(EventType.DATA_CHANGED, client.getData(path), path));
+                localEvent.add(new ZookeeperClusterEvent(EventType.DATA_CHANGED, client.getData(path).getLeft(), path));
             } else if (eventType == Event.EventType.NodeChildrenChanged) { //子节点创建、删除会触发该事件
                 //构造子节点集合
                 List<String> localChildren = null;
@@ -152,7 +152,7 @@ public class ZookeeperClusterMonitor implements ClusterMonitor, Watcher {
                         localChildren.add(childFullPath);
                         //only for trigger watcher "getChildren"
                         client.getChildren(childFullPath);
-                        localEvent.add(new ZookeeperClusterEvent(EventType.ONLINE, client.getData(childFullPath), childFullPath));
+                        localEvent.add(new ZookeeperClusterEvent(EventType.ONLINE, client.getData(childFullPath).getLeft(), childFullPath));
                     }
                 }
 

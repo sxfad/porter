@@ -10,12 +10,12 @@ package com.suixingpay.datas.node.boot;/**
 import com.suixingpay.datas.common.cluster.ClusterDriver;
 import com.suixingpay.datas.common.cluster.ClusterProvider;
 import com.suixingpay.datas.common.cluster.command.NodeRegisterCommand;
-import com.suixingpay.datas.common.cluster.command.TaskRegisterCommand;
 import com.suixingpay.datas.common.util.ProcessUtils;
 import com.suixingpay.datas.node.boot.config.DataDriverConfig;
 import com.suixingpay.datas.node.boot.config.NodeConfig;
 import com.suixingpay.datas.node.boot.config.TaskConfig;
 import com.suixingpay.datas.node.core.connector.ConnectorContext;
+import com.suixingpay.datas.node.task.TaskController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.Banner;
@@ -76,12 +76,15 @@ public class NodeBootApplication {
         //获取任务配置
         TaskConfig taskConfig = context.getBean(TaskConfig.class);
         try {
-            ClusterProvider.sendCommand(new TaskRegisterCommand(taskConfig.getItems()));
+            ClusterProvider.sendCommand(taskConfig.convert2RegisterCmd());
         } catch (Exception e) {
             e.printStackTrace();
             LOGGER.error("初始任务分配失败", e);
             System.exit(-1);
         }
+        //启动任务控制器
+        TaskController controller = context.getBean(TaskController.class);
+        controller.start(taskConfig.getItems());
         //保持进程持续运行不退出
         ProcessUtils.keepRunning();
     }

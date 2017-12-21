@@ -7,6 +7,8 @@ package com.suixingpay.datas.common.cluster.zookeeper.data;/**
  * 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
  */
 
+import java.util.concurrent.atomic.AtomicLong;
+
 /**
  *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -18,10 +20,10 @@ public class DTaskStat  extends DObject {
     private String taskId;
     private String nodeId;
     private String topic;
-    private long insertRow = 0L;
-    private long updateRow = 0L;
-    private long deleteRow = 0L;
-    private long maylostRow = 0L;
+    private AtomicLong insertRow = new AtomicLong(0);
+    private AtomicLong updateRow = new AtomicLong(0);
+    private AtomicLong deleteRow = new AtomicLong(0);
+    private AtomicLong maylostRow = new AtomicLong(0);
     public DTaskStat() {
 
     }
@@ -55,35 +57,35 @@ public class DTaskStat  extends DObject {
         this.topic = topic;
     }
 
-    public long getInsertRow() {
+    public AtomicLong getInsertRow() {
         return insertRow;
     }
 
-    public void setInsertRow(long insertRow) {
+    public void setInsertRow(AtomicLong insertRow) {
         this.insertRow = insertRow;
     }
 
-    public long getUpdateRow() {
+    public AtomicLong getUpdateRow() {
         return updateRow;
     }
 
-    public void setUpdateRow(long updateRow) {
+    public void setUpdateRow(AtomicLong updateRow) {
         this.updateRow = updateRow;
     }
 
-    public long getDeleteRow() {
+    public AtomicLong getDeleteRow() {
         return deleteRow;
     }
 
-    public void setDeleteRow(long deleteRow) {
+    public void setDeleteRow(AtomicLong deleteRow) {
         this.deleteRow = deleteRow;
     }
 
-    public long getMaylostRow() {
+    public AtomicLong getMaylostRow() {
         return maylostRow;
     }
 
-    public void setMaylostRow(long maylostRow) {
+    public void setMaylostRow(AtomicLong maylostRow) {
         this.maylostRow = maylostRow;
     }
 }

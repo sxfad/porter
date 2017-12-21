@@ -1,4 +1,10 @@
 group 'com.suixingpay.datas'
 
 dependencies {
+    compile (
+            project(':common'),
+            project(':node:node-data-carrier'),
+            project(':node:node-consumer'),
+            project(":node:node-core")
+    )
 }

@@ -19,6 +19,7 @@ import com.suixingpay.datas.common.cluster.zookeeper.ZookeeperClusterListenerFil
 import com.suixingpay.datas.common.cluster.zookeeper.data.DNode;
 import com.suixingpay.datas.common.util.DefaultNamedThreadFactory;
 import org.apache.commons.lang3.time.DateUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.data.Stat;
 
@@ -89,9 +90,10 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener {
             if (null == stat) {
                 client.create(path,false, new DNode(nodeId).toString());
             } else {
-                DNode nodeData = DNode.fromString(client.getData(path), DNode.class);
+                Pair<String, Stat> dataPair = client.getData(path);
+                DNode nodeData = DNode.fromString(dataPair.getLeft(), DNode.class);
                 if (DateUtils.addSeconds(nodeData.getHeartbeat(),60*5).before(new Date())) {
-                    client.setData(path,new DNode(nodeId).toString(), stat.getVersion());
+                    client.setData(path,new DNode(nodeId).toString(), dataPair.getRight().getVersion());
                 } else {
                     throw  new Exception(path + ",5分钟前已注册:" +  nodeData.toString());
                 }
@@ -104,9 +106,10 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener {
                     try {
                         Stat statInJob = client.exists(path, false);
                         if (null != statInJob) {
-                            DNode nodeData = DNode.fromString(client.getData(path), DNode.class);
+                            Pair<String, Stat> dataPair = client.getData(path);
+                            DNode nodeData = DNode.fromString(dataPair.getLeft(), DNode.class);
                             nodeData.setHeartbeat(new Date());
-                            client.setData(path,nodeData.toString(), statInJob.getVersion());
+                            client.setData(path,nodeData.toString(), dataPair.getRight().getVersion());
                         }
                     } catch (KeeperException e) {
                         e.printStackTrace();
@@ -124,7 +127,7 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener {
             TaskAssignedCommand assignedCommand =  (TaskAssignedCommand)command;
             String path = path() + "/" + nodeId;
             lock.lock();
-            DNode nodeData = DNode.fromString(client.getData(path), DNode.class);
+            DNode nodeData = DNode.fromString(client.getData(path).getLeft(), DNode.class);
             List<String> topics = nodeData.getTasks().getOrDefault(assignedCommand.getTaskId(), new ArrayList<>());
             topics.add(assignedCommand.getTopic());
             nodeData.getTasks().put(assignedCommand.getTaskId(), topics);

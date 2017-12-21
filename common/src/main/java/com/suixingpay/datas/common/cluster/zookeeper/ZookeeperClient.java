@@ -9,6 +9,8 @@ package com.suixingpay.datas.common.cluster.zookeeper;/**
 
 import com.suixingpay.datas.common.cluster.AbstractClient;
 import com.suixingpay.datas.common.cluster.ClusterDriver;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.zookeeper.*;
 import org.apache.zookeeper.data.Stat;
 
@@ -68,16 +70,17 @@ public class ZookeeperClient extends AbstractClient {
         }
         return children;
     }
-    public String getData(String path)  {
+    public Pair<String, Stat> getData(String path)  {
+        Stat stat = new Stat();
         byte[] dataBytes = new byte[0];
         try {
-            dataBytes = zk.getData(path, true, new Stat());
+            dataBytes = zk.getData(path, true, stat);
         } catch (KeeperException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        return  new String(dataBytes);
+        return new ImmutablePair(new String(dataBytes), stat) ;
     }
 
     public String  create(String path, boolean isTemp, String data) throws KeeperException, InterruptedException {

@@ -11,6 +11,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.suixingpay.datas.common.connector.AbstractConnector;
 import com.suixingpay.datas.common.connector.DataDriver;
+import com.suixingpay.datas.common.connector.MQConnector;
 import com.suixingpay.datas.common.connector.meta.KafkaDriverMeta;
 import com.suixingpay.datas.node.core.event.EventFetcher;
 import com.suixingpay.datas.node.core.event.EventHeader;
@@ -30,12 +31,12 @@ import java.util.*;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月14日 09:52
  */
-public class KafkaConnector extends AbstractConnector implements EventFetcher {
+public class KafkaConnector extends AbstractConnector implements EventFetcher, MQConnector {
     private static final DateFormat OP_TS_F = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
     private static final DateFormat C_TS_F = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS");
     private final String FIRST_CONSUME_FROM = "earliest";
 
-    private final String topic;
+    private String topic;
     private final String group;
     //ip:port;ip:port
     private final String servers;
@@ -133,5 +134,9 @@ public class KafkaConnector extends AbstractConnector implements EventFetcher {
         Consumer<String, String> connector = new KafkaConsumer<String, String>(props);
         connector.subscribe(Arrays.asList(topic));
         this.consumer = connector;
+    }
+
+    public void  setTopic(String topic) {
+        this.topic =topic;
     }
 }

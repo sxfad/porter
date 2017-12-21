@@ -10,7 +10,6 @@ package com.suixingpay.datas.common.cluster.zookeeper.data;/**
 import com.alibaba.fastjson.JSON;
 
 /**
- * TODO
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月20日 17:42
  * @version: V1.0

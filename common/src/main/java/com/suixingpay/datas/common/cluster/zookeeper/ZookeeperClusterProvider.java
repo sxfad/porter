@@ -9,6 +9,8 @@ package com.suixingpay.datas.common.cluster.zookeeper;/**
 
 import com.suixingpay.datas.common.cluster.*;
 import com.suixingpay.datas.common.cluster.command.ClusterCommand;
+import com.suixingpay.datas.common.task.TaskEventListener;
+import com.suixingpay.datas.common.task.TaskEventProvider;
 
 import java.util.ServiceLoader;
 
@@ -30,6 +32,16 @@ public class ZookeeperClusterProvider extends ClusterProvider{
     protected void addListener(ClusterListener listener) {
         listener.setClient(client);
         zkMonitor.addListener(listener);
+    }
+
+    @Override
+    public void addTaskEventListener(TaskEventListener listener) {
+        for (ClusterListener clusterListener : zkMonitor.getListener().values()) {
+            if (clusterListener instanceof TaskEventProvider) {
+                TaskEventProvider teProvider = (TaskEventProvider) clusterListener;
+                teProvider.addTaskEventListener(listener);
+            }
+        }
     }
 
     @Override

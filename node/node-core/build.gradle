@@ -1,9 +1,5 @@
 group 'com.suixingpay.datas'
 
-repositories {
-    maven{url "https://mvnrepository.com/artifact/oracle/ojdbc14"}
-}
-
 dependencies {
     compile(
             project(':common')

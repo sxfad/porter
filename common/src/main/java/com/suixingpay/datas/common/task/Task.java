@@ -7,7 +7,9 @@ package com.suixingpay.datas.common.task;/**
  * 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
  */
 
+import com.suixingpay.datas.common.connector.DataDriverType;
 import com.suixingpay.datas.common.connector.NamedDataDriver;
+import com.suixingpay.datas.common.connector.meta.KafkaDriverMeta;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -26,7 +28,14 @@ public class Task {
     private NamedDataDriver dataDriver;
     //自定义字段映射
     private String filter;
-
+    public String[] listTopic() {
+        String[] topics = null;
+        if (DataDriverType.KAFKA == dataDriver.getType()) {
+            KafkaDriverMeta meta = (KafkaDriverMeta) DataDriverType.KAFKA.getMeta();
+            topics = dataDriver.getExtendAttr().getOrDefault(meta.TOPIC, "").split(",");
+        }
+        return null == topics ? new String[]{} :topics;
+    }
     public NamedDataDriver getSourceDriver() {
         return sourceDriver;
     }

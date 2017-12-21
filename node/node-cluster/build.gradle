@@ -2,6 +2,7 @@ group 'com.suixingpay.datas'
 
 dependencies {
     compile(
-            project(":common")
+            project(":common"),
+            project(":node:node-core")
     )
 }

@@ -7,19 +7,17 @@ package com.suixingpay.datas.common.cluster.command;/**
  * 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
  */
 
-import com.suixingpay.datas.common.task.Task;
-
-import java.util.List; /**
+/**
  *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月19日 18:42
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月19日 18:42
  */
-public class TaskRegisterCommand implements ClusterCommand {
+public class TaskStopCommand implements ClusterCommand {
     private String taskId;
     private String topic;
-    public TaskRegisterCommand(String taskId, String topic) {
+    public TaskStopCommand(String taskId, String topic) {
         this.taskId = taskId;
         this.topic = topic;
     }
