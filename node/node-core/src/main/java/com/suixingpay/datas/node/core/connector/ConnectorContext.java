@@ -13,6 +13,7 @@ import com.suixingpay.datas.common.connector.DataDriverType;
 import com.suixingpay.datas.common.connector.NamedDataDriver;
 import com.suixingpay.datas.node.core.connector.jdbc.JDBCConnector;
 import com.suixingpay.datas.node.core.connector.mq.KafkaConnector;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -33,20 +34,23 @@ public enum  ConnectorContext {
         for (Map.Entry<String, DataDriver> entry : drivers.entrySet()) {
             DataConnector publicConnector = newConnector(entry.getValue());
             if (null != publicConnector) {
-                //启动公共数据连接池
-                if (!publicConnector.isConnected()) {
+                DataConnector putReturn = connection.putIfAbsent(entry.getKey(), publicConnector);
+                if (null == putReturn) {//第一次添加
                     publicConnector.connect();
+                    //将资源标注为公共资源,默认为私有
+                    publicConnector.setPrivatePool(false);
+                } else {
+                    publicConnector.disconnect();
+                    publicConnector = null;
                 }
-                //将资源标注为公共资源,默认为私有
-                publicConnector.setPrivatePool(false);
-                connection.putIfAbsent(entry.getKey(), publicConnector);
             }
         }
     }
     public DataConnector newConnector(DataDriver driver) {
         DataConnector connector = null;
-        if (driver instanceof NamedDataDriver) {
-            connector = connection.get(((NamedDataDriver)driver).getName());
+        String namedDriverName = driver instanceof NamedDataDriver ? ((NamedDataDriver)driver).getName() : null;
+        if (!StringUtils.isBlank(namedDriverName) && connection.containsKey(namedDriverName) ) {
+            connector = connection.get(namedDriverName);
         } else {
             switch (driver.getType().getValue()) {
                 case DataDriverType.KAFKA_VALUE :

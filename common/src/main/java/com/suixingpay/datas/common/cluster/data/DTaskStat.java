@@ -1,4 +1,4 @@
-package com.suixingpay.datas.common.cluster.zookeeper.data;/**
+package com.suixingpay.datas.common.cluster.data;/**
  * All rights Reserved, Designed By Suixingpay.
  *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -7,6 +7,10 @@ package com.suixingpay.datas.common.cluster.zookeeper.data;/**
  * 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
  */
 
+import com.alibaba.fastjson.JSON;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Date;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -24,8 +28,9 @@ public class DTaskStat  extends DObject {
     private AtomicLong updateRow = new AtomicLong(0);
     private AtomicLong deleteRow = new AtomicLong(0);
     private AtomicLong maylostRow = new AtomicLong(0);
+    private Date statedTime;
     public DTaskStat() {
-
+        statedTime = new Date();
     }
     public DTaskStat(String taskId, String nodeId, String topic) {
         this.taskId = taskId;
@@ -87,5 +92,24 @@ public class DTaskStat  extends DObject {
 
     public void setMaylostRow(AtomicLong maylostRow) {
         this.maylostRow = maylostRow;
+    }
+
+    @Override
+    public <T> void merge(T data) {
+        DTaskStat stat = (DTaskStat) data;
+        if (taskId.equals(stat.getTaskId()) && stat.getTopic().equals(topic)) {
+            if (!StringUtils.isBlank(stat.nodeId)) this.nodeId = stat.nodeId;
+            this.deleteRow.addAndGet(stat.deleteRow.longValue());
+            this.insertRow.addAndGet(stat.insertRow.longValue());
+            this.updateRow.addAndGet(stat.updateRow.longValue());
+            this.maylostRow.addAndGet(stat.maylostRow.longValue());
+            this.statedTime = new Date();
+        }
+    }
+    public void reset() {
+        this.deleteRow.set(0);
+        this.insertRow.set(0);
+        this.updateRow.set(0);
+        this.maylostRow.set(0);
     }
 }

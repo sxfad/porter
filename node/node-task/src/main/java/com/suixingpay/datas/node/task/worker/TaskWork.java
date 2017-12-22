@@ -10,6 +10,7 @@ package com.suixingpay.datas.node.task.worker;/**
 
 import com.suixingpay.datas.common.cluster.ClusterProvider;
 import com.suixingpay.datas.common.cluster.command.TaskStopCommand;
+import com.suixingpay.datas.common.cluster.data.DTaskStat;
 import com.suixingpay.datas.common.connector.DataConnector;
 import com.suixingpay.datas.common.util.DefaultNamedThreadFactory;
 import org.slf4j.Logger;
@@ -35,11 +36,9 @@ public class TaskJob {
     private final DataConnector source;
     private final DataConnector target;
     private final DataConnector consumerSource;
-    protected final AtomicLong insertCount = new AtomicLong(0);
-    protected final AtomicLong updateCount = new AtomicLong(0);
-    protected final AtomicLong deleteCount = new AtomicLong(0);
-    protected final AtomicLong errorCount = new AtomicLong(0);
-    protected final AtomicLong mayLostCount = new AtomicLong(0);
+    protected final DTaskStat stat;
+    
+
 
     public TaskJob(String taskId, String topic, DataConnector source, DataConnector target, DataConnector dataSource) {
         this.target = target;
@@ -48,10 +47,12 @@ public class TaskJob {
         this.taskId = taskId;
         this.consumerSource = dataSource;
         this.TASK_JOB_ALERT = Executors.newSingleThreadScheduledExecutor(new DefaultNamedThreadFactory("TaskJobAlert-" + taskId + "-" + topic));
+        stat = new DTaskStat(taskId, null, topic);
     }
 
     public void stop() {
         try {
+            consumerSource.disconnect();
             TASK_JOB_ALERT.shutdown();
             ClusterProvider.sendCommand(new TaskStopCommand(taskId,topic));
         } catch (Exception e) {
@@ -60,6 +61,8 @@ public class TaskJob {
     }
 
     public void start() {
+        consumerSource.connect();
+        //告警任务
         TASK_JOB_ALERT.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
@@ -67,13 +70,5 @@ public class TaskJob {
                 //上传进度
             }
         }, 0, 5, TimeUnit.MINUTES);
-    }
-
-    protected void clearStastic() {
-        mayLostCount.set(0L);
-        insertCount.set(0L);
-        updateCount.set(0L);
-        deleteCount.set(0L);
-        errorCount.set(0L);
     }
 }

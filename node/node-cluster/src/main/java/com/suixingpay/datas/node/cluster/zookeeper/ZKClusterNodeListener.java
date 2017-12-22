@@ -16,7 +16,7 @@ import com.suixingpay.datas.common.cluster.event.ClusterEvent;
 import com.suixingpay.datas.common.cluster.zookeeper.ZookeeperClusterEvent;
 import com.suixingpay.datas.common.cluster.zookeeper.ZookeeperClusterListener;
 import com.suixingpay.datas.common.cluster.zookeeper.ZookeeperClusterListenerFilter;
-import com.suixingpay.datas.common.cluster.zookeeper.data.DNode;
+import com.suixingpay.datas.common.cluster.data.DNode;
 import com.suixingpay.datas.common.util.DefaultNamedThreadFactory;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.lang3.tuple.Pair;

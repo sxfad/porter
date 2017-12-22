@@ -1,4 +1,4 @@
-package com.suixingpay.datas.common.cluster.zookeeper.data;/**
+package com.suixingpay.datas.common.cluster.data;/**
  * All rights Reserved, Designed By Suixingpay.
  *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -7,7 +7,6 @@ package com.suixingpay.datas.common.cluster.zookeeper.data;/**
  * 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
  */
 
-import com.alibaba.fastjson.JSON;
 import com.suixingpay.datas.common.util.MachineUtils;
 
 import java.util.*;
@@ -19,7 +18,7 @@ import java.util.*;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月20日 13:45
  */
-public class DNode extends DObject{
+public class DNode extends DObject {
     private String nodeId;
     private Date heartbeat;
     private String address = MachineUtils.IP_ADDRESS;
@@ -82,5 +81,10 @@ public class DNode extends DObject{
 
     public void setTasks(Map<String,List<String>> tasks) {
         this.tasks = tasks;
+    }
+
+    @Override
+    public <T> void merge(T data) {
+
     }
 }

@@ -14,7 +14,7 @@ import com.suixingpay.datas.common.cluster.event.ClusterEvent;
 import com.suixingpay.datas.common.cluster.zookeeper.ZookeeperClusterEvent;
 import com.suixingpay.datas.common.cluster.zookeeper.ZookeeperClusterListener;
 import com.suixingpay.datas.common.cluster.zookeeper.ZookeeperClusterListenerFilter;
-import com.suixingpay.datas.common.cluster.zookeeper.data.DTaskStat;
+import com.suixingpay.datas.common.cluster.data.DTaskStat;
 import com.suixingpay.datas.common.task.TaskEventListener;
 import com.suixingpay.datas.common.task.TaskEventProvider;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -124,18 +124,13 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
             }
         } else if (command instanceof TaskStatCommand) {
             TaskStatCommand statCommand = (TaskStatCommand) command;
-            String node = path() + "/" + statCommand.getTaskId() + "/assign/" + statCommand.getTopic();
+            String node = path() + "/" + statCommand.getStat().getTaskId() + "/assign/" + statCommand.getStat().getTopic();
             Stat stat = client.exists(node, false);
             if (null != stat) {
                 Pair<String, Stat> nodePair = client.getData(node);
                 DTaskStat taskStat = DTaskStat.fromString(nodePair.getLeft(), DTaskStat.class);
-                if (taskStat.getNodeId().equals(nodeId)) {
-                    taskStat.getDeleteRow().addAndGet(statCommand.getDeleteCount());
-                    taskStat.getInsertRow().addAndGet(statCommand.getInsertCount());
-                    taskStat.getMaylostRow().addAndGet(statCommand.getMayLostCount());
-                    taskStat.getUpdateRow().addAndGet(statCommand.getUpdateCount());
-                    client.setData(node, taskStat.toString(), nodePair.getRight().getVersion());
-                }
+                taskStat.merge(statCommand.getStat());
+                client.setData(node, taskStat.toString(), nodePair.getRight().getVersion());
             }
         }
     }

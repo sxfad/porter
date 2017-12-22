@@ -10,6 +10,7 @@ package com.suixingpay.datas.node.task.worker;/**
 import com.suixingpay.datas.common.cluster.ClusterProvider;
 import com.suixingpay.datas.common.cluster.command.TaskRegisterCommand;
 import com.suixingpay.datas.common.cluster.command.TaskStatCommand;
+import com.suixingpay.datas.common.cluster.data.DTaskStat;
 import com.suixingpay.datas.common.connector.DataConnector;
 import com.suixingpay.datas.common.connector.MQConnector;
 import com.suixingpay.datas.common.task.Task;
@@ -63,8 +64,9 @@ public class TaskWorker {
                     for (TaskJob job : JOBS) {
                         try {
                             //获取JOB的运行状态
-                            ClusterProvider.sendCommand(new TaskStatCommand(job.taskId, job.topic, job.insertCount.longValue(), job.updateCount.longValue(), job.deleteCount.longValue(), 0L, job.mayLostCount.longValue()));
-                            job.clearStastic();
+                            DTaskStat newStat = job.stat.snapshot(DTaskStat.class);
+                            job.stat.reset();
+                            ClusterProvider.sendCommand(new TaskStatCommand(newStat));
                         } catch (Exception e) {
                             LOGGER.error("上传任务消费进度出错", e);
                         }
@@ -108,7 +110,7 @@ public class TaskWorker {
                 job.start();
                 JOBS.add(job);
             } catch (Exception e){
-
+                LOGGER.error("topic JOB分配出错!", e);
             }
         }
     }

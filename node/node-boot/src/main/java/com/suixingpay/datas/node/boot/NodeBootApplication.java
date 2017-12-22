@@ -71,20 +71,14 @@ public class NodeBootApplication {
             LOGGER.error(e.getMessage() + "," + "数据同步节点退出!", e);
             System.exit(-1);
         }
-
-        //初始任务加载
         //获取任务配置
         TaskConfig taskConfig = context.getBean(TaskConfig.class);
-        try {
-            ClusterProvider.sendCommand(taskConfig.convert2RegisterCmd());
-        } catch (Exception e) {
-            e.printStackTrace();
-            LOGGER.error("初始任务分配失败", e);
-            System.exit(-1);
-        }
         //启动任务控制器
         TaskController controller = context.getBean(TaskController.class);
         controller.start(taskConfig.getItems());
+
+        LOGGER.info("NodeBootApplication started");
+
         //保持进程持续运行不退出
         ProcessUtils.keepRunning();
     }

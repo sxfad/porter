@@ -1,4 +1,4 @@
-package com.suixingpay.datas.common.cluster.zookeeper.data;/**
+package com.suixingpay.datas.common.cluster.data;/**
  * All rights Reserved, Designed By Suixingpay.
  *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -15,11 +15,16 @@ import com.alibaba.fastjson.JSON;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月20日 17:42
  */
-public  class DObject {
+public  abstract class DObject {
     public String toString() {
         return JSON.toJSONString(this);
     }
     public static <T> T  fromString(String string, Class<T> clazz) {
         return JSON.parseObject(string, clazz);
+    }
+    public abstract <T> void merge(T data);
+
+    public  <T> T snapshot(Class<T> clazz) {
+        return JSON.parseObject(JSON.toJSONString(this), clazz);
     }
 }
