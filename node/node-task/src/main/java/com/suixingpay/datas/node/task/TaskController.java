@@ -25,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- *
+ * 监工
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月20日 20:53
  * @version: V1.0
@@ -59,6 +59,9 @@ public class TaskController implements TaskEventListener {
             @Override
             public void run() {
                 controller.stop();
+                //退出群聊需在业务代码执行之后才能执行
+                LOGGER.info("退出群聊.......");
+                ClusterProvider.unload();
             }
         });
 
@@ -86,8 +89,9 @@ public class TaskController implements TaskEventListener {
         }
     }
 
-    public void stop() {
+    private void stop() {
         if (stat.compareAndSet(true, false)) {
+            LOGGER.info("监工下线.......");
             for (TaskWorker worker : WORKER_MAP.values()) {
                 stopTask(worker);
             }
@@ -99,9 +103,9 @@ public class TaskController implements TaskEventListener {
     @Override
     public void onEvent(TaskEvent event) {
         if (event.getType() == TaskEventType.CREATE) {
-
+            //startTask();
         } else if (event.getType() == TaskEventType.DELETE) {
-
+            //stopTask();
         }
     }
 }

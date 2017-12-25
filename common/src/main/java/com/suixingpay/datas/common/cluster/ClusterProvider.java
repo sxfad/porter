@@ -56,15 +56,15 @@ public abstract class ClusterProvider {
                 clusterProvider.initialize(driver);
                 clusterProvider.start();
                 CLUSTER_PROVIDERS.add(clusterProvider);
-                //进程退出Hook
-                Runtime.getRuntime().addShutdownHook(new Thread("datas-ClusterProviderShutdownHook-"+clusterProvider.hashCode()){
-                    @Override
-                    public void run() {
-                        clusterProvider.stop();
-                    }
-                });
             }
         });
+    }
+    public static final void unload() {
+        //退出群聊需在业务代码执行之后才能执行
+        for (ClusterProvider provider : CLUSTER_PROVIDERS) {
+            //进程退出Hook
+            provider.stop();
+        }
     }
     public static final void sendCommand (ClusterCommand command) throws Exception {
         for (ClusterProvider provider : CLUSTER_PROVIDERS) {

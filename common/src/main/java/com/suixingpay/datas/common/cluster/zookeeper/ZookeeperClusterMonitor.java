@@ -91,6 +91,7 @@ public class ZookeeperClusterMonitor implements ClusterMonitor, Watcher {
     @Override
     public void stop() {
         try {
+            //最后的清除任务
             ClusterProvider.sendCommand(new ShutwdownCommand());
         } catch (Exception e) {
             e.printStackTrace();

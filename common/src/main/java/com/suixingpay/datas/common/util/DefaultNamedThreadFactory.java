@@ -21,12 +21,17 @@ public class DefaultNamedThreadFactory implements ThreadFactory {
     private final AtomicInteger threadSeq = new AtomicInteger(0);
     private final String namePrefix;
     public DefaultNamedThreadFactory(String name) {
-        namePrefix = "suixingpay-job-" + JOB_SERVICE_SEQ.incrementAndGet() + "-" + name + "-";
+        namePrefix = "suixingpay-" + JOB_SERVICE_SEQ.incrementAndGet() + "-" + name + "-";
     }
+
     @Override
     public Thread newThread(Runnable r) {
-        Thread t = new Thread(r,namePrefix + threadSeq.getAndIncrement());
-        t.setDaemon(true);
+        return newThread(r, threadSeq.getAndIncrement() + "");
+    }
+
+    public Thread newThread(Runnable r,String threadName) {
+        Thread t = new Thread(r,namePrefix + threadName);
+        if (t.isDaemon()) t.setDaemon(false);
         return t;
     }
 }

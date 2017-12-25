@@ -39,7 +39,6 @@ public abstract class AbstractClient implements Client {
             try {
                 doDisconnect();
             } catch (Exception e) {
-                disconnect();
             }
         } else {
 

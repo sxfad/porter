@@ -19,10 +19,13 @@ import com.suixingpay.datas.node.core.event.EventType;
 import com.suixingpay.datas.node.core.event.MessageEvent;
 import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.common.serialization.StringDeserializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
 
 /**
  * TODO
@@ -32,6 +35,7 @@ import java.util.*;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月14日 09:52
  */
 public class KafkaConnector extends AbstractConnector implements EventFetcher, MQConnector {
+    private static final Logger LOGGER = LoggerFactory.getLogger(KafkaConnector.class);
     private static final DateFormat OP_TS_F = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
     private static final DateFormat C_TS_F = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS");
     private final String FIRST_CONSUME_FROM = "earliest";
@@ -43,6 +47,7 @@ public class KafkaConnector extends AbstractConnector implements EventFetcher, M
     private final Long  oncePollSize;
     private final Long  oncePollTimeout;
     private Consumer<String, String> consumer;
+    private CountDownLatch canFetch;
 
     public KafkaConnector(DataDriver driver) {
         super(driver);
@@ -54,10 +59,16 @@ public class KafkaConnector extends AbstractConnector implements EventFetcher, M
         oncePollSize = Long.parseLong(oncePoolSizeStr);
         String oncePoolTimeoutStr= driver.getExtendAttr().getOrDefault(meta.POLL_TIME_OUT,"10000");
         oncePollTimeout = Long.parseLong(oncePoolTimeoutStr);
+        canFetch = new CountDownLatch(1);
     }
 
     @Override
     public List<MessageEvent> fetch() {
+        try {
+            canFetch.await();
+        } catch (InterruptedException e) {
+            LOGGER.error("等待kafka状态可用异常", e);
+        }
         List<MessageEvent> msgs = new ArrayList<MessageEvent>();
         ConsumerRecords<String, String> results = consumer.poll(oncePollTimeout);
         if (null == results ||results.isEmpty()) return msgs;
@@ -79,7 +90,7 @@ public class KafkaConnector extends AbstractConnector implements EventFetcher, M
                 //body
                 MessageEvent event = new MessageEvent();
                 String schemaAndTable = obj.getString("table");
-                String[] stTmp = null != schemaAndTable ? schemaAndTable.split(".") : null;
+                String[] stTmp = null != schemaAndTable ? schemaAndTable.split("\\.") : null;
                 if (null != stTmp && stTmp.length == 2) {
                     event.setSchema(stTmp[0]);
                     event.setTable(stTmp[1]);
@@ -114,6 +125,7 @@ public class KafkaConnector extends AbstractConnector implements EventFetcher, M
             consumer.close();
             consumer = null;
         }
+        canFetch = new CountDownLatch(1);
     }
 
 
@@ -125,15 +137,16 @@ public class KafkaConnector extends AbstractConnector implements EventFetcher, M
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         //单次消费数量
-        props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, oncePollSize);
+        props.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, oncePollSize + "");
         //从最开始的位置读取
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, FIRST_CONSUME_FROM);
         //设置offset默认每秒提交一次,不同于mysql binlog需要手动维护消费进度
-        props.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, 1000);
+        props.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, "1000");
         props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG,true );
         Consumer<String, String> connector = new KafkaConsumer<String, String>(props);
         connector.subscribe(Arrays.asList(topic));
         this.consumer = connector;
+        canFetch.countDown();
     }
 
     public void  setTopic(String topic) {

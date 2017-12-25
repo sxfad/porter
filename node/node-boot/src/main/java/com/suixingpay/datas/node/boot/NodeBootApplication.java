@@ -59,7 +59,7 @@ public class NodeBootApplication {
         }
         //初始化集群提供者中间件
         ClusterProvider.load(driver);
-
+        LOGGER.info("建群.......");
         //节点初始化
         NodeConfig nodeConfig = context.getBean(NodeConfig.class);
         //节点注册
@@ -71,12 +71,13 @@ public class NodeBootApplication {
             LOGGER.error(e.getMessage() + "," + "数据同步节点退出!", e);
             System.exit(-1);
         }
+        LOGGER.info("加入群聊.......");
         //获取任务配置
         TaskConfig taskConfig = context.getBean(TaskConfig.class);
-        //启动任务控制器
+        //监工上线
+        LOGGER.info("监工上线.......");
         TaskController controller = context.getBean(TaskController.class);
         controller.start(taskConfig.getItems());
-
         LOGGER.info("NodeBootApplication started");
 
         //保持进程持续运行不退出

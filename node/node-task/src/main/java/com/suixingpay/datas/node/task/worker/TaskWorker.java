@@ -27,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
+ * 工人
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月21日 11:22
  * @version: V1.0
@@ -38,7 +39,7 @@ public class TaskWorker {
     private final AtomicBoolean SOURCE_STAT = new AtomicBoolean(false);
     //负责将任务工作者的状态定时上传
     private final ScheduledExecutorService STAT_WORKER;
-    private final List<TaskJob> JOBS;
+    private final List<TaskWork> JOBS;
 
     private DataConnector source;
     private DataConnector target;
@@ -49,6 +50,7 @@ public class TaskWorker {
     }
     public void start() {
         if (STAT.compareAndSet(false, true)) {
+            LOGGER.info("工人上线.......");
             STAT_WORKER.scheduleAtFixedRate(new Runnable() {
                 @Override
                 public void run() {
@@ -61,7 +63,7 @@ public class TaskWorker {
                         }
                     }
                     //每10秒上传一次消费进度
-                    for (TaskJob job : JOBS) {
+                    for (TaskWork job : JOBS) {
                         try {
                             //获取JOB的运行状态
                             DTaskStat newStat = job.stat.snapshot(DTaskStat.class);
@@ -78,9 +80,10 @@ public class TaskWorker {
         }
     }
     public void stop() {
-        if (STAT.compareAndSet(false, true)) {
+        if (STAT.compareAndSet(true, false)) {
+            LOGGER.info("工人下线.......");
             STAT_WORKER.shutdown();
-            for (TaskJob job : JOBS) {
+            for (TaskWork job : JOBS) {
                 job.stop();
             }
         } else {
@@ -98,15 +101,13 @@ public class TaskWorker {
         String[]  topics = task.listTopic();
         for (String topic : topics) {
             try {
-                //如果所有的命令执行都没有报错，认为分配成功
-                ClusterProvider.sendCommand(new TaskRegisterCommand(task.getTaskId(), topic));
                 //启动JOB
                 DataConnector dataSource = ConnectorContext.INSTANCE.newConnector(task.getDataDriver());
                 if (dataSource instanceof MQConnector) {
                     MQConnector connector = (MQConnector) dataSource;
                     connector.setTopic(topic);
                 }
-                TaskJob job = new TaskJob(task.getTaskId(), topic, source, target, dataSource);
+                TaskWork job = new TaskWork(task.getTaskId(), topic, source, target, dataSource);
                 job.start();
                 JOBS.add(job);
             } catch (Exception e){

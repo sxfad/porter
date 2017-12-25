@@ -41,6 +41,7 @@ public abstract  class AbstractConnector  implements DataConnector {
             try {
                 doConnect();
             } catch (Exception e) {
+                logger.error("DataConnector  disconnected with error", e);
                 disconnect();
             }
         } else {
