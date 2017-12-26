@@ -21,6 +21,8 @@ import java.util.List;
 public interface DataCarrier<E> {
     void push(List<E> list) throws InterruptedException;
     void push(E item) throws InterruptedException;
-    Pair<Long, E> pull();
-    Pair<Long, List<E>> greedyPull();
+    Pair<Long, E> pullByOrder();
+    Pair<Long, List<E>> greedyPullByOrder();
+    <E> E pull();
+    <E> List<E> greedyPull();
 }

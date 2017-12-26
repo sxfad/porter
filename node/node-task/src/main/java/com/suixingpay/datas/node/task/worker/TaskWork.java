@@ -13,9 +13,6 @@ import com.suixingpay.datas.common.cluster.command.TaskRegisterCommand;
 import com.suixingpay.datas.common.cluster.command.TaskStopCommand;
 import com.suixingpay.datas.common.cluster.data.DTaskStat;
 import com.suixingpay.datas.common.connector.DataConnector;
-import com.suixingpay.datas.common.util.DefaultNamedThreadFactory;
-import com.suixingpay.datas.node.core.event.ETLEvent;
-import com.suixingpay.datas.node.core.event.MessageEvent;
 import com.suixingpay.datas.node.core.task.StageJob;
 import com.suixingpay.datas.node.core.task.StageType;
 import com.suixingpay.datas.node.task.alert.AlertJob;
@@ -111,7 +108,7 @@ public class TaskWork {
         return basicThreadName;
     }
 
-    public <T> Pair<Long, List<T>> waitEvent(StageType type) throws Exception {
+    public <T> T waitEvent(StageType type) throws Exception {
         return JOBS.get(type).output();
     }
 }

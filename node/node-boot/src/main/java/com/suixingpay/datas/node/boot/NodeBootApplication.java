@@ -10,12 +10,15 @@ package com.suixingpay.datas.node.boot;/**
 import com.suixingpay.datas.common.cluster.ClusterDriver;
 import com.suixingpay.datas.common.cluster.ClusterProvider;
 import com.suixingpay.datas.common.cluster.command.NodeRegisterCommand;
+import com.suixingpay.datas.common.util.ApplicationContextUtils;
 import com.suixingpay.datas.common.util.ProcessUtils;
 import com.suixingpay.datas.node.boot.config.DataDriverConfig;
 import com.suixingpay.datas.node.boot.config.NodeConfig;
 import com.suixingpay.datas.node.boot.config.TaskConfig;
 import com.suixingpay.datas.node.core.connector.ConnectorContext;
 import com.suixingpay.datas.node.task.TaskController;
+import com.suixingpay.datas.node.task.extract.extractor.Extractor;
+import com.suixingpay.datas.node.task.extract.extractor.ExtractorFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.Banner;
@@ -23,6 +26,9 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.core.io.support.SpringFactoriesLoader;
+
+import java.util.List;
 
 /**
  * node launcher
@@ -42,6 +48,8 @@ public class NodeBootApplication {
         app.setBannerMode(Banner.Mode.OFF);
         app.setWebEnvironment(false);
         ConfigurableApplicationContext context = app.run(args);
+        //注入spring工具类
+        ApplicationContextUtils.INSTANCE.init(context);
         //获取公用数据库连接池
         DataDriverConfig dataDriverConfig = context.getBean(DataDriverConfig.class);
         if (DataDriverConfig.error(dataDriverConfig)) {
@@ -57,7 +65,7 @@ public class NodeBootApplication {
             LOGGER.error("集群参数初始化失败", new Exception("集群配置参数ClusterDriver初始化失败, 数据同步节点退出!"));
             System.exit(-1);
         }
-        //初始化集群提供者中间件
+        //初始化集群提供者中间件,spring spi插件
         ClusterProvider.load(driver);
         LOGGER.info("建群.......");
         //节点初始化

@@ -63,7 +63,7 @@ public class KafkaConnector extends AbstractConnector implements EventFetcher, M
     }
 
     @Override
-    public List<MessageEvent> fetch() {
+    public  List<MessageEvent> fetch() {
         try {
             canFetch.await();
         } catch (InterruptedException e) {
@@ -101,7 +101,7 @@ public class KafkaConnector extends AbstractConnector implements EventFetcher, M
                 String currentTS = obj.getString("current_ts");
                 event.setCurrentTs(C_TS_F.parse(currentTS.substring(0, currentTS.length() - 3)));
                 JSONArray pkeys = obj.containsKey("primary_keys") ? obj.getJSONArray("primary_keys") : null;
-                if (null != pkeys) event.setPrimaryKeys(pkeys.toArray(new String[]{}));
+                if (null != pkeys) event.setPrimaryKeys(pkeys.toJavaList(String.class));
                 event.setBefore(obj.getObject("before",Map.class));
                 event.setAfter(obj.getObject("after",Map.class));
                 event.setHead(eventHeader);

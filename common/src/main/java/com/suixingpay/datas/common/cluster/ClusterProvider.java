@@ -9,6 +9,7 @@ package com.suixingpay.datas.common.cluster;/**
 
 import com.suixingpay.datas.common.cluster.command.ClusterCommand;
 import com.suixingpay.datas.common.task.TaskEventListener;
+import org.springframework.core.io.support.SpringFactoriesLoader;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,8 +36,8 @@ public abstract class ClusterProvider {
         afterInitialize();
     }
     private final void afterInitialize(){
-        //获取ClusterListener SPI
-        ServiceLoader<ClusterListener> listeners = ServiceLoader.load(ClusterListener.class);
+        //通过spring框架的SPI loader加载服务
+        List<ClusterListener> listeners = SpringFactoriesLoader.loadFactories(ClusterListener.class, null);
         //添加SPI到监听器
         listeners.forEach(new Consumer<ClusterListener>() {
             @Override
@@ -49,7 +50,7 @@ public abstract class ClusterProvider {
 
     public static final void load(ClusterDriver driver) {
         //集群组件初始化, 一般情况下只有一个.
-        final ServiceLoader<ClusterProvider> providers = ServiceLoader.load(ClusterProvider.class);
+        List<ClusterProvider> providers = SpringFactoriesLoader.loadFactories(ClusterProvider.class, null);
         providers.forEach(new Consumer<ClusterProvider>() {
             @Override
             public void accept(ClusterProvider clusterProvider) {

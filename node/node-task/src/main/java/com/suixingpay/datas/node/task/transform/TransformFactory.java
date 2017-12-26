@@ -1,4 +1,4 @@
-package com.suixingpay.datas.node.task.extract.extractor;/**
+package com.suixingpay.datas.node.task.transform;/**
  * All rights Reserved, Designed By Suixingpay.
  *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -8,6 +8,7 @@ package com.suixingpay.datas.node.task.extract.extractor;/**
  */
 
 import com.suixingpay.datas.node.core.event.ETLBucket;
+import com.suixingpay.datas.node.task.extract.extractor.Extractor;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 import org.springframework.stereotype.Component;
@@ -22,11 +23,11 @@ import java.util.List;
  */
 @Component
 @Scope("singleton")
-public class ExtractorFactory {
-    private List<Extractor> extractors = SpringFactoriesLoader.loadFactories(Extractor.class, null);
-    public void extract(ETLBucket bucket) {
-        for (Extractor extractor : extractors) {
-            extractor.extract(bucket);
+public class TransformFactory {
+    private List<Transformer> extractors = SpringFactoriesLoader.loadFactories(Transformer.class, null);
+    public void transform(ETLBucket bucket) {
+        for (Transformer transformer : extractors) {
+            transformer.transform(bucket);
         }
     }
 }

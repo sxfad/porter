@@ -1,8 +1,8 @@
-package com.suixingpay.datas.node.task.extract.extractor;/**
+package com.suixingpay.datas.node.task.transform;/**
  * All rights Reserved, Designed By Suixingpay.
  *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
- * @date: 2017年12月25日 19:18
+ * @date: 2017年12月26日 15:59
  * @Copyright ©2017 Suixingpay. All rights reserved.
  * 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
  */
@@ -11,10 +11,10 @@ import com.suixingpay.datas.node.core.event.ETLBucket;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
- * @date: 2017年12月25日 19:18
+ * @date: 2017年12月26日 15:59
  * @version: V1.0
- * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月25日 19:18
+ * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月26日 15:59
  */
-public interface Extractor {
-    void extract(ETLBucket bucket);
+public interface Transformer {
+    void transform(ETLBucket bucket);
 }

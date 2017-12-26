@@ -8,6 +8,7 @@ package com.suixingpay.datas.node.task.load;/**
  */
 
 import com.suixingpay.datas.common.connector.DataConnector;
+import com.suixingpay.datas.node.core.event.ETLBucket;
 import com.suixingpay.datas.node.core.task.AbstractStageJob;
 import com.suixingpay.datas.node.task.worker.TaskWork;
 import org.apache.commons.lang3.tuple.Pair;
@@ -47,7 +48,7 @@ public class LoadJob extends AbstractStageJob{
     }
 
     @Override
-    public <T> Pair<Long, List<T>> output() throws Exception {
+    public ETLBucket output() throws Exception {
         throw new Exception("unsupported Method");
     }
 }

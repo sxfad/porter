@@ -8,20 +8,19 @@ package com.suixingpay.datas.node.task.select;/**
  */
 
 import com.suixingpay.datas.common.connector.DataConnector;
+import com.suixingpay.datas.common.util.ApplicationContextUtils;
 import com.suixingpay.datas.node.core.event.EventFetcher;
 import com.suixingpay.datas.node.core.event.MessageEvent;
 import com.suixingpay.datas.node.core.task.AbstractStageJob;
 import com.suixingpay.datas.node.datacarrier.DataCarrier;
-import com.suixingpay.datas.node.datacarrier.simple.SimpleDataCarrier;
+import com.suixingpay.datas.node.datacarrier.DataCarrierFactory;
 import com.suixingpay.datas.node.task.worker.TaskWork;
 import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 /**
- * 完成SQL事件从数据源的消费
+ * 完成SQL事件从数据源的消费。为了提升消费能力，不做过多业务逻辑处理和数据模型转换
  * 获取事件消息，单线程执行,通过interrupt终止线程
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月24日 11:15
@@ -29,15 +28,16 @@ import java.util.List;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月24日 11:15
  */
 public class SelectJob extends AbstractStageJob {
-    private static final int BUFFER_SIZE = 1024*10;
     private static final int PULL_BATCH_SIZE = 512;
+    private static final int BUFFER_SIZE = PULL_BATCH_SIZE*1*1000;
+
     private final DataConnector selectSource;
     private final DataCarrier<MessageEvent> carrier;
     public SelectJob(TaskWork work) {
         super(work.getBasicThreadName());
         if (work.getConsumerSource() instanceof  EventFetcher) {
             selectSource = work.getConsumerSource();
-            carrier = new SimpleDataCarrier(BUFFER_SIZE,PULL_BATCH_SIZE);
+            carrier = ApplicationContextUtils.INSTANCE.getBean(DataCarrierFactory.class).newDataCarrier(BUFFER_SIZE,PULL_BATCH_SIZE);
         } else {
             selectSource = null;
             carrier = null;
@@ -56,6 +56,7 @@ public class SelectJob extends AbstractStageJob {
     protected void doStart() {
         selectSource.connect();
     }
+
     @Override
     protected void loopLogic(){
         EventFetcher fetcher = (EventFetcher)selectSource;
@@ -78,6 +79,6 @@ public class SelectJob extends AbstractStageJob {
 
     @Override
     public Pair<Long, List<MessageEvent>> output() {
-        return carrier.greedyPull();
+        return carrier.greedyPullByOrder();
     }
 }

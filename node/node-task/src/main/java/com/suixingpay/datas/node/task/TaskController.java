@@ -12,9 +12,12 @@ import com.suixingpay.datas.common.task.Task;
 import com.suixingpay.datas.common.task.TaskEvent;
 import com.suixingpay.datas.common.task.TaskEventType;
 import com.suixingpay.datas.common.task.TaskEventListener;
+import com.suixingpay.datas.node.task.extract.extractor.ExtractorFactory;
 import com.suixingpay.datas.node.task.worker.TaskWorker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -38,12 +41,14 @@ public class TaskController implements TaskEventListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskController.class);
     private final AtomicBoolean stat = new AtomicBoolean(false);
     private final Map<String,TaskWorker> WORKER_MAP = new ConcurrentHashMap<>();
+
     public void start() {
         start(null);
     }
 
     public void start(List<Task> initTasks) {
         if (stat.compareAndSet(false, true)) {
+
             if (null != initTasks && !initTasks.isEmpty()) {
                 for (Task t : initTasks) {
                     startTask(t);

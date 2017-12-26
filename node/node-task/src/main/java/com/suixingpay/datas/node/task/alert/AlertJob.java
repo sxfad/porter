@@ -49,7 +49,7 @@ public class AlertJob extends AbstractStageJob {
     }
 
     @Override
-    public <T> Pair<Long, List<T>> output() {
+    public <T> T output() {
         return null;
     }
 }

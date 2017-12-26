@@ -7,10 +7,15 @@ package com.suixingpay.datas.node.task.extract;/**
  * 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
  */
 
-import com.suixingpay.datas.common.util.DefaultNamedThreadFactory;
+import com.suixingpay.datas.common.util.ApplicationContextUtils;
+import com.suixingpay.datas.node.core.event.ETLBucket;
 import com.suixingpay.datas.node.core.event.MessageEvent;
 import com.suixingpay.datas.node.core.task.AbstractStageJob;
 import com.suixingpay.datas.node.core.task.StageType;
+import com.suixingpay.datas.node.datacarrier.DataCarrier;
+import com.suixingpay.datas.node.datacarrier.DataCarrierFactory;
+import com.suixingpay.datas.node.datacarrier.simple.SimpleDataCarrier;
+import com.suixingpay.datas.node.task.extract.extractor.ExtractorFactory;
 import com.suixingpay.datas.node.task.worker.TaskWork;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -25,16 +30,21 @@ import java.util.concurrent.*;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月24日 11:20
  */
 public class ExtractJob extends AbstractStageJob {
+    private static final int BUFFER_SIZE = LOGIC_THREAD_SIZE * LOGIC_THREAD_SIZE * LOGIC_THREAD_SIZE;
     private final TaskWork work;
     private final ExecutorService executorService;
+    private final DataCarrier<ETLBucket> carrier;
+    private final ExtractorFactory extractorFactory;
     public ExtractJob(TaskWork work) {
         super(work.getBasicThreadName());
+        extractorFactory = ApplicationContextUtils.INSTANCE.getBean(ExtractorFactory.class);
         this.work = work;
         //线程阻塞时，在调用者线程中执行
         executorService = new ThreadPoolExecutor(LOGIC_THREAD_SIZE, LOGIC_THREAD_SIZE,
                 0L, TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<Runnable>(),
                 getThreadFactory(), new ThreadPoolExecutor.CallerRunsPolicy());
+        carrier = ApplicationContextUtils.INSTANCE.getBean(DataCarrierFactory.class).newDataCarrier(BUFFER_SIZE, 1);
     }
 
     @Override
@@ -54,23 +64,31 @@ public class ExtractJob extends AbstractStageJob {
         do {
             try {
                 events = work.waitEvent(StageType.SELECT);
-                final Pair<Long, List<MessageEvent>> inThreadEvents = events;
-                Future<Boolean> future = executorService.submit(new Callable<Boolean>(){
-                    @Override
-                    public Boolean call() throws Exception {
-                        Long a = inThreadEvents.getKey();
-                        System.out.println(a);
-                        return null;
-                    }
-                });
+                if (null != events) {
+                    final Pair<Long, List<MessageEvent>> inThreadEvents = events;
+                    Future<Boolean> future = executorService.submit(new Callable<Boolean>() {
+                        @Override
+                        public Boolean call() {
+                            try {
+                                //将MessageEvent转换为ETLBucket
+                                ETLBucket bucket = ETLBucket.from(inThreadEvents);
+                                extractorFactory.extract(bucket);
+                                return true;
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            return true;
+                        }
+                    });
+                }
             } catch (Exception e) {
                 LOGGER.error("extract MessageEvent error!", e);
             }
-        } while (null != events && ! events.getRight().isEmpty());
+        } while (null != events && null != events.getRight() &&! events.getRight().isEmpty());
     }
 
     @Override
-    public <T> Pair<Long, List<T>> output() {
+    public ETLBucket output() {
         return null;
     }
 }

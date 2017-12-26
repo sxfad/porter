@@ -26,7 +26,7 @@ public class SimpleDataCarrier implements DataCarrier {
     private final AtomicLong sequencer;
     private final ArrayBlockingQueue buffer;
     private final int pullBatchSize;
-    public SimpleDataCarrier(int bufferSize, int segmentSize) {
+    public SimpleDataCarrier(Integer bufferSize, Integer segmentSize) {
         this.sequencer = new AtomicLong(0);
         buffer = new ArrayBlockingQueue(bufferSize);
         pullBatchSize = segmentSize;
@@ -43,35 +43,58 @@ public class SimpleDataCarrier implements DataCarrier {
 
     @Override
     public void push(Object item) throws InterruptedException {
-        buffer.put(item);
+        if (null != item) buffer.put(item);
     }
 
     /**
      * 生成序列号和数据对儿，需要通过锁保证原子性
-     * 在单线程调用情况下，默认开启偏向锁(UseBiasedLocking)
+     * 默认开启偏向锁(UseBiasedLocking),在单线程调用情况下，锁消耗可忽略
+     * 锁可重入
      * @return
      */
     @Override
-    public synchronized Pair pull() {
-        Object item = buffer.poll();
+    public synchronized Pair pullByOrder() {
+        Object item = pull();
         return null != item ? new ImmutablePair(sequencer.getAndIncrement(), item) :null;
     }
 
     /**
      * 生成序列号和数据对儿，需要通过锁保证原子性
-     * 在单线程调用情况下，默认开启偏向锁(UseBiasedLocking)
+     * 默认开启偏向锁(UseBiasedLocking),在单线程调用情况下，锁消耗可忽略
+     * 锁可重入
      * @return
      */
     @Override
-    public synchronized Pair<Long, List> greedyPull() {
+    public synchronized Pair<Long, List> greedyPullByOrder() {
+        List list = greedyPull();
+        return null == list || list.isEmpty() ? null : new ImmutablePair<>(sequencer.getAndIncrement(), list);
+    }
+
+    /**
+     * 默认开启偏向锁(UseBiasedLocking),在单线程调用情况下，锁消耗可忽略
+     * 锁可重入
+     * @return
+     */
+    @Override
+    public synchronized List greedyPull() {
         List list = new ArrayList();
         int currentCount = 0;
         Object item = null;
-        while ((item = buffer.poll()) != null) {
+        while ((item = pull()) != null) {
             list.add(item);
             currentCount ++;
             if (currentCount >= pullBatchSize) break;
         }
-        return list.isEmpty() ? null : new ImmutablePair<>(sequencer.getAndIncrement(), list);
+        return list;
+    }
+
+    /**
+     * 默认开启偏向锁(UseBiasedLocking),在单线程调用情况下，锁消耗可忽略
+     * 锁可重入
+     * @return
+     */
+    @Override
+    public synchronized Object pull() {
+        return buffer.poll();
     }
 }

@@ -25,5 +25,5 @@ public interface StageJob {
         return true;
     }
     void stop();
-    <T> Pair<Long, List<T>> output() throws Exception;
+    <T> T output() throws Exception;
 }

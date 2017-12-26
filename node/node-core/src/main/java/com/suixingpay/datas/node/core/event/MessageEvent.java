@@ -7,8 +7,7 @@ package com.suixingpay.datas.node.core.event;/**
  * 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
  */
 
-import java.util.Date;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 消息事件
@@ -28,10 +27,10 @@ public class MessageEvent {
     //解析事件的时间
     private Date currentTs;
     //修改之后的值
-    private Map<String,String> after;
+    private Map<String,Object> after;
     //修改之前的值
-    private Map<String,String> before;
-    private String[] primaryKeys;
+    private Map<String,Object> before;
+    private List<String> primaryKeys;
 
     public EventHeader getHead() {
         return head;
@@ -81,27 +80,39 @@ public class MessageEvent {
         this.currentTs = currentTs;
     }
 
-    public Map<String, String> getAfter() {
-        return after;
+    /**
+     * 如果字段为空，构造空集合。方便后期对象操作
+     * @return
+     */
+    public Map<String, Object> getAfter() {
+        return null == after ? new HashMap<>(0) : after;
     }
 
-    public void setAfter(Map<String, String> after) {
+    public void setAfter(Map<String, Object> after) {
         this.after = after;
     }
 
-    public Map<String, String> getBefore() {
-        return before;
+    /**
+     * 如果字段为空，构造空集合。方便后期对象操作
+     * @return
+     */
+    public Map<String, Object> getBefore() {
+        return null == before ? new HashMap<>(0) : before;
     }
 
-    public void setBefore(Map<String, String> before) {
+    public void setBefore(Map<String, Object> before) {
         this.before = before;
     }
 
-    public String[] getPrimaryKeys() {
-        return primaryKeys;
+    /**
+     * 如果字段为空，构造空集合。方便后期对象操作
+     * @return
+     */
+    public List<String> getPrimaryKeys() {
+        return null == primaryKeys ? new ArrayList<>(0) : primaryKeys;
     }
 
-    public void setPrimaryKeys(String[] primaryKeys) {
+    public void setPrimaryKeys(List<String> primaryKeys) {
         this.primaryKeys = primaryKeys;
     }
 }
