@@ -7,9 +7,6 @@ package com.suixingpay.datas.common.cluster.event;/**
  * 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
  */
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月18日 10:46

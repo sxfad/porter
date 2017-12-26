@@ -66,18 +66,18 @@ public class ExtractJob extends AbstractStageJob {
                 events = work.waitEvent(StageType.SELECT);
                 if (null != events) {
                     final Pair<Long, List<MessageEvent>> inThreadEvents = events;
-                    Future<Boolean> future = executorService.submit(new Callable<Boolean>() {
+                    //暂无Extractor失败处理方案
+                    executorService.submit(new Runnable() {
                         @Override
-                        public Boolean call() {
+                        public void run() {
                             try {
                                 //将MessageEvent转换为ETLBucket
                                 ETLBucket bucket = ETLBucket.from(inThreadEvents);
                                 extractorFactory.extract(bucket);
-                                return true;
+                                carrier.push(bucket);
                             } catch (Exception e) {
-                                e.printStackTrace();
+                                LOGGER.error("批次[" + inThreadEvents.getLeft() + "]执行ExtractJob失败!", e);
                             }
-                            return true;
                         }
                     });
                 }
@@ -89,6 +89,6 @@ public class ExtractJob extends AbstractStageJob {
 
     @Override
     public ETLBucket output() {
-        return null;
+        return carrier.pull();
     }
 }

@@ -9,7 +9,10 @@ package com.suixingpay.datas.node.task.load;/**
 
 import com.suixingpay.datas.common.connector.DataConnector;
 import com.suixingpay.datas.node.core.event.ETLBucket;
+import com.suixingpay.datas.node.core.event.EventFetcher;
+import com.suixingpay.datas.node.core.event.MessageEvent;
 import com.suixingpay.datas.node.core.task.AbstractStageJob;
+import com.suixingpay.datas.node.core.task.StageType;
 import com.suixingpay.datas.node.task.worker.TaskWork;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
@@ -26,10 +29,11 @@ import java.util.List;
  */
 public class LoadJob extends AbstractStageJob{
     private final DataConnector target;
-
+    private final TaskWork work;
     public LoadJob(TaskWork work) {
         super(work.getBasicThreadName());
         this.target = work.getTarget();
+        this.work = work;
     }
 
     @Override
@@ -44,7 +48,16 @@ public class LoadJob extends AbstractStageJob{
 
     @Override
     protected void loopLogic() {
+        //只要队列有消息，持续读取
+        ETLBucket bucket = null;
+        do {
+            try {
+                bucket = work.waitEvent(StageType.TRANSFORM);
 
+            } catch (Exception e) {
+                LOGGER.error("Load ETLRow error!", e);
+            }
+        } while (null != bucket && ! bucket.getRows().isEmpty());
     }
 
     @Override

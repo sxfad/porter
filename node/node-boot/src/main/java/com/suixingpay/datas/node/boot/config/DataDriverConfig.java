@@ -7,7 +7,6 @@ package com.suixingpay.datas.node.boot.config;/**
  * 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
  */
 
-import com.suixingpay.datas.common.cluster.ClusterType;
 import com.suixingpay.datas.common.connector.DataDriver;
 import com.suixingpay.datas.common.connector.DataDriverType;
 import org.springframework.boot.context.properties.ConfigurationProperties;

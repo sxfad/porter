@@ -12,8 +12,6 @@ import com.suixingpay.datas.common.cluster.command.ClusterCommand;
 import com.suixingpay.datas.common.task.TaskEventListener;
 import com.suixingpay.datas.common.task.TaskEventProvider;
 
-import java.util.ServiceLoader;
-
 /**
  * zookeeper集群提供者
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -64,7 +62,7 @@ public class ZookeeperClusterProvider extends ClusterProvider{
         try {
             zkMonitor.stop();
             //稍微等待一会儿，等待命令执行完
-            Thread.sleep(2000);
+            Thread.sleep(5000);
         } catch (InterruptedException e) {
 
         }finally {

@@ -20,6 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import sun.misc.Signal;
+import sun.misc.SignalHandler;
 
 
 import java.util.List;
@@ -60,13 +62,32 @@ public class TaskController implements TaskEventListener {
 
         //进程退出钩子
         final TaskController controller = this;
-        Runtime.getRuntime().addShutdownHook(new Thread("suixingpay-task-shutdownHook"){
+
+        //因为JVM不能保证ShutdownHook一定能执行，通过自定义信号实现优雅下线。
+        LOGGER.info("Shutdown gracefully with signal 31. [kill -31 PID]");
+        Signal graceShutdown = new Signal("USR2");
+        Signal.handle(graceShutdown, new SignalHandler() {
             @Override
-            public void run() {
+            public void handle(Signal signal) {
                 controller.stop();
                 //退出群聊需在业务代码执行之后才能执行
                 LOGGER.info("退出群聊.......");
                 ClusterProvider.unload();
+
+                System.exit(-1);
+            }
+        });
+
+        Runtime.getRuntime().addShutdownHook(new Thread("suixingpay-task-shutdownHook"){
+            @Override
+            public void run() {
+                //如果TaskController没有退出,执行清理操作.
+                if (stat.get()) {
+                    controller.stop();
+                    //退出群聊需在业务代码执行之后才能执行
+                    LOGGER.info("退出群聊.......");
+                    ClusterProvider.unload();
+                }
             }
         });
 

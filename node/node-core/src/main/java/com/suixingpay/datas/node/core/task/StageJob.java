@@ -26,4 +26,7 @@ public interface StageJob {
     }
     void stop();
     <T> T output() throws Exception;
+    default boolean stopWaiting() {
+        return true;
+    }
 }

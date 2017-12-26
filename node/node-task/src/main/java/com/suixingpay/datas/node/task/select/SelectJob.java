@@ -81,4 +81,9 @@ public class SelectJob extends AbstractStageJob {
     public Pair<Long, List<MessageEvent>> output() {
         return carrier.greedyPullByOrder();
     }
+
+    @Override
+    public boolean stopWaiting() {
+        return false;
+    }
 }

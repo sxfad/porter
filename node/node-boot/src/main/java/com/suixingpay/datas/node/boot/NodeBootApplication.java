@@ -17,8 +17,6 @@ import com.suixingpay.datas.node.boot.config.NodeConfig;
 import com.suixingpay.datas.node.boot.config.TaskConfig;
 import com.suixingpay.datas.node.core.connector.ConnectorContext;
 import com.suixingpay.datas.node.task.TaskController;
-import com.suixingpay.datas.node.task.extract.extractor.Extractor;
-import com.suixingpay.datas.node.task.extract.extractor.ExtractorFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.Banner;
@@ -26,9 +24,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.core.io.support.SpringFactoriesLoader;
-
-import java.util.List;
 
 /**
  * node launcher

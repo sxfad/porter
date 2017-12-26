@@ -15,9 +15,9 @@ import com.suixingpay.datas.node.core.event.ETLBucket;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月26日 14:26
  */
-public class TestExtractor implements  Extractor {
+public class PrintETLDataExtractor implements  Extractor {
     @Override
     public void extract(ETLBucket bucket) {
-        System.out.println("sequence:" + bucket.getSequence() + ", size:" + bucket.getRows().size());
+        System.out.println("序列号:" + bucket.getSequence() + ", 大小:" + bucket.getRows().size());
     }
 }

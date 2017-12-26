@@ -11,6 +11,7 @@ import com.suixingpay.datas.common.util.DefaultNamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -27,7 +28,10 @@ public abstract class AbstractStageJob implements StageJob {
     private AtomicBoolean stat = new AtomicBoolean(false);
     private final Thread loopService;
     private final ThreadFactory threadFactory;
+    //任务退出信号量，为了保证优雅关机时内存中的数据处理完毕
+    private final Semaphore stopSignal;
     public AbstractStageJob(String baseThreadName) {
+        stopSignal = new Semaphore(0);
         threadFactory = new DefaultNamedThreadFactory(baseThreadName + "-" + this.getClass().getSimpleName());
         loopService = threadFactory.newThread(new LoopService());
     }
@@ -55,6 +59,12 @@ public abstract class AbstractStageJob implements StageJob {
     public void stop() {
         if (stat.compareAndSet(true, false)) {
             try {
+                //确保现有数据流处理结束
+                if (stopWaiting()) {
+                    LOGGER.debug("任务退出线程等待源队列为空.");
+                    stopSignal.acquire();
+                    LOGGER.debug("源队列为空，发送线程中断信号");
+                }
                 loopService.interrupt();
                 doStop();
             } catch (Exception e) {
@@ -74,7 +84,11 @@ public abstract class AbstractStageJob implements StageJob {
                 loopLogic();
                 //不符合业务执行条件时，线程沉睡10秒后继续执行
                 try {
+                    stopSignal.release();
+                    LOGGER.debug("源队列为空，线程进入等待.");
                     Thread.sleep(10000L);
+                    LOGGER.debug("源队列为空，线程恢复执行.");
+                    stopSignal.acquire();
                 } catch (InterruptedException e) {//如果线程有中断信号，退出线程
                     break;
                 }
