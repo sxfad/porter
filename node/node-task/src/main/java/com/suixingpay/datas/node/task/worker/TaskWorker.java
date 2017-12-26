@@ -8,7 +8,6 @@ package com.suixingpay.datas.node.task.worker;/**
  */
 
 import com.suixingpay.datas.common.cluster.ClusterProvider;
-import com.suixingpay.datas.common.cluster.command.TaskRegisterCommand;
 import com.suixingpay.datas.common.cluster.command.TaskStatCommand;
 import com.suixingpay.datas.common.cluster.data.DTaskStat;
 import com.suixingpay.datas.common.connector.DataConnector;

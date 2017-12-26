@@ -1,5 +1,5 @@
 group 'com.suixingpay.datas'
-
+archivesBaseName = 'datas-node-cluster'
 dependencies {
     compile(
             project(":common"),

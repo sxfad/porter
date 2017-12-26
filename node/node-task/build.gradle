@@ -1,5 +1,5 @@
 group 'com.suixingpay.datas'
-
+archivesBaseName = 'datas-node-task'
 dependencies {
     compile (
             project(':common'),

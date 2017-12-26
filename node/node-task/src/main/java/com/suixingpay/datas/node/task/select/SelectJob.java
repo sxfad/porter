@@ -8,81 +8,76 @@ package com.suixingpay.datas.node.task.select;/**
  */
 
 import com.suixingpay.datas.common.connector.DataConnector;
-import com.suixingpay.datas.common.util.DefaultNamedThreadFactory;
 import com.suixingpay.datas.node.core.event.EventFetcher;
 import com.suixingpay.datas.node.core.event.MessageEvent;
 import com.suixingpay.datas.node.core.task.AbstractStageJob;
+import com.suixingpay.datas.node.datacarrier.DataCarrier;
+import com.suixingpay.datas.node.datacarrier.simple.SimpleDataCarrier;
+import com.suixingpay.datas.node.task.worker.TaskWork;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 /**
+ * 完成SQL事件从数据源的消费
+ * 获取事件消息，单线程执行,通过interrupt终止线程
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月24日 11:15
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月24日 11:15
  */
 public class SelectJob extends AbstractStageJob {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SelectJob.class);
-    private final DataConnector consumer;
-    private final Thread  fetcherJob;
-    private final DefaultNamedThreadFactory factory;
-    public SelectJob(DataConnector consumerSource, DefaultNamedThreadFactory factory) {
-        super();
-        this.factory = factory;
-        if (consumerSource instanceof  EventFetcher) {
-            consumer = consumerSource;
-            fetcherJob = factory.newThread(new FetcherJob((EventFetcher) consumerSource),"SelectJob");
+    private static final int BUFFER_SIZE = 1024*10;
+    private static final int PULL_BATCH_SIZE = 512;
+    private final DataConnector selectSource;
+    private final DataCarrier<MessageEvent> carrier;
+    public SelectJob(TaskWork work) {
+        super(work.getBasicThreadName());
+        if (work.getConsumerSource() instanceof  EventFetcher) {
+            selectSource = work.getConsumerSource();
+            carrier = new SimpleDataCarrier(BUFFER_SIZE,PULL_BATCH_SIZE);
         } else {
-            consumer = null;
-            fetcherJob = null;
+            selectSource = null;
+            carrier = null;
         }
     }
 
+    /**
+     * 只有当DataCarrier数据消费完才能退出
+     */
     @Override
     protected void doStop() {
-        fetcherJob.interrupt();
-        consumer.disconnect();
+        selectSource.disconnect();
     }
 
     @Override
     protected void doStart() {
-        fetcherJob.start();
-        consumer.connect();
+        selectSource.connect();
+    }
+    @Override
+    protected void loopLogic(){
+        EventFetcher fetcher = (EventFetcher)selectSource;
+        //只要队列有消息，持续读取
+        List<MessageEvent> events = null;
+        do {
+            try {
+                events = fetcher.fetch();
+                carrier.push(events);
+            } catch (InterruptedException e) {
+                LOGGER.error("fetch MessageEvent error!", e);
+            }
+        } while (null != events && ! events.isEmpty());
     }
 
     @Override
     public boolean canStart() {
-        return null != consumer;
+        return null != selectSource;
     }
 
-    private  class FetcherJob implements Runnable {
-        private final EventFetcher fetcher;
-        public FetcherJob(EventFetcher fetcher) {
-            this.fetcher = fetcher;
-        }
-
-        @Override
-        public void run() {
-            //如果线程没有中断信号，持续执行
-            while (!Thread.currentThread().isInterrupted()) {
-                //只要队列有消息，持续读取
-                List<MessageEvent> events = null;
-                do {
-                    try {
-                        events = fetcher.fetch();
-                    } catch (Exception e){
-                        LOGGER.error("fetch MessageEvent error!", e);
-                    }
-                } while (null != events && ! events.isEmpty());
-                //当前时间段MessageEvent队列消息取完，线程沉睡10秒
-                try {
-                    Thread.sleep(10000L);
-                } catch (InterruptedException e) {//如果线程有中断信号，退出线程
-                    break;
-                }
-            }
-        }
+    @Override
+    public Pair<Long, List<MessageEvent>> output() {
+        return carrier.greedyPull();
     }
 }

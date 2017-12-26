@@ -18,7 +18,8 @@ public class ProcessUtils {
      * 保持线程不退出
      */
     public static void keepRunning(){
-        Thread keepingThread = (new Thread("datas-processKeepRunning"){
+        //默认不是守护进程
+        Thread keepingThread = new DefaultNamedThreadFactory("ProcessKeepRunning").newThread(new Runnable() {
             @Override
             public void run() {
                 while (true) {
@@ -30,7 +31,6 @@ public class ProcessUtils {
                 }
             }
         });
-        keepingThread.setDaemon(false);
         keepingThread.start();
     }
 }

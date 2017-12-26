@@ -1,5 +1,6 @@
 group 'com.suixingpay.datas'
 apply plugin: 'application'
+archivesBaseName = 'datas-node-boot'
 mainClassName = "com.suixingpay.datas.node.boot.DatasNodeBootApplication"
 dependencies {
     compile(

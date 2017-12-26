@@ -61,8 +61,15 @@ public class ZookeeperClusterProvider extends ClusterProvider{
 
     @Override
     public void stop() {
-        zkMonitor.stop();
-        if( null != client) client.disconnect();
+        try {
+            zkMonitor.stop();
+            //稍微等待一会儿，等待命令执行完
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+
+        }finally {
+            if( null != client) client.disconnect();
+        }
     }
 
     @Override

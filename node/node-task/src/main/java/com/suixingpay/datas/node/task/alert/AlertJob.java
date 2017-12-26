@@ -10,25 +10,29 @@ package com.suixingpay.datas.node.task.alert;/**
 import com.suixingpay.datas.common.connector.DataConnector;
 import com.suixingpay.datas.common.util.DefaultNamedThreadFactory;
 import com.suixingpay.datas.node.core.task.AbstractStageJob;
+import com.suixingpay.datas.node.task.worker.TaskWork;
+import org.apache.commons.lang3.tuple.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
+import java.util.List;
 
 /**
+ * 单线程执行，但存在多线程执行的可能性，前期单线程执行
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月24日 11:20
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月24日 11:20
  */
-public class AlertJob extends AbstractStageJob{
-    private final ScheduledExecutorService checkService;
+public class AlertJob extends AbstractStageJob {
     private final DataConnector source;
     private final DataConnector target;
-    public AlertJob(DataConnector source, DataConnector target) {
-        this.target = target;
-        this.source = source;
-        checkService = Executors.newScheduledThreadPool(2, new DefaultNamedThreadFactory(""));
+    public AlertJob(TaskWork work) {
+        super(work.getBasicThreadName());
+        this.target = work.getTarget();
+        this.source = work.getSource();
     }
+
     @Override
     protected void doStop() {
 
@@ -37,5 +41,15 @@ public class AlertJob extends AbstractStageJob{
     @Override
     protected void doStart() {
 
+    }
+
+    @Override
+    protected void loopLogic() {
+
+    }
+
+    @Override
+    public <T> Pair<Long, List<T>> output() {
+        return null;
     }
 }

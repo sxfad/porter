@@ -1,5 +1,7 @@
 group 'com.suixingpay.datas'
+archivesBaseName = 'datas-node-data-carrier'
 dependencies {
     compile (
+            project(":node:node-core")
     )
 }

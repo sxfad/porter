@@ -20,17 +20,14 @@ public class DefaultNamedThreadFactory implements ThreadFactory {
     private static final AtomicInteger JOB_SERVICE_SEQ = new AtomicInteger(0);
     private final AtomicInteger threadSeq = new AtomicInteger(0);
     private final String namePrefix;
+
     public DefaultNamedThreadFactory(String name) {
         namePrefix = "suixingpay-" + JOB_SERVICE_SEQ.incrementAndGet() + "-" + name + "-";
     }
 
     @Override
     public Thread newThread(Runnable r) {
-        return newThread(r, threadSeq.getAndIncrement() + "");
-    }
-
-    public Thread newThread(Runnable r,String threadName) {
-        Thread t = new Thread(r,namePrefix + threadName);
+        Thread t = new Thread(r,namePrefix + threadSeq.getAndIncrement());
         if (t.isDaemon()) t.setDaemon(false);
         return t;
     }
