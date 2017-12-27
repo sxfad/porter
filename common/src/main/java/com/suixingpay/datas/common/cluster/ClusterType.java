@@ -1,4 +1,4 @@
-package com.suixingpay.datas.common.cluster;/**
+/**
  * All rights Reserved, Designed By Suixingpay.
  *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -6,6 +6,7 @@ package com.suixingpay.datas.common.cluster;/**
  * @Copyright ©2017 Suixingpay. All rights reserved.
  * 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
  */
+package com.suixingpay.datas.common.cluster;
 
 import com.suixingpay.datas.common.cluster.zookeeper.ZookeeperDriverMeta;
 

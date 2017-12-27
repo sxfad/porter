@@ -1,4 +1,4 @@
-package com.suixingpay.datas.node.core.connector.mq;/**
+/**
  * All rights Reserved, Designed By Suixingpay.
  *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -6,13 +6,15 @@ package com.suixingpay.datas.node.core.connector.mq;/**
  * @Copyright ©2017 Suixingpay. All rights reserved.
  * 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
  */
+package com.suixingpay.datas.node.core.datasource.mq;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.suixingpay.datas.common.connector.AbstractConnector;
-import com.suixingpay.datas.common.connector.DataDriver;
-import com.suixingpay.datas.common.connector.MQConnector;
-import com.suixingpay.datas.common.connector.meta.KafkaDriverMeta;
+import com.suixingpay.datas.common.datasource.AbstractSourceWrapper;
+import com.suixingpay.datas.common.datasource.DataDriver;
+import com.suixingpay.datas.common.datasource.MQDataSourceWrapper;
+import com.suixingpay.datas.common.datasource.meta.KafkaDriverMeta;
 import com.suixingpay.datas.node.core.event.EventFetcher;
 import com.suixingpay.datas.node.core.event.EventHeader;
 import com.suixingpay.datas.node.core.event.EventType;
@@ -22,6 +24,7 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.sql.DataSource;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -34,8 +37,8 @@ import java.util.concurrent.CountDownLatch;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月14日 09:52
  */
-public class KafkaConnector extends AbstractConnector implements EventFetcher, MQConnector {
-    private static final Logger LOGGER = LoggerFactory.getLogger(KafkaConnector.class);
+public class KafkaSourceWrapper extends AbstractSourceWrapper implements EventFetcher, MQDataSourceWrapper {
+    private static final Logger LOGGER = LoggerFactory.getLogger(KafkaSourceWrapper.class);
     private static final DateFormat OP_TS_F = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
     private static final DateFormat C_TS_F = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS");
     private final String FIRST_CONSUME_FROM = "earliest";
@@ -49,7 +52,7 @@ public class KafkaConnector extends AbstractConnector implements EventFetcher, M
     private Consumer<String, String> consumer;
     private CountDownLatch canFetch;
 
-    public KafkaConnector(DataDriver driver) {
+    public KafkaSourceWrapper(DataDriver driver) {
         super(driver);
         KafkaDriverMeta meta = (KafkaDriverMeta)driver.getType().getMeta();
         servers = driver.getUrl();
@@ -114,12 +117,7 @@ public class KafkaConnector extends AbstractConnector implements EventFetcher, M
     }
 
     @Override
-    public boolean doIsConnected() {
-        return null != consumer;
-    }
-
-    @Override
-    protected void doDisconnect() {
+    protected void doDestroy() {
         if (null != consumer) {
             consumer.unsubscribe();
             consumer.close();
@@ -128,9 +126,8 @@ public class KafkaConnector extends AbstractConnector implements EventFetcher, M
         canFetch = new CountDownLatch(1);
     }
 
-
     @Override
-    protected void doConnect() {
+    protected void doCreate() {
         final Properties props = new Properties();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, servers);
         props.put(ConsumerConfig.GROUP_ID_CONFIG, group);
@@ -151,5 +148,10 @@ public class KafkaConnector extends AbstractConnector implements EventFetcher, M
 
     public void  setTopic(String topic) {
         this.topic =topic;
+    }
+
+    @Override
+    public DataSource getDataSource() {
+        return null;
     }
 }

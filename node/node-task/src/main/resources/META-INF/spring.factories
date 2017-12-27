@@ -1,1 +1,1 @@
-com.suixingpay.datas.node.task.extract.extractor.Extractor=com.suixingpay.datas.node.task.extract.extractor.PrintETLDataExtractor
+com.suixingpay.datas.node.task.extract.extractor.Extractor=com.suixingpay.datas.node.task.extract.extractor.IgnoreRowExtractor

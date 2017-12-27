@@ -1,4 +1,4 @@
-package com.suixingpay.datas.node.task.transform;/**
+/**
  * All rights Reserved, Designed By Suixingpay.
  *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -6,6 +6,7 @@ package com.suixingpay.datas.node.task.transform;/**
  * @Copyright ©2017 Suixingpay. All rights reserved.
  * 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
  */
+package com.suixingpay.datas.node.task.transform;
 
 import com.suixingpay.datas.common.util.ApplicationContextUtils;
 import com.suixingpay.datas.node.core.event.ETLBucket;
@@ -68,7 +69,7 @@ public class TransformJob extends AbstractStageJob {
                                 transformFactory.transform(inThreadBucket);
                                 carrier.push(inThreadBucket);
                             } catch (Exception e) {
-                                LOGGER.error("批次[" + inThreadBucket.getSequence() + "]执行TransformJob失败!", e);
+                                LOGGER.error("批次[{}]执行TransformJob失败!", inThreadBucket.getSequence(), e);
                             }
                         }
                     });

@@ -1,4 +1,4 @@
-package com.suixingpay.datas.node.task.extract;/**
+/**
  * All rights Reserved, Designed By Suixingpay.
  *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -6,7 +6,9 @@ package com.suixingpay.datas.node.task.extract;/**
  * @Copyright ©2017 Suixingpay. All rights reserved.
  * 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
  */
+package com.suixingpay.datas.node.task.extract;
 
+import com.suixingpay.datas.common.datasource.DataSourceWrapper;
 import com.suixingpay.datas.common.util.ApplicationContextUtils;
 import com.suixingpay.datas.node.core.event.ETLBucket;
 import com.suixingpay.datas.node.core.event.MessageEvent;
@@ -35,10 +37,12 @@ public class ExtractJob extends AbstractStageJob {
     private final ExecutorService executorService;
     private final DataCarrier<ETLBucket> carrier;
     private final ExtractorFactory extractorFactory;
+    private final DataSourceWrapper target;
     public ExtractJob(TaskWork work) {
         super(work.getBasicThreadName());
         extractorFactory = ApplicationContextUtils.INSTANCE.getBean(ExtractorFactory.class);
         this.work = work;
+        target = work.getTarget();
         //线程阻塞时，在调用者线程中执行
         executorService = new ThreadPoolExecutor(LOGIC_THREAD_SIZE, LOGIC_THREAD_SIZE,
                 0L, TimeUnit.MILLISECONDS,
@@ -72,11 +76,11 @@ public class ExtractJob extends AbstractStageJob {
                         public void run() {
                             try {
                                 //将MessageEvent转换为ETLBucket
-                                ETLBucket bucket = ETLBucket.from(inThreadEvents);
+                                ETLBucket bucket = ETLBucket.from(inThreadEvents, target.getUniqueId());
                                 extractorFactory.extract(bucket);
                                 carrier.push(bucket);
                             } catch (Exception e) {
-                                LOGGER.error("批次[" + inThreadEvents.getLeft() + "]执行ExtractJob失败!", e);
+                                LOGGER.error("批次[{}]执行ExtractJob失败!", inThreadEvents.getLeft(), e);
                             }
                         }
                     });

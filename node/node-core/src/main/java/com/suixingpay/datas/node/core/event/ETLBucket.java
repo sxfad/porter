@@ -21,11 +21,13 @@ import java.util.Map;
  */
 public class ETLBucket {
     private final long sequence;
+    private final String dataSourceId;
     private final List<ETLRow> rows;
 
-    public ETLBucket(long sequence, List<ETLRow> rows) {
+    public ETLBucket(long sequence, List<ETLRow> rows, String dataSourceId) {
         this.sequence = sequence;
         this.rows = rows;
+        this.dataSourceId = dataSourceId;
     }
 
     public long getSequence() {
@@ -41,7 +43,7 @@ public class ETLBucket {
      * @param events
      * @return
      */
-    public static ETLBucket from(Pair<Long, List<MessageEvent>> events) {
+    public static ETLBucket from(Pair<Long, List<MessageEvent>> events, String dataSourceId) {
         List<ETLRow> rows = new ArrayList<>();
         for (MessageEvent event : events.getRight()) {
             List<ETLColumn> columns = new ArrayList<>();
@@ -67,6 +69,10 @@ public class ETLBucket {
             ETLRow row = new ETLRow(event.getSchema(), event.getTable(), event.getOpType(), columns, event.getOpTs());
             rows.add(row);
         }
-        return new ETLBucket(events.getKey(), rows);
+        return new ETLBucket(events.getKey(), rows, dataSourceId);
+    }
+
+    public String getDataSourceId() {
+        return dataSourceId;
     }
 }

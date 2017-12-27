@@ -1,4 +1,4 @@
-package com.suixingpay.datas.node.task.worker;/**
+/**
  * All rights Reserved, Designed By Suixingpay.
  *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -6,13 +6,13 @@ package com.suixingpay.datas.node.task.worker;/**
  * @Copyright ©2017 Suixingpay. All rights reserved.
  * 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
  */
-
+package com.suixingpay.datas.node.task.worker;
 
 import com.suixingpay.datas.common.cluster.ClusterProvider;
 import com.suixingpay.datas.common.cluster.command.TaskRegisterCommand;
 import com.suixingpay.datas.common.cluster.command.TaskStopCommand;
 import com.suixingpay.datas.common.cluster.data.DTaskStat;
-import com.suixingpay.datas.common.connector.DataConnector;
+import com.suixingpay.datas.common.datasource.DataSourceWrapper;
 import com.suixingpay.datas.node.core.task.StageJob;
 import com.suixingpay.datas.node.core.task.StageType;
 import com.suixingpay.datas.node.task.alert.AlertJob;
@@ -20,12 +20,10 @@ import com.suixingpay.datas.node.task.extract.ExtractJob;
 import com.suixingpay.datas.node.task.load.LoadJob;
 import com.suixingpay.datas.node.task.select.SelectJob;
 import com.suixingpay.datas.node.task.transform.TransformJob;
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -39,14 +37,14 @@ public class TaskWork {
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskWork.class);
     private final String taskId;
     private final String topic;
-    private final DataConnector source;
-    private final DataConnector target;
-    private final DataConnector consumerSource;
+    private final DataSourceWrapper source;
+    private final DataSourceWrapper target;
+    private final DataSourceWrapper consumerSource;
     protected final DTaskStat stat;
     private  final Map<StageType, StageJob> JOBS;
     private final String basicThreadName;
 
-    public TaskWork(String taskId, String topic, DataConnector source, DataConnector target, DataConnector dataSource) {
+    public TaskWork(String taskId, String topic, DataSourceWrapper source, DataSourceWrapper target, DataSourceWrapper dataSource) {
         basicThreadName = "TaskWork-[taskId:" + taskId + "]-[topic:" + topic + "]";
         this.target = target;
         this.source = source;
@@ -68,39 +66,39 @@ public class TaskWork {
 
     public void stop() {
         try {
-            LOGGER.info("终止执行任务[" + taskId + "-" + topic + "]");
+            LOGGER.info("终止执行任务[{}-{}]", taskId, topic);
             //终止阶段性工作,需要
             for (Map.Entry<StageType, StageJob> jobs : JOBS.entrySet()) {
                 jobs.getValue().stop();
             }
             ClusterProvider.sendCommand(new TaskStopCommand(taskId,topic));
         } catch (Exception e) {
-            LOGGER.error("终止执行任务[" + taskId + "-" + topic + "]异常", e);
+            LOGGER.error("终止执行任务[{}-{}]异常", taskId, topic, e);
         }
     }
 
     public void start() {
         try {
-            LOGGER.info("开始执行任务[" + taskId + "-" + topic + "]");
+            LOGGER.info("开始执行任务[{}-{}]", taskId, topic);
             ClusterProvider.sendCommand(new TaskRegisterCommand(taskId, topic));
             //开始阶段性工作
             for (Map.Entry<StageType, StageJob> jobs : JOBS.entrySet()) {
                 jobs.getValue().start();
             }
         } catch (Exception e) {
-            LOGGER.error("开始执行任务[" + taskId + "-" + topic + "]异常", e);
+            LOGGER.error("开始执行任务[{}-{}]异常", taskId, topic, e);
         }
     }
 
-    public DataConnector getSource() {
+    public DataSourceWrapper getSource() {
         return source;
     }
 
-    public DataConnector getTarget() {
+    public DataSourceWrapper getTarget() {
         return target;
     }
 
-    public DataConnector getConsumerSource() {
+    public DataSourceWrapper getConsumerSource() {
         return consumerSource;
     }
 

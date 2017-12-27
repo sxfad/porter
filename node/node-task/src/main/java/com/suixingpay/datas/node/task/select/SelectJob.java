@@ -1,4 +1,4 @@
-package com.suixingpay.datas.node.task.select;/**
+/**
  * All rights Reserved, Designed By Suixingpay.
  *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -6,8 +6,9 @@ package com.suixingpay.datas.node.task.select;/**
  * @Copyright ©2017 Suixingpay. All rights reserved.
  * 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
  */
+package com.suixingpay.datas.node.task.select;
 
-import com.suixingpay.datas.common.connector.DataConnector;
+import com.suixingpay.datas.common.datasource.DataSourceWrapper;
 import com.suixingpay.datas.common.util.ApplicationContextUtils;
 import com.suixingpay.datas.node.core.event.EventFetcher;
 import com.suixingpay.datas.node.core.event.MessageEvent;
@@ -31,15 +32,15 @@ public class SelectJob extends AbstractStageJob {
     private static final int PULL_BATCH_SIZE = 512;
     private static final int BUFFER_SIZE = PULL_BATCH_SIZE*1*1000;
 
-    private final DataConnector selectSource;
+    private final DataSourceWrapper selectWrapper;
     private final DataCarrier<MessageEvent> carrier;
     public SelectJob(TaskWork work) {
         super(work.getBasicThreadName());
         if (work.getConsumerSource() instanceof  EventFetcher) {
-            selectSource = work.getConsumerSource();
+            selectWrapper = work.getConsumerSource();
             carrier = ApplicationContextUtils.INSTANCE.getBean(DataCarrierFactory.class).newDataCarrier(BUFFER_SIZE,PULL_BATCH_SIZE);
         } else {
-            selectSource = null;
+            selectWrapper = null;
             carrier = null;
         }
     }
@@ -49,17 +50,17 @@ public class SelectJob extends AbstractStageJob {
      */
     @Override
     protected void doStop() {
-        selectSource.disconnect();
+        selectWrapper.destroy();
     }
 
     @Override
     protected void doStart() {
-        selectSource.connect();
+        selectWrapper.create();
     }
 
     @Override
     protected void loopLogic(){
-        EventFetcher fetcher = (EventFetcher)selectSource;
+        EventFetcher fetcher = (EventFetcher)selectWrapper;
         //只要队列有消息，持续读取
         List<MessageEvent> events = null;
         do {
@@ -74,7 +75,7 @@ public class SelectJob extends AbstractStageJob {
 
     @Override
     public boolean canStart() {
-        return null != selectSource;
+        return null != selectWrapper;
     }
 
     @Override

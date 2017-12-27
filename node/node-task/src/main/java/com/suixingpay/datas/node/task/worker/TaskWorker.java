@@ -1,4 +1,4 @@
-package com.suixingpay.datas.node.task.worker;/**
+/**
  * All rights Reserved, Designed By Suixingpay.
  *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -6,15 +6,16 @@ package com.suixingpay.datas.node.task.worker;/**
  * @Copyright ©2017 Suixingpay. All rights reserved.
  * 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
  */
+package com.suixingpay.datas.node.task.worker;
 
 import com.suixingpay.datas.common.cluster.ClusterProvider;
 import com.suixingpay.datas.common.cluster.command.TaskStatCommand;
 import com.suixingpay.datas.common.cluster.data.DTaskStat;
-import com.suixingpay.datas.common.connector.DataConnector;
-import com.suixingpay.datas.common.connector.MQConnector;
+import com.suixingpay.datas.common.datasource.DataSourceWrapper;
+import com.suixingpay.datas.common.datasource.MQDataSourceWrapper;
 import com.suixingpay.datas.common.task.Task;
 import com.suixingpay.datas.common.util.DefaultNamedThreadFactory;
-import com.suixingpay.datas.node.core.connector.ConnectorContext;
+import com.suixingpay.datas.node.core.datasource.DataSourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,6 +25,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 工人
@@ -34,18 +36,21 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class TaskWorker {
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskWorker.class);
+    private static final AtomicInteger SEQUENCE = new AtomicInteger(0);
+    private final int workerSequence;
     private final AtomicBoolean STAT = new AtomicBoolean(false);
     private final AtomicBoolean SOURCE_STAT = new AtomicBoolean(false);
     //负责将任务工作者的状态定时上传
     private final ScheduledExecutorService STAT_WORKER;
     private final List<TaskWork> JOBS;
 
-    private DataConnector source;
-    private DataConnector target;
+    private DataSourceWrapper source;
+    private DataSourceWrapper target;
 
     public TaskWorker() {
         STAT_WORKER = Executors.newSingleThreadScheduledExecutor(new DefaultNamedThreadFactory("TaskStat"));
         JOBS = new CopyOnWriteArrayList<>();
+        workerSequence = SEQUENCE.incrementAndGet();
     }
     public void start() {
         if (STAT.compareAndSet(false, true)) {
@@ -75,7 +80,7 @@ public class TaskWorker {
                 }
             }, 0 ,10000 , TimeUnit.MILLISECONDS);
         } else {
-            LOGGER.warn("TaskWorker[" + "" + "] has started already");
+            LOGGER.warn("TaskWorker[] has started already", workerSequence);
         }
     }
     public void stop() {
@@ -86,25 +91,25 @@ public class TaskWorker {
                 job.stop();
             }
         } else {
-            LOGGER.warn("TaskWorker[" + "" + "] has stoped already");
+            LOGGER.warn("TaskWorker[] has stoped already", workerSequence);
         }
     }
 
     public void alloc(Task task) {
         if (SOURCE_STAT.compareAndSet(false, true)) {
-            source = ConnectorContext.INSTANCE.newConnector(task.getSourceDriver());
-            target = ConnectorContext.INSTANCE.newConnector(task.getTargetDriver());
-            source.connect();
-            target.connect();
+            source = DataSourceFactory.INSTANCE.newDataSource(task.getSourceDriver());
+            target = DataSourceFactory.INSTANCE.newDataSource(task.getTargetDriver());
+            source.create();
+            target.create();
         }
         String[]  topics = task.listTopic();
         for (String topic : topics) {
             try {
                 //启动JOB
-                DataConnector dataSource = ConnectorContext.INSTANCE.newConnector(task.getDataDriver());
-                if (dataSource instanceof MQConnector) {
-                    MQConnector connector = (MQConnector) dataSource;
-                    connector.setTopic(topic);
+                DataSourceWrapper dataSource = DataSourceFactory.INSTANCE.newDataSource(task.getDataDriver());
+                if (dataSource instanceof MQDataSourceWrapper) {
+                    MQDataSourceWrapper mqDataSource = (MQDataSourceWrapper) dataSource;
+                    mqDataSource.setTopic(topic);
                 }
                 TaskWork job = new TaskWork(task.getTaskId(), topic, source, target, dataSource);
                 job.start();

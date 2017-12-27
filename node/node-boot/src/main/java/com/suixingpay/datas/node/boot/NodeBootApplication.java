@@ -1,4 +1,4 @@
-package com.suixingpay.datas.node.boot;/**
+/**
  * All rights Reserved, Designed By Suixingpay.
  *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -6,6 +6,7 @@ package com.suixingpay.datas.node.boot;/**
  * @Copyright ©2017 Suixingpay. All rights reserved.
  * 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
  */
+package com.suixingpay.datas.node.boot;
 
 import com.suixingpay.datas.common.cluster.ClusterDriver;
 import com.suixingpay.datas.common.cluster.ClusterProvider;
@@ -15,13 +16,16 @@ import com.suixingpay.datas.common.util.ProcessUtils;
 import com.suixingpay.datas.node.boot.config.DataDriverConfig;
 import com.suixingpay.datas.node.boot.config.NodeConfig;
 import com.suixingpay.datas.node.boot.config.TaskConfig;
-import com.suixingpay.datas.node.core.connector.ConnectorContext;
+import com.suixingpay.datas.node.core.datasource.DataSourceFactory;
 import com.suixingpay.datas.node.task.TaskController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
+import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 
@@ -33,7 +37,10 @@ import org.springframework.context.annotation.ComponentScan;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月13日 16:24
  */
 @ComponentScan({"com.suixingpay"})
-@SpringBootApplication
+@SpringBootApplication(exclude = {
+        DataSourceAutoConfiguration.class,
+        DataSourceTransactionManagerAutoConfiguration.class,
+        HibernateJpaAutoConfiguration.class})
 public class NodeBootApplication {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NodeBootApplication.class);
@@ -45,6 +52,7 @@ public class NodeBootApplication {
         ConfigurableApplicationContext context = app.run(args);
         //注入spring工具类
         ApplicationContextUtils.INSTANCE.init(context);
+
         //获取公用数据库连接池
         DataDriverConfig dataDriverConfig = context.getBean(DataDriverConfig.class);
         if (DataDriverConfig.error(dataDriverConfig)) {
@@ -52,7 +60,8 @@ public class NodeBootApplication {
             System.exit(-1);
         }
         //初始化连接池
-        ConnectorContext.INSTANCE.initialize(dataDriverConfig.getDrivers());
+
+        DataSourceFactory.INSTANCE.initialize(dataDriverConfig.getDrivers());
 
         //获取集群配置信息
         ClusterDriver driver = context.getBean(ClusterDriver.class);
@@ -70,8 +79,7 @@ public class NodeBootApplication {
             //注册节点，注册失败退出进程
             ClusterProvider.sendCommand(new NodeRegisterCommand(nodeConfig.getId()));
         } catch (Exception e){
-            e.printStackTrace();
-            LOGGER.error(e.getMessage() + "," + "数据同步节点退出!", e);
+            LOGGER.error("{},数据同步节点退出!", e.getMessage(), e);
             System.exit(-1);
         }
         LOGGER.info("加入群聊.......");
