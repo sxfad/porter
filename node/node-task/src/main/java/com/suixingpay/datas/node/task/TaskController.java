@@ -12,12 +12,10 @@ import com.suixingpay.datas.common.task.Task;
 import com.suixingpay.datas.common.task.TaskEvent;
 import com.suixingpay.datas.common.task.TaskEventType;
 import com.suixingpay.datas.common.task.TaskEventListener;
-import com.suixingpay.datas.node.task.extract.extractor.ExtractorFactory;
+import com.suixingpay.datas.common.util.MachineUtils;
 import com.suixingpay.datas.node.task.worker.TaskWorker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import sun.misc.Signal;
@@ -50,7 +48,6 @@ public class TaskController implements TaskEventListener {
 
     public void start(List<Task> initTasks) {
         if (stat.compareAndSet(false, true)) {
-
             if (null != initTasks && !initTasks.isEmpty()) {
                 for (Task t : initTasks) {
                     startTask(t);
@@ -64,8 +61,9 @@ public class TaskController implements TaskEventListener {
         final TaskController controller = this;
 
         //因为JVM不能保证ShutdownHook一定能执行，通过自定义信号实现优雅下线。
-        LOGGER.info("Shutdown gracefully with signal 31. [kill -31 PID]");
         Signal graceShutdown = new Signal("USR2");
+        //不同的操作系统USR2信号量数值不一样，不支持windows操作系统
+        LOGGER.info("Shutdown gracefully with signal {}. [kill -{} {}]", graceShutdown.getName(), graceShutdown.getNumber(), MachineUtils.getPID());
         Signal.handle(graceShutdown, new SignalHandler() {
             @Override
             public void handle(Signal signal) {
