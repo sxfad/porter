@@ -11,6 +11,9 @@ package com.suixingpay.datas.common.task;
 import com.suixingpay.datas.common.datasource.DataDriverType;
 import com.suixingpay.datas.common.datasource.NamedDataDriver;
 import com.suixingpay.datas.common.datasource.meta.KafkaDriverMeta;
+import com.suixingpay.datas.common.db.TableMapper;
+
+import java.util.List;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -28,7 +31,7 @@ public class Task {
     //sql事件源地址
     private NamedDataDriver dataDriver;
     //自定义字段映射
-    private String filter;
+    private List<TableMapper> mappers;
     public String[] listTopic() {
         String[] topics = null;
         if (DataDriverType.KAFKA == dataDriver.getType()) {
@@ -61,19 +64,19 @@ public class Task {
         this.dataDriver = dataDriver;
     }
 
-    public String getFilter() {
-        return filter;
-    }
-
-    public void setFilter(String filter) {
-        this.filter = filter;
-    }
-
     public String getTaskId() {
         return taskId;
     }
 
     public void setTaskId(String taskId) {
         this.taskId = taskId;
+    }
+
+    public List<TableMapper> getMappers() {
+        return mappers;
+    }
+
+    public void setMappers(List<TableMapper> mappers) {
+        this.mappers = mappers;
     }
 }

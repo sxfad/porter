@@ -17,11 +17,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月19日 13:59
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月19日 13:59
  */
+
 @ConfigurationProperties(prefix = "dataDriver")
 @Component
 public class DataDriverConfig {

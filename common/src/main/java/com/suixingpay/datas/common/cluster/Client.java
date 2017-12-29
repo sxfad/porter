@@ -9,7 +9,6 @@
 package com.suixingpay.datas.common.cluster;
 
 /**
- * TODO
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月14日 17:00
  * @version: V1.0

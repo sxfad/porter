@@ -9,6 +9,7 @@ package com.suixingpay.datas.node.core.event;/**
 
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +52,6 @@ public class ETLBucket {
             for (Map.Entry<String,Object> entity : loopAfter ? event.getAfter().entrySet() : event.getBefore().entrySet()) {
                 Object newValue = "";
                 Object oldValue = "";
-                Class type = String.class;
 
                 if (loopAfter) {
                     newValue = entity.getValue();
@@ -60,9 +60,20 @@ public class ETLBucket {
                     newValue = event.getBefore().getOrDefault(entity.getKey(),null);
                     oldValue = entity.getValue();
                 }
+                Object finalValue = newValue;
+                if (event.getOpType() == EventType.DELETE) {
+                    finalValue = oldValue;
+                }
 
-                type =  null != newValue ? newValue.getClass() : (null != oldValue ? oldValue.getClass() : type);
-                ETLColumn column = new ETLColumn(entity.getKey(), newValue, oldValue, type, event.getPrimaryKeys().contains(entity.getKey()));
+                String newValueStr= String.valueOf(newValue);
+                newValueStr = newValueStr.equals("null") ? null : newValueStr;
+                String oldValueStr= String.valueOf(oldValue);
+                oldValueStr = oldValueStr.equals("null") ? null : oldValueStr;
+                String finalValueStr= String.valueOf(finalValue);
+                finalValueStr = finalValueStr.equals("null") ? null : finalValueStr;
+
+                //源数据事件精度损失，转字符串也会有精度损失。后续观察处理
+                ETLColumn column = new ETLColumn(entity.getKey(), newValueStr, oldValueStr, finalValueStr, event.getPrimaryKeys().contains(entity.getKey()));
                 columns.add(column);
             }
 

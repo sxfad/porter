@@ -7,6 +7,8 @@ package com.suixingpay.datas.node.core.event;/**
  * 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
  */
 
+import java.sql.Types;
+
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月26日 10:59
@@ -15,85 +17,86 @@ package com.suixingpay.datas.node.core.event;/**
  */
 public class ETLColumn {
     private final String name;
-    private final Object newValue;
-    private final Object oldValue;
-    private Class javaType;
-    private final boolean isKey;
+    private final String newValue;
+    private final String oldValue;
+    private  boolean isKey = false;
+    private boolean required = false;
+    private String finalName;
+    private String finalValue;
+    private int finalType;
 
-    private boolean hasChangedName;
-    private boolean hasChangedValue;
-    private boolean finalName;
-    private boolean finalValue;
-    private Class finalJavaType;
+    public ETLColumn(String name, String newValue, String oldValue, String finalValue, boolean isKey) {
+        this(name, newValue, oldValue, finalValue, isKey, isKey, Types.VARCHAR);
+    }
 
-    public ETLColumn(String name, Object newValue, Object oldValue, Class javaType, boolean isKey) {
+    public ETLColumn(String name, String newValue, String oldValue, String finalValue, boolean isKey, boolean required, int type) {
         this.name = name;
         this.newValue = newValue;
         this.oldValue = oldValue;
         this.isKey = isKey;
+        this.required = required;
+        this.finalType = type;
+        this.finalName = name;
+        this.finalValue = finalValue;
     }
 
     public String getName() {
         return name;
     }
 
-    public Object getNewValue() {
+    public String getNewValue() {
         return newValue;
     }
 
-    public Object getOldValue() {
+    public String getOldValue() {
         return oldValue;
-    }
-
-    public Class getJavaType() {
-        return javaType;
     }
 
     public boolean isKey() {
         return isKey;
     }
 
-    public boolean isHasChangedName() {
-        return hasChangedName;
-    }
-
-    public void setHasChangedName(boolean hasChangedName) {
-        this.hasChangedName = hasChangedName;
-    }
-
-    public boolean isHasChangedValue() {
-        return hasChangedValue;
-    }
-
-    public void setHasChangedValue(boolean hasChangedValue) {
-        this.hasChangedValue = hasChangedValue;
-    }
-
-    public boolean isFinalName() {
+    public String isFinalName() {
         return finalName;
     }
 
-    public void setFinalName(boolean finalName) {
+    public void setFinalName(String finalName) {
         this.finalName = finalName;
     }
 
-    public boolean isFinalValue() {
+    public String isFinalValue() {
         return finalValue;
     }
 
-    public void setFinalValue(boolean finalValue) {
+    public void setFinalValue(String finalValue) {
         this.finalValue = finalValue;
     }
 
-    public Class getFinalJavaType() {
-        return finalJavaType;
+    public int getFinalType() {
+        return finalType;
     }
 
-    public void setFinalJavaType(Class finalJavaType) {
-        this.finalJavaType = finalJavaType;
+    public void setFinalType(int finalType) {
+        this.finalType = finalType;
     }
 
-    public void setJavaType(Class javaType) {
-        this.javaType = javaType;
+    public String getFinalName() {
+        return finalName;
+    }
+
+    public void setKey(boolean key) {
+        isKey = key;
+    }
+
+    public boolean isRequired() {
+        return required;
+    }
+
+    public void setRequired(boolean required) {
+        this.required = required;
+    }
+
+    public String getFinalValue() {
+        return finalValue;
     }
 }

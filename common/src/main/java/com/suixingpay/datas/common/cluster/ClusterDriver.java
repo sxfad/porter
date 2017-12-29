@@ -8,9 +8,6 @@
  */
 package com.suixingpay.datas.common.cluster;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
-
 import java.util.Map;
 
 /**
@@ -20,8 +17,6 @@ import java.util.Map;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月14日 17:07
  */
-@ConfigurationProperties(prefix = "cluster.driver")
-@Component
 public class ClusterDriver {
     private ClusterType type;
     private String url;

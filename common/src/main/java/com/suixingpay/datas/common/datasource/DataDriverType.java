@@ -14,7 +14,6 @@ import com.suixingpay.datas.common.datasource.meta.JDBCDriverMeta;
 import com.suixingpay.datas.common.datasource.meta.KafkaDriverMeta;
 
 /**
- * TODO
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月14日 10:46
  * @version: V1.0

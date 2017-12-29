@@ -27,7 +27,7 @@ public class DTaskStat  extends DObject {
     private AtomicLong insertRow = new AtomicLong(0);
     private AtomicLong updateRow = new AtomicLong(0);
     private AtomicLong deleteRow = new AtomicLong(0);
-    private AtomicLong maylostRow = new AtomicLong(0);
+    private AtomicLong errorRow = new AtomicLong(0);
     private Date statedTime;
     public DTaskStat() {
         statedTime = new Date();
@@ -86,12 +86,10 @@ public class DTaskStat  extends DObject {
         this.deleteRow = deleteRow;
     }
 
-    public AtomicLong getMaylostRow() {
-        return maylostRow;
-    }
 
-    public void setMaylostRow(AtomicLong maylostRow) {
-        this.maylostRow = maylostRow;
+
+    public AtomicLong getErrorRow() {
+        return errorRow;
     }
 
     @Override
@@ -102,7 +100,7 @@ public class DTaskStat  extends DObject {
             this.deleteRow.addAndGet(stat.deleteRow.longValue());
             this.insertRow.addAndGet(stat.insertRow.longValue());
             this.updateRow.addAndGet(stat.updateRow.longValue());
-            this.maylostRow.addAndGet(stat.maylostRow.longValue());
+            this.errorRow.addAndGet(stat.errorRow.longValue());
             this.statedTime = new Date();
         }
     }
@@ -110,6 +108,6 @@ public class DTaskStat  extends DObject {
         this.deleteRow.set(0);
         this.insertRow.set(0);
         this.updateRow.set(0);
-        this.maylostRow.set(0);
+        this.errorRow.set(0);
     }
 }

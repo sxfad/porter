@@ -8,6 +8,7 @@
  */
 package com.suixingpay.datas.node.task.extract.extractor;
 
+import com.suixingpay.datas.common.db.TableMapper;
 import com.suixingpay.datas.node.core.event.ETLBucket;
 import com.suixingpay.datas.node.core.event.ETLRow;
 import com.suixingpay.datas.node.core.event.EventType;
@@ -16,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 包含所有的忽略规则

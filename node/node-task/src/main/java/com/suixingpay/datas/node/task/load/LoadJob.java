@@ -51,7 +51,7 @@ public class LoadJob extends AbstractStageJob{
         do {
             try {
                 bucket = work.waitEvent(StageType.TRANSFORM);
-                loaderFactory.load(bucket);
+                if (null != bucket) loaderFactory.load(bucket , work.getStat());
             } catch (Exception e) {
                 LOGGER.error("Load ETLRow error!", e);
             }

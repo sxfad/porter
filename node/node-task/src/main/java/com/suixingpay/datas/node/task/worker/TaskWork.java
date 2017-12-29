@@ -13,6 +13,7 @@ import com.suixingpay.datas.common.cluster.command.TaskRegisterCommand;
 import com.suixingpay.datas.common.cluster.command.TaskStopCommand;
 import com.suixingpay.datas.common.cluster.data.DTaskStat;
 import com.suixingpay.datas.common.datasource.DataSourceWrapper;
+import com.suixingpay.datas.common.db.TableMapper;
 import com.suixingpay.datas.node.core.task.StageJob;
 import com.suixingpay.datas.node.core.task.StageType;
 import com.suixingpay.datas.node.task.alert.AlertJob;
@@ -43,14 +44,15 @@ public class TaskWork {
     protected final DTaskStat stat;
     private  final Map<StageType, StageJob> JOBS;
     private final String basicThreadName;
-
-    public TaskWork(String taskId, String topic, DataSourceWrapper source, DataSourceWrapper target, DataSourceWrapper dataSource) {
+    private final TaskWorker worker;
+    public TaskWork(String taskId, String topic, DataSourceWrapper source, DataSourceWrapper target, DataSourceWrapper dataSource, TaskWorker worker) {
         basicThreadName = "TaskWork-[taskId:" + taskId + "]-[topic:" + topic + "]";
         this.target = target;
         this.source = source;
         this.topic = topic;
         this.taskId = taskId;
         this.consumerSource = dataSource;
+        this.worker = worker;
         stat = new DTaskStat(taskId, null, topic);
         TaskWork work = this;
         JOBS = new LinkedHashMap<StageType, StageJob>(){
@@ -108,5 +110,15 @@ public class TaskWork {
 
     public <T> T waitEvent(StageType type) throws Exception {
         return JOBS.get(type).output();
+    }
+    public <T> T waitSequence() {
+        return ((ExtractJob)JOBS.get(StageType.EXTRACT)).getNextSequence();
+    }
+    public Map<String, TableMapper> getTableMapper() {
+        return worker.getTableMapper();
+    }
+
+    public DTaskStat getStat() {
+        return stat;
     }
 }

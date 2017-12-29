@@ -7,8 +7,12 @@ package com.suixingpay.datas.node.core.event;/**
  * 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
  */
 
+import org.apache.commons.lang3.tuple.Pair;
+
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -21,13 +25,13 @@ import java.util.List;
 public class ETLRow {
     private final String schema;
     private final String table;
-    private boolean hasChangedTable = false;
-    private boolean hasChangedSchema = false;
     private String finalSchema;
     private String finalTable;
     //操作类型 I U D T
     private final EventType opType;
     private final List<ETLColumn> columns;
+    private Map<String, Pair<Object,Object>> sqlKeys = new LinkedHashMap<>();
+    private Map<String, Pair<Object,Object>> sqlColumns = new LinkedHashMap<>();
     //操作时间，保留该字段可以在需要的时候计算出与最终执行时间间隔
     private final Date opTime;
     public ETLRow(String schema, String table, EventType opType, List<ETLColumn> columns, Date opTime) {
@@ -61,22 +65,6 @@ public class ETLRow {
         return opTime;
     }
 
-    public boolean isHasChangedTable() {
-        return hasChangedTable;
-    }
-
-    public void setHasChangedTable(boolean hasChangedTable) {
-        this.hasChangedTable = hasChangedTable;
-    }
-
-    public boolean isHasChangedSchema() {
-        return hasChangedSchema;
-    }
-
-    public void setHasChangedSchema(boolean hasChangedSchema) {
-        this.hasChangedSchema = hasChangedSchema;
-    }
-
     public String getFinalSchema() {
         return finalSchema;
     }
@@ -91,5 +79,21 @@ public class ETLRow {
 
     public void setFinalTable(String finalTable) {
         this.finalTable = finalTable;
+    }
+
+    public Map<String, Pair<Object,Object>> getSqlKeys() {
+        return sqlKeys;
+    }
+
+    public void setSqlKeys(Map<String, Pair<Object,Object>> sqlKeys) {
+        this.sqlKeys = sqlKeys;
+    }
+
+    public Map<String, Pair<Object,Object>> getSqlColumns() {
+        return sqlColumns;
+    }
+
+    public void setSqlColumns(Map<String, Pair<Object,Object>> sqlColumns) {
+        this.sqlColumns = sqlColumns;
     }
 }

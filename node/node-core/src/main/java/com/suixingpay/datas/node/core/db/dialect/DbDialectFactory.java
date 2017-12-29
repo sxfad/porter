@@ -33,7 +33,9 @@ public enum  DbDialectFactory {
     private final Map<String, DbDialect> dialects = new ConcurrentHashMap<>();
 
     private DbDialectFactory() {
+        //Dialect生成器构造
         dbDialectGenerator = new DbDialectGenerator();
+        //用于blob clob字段的处理
         DefaultLobHandler lobHandler = new DefaultLobHandler();
         lobHandler.setStreamAsLob(true);
         dbDialectGenerator.setDefaultLobHandler(lobHandler);

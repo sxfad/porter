@@ -12,6 +12,6 @@
 
 
 ## 优雅关闭
-signalId = `kill -l USR2`
+signalId = \`kill -l USR2\`
 
 kill -$signalId PID  #centos:31 mac:12

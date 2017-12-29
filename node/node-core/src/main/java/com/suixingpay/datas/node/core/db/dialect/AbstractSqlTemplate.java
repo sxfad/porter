@@ -38,12 +38,13 @@ public abstract class AbstractSqlTemplate implements SqlTemplate {
         return sql.toString().intern(); // 不使用intern，避免方法区内存消耗过多
     }
 
-    public String getInsertSql(String schemaName, String tableName, String[] pkNames, String[] columnNames) {
-        StringBuilder sql = new StringBuilder("insert into " + getFullName(schemaName, tableName) + "(");
-        String[] allColumns = new String[pkNames.length + columnNames.length];
-        System.arraycopy(columnNames, 0, allColumns, 0, columnNames.length);
-        System.arraycopy(pkNames, 0, allColumns, columnNames.length, pkNames.length);
+    public String getUpdateSql(String schemaName, String tableName, String[] columns) {
+        return getUpdateSql(schemaName, tableName, columns, columns);
+    }
 
+
+    public String getInsertSql(String schemaName, String tableName, String[] allColumns) {
+        StringBuilder sql = new StringBuilder("insert into " + getFullName(schemaName, tableName) + "(");
         int size = allColumns.length;
         for (int i = 0; i < size; i++) {
             sql.append(appendEscape(allColumns[i])).append((i + 1 < size) ? "," : "");
@@ -68,6 +69,12 @@ public abstract class AbstractSqlTemplate implements SqlTemplate {
         }
         sb.append(appendEscape(tableName));
         return sb.toString().intern();
+    }
+
+    @Override
+    public String getTruncateSql(String schemaName, String tableName) {
+        StringBuilder sql = new StringBuilder("truncate table  " + getFullName(schemaName, tableName));
+        return sql.toString().intern();
     }
 
     // ================ helper method ============

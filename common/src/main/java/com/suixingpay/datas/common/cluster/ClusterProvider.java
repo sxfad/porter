@@ -10,8 +10,11 @@ package com.suixingpay.datas.common.cluster;
 
 import com.suixingpay.datas.common.cluster.command.ClusterCommand;
 import com.suixingpay.datas.common.task.TaskEventListener;
+import com.sun.deploy.util.ReflectionUtil;
 import org.springframework.core.io.support.SpringFactoriesLoader;
+import org.springframework.util.ReflectionUtils;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ServiceLoader;
@@ -25,7 +28,7 @@ import java.util.function.Consumer;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月14日 16:32
  */
 public abstract class ClusterProvider {
-    private static final List<ClusterProvider> CLUSTER_PROVIDERS = new ArrayList<>();
+    private static ClusterProvider CLUSTER_PROVIDER;
     protected abstract void addListener(ClusterListener listener);
     public abstract void addTaskEventListener(TaskEventListener listener);
     protected abstract void doInitialize(ClusterDriver driver);
@@ -36,7 +39,7 @@ public abstract class ClusterProvider {
         doInitialize(driver);
         afterInitialize();
     }
-    private final void afterInitialize(){
+    private void afterInitialize(){
         //通过spring框架的SPI loader加载服务
         List<ClusterListener> listeners = SpringFactoriesLoader.loadFactories(ClusterListener.class, null);
         //添加SPI到监听器
@@ -50,28 +53,32 @@ public abstract class ClusterProvider {
 
 
     public static final void load(ClusterDriver driver) {
-        //集群组件初始化, 一般情况下只有一个.
-        List<ClusterProvider> providers = SpringFactoriesLoader.loadFactories(ClusterProvider.class, null);
-        providers.forEach(new Consumer<ClusterProvider>() {
-            @Override
-            public void accept(ClusterProvider clusterProvider) {
-                clusterProvider.initialize(driver);
-                clusterProvider.start();
-                CLUSTER_PROVIDERS.add(clusterProvider);
+        //集群组件初始化
+        List<String> providers = SpringFactoriesLoader.loadFactoryNames(ClusterProvider.class, null);
+        for (String providerName : providers) {
+            try {
+                ClusterProvider tempProvider = null;
+                if (driver.getType().matches(providerName)) {
+                    Class<ClusterProvider> clazzProvider = (Class<ClusterProvider>) Class.forName(providerName);
+                    tempProvider = clazzProvider.getDeclaredConstructor().newInstance();
+                }
+                if (null != tempProvider){
+                    tempProvider.initialize(driver);
+                    tempProvider.start();
+                    CLUSTER_PROVIDER = tempProvider;
+                    break;
+                }
+            } catch (Exception e) {
+                continue;
             }
-        });
+        }
     }
     public static final void unload() {
-        //退出群聊需在业务代码执行之后才能执行
-        for (ClusterProvider provider : CLUSTER_PROVIDERS) {
-            //进程退出Hook
-            provider.stop();
-        }
+        //退出群聊需在业务代码执行之后才能执行,进程退出Hook
+        CLUSTER_PROVIDER.stop();
     }
     public static final void sendCommand (ClusterCommand command) throws Exception {
-        for (ClusterProvider provider : CLUSTER_PROVIDERS) {
-            provider.distributeCommand(command);
-        }
+        CLUSTER_PROVIDER.distributeCommand(command);
     }
     public static final void sendCommand (List<ClusterCommand> command) throws Exception {
         for (ClusterCommand c : command) {
@@ -79,8 +86,6 @@ public abstract class ClusterProvider {
         }
     }
     public static final void addTaskListener (TaskEventListener listener){
-        for (ClusterProvider provider : CLUSTER_PROVIDERS) {
-            provider.addTaskEventListener(listener);
-        }
+        CLUSTER_PROVIDER.addTaskEventListener(listener);
     }
 }

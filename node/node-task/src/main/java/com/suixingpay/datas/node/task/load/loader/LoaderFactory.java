@@ -9,9 +9,14 @@
 
 package com.suixingpay.datas.node.task.load.loader;
 
+import com.suixingpay.datas.common.cluster.data.DTaskStat;
 import com.suixingpay.datas.node.core.event.ETLBucket;
+import com.suixingpay.datas.node.task.extract.extractor.Extractor;
 import org.springframework.context.annotation.Scope;
+import org.springframework.core.io.support.SpringFactoriesLoader;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -22,7 +27,18 @@ import org.springframework.stereotype.Component;
 @Component
 @Scope("singleton")
 public class LoaderFactory {
-    public void load(ETLBucket bucket) {
+    private Loader loader;
 
+    public LoaderFactory() {
+        List<Loader> loaders = SpringFactoriesLoader.loadFactories(Loader.class, null);
+        if (null != loaders && loaders.size() == 1) {
+            loader = loaders.get(0);
+        } else {
+            throw new RuntimeException("LoaderFactory仅允许配置单个Loader实现");
+        }
+    }
+
+    public void load(ETLBucket bucket, DTaskStat stat) {
+        loader.load(bucket, stat);
     }
 }

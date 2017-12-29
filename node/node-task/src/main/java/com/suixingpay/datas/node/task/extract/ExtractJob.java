@@ -36,6 +36,7 @@ public class ExtractJob extends AbstractStageJob {
     private final TaskWork work;
     private final ExecutorService executorService;
     private final DataCarrier<ETLBucket> carrier;
+    private final DataCarrier<Long> orderedBucket;
     private final ExtractorFactory extractorFactory;
     private final DataSourceWrapper target;
     public ExtractJob(TaskWork work) {
@@ -49,6 +50,7 @@ public class ExtractJob extends AbstractStageJob {
                 new LinkedBlockingQueue<Runnable>(),
                 getThreadFactory(), new ThreadPoolExecutor.CallerRunsPolicy());
         carrier = ApplicationContextUtils.INSTANCE.getBean(DataCarrierFactory.class).newDataCarrier(BUFFER_SIZE, 1);
+        orderedBucket = ApplicationContextUtils.INSTANCE.getBean(DataCarrierFactory.class).newDataCarrier(1024*1*1000, 1);
     }
 
     @Override
@@ -70,6 +72,7 @@ public class ExtractJob extends AbstractStageJob {
                 events = work.waitEvent(StageType.SELECT);
                 if (null != events) {
                     final Pair<Long, List<MessageEvent>> inThreadEvents = events;
+                    orderedBucket.push(inThreadEvents.getLeft());
                     //暂无Extractor失败处理方案
                     executorService.submit(new Runnable() {
                         @Override
@@ -94,5 +97,8 @@ public class ExtractJob extends AbstractStageJob {
     @Override
     public ETLBucket output() {
         return carrier.pull();
+    }
+    public <T> T getNextSequence() {
+        return orderedBucket.pull();
     }
 }

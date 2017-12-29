@@ -13,17 +13,18 @@ import com.suixingpay.datas.common.cluster.command.TaskStatCommand;
 import com.suixingpay.datas.common.cluster.data.DTaskStat;
 import com.suixingpay.datas.common.datasource.DataSourceWrapper;
 import com.suixingpay.datas.common.datasource.MQDataSourceWrapper;
+import com.suixingpay.datas.common.db.TableMapper;
 import com.suixingpay.datas.common.task.Task;
 import com.suixingpay.datas.common.util.DefaultNamedThreadFactory;
 import com.suixingpay.datas.node.core.datasource.DataSourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.Map;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -43,7 +44,7 @@ public class TaskWorker {
     //负责将任务工作者的状态定时上传
     private final ScheduledExecutorService STAT_WORKER;
     private final List<TaskWork> JOBS;
-
+    private final Map<String,TableMapper> TABLE_MAPPERS;
     private DataSourceWrapper source;
     private DataSourceWrapper target;
 
@@ -51,6 +52,7 @@ public class TaskWorker {
         STAT_WORKER = Executors.newSingleThreadScheduledExecutor(new DefaultNamedThreadFactory("TaskStat"));
         JOBS = new CopyOnWriteArrayList<>();
         workerSequence = SEQUENCE.incrementAndGet();
+        TABLE_MAPPERS = new ConcurrentHashMap<>();
     }
     public void start() {
         if (STAT.compareAndSet(false, true)) {
@@ -96,6 +98,14 @@ public class TaskWorker {
     }
 
     public void alloc(Task task) {
+        //源数据映射
+        if (null != task.getMappers()) {
+            for (TableMapper mapper : task.getMappers()) {
+                if (mapper.isCustom()) {
+                    TABLE_MAPPERS.putIfAbsent(mapper.getUniqueKey(), mapper);
+                }
+            }
+        }
         if (SOURCE_STAT.compareAndSet(false, true)) {
             source = DataSourceFactory.INSTANCE.newDataSource(task.getSourceDriver());
             target = DataSourceFactory.INSTANCE.newDataSource(task.getTargetDriver());
@@ -111,12 +121,16 @@ public class TaskWorker {
                     MQDataSourceWrapper mqDataSource = (MQDataSourceWrapper) dataSource;
                     mqDataSource.setTopic(topic);
                 }
-                TaskWork job = new TaskWork(task.getTaskId(), topic, source, target, dataSource);
+                TaskWork job = new TaskWork(task.getTaskId(), topic, source, target, dataSource, this);
                 job.start();
                 JOBS.add(job);
             } catch (Exception e){
                 LOGGER.error("topic JOB分配出错!", e);
             }
         }
+    }
+
+    public Map<String,TableMapper> getTableMapper() {
+        return Collections.unmodifiableMap(TABLE_MAPPERS);
     }
 }

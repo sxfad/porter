@@ -42,7 +42,7 @@ public abstract class AbstractDbDialect implements DbDialect {
     protected JdbcTemplate             jdbcTemplate;
     protected TransactionTemplate      transactionTemplate;
     protected LobHandler               lobHandler;
-    protected Map<List<String>, Table> tables;
+    protected final Map<List<String>, Table> tables = new ConcurrentHashMap<>();
 
     public AbstractDbDialect(final JdbcTemplate jdbcTemplate, LobHandler lobHandler){
         this.jdbcTemplate = jdbcTemplate;
@@ -64,7 +64,6 @@ public abstract class AbstractDbDialect implements DbDialect {
                 return null;
             }
         });
-        tables = new ConcurrentHashMap<>();
     }
 
     public AbstractDbDialect(JdbcTemplate jdbcTemplate, LobHandler lobHandler, String name, int majorVersion,

@@ -8,7 +8,9 @@
  */
 package com.suixingpay.datas.common.cluster;
 
+import com.suixingpay.datas.common.cluster.zookeeper.ZookeeperClusterProvider;
 import com.suixingpay.datas.common.cluster.zookeeper.ZookeeperDriverMeta;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 集群中间件类型
@@ -18,16 +20,18 @@ import com.suixingpay.datas.common.cluster.zookeeper.ZookeeperDriverMeta;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月14日 16:20
  */
 public enum  ClusterType {
-    ZOOKEEPER(0, "ZK", ZookeeperDriverMeta.INSTANCE),
-    REDIS(1, "REDIS", null),
-    UNKNOWN(-1, "UNKNOWN", null);
+    ZOOKEEPER(0, "ZK", ZookeeperDriverMeta.INSTANCE, ZookeeperClusterProvider.class),
+    REDIS(1, "REDIS", null, null),
+    UNKNOWN(-1, "UNKNOWN", null, null);
     private int index;
     private String value;
     private final ClusterDriverMeta meta;
-    private ClusterType(int index, String value, ClusterDriverMeta meta) {
+    private Class implementClass;
+    private ClusterType(int index, String value, ClusterDriverMeta meta, Class implementClass) {
         this.index = index;
         this.value = value;
         this.meta =meta;
+        this.implementClass = implementClass;
     }
     public int getIndex() {
         return index;
@@ -47,5 +51,9 @@ public enum  ClusterType {
 
     public ClusterDriverMeta getMeta() {
         return meta;
+    }
+
+    public boolean matches(String clazz) {
+        return null != implementClass && !StringUtils.isBlank(clazz) && StringUtils.trim(clazz).equals(implementClass.getName());
     }
 }

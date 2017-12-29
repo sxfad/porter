@@ -66,7 +66,7 @@ public class SelectJob extends AbstractStageJob {
         do {
             try {
                 events = fetcher.fetch();
-                carrier.push(events);
+                if (null != events) carrier.push(events);
             } catch (InterruptedException e) {
                 LOGGER.error("fetch MessageEvent error!", e);
             }

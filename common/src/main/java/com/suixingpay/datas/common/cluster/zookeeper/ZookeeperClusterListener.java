@@ -12,7 +12,6 @@ import com.suixingpay.datas.common.cluster.Client;
 import com.suixingpay.datas.common.cluster.ClusterListener;
 
 /**
- * TODO
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月19日 16:24
  * @version: V1.0

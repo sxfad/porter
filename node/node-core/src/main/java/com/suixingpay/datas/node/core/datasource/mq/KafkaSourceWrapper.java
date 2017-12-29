@@ -31,7 +31,6 @@ import java.util.*;
 import java.util.concurrent.CountDownLatch;
 
 /**
- * TODO
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月14日 09:52
  * @version: V1.0

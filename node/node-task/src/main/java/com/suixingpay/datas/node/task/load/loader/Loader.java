@@ -9,6 +9,7 @@
 
 package com.suixingpay.datas.node.task.load.loader;
 
+import com.suixingpay.datas.common.cluster.data.DTaskStat;
 import com.suixingpay.datas.node.core.event.ETLBucket;
 
 /**
@@ -18,5 +19,5 @@ import com.suixingpay.datas.node.core.event.ETLBucket;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月27日 15:56
  */
 public interface Loader {
-    void load(ETLBucket bucket);
+    void load(ETLBucket bucket, DTaskStat stat);
 }

@@ -1,1 +1,3 @@
-com.suixingpay.datas.node.task.extract.extractor.Extractor=com.suixingpay.datas.node.task.extract.extractor.IgnoreRowExtractor
+com.suixingpay.datas.node.task.extract.extractor.Extractor = com.suixingpay.datas.node.task.extract.extractor.IgnoreRowExtractor
+com.suixingpay.datas.node.task.load.loader.Loader = com.suixingpay.datas.node.task.load.loader.SQLBatchLoader
+com.suixingpay.datas.node.task.transform.transformer.Transformer = com.suixingpay.datas.node.task.transform.transformer.ETLRowTransformer

@@ -14,9 +14,13 @@ import com.suixingpay.datas.node.core.task.AbstractStageJob;
 import com.suixingpay.datas.node.core.task.StageType;
 import com.suixingpay.datas.node.datacarrier.DataCarrier;
 import com.suixingpay.datas.node.datacarrier.DataCarrierFactory;
+import com.suixingpay.datas.node.task.transform.transformer.TransformFactory;
 import com.suixingpay.datas.node.task.worker.TaskWork;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.*;
+import java.util.function.BiFunction;
 
 /**
  * 多线程执行,完成字段、表的映射转化。
@@ -26,10 +30,9 @@ import java.util.concurrent.*;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月24日 11:32
  */
 public class TransformJob extends AbstractStageJob {
-    private static final int BUFFER_SIZE = LOGIC_THREAD_SIZE * LOGIC_THREAD_SIZE * LOGIC_THREAD_SIZE;
     private final TransformFactory transformFactory;
     private final ExecutorService executorService;
-    private final DataCarrier<ETLBucket> carrier;
+    private final Map<String, Future<ETLBucket>> carrier = new ConcurrentHashMap<>();
     private final TaskWork work;
     public TransformJob(TaskWork work) {
         super(work.getBasicThreadName());
@@ -40,7 +43,6 @@ public class TransformJob extends AbstractStageJob {
                 0L, TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<Runnable>(),
                 getThreadFactory(), new ThreadPoolExecutor.CallerRunsPolicy());
-        carrier =  ApplicationContextUtils.INSTANCE.getBean(DataCarrierFactory.class).newDataCarrier(BUFFER_SIZE, 1);
     }
 
     @Override
@@ -62,17 +64,18 @@ public class TransformJob extends AbstractStageJob {
                 bucket = work.waitEvent(StageType.EXTRACT);
                 if (null != bucket) {
                     final ETLBucket inThreadBucket = bucket;
-                    executorService.submit(new Runnable() {
+                    Future<ETLBucket> result = executorService.submit(new Callable<ETLBucket>() {
                         @Override
-                        public void run() {
+                        public ETLBucket call() throws Exception {
                             try {
-                                transformFactory.transform(inThreadBucket);
-                                carrier.push(inThreadBucket);
+                                transformFactory.transform(inThreadBucket, work.getTableMapper());
                             } catch (Exception e) {
                                 LOGGER.error("批次[{}]执行TransformJob失败!", inThreadBucket.getSequence(), e);
                             }
+                            return inThreadBucket;
                         }
                     });
+                    carrier.put(inThreadBucket.getSequence() + "", result);
                 }
             } catch (Exception e) {
                 LOGGER.error("transform ETLBucket error!", e);
@@ -81,7 +84,15 @@ public class TransformJob extends AbstractStageJob {
     }
 
     @Override
-    public ETLBucket output() {
-        return carrier.pull();
+    public ETLBucket output() throws ExecutionException, InterruptedException {
+        Long sequence = work.waitSequence();
+        Future<ETLBucket> result = null != sequence ? carrier.computeIfPresent(sequence + "", new BiFunction<String, Future<ETLBucket>, Future<ETLBucket>>() {
+            @Override
+            public Future<ETLBucket> apply(String key, Future<ETLBucket> etlBucketFuture) {
+                carrier.remove(key);
+                return etlBucketFuture;
+            }
+        }) : null;
+        return null != result ? result.get() : null;
     }
 }

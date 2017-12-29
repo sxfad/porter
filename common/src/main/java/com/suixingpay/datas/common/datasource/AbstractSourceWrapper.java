@@ -8,6 +8,7 @@
  */
 package com.suixingpay.datas.common.datasource;
 
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
@@ -26,10 +27,14 @@ public abstract  class AbstractSourceWrapper implements DataSourceWrapper {
     protected DataDriver driver;
     //默认为任务私有连接池
     private boolean privatePool = true;
+    //当前为对象创建时初始化，最终是配置中心读取配置
+    private final String id;
 
     public AbstractSourceWrapper(DataDriver driver) {
         this.driver = driver;
+        this.id = UUID.randomUUID().toString();
     }
+
 
     @Override
     public void destroy() {
@@ -66,5 +71,10 @@ public abstract  class AbstractSourceWrapper implements DataSourceWrapper {
     @Override
     public boolean isPrivatePool() {
         return privatePool;
+    }
+
+    @Override
+    public String getUniqueId() {
+        return id;
     }
 }

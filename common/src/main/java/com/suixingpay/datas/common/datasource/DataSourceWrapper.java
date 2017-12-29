@@ -29,7 +29,5 @@ public interface DataSourceWrapper {
      * 后期从配置中心读取
      * @return
      */
-    default String getUniqueId(){
-        return UUID.randomUUID().toString();
-    }
+    String getUniqueId();
 }

@@ -33,9 +33,19 @@ public enum DataSourceFactory {
         allSources = new ConcurrentHashMap<String, DataSourceWrapper>();
         publicDataSources = new ConcurrentHashMap<String, String>();
     }
+
+    /**
+     * 初始化公用DataSource
+     * @param drivers
+     */
     public void initialize(Map<String,DataDriver> drivers) {
         for (Map.Entry<String, DataDriver> entry : drivers.entrySet()) {
-            newDataSource(entry.getValue());
+            DataSourceWrapper wrapper = newDataSource(entry.getValue());
+
+            if (null == publicDataSources.putIfAbsent(entry.getKey(), wrapper.getUniqueId())) {
+                    wrapper.setPrivatePool(false);
+                    wrapper.create();
+            }
         }
     }
     public DataSourceWrapper getDataSource(String sourceId) {
@@ -61,11 +71,6 @@ public enum DataSourceFactory {
         }
         if (null != wrapper && ! allSources.containsKey(wrapper.getUniqueId())) {
             allSources.putIfAbsent(wrapper.getUniqueId(), wrapper);
-            if (driver instanceof NamedDataDriver && ! publicDataSources.containsKey(namedDriverName)) {
-                publicDataSources.putIfAbsent(namedDriverName, wrapper.getUniqueId());
-                wrapper.setPrivatePool(false);
-                wrapper.create();
-            }
         }
         return wrapper;
     }

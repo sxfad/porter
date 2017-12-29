@@ -9,7 +9,6 @@
 package com.suixingpay.datas.common.datasource.meta;
 
 /**
- * TODO
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月14日 11:24
  * @version: V1.0

@@ -34,7 +34,7 @@ public class ZookeeperClient extends AbstractClient {
     public ZookeeperClient(ClusterDriver driver) {
         this.driver = driver;
         ZookeeperDriverMeta meta = (ZookeeperDriverMeta) driver.getType().getMeta();
-        String timoutStr = driver.getExtendAttr().getOrDefault(meta.SESSION_TIMEOUT, "100000");
+        String timoutStr = driver.getExtendAttr().getOrDefault(meta.SESSION_TIMEOUT, 1000 * 60 * 10 + "");
         this.sessionTimeout = Integer.parseInt(timoutStr);
     }
 

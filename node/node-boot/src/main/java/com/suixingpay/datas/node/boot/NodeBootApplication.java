@@ -13,6 +13,7 @@ import com.suixingpay.datas.common.cluster.ClusterProvider;
 import com.suixingpay.datas.common.cluster.command.NodeRegisterCommand;
 import com.suixingpay.datas.common.util.ApplicationContextUtils;
 import com.suixingpay.datas.common.util.ProcessUtils;
+import com.suixingpay.datas.node.boot.config.ClusterDriverConfig;
 import com.suixingpay.datas.node.boot.config.DataDriverConfig;
 import com.suixingpay.datas.node.boot.config.NodeConfig;
 import com.suixingpay.datas.node.boot.config.TaskConfig;
@@ -56,21 +57,21 @@ public class NodeBootApplication {
         //获取公用数据库连接池
         DataDriverConfig dataDriverConfig = context.getBean(DataDriverConfig.class);
         if (DataDriverConfig.error(dataDriverConfig)) {
-            LOGGER.error("公用数据库连接池初始化失败", new Exception("公用数据库连接池仅支持Mysql、Oracle, 数据同步节点退出!"));
-            System.exit(-1);
+            LOGGER.error("公用数据库连接池初始化失败", new RuntimeException("公用数据库连接池仅支持Mysql、Oracle, 数据同步节点退出!"));
         }
         //初始化连接池
 
         DataSourceFactory.INSTANCE.initialize(dataDriverConfig.getDrivers());
 
         //获取集群配置信息
-        ClusterDriver driver = context.getBean(ClusterDriver.class);
-        if (ClusterDriver.error(driver)) {
-            LOGGER.error("集群参数初始化失败", new Exception("集群配置参数ClusterDriver初始化失败, 数据同步节点退出!"));
-            System.exit(-1);
+        ClusterDriverConfig clusterConfig = context.getBean(ClusterDriverConfig.class);
+        if (ClusterDriver.error(clusterConfig.getDriver())) {
+            LOGGER.error("集群参数初始化失败", new RuntimeException("集群配置参数ClusterDriver初始化失败, 数据同步节点退出!"));
         }
+
         //初始化集群提供者中间件,spring spi插件
-        ClusterProvider.load(driver);
+        ClusterProvider.load(clusterConfig.getDriver());
+
         LOGGER.info("建群.......");
         //节点初始化
         NodeConfig nodeConfig = context.getBean(NodeConfig.class);
@@ -79,8 +80,7 @@ public class NodeBootApplication {
             //注册节点，注册失败退出进程
             ClusterProvider.sendCommand(new NodeRegisterCommand(nodeConfig.getId()));
         } catch (Exception e){
-            LOGGER.error("{},数据同步节点退出!", e.getMessage(), e);
-            System.exit(-1);
+            throw  new RuntimeException(e.getMessage() + "数据同步节点退出!");
         }
         LOGGER.info("加入群聊.......");
         //获取任务配置

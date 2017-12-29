@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
 
 /**
  * 监工
@@ -48,50 +49,42 @@ public class TaskController implements TaskEventListener {
     }
 
     public void start(List<Task> initTasks) {
-        if (stat.compareAndSet(false, true)) {
-            if (null != initTasks && !initTasks.isEmpty()) {
-                for (Task t : initTasks) {
-                    startTask(t);
+        try {
+            if (stat.compareAndSet(false, true)) {
+                if (null != initTasks && !initTasks.isEmpty()) {
+                    for (Task t : initTasks) {
+                        startTask(t);
+                    }
                 }
+
+                //从配置中心监听任务变更事件，进行任务创建关闭等操作
+                ClusterProvider.addTaskListener(this);
+            } else {
+                LOGGER.warn("Task controller has started already");
             }
-        } else {
-            LOGGER.warn("Task controller has started already");
+        } finally {
+            //进程退出钩子
+            final TaskController controller = this;
+
+            //因为JVM不能保证ShutdownHook一定能执行，通过自定义信号实现优雅下线。
+            Signal graceShutdown = new Signal("USR2");
+            //不同的操作系统USR2信号量数值不一样，不支持windows操作系统
+            LOGGER.info("Shutdown gracefully with signal {}. [kill -{} {}]", graceShutdown.getName(), graceShutdown.getNumber(), MachineUtils.getPID());
+            Signal.handle(graceShutdown, new SignalHandler() {
+                @Override
+                public void handle(Signal signal) {
+                    shutdownHook();
+                    System.exit(-1);
+                }
+            });
+
+            Runtime.getRuntime().addShutdownHook(new Thread("suixingpay-task-shutdownHook"){
+                @Override
+                public void run() {
+                    shutdownHook();
+                }
+            });
         }
-
-        //进程退出钩子
-        final TaskController controller = this;
-
-        //因为JVM不能保证ShutdownHook一定能执行，通过自定义信号实现优雅下线。
-        Signal graceShutdown = new Signal("USR2");
-        //不同的操作系统USR2信号量数值不一样，不支持windows操作系统
-        LOGGER.info("Shutdown gracefully with signal {}. [kill -{} {}]", graceShutdown.getName(), graceShutdown.getNumber(), MachineUtils.getPID());
-        Signal.handle(graceShutdown, new SignalHandler() {
-            @Override
-            public void handle(Signal signal) {
-                controller.stop();
-                //退出群聊需在业务代码执行之后才能执行
-                LOGGER.info("退出群聊.......");
-                ClusterProvider.unload();
-
-                System.exit(-1);
-            }
-        });
-
-        Runtime.getRuntime().addShutdownHook(new Thread("suixingpay-task-shutdownHook"){
-            @Override
-            public void run() {
-                //如果TaskController没有退出,执行清理操作.
-                if (stat.get()) {
-                    controller.stop();
-                    //退出群聊需在业务代码执行之后才能执行
-                    LOGGER.info("退出群聊.......");
-                    ClusterProvider.unload();
-                }
-            }
-        });
-
-        //监听任务变更事件
-        ClusterProvider.addTaskListener(this);
     }
 
     public void startTask(Task task) {
@@ -131,6 +124,15 @@ public class TaskController implements TaskEventListener {
             //startTask();
         } else if (event.getType() == TaskEventType.DELETE) {
             //stopTask();
+        }
+    }
+
+    private void shutdownHook() {
+        if (stat.get()) {
+            this.stop();
+            //退出群聊需在业务代码执行之后才能执行
+            LOGGER.info("退出群聊.......");
+            ClusterProvider.unload();
         }
     }
 }
