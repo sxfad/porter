@@ -1,7 +1,45 @@
 group 'com.suixingpay.datas'
 apply plugin: 'application'
 archivesBaseName = 'datas-node-boot'
-mainClassName = "com.suixingpay.datas.node.boot.DatasNodeBootApplication"
+mainClassName = "com.suixingpay.datas.node.boot.NodeBootApplication"
+applicationDefaultJvmArgs = ["-Dapp.home=DEFINE_APP_HOME/"]
+sourceSets {
+    main {
+    }
+}
+processResources {
+    exclude(
+            "**/**"
+    )
+}
+
+task moveOutFromJar(type: Copy) {
+    sourceSets.main.resources.srcDirs.each {
+        from it
+        into buildDir.getPath() + "/config"
+    }
+}
+
+processResources.dependsOn moveOutFromJar
+
+
+distributions {
+    main {
+        contents {
+            from (buildDir.getPath() + "/config") {
+                into "config"
+            }
+        }
+    }
+}
+
+startScripts {
+    doLast {
+        unixScript.text = unixScript.text.replace('CLASSPATH=', 'cd $APP_HOME;\nCLASSPATH=').replace("DEFINE_APP_HOME",'$APP_HOME')
+        windowsScript.text = windowsScript.text.replace('set CLASSPATH=', 'cd %APP_HOME%\nset CLASSPATH=').replace("DEFINE_APP_HOME",'%APP_HOME%')
+    }
+}
+
 dependencies {
     compile(
             project(":node:node-cluster"),

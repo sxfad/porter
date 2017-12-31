@@ -8,6 +8,7 @@
  */
 package com.suixingpay.datas.common.cluster;
 
+
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
