@@ -12,6 +12,8 @@ buildscript {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:1.5.9.RELEASE"
     }
 }
+//将子项目包复制到根目录
+
 subprojects {
     apply plugin: 'java'
     apply plugin: 'maven'
@@ -45,5 +47,11 @@ subprojects {
                 'oracle:ojdbc14:10.2.0.1.0',
                 'commons-beanutils:commons-beanutils:1.9.2'
         )
+    }
+    build.doLast {
+        def rootPath = rootProject.buildDir.getPath() + "/distributions"
+        copy {
+            from buildDir.getPath() + "/distributions" into rootPath
+        }
     }
 }
