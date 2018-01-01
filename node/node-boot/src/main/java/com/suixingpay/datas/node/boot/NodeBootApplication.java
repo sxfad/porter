@@ -8,15 +8,13 @@
  */
 package com.suixingpay.datas.node.boot;
 
+import com.suixingpay.datas.common.alert.AlertProviderFactory;
 import com.suixingpay.datas.common.cluster.ClusterDriver;
 import com.suixingpay.datas.common.cluster.ClusterProvider;
 import com.suixingpay.datas.common.cluster.command.NodeRegisterCommand;
 import com.suixingpay.datas.common.util.ApplicationContextUtils;
 import com.suixingpay.datas.common.util.ProcessUtils;
-import com.suixingpay.datas.node.boot.config.ClusterDriverConfig;
-import com.suixingpay.datas.node.boot.config.DataDriverConfig;
-import com.suixingpay.datas.node.boot.config.NodeConfig;
-import com.suixingpay.datas.node.boot.config.TaskConfig;
+import com.suixingpay.datas.node.boot.config.*;
 import com.suixingpay.datas.node.core.datasource.DataSourceFactory;
 import com.suixingpay.datas.node.task.TaskController;
 import org.slf4j.Logger;
@@ -71,6 +69,10 @@ public class NodeBootApplication {
 
         //初始化集群提供者中间件,spring spi插件
         ClusterProvider.load(clusterConfig.getDriver());
+
+        //初始化告警配置
+        AlertConfig alertConfig = context.getBean(AlertConfig.class);
+        AlertProviderFactory.INSTANCE.initialize(alertConfig.getDriver());
 
         LOGGER.info("建群.......");
         //节点初始化

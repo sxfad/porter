@@ -9,7 +9,10 @@
 package com.suixingpay.datas.node.task.alert;
 
 import com.suixingpay.datas.common.datasource.DataSourceWrapper;
+import com.suixingpay.datas.common.util.ApplicationContextUtils;
 import com.suixingpay.datas.node.core.task.AbstractStageJob;
+import com.suixingpay.datas.node.task.alert.alerter.AlerterFactory;
+import com.suixingpay.datas.node.task.load.loader.LoaderFactory;
 import com.suixingpay.datas.node.task.worker.TaskWork;
 
 /**
@@ -22,10 +25,12 @@ import com.suixingpay.datas.node.task.worker.TaskWork;
 public class AlertJob extends AbstractStageJob {
     private final DataSourceWrapper source;
     private final DataSourceWrapper target;
+    private final AlerterFactory alerterFactory;
     public AlertJob(TaskWork work) {
         super(work.getBasicThreadName());
         this.target = work.getTarget();
         this.source = work.getSource();
+        alerterFactory = ApplicationContextUtils.INSTANCE.getBean(AlerterFactory.class);
     }
 
     @Override
@@ -40,11 +45,12 @@ public class AlertJob extends AbstractStageJob {
 
     @Override
     protected void loopLogic() {
-
+        //10秒执行一次
+        alerterFactory.check(source, target);
     }
 
     @Override
-    public <T> T output() {
-        return null;
+    public <T> T output() throws Exception {
+        throw new Exception("unsupported Method");
     }
 }

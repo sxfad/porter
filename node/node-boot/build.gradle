@@ -2,7 +2,8 @@ group 'com.suixingpay.datas'
 apply plugin: 'application'
 archivesBaseName = 'datas-node-boot'
 mainClassName = "com.suixingpay.datas.node.boot.NodeBootApplication"
-applicationDefaultJvmArgs = ["-Dapp.home=DEFINE_APP_HOME/"]
+applicationDefaultJvmArgs = ["-Dapp.home=DEFINE_APP_HOME/ -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005"]
+
 sourceSets {
     main {
     }
@@ -39,6 +40,7 @@ startScripts {
         windowsScript.text = windowsScript.text.replace('set CLASSPATH=', 'cd %APP_HOME%\nset CLASSPATH=').replace("DEFINE_APP_HOME",'%APP_HOME%')
     }
 }
+
 
 dependencies {
     compile(
