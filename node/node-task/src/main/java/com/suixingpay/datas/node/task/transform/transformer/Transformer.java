@@ -21,5 +21,5 @@ import java.util.Map;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月26日 15:59
  */
 public interface Transformer {
-    void transform(ETLBucket bucket, Map<String, TableMapper> tableMapper, DbDialect targetDialect);
+    void transform(ETLBucket bucket, TableMapper tableMapper, DbDialect targetDialect);
 }

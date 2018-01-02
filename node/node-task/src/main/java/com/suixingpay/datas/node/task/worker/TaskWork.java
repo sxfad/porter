@@ -44,7 +44,7 @@ public class TaskWork {
     protected final DTaskStat stat;
     private  final Map<StageType, StageJob> JOBS;
     private final String basicThreadName;
-    private final TaskWorker worker;
+    private final TableMapper mapper;
     public TaskWork(String taskId, String topic, DataSourceWrapper source, DataSourceWrapper target, DataSourceWrapper dataSource, TaskWorker worker) {
         basicThreadName = "TaskWork-[taskId:" + taskId + "]-[topic:" + topic + "]";
         this.target = target;
@@ -52,7 +52,6 @@ public class TaskWork {
         this.topic = topic;
         this.taskId = taskId;
         this.consumerSource = dataSource;
-        this.worker = worker;
         stat = new DTaskStat(taskId, null, topic);
         TaskWork work = this;
         JOBS = new LinkedHashMap<StageType, StageJob>(){
@@ -64,6 +63,8 @@ public class TaskWork {
                 put(StageType.DB_CHECK, new AlertJob(work));
             }
         };
+        String mapperKey = taskId + "_" +topic.replace(".", "_");
+        this.mapper = worker.getTableMapper().get(mapperKey.toUpperCase());
     }
 
     public void stop() {
@@ -73,6 +74,8 @@ public class TaskWork {
             for (Map.Entry<StageType, StageJob> jobs : JOBS.entrySet()) {
                 jobs.getValue().stop();
             }
+
+            //广播任务结束消息
             ClusterProvider.sendCommand(new TaskStopCommand(taskId,topic));
         } catch (Exception e) {
             LOGGER.error("终止执行任务[{}-{}]异常", taskId, topic, e);
@@ -114,11 +117,20 @@ public class TaskWork {
     public <T> T waitSequence() {
         return ((ExtractJob)JOBS.get(StageType.EXTRACT)).getNextSequence();
     }
-    public Map<String, TableMapper> getTableMapper() {
-        return worker.getTableMapper();
-    }
 
     public DTaskStat getStat() {
         return stat;
+    }
+
+    public String getTaskId() {
+        return taskId;
+    }
+
+    public String getTopic() {
+        return topic;
+    }
+
+    public TableMapper getMapper() {
+        return mapper;
     }
 }

@@ -112,6 +112,8 @@ public class SQLBatchLoader implements Loader {
             } catch (Exception e) {
                 LOGGER.error("{}->ETLData:{},sequenceId:{}",row.getOpType(), JSON.toJSONString(row), bucket.getSequence(), e);
             }
+            //更新最后执行消息事件的产生时间，用于计算从消息产生到加载如路时间、计算数据同步检查时间
+            if (null != row.getOpTime()) stat.setLastLoadedTime(row.getOpTime());
         }
-     }
+    }
 }

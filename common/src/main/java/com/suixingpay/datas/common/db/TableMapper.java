@@ -22,6 +22,7 @@ public class TableMapper {
     private boolean custom = false;
     private String[] schema;
     private String[] table;
+    private String[] updateDate;
     private Map<String, String> columns;
 
     public String[] getSchema() {
@@ -51,6 +52,7 @@ public class TableMapper {
     public boolean isCustom() {
         boolean changed = (null != schema && schema.length == 2)
                 || (null != table && table.length ==2)
+                || (null != updateDate && updateDate.length ==2)
                 || (null != columns && !columns.isEmpty());
         return changed || custom;
     }
@@ -59,7 +61,15 @@ public class TableMapper {
         this.custom = custom;
     }
 
-    public String getUniqueKey() {
-        return isCustom() ? (schema[0] + "_" + table[0]).toUpperCase() :null;
+    public String getUniqueKey(String taskId) {
+        return isCustom() ? (taskId + "_" + schema[0] + "_" + table[0]).toUpperCase() :null;
+    }
+
+    public String[] getUpdateDate() {
+        return updateDate;
+    }
+
+    public void setUpdateDate(String[] updateDate) {
+        this.updateDate = updateDate;
     }
 }

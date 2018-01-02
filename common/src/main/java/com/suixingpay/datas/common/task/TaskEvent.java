@@ -8,6 +8,8 @@
  */
 package com.suixingpay.datas.common.task;
 
+import com.suixingpay.datas.common.cluster.data.DObject;
+
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月21日 17:19
@@ -15,16 +17,17 @@ package com.suixingpay.datas.common.task;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月21日 17:19
  */
 public class TaskEvent {
-    private final String taskId;
+    private final DObject dData;
     private final TaskEventType type;
 
-    public TaskEvent(String taskId, TaskEventType type) {
-        this.taskId = taskId;
+    public TaskEvent(DObject dData, TaskEventType type) {
+        this.dData = dData;
         this.type = type;
     }
 
-    public String getTaskId() {
-        return taskId;
+
+    public DObject getdData() {
+        return dData;
     }
 
     public TaskEventType getType() {

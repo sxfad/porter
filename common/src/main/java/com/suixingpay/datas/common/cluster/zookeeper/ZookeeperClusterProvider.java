@@ -46,6 +46,16 @@ public class ZookeeperClusterProvider extends ClusterProvider{
     }
 
     @Override
+    public void removeTaskEventListener(TaskEventListener listener) {
+        for (ClusterListener clusterListener : zkMonitor.getListener().values()) {
+            if (clusterListener instanceof TaskEventProvider) {
+                TaskEventProvider teProvider = (TaskEventProvider) clusterListener;
+                teProvider.removeTaskEventListener(listener);
+            }
+        }
+    }
+
+    @Override
     public void doInitialize(ClusterDriver driver) {
         client = new ZookeeperClient(driver);
         zkMonitor = new ZookeeperClusterMonitor();

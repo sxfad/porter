@@ -77,6 +77,13 @@ public abstract class AbstractSqlTemplate implements SqlTemplate {
         return sql.toString().intern();
     }
 
+    @Override
+    public String getDataChangedCountSql(String schemaName, String tableName, String autoUpdateColumn) {
+        StringBuilder sql = new StringBuilder("select count(1) from ").append(getFullName(schemaName, tableName)).append(" where ");
+        sql.append(autoUpdateColumn).append(" >= ? and ").append(autoUpdateColumn).append(" <= ? ");
+        return sql.toString().intern();
+    }
+
     // ================ helper method ============
 
     protected String appendEscape(String columnName) {

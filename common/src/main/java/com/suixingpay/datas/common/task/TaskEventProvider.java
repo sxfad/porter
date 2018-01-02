@@ -16,4 +16,6 @@ package com.suixingpay.datas.common.task;
  */
 public interface TaskEventProvider {
     void addTaskEventListener(TaskEventListener listener);
+
+    void removeTaskEventListener(TaskEventListener listener);
 }

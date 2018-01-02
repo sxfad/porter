@@ -8,6 +8,7 @@
  */
 package com.suixingpay.datas.common.cluster.command;
 
+import com.suixingpay.datas.common.cluster.data.DCallback;
 import com.suixingpay.datas.common.cluster.data.DTaskStat;
 
 import java.util.concurrent.atomic.AtomicLong;
@@ -21,12 +22,17 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class TaskStatCommand implements ClusterCommand {
     private final DTaskStat stat;
-
-    public TaskStatCommand(DTaskStat stat) {
+    private final DCallback callback;
+    public TaskStatCommand(DTaskStat stat, DCallback callback) {
         this.stat = stat;
+        this.callback = callback;
     }
 
     public DTaskStat getStat() {
         return stat;
+    }
+
+    public DCallback getCallback() {
+        return callback;
     }
 }

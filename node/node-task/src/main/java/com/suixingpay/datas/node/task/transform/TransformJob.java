@@ -68,7 +68,7 @@ public class TransformJob extends AbstractStageJob {
                         @Override
                         public ETLBucket call() throws Exception {
                             try {
-                                transformFactory.transform(inThreadBucket, work.getTableMapper());
+                                transformFactory.transform(inThreadBucket, work.getMapper());
                             } catch (Exception e) {
                                 LOGGER.error("批次[{}]执行TransformJob失败!", inThreadBucket.getSequence(), e);
                             }

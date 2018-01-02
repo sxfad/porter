@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 public class ETLRowTransformer implements Transformer {
     private static final Logger LOGGER = LoggerFactory.getLogger(ETLRowTransformer.class);
     @Override
-    public void transform(ETLBucket bucket, Map<String, TableMapper> tableMapper, DbDialect targetDialect) {
+    public void transform(ETLBucket bucket, TableMapper tableMapper, DbDialect targetDialect) {
         for (ETLRow row : bucket.getRows()) {
             mappingRowData(tableMapper, row);
             Table table = findTable(targetDialect, row.getFinalSchema(), row.getFinalTable());
@@ -42,9 +42,7 @@ public class ETLRowTransformer implements Transformer {
         }
     }
 
-    private void mappingRowData(Map<String, TableMapper> tableMapper, ETLRow row) {
-        String key = row.getSchema() + "_" +row.getTable();
-        TableMapper mapper = tableMapper.get(key.toUpperCase());
+    private void mappingRowData(TableMapper mapper, ETLRow row) {
         if (null != mapper && mapper.isCustom()) {
             //替换schema和表名
             if (null != mapper.getSchema() && mapper.getSchema().length == 2) row.setFinalSchema(mapper.getSchema()[1]);

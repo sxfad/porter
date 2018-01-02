@@ -10,6 +10,8 @@ package com.suixingpay.datas.common.cluster.zookeeper;
 
 import com.suixingpay.datas.common.cluster.Client;
 import com.suixingpay.datas.common.cluster.ClusterListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -20,6 +22,7 @@ import com.suixingpay.datas.common.cluster.ClusterListener;
 public abstract class ZookeeperClusterListener implements ClusterListener {
     protected static final  String PREFIX_ATALOG = "/suixingpay";
     protected static final  String BASE_CATALOG = PREFIX_ATALOG + "/datas";
+    protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
     protected ZookeeperClient client;
     public abstract String path();
 

@@ -10,6 +10,8 @@ package com.suixingpay.datas.node.task.worker;
 
 import com.suixingpay.datas.common.cluster.ClusterProvider;
 import com.suixingpay.datas.common.cluster.command.TaskStatCommand;
+import com.suixingpay.datas.common.cluster.data.DCallback;
+import com.suixingpay.datas.common.cluster.data.DObject;
 import com.suixingpay.datas.common.cluster.data.DTaskStat;
 import com.suixingpay.datas.common.datasource.DataSourceWrapper;
 import com.suixingpay.datas.common.datasource.MQDataSourceWrapper;
@@ -21,8 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -43,14 +43,14 @@ public class TaskWorker {
     private final AtomicBoolean SOURCE_STAT = new AtomicBoolean(false);
     //负责将任务工作者的状态定时上传
     private final ScheduledExecutorService STAT_WORKER;
-    private final List<TaskWork> JOBS;
+    private final Map<String,TaskWork> JOBS;
     private final Map<String,TableMapper> TABLE_MAPPERS;
     private DataSourceWrapper source;
     private DataSourceWrapper target;
 
     public TaskWorker() {
         STAT_WORKER = Executors.newSingleThreadScheduledExecutor(new DefaultNamedThreadFactory("TaskStat"));
-        JOBS = new CopyOnWriteArrayList<>();
+        JOBS = new ConcurrentHashMap<>();
         workerSequence = SEQUENCE.incrementAndGet();
         TABLE_MAPPERS = new ConcurrentHashMap<>();
     }
@@ -69,12 +69,21 @@ public class TaskWorker {
                         }
                     }
                     //每10秒上传一次消费进度
-                    for (TaskWork job : JOBS) {
+                    for (TaskWork job : JOBS.values()) {
                         try {
                             //获取JOB的运行状态
                             DTaskStat newStat = job.stat.snapshot(DTaskStat.class);
                             job.stat.reset();
-                            ClusterProvider.sendCommand(new TaskStatCommand(newStat));
+                            ClusterProvider.sendCommand(new TaskStatCommand(newStat, new DCallback() {
+                                @Override
+                                public void callback(DObject object) {
+                                    DTaskStat remoteData = (DTaskStat) object;
+                                    if(null == job.stat.getLastCheckedTime()
+                                            && job.stat.getUpdateStat().compareAndSet(false, true)) {
+                                        job.stat.setLastLoadedTime(remoteData.getLastLoadedTime());
+                                    }
+                                }
+                            }));
                         } catch (Exception e) {
                             LOGGER.error("上传任务消费进度出错", e);
                         }
@@ -89,7 +98,7 @@ public class TaskWorker {
         if (STAT.compareAndSet(true, false)) {
             LOGGER.info("工人下线.......");
             STAT_WORKER.shutdown();
-            for (TaskWork job : JOBS) {
+            for (TaskWork job : JOBS.values()) {
                 job.stop();
             }
         } else {
@@ -102,7 +111,7 @@ public class TaskWorker {
         if (null != task.getMappers()) {
             for (TableMapper mapper : task.getMappers()) {
                 if (mapper.isCustom()) {
-                    TABLE_MAPPERS.putIfAbsent(mapper.getUniqueKey(), mapper);
+                    TABLE_MAPPERS.putIfAbsent(mapper.getUniqueKey(task.getTaskId()), mapper);
                 }
             }
         }
@@ -123,7 +132,7 @@ public class TaskWorker {
                 }
                 TaskWork job = new TaskWork(task.getTaskId(), topic, source, target, dataSource, this);
                 job.start();
-                JOBS.add(job);
+                JOBS.put(task.getTaskId() + "_" +topic, job);
             } catch (Exception e){
                 LOGGER.error("topic JOB分配出错!", e);
             }

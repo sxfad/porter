@@ -20,6 +20,8 @@ public interface SqlTemplate {
     public String getInsertSql(String schemaName, String tableName, String[] columns);
     public String getTruncateSql(String schemaName, String tableName);
 
+    public String getDataChangedCountSql(String schemaName, String tableName, String autoUpdateColumn);
+
     /**
      * 获取对应的mergeSql
      */

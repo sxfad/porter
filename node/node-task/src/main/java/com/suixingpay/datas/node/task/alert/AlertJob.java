@@ -9,11 +9,13 @@
 package com.suixingpay.datas.node.task.alert;
 
 import com.suixingpay.datas.common.datasource.DataSourceWrapper;
+import com.suixingpay.datas.common.db.TableMapper;
 import com.suixingpay.datas.common.util.ApplicationContextUtils;
 import com.suixingpay.datas.node.core.task.AbstractStageJob;
 import com.suixingpay.datas.node.task.alert.alerter.AlerterFactory;
-import com.suixingpay.datas.node.task.load.loader.LoaderFactory;
 import com.suixingpay.datas.node.task.worker.TaskWork;
+import org.apache.commons.lang3.tuple.ImmutableTriple;
+import org.apache.commons.lang3.tuple.Triple;
 
 /**
  * 单线程执行，但存在多线程执行的可能性，前期单线程执行
@@ -26,11 +28,37 @@ public class AlertJob extends AbstractStageJob {
     private final DataSourceWrapper source;
     private final DataSourceWrapper target;
     private final AlerterFactory alerterFactory;
+    private final TaskWork work;
+    private final Triple<String[], String[], String[]> checkMeta;
     public AlertJob(TaskWork work) {
         super(work.getBasicThreadName());
         this.target = work.getTarget();
         this.source = work.getSource();
         alerterFactory = ApplicationContextUtils.INSTANCE.getBean(AlerterFactory.class);
+        this.work = work;
+        //初始化告警数据库查询信息
+        TableMapper mapper = work.getMapper();
+        String[] updateTime = null;
+        String[] schema = null;
+        String[] table = null;
+        if (null != mapper && null != mapper.getUpdateDate() && mapper.getUpdateDate().length == 2) {
+            updateTime = mapper.getUpdateDate();
+        } else {
+            updateTime = null;
+        }
+        if (null != mapper && null != mapper.getSchema() && mapper.getSchema().length == 2) {
+            schema = mapper.getSchema();
+        } else {
+            String defaultSchema = work.getTopic().split("\\.")[0];
+            schema = new String[] {defaultSchema, defaultSchema};
+        }
+        if (null != mapper && null != mapper.getTable() && mapper.getTable().length == 2) {
+            table = mapper.getTable();
+        } else {
+            String defaultSchema = work.getTopic().split("\\.")[1];
+            table = new String[] {defaultSchema, defaultSchema};
+        }
+        checkMeta = new ImmutableTriple<>(schema, table, updateTime);
     }
 
     @Override
@@ -46,7 +74,11 @@ public class AlertJob extends AbstractStageJob {
     @Override
     protected void loopLogic() {
         //10秒执行一次
-        alerterFactory.check(source, target);
+        try {
+            alerterFactory.check(source, target, work.getStat(), checkMeta);
+        } catch (Exception e) {
+            LOGGER.error("[{}][{}]db check error!",work.getTaskId(), work.getTopic(), e);
+        }
     }
 
     @Override

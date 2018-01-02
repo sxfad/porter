@@ -8,9 +8,12 @@
  */
 package com.suixingpay.datas.common.cluster.data;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import org.apache.commons.lang3.StringUtils;
 
+import java.beans.Transient;
 import java.util.Date;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -29,6 +32,11 @@ public class DTaskStat  extends DObject {
     private AtomicLong deleteRow = new AtomicLong(0);
     private AtomicLong errorRow = new AtomicLong(0);
     private Date statedTime;
+    private Date lastCheckedTime;
+    private Date lastLoadedTime;
+    private AtomicLong alertedTimes = new AtomicLong(0);
+    @JSONField(serialize = false, deserialize = false)
+    private AtomicBoolean updateStat = new AtomicBoolean(false);
     public DTaskStat() {
         statedTime = new Date();
     }
@@ -66,30 +74,40 @@ public class DTaskStat  extends DObject {
         return insertRow;
     }
 
-    public void setInsertRow(AtomicLong insertRow) {
-        this.insertRow = insertRow;
-    }
 
     public AtomicLong getUpdateRow() {
         return updateRow;
     }
 
-    public void setUpdateRow(AtomicLong updateRow) {
-        this.updateRow = updateRow;
-    }
 
     public AtomicLong getDeleteRow() {
         return deleteRow;
     }
 
-    public void setDeleteRow(AtomicLong deleteRow) {
-        this.deleteRow = deleteRow;
-    }
-
-
 
     public AtomicLong getErrorRow() {
         return errorRow;
+    }
+
+    public Date getLastCheckedTime() {
+        return lastCheckedTime;
+    }
+
+    public AtomicLong getAlertedTimes() {
+        return alertedTimes;
+    }
+
+
+    public Date getLastLoadedTime() {
+        return lastLoadedTime;
+    }
+
+    public void setLastLoadedTime(Date lastLoadedTime) {
+        this.lastLoadedTime = lastLoadedTime;
+    }
+
+    public void setLastCheckedTime(Date lastCheckedTime) {
+        this.lastCheckedTime = lastCheckedTime;
     }
 
     @Override
@@ -101,7 +119,10 @@ public class DTaskStat  extends DObject {
             this.insertRow.addAndGet(stat.insertRow.longValue());
             this.updateRow.addAndGet(stat.updateRow.longValue());
             this.errorRow.addAndGet(stat.errorRow.longValue());
+            this.alertedTimes.addAndGet(stat.alertedTimes.longValue());
             this.statedTime = new Date();
+            if (null != stat.lastLoadedTime) this.lastLoadedTime = stat.lastLoadedTime;
+            if (null != stat.lastCheckedTime) this.lastCheckedTime = stat.lastCheckedTime;
         }
     }
     public void reset() {
@@ -109,5 +130,14 @@ public class DTaskStat  extends DObject {
         this.insertRow.set(0);
         this.updateRow.set(0);
         this.errorRow.set(0);
+        this.alertedTimes.set(0);
+    }
+
+    public AtomicBoolean getUpdateStat() {
+        return updateStat;
+    }
+
+    public Date getStatedTime() {
+        return statedTime;
     }
 }

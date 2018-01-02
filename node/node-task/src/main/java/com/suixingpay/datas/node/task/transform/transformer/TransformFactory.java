@@ -29,7 +29,7 @@ import java.util.Map;
 @Scope("singleton")
 public class TransformFactory {
     private List<Transformer> extractors = SpringFactoriesLoader.loadFactories(Transformer.class, null);
-    public void transform(ETLBucket bucket, Map<String,TableMapper> tableMapper) {
+    public void transform(ETLBucket bucket, TableMapper tableMapper) {
         DbDialect targetDialect = DbDialectFactory.INSTANCE.getDbDialect(bucket.getDataSourceId());
         for (Transformer transformer : extractors) {
             transformer.transform(bucket, tableMapper, targetDialect);

@@ -26,6 +26,7 @@ public abstract class ClusterProvider {
     private static ClusterProvider CLUSTER_PROVIDER;
     protected abstract void addListener(ClusterListener listener);
     public abstract void addTaskEventListener(TaskEventListener listener);
+    public abstract void removeTaskEventListener(TaskEventListener listener);
     protected abstract void doInitialize(ClusterDriver driver);
     protected abstract void start();
     protected abstract void stop();
@@ -82,5 +83,8 @@ public abstract class ClusterProvider {
     }
     public static final void addTaskListener (TaskEventListener listener){
         CLUSTER_PROVIDER.addTaskEventListener(listener);
+    }
+    public static final void removeTaskListener (TaskEventListener listener){
+        CLUSTER_PROVIDER.removeTaskEventListener(listener);
     }
 }

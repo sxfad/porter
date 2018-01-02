@@ -9,7 +9,10 @@
 
 package com.suixingpay.datas.node.task.alert.alerter;
 
+import com.suixingpay.datas.common.cluster.data.DTaskStat;
 import com.suixingpay.datas.common.datasource.DataSourceWrapper;
+import com.suixingpay.datas.common.db.TableMapper;
+import org.apache.commons.lang3.tuple.Triple;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 import org.springframework.stereotype.Component;
@@ -36,7 +39,7 @@ public class AlerterFactory {
         }
     }
 
-    public void check(DataSourceWrapper source, DataSourceWrapper target) {
-        alerter.check(source, target);
+    public void check(DataSourceWrapper source, DataSourceWrapper target, DTaskStat stat, Triple<String[], String[], String[]> checkMeta) {
+        alerter.check(source, target, stat, checkMeta);
     }
 }

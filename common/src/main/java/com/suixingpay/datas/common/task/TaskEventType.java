@@ -15,7 +15,7 @@ package com.suixingpay.datas.common.task;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月19日 10:12
  */
 public  enum TaskEventType {
-    CREATE, DELETE;
+    CREATE, DELETE, STAT_READY;
     private TaskEventType() {
 
     }
@@ -25,5 +25,8 @@ public  enum TaskEventType {
 
     public boolean isDelete() {
         return this == TaskEventType.DELETE;
+    }
+    public boolean isStatReady() {
+        return this == TaskEventType.STAT_READY;
     }
 }
