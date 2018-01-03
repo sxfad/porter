@@ -8,7 +8,6 @@
  */
 package com.suixingpay.datas.node.task.extract.extractor;
 
-import com.suixingpay.datas.common.db.TableMapper;
 import com.suixingpay.datas.node.core.event.ETLBucket;
 import com.suixingpay.datas.node.core.event.ETLRow;
 import com.suixingpay.datas.node.core.event.EventType;
@@ -17,7 +16,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 包含所有的忽略规则
@@ -45,6 +43,6 @@ public class IgnoreRowExtractor implements Extractor{
             }
         }
         bucket.getRows().removeAll(removals);
-        LOGGER.info("sequence:{},before bucketSize:{},after bucketSize:{}", bucket.getSequence(), initBucketSize, bucket.getRows().size());
+        LOGGER.debug("sequence:{},before bucketSize:{},after bucketSize:{}", bucket.getSequence(), initBucketSize, bucket.getRows().size());
     }
 }

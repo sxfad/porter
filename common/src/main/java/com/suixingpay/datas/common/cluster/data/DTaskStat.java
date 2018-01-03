@@ -37,10 +37,14 @@ public class DTaskStat  extends DObject {
     private AtomicLong alertedTimes = new AtomicLong(0);
     @JSONField(serialize = false, deserialize = false)
     private AtomicBoolean updateStat = new AtomicBoolean(false);
+
+    //处理进度,如果是mq就是topic的消费进度
+    private String progress;
     public DTaskStat() {
         statedTime = new Date();
     }
     public DTaskStat(String taskId, String nodeId, String topic) {
+        this();
         this.taskId = taskId;
         this.nodeId = nodeId;
         this.topic = topic;
@@ -115,6 +119,7 @@ public class DTaskStat  extends DObject {
         DTaskStat stat = (DTaskStat) data;
         if (taskId.equals(stat.getTaskId()) && stat.getTopic().equals(topic)) {
             if (!StringUtils.isBlank(stat.nodeId)) this.nodeId = stat.nodeId;
+            if (!StringUtils.isBlank(stat.progress)) this.progress = stat.progress;
             this.deleteRow.addAndGet(stat.deleteRow.longValue());
             this.insertRow.addAndGet(stat.insertRow.longValue());
             this.updateRow.addAndGet(stat.updateRow.longValue());
@@ -139,5 +144,13 @@ public class DTaskStat  extends DObject {
 
     public Date getStatedTime() {
         return statedTime;
+    }
+
+    public String getProgress() {
+        return progress;
+    }
+
+    public void setProgress(String progress) {
+        this.progress = progress;
     }
 }

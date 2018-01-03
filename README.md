@@ -67,15 +67,17 @@ AlertJob单线程同步Zookeeper数据库检查时间点，对比指定时间段
             - 累计已完成数据比对时间
 	
 ## quick start
-git clone http://192.168.120.68/zhangkewei/suixingpay-datas.git
+git clone http://192.168.120.68/root/suixingpay-datas.git
 
 cd suixingpay-datas
 
+git checkout 0.1
+
 gradle build
 
-tar zxvf build/distributions/node-boot-1.0-SNAPSHOT.tar
+tar zxvf build/distributions/node-boot-0.1-SNAPSHOT.tar
 
-node-boot-1.0-SNAPSHOT/bin/node-start
+node-boot-0.1-SNAPSHOT/bin/node-start
 
 ## 优雅关闭
 signalId = \`kill -l USR2\`

@@ -2,7 +2,9 @@ group 'com.suixingpay.datas'
 apply plugin: 'application'
 archivesBaseName = 'datas-node-boot'
 mainClassName = "com.suixingpay.datas.node.boot.NodeBootApplication"
-applicationDefaultJvmArgs = ["-Dapp.home=DEFINE_APP_HOME/", "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005"]
+
+//applicationDefaultJvmArgs = ["-Dapp.home=DEFINE_APP_HOME/", "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005"]
+applicationDefaultJvmArgs = ["-Dapp.home=DEFINE_APP_HOME/"]
 
 sourceSets {
     main {

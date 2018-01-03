@@ -7,9 +7,11 @@ package com.suixingpay.datas.node.core.event;/**
  * 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
  */
 
+import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang3.tuple.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +23,7 @@ import java.util.Map;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月26日 11:04
  */
 public class ETLBucket {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ETLBucket.class);
     private final long sequence;
     private final String dataSourceId;
     private final List<ETLRow> rows;
@@ -47,6 +50,7 @@ public class ETLBucket {
     public static ETLBucket from(Pair<Long, List<MessageEvent>> events, String dataSourceId) {
         List<ETLRow> rows = new ArrayList<>();
         for (MessageEvent event : events.getRight()) {
+            LOGGER.debug(JSON.toJSONString(event));
             List<ETLColumn> columns = new ArrayList<>();
             Boolean loopAfter = ! event.getAfter().isEmpty();
             for (Map.Entry<String,Object> entity : loopAfter ? event.getAfter().entrySet() : event.getBefore().entrySet()) {
@@ -78,7 +82,9 @@ public class ETLBucket {
             }
 
             ETLRow row = new ETLRow(event.getSchema(), event.getTable(), event.getOpType(), columns, event.getOpTs());
+            row.setIndex(event.getHead().getOffset()+"");
             rows.add(row);
+            LOGGER.debug(JSON.toJSONString(row));
         }
         return new ETLBucket(events.getKey(), rows, dataSourceId);
     }

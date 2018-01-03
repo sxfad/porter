@@ -34,6 +34,8 @@ public class ETLRow {
     private Map<String, Pair<Object,Object>> sqlColumns = new LinkedHashMap<>();
     //操作时间，保留该字段可以在需要的时候计算出与最终执行时间间隔
     private final Date opTime;
+    //当前消息所在消费源的下标、顺序位置
+    private String index;
     public ETLRow(String schema, String table, EventType opType, List<ETLColumn> columns, Date opTime) {
         this.schema = schema;
         this.table = table;
@@ -95,5 +97,13 @@ public class ETLRow {
 
     public void setSqlColumns(Map<String, Pair<Object,Object>> sqlColumns) {
         this.sqlColumns = sqlColumns;
+    }
+
+    public String getIndex() {
+        return index;
+    }
+
+    public void setIndex(String index) {
+        this.index = index;
     }
 }

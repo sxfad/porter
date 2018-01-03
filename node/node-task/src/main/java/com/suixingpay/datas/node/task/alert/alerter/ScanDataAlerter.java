@@ -36,7 +36,7 @@ public class ScanDataAlerter implements Alerter{
 
     @Override
     public void check(DataSourceWrapper source, DataSourceWrapper target, DTaskStat stat, Triple<String[], String[], String[]> checkMeta) {
-        if (null == stat ||  ! stat.getUpdateStat().get() || null == stat.getLastLoadedTime()) return;
+        if (null == stat ||  ! stat.getUpdateStat().get() || null == stat.getLastLoadedTime() || null == checkMeta.getRight()) return;
         //数据库连接
         DbDialect sourceDialect = DbDialectFactory.INSTANCE.getDbDialect(source.getUniqueId());
         DbDialect targetDialect = DbDialectFactory.INSTANCE.getDbDialect(target.getUniqueId());

@@ -18,6 +18,7 @@ import com.suixingpay.datas.node.core.event.ETLBucket;
 import com.suixingpay.datas.node.core.event.ETLRow;
 import com.suixingpay.datas.node.core.event.EventType;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -108,12 +109,15 @@ public class SQLBatchLoader implements Loader {
                 if (affect < 1) {
                     stat.getErrorRow().incrementAndGet();
                 }
-                //LOGGER.info("[{}]sql:{},affect:{}", row.getOpType(), sql, affect);
+                LOGGER.debug("[{}]sql:{},affect:{}", row.getOpType(), sql, affect);
             } catch (Exception e) {
                 LOGGER.error("{}->ETLData:{},sequenceId:{}",row.getOpType(), JSON.toJSONString(row), bucket.getSequence(), e);
             }
             //更新最后执行消息事件的产生时间，用于计算从消息产生到加载如路时间、计算数据同步检查时间
             if (null != row.getOpTime()) stat.setLastLoadedTime(row.getOpTime());
+            if (!StringUtils.isBlank(row.getIndex())){
+                stat.setProgress(row.getIndex());
+            }
         }
     }
 }
