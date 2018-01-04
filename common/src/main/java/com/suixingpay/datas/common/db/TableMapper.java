@@ -62,7 +62,16 @@ public class TableMapper {
     }
 
     public String getUniqueKey(String taskId) {
-        return isCustom() ? (taskId + "_" + schema[0] + "_" + table[0]).toUpperCase() :null;
+        StringBuffer sb = new StringBuffer();
+        sb.append(taskId).append("_");
+        if (null != schema && schema.length == 2) {
+            sb.append(schema[0]);
+        }
+        sb.append("_");
+        if (null != table && table.length == 2) {
+            sb.append(table[0]);
+        }
+        return isCustom() ? sb.toString().toUpperCase() :null;
     }
 
     public String[] getUpdateDate() {

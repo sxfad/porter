@@ -20,6 +20,7 @@ import com.suixingpay.datas.node.core.event.EventHeader;
 import com.suixingpay.datas.node.core.event.EventType;
 import com.suixingpay.datas.node.core.event.MessageEvent;
 import org.apache.kafka.clients.consumer.*;
+import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +30,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
+import java.util.regex.Pattern;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]

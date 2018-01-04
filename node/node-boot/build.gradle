@@ -25,10 +25,12 @@ task moveOutFromJar(type: Copy) {
 
 processResources.dependsOn moveOutFromJar
 
-
 distributions {
     main {
         contents {
+            from ("bin") {
+                into "bin"
+            }
             from (buildDir.getPath() + "/config") {
                 into "config"
             }

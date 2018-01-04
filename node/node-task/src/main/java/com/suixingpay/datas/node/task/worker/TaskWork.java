@@ -44,7 +44,7 @@ public class TaskWork {
     protected final DTaskStat stat;
     private  final Map<StageType, StageJob> JOBS;
     private final String basicThreadName;
-    private final TableMapper mapper;
+    private TableMapper mapper;
     public TaskWork(String taskId, String topic, DataSourceWrapper source, DataSourceWrapper target, DataSourceWrapper dataSource, TaskWorker worker) {
         basicThreadName = "TaskWork-[taskId:" + taskId + "]-[topic:" + topic + "]";
         this.target = target;
@@ -65,6 +65,10 @@ public class TaskWork {
         };
         String mapperKey = taskId + "_" +topic.replace(".", "_");
         this.mapper = worker.getTableMapper().get(mapperKey.toUpperCase());
+        if (null == this.mapper) {
+            mapperKey = taskId + "_" +topic.split("\\.")[0] + "_";
+            this.mapper = worker.getTableMapper().get(mapperKey.toUpperCase());
+        }
     }
 
     public void stop() {
