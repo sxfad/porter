@@ -23,6 +23,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 
+import java.util.Arrays;
+
 /**
  *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -66,6 +68,7 @@ public class SQLBatchLoader implements Loader {
                     //全字段删除
                     sql = template.getDeleteSql(row.getFinalSchema(), row.getFinalTable(), allColumnNames);
                     if (jdbcTemplate.update(sql, allNewValues) < 1 && keyNames.length > 0) {
+
                         //主键删除
                         sql = template.getDeleteSql(row.getFinalSchema(), row.getFinalTable(), keyNames);
                         affect = jdbcTemplate.update(sql, keyNewValues);
@@ -73,14 +76,22 @@ public class SQLBatchLoader implements Loader {
                             LOGGER.debug("DELETE->ETLData:{},sequenceId:{}", JSON.toJSONString(row), bucket.getSequence());
                         }
                     }
-                    stat.getDeleteRow().addAndGet(affect);
+                    if (affect > 0) {
+                        stat.getDeleteRow().incrementAndGet();
+                    } else {
+                        stat.getErrorDeleteRow().incrementAndGet();
+                    }
                 } else if (row.getOpType() == EventType.INSERT) {
                     sql = template.getInsertSql(row.getFinalSchema(), row.getFinalTable(), allColumnNames);
                     affect = jdbcTemplate.update(sql, allNewValues);
                     if (affect < 1) {
                         LOGGER.debug("INSERT->ETLData:{},sequenceId:{}", JSON.toJSONString(row), bucket.getSequence());
                     }
-                    stat.getInsertRow().addAndGet(affect);
+                    if (affect > 0) {
+                        stat.getInsertRow().incrementAndGet();
+                    } else {
+                        stat.getErrorInsertRow().incrementAndGet();
+                    }
                 } else if (row.getOpType() == EventType.UPDATE) {
                     //全字段更新
                     sql = template.getUpdateSql(row.getFinalSchema(), row.getFinalTable(), allColumnNames);
@@ -97,17 +108,18 @@ public class SQLBatchLoader implements Loader {
                             affect = jdbcTemplate.update(sql, allNewValues);
                         }
                     }
-                    stat.getUpdateRow().addAndGet(affect);
+                    if (affect > 0) {
+                        stat.getUpdateRow().incrementAndGet();
+                    } else {
+                        stat.getErrorUpdateRow().incrementAndGet();
+                    }
                 } else if (row.getOpType() == EventType.TRUNCATE) {
                     sql = template.getTruncateSql(row.getFinalSchema(), row.getFinalTable());
                     affect = jdbcTemplate.update(sql);
                     if (affect < 1) {
                         LOGGER.debug("TRUNCATE->ETLData:{},sequenceId:{}", JSON.toJSONString(row), bucket.getSequence());
                     }
-                    stat.getDeleteRow().addAndGet(affect);
-                }
-                if (affect < 1) {
-                    stat.getErrorRow().incrementAndGet();
+                    stat.getDeleteRow().incrementAndGet();
                 }
                 LOGGER.debug("[{}]sql:{},affect:{}", row.getOpType(), sql, affect);
             } catch (Exception e) {

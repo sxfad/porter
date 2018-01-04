@@ -46,7 +46,8 @@ subprojects {
                 'org.apache.kafka:kafka-clients:1.0.0',
                 'oracle:ojdbc14:10.2.0.1.0',
                 'commons-beanutils:commons-beanutils:1.9.2',
-                "org.springframework.boot:spring-boot-starter-mail:${springVersion}"
+                "org.springframework.boot:spring-boot-starter-mail:${springVersion}",
+                'mysql:mysql-connector-java:5.1.45'
         )
     }
     build.doLast {

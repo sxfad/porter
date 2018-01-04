@@ -11,7 +11,6 @@ package com.suixingpay.datas.common.cluster.data;
 import com.alibaba.fastjson.annotation.JSONField;
 import org.apache.commons.lang3.StringUtils;
 
-import java.beans.Transient;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
@@ -30,7 +29,9 @@ public class DTaskStat  extends DObject {
     private AtomicLong insertRow = new AtomicLong(0);
     private AtomicLong updateRow = new AtomicLong(0);
     private AtomicLong deleteRow = new AtomicLong(0);
-    private AtomicLong errorRow = new AtomicLong(0);
+    private AtomicLong errorUpdateRow = new AtomicLong(0);
+    private AtomicLong errorInsertRow = new AtomicLong(0);
+    private AtomicLong errorDeleteRow = new AtomicLong(0);
     private Date statedTime;
     private Date lastCheckedTime;
     private Date lastLoadedTime;
@@ -89,10 +90,6 @@ public class DTaskStat  extends DObject {
     }
 
 
-    public AtomicLong getErrorRow() {
-        return errorRow;
-    }
-
     public Date getLastCheckedTime() {
         return lastCheckedTime;
     }
@@ -123,7 +120,9 @@ public class DTaskStat  extends DObject {
             this.deleteRow.addAndGet(stat.deleteRow.longValue());
             this.insertRow.addAndGet(stat.insertRow.longValue());
             this.updateRow.addAndGet(stat.updateRow.longValue());
-            this.errorRow.addAndGet(stat.errorRow.longValue());
+            this.errorDeleteRow.addAndGet(stat.errorDeleteRow.longValue());
+            this.errorInsertRow.addAndGet(stat.errorInsertRow.longValue());
+            this.errorUpdateRow.addAndGet(stat.errorUpdateRow.longValue());
             this.alertedTimes.addAndGet(stat.alertedTimes.longValue());
             this.statedTime = new Date();
             if (null != stat.lastLoadedTime) this.lastLoadedTime = stat.lastLoadedTime;
@@ -134,7 +133,9 @@ public class DTaskStat  extends DObject {
         this.deleteRow.set(0);
         this.insertRow.set(0);
         this.updateRow.set(0);
-        this.errorRow.set(0);
+        this.errorDeleteRow.set(0);
+        this.errorInsertRow.set(0);
+        this.errorUpdateRow.set(0);
         this.alertedTimes.set(0);
     }
 
@@ -152,5 +153,17 @@ public class DTaskStat  extends DObject {
 
     public void setProgress(String progress) {
         this.progress = progress;
+    }
+
+    public AtomicLong getErrorUpdateRow() {
+        return errorUpdateRow;
+    }
+
+    public AtomicLong getErrorInsertRow() {
+        return errorInsertRow;
+    }
+
+    public AtomicLong getErrorDeleteRow() {
+        return errorDeleteRow;
     }
 }

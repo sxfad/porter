@@ -30,7 +30,16 @@ public abstract class AbstractStageJob implements StageJob {
     private final ThreadFactory threadFactory;
     //任务退出信号量，为了保证优雅关机时内存中的数据处理完毕
     private final Semaphore stopSignal;
+
+    //管道无数据线程等待间隙
+    private static  final long DEFAULT_THREAD_WAIT_SPAN = 3000;
+    private final long threadWaitSpan;
+
     public AbstractStageJob(String baseThreadName) {
+        this(baseThreadName, DEFAULT_THREAD_WAIT_SPAN);
+    }
+    public AbstractStageJob(String baseThreadName, Long threadWaitSpan) {
+        this.threadWaitSpan = null == threadWaitSpan ? DEFAULT_THREAD_WAIT_SPAN : threadWaitSpan;
         stopSignal = new Semaphore(0);
         threadFactory = new DefaultNamedThreadFactory(baseThreadName + "-" + this.getClass().getSimpleName());
         loopService = threadFactory.newThread(new LoopService());
@@ -86,7 +95,7 @@ public abstract class AbstractStageJob implements StageJob {
                 try {
                     stopSignal.release();
                     LOGGER.debug("源队列为空，线程进入等待.");
-                    Thread.sleep(10000L);
+                    Thread.sleep(threadWaitSpan);
                     LOGGER.debug("源队列为空，线程恢复执行.");
                     stopSignal.acquire();
                 } catch (InterruptedException e) {//如果线程有中断信号，退出线程

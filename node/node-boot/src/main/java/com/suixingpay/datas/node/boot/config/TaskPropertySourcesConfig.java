@@ -8,7 +8,6 @@
  */
 package com.suixingpay.datas.node.boot.config;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.context.annotation.Bean;

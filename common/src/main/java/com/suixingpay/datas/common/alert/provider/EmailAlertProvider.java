@@ -7,11 +7,11 @@
  * 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
  */
 
-package com.suixingpay.datas.common.alert;
+package com.suixingpay.datas.common.alert.provider;
 
+import com.suixingpay.datas.common.alert.AlertDriver;
 import com.suixingpay.datas.common.alert.meta.EmailParams;
 import com.suixingpay.datas.common.util.MachineUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 
@@ -25,7 +25,7 @@ import java.util.Date;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月30日 11:47
  */
-public class EmailAlertProvider implements AlertProvider{
+public class EmailAlertProvider implements AlertProvider {
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private final JavaMailSender sender;
     private final AlertDriver driver;

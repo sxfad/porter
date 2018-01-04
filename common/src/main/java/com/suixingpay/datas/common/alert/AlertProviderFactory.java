@@ -9,6 +9,8 @@
 
 package com.suixingpay.datas.common.alert;
 
+import com.suixingpay.datas.common.alert.provider.AlertProvider;
+import com.suixingpay.datas.common.alert.provider.EmailAlertProvider;
 import com.suixingpay.datas.common.util.ApplicationContextUtils;
 import org.springframework.mail.javamail.JavaMailSender;
 

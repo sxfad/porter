@@ -3,8 +3,7 @@ apply plugin: 'application'
 archivesBaseName = 'datas-node-boot'
 mainClassName = "com.suixingpay.datas.node.boot.NodeBootApplication"
 
-//applicationDefaultJvmArgs = ["-Dapp.home=DEFINE_APP_HOME/", "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005"]
-applicationDefaultJvmArgs = ["-Dapp.home=DEFINE_APP_HOME/"]
+applicationDefaultJvmArgs = ["-Dapp.home=DEFINE_APP_HOME/", "-Xms2G", "-Xmx2G"]
 
 sourceSets {
     main {
@@ -12,7 +11,7 @@ sourceSets {
 }
 processResources {
     exclude(
-            "**/**"
+            //"**/**"
     )
 }
 
@@ -25,11 +24,14 @@ task moveOutFromJar(type: Copy) {
 
 processResources.dependsOn moveOutFromJar
 
+
+
 distributions {
     main {
         contents {
             from ("bin") {
                 into "bin"
+                fileMode = 0755
             }
             from (buildDir.getPath() + "/config") {
                 into "config"
