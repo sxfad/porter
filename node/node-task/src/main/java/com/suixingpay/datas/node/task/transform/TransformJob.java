@@ -9,15 +9,12 @@
 package com.suixingpay.datas.node.task.transform;
 
 import com.suixingpay.datas.common.util.ApplicationContextUtils;
-import com.suixingpay.datas.node.core.event.ETLBucket;
+import com.suixingpay.datas.node.core.event.etl.ETLBucket;
 import com.suixingpay.datas.node.core.task.AbstractStageJob;
 import com.suixingpay.datas.node.core.task.StageType;
-import com.suixingpay.datas.node.datacarrier.DataCarrier;
-import com.suixingpay.datas.node.datacarrier.DataCarrierFactory;
 import com.suixingpay.datas.node.task.transform.transformer.TransformFactory;
 import com.suixingpay.datas.node.task.worker.TaskWork;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.*;
 import java.util.function.BiFunction;

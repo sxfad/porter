@@ -8,9 +8,9 @@
  */
 package com.suixingpay.datas.node.task.extract.extractor;
 
-import com.suixingpay.datas.node.core.event.ETLBucket;
-import com.suixingpay.datas.node.core.event.ETLRow;
-import com.suixingpay.datas.node.core.event.EventType;
+import com.suixingpay.datas.node.core.event.etl.ETLBucket;
+import com.suixingpay.datas.node.core.event.etl.ETLRow;
+import com.suixingpay.datas.node.core.event.s.EventType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

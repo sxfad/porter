@@ -8,29 +8,21 @@
  */
 package com.suixingpay.datas.node.core.datasource.mq;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.alibaba.fastjson.JSONObject;
 import com.suixingpay.datas.common.datasource.AbstractSourceWrapper;
 import com.suixingpay.datas.common.datasource.DataDriver;
 import com.suixingpay.datas.common.datasource.MQDataSourceWrapper;
 import com.suixingpay.datas.common.datasource.meta.KafkaDriverMeta;
-import com.suixingpay.datas.node.core.event.EventFetcher;
-import com.suixingpay.datas.node.core.event.EventHeader;
-import com.suixingpay.datas.node.core.event.EventType;
-import com.suixingpay.datas.node.core.event.MessageEvent;
+import com.suixingpay.datas.node.core.event.s.*;
+import com.suixingpay.datas.node.core.event.s.converter.ConvertNotMatchException;
+import com.suixingpay.datas.node.core.event.s.converter.OggConverter;
 import org.apache.kafka.clients.consumer.*;
-import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.sql.DataSource;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
-import java.util.regex.Pattern;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -40,8 +32,6 @@ import java.util.regex.Pattern;
  */
 public class KafkaSourceWrapper extends AbstractSourceWrapper implements EventFetcher, MQDataSourceWrapper {
     private static final Logger LOGGER = LoggerFactory.getLogger(KafkaSourceWrapper.class);
-    private static final DateFormat OP_TS_F = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
-    private static final DateFormat C_TS_F = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS");
     private final String FIRST_CONSUME_FROM = "earliest";
 
     private String topic;
@@ -53,6 +43,8 @@ public class KafkaSourceWrapper extends AbstractSourceWrapper implements EventFe
     private Consumer<String, String> consumer;
     private CountDownLatch canFetch;
 
+    //MessageEvent转换器
+    private EventConverter converter;
     public KafkaSourceWrapper(DataDriver driver) {
         super(driver);
         KafkaDriverMeta meta = (KafkaDriverMeta)driver.getType().getMeta();
@@ -64,10 +56,23 @@ public class KafkaSourceWrapper extends AbstractSourceWrapper implements EventFe
         String oncePoolTimeoutStr= driver.getExtendAttr().getOrDefault(meta.POLL_TIME_OUT,"10000");
         oncePollTimeout = Long.parseLong(oncePoolTimeoutStr);
         canFetch = new CountDownLatch(1);
+        //配置转换器
+        String converterName = driver.getExtendAttr().getOrDefault(meta.CONVERTER, "");
+        converter = ConverterFactory.INSTANCE.getConverter(converterName);
+    }
+
+    @Override
+    public EventConverter getConverter() {
+        return converter;
     }
 
     @Override
     public  List<MessageEvent> fetch() {
+        if (null == converter) {
+            String msg = "消息转换器不可用，消息消费暂停!";
+            LOGGER.error("topic:{},group:{}" + msg, topic, group, new Exception(msg));
+            return null;
+        }
         try {
             canFetch.await();
         } catch (InterruptedException e) {
@@ -80,38 +85,13 @@ public class KafkaSourceWrapper extends AbstractSourceWrapper implements EventFe
         while (it.hasNext()) {
             try {
                 ConsumerRecord<String, String> record = it.next();
-                JSONObject obj = JSON.parseObject(record.value());
-                EventType eventType = EventType.type(obj.getString("op_type"));
-                //不能解析的事件跳过
-                if(null == eventType ||  eventType == EventType.UNKNOWN) continue;
-
-                EventHeader eventHeader = new EventHeader();
-                eventHeader.setKey(record.key());
-                eventHeader.setOffset(record.offset());
-                eventHeader.setPartition(record.partition());
-                eventHeader.setTopic(record.topic());
-
-                //body
-                MessageEvent event = new MessageEvent();
-                String schemaAndTable = obj.getString("table");
-                String[] stTmp = null != schemaAndTable ? schemaAndTable.split("\\.") : null;
-                if (null != stTmp && stTmp.length == 2) {
-                    event.setSchema(stTmp[0]);
-                    event.setTable(stTmp[1]);
-                }
-                event.setOpType(eventType);
-                String poTS = obj.getString("op_ts");
-                event.setOpTs(OP_TS_F.parse(poTS.substring(0,poTS.length() - 3)));
-                String currentTS = obj.getString("current_ts");
-                event.setCurrentTs(C_TS_F.parse(currentTS.substring(0, currentTS.length() - 3)));
-                JSONArray pkeys = obj.containsKey("primary_keys") ? obj.getJSONArray("primary_keys") : null;
-                if (null != pkeys) event.setPrimaryKeys(pkeys.toJavaList(String.class));
-                event.setBefore(obj.getObject("before",Map.class));
-                event.setAfter(obj.getObject("after",Map.class));
-                event.setHead(eventHeader);
-
-                msgs.add(event);
+                MessageEvent event = getConverter().convert(record);
+                if (null !=event) msgs.add(event);
+            } catch (ConvertNotMatchException notMatchException) {
+                LOGGER.error("消息转换器不匹配", notMatchException);
+                converter = null;
             } catch (Exception e) {
+                e.printStackTrace();
             }
         }
         return msgs;

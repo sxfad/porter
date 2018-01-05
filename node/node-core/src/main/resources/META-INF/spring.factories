@@ -1,0 +1,1 @@
+com.suixingpay.datas.node.core.event.s.EventConverter = com.suixingpay.datas.node.core.event.s.converter.OggConverter

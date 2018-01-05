@@ -10,7 +10,7 @@
 package com.suixingpay.datas.node.task.load.loader;
 
 import com.suixingpay.datas.common.cluster.data.DTaskStat;
-import com.suixingpay.datas.node.core.event.ETLBucket;
+import com.suixingpay.datas.node.core.event.etl.ETLBucket;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 import org.springframework.stereotype.Component;

@@ -10,7 +10,7 @@
 package com.suixingpay.datas.node.task.load.loader;
 
 import com.suixingpay.datas.common.cluster.data.DTaskStat;
-import com.suixingpay.datas.node.core.event.ETLBucket;
+import com.suixingpay.datas.node.core.event.etl.ETLBucket;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]

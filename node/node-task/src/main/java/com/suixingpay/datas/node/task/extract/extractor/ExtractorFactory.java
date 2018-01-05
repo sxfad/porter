@@ -8,14 +8,12 @@
  */
 package com.suixingpay.datas.node.task.extract.extractor;
 
-import com.suixingpay.datas.common.db.TableMapper;
-import com.suixingpay.datas.node.core.event.ETLBucket;
+import com.suixingpay.datas.node.core.event.etl.ETLBucket;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
