@@ -10,13 +10,12 @@ package com.suixingpay.datas.node.task.extract;
 
 import com.suixingpay.datas.common.datasource.DataSourceWrapper;
 import com.suixingpay.datas.common.util.ApplicationContextUtils;
-import com.suixingpay.datas.node.core.event.ETLBucket;
-import com.suixingpay.datas.node.core.event.MessageEvent;
+import com.suixingpay.datas.node.core.event.etl.ETLBucket;
+import com.suixingpay.datas.node.core.event.s.MessageEvent;
 import com.suixingpay.datas.node.core.task.AbstractStageJob;
 import com.suixingpay.datas.node.core.task.StageType;
 import com.suixingpay.datas.node.datacarrier.DataCarrier;
 import com.suixingpay.datas.node.datacarrier.DataCarrierFactory;
-import com.suixingpay.datas.node.datacarrier.simple.SimpleDataCarrier;
 import com.suixingpay.datas.node.task.extract.extractor.ExtractorFactory;
 import com.suixingpay.datas.node.task.worker.TaskWork;
 import org.apache.commons.lang3.tuple.Pair;

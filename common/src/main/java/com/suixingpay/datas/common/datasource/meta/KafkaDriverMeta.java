@@ -16,8 +16,9 @@ package com.suixingpay.datas.common.datasource.meta;
  */
 public enum  KafkaDriverMeta  implements DataDriverMeta {
     INSTANCE();
-    public  final String TOPIC="topic";
-    public  final String GROUP="group";
-    public  final String POLL_TIME_OUT="pollTimeOut";
-    public  final String ONCE_POLL_SIZE="oncePollSize";
+    public  final String TOPIC = "topic";
+    public  final String GROUP = "group";
+    public  final String POLL_TIME_OUT = "pollTimeOut";
+    public  final String ONCE_POLL_SIZE = "oncePollSize";
+    public  final String CONVERTER = "converter";
 }

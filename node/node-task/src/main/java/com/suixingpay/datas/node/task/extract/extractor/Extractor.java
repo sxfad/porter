@@ -8,10 +8,7 @@
  */
 package com.suixingpay.datas.node.task.extract.extractor;
 
-import com.suixingpay.datas.common.db.TableMapper;
-import com.suixingpay.datas.node.core.event.ETLBucket;
-
-import java.util.Map;
+import com.suixingpay.datas.node.core.event.etl.ETLBucket;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]

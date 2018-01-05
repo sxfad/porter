@@ -1,4 +1,4 @@
-package com.suixingpay.datas.node.core.event;/**
+package com.suixingpay.datas.node.core.event.etl;/**
  * All rights Reserved, Designed By Suixingpay.
  *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -7,6 +7,7 @@ package com.suixingpay.datas.node.core.event;/**
  * 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
  */
 
+import com.suixingpay.datas.node.core.event.s.EventType;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Date;

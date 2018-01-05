@@ -1,4 +1,4 @@
-package com.suixingpay.datas.node.core.event;/**
+package com.suixingpay.datas.node.core.event.s;/**
  * All rights Reserved, Designed By Suixingpay.
  *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -17,5 +17,6 @@ import java.util.List;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月14日 14:05
  */
 public interface EventFetcher {
+    EventConverter getConverter();
     List<MessageEvent> fetch();
 }

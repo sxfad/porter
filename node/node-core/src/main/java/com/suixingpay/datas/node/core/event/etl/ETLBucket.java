@@ -1,4 +1,4 @@
-package com.suixingpay.datas.node.core.event;/**
+package com.suixingpay.datas.node.core.event.etl;/**
  * All rights Reserved, Designed By Suixingpay.
  *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -8,6 +8,8 @@ package com.suixingpay.datas.node.core.event;/**
  */
 
 import com.alibaba.fastjson.JSON;
+import com.suixingpay.datas.node.core.event.s.EventType;
+import com.suixingpay.datas.node.core.event.s.MessageEvent;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
