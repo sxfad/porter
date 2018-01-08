@@ -31,7 +31,7 @@ public class AlertJob extends AbstractStageJob {
     private final TaskWork work;
     private final Triple<String[], String[], String[]> checkMeta;
     public AlertJob(TaskWork work) {
-        super(work.getBasicThreadName(), 1000 * 60 * 3L );
+        super(work.getBasicThreadName(), 1000 * 60 * 5L );
         this.target = work.getTarget();
         this.source = work.getSource();
         alerterFactory = ApplicationContextUtils.INSTANCE.getBean(AlerterFactory.class);

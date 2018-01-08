@@ -8,6 +8,7 @@
  */
 package com.suixingpay.datas.node.task.extract.extractor;
 
+import com.alibaba.fastjson.JSON;
 import com.suixingpay.datas.node.core.event.etl.ETLBucket;
 import com.suixingpay.datas.node.core.event.etl.ETLRow;
 import com.suixingpay.datas.node.core.event.s.EventType;
@@ -32,13 +33,16 @@ public class IgnoreRowExtractor implements Extractor{
         long initBucketSize = bucket.getRows().size();
         List<ETLRow> removals = new ArrayList<>();
         for (ETLRow row : bucket.getRows()) {
+            LOGGER.debug("trying extract row:{}", JSON.toJSONString(row));
             //当前仅支持插入、更新、删除、截断表
             if (row.getOpType() == EventType.INSERT || row.getOpType() == EventType.UPDATE || row.getOpType() == EventType.DELETE) {
                 //插入、删除、更新字段为空
                 if ((null == row.getColumns() || row.getColumns().isEmpty()) && row.getOpType() != EventType.TRUNCATE) {
+                    LOGGER.debug("removing row:{}", JSON.toJSONString(row));
                     removals.add(row);
                 }
             } else {
+                LOGGER.debug("removing row:{}", JSON.toJSONString(row));
                 removals.add(row);
             }
         }

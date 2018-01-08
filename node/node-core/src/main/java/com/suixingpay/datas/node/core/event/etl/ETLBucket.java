@@ -26,7 +26,7 @@ import java.util.Map;
  */
 public class ETLBucket {
     private static final Logger LOGGER = LoggerFactory.getLogger(ETLBucket.class);
-    private final long sequence;
+    private final Long sequence;
     private final String dataSourceId;
     private final List<ETLRow> rows;
 
@@ -36,12 +36,12 @@ public class ETLBucket {
         this.dataSourceId = dataSourceId;
     }
 
-    public long getSequence() {
+    public Long getSequence() {
         return sequence;
     }
 
     public List<ETLRow> getRows() {
-        return rows;
+        return null == rows ? new ArrayList<>(): rows;
     }
 
     /**

@@ -26,4 +26,5 @@ public interface DataCarrier<E> {
     Pair<Long, List<E>> greedyPullByOrder();
     <E> E pull();
     <E> List<E> greedyPull();
+    long size();
 }

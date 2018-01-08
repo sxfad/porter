@@ -32,7 +32,7 @@ public abstract class AbstractStageJob implements StageJob {
     private final Semaphore stopSignal;
 
     //管道无数据线程等待间隙
-    private static  final long DEFAULT_THREAD_WAIT_SPAN = 3000;
+    private static  final long DEFAULT_THREAD_WAIT_SPAN = 2000;
     private final long threadWaitSpan;
 
     public AbstractStageJob(String baseThreadName) {

@@ -31,7 +31,7 @@ import java.util.concurrent.*;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月24日 11:20
  */
 public class ExtractJob extends AbstractStageJob {
-    private static final int BUFFER_SIZE = LOGIC_THREAD_SIZE * LOGIC_THREAD_SIZE * LOGIC_THREAD_SIZE;
+    private static final int BUFFER_SIZE = LOGIC_THREAD_SIZE * LOGIC_THREAD_SIZE * LOGIC_THREAD_SIZE * LOGIC_THREAD_SIZE;
     private final TaskWork work;
     private final ExecutorService executorService;
     private final DataCarrier<ETLBucket> carrier;

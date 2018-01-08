@@ -16,4 +16,18 @@ if [ "$1" = "debug" ]; then
     export JAVA_OPTS=" $JAVA_OPTS -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,address=$DEBUG_PORT,server=y,suspend=n"
 fi
 
-nohup "$PRGDIR/$EXECUTABLE" > /dev/null 2>&1 &
+save_spring () {
+    index=0
+    declare -a temp_array
+    for i do
+        if [[ "$i" =~ ^--[a-zA-Z].* ]];then
+           temp_array[index]=${i}
+           index=$((index+1));
+        fi
+    done
+    echo ${temp_array[@]}
+}
+
+SPRING_ARGS=$(save_spring "$@")
+
+nohup "$PRGDIR/$EXECUTABLE" $SPRING_ARGS > /dev/null 2>&1 &

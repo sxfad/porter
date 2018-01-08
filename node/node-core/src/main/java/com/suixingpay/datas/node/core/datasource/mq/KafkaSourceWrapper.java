@@ -14,7 +14,6 @@ import com.suixingpay.datas.common.datasource.MQDataSourceWrapper;
 import com.suixingpay.datas.common.datasource.meta.KafkaDriverMeta;
 import com.suixingpay.datas.node.core.event.s.*;
 import com.suixingpay.datas.node.core.event.s.converter.ConvertNotMatchException;
-import com.suixingpay.datas.node.core.event.s.converter.OggConverter;
 import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.slf4j.Logger;
@@ -51,7 +50,7 @@ public class KafkaSourceWrapper extends AbstractSourceWrapper implements EventFe
         servers = driver.getUrl();
         group = driver.getExtendAttr().getOrDefault(meta.GROUP,"");
         topic = driver.getExtendAttr().getOrDefault(meta.TOPIC,"");
-        String oncePoolSizeStr= driver.getExtendAttr().getOrDefault(meta.ONCE_POLL_SIZE,"500");
+        String oncePoolSizeStr= driver.getExtendAttr().getOrDefault(meta.ONCE_POLL_SIZE,"1000");
         oncePollSize = Long.parseLong(oncePoolSizeStr);
         String oncePoolTimeoutStr= driver.getExtendAttr().getOrDefault(meta.POLL_TIME_OUT,"10000");
         oncePollTimeout = Long.parseLong(oncePoolTimeoutStr);

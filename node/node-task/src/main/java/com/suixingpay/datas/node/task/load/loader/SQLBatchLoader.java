@@ -36,10 +36,12 @@ public class SQLBatchLoader implements Loader {
     //需要在之前对datasource进行二次封装
     @Override
     public void load(ETLBucket bucket, DTaskStat stat) {
+        LOGGER.debug("start loading bucket:{},size:{}", bucket.getSequence(), bucket.getRows().size());
         DbDialect dbDialect = dbFactory.getDbDialect(bucket.getDataSourceId());
         SqlTemplate template = dbDialect.getSqlTemplate();
         JdbcTemplate jdbcTemplate = dbDialect.getJdbcTemplate();
         for (ETLRow row : bucket.getRows()) {
+            LOGGER.debug("loading row:{}", row.getIndex(), JSON.toJSONString(row));
             int affect = 0;
             String sql = "";
             try {
@@ -70,9 +72,6 @@ public class SQLBatchLoader implements Loader {
                         //主键删除
                         sql = template.getDeleteSql(row.getFinalSchema(), row.getFinalTable(), keyNames);
                         affect = jdbcTemplate.update(sql, keyNewValues);
-                        if (affect < 1) {
-                            LOGGER.debug("DELETE->ETLData:{},sequenceId:{}", JSON.toJSONString(row), bucket.getSequence());
-                        }
                     }
                     if (affect > 0) {
                         stat.getDeleteRow().incrementAndGet();
@@ -82,9 +81,6 @@ public class SQLBatchLoader implements Loader {
                 } else if (row.getOpType() == EventType.INSERT) {
                     sql = template.getInsertSql(row.getFinalSchema(), row.getFinalTable(), allColumnNames);
                     affect = jdbcTemplate.update(sql, allNewValues);
-                    if (affect < 1) {
-                        LOGGER.debug("INSERT->ETLData:{},sequenceId:{}", JSON.toJSONString(row), bucket.getSequence());
-                    }
                     if (affect > 0) {
                         stat.getInsertRow().incrementAndGet();
                     } else {
@@ -114,13 +110,10 @@ public class SQLBatchLoader implements Loader {
                 } else if (row.getOpType() == EventType.TRUNCATE) {
                     sql = template.getTruncateSql(row.getFinalSchema(), row.getFinalTable());
                     affect = jdbcTemplate.update(sql);
-                    if (affect < 1) {
-                        LOGGER.debug("TRUNCATE->ETLData:{},sequenceId:{}", JSON.toJSONString(row), bucket.getSequence());
-                    }
                     stat.getDeleteRow().incrementAndGet();
                 }
-                LOGGER.debug("[{}]sql:{},affect:{}", row.getOpType(), sql, affect);
             } catch (Exception e) {
+                e.printStackTrace();
                 LOGGER.error("{}->ETLData:{},sequenceId:{}",row.getOpType(), JSON.toJSONString(row), bucket.getSequence(), e);
             }
             //更新最后执行消息事件的产生时间，用于计算从消息产生到加载如路时间、计算数据同步检查时间

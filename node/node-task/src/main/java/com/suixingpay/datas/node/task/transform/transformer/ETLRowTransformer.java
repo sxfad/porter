@@ -9,6 +9,7 @@
 
 package com.suixingpay.datas.node.task.transform.transformer;
 
+import com.alibaba.fastjson.JSON;
 import com.suixingpay.datas.common.db.TableMapper;
 import com.suixingpay.datas.node.core.db.dialect.DbDialect;
 import com.suixingpay.datas.node.core.db.utils.SqlUtils;
@@ -34,11 +35,14 @@ public class ETLRowTransformer implements Transformer {
     private static final Logger LOGGER = LoggerFactory.getLogger(ETLRowTransformer.class);
     @Override
     public void transform(ETLBucket bucket, TableMapper tableMapper, DbDialect targetDialect) {
+        LOGGER.debug("start tranforming bucket:{},size:{}", bucket.getSequence(), bucket.getRows().size());
         for (ETLRow row : bucket.getRows()) {
+            LOGGER.debug("try tranform row:{},{}", row.getIndex(), JSON.toJSONString(row));
             mappingRowData(tableMapper, row);
             Table table = findTable(targetDialect, row.getFinalSchema(), row.getFinalTable());
             if (null != table) remedyColumns(table, row);
             createSQLPrepare(row);
+            LOGGER.debug("after tranform row:{},{}", row.getIndex(), JSON.toJSONString(row));
         }
     }
 
@@ -72,7 +76,7 @@ public class ETLRowTransformer implements Transformer {
         //反向查找
         List<String> inColumnNames = row.getColumns().stream().map(p  -> p.getFinalName()).collect(Collectors.toList());
         //如果目标库表中有新增必填的字段需要补充上去
-        Arrays.stream(table.getColumns()).filter(p -> ! inColumnNames.contains(p.getName()) && p.isRequired())
+        Arrays.stream(table.getColumns()).filter(p -> ! inColumnNames.contains(p.getName()) && p.isRequired() && null == p.getDefaultValue())
                 .forEach(p -> row.getColumns().add(new ETLColumn(p.getName(), p.getDefaultValue() ,p.getDefaultValue(), p.getDefaultValue(), p.isPrimaryKey(), p.isRequired(), p.getTypeCode())));
 
         row.getColumns().removeAll(removeables);
@@ -96,6 +100,7 @@ public class ETLRowTransformer implements Transformer {
         try {
             table = targetDialect.findTable(finalSchema, finalTable);
         } catch (Exception e) {
+            e.printStackTrace();
             LOGGER.error("查询目标仓库表结构{}.{}出错!", finalSchema, finalTable, e);
         }
         return table;

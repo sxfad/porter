@@ -71,6 +71,11 @@ public class SimpleDataCarrier implements DataCarrier {
         return null == list || list.isEmpty() ? null : new ImmutablePair<>(sequencer.getAndIncrement(), list);
     }
 
+    @Override
+    public long size() {
+        return buffer.size();
+    }
+
     /**
      * 默认开启偏向锁(UseBiasedLocking),在单线程调用情况下，锁消耗可忽略
      * 锁可重入

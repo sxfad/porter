@@ -29,7 +29,7 @@ import java.util.List;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月24日 11:15
  */
 public class SelectJob extends AbstractStageJob {
-    private static final int PULL_BATCH_SIZE = 512;
+    private static final int PULL_BATCH_SIZE = 1000;
     private static final int BUFFER_SIZE = PULL_BATCH_SIZE*1*1000;
 
     private final DataSourceWrapper selectWrapper;
