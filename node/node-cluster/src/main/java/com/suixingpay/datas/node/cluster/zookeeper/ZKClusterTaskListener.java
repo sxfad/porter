@@ -138,19 +138,23 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
             }
         } else if (command instanceof TaskStatCommand) {
             TaskStatCommand statCommand = (TaskStatCommand) command;
-            String node = path() + "/" + statCommand.getStat().getTaskId() + "/stat/" + statCommand.getStat().getTopic();
-            Stat stat = client.exists(node, false);
-            if (null != stat) {
-                Pair<String, Stat> nodePair = client.getData(node);
-                //remoteStat
-                DTaskStat taskStat = DTaskStat.fromString(nodePair.getLeft(), DTaskStat.class);
-                //run callback before merge data
-                if (null != statCommand.getCallback()) statCommand.getCallback().callback(taskStat);
-                //merge from localStat
-                taskStat.merge(statCommand.getStat());
-                //upload stat
-                client.setData(node, taskStat.toString(), nodePair.getRight().getVersion());
+            //.intern()保证全局唯一字符串对象
+            String node = (path() + "/" + statCommand.getStat().getTaskId() + "/stat/" + statCommand.getStat().getTopic()).intern();
+            //控制锁的粒度到每个topic节点，
+            synchronized (node) {
+                Stat stat = client.exists(node, false);
+                if (null != stat) {
+                    Pair<String, Stat> nodePair = client.getData(node);
+                    //remoteStat
+                    DTaskStat taskStat = DTaskStat.fromString(nodePair.getLeft(), DTaskStat.class);
+                    //run callback before merge data
+                    if (null != statCommand.getCallback()) statCommand.getCallback().callback(taskStat);
+                    //merge from localStat
+                    taskStat.merge(statCommand.getStat());
+                    //upload stat
+                    client.setData(node, taskStat.toString(), nodePair.getRight().getVersion());
 
+                }
             }
         }
     }

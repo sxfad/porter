@@ -68,23 +68,22 @@ public class SQLBatchLoader implements Loader {
                     //全字段删除
                     sql = template.getDeleteSql(row.getFinalSchema(), row.getFinalTable(), allColumnNames);
                     if (jdbcTemplate.update(sql, allNewValues) < 1 && keyNames.length > 0) {
-
                         //主键删除
                         sql = template.getDeleteSql(row.getFinalSchema(), row.getFinalTable(), keyNames);
                         affect = jdbcTemplate.update(sql, keyNewValues);
                     }
                     if (affect > 0) {
-                        stat.getDeleteRow().incrementAndGet();
+                        stat.incrementDeleteRow();
                     } else {
-                        stat.getErrorDeleteRow().incrementAndGet();
+                        stat.incrementErrorDeleteRow();
                     }
                 } else if (row.getOpType() == EventType.INSERT) {
                     sql = template.getInsertSql(row.getFinalSchema(), row.getFinalTable(), allColumnNames);
                     affect = jdbcTemplate.update(sql, allNewValues);
                     if (affect > 0) {
-                        stat.getInsertRow().incrementAndGet();
+                        stat.incrementInsertRow();
                     } else {
-                        stat.getErrorInsertRow().incrementAndGet();
+                        stat.incrementErrorInsertRow();
                     }
                 } else if (row.getOpType() == EventType.UPDATE) {
                     //全字段更新
@@ -103,14 +102,14 @@ public class SQLBatchLoader implements Loader {
                         }
                     }
                     if (affect > 0) {
-                        stat.getUpdateRow().incrementAndGet();
+                        stat.incrementUpdateRow();
                     } else {
-                        stat.getErrorUpdateRow().incrementAndGet();
+                        stat.incrementErrorUpdateRow();
                     }
                 } else if (row.getOpType() == EventType.TRUNCATE) {
                     sql = template.getTruncateSql(row.getFinalSchema(), row.getFinalTable());
                     affect = jdbcTemplate.update(sql);
-                    stat.getDeleteRow().incrementAndGet();
+                    stat.incrementDeleteRow();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
