@@ -71,15 +71,14 @@ public class TaskController implements TaskEventListener {
             Signal.handle(graceShutdown, new SignalHandler() {
                 @Override
                 public void handle(Signal signal) {
-                    shutdownHook();
-                    System.exit(-1);
+                    shutdownHook(true);
                 }
             });
 
             Runtime.getRuntime().addShutdownHook(new Thread("suixingpay-task-shutdownHook"){
                 @Override
                 public void run() {
-                    shutdownHook();
+                    shutdownHook(false);
                 }
             });
         }
@@ -105,14 +104,16 @@ public class TaskController implements TaskEventListener {
         }
     }
 
-    private void stop() {
+    private boolean stop() {
         if (stat.compareAndSet(true, false)) {
             LOGGER.info("监工下线.......");
             for (TaskWorker worker : WORKER_MAP.values()) {
                 stopTask(worker);
             }
+            return true;
         } else {
             LOGGER.warn("Task controller has stoped already");
+            return false;
         }
     }
 
@@ -125,12 +126,14 @@ public class TaskController implements TaskEventListener {
         }
     }
 
-    private void shutdownHook() {
-        if (stat.get()) {
-            this.stop();
+    private void shutdownHook(boolean exit) {
+        if (this.stop()) {
             //退出群聊需在业务代码执行之后才能执行
             LOGGER.info("退出群聊.......");
             ClusterProvider.unload();
+            if(exit) {
+                System.exit(-1);
+            }
         }
     }
 }

@@ -10,7 +10,10 @@ package com.suixingpay.datas.node.task.worker;
 
 import com.suixingpay.datas.common.cluster.ClusterProvider;
 import com.suixingpay.datas.common.cluster.command.TaskRegisterCommand;
+import com.suixingpay.datas.common.cluster.command.TaskStatCommand;
 import com.suixingpay.datas.common.cluster.command.TaskStopCommand;
+import com.suixingpay.datas.common.cluster.data.DCallback;
+import com.suixingpay.datas.common.cluster.data.DObject;
 import com.suixingpay.datas.common.cluster.data.DTaskStat;
 import com.suixingpay.datas.common.datasource.DataSourceWrapper;
 import com.suixingpay.datas.common.db.TableMapper;
@@ -78,7 +81,8 @@ public class TaskWork {
             for (Map.Entry<StageType, StageJob> jobs : JOBS.entrySet()) {
                 jobs.getValue().stop();
             }
-
+            //上传消费进度
+            submitStat();
             //广播任务结束消息
             ClusterProvider.sendCommand(new TaskStopCommand(taskId,topic));
         } catch (Exception e) {
@@ -122,6 +126,10 @@ public class TaskWork {
         return ((ExtractJob)JOBS.get(StageType.EXTRACT)).getNextSequence();
     }
 
+    public boolean isPoolEmpty(StageType type) {
+        return JOBS.get(type).isPoolEmpty();
+    }
+
     public DTaskStat getStat() {
         return stat;
     }
@@ -136,5 +144,30 @@ public class TaskWork {
 
     public TableMapper getMapper() {
         return mapper;
+    }
+
+
+    public void submitStat() {
+        try {
+            //多线程访问情况下（目前是两个线程:状态上报线程、任务状态更新线程），获取JOB的运行状态。
+            DTaskStat newStat = null;
+            synchronized (stat) {
+                newStat = stat.snapshot(DTaskStat.class);
+                stat.reset();
+
+                ClusterProvider.sendCommand(new TaskStatCommand(newStat, new DCallback() {
+                    @Override
+                    public void callback(DObject object) {
+                        DTaskStat remoteData = (DTaskStat) object;
+                        if (null == stat.getLastCheckedTime()
+                                && stat.getUpdateStat().compareAndSet(false, true)) {
+                            stat.setLastLoadedTime(remoteData.getLastLoadedTime());
+                        }
+                    }
+                }));
+            }
+        } catch (Exception e) {
+            LOGGER.error("上传任务消费进度出错", e);
+        }
     }
 }

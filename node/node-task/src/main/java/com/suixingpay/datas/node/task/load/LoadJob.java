@@ -62,4 +62,9 @@ public class LoadJob extends AbstractStageJob{
     public ETLBucket output() throws Exception {
         throw new Exception("unsupported Method");
     }
+
+    @Override
+    public boolean isPrevPoolEmpty() {
+        return work.isPoolEmpty(StageType.TRANSFORM);
+    }
 }

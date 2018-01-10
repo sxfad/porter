@@ -104,4 +104,14 @@ public class TransformJob extends AbstractStageJob {
         }
         return null != result ? result.get() : null;
     }
+
+    @Override
+    public boolean isPoolEmpty() {
+        return carrier.size() == 0 && executorService.isTerminated();
+    }
+
+    @Override
+    public boolean isPrevPoolEmpty() {
+        return work.isPoolEmpty(StageType.EXTRACT);
+    }
 }

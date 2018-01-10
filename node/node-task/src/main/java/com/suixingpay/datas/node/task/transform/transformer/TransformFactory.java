@@ -16,7 +16,9 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 import org.springframework.stereotype.Component;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -28,10 +30,28 @@ import java.util.List;
 @Scope("singleton")
 public class TransformFactory {
     private List<Transformer> extractors = SpringFactoriesLoader.loadFactories(Transformer.class, null);
+    private final AtomicBoolean isSort = new AtomicBoolean(false);
+
+    public TransformFactory() {
+        //服务排序
+        sort();
+    }
+
     public void transform(ETLBucket bucket, TableMapper tableMapper) {
         DbDialect targetDialect = DbDialectFactory.INSTANCE.getDbDialect(bucket.getDataSourceId());
         for (Transformer transformer : extractors) {
             transformer.transform(bucket, tableMapper, targetDialect);
+        }
+    }
+
+    private void sort() {
+        if (isSort.compareAndSet(false,true)) {
+            extractors.sort(new Comparator<Transformer>() {
+                @Override
+                public int compare(Transformer o1, Transformer o2) {
+                    return o1.order() - o2.order();
+                }
+            });
         }
     }
 }

@@ -24,4 +24,6 @@ public interface StageJob {
     default boolean stopWaiting() {
         return true;
     }
+    default boolean isPoolEmpty() {return true;}
+    default boolean isPrevPoolEmpty()  {return true;}
 }

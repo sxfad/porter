@@ -85,6 +85,11 @@ public class SelectJob extends AbstractStageJob {
 
     @Override
     public boolean stopWaiting() {
-        return false;
+        return true;
+    }
+
+    @Override
+    public boolean isPoolEmpty() {
+        return carrier.size() == 0;
     }
 }

@@ -70,27 +70,7 @@ public class TaskWorker {
                     }
                     //每10秒上传一次消费进度
                     for (TaskWork job : JOBS.values()) {
-                        try {
-                            //多线程访问情况下（目前是两个线程:状态上报线程、任务状态更新线程），获取JOB的运行状态。
-                            DTaskStat newStat = null;
-                            synchronized (job.stat) {
-                                newStat = job.stat.snapshot(DTaskStat.class);
-                                job.stat.reset();
-                            }
-
-                            ClusterProvider.sendCommand(new TaskStatCommand(newStat, new DCallback() {
-                                @Override
-                                public void callback(DObject object) {
-                                    DTaskStat remoteData = (DTaskStat) object;
-                                    if (null == job.stat.getLastCheckedTime()
-                                            && job.stat.getUpdateStat().compareAndSet(false, true)) {
-                                        job.stat.setLastLoadedTime(remoteData.getLastLoadedTime());
-                                    }
-                                }
-                            }));
-                        } catch (Exception e) {
-                            LOGGER.error("上传任务消费进度出错", e);
-                        }
+                        job.submitStat();
                     }
                 }
             }, 0 ,10000 , TimeUnit.MILLISECONDS);

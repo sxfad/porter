@@ -16,11 +16,7 @@ import com.suixingpay.datas.node.core.db.dialect.SqlTemplate;
 import com.suixingpay.datas.node.core.event.etl.ETLBucket;
 import com.suixingpay.datas.node.core.event.etl.ETLRow;
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.jdbc.core.JdbcTemplate;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *
@@ -29,7 +25,7 @@ import java.util.List;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月27日 16:02
  */
-public class SQLBatchLoader extends BaseSqlLoader implements Loader {
+public class SQLSingleLoader extends BaseSqlLoader implements Loader {
     private final DbDialectFactory dbFactory = DbDialectFactory.INSTANCE;
     //需要在之前对datasource进行二次封装
     @Override
@@ -38,32 +34,11 @@ public class SQLBatchLoader extends BaseSqlLoader implements Loader {
         DbDialect dbDialect = dbFactory.getDbDialect(bucket.getDataSourceId());
         SqlTemplate template = dbDialect.getSqlTemplate();
         JdbcTemplate jdbcTemplate = dbDialect.getJdbcTemplate();
-        for (List<ETLRow> rows : bucket.getBatchRows()) {
-            if (rows.size() == 1) {
-                //更新目标仓储
-                int affect = loadSql(buildSql(rows.get(0), template), jdbcTemplate);
-                //更新状态
-                updateStat(new ImmutablePair<>(affect, rows.get(0)), stat);
-            } else if (rows.size() > 1) { //仅支持单条记录生成一个sql的情况
-                List<Pair<String, Object[]>> subList = new ArrayList<>();
-
-                //生成sql
-                for (int i = 0; i < rows.size(); i++) {
-                    List<Pair<String, Object[]>> tmpSql = buildSql(rows.get(i), template);
-                    subList.add(tmpSql.get(0));
-                }
-
-                //执行sql
-                int[] results = batchLoadSql(subList, jdbcTemplate);
-
-
-                //处理状态变更
-                for (int rindex = 0; rindex < rows.size(); rindex++) {
-                    int affect = rindex < results.length ? results[rindex] : 0;
-                    ETLRow row = rows.get(rindex);
-                    updateStat(new ImmutablePair<>(affect, row), stat);
-                }
-            }
+        for (ETLRow row : bucket.getRows()) {
+            //更新目标仓储
+            int affect = loadSql(buildSql(row, template),jdbcTemplate);
+            //更新状态
+            updateStat(new ImmutablePair<>(affect, row), stat);
         }
     }
 }

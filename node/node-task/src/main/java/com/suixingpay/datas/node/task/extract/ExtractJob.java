@@ -100,4 +100,14 @@ public class ExtractJob extends AbstractStageJob {
     public <T> T getNextSequence() {
         return orderedBucket.pull();
     }
+
+    @Override
+    public boolean isPoolEmpty() {
+        return orderedBucket.size() == 0 && carrier.size() == 0 && executorService.isTerminated();
+    }
+
+    @Override
+    public boolean isPrevPoolEmpty() {
+        return work.isPoolEmpty(StageType.SELECT);
+    }
 }

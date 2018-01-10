@@ -33,6 +33,12 @@ import java.util.stream.Collectors;
  */
 public class ETLRowTransformer implements Transformer {
     private static final Logger LOGGER = LoggerFactory.getLogger(ETLRowTransformer.class);
+
+    @Override
+    public int order() {
+        return 0;
+    }
+
     @Override
     public void transform(ETLBucket bucket, TableMapper tableMapper, DbDialect targetDialect) {
         LOGGER.debug("start tranforming bucket:{},size:{}", bucket.getSequence(), bucket.getRows().size());

@@ -29,11 +29,12 @@ public class ETLBucket {
     private final Long sequence;
     private final String dataSourceId;
     private final List<ETLRow> rows;
-
+    private final List<List<ETLRow>> batchRows;
     public ETLBucket(long sequence, List<ETLRow> rows, String dataSourceId) {
         this.sequence = sequence;
         this.rows = rows;
         this.dataSourceId = dataSourceId;
+        this.batchRows = new ArrayList<List<ETLRow>>();
     }
 
     public Long getSequence() {
@@ -93,5 +94,9 @@ public class ETLBucket {
 
     public String getDataSourceId() {
         return dataSourceId;
+    }
+
+    public List<List<ETLRow>> getBatchRows() {
+        return batchRows;
     }
 }

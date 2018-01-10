@@ -46,15 +46,64 @@ public class KafkaSourceWrapperTest {
     public static void initSource() {
         driver = new DataDriver();
         driver.setType(DataDriverType.KAFKA);
-        driver.setUrl("172.16.135.30:9092,172.16.135.30:9093");
+        //driver.setUrl("172.16.135.30:9092,172.16.135.30:9093");
         driver.setExtendAttr(new HashMap<>());
-        driver.getExtendAttr().put("topic","zkw.t_user_debug-update");
+        driver.getExtendAttr().put("topic","zkw.t_user_debug-delete");
         driver.getExtendAttr().put("converter","ogg");
         driver.getExtendAttr().put("pollTimeOut","1000");
         driver.getExtendAttr().put("group",UUID.randomUUID().toString());
         wrapper = new KafkaSourceWrapper(driver);
     }
+    @Test
+    @Ignore
+    public void sendCeshi() throws ExecutionException, InterruptedException {
+        //driver.setUrl("172.16.136.91:9092,172.16.136.92:9092");
+        driver.getExtendAttr().put("topic","zkw.t_ceshi_table");
+        Properties props = new Properties();
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, driver.getUrl());
+        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        KafkaProducer<String, String> producer = new KafkaProducer<String, String>(props);
+        /**
+        Future<RecordMetadata> a = producer.send(new ProducerRecord<String, String>(driver.getExtendAttr().get(KafkaDriverMeta.INSTANCE.TOPIC),"{\n" +
+                "    \"table\":\"zkw.t_ceshi_table\",\n" +
+                "    \"op_type\":\"I\",\n" +
+                "    \"op_ts\":\"2017-01-01 00:00:00.000000\",\n" +
+                "    \"current_ts\":\"2017-01-02T23:59:59.000000\",\n" +
+                "    \"pos\":\"1\",\n" +
+                "    \"after\":{\n" +
+                "        \"ID\":\"1\"\n"+
+                "    }\n" +
+                "}"));
+        a.get();
 
+        Future<RecordMetadata> b = producer.send(new ProducerRecord<String, String>(driver.getExtendAttr().get(KafkaDriverMeta.INSTANCE.TOPIC),"{\n" +
+                "    \"table\":\"zkw.t_ceshi_table\",\n" +
+                "    \"op_type\":\"U\",\n" +
+                "    \"op_ts\":\"2017-01-01 00:00:00.000000\",\n" +
+                "    \"current_ts\":\"2017-01-02T23:59:59.000000\",\n" +
+                "    \"pos\":\"1\",\n" +
+                "    \"before\":{\n" +
+                "        \"ID\":\"1\"\n"+
+                "    },\"after\":{\n" +
+                "        \"ID\":\"1\",\n" +
+                "\t\t\"C2\":\"3\"\n" +
+                "    }" +
+                "}"));
+        b.get();
+         **/
+        Future<RecordMetadata> b = producer.send(new ProducerRecord<String, String>(driver.getExtendAttr().get(KafkaDriverMeta.INSTANCE.TOPIC),"{\n" +
+                "    \"table\":\"zkw.t_ceshi_table\",\n" +
+                "    \"op_type\":\"D\",\n" +
+                "    \"op_ts\":\"2017-01-01 00:00:00.000000\",\n" +
+                "    \"current_ts\":\"2017-01-02T23:59:59.000000\",\n" +
+                "    \"pos\":\"1\",\n" +"\"before\":{\n" +
+                "        \"ID\":\"1\",\n" +
+                "\t\t\"C2\":\"3\"\n" +
+                "    }" +
+                "}"));
+        b.get();
+    }
     @Test
     @Ignore
     public void sendMsgUpdate() throws ExecutionException, InterruptedException {
@@ -325,10 +374,146 @@ public class KafkaSourceWrapperTest {
 
     @Test
     @Ignore
+    public void sendMsgDelete() throws ExecutionException, InterruptedException {
+        Properties props = new Properties();
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, driver.getUrl());
+        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
+        KafkaProducer<String,String> producer = new KafkaProducer<String, String>(props);
+        CyclicBarrier barrier = new CyclicBarrier(6);
+        new Thread(){
+            @Override
+            public void run() {
+                for(int i=0; i<50000;i++) {
+                    Future<RecordMetadata> a =producer.send(new ProducerRecord<String, String>(driver.getExtendAttr().get(KafkaDriverMeta.INSTANCE.TOPIC),"{\"table\":\"zkw.t_user_debug\",\"op_type\":\"D\",\"op_ts\":\"2013-06-02 22:14:36.000000\",\"current_ts\":\"2015-09-18T13:39:35.447000\",\"pos\":\""+i+"\",\"before\":{\"ID\":\""+i+"\"}}"));
+                    try {
+                        a.get();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    }
+                }
+                try {
+                    barrier.await();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (BrokenBarrierException e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
+
+        new Thread(){
+            @Override
+            public void run() {
+                for(int i=50000; i<100000;i++) {
+                    Future<RecordMetadata> a =producer.send(new ProducerRecord<String, String>(driver.getExtendAttr().get(KafkaDriverMeta.INSTANCE.TOPIC),"{\"table\":\"zkw.t_user_debug\",\"op_type\":\"D\",\"op_ts\":\"2013-06-02 22:14:36.000000\",\"current_ts\":\"2015-09-18T13:39:35.447000\",\"pos\":\""+i+"\",\"before\":{\"ID\":\""+i+"\"}}"));
+                    try {
+                        a.get();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    }
+                }
+                try {
+                    barrier.await();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (BrokenBarrierException e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
+
+        new Thread(){
+            @Override
+            public void run() {
+                for(int i=100000; i<150000;i++) {
+                    Future<RecordMetadata> a =producer.send(new ProducerRecord<String, String>(driver.getExtendAttr().get(KafkaDriverMeta.INSTANCE.TOPIC),"{\"table\":\"zkw.t_user_debug\",\"op_type\":\"D\",\"op_ts\":\"2013-06-02 22:14:36.000000\",\"current_ts\":\"2015-09-18T13:39:35.447000\",\"pos\":\""+i+"\",\"before\":{\"ID\":\""+i+"\"}}"));
+                    try {
+                        a.get();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    }
+                }
+                try {
+                    barrier.await();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (BrokenBarrierException e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
+
+        new Thread(){
+            @Override
+            public void run() {
+                for(int i=150000; i<200000;i++) {
+                    Future<RecordMetadata> a =producer.send(new ProducerRecord<String, String>(driver.getExtendAttr().get(KafkaDriverMeta.INSTANCE.TOPIC),"{\"table\":\"zkw.t_user_debug\",\"op_type\":\"D\",\"op_ts\":\"2013-06-02 22:14:36.000000\",\"current_ts\":\"2015-09-18T13:39:35.447000\",\"pos\":\""+i+"\",\"before\":{\"ID\":\""+i+"\"}}"));
+                    try {
+                        a.get();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    }
+                }
+                try {
+                    barrier.await();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (BrokenBarrierException e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
+
+        new Thread(){
+            @Override
+            public void run() {
+                for(int i=200000; i<250000;i++) {
+                    Future<RecordMetadata> a =producer.send(new ProducerRecord<String, String>(driver.getExtendAttr().get(KafkaDriverMeta.INSTANCE.TOPIC),"{\"table\":\"zkw.t_user_debug\",\"op_type\":\"D\",\"op_ts\":\"2013-06-02 22:14:36.000000\",\"current_ts\":\"2015-09-18T13:39:35.447000\",\"pos\":\""+i+"\",\"before\":{\"ID\":\""+i+"\"}}"));
+                    try {
+                        a.get();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    }
+                }
+                try {
+                    barrier.await();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (BrokenBarrierException e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
+        try {
+            barrier.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (BrokenBarrierException e) {
+            e.printStackTrace();
+        }
+        System.out.println("ok");
+
+    }
+
+    @Test
+    @Ignore
     public void fetch() {
         List<MessageEvent> msgs =  wrapper.fetch();
         for (MessageEvent e : msgs) {
             System.out.println(JSON.toJSONString(e));
         }
     }
+
+
 }

@@ -40,7 +40,7 @@ public abstract class AbstractStageJob implements StageJob {
     }
     public AbstractStageJob(String baseThreadName, Long threadWaitSpan) {
         this.threadWaitSpan = null == threadWaitSpan ? DEFAULT_THREAD_WAIT_SPAN : threadWaitSpan;
-        stopSignal = new Semaphore(0);
+        stopSignal = new Semaphore(1);
         threadFactory = new DefaultNamedThreadFactory(baseThreadName + "-" + this.getClass().getSimpleName());
         loopService = threadFactory.newThread(new LoopService());
     }
@@ -71,6 +71,13 @@ public abstract class AbstractStageJob implements StageJob {
                 //确保现有数据流处理结束
                 if (stopWaiting()) {
                     LOGGER.debug("任务退出线程等待源队列为空.");
+                    //判断上层管道是否有未处理完的事件及数据
+                    //防止消费间隙上层管道新增数据
+                    while (! isPrevPoolEmpty()) {
+                        LOGGER.debug("内存队列有未处理完的数据，线程休眠1秒.");
+                        Thread.currentThread().sleep(1000L);
+                    }
+                    //设置信号量的目的是防止loopLogic执行期间代码被粗暴打断
                     stopSignal.acquire();
                     LOGGER.debug("源队列为空，发送线程中断信号");
                 }
@@ -90,14 +97,14 @@ public abstract class AbstractStageJob implements StageJob {
         public void run() {
             //如果线程没有中断信号，持续执行
             while (!Thread.currentThread().isInterrupted()) {
-                loopLogic();
-                //不符合业务执行条件时，线程沉睡10秒后继续执行
                 try {
+                    stopSignal.acquire();
+                    LOGGER.debug("源队列为空，线程恢复执行.");
+                    loopLogic();
+                    //不符合业务执行条件时，释放资源。线程沉睡10秒后继续执行
                     stopSignal.release();
                     LOGGER.debug("源队列为空，线程进入等待.");
                     Thread.sleep(threadWaitSpan);
-                    LOGGER.debug("源队列为空，线程恢复执行.");
-                    stopSignal.acquire();
                 } catch (InterruptedException e) {//如果线程有中断信号，退出线程
                     break;
                 }

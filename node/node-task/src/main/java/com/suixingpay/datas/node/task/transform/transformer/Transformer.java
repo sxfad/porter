@@ -19,5 +19,6 @@ import com.suixingpay.datas.node.core.event.etl.ETLBucket;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月26日 15:59
  */
 public interface Transformer {
+    int order();
     void transform(ETLBucket bucket, TableMapper tableMapper, DbDialect targetDialect);
 }

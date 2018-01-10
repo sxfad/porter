@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import javax.sql.DataSource;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -49,6 +50,18 @@ public class CatchErrorJdbcTemplate extends JdbcTemplate{
             e.printStackTrace();
         }
         LOGGER.debug("sql:{},affect:{}", sql, affect);
+        return affect;
+    }
+
+    @Override
+    public int[] batchUpdate(String sql, List<Object[]> batchArgs) {
+        int[] affect = new int[]{};
+        try {
+            affect = super.batchUpdate(sql, batchArgs);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        LOGGER.debug("sql:{},params:{},affect:{}", sql, JSON.toJSONString(batchArgs), affect);
         return affect;
     }
 }
