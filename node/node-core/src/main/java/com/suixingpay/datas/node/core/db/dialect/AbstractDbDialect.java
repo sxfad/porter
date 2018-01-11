@@ -64,6 +64,10 @@ public abstract class AbstractDbDialect implements DbDialect {
                 return null;
             }
         });
+
+        if (jdbcTemplate instanceof JdbcTransactionTemplate) {
+            ((JdbcTransactionTemplate) jdbcTemplate).setTransactionTemplate(this.transactionTemplate);
+        }
     }
 
     public AbstractDbDialect(JdbcTemplate jdbcTemplate, LobHandler lobHandler, String name, int majorVersion,
@@ -78,6 +82,10 @@ public abstract class AbstractDbDialect implements DbDialect {
         this.databaseName = name;
         this.databaseMajorVersion = majorVersion;
         this.databaseMinorVersion = minorVersion;
+
+        if (jdbcTemplate instanceof JdbcTransactionTemplate) {
+            ((JdbcTransactionTemplate) jdbcTemplate).setTransactionTemplate(this.transactionTemplate);
+        }
     }
 
     public Table findTable(String schema, String table, boolean useCache) {

@@ -53,7 +53,7 @@ public enum  DbDialectFactory {
             synchronized (dialects) {
                 dbDialect = dialects.containsKey(key) ? dialects.get(key) : null;
                 if (null == dbDialect) {
-                    final JdbcTemplate jdbcTemplate = new CatchErrorJdbcTemplate(dataSourceWrapper.getDataSource());
+                    final JdbcTemplate jdbcTemplate = new JdbcTransactionTemplate(dataSourceWrapper.getDataSource());
                     dbDialect = (DbDialect)jdbcTemplate.execute(new ConnectionCallback() {
                         public Object doInConnection(Connection c) throws SQLException, DataAccessException {
                             DatabaseMetaData meta = c.getMetaData();

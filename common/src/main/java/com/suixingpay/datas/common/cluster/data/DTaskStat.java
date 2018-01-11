@@ -26,6 +26,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月20日 13:45
  */
 public class DTaskStat  extends DObject {
+    private static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
     private String taskId;
     private String nodeId;
     private String topic;
@@ -36,8 +37,14 @@ public class DTaskStat  extends DObject {
     private final AtomicLong errorUpdateRow = new AtomicLong(0);
     private final AtomicLong errorInsertRow = new AtomicLong(0);
     private final AtomicLong errorDeleteRow = new AtomicLong(0);
+    @JSONField(format = DEFAULT_DATE_FORMAT)
     private Date statedTime;
+    @JSONField(format = DEFAULT_DATE_FORMAT)
+    private Date heartbeatTime;
+
+    @JSONField(format = DEFAULT_DATE_FORMAT)
     private Date lastCheckedTime;
+    @JSONField(format = DEFAULT_DATE_FORMAT)
     private Date lastLoadedTime;
     private final AtomicLong alertedTimes = new AtomicLong(0);
     @JSONField(serialize = false, deserialize = false)
@@ -48,6 +55,7 @@ public class DTaskStat  extends DObject {
     private String progress;
     public DTaskStat() {
         statedTime = new Date();
+        heartbeatTime = new Date();
     }
     public DTaskStat(String taskId, String nodeId, String topic) {
         this();
@@ -117,9 +125,9 @@ public class DTaskStat  extends DObject {
             this.errorInsertRow.addAndGet(stat.errorInsertRow.longValue());
             this.errorUpdateRow.addAndGet(stat.errorUpdateRow.longValue());
             this.alertedTimes.addAndGet(stat.alertedTimes.longValue());
-            this.statedTime = new Date();
             if (null != stat.lastLoadedTime) this.lastLoadedTime = stat.lastLoadedTime;
             if (null != stat.lastCheckedTime) this.lastCheckedTime = stat.lastCheckedTime;
+            this.heartbeatTime = new Date();
         }
     }
     public void reset() {
@@ -233,5 +241,17 @@ public class DTaskStat  extends DObject {
      */
     public AtomicLong getErrorDeleteRow() {
         return errorDeleteRow;
+    }
+
+    public Date getHeartbeatTime() {
+        return heartbeatTime;
+    }
+
+    public void setStatedTime(Date statedTime) {
+        this.statedTime = statedTime;
+    }
+
+    public void setHeartbeatTime(Date heartbeatTime) {
+        this.heartbeatTime = heartbeatTime;
     }
 }

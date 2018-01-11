@@ -46,9 +46,9 @@ public class KafkaSourceWrapperTest {
     public static void initSource() {
         driver = new DataDriver();
         driver.setType(DataDriverType.KAFKA);
-        //driver.setUrl("172.16.135.30:9092,172.16.135.30:9093");
+        driver.setUrl("172.16.135.30:9092,172.16.135.30:9093");
         driver.setExtendAttr(new HashMap<>());
-        driver.getExtendAttr().put("topic","zkw.t_user_debug-delete");
+        driver.getExtendAttr().put("topic","zkw.t_user_debug-insert");
         driver.getExtendAttr().put("converter","ogg");
         driver.getExtendAttr().put("pollTimeOut","1000");
         driver.getExtendAttr().put("group",UUID.randomUUID().toString());
@@ -246,7 +246,29 @@ public class KafkaSourceWrapperTest {
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         KafkaProducer<String,String> producer = new KafkaProducer<String, String>(props);
+
+        Future<RecordMetadata> b =producer.send(new ProducerRecord<String, String>(driver.getExtendAttr().get(KafkaDriverMeta.INSTANCE.TOPIC),"{\"table\":\"zkw.t_user_debug\",\"op_type\":\"I\",\"op_ts\":\"2013-06-02 22:14:36.000000\",\"current_ts\":\"2015-09-18T13:39:35.447000\",\"pos\":\""+999999999+"\",\"after\":{\"ID\":\"zkevin\",\"REAL_NAME\":\"joe\"}}"));
+        try {
+            b.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        Future<RecordMetadata> c =producer.send(new ProducerRecord<String, String>(driver.getExtendAttr().get(KafkaDriverMeta.INSTANCE.TOPIC),"{\"table\":\"zkw.t_user_debug\",\"op_type\":\"I\",\"op_ts\":\"2013-06-02 22:14:36.000000\",\"current_ts\":\"2015-09-18T13:39:35.447000\",\"pos\":\""+999999999+"\",\"after\":{\"ID\":\"zkevin111\",\"REAL_NAME\":\"joe\"}}"));
+        try {
+            c.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        /**
+         *
+         *
         CyclicBarrier barrier = new CyclicBarrier(6);
+
         new Thread(){
             @Override
             public void run() {
@@ -369,6 +391,7 @@ public class KafkaSourceWrapperTest {
             e.printStackTrace();
         }
         System.out.println("ok");
+         **/
 
     }
 
