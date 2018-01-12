@@ -15,6 +15,7 @@ import com.suixingpay.datas.node.core.db.dialect.DbDialectFactory;
 import com.suixingpay.datas.node.core.db.dialect.SqlTemplate;
 import com.suixingpay.datas.node.core.event.etl.ETLBucket;
 import com.suixingpay.datas.node.core.event.etl.ETLRow;
+import com.suixingpay.datas.node.task.worker.TaskWork;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -29,12 +30,13 @@ public class SQLSingleLoader extends BaseSqlLoader implements Loader {
     private final DbDialectFactory dbFactory = DbDialectFactory.INSTANCE;
     //需要在之前对datasource进行二次封装
     @Override
-    public void load(ETLBucket bucket, DTaskStat stat) {
+    public void load(ETLBucket bucket, TaskWork work) {
         LOGGER.debug("start loading bucket:{},size:{}", bucket.getSequence(), bucket.getRows().size());
         DbDialect dbDialect = dbFactory.getDbDialect(bucket.getDataSourceId());
         SqlTemplate template = dbDialect.getSqlTemplate();
         JdbcTemplate jdbcTemplate = dbDialect.getJdbcTemplate();
         for (ETLRow row : bucket.getRows()) {
+            DTaskStat stat = work.getDTaskStat(row.getSchema(), row.getTable());
             //更新目标仓储
             int affect = loadSql(buildSql(row, template),jdbcTemplate);
             //更新状态

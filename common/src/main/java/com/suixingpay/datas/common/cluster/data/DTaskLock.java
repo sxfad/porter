@@ -8,13 +8,8 @@
  */
 package com.suixingpay.datas.common.cluster.data;
 
-import com.alibaba.fastjson.annotation.JSONField;
 import com.suixingpay.datas.common.util.MachineUtils;
 import org.apache.commons.lang3.StringUtils;
-
-import java.util.Date;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  *

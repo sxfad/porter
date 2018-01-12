@@ -16,6 +16,7 @@ import com.suixingpay.datas.node.core.db.utils.SqlUtils;
 import com.suixingpay.datas.node.core.event.etl.ETLBucket;
 import com.suixingpay.datas.node.core.event.etl.ETLColumn;
 import com.suixingpay.datas.node.core.event.etl.ETLRow;
+import com.suixingpay.datas.node.task.worker.TaskWork;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.ddlutils.model.Column;
 import org.apache.ddlutils.model.Table;
@@ -40,10 +41,11 @@ public class ETLRowTransformer implements Transformer {
     }
 
     @Override
-    public void transform(ETLBucket bucket, TableMapper tableMapper, DbDialect targetDialect) {
+    public void transform(ETLBucket bucket, TaskWork work, DbDialect targetDialect) {
         LOGGER.debug("start tranforming bucket:{},size:{}", bucket.getSequence(), bucket.getRows().size());
         for (ETLRow row : bucket.getRows()) {
             LOGGER.debug("try tranform row:{},{}", row.getIndex(), JSON.toJSONString(row));
+            TableMapper tableMapper = work.getTableMapper(row.getSchema(), row.getTable());
             mappingRowData(tableMapper, row);
             Table table = findTable(targetDialect, row.getFinalSchema(), row.getFinalTable());
             if (null != table) remedyColumns(table, row);

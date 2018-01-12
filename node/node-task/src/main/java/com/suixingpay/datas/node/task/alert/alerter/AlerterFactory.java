@@ -12,12 +12,20 @@ package com.suixingpay.datas.node.task.alert.alerter;
 import com.suixingpay.datas.common.cluster.data.DTaskStat;
 import com.suixingpay.datas.common.datasource.DataSourceWrapper;
 import com.suixingpay.datas.common.db.TableMapper;
+import com.suixingpay.datas.node.core.db.dialect.DbDialect;
+import com.suixingpay.datas.node.core.db.dialect.DbDialectFactory;
+import com.suixingpay.datas.node.task.worker.TaskWork;
+import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -39,7 +47,75 @@ public class AlerterFactory {
         }
     }
 
-    public void check(DataSourceWrapper source, DataSourceWrapper target, DTaskStat stat, Triple<String[], String[], String[]> checkMeta) {
-        alerter.check(source, target, stat, checkMeta);
+    public void check(DataSourceWrapper source, DataSourceWrapper target, TaskWork work) {
+        //数据库连接
+        final DbDialect sourceDialect = DbDialectFactory.INSTANCE.getDbDialect(source.getUniqueId());
+        final DbDialect targetDialect = DbDialectFactory.INSTANCE.getDbDialect(target.getUniqueId());
+        //任务统计列表
+        List<DTaskStat> stats = work.getStats();
+        if (stats.size() > 5) {
+            //创建屏障
+            CyclicBarrier barrier = new CyclicBarrier(stats.size() + 1);
+
+            //创建线程池
+            int threadSize = 3;
+            ExecutorService service = Executors.newFixedThreadPool(threadSize);
+            //分配告警检查任务到线程池子
+            for (DTaskStat stat : stats) {
+                service.submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        //执行任务
+                        try {
+                            alerter.check(sourceDialect, targetDialect, stat, getCheckMeta(work, stat.getSchema(), stat.getTable()));
+                        } finally {
+                            try {
+                                barrier.await();
+                            }catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                });
+            }
+            //关闭线程池
+            try {
+                barrier.await();
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                service.shutdown();
+            }
+        } else {
+            for (DTaskStat stat : stats) {
+                alerter.check(sourceDialect, targetDialect, stat, getCheckMeta(work, stat.getSchema(), stat.getTable()));
+            }
+        }
     }
+
+    private Triple<String[], String[], String[]> getCheckMeta(TaskWork work, String schema, String table) {
+        TableMapper mapper = work.getTableMapper(schema, table);
+        //初始化告警数据库查询信息
+        String[] updateTime = null;
+        String[] schemas = null;
+        String[] tables = null;
+
+        if (null != mapper && null != mapper.getUpdateDate() && mapper.getUpdateDate().length == 2) {
+            updateTime = mapper.getUpdateDate();
+        } else {
+            updateTime = null;
+        }
+        if (null != mapper && null != mapper.getSchema() && mapper.getSchema().length == 2) {
+            schemas = mapper.getSchema();
+        } else {
+            schemas = new String[] {schema, schema};
+        }
+        if (null != mapper && null != mapper.getTable() && mapper.getTable().length == 2) {
+            tables = mapper.getTable();
+        } else {
+            tables = new String[] {table, table};
+        }
+        return new ImmutableTriple<>(schemas, tables, updateTime);
+    }
+
 }

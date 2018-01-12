@@ -12,6 +12,7 @@ import com.suixingpay.datas.common.db.TableMapper;
 import com.suixingpay.datas.node.core.db.dialect.DbDialect;
 import com.suixingpay.datas.node.core.db.dialect.DbDialectFactory;
 import com.suixingpay.datas.node.core.event.etl.ETLBucket;
+import com.suixingpay.datas.node.task.worker.TaskWork;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 import org.springframework.stereotype.Component;
@@ -37,10 +38,10 @@ public class TransformFactory {
         sort();
     }
 
-    public void transform(ETLBucket bucket, TableMapper tableMapper) {
+    public void transform(ETLBucket bucket, TaskWork work) {
         DbDialect targetDialect = DbDialectFactory.INSTANCE.getDbDialect(bucket.getDataSourceId());
         for (Transformer transformer : extractors) {
-            transformer.transform(bucket, tableMapper, targetDialect);
+            transformer.transform(bucket, work, targetDialect);
         }
     }
 

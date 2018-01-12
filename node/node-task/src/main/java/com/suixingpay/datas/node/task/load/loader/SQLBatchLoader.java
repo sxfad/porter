@@ -15,6 +15,7 @@ import com.suixingpay.datas.node.core.db.dialect.DbDialectFactory;
 import com.suixingpay.datas.node.core.db.dialect.SqlTemplate;
 import com.suixingpay.datas.node.core.event.etl.ETLBucket;
 import com.suixingpay.datas.node.core.event.etl.ETLRow;
+import com.suixingpay.datas.node.task.worker.TaskWork;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -33,17 +34,19 @@ public class SQLBatchLoader extends BaseSqlLoader implements Loader {
     private final DbDialectFactory dbFactory = DbDialectFactory.INSTANCE;
     //需要在之前对datasource进行二次封装
     @Override
-    public void load(ETLBucket bucket, DTaskStat stat) {
+    public void load(ETLBucket bucket, TaskWork work) {
         LOGGER.debug("start loading bucket:{},size:{}", bucket.getSequence(), bucket.getRows().size());
         DbDialect dbDialect = dbFactory.getDbDialect(bucket.getDataSourceId());
         SqlTemplate template = dbDialect.getSqlTemplate();
         JdbcTemplate jdbcTemplate = dbDialect.getJdbcTemplate();
         for (List<ETLRow> rows : bucket.getBatchRows()) {
             if (rows.size() == 1) {
+                ETLRow row = rows.get(0);
+                DTaskStat stat = work.getDTaskStat(row.getSchema(), row.getTable());
                 //更新目标仓储
-                int affect = loadSql(buildSql(rows.get(0), template), jdbcTemplate);
+                int affect = loadSql(buildSql(row, template), jdbcTemplate);
                 //更新状态
-                updateStat(new ImmutablePair<>(affect, rows.get(0)), stat);
+                updateStat(new ImmutablePair<>(affect, row), stat);
             } else if (rows.size() > 1) { //仅支持单条记录生成一个sql的情况
                 List<Pair<String, Object[]>> subList = new ArrayList<>();
 
@@ -61,6 +64,7 @@ public class SQLBatchLoader extends BaseSqlLoader implements Loader {
                 for (int rindex = 0; rindex < rows.size(); rindex++) {
                     int affect = rindex < results.length ? results[rindex] : 0;
                     ETLRow row = rows.get(rindex);
+                    DTaskStat stat = work.getDTaskStat(row.getSchema(), row.getTable());
                     updateStat(new ImmutablePair<>(affect, row), stat);
                 }
             }

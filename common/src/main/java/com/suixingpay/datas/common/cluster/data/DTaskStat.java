@@ -28,6 +28,9 @@ public class DTaskStat  extends DObject {
     private String taskId;
     private String nodeId;
     private String topic;
+    private String schema;
+    private String table;
+
     //final用于保证不可变状态，同时保证多线程内存可见性
     private final AtomicLong insertRow = new AtomicLong(0);
     private final AtomicLong updateRow = new AtomicLong(0);
@@ -35,33 +38,35 @@ public class DTaskStat  extends DObject {
     private final AtomicLong errorUpdateRow = new AtomicLong(0);
     private final AtomicLong errorInsertRow = new AtomicLong(0);
     private final AtomicLong errorDeleteRow = new AtomicLong(0);
+    private final AtomicLong alertedTimes = new AtomicLong(0);
+    @JSONField(serialize = false, deserialize = false)
+    private final AtomicBoolean updateStat = new AtomicBoolean(false);
+
     @JSONField(format = DEFAULT_DATE_FORMAT)
     private Date statedTime;
     @JSONField(format = DEFAULT_DATE_FORMAT)
     private Date heartbeatTime;
-
     @JSONField(format = DEFAULT_DATE_FORMAT)
     private Date lastCheckedTime;
     @JSONField(format = DEFAULT_DATE_FORMAT)
     private Date lastLoadedTime;
     @JSONField(format = DEFAULT_DATE_FORMAT)
     private Date lastLoadedSystemTime;
-    private final AtomicLong alertedTimes = new AtomicLong(0);
-    @JSONField(serialize = false, deserialize = false)
-    private final AtomicBoolean updateStat = new AtomicBoolean(false);
-
 
     //处理进度,如果是mq就是topic的消费进度
     private String progress;
+
     public DTaskStat() {
         statedTime = new Date();
         heartbeatTime = new Date();
     }
-    public DTaskStat(String taskId, String nodeId, String topic) {
+    public DTaskStat(String taskId, String nodeId, String topic, String schema, String table) {
         this();
         this.taskId = taskId;
         this.nodeId = nodeId;
         this.topic = topic;
+        this.schema = schema;
+        this.table = table;
     }
 
     public String getTaskId() {
@@ -115,7 +120,8 @@ public class DTaskStat  extends DObject {
     @Override
     public <T> void merge(T data) {
         DTaskStat stat = (DTaskStat) data;
-        if (taskId.equals(stat.getTaskId()) && stat.getTopic().equals(topic)) {
+        if (taskId.equals(stat.getTaskId()) && stat.getTopic().equals(topic) && table.equals(stat.table)
+                && schema.equals(stat.schema)) {
             if (!StringUtils.isBlank(stat.nodeId)) this.nodeId = stat.nodeId;
             if (!StringUtils.isBlank(stat.progress)) this.progress = stat.progress;
             this.deleteRow.addAndGet(stat.deleteRow.longValue());
@@ -269,5 +275,19 @@ public class DTaskStat  extends DObject {
     }
 
 
+    public String getSchema() {
+        return schema;
+    }
 
+    public void setSchema(String schema) {
+        this.schema = schema;
+    }
+
+    public String getTable() {
+        return table;
+    }
+
+    public void setTable(String table) {
+        this.table = table;
+    }
 }

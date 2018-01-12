@@ -2,8 +2,11 @@ package com.suixingpay.datas.node.task.alert.alerter;
 
 import com.suixingpay.datas.common.cluster.data.DTaskStat;
 import com.suixingpay.datas.common.datasource.DataSourceWrapper;
-import com.suixingpay.datas.common.db.TableMapper;
+import com.suixingpay.datas.node.core.db.dialect.DbDialect;
+import com.suixingpay.datas.node.task.worker.TaskWork;
 import org.apache.commons.lang3.tuple.Triple;
+
+import java.util.List;
 
 /**
  * All rights Reserved, Designed By Suixingpay.
@@ -15,5 +18,5 @@ import org.apache.commons.lang3.tuple.Triple;
  */
 
 public interface Alerter {
-    void check(DataSourceWrapper source, DataSourceWrapper target, DTaskStat alertStat, Triple<String[], String[], String[]> checkMeta);
+    void check(DbDialect sourceDialect, DbDialect targetDialect, DTaskStat stat, Triple<String[], String[], String[]> checkMeta);
 }

@@ -12,6 +12,7 @@ import com.alibaba.fastjson.JSON;
 import com.suixingpay.datas.common.cluster.ClusterProvider;
 import com.suixingpay.datas.common.cluster.command.TaskRegisterCommand;
 import com.suixingpay.datas.common.cluster.command.TaskStatCommand;
+import com.suixingpay.datas.common.cluster.command.TaskStatQueryCommand;
 import com.suixingpay.datas.common.cluster.command.TaskStopCommand;
 import com.suixingpay.datas.common.cluster.data.DCallback;
 import com.suixingpay.datas.common.cluster.data.DObject;
@@ -28,8 +29,14 @@ import com.suixingpay.datas.node.task.transform.TransformJob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -44,10 +51,11 @@ public class TaskWork {
     private final DataSourceWrapper source;
     private final DataSourceWrapper target;
     private final DataSourceWrapper consumerSource;
-    protected final DTaskStat stat;
     private  final Map<StageType, StageJob> JOBS;
     private final String basicThreadName;
-    private TableMapper mapper;
+    private final Map<String, DTaskStat> stats;
+    private final Map<String, TableMapper> mappers;
+    private final TaskWorker worker;
     public TaskWork(String taskId, String topic, DataSourceWrapper source, DataSourceWrapper target, DataSourceWrapper dataSource, TaskWorker worker) {
         basicThreadName = "TaskWork-[taskId:" + taskId + "]-[topic:" + topic + "]";
         this.target = target;
@@ -55,22 +63,9 @@ public class TaskWork {
         this.topic = topic;
         this.taskId = taskId;
         this.consumerSource = dataSource;
-        stat = new DTaskStat(taskId, null, topic);
-
-        String mapperKey = taskId + "_" +topic.replace(".", "_");
-        this.mapper = worker.getTableMapper().get(mapperKey.toUpperCase());
-        if (null == this.mapper) {
-            mapperKey = taskId + "__" +topic.split("\\.")[1];
-            this.mapper = worker.getTableMapper().get(mapperKey.toUpperCase());
-        }
-        if (null == this.mapper) {
-            mapperKey = taskId + "_" +topic.split("\\.")[0] + "_";
-            this.mapper = worker.getTableMapper().get(mapperKey.toUpperCase());
-        }
-        if (null == this.mapper) {
-            mapperKey = taskId + "_" + "_";
-            this.mapper = worker.getTableMapper().get(mapperKey.toUpperCase());
-        }
+        this.stats = new ConcurrentHashMap<>();
+        this.mappers = new ConcurrentHashMap<>();
+        this.worker = worker;
 
         TaskWork work = this;
         JOBS = new LinkedHashMap<StageType, StageJob>(){
@@ -82,6 +77,20 @@ public class TaskWork {
                 put(StageType.DB_CHECK, new AlertJob(work));
             }
         };
+        //从集群模块获取任务状态统计信息
+        try {
+            ClusterProvider.sendCommand(new TaskStatQueryCommand(taskId, topic, new DCallback() {
+                @Override
+                public void callback(List<DObject> objects) {
+                    for ( DObject object : objects) {
+                        DTaskStat stat = (DTaskStat) object;
+                        getDTaskStat(stat.getSchema(), stat.getTable());
+                    }
+                }
+            }));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void stop() {
@@ -140,9 +149,6 @@ public class TaskWork {
         return JOBS.get(type).isPoolEmpty();
     }
 
-    public DTaskStat getStat() {
-        return stat;
-    }
 
     public String getTaskId() {
         return taskId;
@@ -152,41 +158,84 @@ public class TaskWork {
         return topic;
     }
 
-    public TableMapper getMapper() {
+
+    public void submitStat() {
+        stats.forEach(new BiConsumer<String, DTaskStat>() {
+            @Override
+            public void accept(String s, DTaskStat stat) {
+                try {
+                    LOGGER.debug("stat before submit:{}", JSON.toJSONString(stat));
+                    //多线程访问情况下（目前是两个线程:状态上报线程、任务状态更新线程），获取JOB的运行状态。
+                    DTaskStat newStat = null;
+                    synchronized (stat) {
+                        newStat = stat.snapshot(DTaskStat.class);
+                        LOGGER.debug("stat snapshot:{}", JSON.toJSONString(newStat));
+                        stat.reset();
+                        LOGGER.debug("stat after reset:{}", JSON.toJSONString(stat));
+                        ClusterProvider.sendCommand(new TaskStatCommand(newStat, new DCallback() {
+                            @Override
+                            public void callback(DObject object) {
+                                DTaskStat remoteData = (DTaskStat) object;
+
+                                if(stat.getUpdateStat().compareAndSet(false, true)) {
+                                    //最后检查点
+                                    if (null == stat.getLastCheckedTime()) {
+                                        stat.setLastLoadedTime(remoteData.getLastLoadedTime());
+                                    }
+                                    //最初启动时间
+                                    if (null != remoteData.getStatedTime()) {
+                                        stat.setStatedTime(remoteData.getStatedTime());
+                                    }
+                                }
+                            }
+                        }));
+                    }
+                } catch (Exception e) {
+                    LOGGER.error("上传任务消费进度出错", e);
+                }
+            }
+        });
+    }
+
+    public DTaskStat getDTaskStat(String schema, String table) {
+        String key = schema + "." + table;
+        DTaskStat stat = stats.computeIfAbsent(key, new Function<String, DTaskStat>() {
+            @Override
+            public DTaskStat apply(String s) {
+                DTaskStat tmp = new DTaskStat(taskId, null, topic, schema, table);
+                return tmp;
+            }
+        });
+        return stat;
+    }
+
+    public TableMapper getTableMapper(String schema, String table) {
+        String key = schema + "." + table;
+        TableMapper mapper = mappers.computeIfAbsent(key, new Function<String, TableMapper>() {
+            @Override
+            public TableMapper apply(String s) {
+                TableMapper tmp = null;
+                String mapperKey = taskId + "_" + schema + "_" + table;
+                tmp = worker.getTableMapper().get(mapperKey.toUpperCase());
+                if (null == tmp) {
+                    mapperKey = taskId + "__" + table;
+                    tmp = worker.getTableMapper().get(mapperKey.toUpperCase());
+                }
+                if (null == tmp) {
+                    mapperKey = taskId + "_" + schema + "_";
+                    tmp = worker.getTableMapper().get(mapperKey.toUpperCase());
+                }
+                if (null == tmp) {
+                    mapperKey = taskId + "_" + "_";
+                    tmp = worker.getTableMapper().get(mapperKey.toUpperCase());
+                }
+                return tmp;
+            }
+        });
         return mapper;
     }
 
-
-    public void submitStat() {
-        try {
-            LOGGER.debug("stat before submit:{}", JSON.toJSONString(stat));
-            //多线程访问情况下（目前是两个线程:状态上报线程、任务状态更新线程），获取JOB的运行状态。
-            DTaskStat newStat = null;
-            synchronized (stat) {
-                newStat = stat.snapshot(DTaskStat.class);
-                LOGGER.debug("stat snapshot:{}", JSON.toJSONString(newStat));
-                stat.reset();
-                LOGGER.debug("stat after reset:{}", JSON.toJSONString(stat));
-                ClusterProvider.sendCommand(new TaskStatCommand(newStat, new DCallback() {
-                    @Override
-                    public void callback(DObject object) {
-                        DTaskStat remoteData = (DTaskStat) object;
-
-                        if(stat.getUpdateStat().compareAndSet(false, true)) {
-                            //最后检查点
-                            if (null == stat.getLastCheckedTime()) {
-                                stat.setLastLoadedTime(remoteData.getLastLoadedTime());
-                            }
-                            //最初启动时间
-                            if (null != remoteData.getStatedTime()) {
-                                stat.setStatedTime(remoteData.getStatedTime());
-                            }
-                        }
-                    }
-                }));
-            }
-        } catch (Exception e) {
-            LOGGER.error("上传任务消费进度出错", e);
-        }
+    public List<DTaskStat>  getStats() {
+        return Collections.unmodifiableList(stats.values().stream().collect(Collectors.toList()));
     }
 }

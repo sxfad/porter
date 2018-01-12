@@ -11,6 +11,7 @@ package com.suixingpay.datas.node.task.load.loader;
 
 import com.suixingpay.datas.common.cluster.data.DTaskStat;
 import com.suixingpay.datas.node.core.event.etl.ETLBucket;
+import com.suixingpay.datas.node.task.worker.TaskWork;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 import org.springframework.stereotype.Component;
@@ -37,7 +38,7 @@ public class LoaderFactory {
         }
     }
 
-    public void load(ETLBucket bucket, DTaskStat stat) {
-        loader.load(bucket, stat);
+    public void load(ETLBucket bucket, TaskWork work) {
+        loader.load(bucket, work);
     }
 }

@@ -9,6 +9,8 @@
 
 package com.suixingpay.datas.common.cluster.data;
 
+import java.util.List;
+
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年01月02日 15:24
@@ -16,5 +18,10 @@ package com.suixingpay.datas.common.cluster.data;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年01月02日 15:24
  */
 public interface DCallback {
-    void callback(DObject object);
+    default void callback(DObject object) {
+        return;
+    }
+    default void callback(List<DObject> objects) {
+        return;
+    }
 }

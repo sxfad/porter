@@ -6,6 +6,7 @@ import com.suixingpay.datas.common.cluster.data.DTaskStat;
 import com.suixingpay.datas.common.datasource.DataSourceWrapper;
 import com.suixingpay.datas.node.core.db.dialect.DbDialect;
 import com.suixingpay.datas.node.core.db.dialect.DbDialectFactory;
+import com.suixingpay.datas.node.task.worker.TaskWork;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.lang3.tuple.Triple;
@@ -19,6 +20,8 @@ import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+import java.util.concurrent.Executors;
 
 /**
  * All rights Reserved, Designed By Suixingpay.
@@ -34,17 +37,12 @@ public class ScanDataAlerter implements Alerter{
     private static final long TIME_SPAN_OF_MINUTES = 30 ;
     private static final DateFormat NOTICE_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
 
-
-    @Override
-    public void check(DataSourceWrapper source, DataSourceWrapper target, DTaskStat stat, Triple<String[], String[], String[]> checkMeta) {
+    public void check(DbDialect sourceDialect, DbDialect targetDialect, DTaskStat stat, Triple<String[], String[], String[]> checkMeta) {
         LOGGER.debug("trying scan data");
         if (null == stat ||  ! stat.getUpdateStat().get() || null == stat.getLastLoadedTime() || null == checkMeta.getRight()) {
             LOGGER.debug("null == stat ||  ! stat.getUpdateStat().get() || null == stat.getLastLoadedTime() || null == checkMeta.getRight()");
             return;
         }
-        //数据库连接
-        DbDialect sourceDialect = DbDialectFactory.INSTANCE.getDbDialect(source.getUniqueId());
-        DbDialect targetDialect = DbDialectFactory.INSTANCE.getDbDialect(target.getUniqueId());
 
         //获得同步检查时间点并精确到分钟
         Date lastCheckedTime = stat.getLastCheckedTime();

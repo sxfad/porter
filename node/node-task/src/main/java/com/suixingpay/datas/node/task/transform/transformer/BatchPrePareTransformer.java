@@ -14,6 +14,7 @@ import com.suixingpay.datas.node.core.db.dialect.DbDialect;
 import com.suixingpay.datas.node.core.event.etl.ETLBucket;
 import com.suixingpay.datas.node.core.event.etl.ETLRow;
 import com.suixingpay.datas.node.core.event.s.EventType;
+import com.suixingpay.datas.node.task.worker.TaskWork;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,7 +37,7 @@ public class BatchPrePareTransformer implements Transformer{
     }
 
     @Override
-    public void transform(ETLBucket bucket, TableMapper tableMapper, DbDialect targetDialect) {
+    public void transform(ETLBucket bucket, TaskWork work, DbDialect targetDialect) {
         groupRows(bucket, 0);
     }
 

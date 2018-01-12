@@ -12,6 +12,7 @@ import com.alibaba.fastjson.JSON;
 import com.suixingpay.datas.common.cluster.ClusterListenerFilter;
 import com.suixingpay.datas.common.cluster.ClusterProvider;
 import com.suixingpay.datas.common.cluster.command.*;
+import com.suixingpay.datas.common.cluster.data.DObject;
 import com.suixingpay.datas.common.cluster.data.DTaskLock;
 import com.suixingpay.datas.common.cluster.event.ClusterEvent;
 import com.suixingpay.datas.common.cluster.event.EventType;
@@ -23,6 +24,7 @@ import com.suixingpay.datas.common.task.TaskEvent;
 import com.suixingpay.datas.common.task.TaskEventListener;
 import com.suixingpay.datas.common.task.TaskEventProvider;
 import com.suixingpay.datas.common.task.TaskEventType;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.zookeeper.data.Stat;
 
@@ -100,21 +102,17 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
                 client.create(assignPath,false,"{}");
                 client.create(statPath,false,"{}");
             }
-            //创建任务告警节点
+
+            //创建任务统计节点
             try {
                 String alertNode = statPath + "/" + task.getTopic();
-                DTaskStat thisStat = new DTaskStat(task.getTaskId(), nodeId, task.getTopic());
                 if (null == client.exists(alertNode, true)) {
-                    client.create(alertNode,false ,thisStat.toString());
-                } else {
-                    Pair<String, Stat> remoteData = client.getData(alertNode);
-                    DTaskStat remoteStat = DTaskStat.fromString(remoteData.getLeft(), DTaskStat.class);
-                    remoteStat.merge(thisStat);
-                    client.setData(alertNode, remoteData.getLeft(), remoteData.getRight().getVersion());
+                    client.create(alertNode,false ,"{}");
                 }
             } catch (Exception e) {
-                LOGGER.error("创建任务告警节点失败->task:{},node:{},topic:{},", task.getTaskId(), nodeId, task.getTopic(), e);
+                LOGGER.error("创建任务统计节点失败->task:{},node:{},topic:{},", task.getTaskId(), nodeId, task.getTopic(), e);
             }
+
             //任务分配
             String topicPath = assignPath + "/" + task.getTopic();
             Stat ifAssignTopic = client.exists(topicPath, true);
@@ -139,11 +137,13 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
             }
         } else if (command instanceof TaskStatCommand) {
             TaskStatCommand statCommand = (TaskStatCommand) command;
+            DTaskStat dataStat = statCommand.getStat();
             //.intern()保证全局唯一字符串对象
-            String node = (path() + "/" + statCommand.getStat().getTaskId() + "/stat/" + statCommand.getStat().getTopic()).intern();
+            String node = (path() + "/" +dataStat.getTaskId() + "/stat/" + dataStat.getTopic()
+                    + "/" + dataStat.getSchema()+ "." + dataStat.getTable()).intern();
             //控制锁的粒度到每个topic节点，
             synchronized (node) {
-                Stat stat = client.exists(node, false);
+                Stat stat = client.exists(node, true);
                 if (null != stat) {
                     Pair<String, Stat> nodePair = client.getData(node);
                     LOGGER.debug("stat checkout from zookeeper:{}", nodePair.getLeft());
@@ -152,13 +152,38 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
                     //run callback before merge data
                     if (null != statCommand.getCallback()) statCommand.getCallback().callback(taskStat);
                     //merge from localStat
-                    taskStat.merge(statCommand.getStat());
+                    taskStat.merge(dataStat);
                     //upload stat
                     client.setData(node, taskStat.toString(), nodePair.getRight().getVersion());
 
                     LOGGER.debug("stat store in zookeeper:{}", JSON.toJSONString(taskStat));
+                } else {
+                    DTaskStat thisStat = new DTaskStat(dataStat.getTaskId(), nodeId, dataStat.getTopic(), dataStat.getSchema(), dataStat.getTable());
+                    client.create(node,false ,thisStat.toString());
                 }
             }
+        } else if (command instanceof TaskStatQueryCommand) {
+            TaskStatQueryCommand queryCommand = (TaskStatQueryCommand) command;
+            String node = path() + "/" +queryCommand.getTaskId() + "/stat/" + queryCommand.getTopic();
+            LOGGER.debug("query \"{}\" children node.", node);
+
+            List<String> children = client.getChildren(node);
+            List<DObject> stats = new ArrayList<>();
+            for (String child : children) {
+                String fullChild = node + "/" +child;
+                LOGGER.debug("got \"{}\" children node \"{}\".", node, fullChild);
+                try {
+                    Pair<String, Stat> nodePair = client.getData(fullChild);
+                    if (null != nodePair && !StringUtils.isBlank(nodePair.getLeft())) {
+                        LOGGER.debug("got \"{}\" children node \"{}\" value {}.", node, fullChild, nodePair.getLeft());
+                        DTaskStat taskStat = DTaskStat.fromString(nodePair.getLeft(), DTaskStat.class);
+                        stats.add(taskStat);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            if(null != queryCommand.getCallback()) queryCommand.getCallback().callback(stats);
         }
     }
 
