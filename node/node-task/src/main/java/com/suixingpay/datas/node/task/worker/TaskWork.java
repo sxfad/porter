@@ -8,6 +8,7 @@
  */
 package com.suixingpay.datas.node.task.worker;
 
+import com.alibaba.fastjson.JSON;
 import com.suixingpay.datas.common.cluster.ClusterProvider;
 import com.suixingpay.datas.common.cluster.command.TaskRegisterCommand;
 import com.suixingpay.datas.common.cluster.command.TaskStatCommand;
@@ -31,7 +32,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * 工作
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月21日 14:48
  * @version: V1.0
@@ -56,6 +56,22 @@ public class TaskWork {
         this.taskId = taskId;
         this.consumerSource = dataSource;
         stat = new DTaskStat(taskId, null, topic);
+
+        String mapperKey = taskId + "_" +topic.replace(".", "_");
+        this.mapper = worker.getTableMapper().get(mapperKey.toUpperCase());
+        if (null == this.mapper) {
+            mapperKey = taskId + "__" +topic.split("\\.")[1];
+            this.mapper = worker.getTableMapper().get(mapperKey.toUpperCase());
+        }
+        if (null == this.mapper) {
+            mapperKey = taskId + "_" +topic.split("\\.")[0] + "_";
+            this.mapper = worker.getTableMapper().get(mapperKey.toUpperCase());
+        }
+        if (null == this.mapper) {
+            mapperKey = taskId + "_" + "_";
+            this.mapper = worker.getTableMapper().get(mapperKey.toUpperCase());
+        }
+
         TaskWork work = this;
         JOBS = new LinkedHashMap<StageType, StageJob>(){
             {
@@ -66,12 +82,6 @@ public class TaskWork {
                 put(StageType.DB_CHECK, new AlertJob(work));
             }
         };
-        String mapperKey = taskId + "_" +topic.replace(".", "_");
-        this.mapper = worker.getTableMapper().get(mapperKey.toUpperCase());
-        if (null == this.mapper) {
-            mapperKey = taskId + "_" +topic.split("\\.")[0] + "_";
-            this.mapper = worker.getTableMapper().get(mapperKey.toUpperCase());
-        }
     }
 
     public void stop() {
@@ -149,19 +159,28 @@ public class TaskWork {
 
     public void submitStat() {
         try {
+            LOGGER.debug("stat before submit:{}", JSON.toJSONString(stat));
             //多线程访问情况下（目前是两个线程:状态上报线程、任务状态更新线程），获取JOB的运行状态。
             DTaskStat newStat = null;
             synchronized (stat) {
                 newStat = stat.snapshot(DTaskStat.class);
+                LOGGER.debug("stat snapshot:{}", JSON.toJSONString(newStat));
                 stat.reset();
-
+                LOGGER.debug("stat after reset:{}", JSON.toJSONString(stat));
                 ClusterProvider.sendCommand(new TaskStatCommand(newStat, new DCallback() {
                     @Override
                     public void callback(DObject object) {
                         DTaskStat remoteData = (DTaskStat) object;
-                        if (null == stat.getLastCheckedTime()
-                                && stat.getUpdateStat().compareAndSet(false, true)) {
-                            stat.setLastLoadedTime(remoteData.getLastLoadedTime());
+
+                        if(stat.getUpdateStat().compareAndSet(false, true)) {
+                            //最后检查点
+                            if (null == stat.getLastCheckedTime()) {
+                                stat.setLastLoadedTime(remoteData.getLastLoadedTime());
+                            }
+                            //最初启动时间
+                            if (null != remoteData.getStatedTime()) {
+                                stat.setStatedTime(remoteData.getStatedTime());
+                            }
                         }
                     }
                 }));

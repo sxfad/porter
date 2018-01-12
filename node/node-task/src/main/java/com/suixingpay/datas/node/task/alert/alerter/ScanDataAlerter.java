@@ -1,5 +1,6 @@
 package com.suixingpay.datas.node.task.alert.alerter;
 
+import com.alibaba.fastjson.JSON;
 import com.suixingpay.datas.common.alert.AlertProviderFactory;
 import com.suixingpay.datas.common.cluster.data.DTaskStat;
 import com.suixingpay.datas.common.datasource.DataSourceWrapper;
@@ -36,7 +37,11 @@ public class ScanDataAlerter implements Alerter{
 
     @Override
     public void check(DataSourceWrapper source, DataSourceWrapper target, DTaskStat stat, Triple<String[], String[], String[]> checkMeta) {
-        if (null == stat ||  ! stat.getUpdateStat().get() || null == stat.getLastLoadedTime() || null == checkMeta.getRight()) return;
+        LOGGER.debug("trying scan data");
+        if (null == stat ||  ! stat.getUpdateStat().get() || null == stat.getLastLoadedTime() || null == checkMeta.getRight()) {
+            LOGGER.debug("null == stat ||  ! stat.getUpdateStat().get() || null == stat.getLastLoadedTime() || null == checkMeta.getRight()");
+            return;
+        }
         //数据库连接
         DbDialect sourceDialect = DbDialectFactory.INSTANCE.getDbDialect(source.getUniqueId());
         DbDialect targetDialect = DbDialectFactory.INSTANCE.getDbDialect(target.getUniqueId());
@@ -46,11 +51,19 @@ public class ScanDataAlerter implements Alerter{
         lastCheckedTime = null == lastCheckedTime ? stat.getStatedTime() : lastCheckedTime;
         lastCheckedTime = DateUtils.setSeconds(lastCheckedTime, 0);
 
+        LOGGER.debug("获得同步检查时间点:{}", NOTICE_DATE_FORMAT.format(lastCheckedTime));
+
         //计算与最同步时间间隔并推前5分钟,单位分钟
         long timeDiff = (DateUtils.addMinutes(stat.getLastLoadedTime(),5).getTime() - lastCheckedTime.getTime())
                 / 1000 / 60;
+
+        LOGGER.debug("计算与最新表记录操作时间间隔并推前5分钟:{},时间差:{}分钟", NOTICE_DATE_FORMAT.format(stat.getLastLoadedTime()) , timeDiff);
+
         //分割时间段
         int splitTimes = timeDiff > 0 ? (int) (timeDiff / TIME_SPAN_OF_MINUTES) : 0;
+
+        LOGGER.debug("分割时间段:{}", splitTimes);
+
         if (splitTimes > 0) {
             for (int i = 0; i < splitTimes; i ++) {
                 //计算分钟差
@@ -62,17 +75,19 @@ public class ScanDataAlerter implements Alerter{
                 //计算结束时间，时间单位为yyyyMMdd HHmm:59
                 Date endDate = DateUtils.addMinutes(lastCheckedTime, endMinute);
                 endDate = DateUtils.setSeconds(endDate, 59);
+
+                LOGGER.debug("执行同步检查逻辑,执行时间段:{}-{}", NOTICE_DATE_FORMAT.format(startDate), NOTICE_DATE_FORMAT.format(endDate));
+
                 //执行同步检查逻辑，暂时为单线程模式执行
-                checkLogic(sourceDialect, targetDialect, startDate, endDate, checkMeta);
+                checkLogic(stat,sourceDialect, targetDialect, startDate, endDate, checkMeta);
             }
+            //更新同步时间点
+            stat.setLastCheckedTime(DateUtils.addMinutes(lastCheckedTime, (int) (splitTimes * TIME_SPAN_OF_MINUTES) + 1));
         }
-        //更新同步时间点
-        stat.setLastCheckedTime(DateUtils.addMinutes(lastCheckedTime, (int) (timeDiff * TIME_SPAN_OF_MINUTES)));
-        //更新同步检查册书
-        stat.getAlertedTimes().incrementAndGet();
+        LOGGER.debug("stat after scan data:{}", JSON.toJSONString(stat));
     }
 
-    private void checkLogic(DbDialect source, DbDialect target, Date startDate, Date endDate, Triple<String[], String[], String[]> checkMeta) {
+    private void checkLogic(DTaskStat stat, DbDialect source, DbDialect target, Date startDate, Date endDate, Triple<String[], String[], String[]> checkMeta) {
         //源端目标端数据库查询
         String sourceSql = source.getSqlTemplate().getDataChangedCountSql(checkMeta.getLeft()[0],checkMeta.getMiddle()[0], checkMeta.getRight()[0]);
         String targetSql = target.getSqlTemplate().getDataChangedCountSql(checkMeta.getLeft()[1],checkMeta.getMiddle()[1], checkMeta.getRight()[1]);
@@ -81,6 +96,7 @@ public class ScanDataAlerter implements Alerter{
 
         int countTarget = countQuery(target.getJdbcTemplate(), targetSql, startDate, endDate);
 
+        LOGGER.debug("执行同步检查逻辑,执行时间段:{}-{}, 结果:{}-{}", NOTICE_DATE_FORMAT.format(startDate), NOTICE_DATE_FORMAT.format(endDate), countSource, countTarget);
 
         //数据不一致时发送告警
         if (countTarget != countSource) {
@@ -88,7 +104,11 @@ public class ScanDataAlerter implements Alerter{
                     .append("源端数据变更").append(countSource).append("条,").append("\n\r")
                     .append("目标端数据变更").append(countTarget).append("条。").append("\n\r")
                     .append("数据变更条目不一致，请尽快修正").toString();
+
+            LOGGER.debug(notice.toString());
             AlertProviderFactory.INSTANCE.notice(notice);
+            //更新同步检查次数
+            stat.incrementAlertedTimes();
         }
     }
 
@@ -98,8 +118,8 @@ public class ScanDataAlerter implements Alerter{
         template.query(sql, new RowCallbackHandler() {
             @Override
             public void processRow(ResultSet rs) throws SQLException {
-                if (null != rs && rs.first()) {
-                    String value = rs.getString(0);
+                if (null != rs) {
+                    String value = rs.getString(1);
                     if (!StringUtils.isBlank(value) && StringUtils.isNumeric(value)) {
                         count[0] = Integer.valueOf(value).intValue();
                     }

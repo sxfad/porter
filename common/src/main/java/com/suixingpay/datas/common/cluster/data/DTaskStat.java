@@ -12,8 +12,6 @@ import com.alibaba.fastjson.annotation.JSONField;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Date;
-import java.util.concurrent.BrokenBarrierException;
-import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -26,7 +24,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月20日 13:45
  */
 public class DTaskStat  extends DObject {
-    private static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+    public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
     private String taskId;
     private String nodeId;
     private String topic;
@@ -46,6 +44,8 @@ public class DTaskStat  extends DObject {
     private Date lastCheckedTime;
     @JSONField(format = DEFAULT_DATE_FORMAT)
     private Date lastLoadedTime;
+    @JSONField(format = DEFAULT_DATE_FORMAT)
+    private Date lastLoadedSystemTime;
     private final AtomicLong alertedTimes = new AtomicLong(0);
     @JSONField(serialize = false, deserialize = false)
     private final AtomicBoolean updateStat = new AtomicBoolean(false);
@@ -108,7 +108,7 @@ public class DTaskStat  extends DObject {
         this.lastLoadedTime = lastLoadedTime;
     }
 
-    public void setLastCheckedTime(Date lastCheckedTime) {
+    public synchronized void setLastCheckedTime(Date lastCheckedTime) {
         this.lastCheckedTime = lastCheckedTime;
     }
 
@@ -127,6 +127,7 @@ public class DTaskStat  extends DObject {
             this.alertedTimes.addAndGet(stat.alertedTimes.longValue());
             if (null != stat.lastLoadedTime) this.lastLoadedTime = stat.lastLoadedTime;
             if (null != stat.lastCheckedTime) this.lastCheckedTime = stat.lastCheckedTime;
+            if (null != stat.lastLoadedSystemTime) this.lastLoadedSystemTime = stat.lastLoadedSystemTime;
             this.heartbeatTime = new Date();
         }
     }
@@ -152,7 +153,7 @@ public class DTaskStat  extends DObject {
         return progress;
     }
 
-    public void setProgress(String progress) {
+    public synchronized void setProgress(String progress) {
         this.progress = progress;
     }
 
@@ -251,7 +252,22 @@ public class DTaskStat  extends DObject {
         this.statedTime = statedTime;
     }
 
-    public void setHeartbeatTime(Date heartbeatTime) {
+    public synchronized void setHeartbeatTime(Date heartbeatTime) {
         this.heartbeatTime = heartbeatTime;
     }
+
+    public Date getLastLoadedSystemTime() {
+        return lastLoadedSystemTime;
+    }
+
+    public synchronized void setLastLoadedSystemTime(Date lastLoadedSystemTime) {
+        this.lastLoadedSystemTime = lastLoadedSystemTime;
+    }
+
+    public synchronized void incrementAlertedTimes() {
+        alertedTimes.incrementAndGet();
+    }
+
+
+
 }

@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -127,15 +128,15 @@ public class BaseSqlLoader {
         } else if (row.getOpType() == EventType.INSERT) {
             sqlList.add(new ImmutablePair<>(template.getInsertSql(row.getFinalSchema(), row.getFinalTable(), allColumnNames), allNewValues));
         } else if (row.getOpType() == EventType.UPDATE) {
-            //全字段更新
-            sqlList.add(new ImmutablePair<>(template.getUpdateSql(row.getFinalSchema(), row.getFinalTable(), allColumnNames),
-                    ArrayUtils.addAll(allNewValues, allOldValues)));
-
             //如果存在主键，根据主键更新
             if (keyNames.length > 0 && null != columnNames && columnNames.length > 0)  {
                 sqlList.add(new ImmutablePair<>(template.getUpdateSql(row.getFinalSchema(), row.getFinalTable(), keyNames, columnNames),
                         ArrayUtils.addAll(columnNewValues, keyOldValues)));
             }
+
+            //全字段更新
+            sqlList.add(new ImmutablePair<>(template.getUpdateSql(row.getFinalSchema(), row.getFinalTable(), allColumnNames),
+                    ArrayUtils.addAll(allNewValues, allOldValues)));
 
             //插入
             sqlList.add(new ImmutablePair<>(template.getInsertSql(row.getFinalSchema(), row.getFinalTable(), allColumnNames),
@@ -190,6 +191,7 @@ public class BaseSqlLoader {
 
         //更新最后执行消息事件的产生时间，用于计算从消息产生到加载如路时间、计算数据同步检查时间
         if (null != row.getOpTime()) stat.setLastLoadedTime(row.getOpTime());
+        stat.setLastLoadedSystemTime(new Date());
         if (!StringUtils.isBlank(row.getIndex())){
             stat.setProgress(row.getIndex());
         }

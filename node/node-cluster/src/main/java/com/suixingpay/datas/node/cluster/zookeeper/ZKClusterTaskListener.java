@@ -8,6 +8,7 @@
  */
 package com.suixingpay.datas.node.cluster.zookeeper;
 
+import com.alibaba.fastjson.JSON;
 import com.suixingpay.datas.common.cluster.ClusterListenerFilter;
 import com.suixingpay.datas.common.cluster.ClusterProvider;
 import com.suixingpay.datas.common.cluster.command.*;
@@ -145,6 +146,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
                 Stat stat = client.exists(node, false);
                 if (null != stat) {
                     Pair<String, Stat> nodePair = client.getData(node);
+                    LOGGER.debug("stat checkout from zookeeper:{}", nodePair.getLeft());
                     //remoteStat
                     DTaskStat taskStat = DTaskStat.fromString(nodePair.getLeft(), DTaskStat.class);
                     //run callback before merge data
@@ -154,6 +156,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
                     //upload stat
                     client.setData(node, taskStat.toString(), nodePair.getRight().getVersion());
 
+                    LOGGER.debug("stat store in zookeeper:{}", JSON.toJSONString(taskStat));
                 }
             }
         }
