@@ -65,22 +65,10 @@ AlertJob单线程同步Zookeeper数据库检查时间点，对比指定时间段
             - 记录最初开始同步时间
             - 按照合理时间跨度，比对当前时间节点前指定时间跨度的目标库和源库数据记录
             - 累计已完成数据比对时间
-	
-## quick start
-git clone http://192.168.120.68/root/suixingpay-datas.git
+            
+   
+##  quick start
 
-cd suixingpay-datas
 
-git checkout 0.1
-
-gradle build
-
-tar zxvf build/distributions/node-boot-0.1-SNAPSHOT.tar
-
-node-boot-0.1-SNAPSHOT/bin/node-start
-
-## 优雅关闭
-signalId = \`kill -l USR2\`
-
-kill -$signalId PID  #centos:31 mac:12
+[quick start](./docs/quickStart.md)
 
