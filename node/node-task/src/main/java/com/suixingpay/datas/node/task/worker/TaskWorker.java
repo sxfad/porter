@@ -114,7 +114,7 @@ public class TaskWorker {
                     MQDataSourceWrapper mqDataSource = (MQDataSourceWrapper) dataSource;
                     mqDataSource.setTopic(topic);
                 }
-                TaskWork job = new TaskWork(task.getTaskId(), topic, source, target, dataSource, this);
+                TaskWork job = new TaskWork(task.getLoader(), task.getTaskId(), topic, source, target, dataSource, this);
                 job.start();
                 JOBS.put(task.getTaskId() + "_" +topic, job);
             } catch (Exception e){

@@ -9,11 +9,9 @@
 
 package com.suixingpay.datas.node.task.transform.transformer;
 
-import com.suixingpay.datas.common.db.TableMapper;
 import com.suixingpay.datas.node.core.db.dialect.DbDialect;
 import com.suixingpay.datas.node.core.event.etl.ETLBucket;
 import com.suixingpay.datas.node.core.event.etl.ETLRow;
-import com.suixingpay.datas.node.core.event.s.EventType;
 import com.suixingpay.datas.node.task.worker.TaskWork;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,9 +48,9 @@ public class BatchPrePareTransformer implements Transformer{
             from++;
             ETLRow nextRow = null;
             if (from < size) nextRow = bucket.getRows().get(from);
-            //下个操作类型和该类型相同并且类型为插入或截断表或删除表记录
-            if ((row.getOpType()== EventType.INSERT || row.getOpType() == EventType.TRUNCATE || row.getOpType() == EventType.DELETE)
-                    && (null != nextRow && nextRow.getOpType() == row.getOpType())) {
+            //下个操作类型和该类型相同
+            if (null != nextRow && nextRow.getOpType() == row.getOpType() && nextRow.getSchema().equals(row.getSchema())
+                    && nextRow.getTable().equals(row.getTable())) {
                 continue;
             } else {
                 break;

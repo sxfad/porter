@@ -56,7 +56,8 @@ public class TaskWork {
     private final Map<String, DTaskStat> stats;
     private final Map<String, TableMapper> mappers;
     private final TaskWorker worker;
-    public TaskWork(String taskId, String topic, DataSourceWrapper source, DataSourceWrapper target, DataSourceWrapper dataSource, TaskWorker worker) {
+    private final String loader;
+    public TaskWork(String loader, String taskId, String topic, DataSourceWrapper source, DataSourceWrapper target, DataSourceWrapper dataSource, TaskWorker worker) {
         basicThreadName = "TaskWork-[taskId:" + taskId + "]-[topic:" + topic + "]";
         this.target = target;
         this.source = source;
@@ -66,7 +67,7 @@ public class TaskWork {
         this.stats = new ConcurrentHashMap<>();
         this.mappers = new ConcurrentHashMap<>();
         this.worker = worker;
-
+        this.loader = loader;
         TaskWork work = this;
         JOBS = new LinkedHashMap<StageType, StageJob>(){
             {
@@ -237,5 +238,9 @@ public class TaskWork {
 
     public List<DTaskStat>  getStats() {
         return Collections.unmodifiableList(stats.values().stream().collect(Collectors.toList()));
+    }
+
+    public String getLoader() {
+        return loader;
     }
 }

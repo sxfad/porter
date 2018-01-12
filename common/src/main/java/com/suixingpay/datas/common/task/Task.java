@@ -32,6 +32,8 @@ public class Task {
     private NamedDataDriver dataDriver;
     //自定义字段映射
     private List<TableMapper> mappers;
+    //数据导入规则
+    private String loader;
     public String[] listTopic() {
         String[] topics = null;
         if (DataDriverType.KAFKA == dataDriver.getType()) {
@@ -78,5 +80,13 @@ public class Task {
 
     public void setMappers(List<TableMapper> mappers) {
         this.mappers = mappers;
+    }
+
+    public String getLoader() {
+        return loader;
+    }
+
+    public void setLoader(String loader) {
+        this.loader = loader;
     }
 }

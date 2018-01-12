@@ -43,6 +43,7 @@ dataDriver.drivers.名字.extendAttr.initialPoolSize=5<br/>
 - task.items[下标]任务数组,下标从0开始
  <br/>
 task.items[下标].taskId=1<br/>
+task.items[下标].loader=single或batch<br/>
 task.items[下标].sourceDriver.name=源端数据库名(公用连接池名字)<br/>
 task.items[下标].targetDriver.type=ORACLE<br/>
 task.items[下标].targetDriver.url=jdbc连接<br/>

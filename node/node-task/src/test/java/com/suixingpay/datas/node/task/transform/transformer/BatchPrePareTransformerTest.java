@@ -34,19 +34,19 @@ public class BatchPrePareTransformerTest {
     @Test
     public void transform() {
         List<ETLRow> rows = new ArrayList<>();
-        rows.add(new ETLRow(null, null , EventType.DELETE,null,null));
-        rows.add(new ETLRow(null, null ,EventType.DELETE,null,null));
-        rows.add(new ETLRow(null, null ,EventType.INSERT,null,null));
-        rows.add(new ETLRow(null, null ,EventType.DELETE,null,null));
-        rows.add(new ETLRow(null, null ,EventType.INSERT,null,null));
-        rows.add(new ETLRow(null, null ,EventType.INSERT,null,null));
-        rows.add(new ETLRow(null, null ,EventType.INSERT,null,null));
-        rows.add(new ETLRow(null, null ,EventType.TRUNCATE,null,null));
-        rows.add(new ETLRow(null, null ,EventType.TRUNCATE,null,null));
-        rows.add(new ETLRow(null, null ,EventType.UPDATE,null,null));
-        rows.add(new ETLRow(null, null ,EventType.TRUNCATE,null,null));
-        rows.add(new ETLRow(null, null ,EventType.INSERT,null,null));
-        rows.add(new ETLRow(null, null ,EventType.INSERT,null,null));
+        rows.add(new ETLRow("s", "t" , EventType.DELETE,null,null));
+        rows.add(new ETLRow("s", "t"  ,EventType.DELETE,null,null));
+        rows.add(new ETLRow("s", "t"  ,EventType.INSERT,null,null));
+        rows.add(new ETLRow("s", "t"  ,EventType.DELETE,null,null));
+        rows.add(new ETLRow("s", "t"  ,EventType.INSERT,null,null));
+        rows.add(new ETLRow("s", "t"  ,EventType.INSERT,null,null));
+        rows.add(new ETLRow("s", "t"  ,EventType.INSERT,null,null));
+        rows.add(new ETLRow("s", "t"  ,EventType.TRUNCATE,null,null));
+        rows.add(new ETLRow("s", "t"  ,EventType.TRUNCATE,null,null));
+        rows.add(new ETLRow("s", "t"  ,EventType.UPDATE,null,null));
+        rows.add(new ETLRow("s", "t"  ,EventType.TRUNCATE,null,null));
+        rows.add(new ETLRow("s", "t"  ,EventType.INSERT,null,null));
+        rows.add(new ETLRow("s", "t"  ,EventType.INSERT,null,null));
 
         ETLBucket bucket = new ETLBucket(0, rows, "");
 

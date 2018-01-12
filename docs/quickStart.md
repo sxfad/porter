@@ -23,8 +23,7 @@ node-boot-0.2/bin/startup.sh --spring.profiles.active=运行环境
 
 ## 优雅关闭
 >
-signalId = \`kill -l USR2\` <br/>
-kill -$signalId PID  #centos:31 mac:12
+node-boot-0.2/bin/shutdown.sh
 
 
 

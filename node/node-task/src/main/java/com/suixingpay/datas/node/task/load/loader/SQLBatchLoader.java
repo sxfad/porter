@@ -32,6 +32,12 @@ import java.util.List;
  */
 public class SQLBatchLoader extends BaseSqlLoader implements Loader {
     private final DbDialectFactory dbFactory = DbDialectFactory.INSTANCE;
+
+    @Override
+    public String getName() {
+        return "batch";
+    }
+
     //需要在之前对datasource进行二次封装
     @Override
     public void load(ETLBucket bucket, TaskWork work) {
