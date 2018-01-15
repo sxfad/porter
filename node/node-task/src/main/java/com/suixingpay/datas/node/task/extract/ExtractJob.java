@@ -31,7 +31,7 @@ import java.util.concurrent.*;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月24日 11:20
  */
 public class ExtractJob extends AbstractStageJob {
-    private static final int BUFFER_SIZE = LOGIC_THREAD_SIZE * LOGIC_THREAD_SIZE * LOGIC_THREAD_SIZE * LOGIC_THREAD_SIZE;
+    private static final int BUFFER_SIZE = 10000;
     private final TaskWork work;
     private final ExecutorService executorService;
     private final DataCarrier<ETLBucket> carrier;
@@ -46,7 +46,7 @@ public class ExtractJob extends AbstractStageJob {
         //线程阻塞时，在调用者线程中执行
         executorService = new ThreadPoolExecutor(LOGIC_THREAD_SIZE, LOGIC_THREAD_SIZE,
                 0L, TimeUnit.MILLISECONDS,
-                new LinkedBlockingQueue<Runnable>(),
+                new LinkedBlockingQueue<Runnable>(LOGIC_THREAD_SIZE * 2),
                 getThreadFactory(), new ThreadPoolExecutor.CallerRunsPolicy());
         carrier = ApplicationContextUtils.INSTANCE.getBean(DataCarrierFactory.class).newDataCarrier(BUFFER_SIZE, 1);
         orderedBucket = ApplicationContextUtils.INSTANCE.getBean(DataCarrierFactory.class).newDataCarrier(1024*1*1000, 1);
@@ -71,6 +71,7 @@ public class ExtractJob extends AbstractStageJob {
                 events = work.waitEvent(StageType.SELECT);
                 if (null != events) {
                     final Pair<Long, List<MessageEvent>> inThreadEvents = events;
+                    LOGGER.debug("extract MessageEvent batch {}.", inThreadEvents.getLeft());
                     orderedBucket.push(inThreadEvents.getLeft());
                     //暂无Extractor失败处理方案
                     executorService.submit(new Runnable() {
@@ -81,6 +82,7 @@ public class ExtractJob extends AbstractStageJob {
                                 ETLBucket bucket = ETLBucket.from(inThreadEvents, target.getUniqueId());
                                 extractorFactory.extract(bucket);
                                 carrier.push(bucket);
+                                LOGGER.debug("push bucket {} into carrier after extract.", inThreadEvents.getLeft());
                             } catch (Exception e) {
                                 LOGGER.error("批次[{}]执行ExtractJob失败!", inThreadEvents.getLeft(), e);
                             }

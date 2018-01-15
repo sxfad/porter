@@ -67,10 +67,16 @@ public class OggConverter implements EventConverter{
             event.setTable(stTmp[1]);
         }
         event.setOpType(eventType);
-        String poTS = obj.getString("op_ts");
-        event.setOpTs(OP_TS_F.parse(poTS.substring(0,poTS.length() - 3)));
-        String currentTS = obj.getString("current_ts");
-        event.setCurrentTs(C_TS_F.parse(currentTS.substring(0, currentTS.length() - 3)));
+        try {
+            String poTS = obj.getString("op_ts");
+            event.setOpTs(OP_TS_F.parse(poTS.substring(0, poTS.length() - 3)));
+        } catch (Exception e) {}
+
+        try {
+            String currentTS = obj.getString("current_ts");
+            event.setCurrentTs(C_TS_F.parse(currentTS.substring(0, currentTS.length() - 3)));
+        } catch (Exception e) {}
+
         JSONArray pkeys = obj.containsKey("primary_keys") ? obj.getJSONArray("primary_keys") : null;
         if (null != pkeys) event.setPrimaryKeys(pkeys.toJavaList(String.class));
         event.setBefore(obj.getObject("before",Map.class));

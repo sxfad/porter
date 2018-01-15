@@ -16,7 +16,11 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 import org.springframework.stereotype.Component;
 
+import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -27,22 +31,31 @@ import java.util.List;
 @Component
 @Scope("singleton")
 public class LoaderFactory {
-    private final List<Loader> LOADERS;
+    private final Map<String, Loader> LOADERS = new LinkedHashMap<>();
 
     public LoaderFactory() {
-        LOADERS = SpringFactoriesLoader.loadFactories(Loader.class, null);
-    }
-    private Loader getLoader(String name) {
-        for(Loader loader : LOADERS) {
-            if (loader.getName().equals(name)) {
-                return loader;
+        //获取loader实现列表
+        List<Loader> loaderList = SpringFactoriesLoader.loadFactories(Loader.class, null);
+        //排序
+        loaderList.sort(new Comparator<Loader>() {
+            @Override
+            public int compare(Loader o1, Loader o2) {
+                return o1.order() - o2.order();
             }
+        });
+        //填充
+        for (Loader loader : loaderList) {
+            LOADERS.put(loader.getName(), loader);
         }
-        return LOADERS.size() > 0 ? LOADERS.get(0) : null;
+    }
+
+    private Loader getLoader(String name) {
+        Loader loader = LOADERS.get(name);
+        loader = null == loader ? LOADERS.values().stream().findFirst().get() : loader;
+        return loader;
     }
 
     public void load(ETLBucket bucket, TaskWork work) {
-        Loader loader = getLoader(work.getLoader());
-        loader.load(bucket, work);
+        getLoader(work.getLoader()).load(bucket, work);
     }
 }

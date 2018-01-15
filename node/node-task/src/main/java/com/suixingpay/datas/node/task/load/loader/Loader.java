@@ -20,5 +20,6 @@ import com.suixingpay.datas.node.task.worker.TaskWork;
  */
 public interface Loader {
     String getName();
+    int order();
     void load(ETLBucket bucket, TaskWork work);
 }

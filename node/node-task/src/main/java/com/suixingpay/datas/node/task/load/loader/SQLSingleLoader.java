@@ -34,6 +34,11 @@ public class SQLSingleLoader extends BaseSqlLoader implements Loader {
         return "single";
     }
 
+    @Override
+    public int order() {
+        return 1;
+    }
+
     //需要在之前对datasource进行二次封装
     @Override
     public void load(ETLBucket bucket, TaskWork work) {

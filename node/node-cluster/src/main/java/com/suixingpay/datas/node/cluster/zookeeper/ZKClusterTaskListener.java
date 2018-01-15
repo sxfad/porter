@@ -144,6 +144,14 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
             //控制锁的粒度到每个topic节点，
             synchronized (node) {
                 Stat stat = client.exists(node, true);
+                //节点不存在，创建新节点
+                if (null == stat) {
+                    DTaskStat thisStat = new DTaskStat(dataStat.getTaskId(), nodeId, dataStat.getTopic(), dataStat.getSchema(), dataStat.getTable());
+                    client.create(node,false ,thisStat.toString());
+                    stat = client.exists(node, true);
+                }
+
+                //节点合并赋值并上传
                 if (null != stat) {
                     Pair<String, Stat> nodePair = client.getData(node);
                     LOGGER.debug("stat checkout from zookeeper:{}", nodePair.getLeft());
@@ -157,9 +165,6 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
                     client.setData(node, taskStat.toString(), nodePair.getRight().getVersion());
 
                     LOGGER.debug("stat store in zookeeper:{}", JSON.toJSONString(taskStat));
-                } else {
-                    DTaskStat thisStat = new DTaskStat(dataStat.getTaskId(), nodeId, dataStat.getTopic(), dataStat.getSchema(), dataStat.getTable());
-                    client.create(node,false ,thisStat.toString());
                 }
             }
         } else if (command instanceof TaskStatQueryCommand) {

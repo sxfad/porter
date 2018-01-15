@@ -48,7 +48,7 @@ public class KafkaSourceWrapperTest {
         driver.setType(DataDriverType.KAFKA);
         driver.setUrl("172.16.135.30:9092,172.16.135.30:9093");
         driver.setExtendAttr(new HashMap<>());
-        driver.getExtendAttr().put("topic","zkw.t_user_debug_insert");
+        driver.getExtendAttr().put("topic","zkw.t_user_debug_001");
         driver.getExtendAttr().put("converter","ogg");
         driver.getExtendAttr().put("pollTimeOut","1000");
         driver.getExtendAttr().put("group",UUID.randomUUID().toString());
@@ -190,7 +190,7 @@ public class KafkaSourceWrapperTest {
     }
 
     @Test
-    //@Ignore
+    @Ignore
     public void sendMsg() throws ExecutionException, InterruptedException {
         Properties props = new Properties();
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, driver.getUrl());
@@ -205,8 +205,8 @@ public class KafkaSourceWrapperTest {
         new Thread(){
             @Override
             public void run() {
-                for(int i=0; i<50000;i++) {
-                    Future<RecordMetadata> a =producer.send(new ProducerRecord<String, String>(driver.getExtendAttr().get(KafkaDriverMeta.INSTANCE.TOPIC),"{\"table\":\"zkw.t_user_debug\",\"op_type\":\"I\",\"op_ts\":\"2013-06-02 22:14:36.000000\",\"current_ts\":\"2015-09-18T13:39:35.447000\",\"pos\":\""+i+"\",\"after\":{\"ID\":\""+i+"\",\"REAL_NAME\":\"joe\"}}"));
+                for(int i=0; i<100000;i++) {
+                    Future<RecordMetadata> a =producer.send(new ProducerRecord<String, String>(driver.getExtendAttr().get(KafkaDriverMeta.INSTANCE.TOPIC),"{\"table\":\"zkw.t_user_debug\",\"op_type\":\"I\",\"op_ts\":\"2018-01-13 09:55:36.000000\",\"current_ts\":\"2018-01-13T09:56:35.447000\",\"pos\":\""+i+"\",\"after\":{\"ID\":\""+i+"\",\"REAL_NAME\":\"joe\"}}"));
                     try {
                         a.get();
                     } catch (InterruptedException e) {
@@ -228,8 +228,8 @@ public class KafkaSourceWrapperTest {
         new Thread(){
             @Override
             public void run() {
-                for(int i=50000; i<100000;i++) {
-                    Future<RecordMetadata> a =producer.send(new ProducerRecord<String, String>(driver.getExtendAttr().get(KafkaDriverMeta.INSTANCE.TOPIC),"{\"table\":\"zkw.t_user_debug\",\"op_type\":\"I\",\"op_ts\":\"2013-06-02 22:14:36.000000\",\"current_ts\":\"2015-09-18T13:39:35.447000\",\"pos\":\""+i+"\",\"after\":{\"ID\":\""+i+"\",\"REAL_NAME\":\"joe\"}}"));
+                for(int i=100000; i<200000;i++) {
+                    Future<RecordMetadata> a =producer.send(new ProducerRecord<String, String>(driver.getExtendAttr().get(KafkaDriverMeta.INSTANCE.TOPIC),"{\"table\":\"zkw.t_user_debug\",\"op_type\":\"I\",\"op_ts\":\"2018-01-13 09:55:36.000000\",\"current_ts\":\"2018-01-13T09:56:35.447000\",\"pos\":\""+i+"\",\"after\":{\"ID\":\""+i+"\",\"REAL_NAME\":\"joe\"}}"));
                     try {
                         a.get();
                     } catch (InterruptedException e) {
@@ -251,8 +251,8 @@ public class KafkaSourceWrapperTest {
         new Thread(){
             @Override
             public void run() {
-                for(int i=100000; i<150000;i++) {
-                    Future<RecordMetadata> a =producer.send(new ProducerRecord<String, String>(driver.getExtendAttr().get(KafkaDriverMeta.INSTANCE.TOPIC),"{\"table\":\"zkw.t_user_debug\",\"op_type\":\"I\",\"op_ts\":\"2013-06-02 22:14:36.000000\",\"current_ts\":\"2015-09-18T13:39:35.447000\",\"pos\":\""+i+"\",\"after\":{\"ID\":\""+i+"\",\"REAL_NAME\":\"joe\"}}"));
+                for(int i=200000; i<300000;i++) {
+                    Future<RecordMetadata> a =producer.send(new ProducerRecord<String, String>(driver.getExtendAttr().get(KafkaDriverMeta.INSTANCE.TOPIC),"{\"table\":\"zkw.t_user_debug\",\"op_type\":\"I\",\"op_ts\":\"2018-01-13 09:55:36.000000\",\"current_ts\":\"2018-01-13T09:56:35.447000\",\"pos\":\""+i+"\",\"after\":{\"ID\":\""+i+"\",\"REAL_NAME\":\"joe\"}}"));
                     try {
                         a.get();
                     } catch (InterruptedException e) {
@@ -274,8 +274,8 @@ public class KafkaSourceWrapperTest {
         new Thread(){
             @Override
             public void run() {
-                for(int i=150000; i<200000;i++) {
-                    Future<RecordMetadata> a =producer.send(new ProducerRecord<String, String>(driver.getExtendAttr().get(KafkaDriverMeta.INSTANCE.TOPIC),"{\"table\":\"zkw.t_user_debug\",\"op_type\":\"I\",\"op_ts\":\"2013-06-02 22:14:36.000000\",\"current_ts\":\"2015-09-18T13:39:35.447000\",\"pos\":\""+i+"\",\"after\":{\"ID\":\""+i+"\",\"REAL_NAME\":\"joe\"}}"));
+                for(int i=300000; i<400000;i++) {
+                    Future<RecordMetadata> a =producer.send(new ProducerRecord<String, String>(driver.getExtendAttr().get(KafkaDriverMeta.INSTANCE.TOPIC),"{\"table\":\"zkw.t_user_debug\",\"op_type\":\"I\",\"op_ts\":\"2018-01-13 09:55:36.000000\",\"current_ts\":\"2018-01-13T09:56:35.447000\",\"pos\":\""+i+"\",\"after\":{\"ID\":\""+i+"\",\"REAL_NAME\":\"joe\"}}"));
                     try {
                         a.get();
                     } catch (InterruptedException e) {
@@ -297,8 +297,8 @@ public class KafkaSourceWrapperTest {
         new Thread(){
             @Override
             public void run() {
-                for(int i=200000; i<250000;i++) {
-                    Future<RecordMetadata> a =producer.send(new ProducerRecord<String, String>(driver.getExtendAttr().get(KafkaDriverMeta.INSTANCE.TOPIC),"{\"table\":\"zkw.t_user_debug\",\"op_type\":\"I\",\"op_ts\":\"2013-06-02 22:14:36.000000\",\"current_ts\":\"2015-09-18T13:39:35.447000\",\"pos\":\""+i+"\",\"after\":{\"ID\":\""+i+"\",\"REAL_NAME\":\"joe\"}}"));
+                for(int i=500000; i<500000;i++) {
+                    Future<RecordMetadata> a =producer.send(new ProducerRecord<String, String>(driver.getExtendAttr().get(KafkaDriverMeta.INSTANCE.TOPIC),"{\"table\":\"zkw.t_user_debug\",\"op_type\":\"I\",\"op_ts\":\"2018-01-13 09:55:36.000000\",\"current_ts\":\"2018-01-13T09:56:35.447000\",\"pos\":\""+i+"\",\"after\":{\"ID\":\""+i+"\",\"REAL_NAME\":\"joe\"}}"));
                     try {
                         a.get();
                     } catch (InterruptedException e) {

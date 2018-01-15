@@ -8,7 +8,6 @@
  */
 package com.suixingpay.datas.node.task.transform.transformer;
 
-import com.suixingpay.datas.common.db.TableMapper;
 import com.suixingpay.datas.node.core.db.dialect.DbDialect;
 import com.suixingpay.datas.node.core.event.etl.ETLBucket;
 import com.suixingpay.datas.node.task.worker.TaskWork;

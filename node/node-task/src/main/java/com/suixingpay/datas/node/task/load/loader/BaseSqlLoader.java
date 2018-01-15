@@ -157,43 +157,46 @@ public class BaseSqlLoader {
      * @param stat
      */
     protected void updateStat(Pair<Integer, ETLRow> result, DTaskStat stat){
-        ETLRow row = result.getRight();
-        switch (result.getRight().getOpType().getIndex()) {
-            case EventType.DELETE_INDEX :
-                if (result.getLeft() > 0 || result.getLeft() == -2) {
-                    stat.incrementDeleteRow();
-                } else {
-                    stat.incrementErrorDeleteRow();
-                }
-                break;
-            case EventType.UPDATE_INDEX :
-                if (result.getLeft() > 0 || result.getLeft() == -2) {
-                    stat.incrementUpdateRow();
-                } else {
-                    stat.incrementErrorUpdateRow();
-                }
-                break;
-            case EventType.INSERT_INDEX :
-                if (result.getLeft() > 0 || result.getLeft() == -2) {
-                    stat.incrementInsertRow();
-                } else {
-                    stat.incrementErrorInsertRow();
-                }
-                break;
-            case EventType.TRUNCATE_INDEX :
-                if (result.getLeft() > 0 || result.getLeft() == -2) {
-                    stat.incrementDeleteRow();
-                } else {
-                    stat.incrementErrorDeleteRow();
-                }
-                break;
-        }
+        //虽然每个状态值的变更都有stat对象锁，但在最外层加对象锁避免了多次请求的问题（锁可重入），同时保证状态各字段变更一致性
+       synchronized (stat) {
+           ETLRow row = result.getRight();
+           switch (result.getRight().getOpType().getIndex()) {
+               case EventType.DELETE_INDEX:
+                   if (result.getLeft() > 0 || result.getLeft() == -2) {
+                       stat.incrementDeleteRow();
+                   } else {
+                       stat.incrementErrorDeleteRow();
+                   }
+                   break;
+               case EventType.UPDATE_INDEX:
+                   if (result.getLeft() > 0 || result.getLeft() == -2) {
+                       stat.incrementUpdateRow();
+                   } else {
+                       stat.incrementErrorUpdateRow();
+                   }
+                   break;
+               case EventType.INSERT_INDEX:
+                   if (result.getLeft() > 0 || result.getLeft() == -2) {
+                       stat.incrementInsertRow();
+                   } else {
+                       stat.incrementErrorInsertRow();
+                   }
+                   break;
+               case EventType.TRUNCATE_INDEX:
+                   if (result.getLeft() > 0 || result.getLeft() == -2) {
+                       stat.incrementDeleteRow();
+                   } else {
+                       stat.incrementErrorDeleteRow();
+                   }
+                   break;
+           }
 
-        //更新最后执行消息事件的产生时间，用于计算从消息产生到加载如路时间、计算数据同步检查时间
-        if (null != row.getOpTime()) stat.setLastLoadedTime(row.getOpTime());
-        stat.setLastLoadedSystemTime(new Date());
-        if (!StringUtils.isBlank(row.getIndex())){
-            stat.setProgress(row.getIndex());
-        }
+           //更新最后执行消息事件的产生时间，用于计算从消息产生到加载如路时间、计算数据同步检查时间
+           if (null != row.getOpTime()) stat.setLastLoadedTime(row.getOpTime());
+           stat.setLastLoadedSystemTime(new Date());
+           if (!StringUtils.isBlank(row.getIndex())) {
+               stat.setProgress(row.getIndex());
+           }
+       }
     }
 }

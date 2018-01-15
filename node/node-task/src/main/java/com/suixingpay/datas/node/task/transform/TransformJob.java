@@ -36,9 +36,9 @@ public class TransformJob extends AbstractStageJob {
         this.work = work;
         transformFactory = ApplicationContextUtils.INSTANCE.getBean(TransformFactory.class);
         //线程阻塞时，在调用者线程中执行
-        executorService = new ThreadPoolExecutor(LOGIC_THREAD_SIZE, LOGIC_THREAD_SIZE,
+        executorService = new ThreadPoolExecutor(LOGIC_THREAD_SIZE, LOGIC_THREAD_SIZE * 2,
                 0L, TimeUnit.MILLISECONDS,
-                new LinkedBlockingQueue<Runnable>(),
+                new LinkedBlockingQueue<Runnable>(LOGIC_THREAD_SIZE * 4),
                 getThreadFactory(), new ThreadPoolExecutor.CallerRunsPolicy());
     }
 
@@ -60,6 +60,7 @@ public class TransformJob extends AbstractStageJob {
             try {
                 bucket = work.waitEvent(StageType.EXTRACT);
                 if (null != bucket) {
+                    LOGGER.debug("transform ETLBucket batch {} begin.", bucket.getSequence());
                     final ETLBucket inThreadBucket = bucket;
                     Future<ETLBucket> result = executorService.submit(new Callable<ETLBucket>() {
                         @Override
@@ -72,6 +73,7 @@ public class TransformJob extends AbstractStageJob {
                             return inThreadBucket;
                         }
                     });
+                    LOGGER.debug("transform ETLBucket batch {} end.", bucket.getSequence());
                     carrier.put(inThreadBucket.getSequence() + "", result);
                 }
             } catch (Exception e) {
@@ -83,16 +85,17 @@ public class TransformJob extends AbstractStageJob {
     @Override
     public ETLBucket output() throws ExecutionException, InterruptedException {
         Long sequence = work.waitSequence();
-        //等待该sequence对应的ETLBucket transform完成。捕获InterruptedException异常,是为了保证该sequence能够被处理。
-        while (null != sequence && !carrier.containsKey(sequence + "")) {
-            LOGGER.debug("waiting sequence Future:{}", sequence);
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-            }
-        }
         Future<ETLBucket> result = null;
         if (null != sequence) {
+            LOGGER.debug("got sequence:{}, Future: {}", sequence, carrier.containsKey(sequence + ""));
+            //等待该sequence对应的ETLBucket transform完成。捕获InterruptedException异常,是为了保证该sequence能够被处理。
+            while (null != sequence && !carrier.containsKey(sequence + "")) {
+                LOGGER.debug("waiting sequence Future:{}", sequence);
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                }
+            }
             LOGGER.debug("got sequence:{}, Future: {}", sequence, carrier.containsKey(sequence + ""));
             result = carrier.computeIfPresent(sequence + "", new BiFunction<String, Future<ETLBucket>, Future<ETLBucket>>() {
                 @Override

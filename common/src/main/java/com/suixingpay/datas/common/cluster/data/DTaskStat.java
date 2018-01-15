@@ -109,7 +109,7 @@ public class DTaskStat  extends DObject {
         return lastLoadedTime;
     }
 
-    public void setLastLoadedTime(Date lastLoadedTime) {
+    public synchronized void setLastLoadedTime(Date lastLoadedTime) {
         this.lastLoadedTime = lastLoadedTime;
     }
 
