@@ -11,3 +11,5 @@ findProject(':node:node-task')?.name = 'node-task'
 include 'node:node-data-carrier'
 findProject(':node:node-data-carrier')?.name = 'node-data-carrier'
 include 'common'
+include 'canal-client'
+
