@@ -29,6 +29,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 
 /**
  */
@@ -90,11 +91,15 @@ public abstract class AbstractDbDialect implements DbDialect {
 
     public Table findTable(String schema, String table, boolean useCache) {
         List<String> key = Arrays.asList(schema, table);
-        if (useCache == false) {
+        if (! useCache) {
             tables.remove(key);
         }
-        Table findTable = tables.containsKey(key) ? tables.get(key) : tables.putIfAbsent(key, initTables(schema, table));
-        findTable = null == findTable ? tables.get(key) : findTable;
+        Table findTable = tables.computeIfAbsent(key, new Function<List<String>, Table>() {
+            @Override
+            public Table apply(List<String> kv) {
+                return initTables(kv.get(0), kv.get(1));
+            }
+        });
         return findTable;
     }
 
@@ -104,7 +109,6 @@ public abstract class AbstractDbDialect implements DbDialect {
 
     public void reloadTable(String schema, String table) {
         if (StringUtils.isNotEmpty(table)) {
-            List<String> key = Arrays.asList(schema, table);
             findTable(schema, table, false);
         } else {
             Set<List<String>> keys = tables.keySet();

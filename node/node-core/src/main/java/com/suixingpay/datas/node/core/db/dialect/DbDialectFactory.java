@@ -25,6 +25,7 @@ import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 
 public enum  DbDialectFactory {
     INSTANCE();
@@ -48,41 +49,38 @@ public enum  DbDialectFactory {
     }
     public DbDialect getDbDialect(DataSourceWrapper dataSourceWrapper) {
         String key = dataSourceWrapper.getUniqueId();
-        DbDialect dbDialect = dialects.containsKey(key) ? dialects.get(key) : null;
-        if (null == dbDialect) {
-            synchronized (dialects) {
-                dbDialect = dialects.containsKey(key) ? dialects.get(key) : null;
-                if (null == dbDialect) {
-                    final JdbcTemplate jdbcTemplate = new JdbcTransactionTemplate(dataSourceWrapper.getDataSource());
-                    dbDialect = (DbDialect)jdbcTemplate.execute(new ConnectionCallback() {
-                        public Object doInConnection(Connection c) throws SQLException, DataAccessException {
-                            DatabaseMetaData meta = c.getMetaData();
-                            String databaseName = meta.getDatabaseProductName();
-                            String databaseVersion = meta.getDatabaseProductVersion();
-                            int databaseMajorVersion = meta.getDatabaseMajorVersion();
-                            int databaseMinorVersion = meta.getDatabaseMinorVersion();
-                            DbDialect dialect = dbDialectGenerator.generate(jdbcTemplate,
-                                    databaseName,
-                                    databaseVersion,
-                                    databaseMajorVersion,
-                                    databaseMinorVersion);
-                            if (dialect == null) {
-                                throw new UnsupportedOperationException("no dialect for" + databaseName);
-                            }
-
-                            if (logger.isInfoEnabled()) {
-                                logger.info(String.format("--- DATABASE: %s, SCHEMA: %s ---",
-                                        databaseName,
-                                        (dialect.getDefaultSchema() == null) ? dialect.getDefaultCatalog() : dialect.getDefaultSchema()));
-                            }
-
-                            return dialect;
+        DbDialect dbDialect = dialects.computeIfAbsent(key, new Function<String, DbDialect>() {
+            @Override
+            public DbDialect apply(String s) {
+                final JdbcTemplate jdbcTemplate = new JdbcTransactionTemplate(dataSourceWrapper.getDataSource());
+                DbDialect dbDialect = (DbDialect)jdbcTemplate.execute(new ConnectionCallback() {
+                    public Object doInConnection(Connection c) throws SQLException, DataAccessException {
+                        DatabaseMetaData meta = c.getMetaData();
+                        String databaseName = meta.getDatabaseProductName();
+                        String databaseVersion = meta.getDatabaseProductVersion();
+                        int databaseMajorVersion = meta.getDatabaseMajorVersion();
+                        int databaseMinorVersion = meta.getDatabaseMinorVersion();
+                        DbDialect dialect = dbDialectGenerator.generate(jdbcTemplate,
+                                databaseName,
+                                databaseVersion,
+                                databaseMajorVersion,
+                                databaseMinorVersion);
+                        if (dialect == null) {
+                            throw new UnsupportedOperationException("no dialect for" + databaseName);
                         }
-                    });
-                    dialects.put(key, dbDialect);
-                }
+
+                        if (logger.isInfoEnabled()) {
+                            logger.info(String.format("--- DATABASE: %s, SCHEMA: %s ---",
+                                    databaseName,
+                                    (dialect.getDefaultSchema() == null) ? dialect.getDefaultCatalog() : dialect.getDefaultSchema()));
+                        }
+
+                        return dialect;
+                    }
+                });
+                return dbDialect;
             }
-        }
+        });
         return dbDialect;
     }
 

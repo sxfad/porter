@@ -46,7 +46,7 @@ public class SQLBatchLoader extends BaseSqlLoader implements Loader {
     //需要在之前对datasource进行二次封装
     @Override
     public void load(ETLBucket bucket, TaskWork work) {
-        LOGGER.debug("start loading bucket:{},size:{}", bucket.getSequence(), bucket.getRows().size());
+        LOGGER.info("start loading bucket:{},size:{}", bucket.getSequence(), bucket.getRows().size());
         DbDialect dbDialect = dbFactory.getDbDialect(bucket.getDataSourceId());
         SqlTemplate template = dbDialect.getSqlTemplate();
         JdbcTemplate jdbcTemplate = dbDialect.getJdbcTemplate();

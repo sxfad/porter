@@ -87,7 +87,7 @@ public class TransformJob extends AbstractStageJob {
         Long sequence = work.waitSequence();
         Future<ETLBucket> result = null;
         if (null != sequence) {
-            LOGGER.debug("got sequence:{}, Future: {}", sequence, carrier.containsKey(sequence + ""));
+            LOGGER.info("got sequence:{}, Future: {}", sequence, carrier.containsKey(sequence + ""));
             //等待该sequence对应的ETLBucket transform完成。捕获InterruptedException异常,是为了保证该sequence能够被处理。
             while (null != sequence && !carrier.containsKey(sequence + "")) {
                 LOGGER.debug("waiting sequence Future:{}", sequence);
@@ -96,7 +96,7 @@ public class TransformJob extends AbstractStageJob {
                 } catch (InterruptedException e) {
                 }
             }
-            LOGGER.debug("got sequence:{}, Future: {}", sequence, carrier.containsKey(sequence + ""));
+            LOGGER.info("got sequence:{}, Future: {}", sequence, carrier.containsKey(sequence + ""));
             result = carrier.computeIfPresent(sequence + "", new BiFunction<String, Future<ETLBucket>, Future<ETLBucket>>() {
                 @Override
                 public Future<ETLBucket> apply(String key, Future<ETLBucket> etlBucketFuture) {

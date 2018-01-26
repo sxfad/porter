@@ -18,7 +18,7 @@ import java.sql.Types;
 public class ETLColumn {
     private final String name;
     private final String newValue;
-    private final String oldValue;
+    private String oldValue;
     private  boolean isKey = false;
     private boolean required = false;
     private String finalName;
@@ -98,5 +98,9 @@ public class ETLColumn {
 
     public String getFinalValue() {
         return finalValue;
+    }
+
+    public void setOldValue(String oldValue) {
+        this.oldValue = oldValue;
     }
 }

@@ -10,7 +10,6 @@
 package com.suixingpay.datas.node.core.db.dialect;
 
 import com.alibaba.fastjson.JSON;
-import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -56,7 +55,11 @@ public class JdbcTransactionTemplate extends JdbcTemplate{
         } catch (Exception e) {
             e.printStackTrace();
         }
-        LOGGER.debug("sql:{},params:{},affect:{}", sql, JSON.toJSONString(Arrays.asList(args)), affect);
+        if (affect < 1) {
+            LOGGER.error("sql:{},params:{},affect:{}", sql, JSON.toJSONString(Arrays.asList(args)), affect);
+        } else {
+            LOGGER.debug("sql:{},params:{},affect:{}", sql, JSON.toJSONString(Arrays.asList(args)), affect);
+        }
         return  affect;
     }
 
@@ -74,7 +77,11 @@ public class JdbcTransactionTemplate extends JdbcTemplate{
         } catch (Exception e) {
             e.printStackTrace();
         }
-        LOGGER.debug("sql:{},affect:{}", sql, affect);
+        if (affect < 1) {
+            LOGGER.error("sql:{},affect:{}", sql, affect);
+        } else {
+            LOGGER.debug("sql:{},affect:{}", sql, affect);
+        }
         return affect;
     }
 

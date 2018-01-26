@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Function;
 
 /**
  * 监工
@@ -85,9 +86,12 @@ public class TaskController implements TaskEventListener {
     }
 
     public void startTask(Task task) {
-        //ConcurrentHashMap returns null when value not exists before.
-        TaskWorker worker = WORKER_MAP.putIfAbsent(task.getTaskId(),new TaskWorker());
-        if (null == worker) worker = WORKER_MAP.get(task.getTaskId());
+        TaskWorker worker = WORKER_MAP.computeIfAbsent(task.getTaskId(), new Function<String, TaskWorker>() {
+            @Override
+            public TaskWorker apply(String s) {
+                return new TaskWorker();
+            }
+        });
         //尝试通过ClusterProvider的分布式锁功能锁定资源。
         worker.alloc(task);
         worker.start();

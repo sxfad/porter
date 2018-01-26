@@ -16,7 +16,9 @@ import com.suixingpay.datas.node.core.db.utils.SqlUtils;
 import com.suixingpay.datas.node.core.event.etl.ETLBucket;
 import com.suixingpay.datas.node.core.event.etl.ETLColumn;
 import com.suixingpay.datas.node.core.event.etl.ETLRow;
+import com.suixingpay.datas.node.core.event.s.EventType;
 import com.suixingpay.datas.node.task.worker.TaskWork;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.ddlutils.model.Column;
 import org.apache.ddlutils.model.Table;
@@ -77,14 +79,19 @@ public class ETLRowTransformer implements Transformer {
                 c.setFinalType(column.getTypeCode());
                 c.setKey(column.isPrimaryKey());
                 c.setRequired(column.isRequired());
+                //如果是更新并且原主键不存在
+                if (row.getOpType() == EventType.UPDATE && column.isRequired() && StringUtils.isBlank(c.getOldValue())) {
+                    c.setOldValue(c.getNewValue());
+                }
             } else {
                 removeables.add(c);
             }
         }
         //反向查找
         List<String> inColumnNames = row.getColumns().stream().map(p  -> p.getFinalName()).collect(Collectors.toList());
-        //如果目标库表中有新增必填的字段需要补充上去
-        Arrays.stream(table.getColumns()).filter(p -> ! inColumnNames.contains(p.getName()) && p.isRequired() && null == p.getDefaultValue())
+        //如果目标库表中有新增必填的字段需要补充上去,并且是插入操作时
+        Arrays.stream(table.getColumns()).filter(p -> ! inColumnNames.contains(p.getName()) && p.isRequired() && null == p.getDefaultValue()
+                && row.getOpType() == EventType.INSERT)
                 .forEach(p -> row.getColumns().add(new ETLColumn(p.getName(), p.getDefaultValue() ,p.getDefaultValue(), p.getDefaultValue(), p.isPrimaryKey(), p.isRequired(), p.getTypeCode())));
 
         row.getColumns().removeAll(removeables);

@@ -30,7 +30,8 @@ import java.util.List;
  */
 public class SelectJob extends AbstractStageJob {
     private static final int PULL_BATCH_SIZE = 1000;
-    private static final int BUFFER_SIZE = PULL_BATCH_SIZE*1000;
+    //只需要保证select出来的数据不致使ExtractJob的所有消费线程饥饿即可
+    private static final int BUFFER_SIZE = PULL_BATCH_SIZE*10;
 
     private final DataSourceWrapper selectWrapper;
     private final DataCarrier<MessageEvent> carrier;
@@ -85,7 +86,7 @@ public class SelectJob extends AbstractStageJob {
 
     @Override
     public boolean stopWaiting() {
-        return true;
+        return false;
     }
 
     @Override
