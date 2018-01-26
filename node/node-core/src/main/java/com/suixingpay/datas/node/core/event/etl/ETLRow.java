@@ -10,10 +10,7 @@ package com.suixingpay.datas.node.core.event.etl;/**
 import com.suixingpay.datas.node.core.event.s.EventType;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -33,6 +30,9 @@ public class ETLRow {
     private final List<ETLColumn> columns;
     private Map<String, Pair<Object,Object>> sqlKeys = new LinkedHashMap<>();
     private Map<String, Pair<Object,Object>> sqlColumns = new LinkedHashMap<>();
+
+    //当Row类型为更新时并且更新失败的情况下尝试插入，插入时补充目标库缺失必填字段
+    private List<ETLColumn> appendsWhenUInsert = new ArrayList<>();
     //操作时间，保留该字段可以在需要的时候计算出与最终执行时间间隔
     private final Date opTime;
     //当前消息所在消费源的下标、顺序位置
@@ -106,5 +106,9 @@ public class ETLRow {
 
     public void setIndex(String index) {
         this.index = index;
+    }
+
+    public List<ETLColumn> getAppendsWhenUInsert() {
+        return appendsWhenUInsert;
     }
 }

@@ -137,8 +137,17 @@ public class BaseSqlLoader {
             //全字段更新
             sqlList.add(new ImmutablePair<>(template.getUpdateSql(row.getFinalSchema(), row.getFinalTable(), allColumnNames),
                     ArrayUtils.addAll(allNewValues, allOldValues)));
-
             //插入
+            if (null != row.getAppendsWhenUInsert() && !row.getAppendsWhenUInsert().isEmpty()) {
+                List<String> appendC = new ArrayList<>();
+                List<Object> appendCV = new ArrayList<>();
+                row.getAppendsWhenUInsert().stream().forEach(c -> {
+                    appendC.add(c.getFinalName());
+                    appendCV.add(c.getNewValue());
+                });
+                allColumnNames = ArrayUtils.addAll(allColumnNames, appendC.toArray(new String[]{}));
+                allNewValues = ArrayUtils.addAll(allNewValues, appendCV.toArray());
+            }
             sqlList.add(new ImmutablePair<>(template.getInsertSql(row.getFinalSchema(), row.getFinalTable(), allColumnNames),
                     allNewValues));
         } else if (row.getOpType() == EventType.TRUNCATE) {

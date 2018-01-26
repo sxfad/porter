@@ -89,10 +89,18 @@ public class ETLRowTransformer implements Transformer {
         }
         //反向查找
         List<String> inColumnNames = row.getColumns().stream().map(p  -> p.getFinalName()).collect(Collectors.toList());
-        //如果目标库表中有新增必填的字段需要补充上去,并且是插入操作时
-        Arrays.stream(table.getColumns()).filter(p -> ! inColumnNames.contains(p.getName()) && p.isRequired() && null == p.getDefaultValue()
-                && row.getOpType() == EventType.INSERT)
-                .forEach(p -> row.getColumns().add(new ETLColumn(p.getName(), p.getDefaultValue() ,p.getDefaultValue(), p.getDefaultValue(), p.isPrimaryKey(), p.isRequired(), p.getTypeCode())));
+        //如果目标库表中有新增必填的字段需要补充上去
+        Arrays.stream(table.getColumns()).filter(p -> ! inColumnNames.contains(p.getName()) && p.isRequired() && null == p.getDefaultValue())
+                .forEach(p -> {
+                    ETLColumn column = new ETLColumn(p.getName(), p.getDefaultValue(), p.getDefaultValue(), p.getDefaultValue(), p.isPrimaryKey(), p.isRequired(), p.getTypeCode());
+                    if (row.getOpType() == EventType.INSERT) {
+                        row.getColumns().add(column);
+                    }
+                    //更新失败需要插入时才需要
+                    if (row.getOpType() == EventType.UPDATE) {
+                        row.getAppendsWhenUInsert().add(column);
+                    }
+                });
 
         row.getColumns().removeAll(removeables);
     }
