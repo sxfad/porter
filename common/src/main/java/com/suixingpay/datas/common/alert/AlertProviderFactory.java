@@ -11,6 +11,9 @@ package com.suixingpay.datas.common.alert;
 
 import com.suixingpay.datas.common.alert.provider.AlertProvider;
 import com.suixingpay.datas.common.alert.provider.EmailAlertProvider;
+import com.suixingpay.datas.common.config.Config;
+import com.suixingpay.datas.common.config.ConfigType;
+import com.suixingpay.datas.common.config.EmailAlertConfig;
 import com.suixingpay.datas.common.util.ApplicationContextUtils;
 import org.springframework.mail.javamail.JavaMailSender;
 
@@ -27,10 +30,10 @@ public enum AlertProviderFactory {
     INSTANCE();
     private final AtomicBoolean isInitialized = new AtomicBoolean(false);
     private AlertProvider alert;
-    public void initialize(AlertDriver driver) {
+    public void initialize(Config config) {
         if (isInitialized.compareAndSet(false, true)) {
-            if (driver.getAlertWay() == AlertStrategyType.EMAIL) {
-                alert = new EmailAlertProvider(driver, ApplicationContextUtils.INSTANCE.getBean(JavaMailSender.class));
+            if (config.getConfigType() == ConfigType.EMAIL_ALERT) {
+                alert = new EmailAlertProvider(config, ApplicationContextUtils.INSTANCE.getBean(JavaMailSender.class));
             }
         }
     }

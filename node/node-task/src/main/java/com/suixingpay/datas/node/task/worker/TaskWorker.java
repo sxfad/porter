@@ -8,17 +8,11 @@
  */
 package com.suixingpay.datas.node.task.worker;
 
-import com.suixingpay.datas.common.cluster.ClusterProvider;
-import com.suixingpay.datas.common.cluster.command.TaskStatCommand;
-import com.suixingpay.datas.common.cluster.data.DCallback;
-import com.suixingpay.datas.common.cluster.data.DObject;
-import com.suixingpay.datas.common.cluster.data.DTaskStat;
-import com.suixingpay.datas.common.datasource.DataSourceWrapper;
-import com.suixingpay.datas.common.datasource.MQDataSourceWrapper;
-import com.suixingpay.datas.common.db.TableMapper;
-import com.suixingpay.datas.common.task.Task;
+import com.suixingpay.datas.common.config.TaskConfig;
+import com.suixingpay.datas.common.exception.ClientException;
 import com.suixingpay.datas.common.util.DefaultNamedThreadFactory;
-import com.suixingpay.datas.node.core.datasource.DataSourceFactory;
+import com.suixingpay.datas.node.core.task.TableMapper;
+import com.suixingpay.datas.node.core.task.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,13 +34,10 @@ public class TaskWorker {
     private static final AtomicInteger SEQUENCE = new AtomicInteger(0);
     private final int workerSequence;
     private final AtomicBoolean STAT = new AtomicBoolean(false);
-    private final AtomicBoolean SOURCE_STAT = new AtomicBoolean(false);
     //负责将任务工作者的状态定时上传
     private final ScheduledExecutorService STAT_WORKER;
     private final Map<String,TaskWork> JOBS;
     private final Map<String,TableMapper> TABLE_MAPPERS;
-    private DataSourceWrapper source;
-    private DataSourceWrapper target;
 
     public TaskWorker() {
         STAT_WORKER = Executors.newSingleThreadScheduledExecutor(new DefaultNamedThreadFactory("TaskStat"));
@@ -54,6 +45,7 @@ public class TaskWorker {
         workerSequence = SEQUENCE.incrementAndGet();
         TABLE_MAPPERS = new ConcurrentHashMap<>();
     }
+
     public void start() {
         if (STAT.compareAndSet(false, true)) {
             LOGGER.info("工人上线.......");
@@ -90,37 +82,22 @@ public class TaskWorker {
         }
     }
 
-    public void alloc(Task task) {
-        //源数据映射
-        if (null != task.getMappers()) {
-            for (TableMapper mapper : task.getMappers()) {
-                if (mapper.isCustom()) {
-                    TABLE_MAPPERS.putIfAbsent(mapper.getUniqueKey(task.getTaskId()), mapper);
-                }
-            }
-        }
-        if (SOURCE_STAT.compareAndSet(false, true)) {
-            source = DataSourceFactory.INSTANCE.newDataSource(task.getSourceDriver());
-            target = DataSourceFactory.INSTANCE.newDataSource(task.getTargetDriver());
-            source.create();
-            target.create();
-        }
-        String[]  topics = task.listTopic();
-        for (String topic : topics) {
+    public void alloc(TaskConfig taskConfig) throws IllegalAccessException, ClientException, InstantiationException {
+        Task task = Task.fromConfig(taskConfig);
+        task.getMappers().forEach(m -> {
+            TABLE_MAPPERS.putIfAbsent(m.getUniqueKey(task.getTaskId()), m);
+        });
+
+        task.getConsumers().forEach(c -> {
             try {
                 //启动JOB
-                DataSourceWrapper dataSource = DataSourceFactory.INSTANCE.newDataSource(task.getDataDriver());
-                if (dataSource instanceof MQDataSourceWrapper) {
-                    MQDataSourceWrapper mqDataSource = (MQDataSourceWrapper) dataSource;
-                    mqDataSource.setTopic(topic);
-                }
-                TaskWork job = new TaskWork(task.getLoader(), task.getTaskId(), topic, source, target, dataSource, this);
+                TaskWork job = new TaskWork(c, task.getLoader(), task.getTaskId(), this);
                 job.start();
-                JOBS.put(task.getTaskId() + "_" +topic, job);
+                JOBS.put(task.getTaskId() + "_" + c.getId(), job);
             } catch (Exception e){
                 LOGGER.error("topic JOB分配出错!", e);
             }
-        }
+        });
     }
 
     public Map<String,TableMapper> getTableMapper() {

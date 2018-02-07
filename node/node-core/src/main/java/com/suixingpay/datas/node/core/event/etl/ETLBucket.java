@@ -27,13 +27,11 @@ import java.util.Map;
 public class ETLBucket {
     private static final Logger LOGGER = LoggerFactory.getLogger(ETLBucket.class);
     private final Long sequence;
-    private final String dataSourceId;
     private final List<ETLRow> rows;
     private final List<List<ETLRow>> batchRows;
-    public ETLBucket(long sequence, List<ETLRow> rows, String dataSourceId) {
+    public ETLBucket(long sequence, List<ETLRow> rows) {
         this.sequence = sequence;
         this.rows = rows;
-        this.dataSourceId = dataSourceId;
         this.batchRows = new ArrayList<List<ETLRow>>();
     }
 
@@ -50,7 +48,7 @@ public class ETLBucket {
      * @param events
      * @return
      */
-    public static ETLBucket from(Pair<Long, List<MessageEvent>> events, String dataSourceId) {
+    public static ETLBucket from(Pair<Long, List<MessageEvent>> events) {
         List<ETLRow> rows = new ArrayList<>();
         for (MessageEvent event : events.getRight()) {
             LOGGER.debug(JSON.toJSONString(event));
@@ -89,11 +87,7 @@ public class ETLBucket {
             rows.add(row);
             LOGGER.debug(JSON.toJSONString(row));
         }
-        return new ETLBucket(events.getKey(), rows, dataSourceId);
-    }
-
-    public String getDataSourceId() {
-        return dataSourceId;
+        return new ETLBucket(events.getKey(), rows);
     }
 
     public List<List<ETLRow>> getBatchRows() {

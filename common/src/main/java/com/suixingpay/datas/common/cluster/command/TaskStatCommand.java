@@ -11,8 +11,6 @@ package com.suixingpay.datas.common.cluster.command;
 import com.suixingpay.datas.common.cluster.data.DCallback;
 import com.suixingpay.datas.common.cluster.data.DTaskStat;
 
-import java.util.concurrent.atomic.AtomicLong;
-
 /**
  *
  * @author: zhangkewei[zhang_kw@suixingpay.com]

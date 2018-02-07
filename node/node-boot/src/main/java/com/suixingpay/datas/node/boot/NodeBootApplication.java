@@ -9,13 +9,13 @@
 package com.suixingpay.datas.node.boot;
 
 import com.suixingpay.datas.common.alert.AlertProviderFactory;
-import com.suixingpay.datas.common.cluster.ClusterDriver;
 import com.suixingpay.datas.common.cluster.ClusterProvider;
 import com.suixingpay.datas.common.cluster.command.NodeRegisterCommand;
+import com.suixingpay.datas.common.config.Config;
 import com.suixingpay.datas.common.util.ApplicationContextUtils;
 import com.suixingpay.datas.common.util.ProcessUtils;
 import com.suixingpay.datas.node.boot.config.*;
-import com.suixingpay.datas.node.core.datasource.DataSourceFactory;
+import com.suixingpay.datas.node.core.source.PublicSourceFactory;
 import com.suixingpay.datas.node.task.TaskController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +27,8 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerA
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
+
+import java.io.IOException;
 
 /**
  * node launcher
@@ -44,7 +46,7 @@ public class NodeBootApplication {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NodeBootApplication.class);
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args){
         SpringApplication app = new SpringApplication(NodeBootApplication.class);
         app.setBannerMode(Banner.Mode.OFF);
         app.setWebEnvironment(false);
@@ -53,26 +55,29 @@ public class NodeBootApplication {
         ApplicationContextUtils.INSTANCE.init(context);
 
         //获取公用数据库连接池
-        DataDriverConfig dataDriverConfig = context.getBean(DataDriverConfig.class);
-        if (DataDriverConfig.error(dataDriverConfig)) {
-            LOGGER.error("公用数据库连接池初始化失败", new RuntimeException("公用数据库连接池仅支持Mysql、Oracle, 数据同步节点退出!"));
+        SourcesConfig datasourceConfigBean = context.getBean(SourcesConfig.class);
+        try {
+            PublicSourceFactory.INSTANCE.initialize(datasourceConfigBean.getConfig());
+        } catch (Exception e) {
+            e.printStackTrace();
+            LOGGER.error("公用资源连接参数初始化失败", new RuntimeException("公用资源连接SourcesConfig初始化失败, 数据同步节点退出!"));
         }
-        //初始化连接池
-
-        DataSourceFactory.INSTANCE.initialize(dataDriverConfig.getDrivers());
 
         //获取集群配置信息
-        ClusterDriverConfig clusterConfig = context.getBean(ClusterDriverConfig.class);
-        if (ClusterDriver.error(clusterConfig.getDriver())) {
-            LOGGER.error("集群参数初始化失败", new RuntimeException("集群配置参数ClusterDriver初始化失败, 数据同步节点退出!"));
-        }
+        ClusterConfig clusterConfigBean = context.getBean(ClusterConfig.class);
+        Config clusterConfig = Config.getConfig(clusterConfigBean.getCluster());
 
         //初始化集群提供者中间件,spring spi插件
-        ClusterProvider.load(clusterConfig.getDriver());
+        try {
+            ClusterProvider.load(clusterConfig);
+        } catch (IOException e) {
+            e.printStackTrace();
+            LOGGER.error("集群参数初始化失败", new RuntimeException("集群配置参数ClusterConfig初始化失败, 数据同步节点退出!"));
+        }
 
         //初始化告警配置
-        AlertConfig alertConfig = context.getBean(AlertConfig.class);
-        AlertProviderFactory.INSTANCE.initialize(alertConfig.getDriver());
+        AlertConfig alertConfigBean = context.getBean(AlertConfig.class);
+        AlertProviderFactory.INSTANCE.initialize(Config.getConfig(alertConfigBean.getAlert()));
 
         LOGGER.info("建群.......");
         //节点初始化
@@ -86,11 +91,11 @@ public class NodeBootApplication {
         }
         LOGGER.info("加入群聊.......");
         //获取任务配置
-        TaskConfig taskConfig = context.getBean(TaskConfig.class);
+        TasksConfig taskConfig = context.getBean(TasksConfig.class);
         //监工上线
         LOGGER.info("监工上线.......");
         TaskController controller = context.getBean(TaskController.class);
-        controller.start(taskConfig.getItems());
+        controller.start(taskConfig.getTask());
         LOGGER.info("NodeBootApplication started");
 
         //保持进程持续运行不退出

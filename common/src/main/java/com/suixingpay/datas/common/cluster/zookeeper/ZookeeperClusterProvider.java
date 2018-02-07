@@ -8,12 +8,16 @@
  */
 package com.suixingpay.datas.common.cluster.zookeeper;
 
+import com.suixingpay.datas.common.client.impl.ZookeeperClient;
 import com.suixingpay.datas.common.cluster.*;
 import com.suixingpay.datas.common.cluster.command.ClusterCommand;
+import com.suixingpay.datas.common.config.Config;
+import com.suixingpay.datas.common.config.ConfigType;
+import com.suixingpay.datas.common.config.source.ZookeeperConfig;
 import com.suixingpay.datas.common.task.TaskEventListener;
 import com.suixingpay.datas.common.task.TaskEventProvider;
 
-import java.util.concurrent.CyclicBarrier;
+import java.io.IOException;
 
 /**
  * zookeeper集群提供者
@@ -25,9 +29,7 @@ import java.util.concurrent.CyclicBarrier;
 public class ZookeeperClusterProvider extends ClusterProvider{
     private ZookeeperClient client;
     private ZookeeperClusterMonitor zkMonitor;
-    public ZookeeperClusterProvider() {
 
-    }
 
     @Override
     protected void addListener(ClusterListener listener) {
@@ -56,16 +58,22 @@ public class ZookeeperClusterProvider extends ClusterProvider{
     }
 
     @Override
-    public void doInitialize(ClusterDriver driver) {
-        client = new ZookeeperClient(driver);
+    public void doInitialize(Config configIn) {
+        ZookeeperConfig config = (ZookeeperConfig) configIn;
+        client = new ZookeeperClient(config);
         zkMonitor = new ZookeeperClusterMonitor();
         zkMonitor.setClient(client);
     }
 
     @Override
-    public void start() {
+    protected boolean matches(ConfigType type) {
+        return ConfigType.ZOOKEEPER == type;
+    }
+
+    @Override
+    public void start() throws IOException {
         if( null != client) {
-            client.connect();
+            client.start();
         }
         zkMonitor.start();
     }
@@ -75,7 +83,11 @@ public class ZookeeperClusterProvider extends ClusterProvider{
         try {
             zkMonitor.stop();
         } finally {
-            if( null != client) client.disconnect();
+            if( null != client) try {
+                client.shutdown();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 

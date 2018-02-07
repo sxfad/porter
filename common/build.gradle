@@ -1,3 +1,6 @@
 archivesBaseName = 'datas-commons'
 dependencies {
+    compile (
+            'org.apache.ddlutils:ddlutils:1.0'
+    )
 }

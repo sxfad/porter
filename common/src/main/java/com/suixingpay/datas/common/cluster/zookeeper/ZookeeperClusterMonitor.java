@@ -8,6 +8,8 @@
  */
 package com.suixingpay.datas.common.cluster.zookeeper;
 
+import com.suixingpay.datas.common.client.Client;
+import com.suixingpay.datas.common.client.impl.ZookeeperClient;
 import com.suixingpay.datas.common.cluster.*;
 import com.suixingpay.datas.common.cluster.command.ShutwdownCommand;
 import com.suixingpay.datas.common.cluster.event.ClusterEvent;

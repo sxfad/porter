@@ -1,8 +1,8 @@
 group 'com.suixingpay.datas'
 archivesBaseName = 'datas-node-core'
+
 dependencies {
     compile(
-            project(':common'),
-            'org.apache.ddlutils:ddlutils:1.0'
+            project(':common')
     )
 }

@@ -8,7 +8,6 @@
  */
 package com.suixingpay.datas.node.task.transform.transformer;
 
-import com.suixingpay.datas.node.core.db.dialect.DbDialect;
 import com.suixingpay.datas.node.core.event.etl.ETLBucket;
 import com.suixingpay.datas.node.task.worker.TaskWork;
 
@@ -20,5 +19,5 @@ import com.suixingpay.datas.node.task.worker.TaskWork;
  */
 public interface Transformer {
     int order();
-    void transform(ETLBucket bucket, TaskWork work, DbDialect targetDialect);
+    void transform(ETLBucket bucket, TaskWork work);
 }

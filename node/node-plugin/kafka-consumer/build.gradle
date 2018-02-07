@@ -1,0 +1,6 @@
+jar.baseName = 'datas-plugin-kafka-consumer'
+dependencies {
+    compile (
+            project(":node:node-core")
+    )
+}

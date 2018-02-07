@@ -9,7 +9,8 @@
 package com.suixingpay.datas.node.task;
 
 import com.suixingpay.datas.common.cluster.ClusterProvider;
-import com.suixingpay.datas.common.task.Task;
+import com.suixingpay.datas.common.config.TaskConfig;
+import com.suixingpay.datas.common.exception.ClientException;
 import com.suixingpay.datas.common.task.TaskEvent;
 import com.suixingpay.datas.common.task.TaskEventType;
 import com.suixingpay.datas.common.task.TaskEventListener;
@@ -43,16 +44,22 @@ public class TaskController implements TaskEventListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskController.class);
     private final AtomicBoolean stat = new AtomicBoolean(false);
     private final Map<String,TaskWorker> WORKER_MAP = new ConcurrentHashMap<>();
-    public void start() {
+
+    public void start() throws IllegalAccessException, ClientException, InstantiationException {
         start(null);
     }
 
-    public void start(List<Task> initTasks) {
+    public void start(List<TaskConfig> initTasks) {
         try {
             if (stat.compareAndSet(false, true)) {
                 if (null != initTasks && !initTasks.isEmpty()) {
-                    for (Task t : initTasks) {
-                        startTask(t);
+                    for (TaskConfig t : initTasks) {
+                        try {
+                            startTask(t);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            LOGGER.warn("Task start with error:{}", t);
+                        }
                     }
                 }
 
@@ -85,7 +92,7 @@ public class TaskController implements TaskEventListener {
         }
     }
 
-    public void startTask(Task task) {
+    public void startTask(TaskConfig task) throws IllegalAccessException, ClientException, InstantiationException {
         TaskWorker worker = WORKER_MAP.computeIfAbsent(task.getTaskId(), new Function<String, TaskWorker>() {
             @Override
             public TaskWorker apply(String s) {

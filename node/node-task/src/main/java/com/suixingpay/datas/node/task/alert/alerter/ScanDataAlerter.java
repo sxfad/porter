@@ -3,25 +3,16 @@ package com.suixingpay.datas.node.task.alert.alerter;
 import com.alibaba.fastjson.JSON;
 import com.suixingpay.datas.common.alert.AlertProviderFactory;
 import com.suixingpay.datas.common.cluster.data.DTaskStat;
-import com.suixingpay.datas.common.datasource.DataSourceWrapper;
-import com.suixingpay.datas.node.core.db.dialect.DbDialect;
-import com.suixingpay.datas.node.core.db.dialect.DbDialectFactory;
-import com.suixingpay.datas.node.task.worker.TaskWork;
-import org.apache.commons.lang3.StringUtils;
+import com.suixingpay.datas.node.core.consumer.DataConsumer;
+import com.suixingpay.datas.node.core.loader.DataLoader;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowCallbackHandler;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
-import java.util.concurrent.Executors;
 
 /**
  * All rights Reserved, Designed By Suixingpay.
@@ -37,7 +28,7 @@ public class ScanDataAlerter implements Alerter{
     private static final long TIME_SPAN_OF_MINUTES = 30 ;
     private static final DateFormat NOTICE_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
 
-    public void check(DbDialect sourceDialect, DbDialect targetDialect, DTaskStat stat, Triple<String[], String[], String[]> checkMeta) {
+    public void check(DataConsumer consumer, DataLoader loader, DTaskStat stat, Triple<String[], String[], String[]> checkMeta) {
         LOGGER.debug("trying scan data");
         if (null == stat ||  ! stat.getUpdateStat().get() || null == stat.getLastLoadedTime() || null == checkMeta.getRight()) {
             LOGGER.debug("null == stat ||  ! stat.getUpdateStat().get() || null == stat.getLastLoadedTime() || null == checkMeta.getRight()");
@@ -77,7 +68,7 @@ public class ScanDataAlerter implements Alerter{
                 LOGGER.debug("执行同步检查逻辑,执行时间段:{}-{}", NOTICE_DATE_FORMAT.format(startDate), NOTICE_DATE_FORMAT.format(endDate));
 
                 //执行同步检查逻辑，暂时为单线程模式执行
-                checkLogic(stat,sourceDialect, targetDialect, startDate, endDate, checkMeta);
+                checkLogic(stat,consumer, loader, startDate, endDate, checkMeta);
             }
             //更新同步时间点
             stat.setLastCheckedTime(DateUtils.addMinutes(lastCheckedTime, (int) (splitTimes * TIME_SPAN_OF_MINUTES) + 1));
@@ -85,14 +76,11 @@ public class ScanDataAlerter implements Alerter{
         LOGGER.debug("stat after scan data:{}", JSON.toJSONString(stat));
     }
 
-    private void checkLogic(DTaskStat stat, DbDialect source, DbDialect target, Date startDate, Date endDate, Triple<String[], String[], String[]> checkMeta) {
-        //源端目标端数据库查询
-        String sourceSql = source.getSqlTemplate().getDataChangedCountSql(checkMeta.getLeft()[0],checkMeta.getMiddle()[0], checkMeta.getRight()[0]);
-        String targetSql = target.getSqlTemplate().getDataChangedCountSql(checkMeta.getLeft()[1],checkMeta.getMiddle()[1], checkMeta.getRight()[1]);
+    private void checkLogic(DTaskStat stat, DataConsumer consumer, DataLoader loader, Date startDate, Date endDate, Triple<String[], String[], String[]> checkMeta) {
         //更新对比时间
-        int countSource = countQuery(source.getJdbcTemplate(), sourceSql, startDate, endDate);
+        int countSource = consumer.getDataCount(checkMeta.getLeft()[0],checkMeta.getMiddle()[0], checkMeta.getRight()[0], startDate, endDate);
+        int countTarget = loader.getDataCount(checkMeta.getLeft()[1],checkMeta.getMiddle()[1], checkMeta.getRight()[1], startDate, endDate);
 
-        int countTarget = countQuery(target.getJdbcTemplate(), targetSql, startDate, endDate);
 
         LOGGER.debug("执行同步检查逻辑,执行时间段:{}-{}, 结果:{}-{}", NOTICE_DATE_FORMAT.format(startDate), NOTICE_DATE_FORMAT.format(endDate), countSource, countTarget);
 
@@ -110,20 +98,4 @@ public class ScanDataAlerter implements Alerter{
         }
     }
 
-    private int countQuery(JdbcTemplate template, String sql, Date startDate, Date endDate) {
-        //数组形式仅仅是为了处理回调代码块儿对final局部变量的要求
-        int[] count = {0};
-        template.query(sql, new RowCallbackHandler() {
-            @Override
-            public void processRow(ResultSet rs) throws SQLException {
-                if (null != rs) {
-                    String value = rs.getString(1);
-                    if (!StringUtils.isBlank(value) && StringUtils.isNumeric(value)) {
-                        count[0] = Integer.valueOf(value).intValue();
-                    }
-                }
-            }
-        }, startDate, endDate);
-        return  count[0];
-    }
 }

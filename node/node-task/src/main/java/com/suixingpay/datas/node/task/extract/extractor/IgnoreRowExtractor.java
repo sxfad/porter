@@ -34,6 +34,7 @@ public class IgnoreRowExtractor implements Extractor{
         List<ETLRow> removals = new ArrayList<>();
         for (ETLRow row : bucket.getRows()) {
             LOGGER.debug("trying extract row:{}", JSON.toJSONString(row));
+
             //当前仅支持插入、更新、删除、截断表
             if (row.getOpType() == EventType.INSERT || row.getOpType() == EventType.UPDATE || row.getOpType() == EventType.DELETE || row.getOpType() == EventType.TRUNCATE) {
                 //插入、删除、更新字段为空

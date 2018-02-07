@@ -9,8 +9,8 @@
 
 package com.suixingpay.datas.common.alert.provider;
 
-import com.suixingpay.datas.common.alert.AlertDriver;
-import com.suixingpay.datas.common.alert.meta.EmailParams;
+import com.suixingpay.datas.common.config.Config;
+import com.suixingpay.datas.common.config.EmailAlertConfig;
 import com.suixingpay.datas.common.util.MachineUtils;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -28,23 +28,18 @@ import java.util.Date;
 public class EmailAlertProvider implements AlertProvider {
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     private final JavaMailSender sender;
-    private final AlertDriver driver;
-    private final String[] revicers;
-    private final String addresser;
-    public  EmailAlertProvider(AlertDriver driver, JavaMailSender sender) {
-        this.driver = driver;
+    private final EmailAlertConfig config;
+    public  EmailAlertProvider(Config config, JavaMailSender sender) {
+        this.config = (EmailAlertConfig) config;
         this.sender = sender;
-        EmailParams paramsKey = (EmailParams) driver.getAlertWay().getMeta();
-        this.revicers = driver.getExtend().getOrDefault(paramsKey.RECIVER,"").split(",");
-        this.addresser = driver.getExtend().getOrDefault(paramsKey.ADDRESSER, "zhang_kw@suixingpay.com");
 
     }
 
     @Override
     public boolean notice(String notice) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(addresser);
-        message.setTo(revicers);
+        message.setFrom(config.getSender());
+        message.setTo(config.getReceiver());
         message.setSubject("[" + DATE_FORMAT.format(new Date()) + "][" + MachineUtils.localhost() + ":" + MachineUtils.getPID() + "]数据同步告警");
         message.setText(notice);
         sender.send(message);

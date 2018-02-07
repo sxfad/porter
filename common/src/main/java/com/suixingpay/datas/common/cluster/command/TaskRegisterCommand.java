@@ -8,9 +8,7 @@
  */
 package com.suixingpay.datas.common.cluster.command;
 
-import com.suixingpay.datas.common.task.Task;
-
-import java.util.List; /**
+/**
  *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月19日 18:42

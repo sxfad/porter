@@ -9,15 +9,12 @@
 
 package com.suixingpay.datas.node.core.event.s.converter;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.suixingpay.datas.node.core.event.s.EventConverter;
 import com.suixingpay.datas.node.core.event.s.EventHeader;
 import com.suixingpay.datas.node.core.event.s.EventType;
 import com.suixingpay.datas.node.core.event.s.MessageEvent;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -30,7 +27,7 @@ import java.util.Map;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年01月05日 11:50
  */
-public class OggConverter implements EventConverter{
+public class OggConverter implements EventConverter {
     private static final DateFormat OP_TS_F = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
     private static final DateFormat C_TS_F = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS");
     private static final String NAME = "ogg";
@@ -40,23 +37,17 @@ public class OggConverter implements EventConverter{
     }
 
     @Override
-    public <T> MessageEvent convert(T selectObj) throws ParseException, ConvertNotMatchException {
+    public <T> MessageEvent convert(JSONObject head, JSONObject obj) throws ParseException {
 
-        if (!(selectObj instanceof ConsumerRecord)){
-            throw new ConvertNotMatchException();
-        }
-
-        ConsumerRecord<String, String> record = (ConsumerRecord<String, String>) selectObj;
-        JSONObject obj = JSON.parseObject(record.value());
         EventType eventType = EventType.type(obj.getString("op_type"));
         //不能解析的事件跳过
         if(null == eventType ||  eventType == EventType.UNKNOWN) return null;
 
         EventHeader eventHeader = new EventHeader();
-        eventHeader.setKey(record.key());
-        eventHeader.setOffset(record.offset());
-        eventHeader.setPartition(record.partition());
-        eventHeader.setTopic(record.topic());
+        if (null != head) {
+            if (head.containsKey("offset")) eventHeader.setOffset(head.getString("offset"));
+            if (head.containsKey("partition")) eventHeader.setPartition(head.getString("partition"));
+        }
 
         //body
         MessageEvent event = new MessageEvent();

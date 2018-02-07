@@ -8,13 +8,14 @@
  */
 package com.suixingpay.datas.node.task.load;
 
-import com.suixingpay.datas.common.datasource.DataSourceWrapper;
-import com.suixingpay.datas.common.util.ApplicationContextUtils;
 import com.suixingpay.datas.node.core.event.etl.ETLBucket;
+import com.suixingpay.datas.node.core.loader.DataLoader;
 import com.suixingpay.datas.node.core.task.AbstractStageJob;
 import com.suixingpay.datas.node.core.task.StageType;
-import com.suixingpay.datas.node.task.load.loader.LoaderFactory;
+import com.suixingpay.datas.node.core.util.CallbackMethodCreator;
 import com.suixingpay.datas.node.task.worker.TaskWork;
+
+import java.io.IOException;
 
 /**
  * 完成SQL事件的最终执行，单线程执行,通过interrupt终止线程
@@ -24,24 +25,30 @@ import com.suixingpay.datas.node.task.worker.TaskWork;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月24日 11:19
  */
 public class LoadJob extends AbstractStageJob{
-    private final DataSourceWrapper target;
+    private final DataLoader dataLoder;
     private final TaskWork work;
-    private final LoaderFactory loaderFactory;
     public LoadJob(TaskWork work) {
         super(work.getBasicThreadName());
-        this.target = work.getTarget();
+        this.dataLoder = work.getDataLoader();
         this.work = work;
-        loaderFactory = ApplicationContextUtils.INSTANCE.getBean(LoaderFactory.class);
     }
 
     @Override
     protected void doStop() {
-
+        try {
+            dataLoder.shutdown();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     protected void doStart() {
-
+        try {
+            dataLoder.startup();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -51,7 +58,17 @@ public class LoadJob extends AbstractStageJob{
         do {
             try {
                 bucket = work.waitEvent(StageType.TRANSFORM);
-                if (null != bucket) loaderFactory.load(bucket , work);
+                if (null != bucket) {
+                    dataLoder.load(bucket, new CallbackMethodCreator(){
+                        @Override
+                        public <T> T invokeWithResult(Object... params) {
+                            if (null == params || params.length !=2) return null;
+                            String schema = String.valueOf(params[0]);
+                            String table =  String.valueOf(params[1]);
+                            return (T) work.getDTaskStat(schema, table);
+                        }
+                    });
+                }
             } catch (Exception e) {
                 LOGGER.error("Load ETLRow error!", e);
             }

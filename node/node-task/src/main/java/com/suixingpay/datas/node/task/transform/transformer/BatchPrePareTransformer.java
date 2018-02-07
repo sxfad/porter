@@ -9,12 +9,9 @@
 
 package com.suixingpay.datas.node.task.transform.transformer;
 
-import com.suixingpay.datas.node.core.db.dialect.DbDialect;
 import com.suixingpay.datas.node.core.event.etl.ETLBucket;
 import com.suixingpay.datas.node.core.event.etl.ETLRow;
 import com.suixingpay.datas.node.task.worker.TaskWork;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,7 +24,6 @@ import java.util.List;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月28日 13:38
  */
 public class BatchPrePareTransformer implements Transformer{
-    private static final Logger LOGGER = LoggerFactory.getLogger(BatchPrePareTransformer.class);
 
     @Override
     public int order() {
@@ -35,7 +31,7 @@ public class BatchPrePareTransformer implements Transformer{
     }
 
     @Override
-    public void transform(ETLBucket bucket, TaskWork work, DbDialect targetDialect) {
+    public void transform(ETLBucket bucket, TaskWork work) {
         groupRows(bucket, 0);
     }
 

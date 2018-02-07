@@ -17,10 +17,11 @@ import com.suixingpay.datas.common.cluster.command.TaskStopCommand;
 import com.suixingpay.datas.common.cluster.data.DCallback;
 import com.suixingpay.datas.common.cluster.data.DObject;
 import com.suixingpay.datas.common.cluster.data.DTaskStat;
-import com.suixingpay.datas.common.datasource.DataSourceWrapper;
-import com.suixingpay.datas.common.db.TableMapper;
+import com.suixingpay.datas.node.core.consumer.DataConsumer;
+import com.suixingpay.datas.node.core.loader.DataLoader;
 import com.suixingpay.datas.node.core.task.StageJob;
 import com.suixingpay.datas.node.core.task.StageType;
+import com.suixingpay.datas.node.core.task.TableMapper;
 import com.suixingpay.datas.node.task.alert.AlertJob;
 import com.suixingpay.datas.node.task.extract.ExtractJob;
 import com.suixingpay.datas.node.task.load.LoadJob;
@@ -47,27 +48,25 @@ import java.util.stream.Collectors;
 public class TaskWork {
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskWork.class);
     private final String taskId;
-    private final String topic;
-    private final DataSourceWrapper source;
-    private final DataSourceWrapper target;
-    private final DataSourceWrapper consumerSource;
+
+    private final DataConsumer dataConsumer;
+    private final DataLoader dataLoader;
+
     private  final Map<StageType, StageJob> JOBS;
     private final String basicThreadName;
     private final Map<String, DTaskStat> stats;
     private final Map<String, TableMapper> mappers;
     private final TaskWorker worker;
-    private final String loader;
-    public TaskWork(String loader, String taskId, String topic, DataSourceWrapper source, DataSourceWrapper target, DataSourceWrapper dataSource, TaskWorker worker) {
-        basicThreadName = "TaskWork-[taskId:" + taskId + "]-[topic:" + topic + "]";
-        this.target = target;
-        this.source = source;
-        this.topic = topic;
+
+
+    public TaskWork(DataConsumer dataConsumer, DataLoader dataLoader, String taskId, TaskWorker worker) {
+        this.dataConsumer = dataConsumer;
+        this.dataLoader = dataLoader;
+        basicThreadName = "TaskWork-[taskId:" + taskId + "]-[consumer:" + dataConsumer.getId() + "]";
         this.taskId = taskId;
-        this.consumerSource = dataSource;
         this.stats = new ConcurrentHashMap<>();
         this.mappers = new ConcurrentHashMap<>();
         this.worker = worker;
-        this.loader = loader;
         TaskWork work = this;
         JOBS = new LinkedHashMap<StageType, StageJob>(){
             {
@@ -78,9 +77,10 @@ public class TaskWork {
                 put(StageType.DB_CHECK, new AlertJob(work));
             }
         };
+
         //从集群模块获取任务状态统计信息
         try {
-            ClusterProvider.sendCommand(new TaskStatQueryCommand(taskId, topic, new DCallback() {
+            ClusterProvider.sendCommand(new TaskStatQueryCommand(taskId, dataConsumer.getId(), new DCallback() {
                 @Override
                 public void callback(List<DObject> objects) {
                     for ( DObject object : objects) {
@@ -96,7 +96,7 @@ public class TaskWork {
 
     public void stop() {
         try {
-            LOGGER.info("终止执行任务[{}-{}]", taskId, topic);
+            LOGGER.info("终止执行任务[{}-{}]", taskId, dataConsumer.getId());
             //终止阶段性工作,需要
             for (Map.Entry<StageType, StageJob> jobs : JOBS.entrySet()) {
                 jobs.getValue().stop();
@@ -104,35 +104,23 @@ public class TaskWork {
             //上传消费进度
             submitStat();
             //广播任务结束消息
-            ClusterProvider.sendCommand(new TaskStopCommand(taskId,topic));
+            ClusterProvider.sendCommand(new TaskStopCommand(taskId,dataConsumer.getId()));
         } catch (Exception e) {
-            LOGGER.error("终止执行任务[{}-{}]异常", taskId, topic, e);
+            LOGGER.error("终止执行任务[{}-{}]异常", taskId, dataConsumer.getId(), e);
         }
     }
 
     public void start() {
         try {
-            LOGGER.info("开始执行任务[{}-{}]", taskId, topic);
-            ClusterProvider.sendCommand(new TaskRegisterCommand(taskId, topic));
+            LOGGER.info("开始执行任务[{}-{}]", taskId, dataConsumer.getId());
+            ClusterProvider.sendCommand(new TaskRegisterCommand(taskId, dataConsumer.getId()));
             //开始阶段性工作
             for (Map.Entry<StageType, StageJob> jobs : JOBS.entrySet()) {
                 jobs.getValue().start();
             }
         } catch (Exception e) {
-            LOGGER.error("开始执行任务[{}-{}]异常", taskId, topic, e);
+            LOGGER.error("开始执行任务[{}-{}]异常", taskId, dataConsumer.getId(), e);
         }
-    }
-
-    public DataSourceWrapper getSource() {
-        return source;
-    }
-
-    public DataSourceWrapper getTarget() {
-        return target;
-    }
-
-    public DataSourceWrapper getConsumerSource() {
-        return consumerSource;
     }
 
     public String getBasicThreadName() {
@@ -154,11 +142,6 @@ public class TaskWork {
     public String getTaskId() {
         return taskId;
     }
-
-    public String getTopic() {
-        return topic;
-    }
-
 
     public void submitStat() {
         stats.forEach(new BiConsumer<String, DTaskStat>() {
@@ -203,7 +186,7 @@ public class TaskWork {
         DTaskStat stat = stats.computeIfAbsent(key, new Function<String, DTaskStat>() {
             @Override
             public DTaskStat apply(String s) {
-                DTaskStat tmp = new DTaskStat(taskId, null, topic, schema, table);
+                DTaskStat tmp = new DTaskStat(taskId, null, dataConsumer.getId(), schema, table);
                 return tmp;
             }
         });
@@ -240,7 +223,11 @@ public class TaskWork {
         return Collections.unmodifiableList(stats.values().stream().collect(Collectors.toList()));
     }
 
-    public String getLoader() {
-        return loader;
+    public DataConsumer getDataConsumer() {
+        return dataConsumer;
+    }
+
+    public DataLoader getDataLoader() {
+        return dataLoader;
     }
 }

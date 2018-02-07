@@ -8,14 +8,12 @@
  */
 package com.suixingpay.datas.node.task.alert;
 
-import com.suixingpay.datas.common.datasource.DataSourceWrapper;
-import com.suixingpay.datas.common.db.TableMapper;
 import com.suixingpay.datas.common.util.ApplicationContextUtils;
+import com.suixingpay.datas.node.core.consumer.DataConsumer;
+import com.suixingpay.datas.node.core.loader.DataLoader;
 import com.suixingpay.datas.node.core.task.AbstractStageJob;
 import com.suixingpay.datas.node.task.alert.alerter.AlerterFactory;
 import com.suixingpay.datas.node.task.worker.TaskWork;
-import org.apache.commons.lang3.tuple.ImmutableTriple;
-import org.apache.commons.lang3.tuple.Triple;
 
 /**
  * 单线程执行，但存在多线程执行的可能性，前期单线程执行
@@ -25,14 +23,14 @@ import org.apache.commons.lang3.tuple.Triple;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月24日 11:20
  */
 public class AlertJob extends AbstractStageJob {
-    private final DataSourceWrapper source;
-    private final DataSourceWrapper target;
+    private final DataConsumer dataConsumer;
+    private final DataLoader dataLoader;
     private final AlerterFactory alerterFactory;
     private final TaskWork work;
     public AlertJob(TaskWork work) {
         super(work.getBasicThreadName(), 1000 * 60 * 5L );
-        this.target = work.getTarget();
-        this.source = work.getSource();
+        this.dataConsumer = work.getDataConsumer();
+        this.dataLoader = work.getDataLoader();
         alerterFactory = ApplicationContextUtils.INSTANCE.getBean(AlerterFactory.class);
         this.work = work;
     }
@@ -51,9 +49,9 @@ public class AlertJob extends AbstractStageJob {
     protected void loopLogic() {
         //10秒执行一次
         try {
-            alerterFactory.check(source, target, work);
+            alerterFactory.check(dataConsumer, dataLoader, work);
         } catch (Exception e) {
-            LOGGER.error("[{}][{}]db check error!",work.getTaskId(), work.getTopic(), e);
+            LOGGER.error("[{}][{}]db check error!",work.getTaskId(), dataConsumer.getId(), e);
         }
     }
 

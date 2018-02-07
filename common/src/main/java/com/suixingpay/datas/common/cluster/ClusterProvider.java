@@ -9,9 +9,12 @@
 package com.suixingpay.datas.common.cluster;
 
 import com.suixingpay.datas.common.cluster.command.ClusterCommand;
+import com.suixingpay.datas.common.config.Config;
+import com.suixingpay.datas.common.config.ConfigType;
 import com.suixingpay.datas.common.task.TaskEventListener;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -27,12 +30,18 @@ public abstract class ClusterProvider {
     protected abstract void addListener(ClusterListener listener);
     public abstract void addTaskEventListener(TaskEventListener listener);
     public abstract void removeTaskEventListener(TaskEventListener listener);
-    protected abstract void doInitialize(ClusterDriver driver);
-    protected abstract void start();
+    protected abstract void start() throws IOException;
+    protected abstract void doInitialize(Config config);
+    protected abstract boolean matches(ConfigType type);
     protected abstract void stop();
     protected abstract void distributeCommand(ClusterCommand command) throws Exception;
-    private void initialize(ClusterDriver driver) {
-        doInitialize(driver);
+
+    public ClusterProvider() {
+
+    }
+
+    private void initialize(Config config) {
+        doInitialize(config);
         afterInitialize();
     }
     private void afterInitialize(){
@@ -48,24 +57,18 @@ public abstract class ClusterProvider {
     }
 
 
-    public static final void load(ClusterDriver driver) {
+    public static final void load(Config config) throws IOException {
         //集群组件初始化
-        List<String> providers = SpringFactoriesLoader.loadFactoryNames(ClusterProvider.class, null);
-        for (String providerName : providers) {
-            try {
-                ClusterProvider tempProvider = null;
-                if (driver.getType().matches(providerName)) {
-                    Class<ClusterProvider> clazzProvider = (Class<ClusterProvider>) Class.forName(providerName);
-                    tempProvider = clazzProvider.getDeclaredConstructor().newInstance();
-                }
-                if (null != tempProvider){
-                    tempProvider.initialize(driver);
-                    tempProvider.start();
-                    CLUSTER_PROVIDER = tempProvider;
+        List<ClusterProvider> providers = SpringFactoriesLoader.loadFactories(ClusterProvider.class, null);
+        for (ClusterProvider provider : providers) {
+            if (provider.matches(config.getConfigType())) {
+                try {
+                    provider.initialize(config);
+                    provider.start();
+                    CLUSTER_PROVIDER = provider;
+                } finally {
                     break;
                 }
-            } catch (Exception e) {
-                continue;
             }
         }
     }

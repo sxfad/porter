@@ -8,7 +8,8 @@
  */
 package com.suixingpay.datas.common.cluster.zookeeper;
 
-import com.suixingpay.datas.common.cluster.Client;
+import com.suixingpay.datas.common.client.Client;
+import com.suixingpay.datas.common.client.impl.ZookeeperClient;
 import com.suixingpay.datas.common.cluster.ClusterListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

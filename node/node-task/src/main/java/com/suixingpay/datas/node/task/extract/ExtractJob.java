@@ -8,10 +8,10 @@
  */
 package com.suixingpay.datas.node.task.extract;
 
-import com.suixingpay.datas.common.datasource.DataSourceWrapper;
 import com.suixingpay.datas.common.util.ApplicationContextUtils;
 import com.suixingpay.datas.node.core.event.etl.ETLBucket;
 import com.suixingpay.datas.node.core.event.s.MessageEvent;
+import com.suixingpay.datas.node.core.loader.DataLoader;
 import com.suixingpay.datas.node.core.task.AbstractStageJob;
 import com.suixingpay.datas.node.core.task.StageType;
 import com.suixingpay.datas.node.datacarrier.DataCarrier;
@@ -37,12 +37,12 @@ public class ExtractJob extends AbstractStageJob {
     private final DataCarrier<ETLBucket> carrier;
     private final DataCarrier<Long> orderedBucket;
     private final ExtractorFactory extractorFactory;
-    private final DataSourceWrapper target;
+    private final DataLoader loader;
     public ExtractJob(TaskWork work) {
         super(work.getBasicThreadName());
         extractorFactory = ApplicationContextUtils.INSTANCE.getBean(ExtractorFactory.class);
         this.work = work;
-        target = work.getTarget();
+        loader = work.getDataLoader();
         //线程阻塞时，在调用者线程中执行
         executorService = new ThreadPoolExecutor(LOGIC_THREAD_SIZE, LOGIC_THREAD_SIZE,
                 0L, TimeUnit.MILLISECONDS,
@@ -79,7 +79,7 @@ public class ExtractJob extends AbstractStageJob {
                         public void run() {
                             try {
                                 //将MessageEvent转换为ETLBucket
-                                ETLBucket bucket = ETLBucket.from(inThreadEvents, target.getUniqueId());
+                                ETLBucket bucket = ETLBucket.from(inThreadEvents);
                                 extractorFactory.extract(bucket);
                                 carrier.push(bucket);
                                 LOGGER.debug("push bucket {} into carrier after extract.", inThreadEvents.getLeft());

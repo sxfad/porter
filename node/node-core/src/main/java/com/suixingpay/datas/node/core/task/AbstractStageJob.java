@@ -1,4 +1,4 @@
-package com.suixingpay.datas.node.core.task;/**
+/**
  * All rights Reserved, Designed By Suixingpay.
  *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -6,11 +6,13 @@ package com.suixingpay.datas.node.core.task;/**
  * @Copyright ©2017 Suixingpay. All rights reserved.
  * 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
  */
+package com.suixingpay.datas.node.core.task;
 
 import com.suixingpay.datas.common.util.DefaultNamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -44,9 +46,9 @@ public abstract class AbstractStageJob implements StageJob {
         threadFactory = new DefaultNamedThreadFactory(baseThreadName + "-" + this.getClass().getSimpleName());
         loopService = threadFactory.newThread(new LoopService());
     }
-    protected abstract void doStop();
+    protected abstract void doStop() throws InterruptedException;
 
-    protected abstract void doStart();
+    protected abstract void doStart() throws IOException;
 
     @Override
     public void start() {

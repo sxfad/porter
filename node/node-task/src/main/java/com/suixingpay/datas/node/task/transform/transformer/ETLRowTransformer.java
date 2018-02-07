@@ -10,18 +10,16 @@
 package com.suixingpay.datas.node.task.transform.transformer;
 
 import com.alibaba.fastjson.JSON;
-import com.suixingpay.datas.common.db.TableMapper;
-import com.suixingpay.datas.node.core.db.dialect.DbDialect;
-import com.suixingpay.datas.node.core.db.utils.SqlUtils;
+import com.suixingpay.datas.common.db.meta.TableColumn;
+import com.suixingpay.datas.common.db.meta.TableSchema;
 import com.suixingpay.datas.node.core.event.etl.ETLBucket;
 import com.suixingpay.datas.node.core.event.etl.ETLColumn;
 import com.suixingpay.datas.node.core.event.etl.ETLRow;
 import com.suixingpay.datas.node.core.event.s.EventType;
+import com.suixingpay.datas.node.core.loader.DataLoader;
+import com.suixingpay.datas.node.core.task.TableMapper;
 import com.suixingpay.datas.node.task.worker.TaskWork;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.ddlutils.model.Column;
-import org.apache.ddlutils.model.Table;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,38 +41,41 @@ public class ETLRowTransformer implements Transformer {
     }
 
     @Override
-    public void transform(ETLBucket bucket, TaskWork work, DbDialect targetDialect) {
+    public void transform(ETLBucket bucket, TaskWork work) {
         LOGGER.debug("start tranforming bucket:{},size:{}", bucket.getSequence(), bucket.getRows().size());
         for (ETLRow row : bucket.getRows()) {
             LOGGER.debug("try tranform row:{},{}", row.getIndex(), JSON.toJSONString(row));
             TableMapper tableMapper = work.getTableMapper(row.getSchema(), row.getTable());
             mappingRowData(tableMapper, row);
-            Table table = findTable(targetDialect, row.getFinalSchema(), row.getFinalTable());
+            TableSchema table = findTable(work.getDataLoader(), row.getFinalSchema(), row.getFinalTable());
             if (null != table) remedyColumns(table, row);
-            createSQLPrepare(row);
+
+            //DataLoader自定义处理
+            work.getDataLoader().mouldRow(row);
+
             LOGGER.debug("after tranform row:{},{}", row.getIndex(), JSON.toJSONString(row));
         }
     }
 
     private void mappingRowData(TableMapper mapper, ETLRow row) {
-        if (null != mapper && mapper.isCustom()) {
+        if (null != mapper) {
             //替换schema和表名
             if (null != mapper.getSchema() && mapper.getSchema().length == 2) row.setFinalSchema(mapper.getSchema()[1]);
             if (null != mapper.getTable() && mapper.getTable().length == 2) row.setFinalTable(mapper.getTable()[1]);
-            if (null != row.getColumns() && null != mapper.getColumns()) {
+            if (null != row.getColumns() && null != mapper.getColumn()) {
                 for (ETLColumn c : row.getColumns()) {
                     //替换字段名
-                    c.setFinalName(mapper.getColumns().getOrDefault(c.getName(), c.getName()));
+                    c.setFinalName(mapper.getColumn().getOrDefault(c.getName(), c.getName()));
                 }
             }
         }
     }
 
-    private void remedyColumns(Table table, ETLRow row) {
+    private void remedyColumns(TableSchema table, ETLRow row) {
         List<ETLColumn> removeables = new ArrayList<>();
         //正向查找
         for (ETLColumn c : row.getColumns()) {
-            Column column = table.findColumn(c.getFinalName());
+            TableColumn column = table.findColumn(c.getFinalName());
             if (null != column) {
                 c.setFinalType(column.getTypeCode());
                 c.setKey(column.isPrimaryKey());
@@ -87,10 +88,11 @@ public class ETLRowTransformer implements Transformer {
                 removeables.add(c);
             }
         }
+
         //反向查找
         List<String> inColumnNames = row.getColumns().stream().map(p  -> p.getFinalName()).collect(Collectors.toList());
         //如果目标库表中有新增必填的字段需要补充上去
-        Arrays.stream(table.getColumns()).filter(p -> ! inColumnNames.contains(p.getName()) && p.isRequired() && null == p.getDefaultValue())
+        table.getColumns().stream().filter(p -> ! inColumnNames.contains(p.getName()) && p.isRequired() && null == p.getDefaultValue())
                 .forEach(p -> {
                     ETLColumn column = new ETLColumn(p.getName(), p.getDefaultValue(), p.getDefaultValue(), p.getDefaultValue(), p.isPrimaryKey(), p.isRequired(), p.getTypeCode());
                     if (row.getOpType() == EventType.INSERT) {
@@ -104,24 +106,12 @@ public class ETLRowTransformer implements Transformer {
 
         row.getColumns().removeAll(removeables);
     }
-    private void createSQLPrepare(ETLRow row) {
-        if (null != row.getColumns()) {
-            for (ETLColumn c : row.getColumns()) {
-                Object newValue = SqlUtils.stringToSqlValue(c.getFinalValue(), c.getFinalType(), c.isRequired(), true);
-                Object oldValue = SqlUtils.stringToSqlValue(c.getOldValue(), c.getFinalType(), c.isRequired(), true);
-                if (c.isKey()) {
-                    row.getSqlKeys().put(c.getFinalName(), new ImmutablePair<>(oldValue, newValue));
-                } else {
-                    row.getSqlColumns().put(c.getFinalName(), new ImmutablePair<>(oldValue, newValue));
-                }
-            }
-        }
-    }
 
-    private Table findTable(DbDialect targetDialect, String finalSchema, String finalTable) {
-        Table table = null;
+
+    private TableSchema findTable(DataLoader loader, String finalSchema, String finalTable) {
+        TableSchema table = null;
         try {
-            table = targetDialect.findTable(finalSchema, finalTable);
+            table = loader.findTable(finalSchema, finalTable);
         } catch (Exception e) {
             e.printStackTrace();
             LOGGER.error("查询目标仓库表结构{}.{}出错!", finalSchema, finalTable, e);

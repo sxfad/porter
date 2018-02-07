@@ -9,9 +9,10 @@
 
 package com.suixingpay.datas.node.boot.config;
 
-import com.suixingpay.datas.common.alert.AlertDriver;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
+
+import java.util.Map;
 
 /**
  *
@@ -20,16 +21,16 @@ import org.springframework.stereotype.Component;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年01月01日 20:17
  */
-@ConfigurationProperties(prefix = "alert")
+@ConfigurationProperties(prefix = "node")
 @Component
 public class AlertConfig {
-    private AlertDriver driver;
+    private Map<String, String> alert;
 
-    public AlertDriver getDriver() {
-        return driver;
+    public Map<String, String> getAlert() {
+        return alert;
     }
 
-    public void setDriver(AlertDriver driver) {
-        this.driver = driver;
+    public void setAlert(Map<String, String> alert) {
+        this.alert = alert;
     }
 }

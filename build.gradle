@@ -49,11 +49,16 @@ subprojects {
                 "org.springframework.boot:spring-boot-starter-mail:${springVersion}",
                 'mysql:mysql-connector-java:5.1.45'
         )
+        compileOnly 'org.projectlombok:lombok:1.16.20'
     }
     build.doLast {
         def rootPath = rootProject.buildDir.getPath() + "/distributions"
         copy {
             from buildDir.getPath() + "/distributions" into rootPath
         }
+    }
+
+    clean.doFirst {
+        delete "${buildDir}/../out"
     }
 }

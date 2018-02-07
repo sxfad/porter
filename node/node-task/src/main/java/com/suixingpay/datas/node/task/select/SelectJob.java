@@ -8,9 +8,8 @@
  */
 package com.suixingpay.datas.node.task.select;
 
-import com.suixingpay.datas.common.datasource.DataSourceWrapper;
 import com.suixingpay.datas.common.util.ApplicationContextUtils;
-import com.suixingpay.datas.node.core.event.s.EventFetcher;
+import com.suixingpay.datas.node.core.consumer.DataConsumer;
 import com.suixingpay.datas.node.core.event.s.MessageEvent;
 import com.suixingpay.datas.node.core.task.AbstractStageJob;
 import com.suixingpay.datas.node.datacarrier.DataCarrier;
@@ -18,6 +17,7 @@ import com.suixingpay.datas.node.datacarrier.DataCarrierFactory;
 import com.suixingpay.datas.node.task.worker.TaskWork;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -33,17 +33,12 @@ public class SelectJob extends AbstractStageJob {
     //只需要保证select出来的数据不致使ExtractJob的所有消费线程饥饿即可
     private static final int BUFFER_SIZE = PULL_BATCH_SIZE*10;
 
-    private final DataSourceWrapper selectWrapper;
+    private final DataConsumer consumer;
     private final DataCarrier<MessageEvent> carrier;
     public SelectJob(TaskWork work) {
         super(work.getBasicThreadName());
-        if (work.getConsumerSource() instanceof  EventFetcher) {
-            selectWrapper = work.getConsumerSource();
-            carrier = ApplicationContextUtils.INSTANCE.getBean(DataCarrierFactory.class).newDataCarrier(BUFFER_SIZE,PULL_BATCH_SIZE);
-        } else {
-            selectWrapper = null;
-            carrier = null;
-        }
+        consumer = work.getDataConsumer();
+        carrier = ApplicationContextUtils.INSTANCE.getBean(DataCarrierFactory.class).newDataCarrier(BUFFER_SIZE,PULL_BATCH_SIZE);
     }
 
     /**
@@ -51,22 +46,29 @@ public class SelectJob extends AbstractStageJob {
      */
     @Override
     protected void doStop() {
-        selectWrapper.destroy();
+        try {
+            consumer.shutdown();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     protected void doStart() {
-        selectWrapper.create();
+        try {
+            consumer.startup();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     protected void loopLogic(){
-        EventFetcher fetcher = (EventFetcher)selectWrapper;
         //只要队列有消息，持续读取
         List<MessageEvent> events = null;
         do {
             try {
-                events = fetcher.fetch();
+                events = consumer.fetch();
                 if (null != events) carrier.push(events);
             } catch (InterruptedException e) {
                 LOGGER.error("fetch MessageEvent error!", e);
@@ -76,7 +78,7 @@ public class SelectJob extends AbstractStageJob {
 
     @Override
     public boolean canStart() {
-        return null != selectWrapper;
+        return null != consumer && consumer.canStart();
     }
 
     @Override

@@ -19,6 +19,7 @@ import com.suixingpay.datas.common.cluster.event.EventType;
  */
 public class ZookeeperClusterEvent extends ClusterEvent {
     private final String path;
+
     public ZookeeperClusterEvent(EventType eventType, String data) {
         super(eventType, data);
         path = null;

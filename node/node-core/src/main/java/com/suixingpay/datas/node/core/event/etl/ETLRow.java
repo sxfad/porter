@@ -28,6 +28,7 @@ public class ETLRow {
     //操作类型 I U D T
     private final EventType opType;
     private final List<ETLColumn> columns;
+
     private Map<String, Pair<Object,Object>> sqlKeys = new LinkedHashMap<>();
     private Map<String, Pair<Object,Object>> sqlColumns = new LinkedHashMap<>();
 

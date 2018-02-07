@@ -9,8 +9,6 @@
 
 package com.suixingpay.datas.node.task.transform.transformer;
 
-import com.suixingpay.datas.common.db.TableMapper;
-import com.suixingpay.datas.node.core.db.dialect.DbDialect;
 import com.suixingpay.datas.node.core.event.etl.ETLBucket;
 import com.suixingpay.datas.node.core.event.etl.ETLRow;
 import com.suixingpay.datas.node.core.event.s.EventType;
@@ -48,10 +46,10 @@ public class BatchPrePareTransformerTest {
         rows.add(new ETLRow("s", "t"  ,EventType.INSERT,null,null));
         rows.add(new ETLRow("s", "t"  ,EventType.INSERT,null,null));
 
-        ETLBucket bucket = new ETLBucket(0, rows, "");
+        ETLBucket bucket = new ETLBucket(0, rows);
 
         BatchPrePareTransformer t = new BatchPrePareTransformer();
-        t.transform(bucket,null,null);
+        t.transform(bucket,null);
 
         Assert.assertEquals(bucket.getBatchRows().size(), 8);
     }

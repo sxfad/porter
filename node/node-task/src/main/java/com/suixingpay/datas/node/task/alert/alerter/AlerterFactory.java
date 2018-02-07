@@ -10,10 +10,9 @@
 package com.suixingpay.datas.node.task.alert.alerter;
 
 import com.suixingpay.datas.common.cluster.data.DTaskStat;
-import com.suixingpay.datas.common.datasource.DataSourceWrapper;
-import com.suixingpay.datas.common.db.TableMapper;
-import com.suixingpay.datas.node.core.db.dialect.DbDialect;
-import com.suixingpay.datas.node.core.db.dialect.DbDialectFactory;
+import com.suixingpay.datas.node.core.consumer.DataConsumer;
+import com.suixingpay.datas.node.core.loader.DataLoader;
+import com.suixingpay.datas.node.core.task.TableMapper;
 import com.suixingpay.datas.node.task.worker.TaskWork;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
@@ -22,7 +21,6 @@ import org.springframework.core.io.support.SpringFactoriesLoader;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -47,10 +45,7 @@ public class AlerterFactory {
         }
     }
 
-    public void check(DataSourceWrapper source, DataSourceWrapper target, TaskWork work) {
-        //数据库连接
-        final DbDialect sourceDialect = DbDialectFactory.INSTANCE.getDbDialect(source.getUniqueId());
-        final DbDialect targetDialect = DbDialectFactory.INSTANCE.getDbDialect(target.getUniqueId());
+    public void check(DataConsumer dataConsumer, DataLoader dataLoader, TaskWork work) {
         //任务统计列表
         List<DTaskStat> stats = work.getStats();
         if (stats.size() > 5) {
@@ -67,7 +62,7 @@ public class AlerterFactory {
                     public void run() {
                         //执行任务
                         try {
-                            alerter.check(sourceDialect, targetDialect, stat, getCheckMeta(work, stat.getSchema(), stat.getTable()));
+                            alerter.check(dataConsumer, dataLoader, stat, getCheckMeta(work, stat.getSchema(), stat.getTable()));
                         } finally {
                             try {
                                 barrier.await();
@@ -88,10 +83,11 @@ public class AlerterFactory {
             }
         } else {
             for (DTaskStat stat : stats) {
-                alerter.check(sourceDialect, targetDialect, stat, getCheckMeta(work, stat.getSchema(), stat.getTable()));
+                alerter.check(dataConsumer, dataLoader, stat, getCheckMeta(work, stat.getSchema(), stat.getTable()));
             }
         }
     }
+
 
     private Triple<String[], String[], String[]> getCheckMeta(TaskWork work, String schema, String table) {
         TableMapper mapper = work.getTableMapper(schema, table);
@@ -117,5 +113,4 @@ public class AlerterFactory {
         }
         return new ImmutableTriple<>(schemas, tables, updateTime);
     }
-
 }
