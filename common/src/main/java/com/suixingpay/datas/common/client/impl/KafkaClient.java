@@ -10,7 +10,6 @@
 package com.suixingpay.datas.common.client.impl;
 
 import com.suixingpay.datas.common.client.AbstractClient;
-import com.suixingpay.datas.common.client.ClientCallback;
 import com.suixingpay.datas.common.client.ConsumeClient;
 import com.suixingpay.datas.common.config.source.KafkaConfig;
 import com.suixingpay.datas.common.exception.ClientException;
@@ -60,7 +59,7 @@ public class KafkaClient extends AbstractClient<KafkaConfig> implements ConsumeC
     }
 
     @Override
-    public <F, O> List<F> fetch(ClientCallback<F, O> callback) {
+    public <F, O> List<F> fetch(FetchCallback<F, O> callback) {
         List<F> msgs = new ArrayList<>();
         if (isStarted()) {
             ConsumerRecords<String, String> results = consumer.poll(perPullSize);

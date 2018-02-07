@@ -14,6 +14,7 @@ import com.suixingpay.datas.common.db.meta.TableSchema;
 import java.util.Date;
 
 /**
+ * 消费源源数据查询客户端
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年02月06日 14:42
  * @version: V1.0

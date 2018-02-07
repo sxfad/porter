@@ -52,7 +52,7 @@ public interface DataConsumer {
     boolean isMatch(String consumerName);
 
     /**
-     * 区分同一个任务的不同消费者
+     * 区分同一个任务的不同消费资源，用于分布式锁抢占、任务统计等
      * @return
      */
     String getId();

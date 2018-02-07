@@ -105,28 +105,28 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
 
             //创建任务统计节点
             try {
-                String alertNode = statPath + "/" + task.getTopic();
+                String alertNode = statPath + "/" + task.getResourceId();
                 if (null == client.exists(alertNode, true)) {
                     client.create(alertNode,false ,"{}");
                 }
             } catch (Exception e) {
-                LOGGER.error("创建任务统计节点失败->task:{},node:{},topic:{},", task.getTaskId(), nodeId, task.getTopic(), e);
+                LOGGER.error("创建任务统计节点失败->task:{},node:{},consume-resource:{},", task.getTaskId(), nodeId, task.getResourceId(), e);
             }
 
             //任务分配
-            String topicPath = assignPath + "/" + task.getTopic();
+            String topicPath = assignPath + "/" + task.getResourceId();
             Stat ifAssignTopic = client.exists(topicPath, true);
             if (null == ifAssignTopic) {
                 //为当前工作节点分配任务topic
-                client.create(topicPath,false, new DTaskLock(task.getTaskId(), nodeId, task.getTopic()).toString());
+                client.create(topicPath,false, new DTaskLock(task.getTaskId(), nodeId, task.getResourceId()).toString());
                 //通知对此感兴趣的Listener
-                ClusterProvider.sendCommand(new TaskAssignedCommand(task.getTaskId(),task.getTopic()));
+                ClusterProvider.sendCommand(new TaskAssignedCommand(task.getTaskId(),task.getResourceId()));
             } else {
                 throw  new Exception(topicPath+",锁定资源失败。");
             }
         } else if (command instanceof TaskStopCommand) {
             TaskStopCommand stopCommand = (TaskStopCommand) command;
-            String node = path() + "/" + stopCommand.getTaskId() + "/lock/" + stopCommand.getTopic();
+            String node = path() + "/" + stopCommand.getTaskId() + "/lock/" + stopCommand.getResourceId();
             Stat stat = client.exists(node, false);
             if (null != stat) {
                 Pair<String, Stat> remoteData = client.getData(node);
@@ -139,14 +139,14 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
             TaskStatCommand statCommand = (TaskStatCommand) command;
             DTaskStat dataStat = statCommand.getStat();
             //.intern()保证全局唯一字符串对象
-            String node = (path() + "/" +dataStat.getTaskId() + "/stat/" + dataStat.getTopic()
+            String node = (path() + "/" +dataStat.getTaskId() + "/stat/" + dataStat.getResourceId()
                     + "/" + dataStat.getSchema()+ "." + dataStat.getTable()).intern();
-            //控制锁的粒度到每个topic节点，
+            //控制锁的粒度到每个consume-resource节点，
             synchronized (node) {
                 Stat stat = client.exists(node, true);
                 //节点不存在，创建新节点
                 if (null == stat) {
-                    DTaskStat thisStat = new DTaskStat(dataStat.getTaskId(), nodeId, dataStat.getTopic(), dataStat.getSchema(), dataStat.getTable());
+                    DTaskStat thisStat = new DTaskStat(dataStat.getTaskId(), nodeId, dataStat.getResourceId(), dataStat.getSchema(), dataStat.getTable());
                     client.create(node,false ,thisStat.toString());
                     stat = client.exists(node, true);
                 }
@@ -169,7 +169,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
             }
         } else if (command instanceof TaskStatQueryCommand) {
             TaskStatQueryCommand queryCommand = (TaskStatQueryCommand) command;
-            String node = path() + "/" +queryCommand.getTaskId() + "/stat/" + queryCommand.getTopic();
+            String node = path() + "/" +queryCommand.getTaskId() + "/stat/" + queryCommand.getResourceId();
             LOGGER.debug("query \"{}\" children node.", node);
 
             List<String> children = client.getChildren(node);

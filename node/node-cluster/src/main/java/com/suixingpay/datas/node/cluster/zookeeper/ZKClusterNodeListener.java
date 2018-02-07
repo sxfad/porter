@@ -129,9 +129,9 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener {
             String path = path() + "/" + nodeId;
             lock.lock();
             DNode nodeData = DNode.fromString(client.getData(path).getLeft(), DNode.class);
-            List<String> topics = nodeData.getTasks().getOrDefault(assignedCommand.getTaskId(), new ArrayList<>());
-            topics.add(assignedCommand.getTopic());
-            nodeData.getTasks().put(assignedCommand.getTaskId(), topics);
+            List<String> resources = nodeData.getTasks().getOrDefault(assignedCommand.getTaskId(), new ArrayList<>());
+            resources.add(assignedCommand.getResourceId());
+            nodeData.getTasks().put(assignedCommand.getTaskId(), resources);
             Stat nowStat = client.exists(path, true);
             client.setData(path, nodeData.toString(), nowStat.getVersion());
             lock.unlock();

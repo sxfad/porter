@@ -27,13 +27,54 @@ import java.util.function.Consumer;
  */
 public abstract class ClusterProvider {
     private static ClusterProvider CLUSTER_PROVIDER;
+
+    /**
+     *
+     * @param listener
+     */
     protected abstract void addListener(ClusterListener listener);
+
+    /**
+     * 用于集群监听到任务事件的分发
+     * @param listener
+     */
     public abstract void addTaskEventListener(TaskEventListener listener);
+
+    /**
+     * 用于集群监听到任务事件的分发
+     * @param listener
+     */
     public abstract void removeTaskEventListener(TaskEventListener listener);
+
+    /**
+     * 启动集群模块
+     * @throws IOException
+     */
     protected abstract void start() throws IOException;
+
+    /**
+     * 通过配置初始化集群，子类实现
+     * @param config
+     */
     protected abstract void doInitialize(Config config);
+
+    /**
+     * 匹配配置文件指定的集群实现
+     * @param type
+     * @return
+     */
     protected abstract boolean matches(ConfigType type);
+
+    /**
+     * 退出集群
+     */
     protected abstract void stop();
+
+    /**
+     * 分发命令，用于在别的模块通知集群的相关模块
+     * @param command
+     * @throws Exception
+     */
     protected abstract void distributeCommand(ClusterCommand command) throws Exception;
 
     public ClusterProvider() {

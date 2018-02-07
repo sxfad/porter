@@ -30,7 +30,7 @@ public class DataLoaderConfig extends Config {
     }
     @Override
     protected void childStuff() {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override

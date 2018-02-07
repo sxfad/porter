@@ -12,17 +12,18 @@ package com.suixingpay.datas.node.plugin.consumer.kafka;
 
 import com.alibaba.fastjson.JSONObject;
 import com.suixingpay.datas.common.client.Client;
-import com.suixingpay.datas.common.client.ClientCallback;
 import com.suixingpay.datas.common.client.ConsumeClient;
 import com.suixingpay.datas.common.client.MetaQueryClient;
 import com.suixingpay.datas.common.client.impl.KafkaClient;
 import com.suixingpay.datas.node.core.consumer.DataConsumer;
 import com.suixingpay.datas.node.core.event.s.EventConverter;
 import com.suixingpay.datas.node.core.event.s.MessageEvent;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -60,7 +61,7 @@ public class KafkaConsumer implements DataConsumer {
 
     @Override
     public String getId() {
-        return null;
+        return StringUtils.join(consumeClient.getConfig().getTopics(), "_");
     }
 
     @Override
@@ -77,7 +78,7 @@ public class KafkaConsumer implements DataConsumer {
 
     @Override
     public List<MessageEvent> fetch() {
-        return consumeClient.fetch(new ClientCallback<MessageEvent, Object>() {
+        return consumeClient.fetch(new ConsumeClient.FetchCallback<MessageEvent, Object>() {
             @Override
             public <F, O> F accept(O o) throws ParseException {
                 ConsumerRecord<String, String> record = (ConsumerRecord<String, String>) o;

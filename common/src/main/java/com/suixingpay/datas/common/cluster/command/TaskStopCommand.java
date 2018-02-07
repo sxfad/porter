@@ -8,6 +8,9 @@
  */
 package com.suixingpay.datas.common.cluster.command;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -16,26 +19,11 @@ package com.suixingpay.datas.common.cluster.command;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月19日 18:42
  */
 public class TaskStopCommand implements ClusterCommand {
-    private String taskId;
-    private String topic;
-    public TaskStopCommand(String taskId, String topic) {
+    @Getter @Setter private String taskId;
+    @Getter @Setter private String resourceId;
+
+    public TaskStopCommand(String taskId, String resourceId) {
         this.taskId = taskId;
-        this.topic = topic;
-    }
-
-    public String getTaskId() {
-        return taskId;
-    }
-
-    public void setTaskId(String taskId) {
-        this.taskId = taskId;
-    }
-
-    public String getTopic() {
-        return topic;
-    }
-
-    public void setTopic(String topic) {
-        this.topic = topic;
+        this.resourceId = resourceId;
     }
 }

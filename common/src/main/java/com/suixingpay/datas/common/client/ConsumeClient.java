@@ -11,20 +11,27 @@ package com.suixingpay.datas.common.client;
 
 import com.suixingpay.datas.common.exception.ClientException;
 
+import java.text.ParseException;
 import java.util.List;
 
 /**
+ * 消费源客户端
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年02月04日 13:13
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月04日 13:13
  */
 public interface ConsumeClient {
-    <F, O> List<F> fetch(ClientCallback<F, O> callback);
+    <F, O> List<F> fetch(FetchCallback<F, O> callback);
 
     default boolean canSplit() {
         return false;
     }
 
     <T> List<T> split() throws ClientException;
+
+
+    interface FetchCallback<F, O> {
+        <F, O> F  accept(O o) throws ParseException;
+    }
 }

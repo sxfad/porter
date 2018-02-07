@@ -9,6 +9,8 @@
 package com.suixingpay.datas.common.cluster.data;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Date;
@@ -27,7 +29,7 @@ public class DTaskStat  extends DObject {
     public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
     private String taskId;
     private String nodeId;
-    private String topic;
+    @Getter @Setter private String resourceId;
     private String schema;
     private String table;
 
@@ -53,18 +55,18 @@ public class DTaskStat  extends DObject {
     @JSONField(format = DEFAULT_DATE_FORMAT)
     private Date lastLoadedSystemTime;
 
-    //处理进度,如果是mq就是topic的消费进度
+    //处理进度,DataConsumer的消费进度
     private String progress;
 
     public DTaskStat() {
         statedTime = new Date();
         heartbeatTime = new Date();
     }
-    public DTaskStat(String taskId, String nodeId, String topic, String schema, String table) {
+    public DTaskStat(String taskId, String nodeId, String resourceId, String schema, String table) {
         this();
         this.taskId = taskId;
         this.nodeId = nodeId;
-        this.topic = topic;
+        this.resourceId = resourceId;
         this.schema = schema;
         this.table = table;
     }
@@ -83,14 +85,6 @@ public class DTaskStat  extends DObject {
 
     public void setNodeId(String nodeId) {
         this.nodeId = nodeId;
-    }
-
-    public String getTopic() {
-        return topic;
-    }
-
-    public void setTopic(String topic) {
-        this.topic = topic;
     }
 
 
@@ -120,7 +114,7 @@ public class DTaskStat  extends DObject {
     @Override
     public <T> void merge(T data) {
         DTaskStat stat = (DTaskStat) data;
-        if (taskId.equals(stat.getTaskId()) && stat.getTopic().equals(topic) && table.equals(stat.table)
+        if (taskId.equals(stat.getTaskId()) && stat.getResourceId().equals(resourceId) && table.equals(stat.table)
                 && schema.equals(stat.schema)) {
             if (!StringUtils.isBlank(stat.nodeId)) this.nodeId = stat.nodeId;
             if (!StringUtils.isBlank(stat.progress)) this.progress = stat.progress;
@@ -193,7 +187,6 @@ public class DTaskStat  extends DObject {
     /**
      * 仅用于JSON转化注入
      * 状态会被多线程访问，字段变更通过incrementInsertRow进行
-     * @see TaskWorker.start()
      * @return
      */
     public AtomicLong getInsertRow() {
@@ -203,7 +196,6 @@ public class DTaskStat  extends DObject {
     /**
      * 仅用于JSON转化注入
      * 状态会被多线程访问，字段变更通过incrementUpdateRow进行
-     * @see TaskWorker.start()
      * @return
      */
     public AtomicLong getUpdateRow() {
@@ -213,7 +205,6 @@ public class DTaskStat  extends DObject {
     /**
      * 仅用于JSON转化注入
      * 状态会被多线程访问，字段变更通过incrementDeleteRow进行
-     * @see TaskWorker.start()
      * @return
      */
     public AtomicLong getDeleteRow() {
@@ -223,7 +214,6 @@ public class DTaskStat  extends DObject {
     /**
      * 仅用于JSON转化注入
      * 状态会被多线程访问，字段变更通过incrementErrorUpdateRow进行
-     * @see TaskWorker.start()
      * @return
      */
     public AtomicLong getErrorUpdateRow() {
@@ -233,7 +223,6 @@ public class DTaskStat  extends DObject {
     /**
      * 仅用于JSON转化注入
      * 状态会被多线程访问，字段变更通过incrementInsertRow进行
-     * @see TaskWorker.start()
      * @return
      */
     public AtomicLong getErrorInsertRow() {
@@ -243,7 +232,6 @@ public class DTaskStat  extends DObject {
     /**
      * 仅用于JSON转化注入
      * 状态会被多线程访问，字段变更通过incrementErrorDeleteRow进行
-     * @see TaskWorker.start()
      * @return
      */
     public AtomicLong getErrorDeleteRow() {

@@ -37,7 +37,7 @@ public class DataConsumerConfig extends Config {
 
     @Override
     protected void childStuff() {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override

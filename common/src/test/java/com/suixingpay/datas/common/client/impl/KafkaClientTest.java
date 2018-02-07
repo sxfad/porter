@@ -10,7 +10,7 @@
 package com.suixingpay.datas.common.client.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.suixingpay.datas.common.client.ClientCallback;
+import com.suixingpay.datas.common.client.ConsumeClient;
 import com.suixingpay.datas.common.config.source.KafkaConfig;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -44,7 +44,7 @@ public class KafkaClientTest {
 
     @Test
     public void fetch() {
-        kafkaClient.fetch(new ClientCallback<Object, Object>() {
+        kafkaClient.fetch(new ConsumeClient.FetchCallback<Object, Object>() {
             @Override
             public <F, O> F accept(O o) throws ParseException {
                 System.out.println(JSON.toJSONString(o));

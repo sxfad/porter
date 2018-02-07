@@ -95,7 +95,7 @@ public class TaskWorker {
                 job.start();
                 JOBS.put(task.getTaskId() + "_" + c.getId(), job);
             } catch (Exception e){
-                LOGGER.error("topic JOB分配出错!", e);
+                LOGGER.error("Consumer JOB分配出错!", e);
             }
         });
     }

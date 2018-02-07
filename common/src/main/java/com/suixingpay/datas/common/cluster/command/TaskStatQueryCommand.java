@@ -10,6 +10,7 @@
 package com.suixingpay.datas.common.cluster.command;
 
 import com.suixingpay.datas.common.cluster.data.DCallback;
+import lombok.Getter;
 
 import java.util.List;
 
@@ -20,24 +21,13 @@ import java.util.List;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年01月12日 18:46
  */
 public class TaskStatQueryCommand implements ClusterCommand {
-    private final String taskId;
-    private final String topic;
-    private final DCallback callback;
-    public TaskStatQueryCommand(String taskId, String topic, DCallback dCallback) {
+    @Getter private final String taskId;
+    @Getter private final String resourceId;
+    @Getter private final DCallback callback;
+
+    public TaskStatQueryCommand(String taskId, String resourceId, DCallback dCallback) {
         this.taskId = taskId;
-        this.topic = topic;
+        this.resourceId = resourceId;
         this.callback = dCallback;
-    }
-
-    public String getTaskId() {
-        return taskId;
-    }
-
-    public String getTopic() {
-        return topic;
-    }
-
-    public DCallback getCallback() {
-        return callback;
     }
 }

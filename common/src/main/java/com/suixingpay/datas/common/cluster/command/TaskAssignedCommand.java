@@ -8,6 +8,8 @@
  */
 package com.suixingpay.datas.common.cluster.command;
 
+import lombok.Getter;
+
 /**
  *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -16,18 +18,11 @@ package com.suixingpay.datas.common.cluster.command;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月19日 18:42
  */
 public class TaskAssignedCommand implements ClusterCommand {
-    private final String taskId;
-    private final String topic;
-    public TaskAssignedCommand(String taskId, String topic) {
+    @Getter private final String taskId;
+    @Getter private final String resourceId;
+
+    public TaskAssignedCommand(String taskId, String resourceId) {
         this.taskId = taskId;
-        this.topic = topic;
-    }
-
-    public String getTaskId() {
-        return taskId;
-    }
-
-    public String getTopic() {
-        return topic;
+        this.resourceId = resourceId;
     }
 }
