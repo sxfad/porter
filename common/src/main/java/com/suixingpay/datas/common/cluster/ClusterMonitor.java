@@ -9,22 +9,51 @@
 package com.suixingpay.datas.common.cluster;
 
 import com.suixingpay.datas.common.client.Client;
+import com.suixingpay.datas.common.client.ClusterClient;
 import com.suixingpay.datas.common.cluster.event.ClusterEvent;
 
 import java.util.Map;
 
 /**
- * 某一个路径监听
+ * 集群监听
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月14日 16:45
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月14日 16:45
  */
 public interface ClusterMonitor {
+    /**
+     * 添加监听器
+     * @param listener
+     */
     void addListener(ClusterListener listener);
+
+    /**
+     * 设置集群提供客户端
+     * @param client
+     */
     void setClient(Client client);
+
+    /**
+     *
+     * @param e
+     */
     void onEvent(ClusterEvent e);
+
+    /**
+     * 获取监听器
+     * @return
+     */
     Map<String, ClusterListener> getListener();
+
+    /**
+     * 启动监听
+     */
     void start();
-    void stop() throws Exception;
+
+    /**
+     * 停止监听
+     * @throws Exception
+     */
+    void stop();
 }

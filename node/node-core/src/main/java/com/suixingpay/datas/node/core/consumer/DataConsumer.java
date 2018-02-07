@@ -38,6 +38,7 @@ public interface DataConsumer {
      */
     <C extends ConsumeClient> void setClient(C c);
 
+
     /**
      * 消费源源数据查询客户端
      * @param c

@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 /**
  *
- *
+ * 任务状态
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月20日 13:45
  * @version: V1.0

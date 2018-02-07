@@ -9,9 +9,10 @@
 package com.suixingpay.datas.node.boot;
 
 import com.suixingpay.datas.common.alert.AlertProviderFactory;
-import com.suixingpay.datas.common.cluster.ClusterProvider;
+import com.suixingpay.datas.common.cluster.ClusterProviderProxy;
 import com.suixingpay.datas.common.cluster.command.NodeRegisterCommand;
 import com.suixingpay.datas.common.config.Config;
+import com.suixingpay.datas.common.exception.ClientException;
 import com.suixingpay.datas.common.util.ApplicationContextUtils;
 import com.suixingpay.datas.common.util.ProcessUtils;
 import com.suixingpay.datas.node.boot.config.*;
@@ -64,20 +65,17 @@ public class NodeBootApplication {
         }
 
         //获取集群配置信息
-        ClusterConfig clusterConfigBean = context.getBean(ClusterConfig.class);
-        Config clusterConfig = Config.getConfig(clusterConfigBean.getCluster());
-
+        Config clusterConfig = Config.getConfig(context.getBean(ClusterConfig.class).getCluster());
         //初始化集群提供者中间件,spring spi插件
         try {
-            ClusterProvider.load(clusterConfig);
-        } catch (IOException e) {
+            ClusterProviderProxy.INSTANCE.initialize(clusterConfig);
+        } catch (Exception e) {
             e.printStackTrace();
             LOGGER.error("集群参数初始化失败", new RuntimeException("集群配置参数ClusterConfig初始化失败, 数据同步节点退出!"));
         }
 
         //初始化告警配置
-        AlertConfig alertConfigBean = context.getBean(AlertConfig.class);
-        AlertProviderFactory.INSTANCE.initialize(Config.getConfig(alertConfigBean.getAlert()));
+        AlertProviderFactory.INSTANCE.initialize(Config.getConfig(context.getBean(AlertConfig.class).getAlert()));
 
         LOGGER.info("建群.......");
         //节点初始化
@@ -85,7 +83,7 @@ public class NodeBootApplication {
         //节点注册
         try {
             //注册节点，注册失败退出进程
-            ClusterProvider.sendCommand(new NodeRegisterCommand(nodeConfig.getId()));
+            ClusterProviderProxy.INSTANCE.broadcast(new NodeRegisterCommand(nodeConfig.getId()));
         } catch (Exception e){
             throw  new RuntimeException(e.getMessage() + "数据同步节点退出!");
         }
@@ -95,6 +93,7 @@ public class NodeBootApplication {
         //监工上线
         LOGGER.info("监工上线.......");
         TaskController controller = context.getBean(TaskController.class);
+
         controller.start(taskConfig.getTask());
         LOGGER.info("NodeBootApplication started");
 

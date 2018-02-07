@@ -9,7 +9,7 @@
 package com.suixingpay.datas.node.task.worker;
 
 import com.alibaba.fastjson.JSON;
-import com.suixingpay.datas.common.cluster.ClusterProvider;
+import com.suixingpay.datas.common.cluster.ClusterProviderProxy;
 import com.suixingpay.datas.common.cluster.command.TaskRegisterCommand;
 import com.suixingpay.datas.common.cluster.command.TaskStatCommand;
 import com.suixingpay.datas.common.cluster.command.TaskStatQueryCommand;
@@ -80,7 +80,7 @@ public class TaskWork {
 
         //从集群模块获取任务状态统计信息
         try {
-            ClusterProvider.sendCommand(new TaskStatQueryCommand(taskId, dataConsumer.getId(), new DCallback() {
+            ClusterProviderProxy.INSTANCE.broadcast(new TaskStatQueryCommand(taskId, dataConsumer.getId(), new DCallback() {
                 @Override
                 public void callback(List<DObject> objects) {
                     for ( DObject object : objects) {
@@ -104,7 +104,7 @@ public class TaskWork {
             //上传消费进度
             submitStat();
             //广播任务结束消息
-            ClusterProvider.sendCommand(new TaskStopCommand(taskId,dataConsumer.getId()));
+            ClusterProviderProxy.INSTANCE.broadcast(new TaskStopCommand(taskId,dataConsumer.getId()));
         } catch (Exception e) {
             LOGGER.error("终止执行任务[{}-{}]异常", taskId, dataConsumer.getId(), e);
         }
@@ -113,7 +113,7 @@ public class TaskWork {
     public void start() {
         try {
             LOGGER.info("开始执行任务[{}-{}]", taskId, dataConsumer.getId());
-            ClusterProvider.sendCommand(new TaskRegisterCommand(taskId, dataConsumer.getId()));
+            ClusterProviderProxy.INSTANCE.broadcast(new TaskRegisterCommand(taskId, dataConsumer.getId()));
             //开始阶段性工作
             for (Map.Entry<StageType, StageJob> jobs : JOBS.entrySet()) {
                 jobs.getValue().start();
@@ -156,7 +156,7 @@ public class TaskWork {
                         LOGGER.debug("stat snapshot:{}", JSON.toJSONString(newStat));
                         stat.reset();
                         LOGGER.debug("stat after reset:{}", JSON.toJSONString(stat));
-                        ClusterProvider.sendCommand(new TaskStatCommand(newStat, new DCallback() {
+                        ClusterProviderProxy.INSTANCE.broadcast(new TaskStatCommand(newStat, new DCallback() {
                             @Override
                             public void callback(DObject object) {
                                 DTaskStat remoteData = (DTaskStat) object;

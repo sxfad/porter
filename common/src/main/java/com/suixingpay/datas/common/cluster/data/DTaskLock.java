@@ -15,7 +15,7 @@ import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- *
+ * 任务资源锁定
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月20日 13:45
  * @version: V1.0

@@ -9,6 +9,7 @@
 package com.suixingpay.datas.common.cluster.command;
 
 /**
+ * 集群操作命令
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月19日 18:24
  * @version: V1.0

@@ -8,11 +8,10 @@
  */
 package com.suixingpay.datas.node.task;
 
-import com.suixingpay.datas.common.cluster.ClusterProvider;
+import com.suixingpay.datas.common.cluster.ClusterProviderProxy;
 import com.suixingpay.datas.common.config.TaskConfig;
 import com.suixingpay.datas.common.exception.ClientException;
 import com.suixingpay.datas.common.task.TaskEvent;
-import com.suixingpay.datas.common.task.TaskEventType;
 import com.suixingpay.datas.common.task.TaskEventListener;
 import com.suixingpay.datas.common.util.MachineUtils;
 import com.suixingpay.datas.node.task.worker.TaskWorker;
@@ -64,7 +63,7 @@ public class TaskController implements TaskEventListener {
                 }
 
                 //从配置中心监听任务变更事件，进行任务创建关闭等操作
-                ClusterProvider.addTaskListener(this);
+                ClusterProviderProxy.INSTANCE.addTaskListener(this);
             } else {
                 LOGGER.warn("Task controller has started already");
             }
@@ -130,10 +129,15 @@ public class TaskController implements TaskEventListener {
 
     @Override
     public void onEvent(TaskEvent event) {
-        if (event.getType() == TaskEventType.CREATE) {
-            //startTask();
-        } else if (event.getType() == TaskEventType.DELETE) {
-            //stopTask();
+        if (event.getType().isCreate()) {
+            try {
+                startTask(event.getConfig());
+            } catch (Exception e) {
+                e.printStackTrace();
+                stopTask(event.getConfig().getTaskId());
+            }
+        } else if (event.getType().isDelete()) {
+            stopTask(event.getConfig().getTaskId());
         }
     }
 
@@ -141,7 +145,7 @@ public class TaskController implements TaskEventListener {
         if (this.stop()) {
             //退出群聊需在业务代码执行之后才能执行
             LOGGER.info("退出群聊.......");
-            ClusterProvider.unload();
+            ClusterProviderProxy.INSTANCE.stop();
             if(exit) {
                 System.exit(-1);
             }

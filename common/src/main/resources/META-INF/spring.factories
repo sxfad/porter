@@ -1,1 +1,1 @@
-com.suixingpay.datas.common.cluster.ClusterProvider=com.suixingpay.datas.common.cluster.zookeeper.ZookeeperClusterProvider
+com.suixingpay.datas.common.cluster.ClusterProvider=com.suixingpay.datas.common.cluster.impl.zookeeper.ZookeeperClusterProvider

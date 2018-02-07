@@ -12,9 +12,8 @@ package com.suixingpay.datas.common.cluster.command;
 import com.suixingpay.datas.common.cluster.data.DCallback;
 import lombok.Getter;
 
-import java.util.List;
-
 /**
+ * 任务状态查询
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年01月12日 18:46
  * @version: V1.0

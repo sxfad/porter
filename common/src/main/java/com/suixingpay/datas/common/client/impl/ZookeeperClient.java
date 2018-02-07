@@ -10,6 +10,7 @@
 package com.suixingpay.datas.common.client.impl;
 
 import com.suixingpay.datas.common.client.AbstractClient;
+import com.suixingpay.datas.common.client.ClusterClient;
 import com.suixingpay.datas.common.config.source.ZookeeperConfig;
 import lombok.Setter;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -27,7 +28,7 @@ import java.util.List;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月02日 15:37
  */
-public class ZookeeperClient extends AbstractClient<ZookeeperConfig> {
+public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements ClusterClient<Stat> {
     private ZooKeeper zk;
     @Setter private Watcher watcher;
 
@@ -51,6 +52,7 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> {
         return true;
     }
 
+    @Override
     public List<String> getChildren(String path){
         List<String> children = null;
         try {
@@ -65,6 +67,7 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> {
         return children;
     }
 
+    @Override
     public Pair<String, Stat> getData(String path)  {
         Stat stat = new Stat();
         byte[] dataBytes = new byte[0];
@@ -78,18 +81,22 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> {
         return new ImmutablePair(new String(dataBytes), stat) ;
     }
 
+    @Override
     public String  create(String path, boolean isTemp, String data) throws KeeperException, InterruptedException {
         return zk.create(path, data.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, isTemp ? CreateMode.EPHEMERAL : CreateMode.PERSISTENT);
     }
 
+    @Override
     public Stat setData(String path, String data, int version) throws KeeperException, InterruptedException {
         return zk.setData(path, data.getBytes(), version);
     }
 
+    @Override
     public Stat exists(String path, boolean watch) throws KeeperException, InterruptedException {
         return zk.exists(path, watch);
     }
 
+    @Override
     public void delete(String path) throws KeeperException, InterruptedException {
         try {
             Stat stat = zk.exists(path, false);

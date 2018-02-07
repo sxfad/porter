@@ -12,7 +12,7 @@ import com.suixingpay.datas.common.cluster.data.DCallback;
 import com.suixingpay.datas.common.cluster.data.DTaskStat;
 
 /**
- *
+ * 任务状态上报
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月19日 18:42
  * @version: V1.0

@@ -9,6 +9,7 @@
 package com.suixingpay.datas.common.cluster.event;
 
 /**
+ * 集群事件
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月18日 10:46
  * @version: V1.0
@@ -28,5 +29,18 @@ public class ClusterEvent {
 
     public String getData() {
         return data;
+    }
+
+
+    public boolean isOnline() {
+        return eventType == EventType.ONLINE;
+    }
+
+    public boolean isOffline() {
+        return eventType == EventType.OFFLINE;
+    }
+
+    public boolean isDataChanged() {
+        return eventType == EventType.DATA_CHANGED;
     }
 }

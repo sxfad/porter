@@ -6,20 +6,21 @@
  * @Copyright ©2017 Suixingpay. All rights reserved.
  * 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
  */
-package com.suixingpay.datas.common.cluster.zookeeper;
+package com.suixingpay.datas.common.cluster.impl.zookeeper;
 
 import com.suixingpay.datas.common.client.Client;
 import com.suixingpay.datas.common.client.impl.ZookeeperClient;
 import com.suixingpay.datas.common.cluster.*;
-import com.suixingpay.datas.common.cluster.command.ShutwdownCommand;
 import com.suixingpay.datas.common.cluster.event.ClusterEvent;
 import com.suixingpay.datas.common.cluster.event.EventType;
+import com.suixingpay.datas.common.cluster.impl.AbstractClusterMonitor;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.data.Stat;
 
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
+import java.util.function.Function;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -27,41 +28,15 @@ import java.util.concurrent.CountDownLatch;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月14日 18:22
  */
-public class ZookeeperClusterMonitor implements ClusterMonitor, Watcher {
+public class ZookeeperClusterMonitor extends AbstractClusterMonitor implements Watcher {
     private ZookeeperClient client;
-    private Map<String, ClusterListener> listeners;
-    private Map<String,List<String>> nodeChildren;
-    private final CountDownLatch ready;
-    public ZookeeperClusterMonitor(){
-        listeners = new LinkedHashMap<>();
-        nodeChildren = new HashMap<>();
-        ready = new CountDownLatch(1);
-    }
-
-    @Override
-    public void addListener(ClusterListener listener) {
-        ZookeeperClusterListener zkListener = (ZookeeperClusterListener)listener;
-        listeners.put(zkListener.path(),listener);
-    }
+    private final Map<String,List<String>> nodeChildren = new HashMap<>();
+    private final CountDownLatch ready = new CountDownLatch(1);
 
     @Override
     public void setClient(Client client) {
         this.client = (ZookeeperClient) client;
         this.client.setWatcher(this);
-    }
-
-    @Override
-    public void onEvent(ClusterEvent e) {
-        if (null == e || null == listeners || listeners.isEmpty()) return;
-        for (ClusterListener listener : listeners.values()){
-            ClusterListenerFilter filter = listener.filter();
-            if (null == filter || filter.onFilter(e)) listener.onEvent(e);
-        }
-    }
-
-    @Override
-    public Map<String, ClusterListener> getListener() {
-        return Collections.unmodifiableMap(listeners);
     }
 
     @Override
@@ -78,37 +53,18 @@ public class ZookeeperClusterMonitor implements ClusterMonitor, Watcher {
             }
             for (ClusterListener listener : listeners.values()){
                 ZookeeperClusterListener zkListener = (ZookeeperClusterListener)listener;
-                Stat listenerStat = client.exists(zkListener.path(), false);
+                Stat listenerStat = client.exists(zkListener.listenPath(), false);
                 if (null == listenerStat) {
-                    client.create(zkListener.path(), false,"{}");
+                    client.create(zkListener.listenPath(), false,"{}");
                 }
                 //watch children changed
-                client.getChildren(zkListener.path());
+                client.getChildren(zkListener.listenPath());
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
     }
-
-    @Override
-    public void stop() {
-        try {
-            //最后的清除任务
-            ClusterProvider.sendCommand(new ShutwdownCommand());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void onEvent(List<ClusterEvent> events) {
-        if (null != events && !events.isEmpty()) {
-            for (ClusterEvent localEvent : events) {
-                onEvent(localEvent);
-            }
-        }
-    }
-
 
     /**
      * NodeCreated  A watch is set with a call to exists.
@@ -137,13 +93,12 @@ public class ZookeeperClusterMonitor implements ClusterMonitor, Watcher {
                 localEvent.add(new ZookeeperClusterEvent(EventType.DATA_CHANGED, client.getData(path).getLeft(), path));
             } else if (eventType == Event.EventType.NodeChildrenChanged) { //子节点创建、删除会触发该事件
                 //构造子节点集合
-                List<String> localChildren = null;
-                if (nodeChildren.containsKey(path)) {
-                    localChildren = nodeChildren.get(path);
-                } else {
-                    localChildren = new ArrayList<>();
-                    nodeChildren.put(path, localChildren);
-                }
+                List<String> localChildren = nodeChildren.computeIfAbsent(path, new Function<String, List<String>>() {
+                    @Override
+                    public List<String> apply(String s) {
+                        return new ArrayList<>();
+                    }
+                });
 
                 //create a watch event:NodeChildrenChanged
                 List<String> remoteChildren = client.getChildren(path);
@@ -166,5 +121,13 @@ public class ZookeeperClusterMonitor implements ClusterMonitor, Watcher {
         }
         //拿到事件，根据事件类型发送通知
         onEvent(localEvent);
+    }
+
+    private void onEvent(List<ClusterEvent> events) {
+        if (null != events && !events.isEmpty()) {
+            for (ClusterEvent localEvent : events) {
+                super.onEvent(localEvent);
+            }
+        }
     }
 }

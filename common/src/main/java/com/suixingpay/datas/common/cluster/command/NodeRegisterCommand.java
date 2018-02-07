@@ -9,7 +9,7 @@
 package com.suixingpay.datas.common.cluster.command;
 
 /**
- *
+ * 节点注册
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月19日 18:42
  * @version: V1.0

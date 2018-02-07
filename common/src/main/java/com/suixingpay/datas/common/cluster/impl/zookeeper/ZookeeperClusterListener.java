@@ -6,7 +6,7 @@
  * @Copyright ©2017 Suixingpay. All rights reserved.
  * 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
  */
-package com.suixingpay.datas.common.cluster.zookeeper;
+package com.suixingpay.datas.common.cluster.impl.zookeeper;
 
 import com.suixingpay.datas.common.client.Client;
 import com.suixingpay.datas.common.client.impl.ZookeeperClient;
@@ -25,8 +25,11 @@ public abstract class ZookeeperClusterListener implements ClusterListener {
     protected static final  String BASE_CATALOG = PREFIX_ATALOG + "/datas";
     protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
     protected ZookeeperClient client;
-    public abstract String path();
-
+    public abstract String listenPath();
+    @Override
+    public String getName() {
+        return listenPath();
+    }
     @Override
     public void setClient(Client client) {
         this.client = (ZookeeperClient)client;

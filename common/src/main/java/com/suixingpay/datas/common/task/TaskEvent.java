@@ -8,7 +8,8 @@
  */
 package com.suixingpay.datas.common.task;
 
-import com.suixingpay.datas.common.cluster.data.DObject;
+import com.suixingpay.datas.common.config.TaskConfig;
+import lombok.Getter;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -17,18 +18,14 @@ import com.suixingpay.datas.common.cluster.data.DObject;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月21日 17:19
  */
 public class TaskEvent {
-    private final DObject dData;
-    private final TaskEventType type;
+    @Getter private final TaskConfig config;
+    @Getter private final TaskEventType type;
 
-    public TaskEvent(DObject dData, TaskEventType type) {
-        this.dData = dData;
+    public TaskEvent(TaskConfig config, TaskEventType type) {
+        this.config = config;
         this.type = type;
     }
 
-
-    public DObject getdData() {
-        return dData;
-    }
 
     public TaskEventType getType() {
         return type;

@@ -11,7 +11,7 @@ package com.suixingpay.datas.common.cluster;
 import com.suixingpay.datas.common.cluster.event.ClusterEvent;
 
 /**
- * 监听
+ * 集群监听过滤器
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月14日 16:35
  * @version: V1.0
