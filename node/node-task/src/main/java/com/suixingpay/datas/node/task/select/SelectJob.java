@@ -54,12 +54,8 @@ public class SelectJob extends AbstractStageJob {
     }
 
     @Override
-    protected void doStart() {
-        try {
-            consumer.startup();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    protected void doStart() throws IOException {
+        consumer.startup();
     }
 
     @Override

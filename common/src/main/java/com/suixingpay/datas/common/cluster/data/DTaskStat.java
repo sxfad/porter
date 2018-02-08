@@ -26,7 +26,6 @@ import java.util.concurrent.atomic.AtomicLong;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月20日 13:45
  */
 public class DTaskStat  extends DObject {
-    public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
     private String taskId;
     private String nodeId;
     @Getter @Setter private String resourceId;

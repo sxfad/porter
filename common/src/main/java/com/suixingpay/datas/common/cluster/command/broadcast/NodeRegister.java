@@ -18,5 +18,5 @@ import com.suixingpay.datas.common.cluster.command.NodeRegisterCommand;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月07日 15:18
  */
 public interface NodeRegister {
-    void register(NodeRegisterCommand command) throws Exception;
+    void nodeRegister(NodeRegisterCommand command) throws Exception;
 }

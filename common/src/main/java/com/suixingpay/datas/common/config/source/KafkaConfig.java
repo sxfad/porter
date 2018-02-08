@@ -24,9 +24,8 @@ import java.util.stream.Collectors;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月02日 14:24
  */
-public class KafkaConfig  extends Config implements SourceConfig {
+public class KafkaConfig  extends Config {
     private static final String TOPIC_SPLIT_CHARACTER = ",";
-    @Setter @Getter private String sourceName;
     @Setter @Getter private String servers;
     @Setter @Getter private String group;
     @Setter @Getter private List<String> topics;

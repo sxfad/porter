@@ -7,6 +7,8 @@ package com.suixingpay.datas.node.core.task;/**
  * 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
  */
 
+import java.io.IOException;
+
 /**
  * 阶段性工作
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -15,7 +17,7 @@ package com.suixingpay.datas.node.core.task;/**
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月24日 11:04
  */
 public interface StageJob {
-    void start();
+    void start() throws IOException;
     default boolean canStart() {
         return true;
     }

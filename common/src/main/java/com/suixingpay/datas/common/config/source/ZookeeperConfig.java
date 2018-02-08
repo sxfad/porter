@@ -23,8 +23,7 @@ import java.util.UUID;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月02日 14:24
  */
-public class ZookeeperConfig   extends Config implements SourceConfig {
-    @Setter @Getter private String sourceName;
+public class ZookeeperConfig   extends Config {
     @Setter @Getter private String url;
     @Setter @Getter private int sessionTimeout = 1000 * 60 * 10;
 

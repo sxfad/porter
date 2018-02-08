@@ -13,11 +13,10 @@ import com.suixingpay.datas.common.client.impl.JDBCClient;
 import com.suixingpay.datas.common.client.impl.KafkaClient;
 import com.suixingpay.datas.common.client.impl.ZookeeperClient;
 import com.suixingpay.datas.common.config.Config;
-import com.suixingpay.datas.common.config.source.JDBCConfig;
-import com.suixingpay.datas.common.config.source.KafkaConfig;
-import com.suixingpay.datas.common.config.source.SourceConfig;
-import com.suixingpay.datas.common.config.source.ZookeeperConfig;
+import com.suixingpay.datas.common.config.source.*;
 import com.suixingpay.datas.common.exception.ClientException;
+import com.suixingpay.datas.common.exception.ClientMatchException;
+import com.suixingpay.datas.common.exception.ConfigParseException;
 import lombok.Getter;
 import lombok.Setter;
 import org.slf4j.Logger;
@@ -87,6 +86,9 @@ public abstract class AbstractClient<T extends Config> implements Client {
 
     public static Client getClient(Config config) throws ClientException {
         if (config instanceof SourceConfig) {
+            return PublicClientContext.INSTANCE.getSource(((SourceConfig) config).getSourceName());
+        }
+        try {
             switch (config.getConfigType()) {
                 case KAFKA:
                     return new KafkaClient((KafkaConfig) config);
@@ -95,11 +97,10 @@ public abstract class AbstractClient<T extends Config> implements Client {
                 case ZOOKEEPER:
                     return new ZookeeperClient((ZookeeperConfig) config);
                 default:
-                    return null;
+                    throw  new ClientMatchException();
             }
-
-        } else {
-            throw  new ClientException();
+        } catch (Exception e) {
+            throw  new ClientException(e.getMessage());
         }
     }
 

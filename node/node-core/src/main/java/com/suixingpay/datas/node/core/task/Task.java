@@ -8,15 +8,17 @@
  */
 package com.suixingpay.datas.node.core.task;
 
-import com.suixingpay.datas.common.cluster.command.ClusterCommand;
-import com.suixingpay.datas.common.cluster.command.TaskRegisterCommand;
 import com.suixingpay.datas.common.config.TaskConfig;
 import com.suixingpay.datas.common.exception.ClientException;
+import com.suixingpay.datas.common.exception.ConfigParseException;
+import com.suixingpay.datas.common.exception.DataConsumerBuildException;
+import com.suixingpay.datas.common.exception.DataLoaderBuildException;
 import com.suixingpay.datas.node.core.consumer.DataConsumer;
 import com.suixingpay.datas.node.core.consumer.DataConsumerFactory;
 import com.suixingpay.datas.node.core.loader.DataLoader;
 import com.suixingpay.datas.node.core.loader.DataLoaderFactory;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,7 +66,7 @@ public class Task {
         this.consumers = consumers;
     }
 
-    public static Task  fromConfig(TaskConfig config) throws IllegalAccessException, ClientException, InstantiationException {
+    public static Task  fromConfig(TaskConfig config) throws ConfigParseException, ClientException, DataLoaderBuildException, DataConsumerBuildException {
         Task task = new Task();
         task.setTaskId(config.getTaskId());
         task.setMappers(new ArrayList<>());

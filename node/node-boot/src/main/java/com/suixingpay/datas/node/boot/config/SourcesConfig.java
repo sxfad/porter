@@ -8,9 +8,9 @@
  */
 package com.suixingpay.datas.node.boot.config;
 
+import com.alibaba.fastjson.JSONObject;
 import com.suixingpay.datas.common.config.Config;
-import com.suixingpay.datas.common.config.source.SourceConfig;
-import com.suixingpay.datas.common.exception.ConfigException;
+import com.suixingpay.datas.common.exception.ConfigParseException;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -41,19 +41,15 @@ public class SourcesConfig {
         this.source = source;
     }
 
-    public List<Pair<String, Config>> getConfig() throws ConfigException {
+    public List<Pair<String, Config>> getConfig() throws  ConfigParseException {
         List<Pair<String, Config>> configs = new ArrayList<>();
         if (null != source && !source.isEmpty()) {
-            source.forEach((k,v) -> {
-                Config config = Config.getConfig(v);
-                if (config instanceof SourceConfig) {
-                    SourceConfig sourceConfig = (SourceConfig) config;
-                    sourceConfig.setSourceName(k);
-                    configs.add(new ImmutablePair<>(k, config));
-                }
-            });
+            for (Map.Entry<String, Map<String, String>> p : source.entrySet()) {
+                Config config = Config.getConfig(p.getValue());
+                if (null != config) configs.add(new ImmutablePair<>(p.getKey(), config));
+            }
             if (source.size() != configs.size()) {
-                throw new ConfigException();
+                throw new ConfigParseException(source + "配置和解析结果不一致:" + JSONObject.toJSONString(configs));
             }
         }
         return configs;

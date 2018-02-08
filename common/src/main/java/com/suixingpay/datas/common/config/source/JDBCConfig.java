@@ -22,8 +22,7 @@ import org.apache.commons.lang3.StringUtils;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月02日 14:24
  */
-public class JDBCConfig extends Config implements SourceConfig {
-    @Setter @Getter private String sourceName;
+public class JDBCConfig extends Config {
     //驱动类型
     @Setter @Getter private String driverClassName;
     @Setter @Getter private String url;

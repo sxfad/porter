@@ -51,16 +51,10 @@ public abstract class AbstractStageJob implements StageJob {
     protected abstract void doStart() throws IOException;
 
     @Override
-    public void start() {
+    public void start() throws IOException {
         if (canStart() && stat.compareAndSet(false, true)) {
-            try {
-                doStart();
-                loopService.start();
-            } catch (Exception e) {
-                stop();
-            }
-        } else {
-
+            doStart();
+            loopService.start();
         }
     }
 
@@ -87,8 +81,6 @@ public abstract class AbstractStageJob implements StageJob {
                 doStop();
             } catch (Exception e) {
             }
-        } else {
-
         }
     }
 

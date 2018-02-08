@@ -6,10 +6,8 @@
  * @Copyright ©2017 Suixingpay. All rights reserved.
  * 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
  */
-package com.suixingpay.datas.node.core.source;
+package com.suixingpay.datas.common.client;
 
-import com.suixingpay.datas.common.client.AbstractClient;
-import com.suixingpay.datas.common.client.Client;
 import com.suixingpay.datas.common.config.Config;
 import com.suixingpay.datas.common.exception.ClientException;
 import org.apache.commons.lang3.tuple.Pair;
@@ -20,12 +18,13 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * 公共客户端资源容器
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月14日 10:37
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月14日 10:37
  */
-public enum PublicSourceFactory {
+public enum PublicClientContext {
     INSTANCE();
     private final Map<String,Client> allSources = new ConcurrentHashMap<String, Client>();
 

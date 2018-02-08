@@ -72,32 +72,31 @@ public abstract class AbstractClusterProvider<C extends Client> implements Clust
     @Override
     public void broadcastCommand(ClusterCommand command) throws Exception {
         for (ClusterListener listener : monitor.getListener().values()) {
-
-            if (listener instanceof NodeRegister) {
-                ((NodeRegister) listener).register((NodeRegisterCommand) command);
+            if (listener instanceof NodeRegister && command instanceof NodeRegisterCommand) {
+                ((NodeRegister) listener).nodeRegister((NodeRegisterCommand) command);
             }
 
-            if (listener instanceof TaskRegister) {
-                ((TaskRegister) listener).register((TaskRegisterCommand) command);
+            if (listener instanceof TaskRegister && command instanceof TaskRegisterCommand) {
+                ((TaskRegister) listener).taskRegister((TaskRegisterCommand) command);
             }
 
-            if (listener instanceof Shutdown) {
+            if (listener instanceof Shutdown && command instanceof ShutdownCommand) {
                 ((Shutdown) listener).shutdown((ShutdownCommand) command);
             }
 
-            if (listener instanceof TaskAssigned) {
+            if (listener instanceof TaskAssigned && command instanceof TaskAssignedCommand) {
                 ((TaskAssigned) listener).taskAssigned((TaskAssignedCommand) command);
             }
 
-            if (listener instanceof TaskStatUpload) {
+            if (listener instanceof TaskStatUpload && command instanceof TaskStatCommand) {
                 ((TaskStatUpload) listener).uploadStat((TaskStatCommand) command);
             }
 
-            if (listener instanceof TaskStop) {
+            if (listener instanceof TaskStop && command instanceof TaskStopCommand) {
                 ((TaskStop) listener).stopTask((TaskStopCommand) command);
             }
 
-            if (listener instanceof TaskStatQuery) {
+            if (listener instanceof TaskStatQuery && command instanceof TaskStatQueryCommand) {
                 ((TaskStatQuery) listener).queryTaskStat((TaskStatQueryCommand) command);
             }
         }

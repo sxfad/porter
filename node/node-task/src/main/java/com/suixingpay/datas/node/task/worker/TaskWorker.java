@@ -10,13 +10,18 @@ package com.suixingpay.datas.node.task.worker;
 
 import com.suixingpay.datas.common.config.TaskConfig;
 import com.suixingpay.datas.common.exception.ClientException;
+import com.suixingpay.datas.common.exception.ConfigParseException;
+import com.suixingpay.datas.common.exception.DataConsumerBuildException;
+import com.suixingpay.datas.common.exception.DataLoaderBuildException;
 import com.suixingpay.datas.common.util.DefaultNamedThreadFactory;
+import com.suixingpay.datas.node.core.consumer.DataConsumer;
 import com.suixingpay.datas.node.core.task.TableMapper;
 import com.suixingpay.datas.node.core.task.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -36,6 +41,9 @@ public class TaskWorker {
     private final AtomicBoolean STAT = new AtomicBoolean(false);
     //负责将任务工作者的状态定时上传
     private final ScheduledExecutorService STAT_WORKER;
+    /**
+     * consumeSourceId -> work
+     */
     private final Map<String,TaskWork> JOBS;
     private final Map<String,TableMapper> TABLE_MAPPERS;
 
@@ -78,29 +86,44 @@ public class TaskWorker {
                 job.stop();
             }
         } else {
-            LOGGER.warn("TaskWorker[] has stoped already", workerSequence);
+            LOGGER.warn("TaskWorker[] has stopped already", workerSequence);
         }
     }
 
-    public void alloc(TaskConfig taskConfig) throws IllegalAccessException, ClientException, InstantiationException {
+    public void stopJob(List<DataConsumer> consumerSourceId) {
+        consumerSourceId.forEach(c -> {
+            if (JOBS.containsKey(c.getId())) {
+                JOBS.get(c.getId()).stop();
+            }
+        });
+    }
+
+    public void alloc(TaskConfig taskConfig) throws DataConsumerBuildException, DataLoaderBuildException, ConfigParseException, ClientException {
+        //抛出从TaskConfig构建Task的异常
         Task task = Task.fromConfig(taskConfig);
         task.getMappers().forEach(m -> {
             TABLE_MAPPERS.putIfAbsent(m.getUniqueKey(task.getTaskId()), m);
         });
-
+        //根据DataConsumer所使用ConsumeClient的消费拆分细则拆分consumer
         task.getConsumers().forEach(c -> {
+            TaskWork job = null;
             try {
                 //启动JOB
-                TaskWork job = new TaskWork(c, task.getLoader(), task.getTaskId(), this);
+                job = new TaskWork(c, task.getLoader(), task.getTaskId(), this);
                 job.start();
-                JOBS.put(task.getTaskId() + "_" + c.getId(), job);
+                JOBS.put(c.getId(), job);
             } catch (Exception e){
-                LOGGER.error("Consumer JOB分配出错!", e);
+                if (null != job) job.stop();
+                LOGGER.error("Consumer JOB[{}] failed to start!", c.getId(), e);
             }
         });
     }
 
     public Map<String,TableMapper> getTableMapper() {
         return Collections.unmodifiableMap(TABLE_MAPPERS);
+    }
+
+    public boolean isNoWork() {
+        return JOBS.isEmpty();
     }
 }

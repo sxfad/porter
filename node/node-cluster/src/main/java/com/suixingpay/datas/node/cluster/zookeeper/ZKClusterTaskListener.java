@@ -22,10 +22,12 @@ import com.suixingpay.datas.common.cluster.impl.zookeeper.ZookeeperClusterListen
 import com.suixingpay.datas.common.cluster.impl.zookeeper.ZookeeperClusterListenerFilter;
 import com.suixingpay.datas.common.cluster.data.DTaskStat;
 import com.suixingpay.datas.common.config.TaskConfig;
+import com.suixingpay.datas.common.exception.TaskLockException;
 import com.suixingpay.datas.common.task.TaskEvent;
 import com.suixingpay.datas.common.task.TaskEventListener;
 import com.suixingpay.datas.common.task.TaskEventProvider;
 import com.suixingpay.datas.common.task.TaskEventType;
+import com.suixingpay.datas.common.util.MachineUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.zookeeper.data.Stat;
@@ -119,12 +121,12 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
 
 
     @Override
-    public void register(NodeRegisterCommand command) throws Exception {
+    public void nodeRegister(NodeRegisterCommand command) throws Exception {
         this.nodeId = command.getId();
     }
 
     @Override
-    public void register(TaskRegisterCommand task) throws Exception {
+    public void taskRegister(TaskRegisterCommand task) throws Exception {
         String taskPath = listenPath() + "/" + task.getTaskId();
         String assignPath = taskPath + "/lock";
         String statPath = taskPath + "/stat";
@@ -155,14 +157,13 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
             //通知对此感兴趣的Listener
             ClusterProviderProxy.INSTANCE.broadcast(new TaskAssignedCommand(task.getTaskId(),task.getResourceId()));
         } else {
-            throw  new Exception(topicPath+",锁定资源失败。");
+            throw  new TaskLockException(topicPath+",锁定资源失败。");
         }
     }
 
     @Override
     public void uploadStat(TaskStatCommand command) throws Exception {
-        TaskStatCommand statCommand = (TaskStatCommand) command;
-        DTaskStat dataStat = statCommand.getStat();
+        DTaskStat dataStat = command.getStat();
         //.intern()保证全局唯一字符串对象
         String node = (listenPath() + "/" +dataStat.getTaskId() + "/stat/" + dataStat.getResourceId()
                 + "/" + dataStat.getSchema()+ "." + dataStat.getTable()).intern();
@@ -183,7 +184,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
                 //remoteStat
                 DTaskStat taskStat = DTaskStat.fromString(nodePair.getLeft(), DTaskStat.class);
                 //run callback before merge data
-                if (null != statCommand.getCallback()) statCommand.getCallback().callback(taskStat);
+                if (null != command.getCallback()) command.getCallback().callback(taskStat);
                 //merge from localStat
                 taskStat.merge(dataStat);
                 //upload stat
@@ -196,22 +197,21 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
 
     @Override
     public void stopTask(TaskStopCommand command) throws Exception {
-        TaskStopCommand stopCommand = (TaskStopCommand) command;
-        String node = listenPath() + "/" + stopCommand.getTaskId() + "/lock/" + stopCommand.getResourceId();
+        String node = listenPath() + "/" + command.getTaskId() + "/lock/" + command.getResourceId();
         Stat stat = client.exists(node, false);
         if (null != stat) {
             Pair<String, Stat> remoteData = client.getData(node);
             DTaskLock taskLock = DTaskLock.fromString(remoteData.getLeft(), DTaskLock.class);
-            if (taskLock.getNodeId().equals(nodeId)) {
+            if (taskLock.getNodeId().equals(nodeId) && taskLock.getAddress().equals(MachineUtils.IP_ADDRESS)
+                    && taskLock.getProcessId().equals(MachineUtils.CURRENT_JVM_PID + "")) {
                 client.delete(node);
             }
         }
     }
 
     @Override
-    public void queryTaskStat(TaskStatQueryCommand command) throws Exception {
-        TaskStatQueryCommand queryCommand = (TaskStatQueryCommand) command;
-        String node = listenPath() + "/" +queryCommand.getTaskId() + "/stat/" + queryCommand.getResourceId();
+    public void queryTaskStat(TaskStatQueryCommand command) {
+        String node = listenPath() + "/" +command.getTaskId() + "/stat/" + command.getResourceId();
         LOGGER.debug("query \"{}\" children node.", node);
 
         List<String> children = client.getChildren(node);
@@ -230,6 +230,6 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
                 e.printStackTrace();
             }
         }
-        if(null != queryCommand.getCallback()) queryCommand.getCallback().callback(stats);
+        if(null != command.getCallback()) command.getCallback().callback(stats);
     }
 }

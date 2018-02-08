@@ -43,12 +43,8 @@ public class LoadJob extends AbstractStageJob{
     }
 
     @Override
-    protected void doStart() {
-        try {
-            dataLoder.startup();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    protected void doStart() throws IOException {
+        dataLoder.startup();
     }
 
     @Override

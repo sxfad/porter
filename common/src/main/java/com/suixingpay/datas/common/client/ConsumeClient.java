@@ -12,6 +12,7 @@ package com.suixingpay.datas.common.client;
 import com.suixingpay.datas.common.exception.ClientException;
 
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -24,11 +25,15 @@ import java.util.List;
 public interface ConsumeClient {
     <F, O> List<F> fetch(FetchCallback<F, O> callback);
 
-    default boolean canSplit() {
-        return false;
+    /**
+     * 消费源客户端拆分
+     * @param <T>
+     * @return
+     * @throws ClientException
+     */
+    default <T> List<T> split() throws ClientException {
+        return Arrays.asList((T) this);
     }
-
-    <T> List<T> split() throws ClientException;
 
 
     interface FetchCallback<F, O> {

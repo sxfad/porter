@@ -9,8 +9,10 @@
 
 package com.suixingpay.datas.common.config.source;
 
-import org.apache.commons.lang3.StringUtils;
-
+import com.suixingpay.datas.common.config.Config;
+import com.suixingpay.datas.common.config.ConfigType;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  *
@@ -19,10 +21,19 @@ import org.apache.commons.lang3.StringUtils;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月04日 23:38
  */
-public interface SourceConfig {
-    default boolean isPublic() {
-        return !StringUtils.isBlank(getSourceName());
+public class SourceConfig extends Config{
+    @Setter @Getter private String sourceName;
+
+    public SourceConfig() {
+        configType =  ConfigType.PUBLIC_SOURCE;
     }
-    String getSourceName();
-    void setSourceName(String sourceName);
+
+    @Override
+    protected void childStuff() {
+    }
+
+    @Override
+    protected String[] childStuffColumns() {
+        return new String[0];
+    }
 }

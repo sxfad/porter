@@ -18,6 +18,7 @@ import com.alibaba.fastjson.JSON;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月20日 17:42
  */
 public  abstract class DObject {
+    public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
     public String toString() {
         return JSON.toJSONString(this);
     }

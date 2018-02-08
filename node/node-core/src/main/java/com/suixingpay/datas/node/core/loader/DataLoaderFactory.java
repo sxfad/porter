@@ -13,9 +13,9 @@ import com.suixingpay.datas.common.client.AbstractClient;
 import com.suixingpay.datas.common.client.Client;
 import com.suixingpay.datas.common.config.Config;
 import com.suixingpay.datas.common.config.DataLoaderConfig;
-import com.suixingpay.datas.common.config.source.SourceConfig;
 import com.suixingpay.datas.common.exception.ClientException;
-import com.suixingpay.datas.node.core.source.PublicSourceFactory;
+import com.suixingpay.datas.common.exception.ConfigParseException;
+import com.suixingpay.datas.common.exception.DataLoaderBuildException;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 
 import java.util.List;
@@ -30,26 +30,23 @@ public enum DataLoaderFactory {
     INSTANCE();
     private final List<DataLoader> LOADER_TEMPLATE = SpringFactoriesLoader.loadFactories(DataLoader.class, null);
 
-    public DataLoader getLoader(DataLoaderConfig config) throws ClientException, InstantiationException, IllegalAccessException {
-        Client client = null;
+    public DataLoader getLoader(DataLoaderConfig config) throws ConfigParseException, ClientException, DataLoaderBuildException {
+        Client client = AbstractClient.getClient(Config.getConfig(config.getSource()));;
         //获取源数据查询配置
-        Config sourceConfig = Config.getConfig(config.getSource());
-        //如果是公共资源就从公共资源池获取
-        if (sourceConfig instanceof SourceConfig && ((SourceConfig)sourceConfig).isPublic()) {
-            client = PublicSourceFactory.INSTANCE.getSource(((SourceConfig)sourceConfig).getSourceName());
-        } else {
-            client = AbstractClient.getClient(sourceConfig);
-        }
-
         DataLoader loader = newLoader(config.getLoaderName());
         loader.setClient(client);
         return loader;
     }
 
-    public DataLoader newLoader(String loaderName) throws IllegalAccessException, InstantiationException {
+    public DataLoader newLoader(String loaderName) throws DataLoaderBuildException {
         for (DataLoader t : LOADER_TEMPLATE) {
             if (t.isMatch(loaderName)) {
-                return t.getClass().newInstance();
+                try {
+                    return t.getClass().newInstance();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    throw new DataLoaderBuildException(e.getMessage());
+                }
             }
         }
         return null;

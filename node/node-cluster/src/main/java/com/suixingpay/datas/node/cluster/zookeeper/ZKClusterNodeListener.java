@@ -9,13 +9,11 @@
 package com.suixingpay.datas.node.cluster.zookeeper;
 
 import com.suixingpay.datas.common.cluster.ClusterListenerFilter;
-import com.suixingpay.datas.common.cluster.command.ClusterCommand;
-import com.suixingpay.datas.common.cluster.command.NodeRegisterCommand;
-import com.suixingpay.datas.common.cluster.command.ShutdownCommand;
-import com.suixingpay.datas.common.cluster.command.TaskAssignedCommand;
+import com.suixingpay.datas.common.cluster.command.*;
 import com.suixingpay.datas.common.cluster.command.broadcast.NodeRegister;
 import com.suixingpay.datas.common.cluster.command.broadcast.Shutdown;
 import com.suixingpay.datas.common.cluster.command.broadcast.TaskAssigned;
+import com.suixingpay.datas.common.cluster.command.broadcast.TaskStop;
 import com.suixingpay.datas.common.cluster.event.ClusterEvent;
 import com.suixingpay.datas.common.cluster.impl.zookeeper.ZookeeperClusterEvent;
 import com.suixingpay.datas.common.cluster.impl.zookeeper.ZookeeperClusterListener;
@@ -42,7 +40,7 @@ import java.util.concurrent.locks.ReentrantLock;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月15日 10:09
  */
-public class ZKClusterNodeListener extends ZookeeperClusterListener implements NodeRegister, Shutdown, TaskAssigned {
+public class ZKClusterNodeListener extends ZookeeperClusterListener implements NodeRegister, Shutdown, TaskAssigned, TaskStop {
     private final ScheduledExecutorService heartbeatWorker;
     private static final String ZK_PATH = BASE_CATALOG + "/node";
     private final ReentrantLock lock =  new ReentrantLock();
@@ -58,7 +56,8 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements N
 
     @Override
     public void onEvent(ClusterEvent event) {
-        LOGGER.info("集群节点监听->{}:{}",event.getEventType(), event.getData());
+        ZookeeperClusterEvent zkEvent = (ZookeeperClusterEvent) event;
+        LOGGER.info("集群节点监听->{}:{}:{}", zkEvent.getPath(), zkEvent.getEventType(), zkEvent.getData());
     }
 
     @Override
@@ -78,7 +77,7 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements N
     }
 
     @Override
-    public void register(NodeRegisterCommand nrCommend) throws Exception {
+    public void nodeRegister(NodeRegisterCommand nrCommend) throws Exception {
         nodeId = nrCommend.getId();
         String path = listenPath() + "/" + nrCommend.getId();
         Stat stat = client.exists(path, false);
@@ -125,13 +124,26 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements N
 
     @Override
     public void taskAssigned(TaskAssignedCommand command) throws Exception {
-        TaskAssignedCommand assignedCommand =  (TaskAssignedCommand)command;
         String path = listenPath() + "/" + nodeId;
         lock.lock();
         DNode nodeData = DNode.fromString(client.getData(path).getLeft(), DNode.class);
-        List<String> resources = nodeData.getTasks().getOrDefault(assignedCommand.getTaskId(), new ArrayList<>());
-        resources.add(assignedCommand.getResourceId());
-        nodeData.getTasks().put(assignedCommand.getTaskId(), resources);
+        List<String> resources = nodeData.getTasks().getOrDefault(command.getTaskId(), new ArrayList<>());
+        resources.add(command.getResourceId());
+        nodeData.getTasks().put(command.getTaskId(), resources);
+        Stat nowStat = client.exists(path, true);
+        client.setData(path, nodeData.toString(), nowStat.getVersion());
+        lock.unlock();
+    }
+
+    @Override
+    public void stopTask(TaskStopCommand command) throws Exception {
+        String path = listenPath() + "/" + nodeId;
+        lock.lock();
+        DNode nodeData = DNode.fromString(client.getData(path).getLeft(), DNode.class);
+        nodeData.getTasks().getOrDefault(command.getTaskId(), new ArrayList<>()).remove(command.getResourceId());
+        if (nodeData.getTasks().get(command.getTaskId()).isEmpty()) {
+            nodeData.getTasks().remove(command.getTaskId());
+        }
         Stat nowStat = client.exists(path, true);
         client.setData(path, nodeData.toString(), nowStat.getVersion());
         lock.unlock();

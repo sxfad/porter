@@ -8,12 +8,18 @@
  */
 package com.suixingpay.datas.node.task;
 
+import com.alibaba.fastjson.JSONObject;
 import com.suixingpay.datas.common.cluster.ClusterProviderProxy;
 import com.suixingpay.datas.common.config.TaskConfig;
 import com.suixingpay.datas.common.exception.ClientException;
+import com.suixingpay.datas.common.exception.ConfigParseException;
+import com.suixingpay.datas.common.exception.DataConsumerBuildException;
+import com.suixingpay.datas.common.exception.DataLoaderBuildException;
 import com.suixingpay.datas.common.task.TaskEvent;
 import com.suixingpay.datas.common.task.TaskEventListener;
 import com.suixingpay.datas.common.util.MachineUtils;
+import com.suixingpay.datas.node.core.task.Task;
+import com.suixingpay.datas.node.task.worker.TaskWork;
 import com.suixingpay.datas.node.task.worker.TaskWorker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,11 +29,14 @@ import sun.misc.Signal;
 import sun.misc.SignalHandler;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * 监工
@@ -42,6 +51,9 @@ import java.util.function.Function;
 public class TaskController implements TaskEventListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskController.class);
     private final AtomicBoolean stat = new AtomicBoolean(false);
+    /**
+     * taskId -> worker
+     */
     private final Map<String,TaskWorker> WORKER_MAP = new ConcurrentHashMap<>();
 
     public void start() throws IllegalAccessException, ClientException, InstantiationException {
@@ -53,12 +65,7 @@ public class TaskController implements TaskEventListener {
             if (stat.compareAndSet(false, true)) {
                 if (null != initTasks && !initTasks.isEmpty()) {
                     for (TaskConfig t : initTasks) {
-                        try {
-                            startTask(t);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            LOGGER.warn("Task start with error:{}", t);
-                        }
+                        startTask(t);
                     }
                 }
 
@@ -91,7 +98,7 @@ public class TaskController implements TaskEventListener {
         }
     }
 
-    public void startTask(TaskConfig task) throws IllegalAccessException, ClientException, InstantiationException {
+    public void startTask(TaskConfig task) {
         TaskWorker worker = WORKER_MAP.computeIfAbsent(task.getTaskId(), new Function<String, TaskWorker>() {
             @Override
             public TaskWorker apply(String s) {
@@ -99,33 +106,53 @@ public class TaskController implements TaskEventListener {
             }
         });
         //尝试通过ClusterProvider的分布式锁功能锁定资源。
-        worker.alloc(task);
-        worker.start();
+        try {
+            worker.alloc(task);
+            worker.start();
+        } catch (Exception e) {
+            e.printStackTrace();
+            LOGGER.error("failed to start task:{}", JSONObject.toJSONString(task),e);
+        }
+        //考虑到任务启动失败造成的worker闲置(内存、线程),检查worker是否有工作，如果空闲，释放worker资源
+        stopWorkerWhenNoWork(worker, task.getTaskId());
     }
 
-    public void stopTask(String taskId) {
-        TaskWorker worker = WORKER_MAP.containsKey(taskId) ? WORKER_MAP.get(taskId) : null;
-        stopTask(worker);
+    public void stopTask(Task task) {
+        if (WORKER_MAP.containsKey(task.getTaskId())) {
+            TaskWorker worker = WORKER_MAP.get(task.getTaskId());
+            //停止worker的某个work
+            worker.stopJob(task.getConsumers());
+            //如果worker没有work可做就解雇worker
+            stopWorkerWhenNoWork(worker, task.getTaskId());
+        }
     }
-    public void stopTask(TaskWorker worker) {
-        if (null != worker) {
-            worker.stop();
-            WORKER_MAP.remove(worker);
+
+    private void stopWorkerWhenNoWork(TaskWorker worker, String taskId) {
+        if (worker.isNoWork()) {
+            synchronized (WORKER_MAP) {
+                if (worker.isNoWork()) {
+                    worker.stop();
+                    WORKER_MAP.remove(taskId);
+                }
+            }
         }
     }
 
     private boolean stop() {
         if (stat.compareAndSet(true, false)) {
             LOGGER.info("监工下线.......");
-            for (TaskWorker worker : WORKER_MAP.values()) {
-                stopTask(worker);
-            }
+            WORKER_MAP.keySet().stream().collect(Collectors.toList()).forEach( k -> {
+                TaskWorker worker = WORKER_MAP.getOrDefault(k, null);
+                if (null != worker) worker.stop();
+                WORKER_MAP.remove(k);
+            });
             return true;
         } else {
-            LOGGER.warn("Task controller has stoped already");
+            LOGGER.warn("Task controller has stopped already");
             return false;
         }
     }
+
 
     @Override
     public void onEvent(TaskEvent event) {
@@ -134,10 +161,13 @@ public class TaskController implements TaskEventListener {
                 startTask(event.getConfig());
             } catch (Exception e) {
                 e.printStackTrace();
-                stopTask(event.getConfig().getTaskId());
             }
         } else if (event.getType().isDelete()) {
-            stopTask(event.getConfig().getTaskId());
+            try {
+                stopTask(Task.fromConfig(event.getConfig()));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 

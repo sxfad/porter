@@ -9,14 +9,13 @@
 package com.suixingpay.datas.node.boot;
 
 import com.suixingpay.datas.common.alert.AlertProviderFactory;
+import com.suixingpay.datas.common.client.PublicClientContext;
 import com.suixingpay.datas.common.cluster.ClusterProviderProxy;
 import com.suixingpay.datas.common.cluster.command.NodeRegisterCommand;
 import com.suixingpay.datas.common.config.Config;
-import com.suixingpay.datas.common.exception.ClientException;
 import com.suixingpay.datas.common.util.ApplicationContextUtils;
 import com.suixingpay.datas.common.util.ProcessUtils;
 import com.suixingpay.datas.node.boot.config.*;
-import com.suixingpay.datas.node.core.source.PublicSourceFactory;
 import com.suixingpay.datas.node.task.TaskController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,8 +27,6 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerA
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
-
-import java.io.IOException;
 
 /**
  * node launcher
@@ -58,24 +55,30 @@ public class NodeBootApplication {
         //获取公用数据库连接池
         SourcesConfig datasourceConfigBean = context.getBean(SourcesConfig.class);
         try {
-            PublicSourceFactory.INSTANCE.initialize(datasourceConfigBean.getConfig());
+            PublicClientContext.INSTANCE.initialize(datasourceConfigBean.getConfig());
         } catch (Exception e) {
             e.printStackTrace();
-            LOGGER.error("公用资源连接参数初始化失败", new RuntimeException("公用资源连接SourcesConfig初始化失败, 数据同步节点退出!"));
+            throw new RuntimeException("公用资源连接SourcesConfig初始化失败, 数据同步节点退出!error:" + e.getMessage());
         }
 
-        //获取集群配置信息
-        Config clusterConfig = Config.getConfig(context.getBean(ClusterConfig.class).getCluster());
         //初始化集群提供者中间件,spring spi插件
         try {
+            //获取集群配置信息
+            Config clusterConfig = Config.getConfig(context.getBean(ClusterConfig.class).getCluster());
             ClusterProviderProxy.INSTANCE.initialize(clusterConfig);
         } catch (Exception e) {
+            ClusterProviderProxy.INSTANCE.stop();
             e.printStackTrace();
-            LOGGER.error("集群参数初始化失败", new RuntimeException("集群配置参数ClusterConfig初始化失败, 数据同步节点退出!"));
+            throw new RuntimeException("集群配置参数ClusterConfig初始化失败, 数据同步节点退出!error:" + e.getMessage());
         }
 
         //初始化告警配置
-        AlertProviderFactory.INSTANCE.initialize(Config.getConfig(context.getBean(AlertConfig.class).getAlert()));
+        try {
+            AlertProviderFactory.INSTANCE.initialize(Config.getConfig(context.getBean(AlertConfig.class).getAlert()));
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("告警配置初始化失败, 数据同步节点退出!error:" + e.getMessage());
+        }
 
         LOGGER.info("建群.......");
         //节点初始化
@@ -85,7 +88,7 @@ public class NodeBootApplication {
             //注册节点，注册失败退出进程
             ClusterProviderProxy.INSTANCE.broadcast(new NodeRegisterCommand(nodeConfig.getId()));
         } catch (Exception e){
-            throw  new RuntimeException(e.getMessage() + "数据同步节点退出!");
+            throw  new RuntimeException(e.getMessage() + "数据同步节点退出!error:" + e.getMessage());
         }
         LOGGER.info("加入群聊.......");
         //获取任务配置

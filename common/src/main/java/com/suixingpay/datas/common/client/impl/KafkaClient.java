@@ -29,7 +29,7 @@ import java.util.concurrent.CountDownLatch;
 public class KafkaClient extends AbstractClient<KafkaConfig> implements ConsumeClient {
 
     private Consumer<String, String> consumer;
-    private CountDownLatch canFetch;
+    private CountDownLatch canFetch = new CountDownLatch(1);
     private long perPullSize;
 
     public KafkaClient(KafkaConfig config) {
@@ -81,20 +81,22 @@ public class KafkaClient extends AbstractClient<KafkaConfig> implements ConsumeC
         return msgs;
     }
 
-    @Override
-    public boolean canSplit() {
+    private boolean canSplit() {
         return getConfig().getTopics().size() > 1;
     }
 
     @Override
     public <T> List<T> split() throws ClientException {
-        if (!canSplit()) return null;
         List<T> clients = new ArrayList<>();
-        for (String topic : getConfig().getTopics()) {
-            KafkaConfig tmpConfig = getConfig();
-            tmpConfig.setTopics(Arrays.asList(topic));
-            T tmpClient = (T) AbstractClient.getClient(tmpConfig);
-            clients.add(tmpClient);
+        if (canSplit()) {
+            for (String topic : getConfig().getTopics()) {
+                KafkaConfig tmpConfig = getConfig();
+                tmpConfig.setTopics(Arrays.asList(topic));
+                T tmpClient = (T) AbstractClient.getClient(tmpConfig);
+                clients.add(tmpClient);
+            }
+        } else {
+            clients.add((T) this);
         }
         return clients;
     }

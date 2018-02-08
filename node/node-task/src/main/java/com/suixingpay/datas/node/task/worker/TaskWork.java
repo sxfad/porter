@@ -51,15 +51,21 @@ public class TaskWork {
 
     private final DataConsumer dataConsumer;
     private final DataLoader dataLoader;
-
+    /**
+     * stageType -> job
+     */
     private  final Map<StageType, StageJob> JOBS;
     private final String basicThreadName;
+
+    /**
+     * schema_table -> TaskStat
+     */
     private final Map<String, DTaskStat> stats;
     private final Map<String, TableMapper> mappers;
     private final TaskWorker worker;
 
 
-    public TaskWork(DataConsumer dataConsumer, DataLoader dataLoader, String taskId, TaskWorker worker) {
+    public TaskWork(DataConsumer dataConsumer, DataLoader dataLoader, String taskId, TaskWorker worker) throws Exception {
         this.dataConsumer = dataConsumer;
         this.dataLoader = dataLoader;
         basicThreadName = "TaskWork-[taskId:" + taskId + "]-[consumer:" + dataConsumer.getId() + "]";
@@ -79,19 +85,15 @@ public class TaskWork {
         };
 
         //从集群模块获取任务状态统计信息
-        try {
-            ClusterProviderProxy.INSTANCE.broadcast(new TaskStatQueryCommand(taskId, dataConsumer.getId(), new DCallback() {
-                @Override
-                public void callback(List<DObject> objects) {
-                    for ( DObject object : objects) {
-                        DTaskStat stat = (DTaskStat) object;
-                        getDTaskStat(stat.getSchema(), stat.getTable());
-                    }
+        ClusterProviderProxy.INSTANCE.broadcast(new TaskStatQueryCommand(taskId, dataConsumer.getId(), new DCallback() {
+            @Override
+            public void callback(List<DObject> objects) {
+                for ( DObject object : objects) {
+                    DTaskStat stat = (DTaskStat) object;
+                    getDTaskStat(stat.getSchema(), stat.getTable());
                 }
-            }));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+            }
+        }));
     }
 
     public void stop() {
@@ -110,16 +112,13 @@ public class TaskWork {
         }
     }
 
-    public void start() {
-        try {
-            LOGGER.info("开始执行任务[{}-{}]", taskId, dataConsumer.getId());
-            ClusterProviderProxy.INSTANCE.broadcast(new TaskRegisterCommand(taskId, dataConsumer.getId()));
-            //开始阶段性工作
-            for (Map.Entry<StageType, StageJob> jobs : JOBS.entrySet()) {
-                jobs.getValue().start();
-            }
-        } catch (Exception e) {
-            LOGGER.error("开始执行任务[{}-{}]异常", taskId, dataConsumer.getId(), e);
+    public void start() throws Exception {
+        LOGGER.info("开始执行任务[{}-{}]", taskId, dataConsumer.getId());
+        //会抛出分布式锁任务抢占异常
+        ClusterProviderProxy.INSTANCE.broadcast(new TaskRegisterCommand(taskId, dataConsumer.getId()));
+        //开始阶段性工作
+        for (Map.Entry<StageType, StageJob> jobs : JOBS.entrySet()) {
+            jobs.getValue().start();
         }
     }
 
