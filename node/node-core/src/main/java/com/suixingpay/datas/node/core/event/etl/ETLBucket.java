@@ -26,16 +26,20 @@ import java.util.Map;
  */
 public class ETLBucket {
     private static final Logger LOGGER = LoggerFactory.getLogger(ETLBucket.class);
-    private final Long sequence;
+    /**
+     * 由于数据顺序不是通过sequence排序保证，且程序节点持续运行不停机，同时存在Long类型序列号发放殆尽的问题，仅需进程内唯一。
+     * 综上，将序列号改为UUID+timestamp组合
+     */
+    private final String sequence;
     private final List<ETLRow> rows;
     private final List<List<ETLRow>> batchRows;
-    public ETLBucket(long sequence, List<ETLRow> rows) {
+    public ETLBucket(String sequence, List<ETLRow> rows) {
         this.sequence = sequence;
         this.rows = rows;
         this.batchRows = new ArrayList<List<ETLRow>>();
     }
 
-    public Long getSequence() {
+    public String getSequence() {
         return sequence;
     }
 
@@ -48,7 +52,7 @@ public class ETLBucket {
      * @param events
      * @return
      */
-    public static ETLBucket from(Pair<Long, List<MessageEvent>> events) {
+    public static ETLBucket from(Pair<String, List<MessageEvent>> events) {
         List<ETLRow> rows = new ArrayList<>();
         for (MessageEvent event : events.getRight()) {
             LOGGER.debug(JSON.toJSONString(event));

@@ -29,7 +29,7 @@ public class JdbcBatchLoader extends BaseJdbcLoader {
     private static final String LOADER_NAME = "JdbcBatch";
 
     @Override
-    protected String getName() {
+    protected String getPluginName() {
         return LOADER_NAME;
     }
 

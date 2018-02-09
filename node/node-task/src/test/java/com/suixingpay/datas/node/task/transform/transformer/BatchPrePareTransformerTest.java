@@ -46,7 +46,7 @@ public class BatchPrePareTransformerTest {
         rows.add(new ETLRow("s", "t"  ,EventType.INSERT,null,null));
         rows.add(new ETLRow("s", "t"  ,EventType.INSERT,null,null));
 
-        ETLBucket bucket = new ETLBucket(0, rows);
+        ETLBucket bucket = new ETLBucket("0", rows);
 
         BatchPrePareTransformer t = new BatchPrePareTransformer();
         t.transform(bucket,null);

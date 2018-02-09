@@ -9,24 +9,19 @@
 
 package com.suixingpay.datas.node.plugin.loader.jdbc;
 
-import com.suixingpay.datas.common.client.Client;
 import com.suixingpay.datas.common.client.impl.JDBCClient;
 import com.suixingpay.datas.common.cluster.data.DTaskStat;
 import com.suixingpay.datas.common.db.SqlTemplate;
 import com.suixingpay.datas.common.db.SqlUtils;
-import com.suixingpay.datas.common.db.meta.TableSchema;
 import com.suixingpay.datas.node.core.event.etl.ETLColumn;
 import com.suixingpay.datas.node.core.event.etl.ETLRow;
 import com.suixingpay.datas.node.core.event.s.EventType;
-import com.suixingpay.datas.node.core.loader.DataLoader;
+import com.suixingpay.datas.node.core.loader.AbstractDataLoader;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -37,43 +32,14 @@ import java.util.List;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月04日 11:57
  */
-public abstract class BaseJdbcLoader implements DataLoader {
-    private JDBCClient client;
-
-    protected abstract String getName();
-
-    @Override
-    public boolean isMatch(String loaderName) {
-        return getName().equals(loaderName);
-    }
-
-    @Override
-    public <C extends Client> void setClient(C c) {
-        client = (JDBCClient) c;
-    }
-
-    public JDBCClient getClient() {
-        return client;
-    }
-
-    @Override
-    public void shutdown() throws InterruptedException {
-        if (!client.isPublic()) client.shutdown();
-    }
-
-    @Override
-    public void startup() throws IOException {
-        client.start();
-    }
-
-    protected  final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
-
+public abstract class BaseJdbcLoader extends AbstractDataLoader {
     /**
      * 用于一条记录有多个加载补偿策略。这种情况下
      * @param sqlList
      * @return
      */
     protected int loadSql(List<Pair<String, Object[]>> sqlList) {
+        JDBCClient client = getLoadClient();
         int affect = 0;
         for (Pair<String, Object[]> sqlOnce : sqlList) {
             affect = client.update(sqlOnce.getLeft(), sqlOnce.getRight());
@@ -88,6 +54,7 @@ public abstract class BaseJdbcLoader implements DataLoader {
      * @return
      */
     protected int[] batchLoadSql(List<Pair<String, Object[]>> sqlList) {
+        JDBCClient client = getLoadClient();
         List<Pair<String, List<Object[]>>> reGroupList = new ArrayList<Pair<String, List<Object[]>>>();
         groupSql4Batch(reGroupList, sqlList, 0);
         int[] allAffects = new int[]{};
@@ -127,6 +94,7 @@ public abstract class BaseJdbcLoader implements DataLoader {
      * @return
      */
     protected List<Pair<String, Object[]>> buildSql(ETLRow row) {
+        JDBCClient client = getLoadClient();
         SqlTemplate template = client.getSqlTemplate();
         List<Pair<String, Object[]>> sqlList = new ArrayList<>();
 
@@ -239,16 +207,6 @@ public abstract class BaseJdbcLoader implements DataLoader {
                 stat.setProgress(row.getIndex());
             }
         }
-    }
-
-    @Override
-    public int getDataCount(String schema, String table, String updateDateColumn, Date startTime, Date endTime) {
-        return client.getDataCount(schema, table, updateDateColumn, startTime, endTime);
-    }
-
-    @Override
-    public TableSchema findTable(String finalSchema, String finalTable) {
-        return client.getTable(finalSchema, finalTable);
     }
 
     @Override

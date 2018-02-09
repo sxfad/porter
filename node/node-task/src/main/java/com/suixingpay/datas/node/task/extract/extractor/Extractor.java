@@ -10,6 +10,8 @@ package com.suixingpay.datas.node.task.extract.extractor;
 
 import com.suixingpay.datas.node.core.event.etl.ETLBucket;
 
+import java.util.List;
+
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月25日 19:18
@@ -17,5 +19,5 @@ import com.suixingpay.datas.node.core.event.etl.ETLBucket;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月25日 19:18
  */
 public interface Extractor {
-    void extract(ETLBucket bucket);
+    void extract(ETLBucket bucket, List<String> excludeTables, List<String> includeTables);
 }

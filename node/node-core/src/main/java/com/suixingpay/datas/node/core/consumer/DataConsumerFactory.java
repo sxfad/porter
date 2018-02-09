@@ -63,6 +63,8 @@ public enum DataConsumerFactory {
             consumer.setClient(c);
             consumer.setConverter(converter);
             consumer.setMetaQueryClient(metaQueryClient);
+            consumer.setExcludes(config.getExcludes());
+            consumer.setIncludes(config.getIncludes());
             consumers.add(consumer);
         }
 

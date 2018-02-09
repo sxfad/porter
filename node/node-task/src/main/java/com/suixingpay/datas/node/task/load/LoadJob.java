@@ -68,7 +68,7 @@ public class LoadJob extends AbstractStageJob{
             } catch (Exception e) {
                 LOGGER.error("Load ETLRow error!", e);
             }
-        } while (null != bucket && ! bucket.getRows().isEmpty());
+        } while (null != bucket);
     }
 
     @Override

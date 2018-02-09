@@ -74,7 +74,7 @@ public class TransformJob extends AbstractStageJob {
                         }
                     });
                     LOGGER.debug("transform ETLBucket batch {} end.", bucket.getSequence());
-                    carrier.put(inThreadBucket.getSequence() + "", result);
+                    carrier.put(inThreadBucket.getSequence(), result);
                 }
             } catch (Exception e) {
                 LOGGER.error("transform ETLBucket error!", e);
@@ -84,20 +84,20 @@ public class TransformJob extends AbstractStageJob {
 
     @Override
     public ETLBucket output() throws ExecutionException, InterruptedException {
-        Long sequence = work.waitSequence();
+        String sequence = work.waitSequence();
         Future<ETLBucket> result = null;
         if (null != sequence) {
-            LOGGER.info("got sequence:{}, Future: {}", sequence, carrier.containsKey(sequence + ""));
+            LOGGER.info("got sequence:{}, Future: {}", sequence, carrier.containsKey(sequence));
             //等待该sequence对应的ETLBucket transform完成。捕获InterruptedException异常,是为了保证该sequence能够被处理。
-            while (null != sequence && !carrier.containsKey(sequence + "")) {
+            while (null != sequence && !carrier.containsKey(sequence)) {
                 LOGGER.debug("waiting sequence Future:{}", sequence);
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException e) {
                 }
             }
-            LOGGER.info("got sequence:{}, Future: {}", sequence, carrier.containsKey(sequence + ""));
-            result = carrier.computeIfPresent(sequence + "", new BiFunction<String, Future<ETLBucket>, Future<ETLBucket>>() {
+            LOGGER.info("got sequence:{}, Future: {}", sequence, carrier.containsKey(sequence));
+            result = carrier.computeIfPresent(sequence, new BiFunction<String, Future<ETLBucket>, Future<ETLBucket>>() {
                 @Override
                 public Future<ETLBucket> apply(String key, Future<ETLBucket> etlBucketFuture) {
                     carrier.remove(key);

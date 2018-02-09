@@ -68,12 +68,12 @@ public class TaskWorker {
                             e.printStackTrace();
                         }
                     }
-                    //每10秒上传一次消费进度
+                    //每1秒上传一次消费进度
                     for (TaskWork job : JOBS.values()) {
                         job.submitStat();
                     }
                 }
-            }, 0 ,10000 , TimeUnit.MILLISECONDS);
+            }, 0 ,1 , TimeUnit.SECONDS);
         } else {
             LOGGER.warn("TaskWorker[] has started already", workerSequence);
         }
@@ -92,8 +92,8 @@ public class TaskWorker {
 
     public void stopJob(List<DataConsumer> consumerSourceId) {
         consumerSourceId.forEach(c -> {
-            if (JOBS.containsKey(c.getId())) {
-                JOBS.get(c.getId()).stop();
+            if (JOBS.containsKey(c.getSourceId())) {
+                JOBS.get(c.getSourceId()).stop();
             }
         });
     }
@@ -111,10 +111,10 @@ public class TaskWorker {
                 //启动JOB
                 job = new TaskWork(c, task.getLoader(), task.getTaskId(), this);
                 job.start();
-                JOBS.put(c.getId(), job);
+                JOBS.put(c.getSourceId(), job);
             } catch (Exception e){
                 if (null != job) job.stop();
-                LOGGER.error("Consumer JOB[{}] failed to start!", c.getId(), e);
+                LOGGER.error("Consumer JOB[{}] failed to start!", c.getSourceId(), e);
             }
         });
     }

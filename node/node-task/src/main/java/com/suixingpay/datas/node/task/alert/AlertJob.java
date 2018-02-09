@@ -51,7 +51,7 @@ public class AlertJob extends AbstractStageJob {
         try {
             alerterFactory.check(dataConsumer, dataLoader, work);
         } catch (Exception e) {
-            LOGGER.error("[{}][{}]db check error!",work.getTaskId(), dataConsumer.getId(), e);
+            LOGGER.error("[{}][{}]db check error!",work.getTaskId(), dataConsumer.getSourceId(), e);
         }
     }
 

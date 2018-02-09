@@ -22,7 +22,7 @@ import java.util.List;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月04日 13:13
  */
-public interface ConsumeClient {
+public interface ConsumeClient extends Client{
     <F, O> List<F> fetch(FetchCallback<F, O> callback);
 
     /**
@@ -39,4 +39,6 @@ public interface ConsumeClient {
     interface FetchCallback<F, O> {
         <F, O> F  accept(O o) throws ParseException;
     }
+
+
 }

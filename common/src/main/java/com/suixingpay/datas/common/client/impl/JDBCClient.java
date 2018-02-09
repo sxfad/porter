@@ -12,6 +12,7 @@ package com.suixingpay.datas.common.client.impl;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.fastjson.JSON;
 import com.suixingpay.datas.common.client.AbstractClient;
+import com.suixingpay.datas.common.client.LoadClient;
 import com.suixingpay.datas.common.client.MetaQueryClient;
 import com.suixingpay.datas.common.db.SqlTemplate;
 import com.suixingpay.datas.common.config.source.JDBCConfig;
@@ -45,7 +46,7 @@ import java.util.function.Function;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月02日 15:14
  */
-public class JDBCClient extends AbstractClient<JDBCConfig> implements MetaQueryClient {
+public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient, MetaQueryClient {
     private final Map<List<String>, TableSchema> tables = new ConcurrentHashMap<>();
 
     private DruidDataSource dataSource;

@@ -11,20 +11,14 @@ package com.suixingpay.datas.node.plugin.consumer.kafka;
 
 
 import com.alibaba.fastjson.JSONObject;
-import com.suixingpay.datas.common.client.Client;
 import com.suixingpay.datas.common.client.ConsumeClient;
-import com.suixingpay.datas.common.client.MetaQueryClient;
-import com.suixingpay.datas.common.client.impl.KafkaClient;
-import com.suixingpay.datas.node.core.consumer.DataConsumer;
-import com.suixingpay.datas.node.core.event.s.EventConverter;
+import com.suixingpay.datas.common.config.source.KafkaConfig;
+import com.suixingpay.datas.node.core.consumer.AbstractDataConsumer;
 import com.suixingpay.datas.node.core.event.s.MessageEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
-import java.io.IOException;
 import java.text.ParseException;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -33,51 +27,16 @@ import java.util.List;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月02日 11:53
  */
-public class KafkaConsumer implements DataConsumer {
+public class KafkaConsumer extends AbstractDataConsumer {
     private static final String CONSUMER_NAME = "KafkaFetch";
-    private MetaQueryClient metaQueryClient;
-    private KafkaClient consumeClient;
-    private EventConverter converter;
 
     @Override
-    public void setConverter(EventConverter converter) {
-        this.converter = converter;
+    public String getSourceId() {
+        KafkaConfig config = consumeClient.getConfig();
+        return StringUtils.join(config.getTopics(), "_");
     }
 
-    @Override
-    public <C extends ConsumeClient> void setClient(C c) {
-        this.consumeClient = (KafkaClient)c;
-    }
-
-    @Override
-    public <C extends MetaQueryClient> void setMetaQueryClient(C c) {
-        metaQueryClient = c;
-    }
-
-    @Override
-    public boolean isMatch(String consumerName) {
-        return CONSUMER_NAME.equals(consumerName);
-    }
-
-    @Override
-    public String getId() {
-        return StringUtils.join(consumeClient.getConfig().getTopics(), "_");
-    }
-
-    @Override
-    public void shutdown() throws InterruptedException {
-        if (!consumeClient.isPublic()) consumeClient.shutdown();
-        if (metaQueryClient instanceof Client && !((Client)metaQueryClient).isPublic()) ((Client)metaQueryClient).shutdown();
-    }
-
-    @Override
-    public void startup() throws IOException {
-        consumeClient.start();
-        if (metaQueryClient instanceof Client) ((Client) metaQueryClient).start();
-    }
-
-    @Override
-    public List<MessageEvent> fetch() {
+    public List<MessageEvent> doFetch() {
         return consumeClient.fetch(new ConsumeClient.FetchCallback<MessageEvent, Object>() {
             @Override
             public <F, O> F accept(O o) throws ParseException {
@@ -94,7 +53,7 @@ public class KafkaConsumer implements DataConsumer {
     }
 
     @Override
-    public int getDataCount(String schema, String table, String updateColum, Date startDate, Date endDate) {
-        return metaQueryClient.getDataCount(schema, table, updateColum, startDate, endDate);
+    protected String getPluginName() {
+        return CONSUMER_NAME;
     }
 }

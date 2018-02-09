@@ -25,7 +25,7 @@ public class JdbcSingleLoader extends BaseJdbcLoader {
     private static final String LOADER_NAME = "JdbcSingle";
 
     @Override
-    protected String getName() {
+    protected String getPluginName() {
         return LOADER_NAME;
     }
 

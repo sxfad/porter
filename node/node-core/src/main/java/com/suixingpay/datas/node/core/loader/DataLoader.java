@@ -9,7 +9,8 @@
 
 package com.suixingpay.datas.node.core.loader;
 
-import com.suixingpay.datas.common.client.Client;
+import com.suixingpay.datas.common.client.LoadClient;
+import com.suixingpay.datas.common.client.MetaQueryClient;
 import com.suixingpay.datas.common.db.meta.TableSchema;
 import com.suixingpay.datas.node.core.event.etl.ETLBucket;
 import com.suixingpay.datas.node.core.event.etl.ETLRow;
@@ -60,7 +61,8 @@ public interface DataLoader {
      */
     void load(ETLBucket bucket, CallbackMethodCreator getter);
 
-    <C extends Client> void setClient(C c);
+    void setLoadClient(LoadClient c);
+    void setMetaQueryClient(MetaQueryClient c);
 
     /**
      * 告警模块调用,用于查询某个时间段数据变化数量

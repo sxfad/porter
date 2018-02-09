@@ -25,9 +25,9 @@ import java.util.List;
 @Scope("singleton")
 public class ExtractorFactory {
     private List<Extractor> extractors = SpringFactoriesLoader.loadFactories(Extractor.class, null);
-    public void extract(ETLBucket bucket) {
+    public void extract(ETLBucket bucket, List<String> excludeTables, List<String> includeTables) {
         for (Extractor extractor : extractors) {
-            extractor.extract(bucket);
+            extractor.extract(bucket, excludeTables, includeTables);
         }
     }
 }

@@ -11,6 +11,8 @@ package com.suixingpay.datas.node.core.loader;
 
 import com.suixingpay.datas.common.client.AbstractClient;
 import com.suixingpay.datas.common.client.Client;
+import com.suixingpay.datas.common.client.LoadClient;
+import com.suixingpay.datas.common.client.MetaQueryClient;
 import com.suixingpay.datas.common.config.Config;
 import com.suixingpay.datas.common.config.DataLoaderConfig;
 import com.suixingpay.datas.common.exception.ClientException;
@@ -34,7 +36,14 @@ public enum DataLoaderFactory {
         Client client = AbstractClient.getClient(Config.getConfig(config.getSource()));;
         //获取源数据查询配置
         DataLoader loader = newLoader(config.getLoaderName());
-        loader.setClient(client);
+        if (!(client instanceof LoadClient)) {
+            throw new ClientException(config.getSource() + "不是LoadClient实现");
+        }
+        if (!(client instanceof MetaQueryClient)) {
+            throw new ClientException(config.getSource() + "MetaQueryClient");
+        }
+        loader.setLoadClient((LoadClient) client);
+        loader.setMetaQueryClient((MetaQueryClient) client);
         return loader;
     }
 

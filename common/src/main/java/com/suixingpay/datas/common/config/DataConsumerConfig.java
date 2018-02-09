@@ -24,6 +24,19 @@ public class DataConsumerConfig extends Config {
     @Getter @Setter private String consumerName;
     @Getter @Setter private String converter;
 
+    /*
+     *过滤掉不期望处理的表
+     * 与includes同时配置时，该设置不生效
+     *schema.table,schema.table
+     */
+    @Getter @Setter private String excludes;
+
+    /*
+     *期望处理的表
+     *schema.table,schema.table
+     */
+    @Getter @Setter private String includes;
+
     //消费数据的数据源
     @Getter @Setter private Map<String,String> source;
 

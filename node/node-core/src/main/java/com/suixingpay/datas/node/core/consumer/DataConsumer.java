@@ -13,6 +13,7 @@ import com.suixingpay.datas.common.client.ConsumeClient;
 import com.suixingpay.datas.common.client.MetaQueryClient;
 import com.suixingpay.datas.node.core.event.s.EventConverter;
 import com.suixingpay.datas.node.core.event.s.MessageEvent;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
 
 import java.io.IOException;
 import java.util.Date;
@@ -34,17 +35,14 @@ public interface DataConsumer {
     /**
      * 消费源客户端
      * @param c
-     * @param <C>
      */
-    <C extends ConsumeClient> void setClient(C c);
-
+    void setClient(ConsumeClient c);
 
     /**
      * 消费源源数据查询客户端
-     * @param c
-     * @param <C>
+     * @param metaQueryClient
      */
-    <C extends MetaQueryClient> void setMetaQueryClient(C c);
+    void setMetaQueryClient(MetaQueryClient metaQueryClient);
     /**
      * 用于DataConsumer模块儿加载匹配
      * @param consumerName
@@ -56,7 +54,7 @@ public interface DataConsumer {
      * 区分同一个任务的不同消费资源，用于分布式锁抢占、任务统计等
      * @return
      */
-    String getId();
+    String getSourceId();
 
     /**
      * 资源控制
@@ -95,4 +93,11 @@ public interface DataConsumer {
      */
     int getDataCount(String schema, String table, String updateColumnName, Date startDate, Date endDate);
 
+    void setExcludes(String excludes);
+
+    void setIncludes(String includes);
+
+    List<String> getExcludes();
+
+    List<String> getIncludes();
 }

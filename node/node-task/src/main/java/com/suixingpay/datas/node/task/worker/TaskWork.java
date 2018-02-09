@@ -68,7 +68,7 @@ public class TaskWork {
     public TaskWork(DataConsumer dataConsumer, DataLoader dataLoader, String taskId, TaskWorker worker) throws Exception {
         this.dataConsumer = dataConsumer;
         this.dataLoader = dataLoader;
-        basicThreadName = "TaskWork-[taskId:" + taskId + "]-[consumer:" + dataConsumer.getId() + "]";
+        basicThreadName = "TaskWork-[taskId:" + taskId + "]-[consumer:" + dataConsumer.getSourceId() + "]";
         this.taskId = taskId;
         this.stats = new ConcurrentHashMap<>();
         this.mappers = new ConcurrentHashMap<>();
@@ -85,7 +85,7 @@ public class TaskWork {
         };
 
         //从集群模块获取任务状态统计信息
-        ClusterProviderProxy.INSTANCE.broadcast(new TaskStatQueryCommand(taskId, dataConsumer.getId(), new DCallback() {
+        ClusterProviderProxy.INSTANCE.broadcast(new TaskStatQueryCommand(taskId, dataConsumer.getSourceId(), new DCallback() {
             @Override
             public void callback(List<DObject> objects) {
                 for ( DObject object : objects) {
@@ -98,7 +98,7 @@ public class TaskWork {
 
     public void stop() {
         try {
-            LOGGER.info("终止执行任务[{}-{}]", taskId, dataConsumer.getId());
+            LOGGER.info("终止执行任务[{}-{}]", taskId, dataConsumer.getSourceId());
             //终止阶段性工作,需要
             for (Map.Entry<StageType, StageJob> jobs : JOBS.entrySet()) {
                 jobs.getValue().stop();
@@ -106,16 +106,16 @@ public class TaskWork {
             //上传消费进度
             submitStat();
             //广播任务结束消息
-            ClusterProviderProxy.INSTANCE.broadcast(new TaskStopCommand(taskId,dataConsumer.getId()));
+            ClusterProviderProxy.INSTANCE.broadcast(new TaskStopCommand(taskId,dataConsumer.getSourceId()));
         } catch (Exception e) {
-            LOGGER.error("终止执行任务[{}-{}]异常", taskId, dataConsumer.getId(), e);
+            LOGGER.error("终止执行任务[{}-{}]异常", taskId, dataConsumer.getSourceId(), e);
         }
     }
 
     public void start() throws Exception {
-        LOGGER.info("开始执行任务[{}-{}]", taskId, dataConsumer.getId());
+        LOGGER.info("开始执行任务[{}-{}]", taskId, dataConsumer.getSourceId());
         //会抛出分布式锁任务抢占异常
-        ClusterProviderProxy.INSTANCE.broadcast(new TaskRegisterCommand(taskId, dataConsumer.getId()));
+        ClusterProviderProxy.INSTANCE.broadcast(new TaskRegisterCommand(taskId, dataConsumer.getSourceId()));
         //开始阶段性工作
         for (Map.Entry<StageType, StageJob> jobs : JOBS.entrySet()) {
             jobs.getValue().start();
@@ -159,7 +159,6 @@ public class TaskWork {
                             @Override
                             public void callback(DObject object) {
                                 DTaskStat remoteData = (DTaskStat) object;
-
                                 if(stat.getUpdateStat().compareAndSet(false, true)) {
                                     //最后检查点
                                     if (null == stat.getLastCheckedTime()) {
@@ -172,6 +171,8 @@ public class TaskWork {
                                 }
                             }
                         }));
+                        //上传统计
+                        //TaskPerformance
                     }
                 } catch (Exception e) {
                     LOGGER.error("上传任务消费进度出错", e);
@@ -185,7 +186,7 @@ public class TaskWork {
         DTaskStat stat = stats.computeIfAbsent(key, new Function<String, DTaskStat>() {
             @Override
             public DTaskStat apply(String s) {
-                DTaskStat tmp = new DTaskStat(taskId, null, dataConsumer.getId(), schema, table);
+                DTaskStat tmp = new DTaskStat(taskId, null, dataConsumer.getSourceId(), schema, table);
                 return tmp;
             }
         });

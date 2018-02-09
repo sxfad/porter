@@ -29,11 +29,25 @@ public class IgnoreRowExtractor implements Extractor{
     private  static final Logger LOGGER = LoggerFactory.getLogger(IgnoreRowExtractor.class);
 
     @Override
-    public void extract(ETLBucket bucket) {
+    public void extract(ETLBucket bucket, List<String> excludeTables, List<String> includeTables) {
         long initBucketSize = bucket.getRows().size();
         List<ETLRow> removals = new ArrayList<>();
         for (ETLRow row : bucket.getRows()) {
             LOGGER.debug("trying extract row:{}", JSON.toJSONString(row));
+
+            //包含、不包含表判断
+            if (! includeTables.isEmpty()) {
+                String strSeg = new StringBuffer().append(row.getSchema()).append(".")
+                        .append(row.getTable()).toString().toUpperCase().intern();
+
+                if (!includeTables.contains(strSeg)) removals.add(row);
+
+            } else if (includeTables.isEmpty() && ! excludeTables.isEmpty()) { //不包含表
+                String strSeg = new StringBuffer().append(row.getSchema()).append(".")
+                        .append(row.getTable()).toString().toUpperCase().intern();
+
+                if (excludeTables.contains(strSeg)) removals.add(row);
+            }
 
             //当前仅支持插入、更新、删除、截断表
             if (row.getOpType() == EventType.INSERT || row.getOpType() == EventType.UPDATE || row.getOpType() == EventType.DELETE || row.getOpType() == EventType.TRUNCATE) {

@@ -65,7 +65,7 @@ public class SelectJob extends AbstractStageJob {
         do {
             try {
                 events = consumer.fetch();
-                if (null != events) carrier.push(events);
+                if (null != events && ! events.isEmpty()) carrier.push(events);
             } catch (InterruptedException e) {
                 LOGGER.error("fetch MessageEvent error!", e);
             }
@@ -78,7 +78,7 @@ public class SelectJob extends AbstractStageJob {
     }
 
     @Override
-    public Pair<Long, List<MessageEvent>> output() {
+    public Pair<String, List<MessageEvent>> output() {
         return carrier.greedyPullByOrder();
     }
 

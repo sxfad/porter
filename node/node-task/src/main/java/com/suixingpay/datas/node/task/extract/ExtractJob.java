@@ -9,6 +9,7 @@
 package com.suixingpay.datas.node.task.extract;
 
 import com.suixingpay.datas.common.util.ApplicationContextUtils;
+import com.suixingpay.datas.node.core.consumer.DataConsumer;
 import com.suixingpay.datas.node.core.event.etl.ETLBucket;
 import com.suixingpay.datas.node.core.event.s.MessageEvent;
 import com.suixingpay.datas.node.core.loader.DataLoader;
@@ -35,14 +36,12 @@ public class ExtractJob extends AbstractStageJob {
     private final TaskWork work;
     private final ExecutorService executorService;
     private final DataCarrier<ETLBucket> carrier;
-    private final DataCarrier<Long> orderedBucket;
+    private final DataCarrier<String> orderedBucket;
     private final ExtractorFactory extractorFactory;
-    private final DataLoader loader;
     public ExtractJob(TaskWork work) {
-        super(work.getBasicThreadName());
+        super(work.getBasicThreadName(), 1000L);
         extractorFactory = ApplicationContextUtils.INSTANCE.getBean(ExtractorFactory.class);
         this.work = work;
-        loader = work.getDataLoader();
         //线程阻塞时，在调用者线程中执行
         executorService = new ThreadPoolExecutor(LOGIC_THREAD_SIZE, LOGIC_THREAD_SIZE,
                 0L, TimeUnit.MILLISECONDS,
@@ -65,13 +64,14 @@ public class ExtractJob extends AbstractStageJob {
     @Override
     protected void loopLogic() {
         //只要队列有消息，持续读取
-        Pair<Long, List<MessageEvent>> events = null;
+        Pair<String, List<MessageEvent>> events = null;
         do {
             try {
                 events = work.waitEvent(StageType.SELECT);
-                if (null != events) {
-                    final Pair<Long, List<MessageEvent>> inThreadEvents = events;
+                if (null != events && ! events.getRight().isEmpty()) {
+                    final Pair<String, List<MessageEvent>> inThreadEvents = events;
                     LOGGER.debug("extract MessageEvent batch {}.", inThreadEvents.getLeft());
+                    //在单线程执行，保证将来DataLoader load顺序
                     orderedBucket.push(inThreadEvents.getLeft());
                     //暂无Extractor失败处理方案
                     executorService.submit(new Runnable() {
@@ -80,7 +80,7 @@ public class ExtractJob extends AbstractStageJob {
                             try {
                                 //将MessageEvent转换为ETLBucket
                                 ETLBucket bucket = ETLBucket.from(inThreadEvents);
-                                extractorFactory.extract(bucket);
+                                extractorFactory.extract(bucket,work.getDataConsumer().getExcludes(), work.getDataConsumer().getIncludes());
                                 carrier.push(bucket);
                                 LOGGER.debug("push bucket {} into carrier after extract.", inThreadEvents.getLeft());
                             } catch (Exception e) {
@@ -92,7 +92,7 @@ public class ExtractJob extends AbstractStageJob {
             } catch (Exception e) {
                 LOGGER.error("extract MessageEvent error!", e);
             }
-        } while (null != events && null != events.getRight() &&! events.getRight().isEmpty());
+        } while (null != events && null != events.getRight() && ! events.getRight().isEmpty());
     }
 
     @Override

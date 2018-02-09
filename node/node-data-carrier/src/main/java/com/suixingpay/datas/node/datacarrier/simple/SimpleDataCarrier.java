@@ -14,6 +14,7 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -24,11 +25,9 @@ import java.util.concurrent.atomic.AtomicLong;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月25日 14:04
  */
 public class SimpleDataCarrier implements DataCarrier {
-    private final AtomicLong sequencer;
     private final ArrayBlockingQueue buffer;
     private final int pullBatchSize;
     public SimpleDataCarrier(Integer bufferSize, Integer segmentSize) {
-        this.sequencer = new AtomicLong(0);
         buffer = new ArrayBlockingQueue(bufferSize);
         pullBatchSize = segmentSize;
     }
@@ -56,7 +55,7 @@ public class SimpleDataCarrier implements DataCarrier {
     @Override
     public synchronized Pair pullByOrder() {
         Object item = pull();
-        return null != item ? new ImmutablePair(sequencer.getAndIncrement(), item) :null;
+        return null != item ? new ImmutablePair(generateId(), item) :null;
     }
 
     /**
@@ -66,9 +65,9 @@ public class SimpleDataCarrier implements DataCarrier {
      * @return
      */
     @Override
-    public synchronized Pair<Long, List> greedyPullByOrder() {
+    public synchronized Pair<String, List> greedyPullByOrder() {
         List list = greedyPull();
-        return null == list || list.isEmpty() ? null : new ImmutablePair<>(sequencer.getAndIncrement(), list);
+        return null == list || list.isEmpty() ? null : new ImmutablePair<>(generateId(), list);
     }
 
     @Override
@@ -102,5 +101,9 @@ public class SimpleDataCarrier implements DataCarrier {
     @Override
     public synchronized Object pull() {
         return buffer.poll();
+    }
+
+    private String generateId() {
+        return UUID.randomUUID().toString() + System.currentTimeMillis();
     }
 }
