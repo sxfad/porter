@@ -233,7 +233,7 @@ public abstract class BaseJdbcLoader implements DataLoader {
             }
 
             //更新最后执行消息事件的产生时间，用于计算从消息产生到加载如路时间、计算数据同步检查时间
-            if (null != row.getOpTime()) stat.setLastLoadedTime(row.getOpTime());
+            if (null != row.getOpTime()) stat.setLastLoadedDataTime(row.getOpTime());
             stat.setLastLoadedSystemTime(new Date());
             if (!StringUtils.isBlank(row.getIndex())) {
                 stat.setProgress(row.getIndex());

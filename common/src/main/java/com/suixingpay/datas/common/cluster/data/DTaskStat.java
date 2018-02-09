@@ -32,25 +32,40 @@ public class DTaskStat  extends DObject {
     private String schema;
     private String table;
 
-    //final用于保证不可变状态，同时保证多线程内存可见性
+    /*
+     * final用于保证不可变状态，同时保证多线程内存可见性
+     * 累计结果
+     */
     private final AtomicLong insertRow = new AtomicLong(0);
     private final AtomicLong updateRow = new AtomicLong(0);
     private final AtomicLong deleteRow = new AtomicLong(0);
     private final AtomicLong errorUpdateRow = new AtomicLong(0);
     private final AtomicLong errorInsertRow = new AtomicLong(0);
     private final AtomicLong errorDeleteRow = new AtomicLong(0);
+    //告警次数
     private final AtomicLong alertedTimes = new AtomicLong(0);
     @JSONField(serialize = false, deserialize = false)
     private final AtomicBoolean updateStat = new AtomicBoolean(false);
 
+    //注册时间
     @JSONField(format = DEFAULT_DATE_FORMAT)
-    private Date statedTime;
+    @Setter @Getter private Date registeredTime;
+
+    //最近心跳时间
     @JSONField(format = DEFAULT_DATE_FORMAT)
     private Date heartbeatTime;
+
+    //最近告警检查时间
     @JSONField(format = DEFAULT_DATE_FORMAT)
     private Date lastCheckedTime;
+
+    //最近导入数据时间
     @JSONField(format = DEFAULT_DATE_FORMAT)
-    private Date lastLoadedTime;
+    @Getter private Date lastLoadedDataTime;
+
+
+
+    //最近导入系统时间
     @JSONField(format = DEFAULT_DATE_FORMAT)
     private Date lastLoadedSystemTime;
 
@@ -58,7 +73,7 @@ public class DTaskStat  extends DObject {
     private String progress;
 
     public DTaskStat() {
-        statedTime = new Date();
+        registeredTime = new Date();
         heartbeatTime = new Date();
     }
     public DTaskStat(String taskId, String nodeId, String resourceId, String schema, String table) {
@@ -98,12 +113,9 @@ public class DTaskStat  extends DObject {
     }
 
 
-    public Date getLastLoadedTime() {
-        return lastLoadedTime;
-    }
 
-    public synchronized void setLastLoadedTime(Date lastLoadedTime) {
-        this.lastLoadedTime = lastLoadedTime;
+    public synchronized void setLastLoadedDataTime(Date lastLoadedTime) {
+        this.lastLoadedDataTime = lastLoadedTime;
     }
 
     public synchronized void setLastCheckedTime(Date lastCheckedTime) {
@@ -124,7 +136,7 @@ public class DTaskStat  extends DObject {
             this.errorInsertRow.addAndGet(stat.errorInsertRow.longValue());
             this.errorUpdateRow.addAndGet(stat.errorUpdateRow.longValue());
             this.alertedTimes.addAndGet(stat.alertedTimes.longValue());
-            if (null != stat.lastLoadedTime) this.lastLoadedTime = stat.lastLoadedTime;
+            if (null != stat.lastLoadedSystemTime) this.lastLoadedSystemTime = stat.lastLoadedSystemTime;
             if (null != stat.lastCheckedTime) this.lastCheckedTime = stat.lastCheckedTime;
             if (null != stat.lastLoadedSystemTime) this.lastLoadedSystemTime = stat.lastLoadedSystemTime;
             this.heartbeatTime = new Date();
@@ -144,9 +156,6 @@ public class DTaskStat  extends DObject {
         return updateStat;
     }
 
-    public Date getStatedTime() {
-        return statedTime;
-    }
 
     public String getProgress() {
         return progress;
@@ -241,9 +250,6 @@ public class DTaskStat  extends DObject {
         return heartbeatTime;
     }
 
-    public void setStatedTime(Date statedTime) {
-        this.statedTime = statedTime;
-    }
 
     public synchronized void setHeartbeatTime(Date heartbeatTime) {
         this.heartbeatTime = heartbeatTime;
@@ -260,7 +266,6 @@ public class DTaskStat  extends DObject {
     public synchronized void incrementAlertedTimes() {
         alertedTimes.incrementAndGet();
     }
-
 
     public String getSchema() {
         return schema;

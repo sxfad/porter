@@ -163,11 +163,11 @@ public class TaskWork {
                                 if(stat.getUpdateStat().compareAndSet(false, true)) {
                                     //最后检查点
                                     if (null == stat.getLastCheckedTime()) {
-                                        stat.setLastLoadedTime(remoteData.getLastLoadedTime());
+                                        stat.setLastLoadedDataTime(remoteData.getLastLoadedDataTime());
                                     }
                                     //最初启动时间
-                                    if (null != remoteData.getStatedTime()) {
-                                        stat.setStatedTime(remoteData.getStatedTime());
+                                    if (null != remoteData.getRegisteredTime()) {
+                                        stat.setRegisteredTime(remoteData.getRegisteredTime());
                                     }
                                 }
                             }

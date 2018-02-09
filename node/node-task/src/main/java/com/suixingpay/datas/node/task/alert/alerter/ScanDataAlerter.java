@@ -30,23 +30,23 @@ public class ScanDataAlerter implements Alerter{
 
     public void check(DataConsumer consumer, DataLoader loader, DTaskStat stat, Triple<String[], String[], String[]> checkMeta) {
         LOGGER.debug("trying scan data");
-        if (null == stat ||  ! stat.getUpdateStat().get() || null == stat.getLastLoadedTime() || null == checkMeta.getRight()) {
+        if (null == stat ||  ! stat.getUpdateStat().get() || null == stat.getLastLoadedDataTime() || null == checkMeta.getRight()) {
             LOGGER.debug("null == stat ||  ! stat.getUpdateStat().get() || null == stat.getLastLoadedTime() || null == checkMeta.getRight()");
             return;
         }
 
         //获得同步检查时间点并精确到分钟
         Date lastCheckedTime = stat.getLastCheckedTime();
-        lastCheckedTime = null == lastCheckedTime ? stat.getStatedTime() : lastCheckedTime;
+        lastCheckedTime = null == lastCheckedTime ? stat.getRegisteredTime() : lastCheckedTime;
         lastCheckedTime = DateUtils.setSeconds(lastCheckedTime, 0);
 
         LOGGER.debug("获得同步检查时间点:{}", NOTICE_DATE_FORMAT.format(lastCheckedTime));
 
         //计算与最同步时间间隔并推前5分钟,单位分钟
-        long timeDiff = (DateUtils.addMinutes(stat.getLastLoadedTime(),5).getTime() - lastCheckedTime.getTime())
+        long timeDiff = (DateUtils.addMinutes(stat.getLastLoadedDataTime(),5).getTime() - lastCheckedTime.getTime())
                 / 1000 / 60;
 
-        LOGGER.debug("计算与最新表记录操作时间间隔并推前5分钟:{},时间差:{}分钟", NOTICE_DATE_FORMAT.format(stat.getLastLoadedTime()) , timeDiff);
+        LOGGER.debug("计算与最新表记录操作时间间隔并推前5分钟:{},时间差:{}分钟", NOTICE_DATE_FORMAT.format(stat.getLastLoadedDataTime()) , timeDiff);
 
         //分割时间段
         int splitTimes = timeDiff > 0 ? (int) (timeDiff / TIME_SPAN_OF_MINUTES) : 0;
