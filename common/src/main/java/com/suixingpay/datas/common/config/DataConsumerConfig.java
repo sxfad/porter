@@ -20,7 +20,7 @@ import java.util.Map;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月03日 16:43
  */
-public class DataConsumerConfig extends Config {
+public class DataConsumerConfig {
     @Getter @Setter private String consumerName;
     @Getter @Setter private String converter;
 
@@ -43,18 +43,4 @@ public class DataConsumerConfig extends Config {
     //元数据查询的数据源
     //公用配置
     @Getter @Setter private Map<String,String> metaSource;
-
-    public DataConsumerConfig() {
-        configType = ConfigType.DATA_CONSUMER;
-    }
-
-    @Override
-    protected void childStuff() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    protected String[] childStuffColumns() {
-        return new String[0];
-    }
 }

@@ -12,7 +12,6 @@ import com.suixingpay.datas.common.alert.AlertProviderFactory;
 import com.suixingpay.datas.common.client.PublicClientContext;
 import com.suixingpay.datas.common.cluster.ClusterProviderProxy;
 import com.suixingpay.datas.common.cluster.command.NodeRegisterCommand;
-import com.suixingpay.datas.common.config.Config;
 import com.suixingpay.datas.common.util.ApplicationContextUtils;
 import com.suixingpay.datas.common.util.ProcessUtils;
 import com.suixingpay.datas.node.boot.config.*;
@@ -51,8 +50,19 @@ public class NodeBootApplication {
         ConfigurableApplicationContext context = app.run(args);
         //注入spring工具类
         ApplicationContextUtils.INSTANCE.init(context);
+        //获取配置类
+        NodeConfig config = context.getBean(NodeConfig.class);
 
-        //获取公用数据库连接池
+        //从本地初始化告警配置
+        try {
+            AlertProviderFactory.INSTANCE.initialize(config.getAlert());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("告警配置初始化失败, 数据同步节点退出!error:" + e.getMessage());
+        }
+
+
+        //从本地初始化公用数据库连接池
         SourcesConfig datasourceConfigBean = context.getBean(SourcesConfig.class);
         try {
             PublicClientContext.INSTANCE.initialize(datasourceConfigBean.getConfig());
@@ -61,43 +71,37 @@ public class NodeBootApplication {
             throw new RuntimeException("公用资源连接SourcesConfig初始化失败, 数据同步节点退出!error:" + e.getMessage());
         }
 
+
+
+
         //初始化集群提供者中间件,spring spi插件
         try {
             //获取集群配置信息
-            Config clusterConfig = Config.getConfig(context.getBean(ClusterConfig.class).getCluster());
-            ClusterProviderProxy.INSTANCE.initialize(clusterConfig);
+            ClusterProviderProxy.INSTANCE.initialize(config.getCluster());
         } catch (Exception e) {
             ClusterProviderProxy.INSTANCE.stop();
             e.printStackTrace();
             throw new RuntimeException("集群配置参数ClusterConfig初始化失败, 数据同步节点退出!error:" + e.getMessage());
         }
 
-        //初始化告警配置
-        try {
-            AlertProviderFactory.INSTANCE.initialize(Config.getConfig(context.getBean(AlertConfig.class).getAlert()));
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("告警配置初始化失败, 数据同步节点退出!error:" + e.getMessage());
-        }
-
-        LOGGER.info("建群.......");
-        //节点初始化
-        NodeConfig nodeConfig = context.getBean(NodeConfig.class);
         //节点注册
+        LOGGER.info("建群.......");
         try {
             //注册节点，注册失败退出进程
-            ClusterProviderProxy.INSTANCE.broadcast(new NodeRegisterCommand(nodeConfig.getId()));
+            ClusterProviderProxy.INSTANCE.broadcast(new NodeRegisterCommand(config.getId()));
         } catch (Exception e){
             throw  new RuntimeException(e.getMessage() + "数据同步节点退出!error:" + e.getMessage());
         }
+
+
         LOGGER.info("加入群聊.......");
         //获取任务配置
-        TasksConfig taskConfig = context.getBean(TasksConfig.class);
         //监工上线
         LOGGER.info("监工上线.......");
         TaskController controller = context.getBean(TaskController.class);
 
-        controller.start(taskConfig.getTask());
+        //启动节点任务执行容器，并尝试执行本地配置文件任务
+        controller.start(null != config.getTask() && ! config.getTask().isEmpty() ? config.getTask() : null);
         LOGGER.info("NodeBootApplication started");
 
         //保持进程持续运行不退出

@@ -30,12 +30,6 @@ import java.util.List;
 public class KafkaConsumer extends AbstractDataConsumer {
     private static final String CONSUMER_NAME = "KafkaFetch";
 
-    @Override
-    public String getSourceId() {
-        KafkaConfig config = consumeClient.getConfig();
-        return StringUtils.join(config.getTopics(), "_");
-    }
-
     public List<MessageEvent> doFetch() {
         return consumeClient.fetch(new ConsumeClient.FetchCallback<MessageEvent, Object>() {
             @Override

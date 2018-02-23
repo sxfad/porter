@@ -19,10 +19,10 @@ import lombok.Getter;
  */
 public class TaskAssignedCommand implements ClusterCommand {
     @Getter private final String taskId;
-    @Getter private final String resourceId;
+    @Getter private final String swimlaneId;
 
-    public TaskAssignedCommand(String taskId, String resourceId) {
+    public TaskAssignedCommand(String taskId, String swimlaneId) {
         this.taskId = taskId;
-        this.resourceId = resourceId;
+        this.swimlaneId = swimlaneId;
     }
 }

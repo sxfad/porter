@@ -128,7 +128,7 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements N
         lock.lock();
         DNode nodeData = DNode.fromString(client.getData(path).getLeft(), DNode.class);
         List<String> resources = nodeData.getTasks().getOrDefault(command.getTaskId(), new ArrayList<>());
-        resources.add(command.getResourceId());
+        resources.add(command.getSwimlaneId());
         nodeData.getTasks().put(command.getTaskId(), resources);
         Stat nowStat = client.exists(path, true);
         client.setData(path, nodeData.toString(), nowStat.getVersion());
@@ -140,7 +140,7 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements N
         String path = listenPath() + "/" + nodeId;
         lock.lock();
         DNode nodeData = DNode.fromString(client.getData(path).getLeft(), DNode.class);
-        nodeData.getTasks().getOrDefault(command.getTaskId(), new ArrayList<>()).remove(command.getResourceId());
+        nodeData.getTasks().getOrDefault(command.getTaskId(), new ArrayList<>()).remove(command.getSwimlaneId());
         if (nodeData.getTasks().get(command.getTaskId()).isEmpty()) {
             nodeData.getTasks().remove(command.getTaskId());
         }

@@ -8,9 +8,12 @@
  */
 package com.suixingpay.datas.common.cluster.impl.zookeeper;
 
+import com.suixingpay.datas.common.client.Client;
+import com.suixingpay.datas.common.client.impl.ZookeeperClient;
 import com.suixingpay.datas.common.cluster.*;
 import com.suixingpay.datas.common.cluster.impl.AbstractClusterProvider;
-import com.suixingpay.datas.common.config.ConfigType;
+import com.suixingpay.datas.common.config.ClusterConfig;
+import com.suixingpay.datas.common.config.source.ZookeeperConfig;
 
 /**
  * zookeeper集群提供者
@@ -21,8 +24,8 @@ import com.suixingpay.datas.common.config.ConfigType;
  */
 public class ZookeeperClusterProvider extends AbstractClusterProvider {
     @Override
-    protected ConfigType getMatchType() {
-        return ConfigType.ZOOKEEPER;
+    protected ClusterStrategy getMatchType() {
+        return ClusterStrategy.ZOOKEEPER;
     }
 
     @Override
@@ -33,5 +36,11 @@ public class ZookeeperClusterProvider extends AbstractClusterProvider {
     @Override
     protected Class getClusterListenerClass() {
         return ZookeeperClusterListener.class;
+    }
+
+    @Override
+    protected Client initClient(ClusterConfig clusterConfig) {
+        ZookeeperConfig config = new ZookeeperConfig(clusterConfig.getClient());
+        return new ZookeeperClient(config);
     }
 }

@@ -26,21 +26,21 @@ import org.apache.commons.lang3.StringUtils;
 public class DTaskLock extends DObject {
     @Setter @Getter private String taskId;
     @Setter @Getter private String nodeId;
-    @Setter @Getter private String resourceId;
+    @Setter @Getter private String swimlaneId;
     @Setter @Getter private String address = MachineUtils.IP_ADDRESS;
     @Setter @Getter private String hostName = MachineUtils.HOST_NAME;
     @Setter @Getter private String processId = MachineUtils.CURRENT_JVM_PID + "";
 
-    public DTaskLock(String taskId, String nodeId, String resourceId) {
+    public DTaskLock(String taskId, String nodeId, String swimlaneId) {
         this.taskId = taskId;
         this.nodeId = nodeId;
-        this.resourceId = resourceId;
+        this.swimlaneId = swimlaneId;
     }
 
     @Override
     public <T> void merge(T data) {
         DTaskLock lock = (DTaskLock) data;
-        if (taskId.equals(lock.getTaskId()) && lock.getResourceId().equals(resourceId)) {
+        if (taskId.equals(lock.getTaskId()) && lock.getSwimlaneId().equals(swimlaneId)) {
             if (!StringUtils.isBlank(lock.nodeId)) this.nodeId = lock.nodeId;
             if (!StringUtils.isBlank(lock.address)) this.address = lock.address;
             if (!StringUtils.isBlank(lock.hostName)) this.hostName = lock.hostName;

@@ -8,6 +8,7 @@
  */
 package com.suixingpay.datas.node.task.load;
 
+import com.suixingpay.datas.common.statistics.TaskLog;
 import com.suixingpay.datas.node.core.event.etl.ETLBucket;
 import com.suixingpay.datas.node.core.loader.DataLoader;
 import com.suixingpay.datas.node.core.task.AbstractStageJob;
@@ -66,6 +67,7 @@ public class LoadJob extends AbstractStageJob{
                     });
                 }
             } catch (Exception e) {
+                TaskLog.upload(work.getTaskId(), "Load ETLRow error" , e.getMessage(), work.getDataConsumer().getSwimlaneId());
                 LOGGER.error("Load ETLRow error!", e);
             }
         } while (null != bucket);

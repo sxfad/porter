@@ -8,6 +8,7 @@
  */
 package com.suixingpay.datas.node.core.task;
 
+import com.suixingpay.datas.common.alert.AlertReceiver;
 import com.suixingpay.datas.common.config.TaskConfig;
 import com.suixingpay.datas.common.exception.ClientException;
 import com.suixingpay.datas.common.exception.ConfigParseException;
@@ -20,7 +21,9 @@ import com.suixingpay.datas.node.core.loader.DataLoaderFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -33,6 +36,7 @@ public class Task {
     private List<DataConsumer> consumers;
     private DataLoader loader;
     private List<TableMapper> mappers;
+    private List<AlertReceiver> receivers = new ArrayList<>();
 
     public String getTaskId() {
         return taskId;
@@ -66,6 +70,14 @@ public class Task {
         this.consumers = consumers;
     }
 
+    public List<AlertReceiver> getReceivers() {
+        return receivers;
+    }
+
+    public void setReceivers(List<AlertReceiver> receivers) {
+        this.receivers = receivers;
+    }
+
     public static Task  fromConfig(TaskConfig config) throws ConfigParseException, ClientException, DataLoaderBuildException, DataConsumerBuildException {
         Task task = new Task();
         task.setTaskId(config.getTaskId());
@@ -76,6 +88,9 @@ public class Task {
         List<DataConsumer> consumers = DataConsumerFactory.INSTANCE.getConsumer(config.getConsumer());
         task.setConsumers(consumers);
         task.setLoader(DataLoaderFactory.INSTANCE.getLoader(config.getLoader()));
+        task.getReceivers().addAll(Arrays.stream(config.getReceiver()).collect(Collectors.toList()));
         return task;
     }
+
+
 }

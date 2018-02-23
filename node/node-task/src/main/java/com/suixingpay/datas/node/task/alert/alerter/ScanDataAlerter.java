@@ -2,6 +2,7 @@ package com.suixingpay.datas.node.task.alert.alerter;
 
 import com.alibaba.fastjson.JSON;
 import com.suixingpay.datas.common.alert.AlertProviderFactory;
+import com.suixingpay.datas.common.alert.AlertReceiver;
 import com.suixingpay.datas.common.cluster.data.DTaskStat;
 import com.suixingpay.datas.node.core.consumer.DataConsumer;
 import com.suixingpay.datas.node.core.loader.DataLoader;
@@ -13,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 
 /**
  * All rights Reserved, Designed By Suixingpay.
@@ -28,7 +30,7 @@ public class ScanDataAlerter implements Alerter{
     private static final long TIME_SPAN_OF_MINUTES = 30 ;
     private static final DateFormat NOTICE_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
 
-    public void check(DataConsumer consumer, DataLoader loader, DTaskStat stat, Triple<String[], String[], String[]> checkMeta) {
+    public void check(DataConsumer consumer, DataLoader loader, DTaskStat stat, Triple<String[], String[], String[]> checkMeta, List<AlertReceiver> receivers) {
         LOGGER.debug("trying scan data");
         if (null == stat ||  ! stat.getUpdateStat().get() || null == stat.getLastLoadedDataTime() || null == checkMeta.getRight()) {
             LOGGER.debug("null == stat ||  ! stat.getUpdateStat().get() || null == stat.getLastLoadedTime() || null == checkMeta.getRight()");
@@ -68,7 +70,7 @@ public class ScanDataAlerter implements Alerter{
                 LOGGER.debug("执行同步检查逻辑,执行时间段:{}-{}", NOTICE_DATE_FORMAT.format(startDate), NOTICE_DATE_FORMAT.format(endDate));
 
                 //执行同步检查逻辑，暂时为单线程模式执行
-                checkLogic(stat,consumer, loader, startDate, endDate, checkMeta);
+                checkLogic(stat,consumer, loader, startDate, endDate, checkMeta, receivers);
             }
             //更新同步时间点
             stat.setLastCheckedTime(DateUtils.addMinutes(lastCheckedTime, (int) (splitTimes * TIME_SPAN_OF_MINUTES) + 1));
@@ -76,7 +78,7 @@ public class ScanDataAlerter implements Alerter{
         LOGGER.debug("stat after scan data:{}", JSON.toJSONString(stat));
     }
 
-    private void checkLogic(DTaskStat stat, DataConsumer consumer, DataLoader loader, Date startDate, Date endDate, Triple<String[], String[], String[]> checkMeta) {
+    private void checkLogic(DTaskStat stat, DataConsumer consumer, DataLoader loader, Date startDate, Date endDate, Triple<String[], String[], String[]> checkMeta, List<AlertReceiver> receivers) {
         //更新对比时间
         int countSource = consumer.getDataCount(checkMeta.getLeft()[0],checkMeta.getMiddle()[0], checkMeta.getRight()[0], startDate, endDate);
         int countTarget = loader.getDataCount(checkMeta.getLeft()[1],checkMeta.getMiddle()[1], checkMeta.getRight()[1], startDate, endDate);
@@ -92,7 +94,7 @@ public class ScanDataAlerter implements Alerter{
                     .append("数据变更条目不一致，请尽快修正").toString();
 
             LOGGER.debug(notice.toString());
-            AlertProviderFactory.INSTANCE.notice(notice);
+            AlertProviderFactory.INSTANCE.notice(notice, receivers);
             //更新同步检查次数
             stat.incrementAlertedTimes();
         }

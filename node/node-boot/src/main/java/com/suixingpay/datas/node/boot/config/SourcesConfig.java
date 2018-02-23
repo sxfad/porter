@@ -9,7 +9,7 @@
 package com.suixingpay.datas.node.boot.config;
 
 import com.alibaba.fastjson.JSONObject;
-import com.suixingpay.datas.common.config.Config;
+import com.suixingpay.datas.common.config.SourceConfig;
 import com.suixingpay.datas.common.exception.ConfigParseException;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -41,11 +41,11 @@ public class SourcesConfig {
         this.source = source;
     }
 
-    public List<Pair<String, Config>> getConfig() throws  ConfigParseException {
-        List<Pair<String, Config>> configs = new ArrayList<>();
+    public List<Pair<String, SourceConfig>> getConfig() throws  ConfigParseException {
+        List<Pair<String, SourceConfig>> configs = new ArrayList<>();
         if (null != source && !source.isEmpty()) {
             for (Map.Entry<String, Map<String, String>> p : source.entrySet()) {
-                Config config = Config.getConfig(p.getValue());
+                SourceConfig config = SourceConfig.getConfig(p.getValue());
                 if (null != config) configs.add(new ImmutablePair<>(p.getKey(), config));
             }
             if (source.size() != configs.size()) {

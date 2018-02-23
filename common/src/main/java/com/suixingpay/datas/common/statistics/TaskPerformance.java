@@ -10,20 +10,23 @@
 package com.suixingpay.datas.common.statistics;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.suixingpay.datas.common.cluster.data.DTaskStat;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
 
 /**
+ * 任务每秒统计信息
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年02月09日 16:16
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月09日 16:16
  */
-public class TaskPerformance {
+public class TaskPerformance extends StatisticData {
+    private static final String NAME = "task";
     @Setter @Getter private String taskId;
-    @Setter @Getter private String resourceId;
+    @Setter @Getter private String swimlaneId;
     @Setter @Getter private String schema;
     @Setter @Getter private String table;
     @Setter @Getter private Long insertRow = 0L;
@@ -36,4 +39,29 @@ public class TaskPerformance {
     @Setter @Getter private  Long alertedTimes = 0L;
     @JSONField(format = "yyyyMMddHHmmss")
     @Setter @Getter private Date time;
+
+    public TaskPerformance() {
+
+    }
+
+    public TaskPerformance(DTaskStat stat) {
+        this();
+        this.taskId = stat.getTaskId();
+        this.swimlaneId = stat.getSwimlaneId();
+        this.schema = stat.getSchema();
+        this.table = stat.getTable();
+        this.insertRow = stat.getInsertRow().get();
+        this.updateRow = stat.getUpdateRow().get();
+        this.deleteRow = stat.getDeleteRow().get();
+        this.errorInsertRow = stat.getErrorInsertRow().get();
+        this.errorUpdateRow = stat.getErrorUpdateRow().get();
+        this.errorDeleteRow = stat.getErrorDeleteRow().get();
+        this.alertedTimes = stat.getAlertedTimes().get();
+        this.time = new Date();
+    }
+
+    @Override
+    public String getCategory() {
+        return NAME;
+    }
 }

@@ -2,25 +2,25 @@
  * All rights Reserved, Designed By Suixingpay.
  *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
- * @date: 2018年02月03日 16:44
+ * @date: 2018年02月23日 10:43
  * @Copyright ©2018 Suixingpay. All rights reserved.
  * 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
  */
 
-package com.suixingpay.datas.common.config;
+package com.suixingpay.datas.common.alert;
 
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Map;
-
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
- * @date: 2018年02月03日 16:44
+ * @date: 2018年02月23日 10:43
  * @version: V1.0
- * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月03日 16:44
+ * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月23日 10:43
  */
-public class DataLoaderConfig {
-    @Getter @Setter private String loaderName;
-    @Getter @Setter private Map<String,String> source;
+
+public class AlertReceiver {
+    @Setter @Getter private String realName;
+    @Setter @Getter private String email;
+    @Setter @Getter private String phone;
 }

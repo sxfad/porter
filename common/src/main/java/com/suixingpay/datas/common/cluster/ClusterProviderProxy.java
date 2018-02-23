@@ -10,8 +10,7 @@
 package com.suixingpay.datas.common.cluster;
 
 import com.suixingpay.datas.common.cluster.command.ClusterCommand;
-import com.suixingpay.datas.common.cluster.command.NodeRegisterCommand;
-import com.suixingpay.datas.common.config.Config;
+import com.suixingpay.datas.common.config.ClusterConfig;
 import com.suixingpay.datas.common.exception.ClientException;
 import com.suixingpay.datas.common.task.TaskEventListener;
 import org.springframework.core.io.support.SpringFactoriesLoader;
@@ -31,12 +30,12 @@ public enum ClusterProviderProxy {
     private final AtomicBoolean isConfig = new AtomicBoolean(false);
     private volatile ClusterProvider provider;
 
-    public void initialize(Config config) throws IOException, ClientException {
+    public void initialize(ClusterConfig config) throws IOException, ClientException {
         if (isConfig.compareAndSet(false, true)) {
             List<ClusterProvider> providers = SpringFactoriesLoader.loadFactories(ClusterProvider.class, null);
 
             for (ClusterProvider tmp : providers) {
-                if (tmp.matches(config.getConfigType())) {
+                if (tmp.matches(config.getStrategy())) {
                     tmp.start(config);
                     provider = tmp;
                     break;

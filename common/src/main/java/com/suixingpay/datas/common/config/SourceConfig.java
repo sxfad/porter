@@ -2,17 +2,14 @@
  * All rights Reserved, Designed By Suixingpay.
  *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
- * @date: 2018年02月02日 14:24
+ * @date: 2018年02月23日 11:53
  * @Copyright ©2018 Suixingpay. All rights reserved.
  * 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
  */
 
 package com.suixingpay.datas.common.config;
 
-import com.suixingpay.datas.common.config.source.JDBCConfig;
-import com.suixingpay.datas.common.config.source.KafkaConfig;
-import com.suixingpay.datas.common.config.source.SourceConfig;
-import com.suixingpay.datas.common.config.source.ZookeeperConfig;
+import com.suixingpay.datas.common.config.source.*;
 import com.suixingpay.datas.common.exception.ConfigParseException;
 import com.suixingpay.datas.common.util.BeanUtils;
 import lombok.Getter;
@@ -21,43 +18,45 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.Map;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
- * @date: 2018年02月02日 14:24
+ * @date: 2018年02月23日 11:53
  * @version: V1.0
- * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月02日 14:24
+ * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月23日 11:53
  */
-public  abstract class Config {
-    protected static final Logger LOGGER = LoggerFactory.getLogger(Config.class);
-    public static final String CONFIG_TYPE_KEY = "configType";
-    public static final String PUBLIC_SOURCE_NAME_KEY = "sourceName";
-    @Getter protected ConfigType configType;
+public abstract class SourceConfig {
+    protected static final Logger LOGGER = LoggerFactory.getLogger(SourceConfig.class);
+    public static final String SOURCE_TYPE_KEY = "sourceType";
+    public static final String NAME_SOURCE_KEY = "sourceName";
+    @Getter
+    protected SourceType sourceType;
     private Map<String, String> properties;
 
     protected abstract void childStuff();
     protected abstract String[] childStuffColumns();
 
-    protected <T extends Config> T stuff() throws InvocationTargetException, IllegalAccessException {
-        BeanUtils.copyProperties(properties, this, ArrayUtils.addAll(childStuffColumns(),CONFIG_TYPE_KEY));
-        childStuff();
-        return (T) this;
+    public  <T extends SourceConfig> T stuff() throws ConfigParseException {
+        try {
+            BeanUtils.copyProperties(properties, this, ArrayUtils.addAll(childStuffColumns(),SOURCE_TYPE_KEY));
+            childStuff();
+            return (T) this;
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new ConfigParseException((null != properties ? properties.toString() : "{}") + "转换SourceConfig出错");
+        }
     }
 
 
-    public static  <T extends Config> T getConfig(Map<String, String>  properties) throws ConfigParseException {
+    public static  <T extends SourceConfig> T getConfig(Map<String, String>  properties) throws ConfigParseException {
         T config = null;
         try {
-            String configTypeStr = properties.getOrDefault(CONFIG_TYPE_KEY, "");
-            ConfigType configType = !StringUtils.isBlank(configTypeStr) ? ConfigType.valueOf(configTypeStr) : null;
-            if (null != configType) {
-                switch (configType) {
-                    case REDIS:
-                        config = null;
-                        break;
+            String sourceTypeStr = properties.getOrDefault(SOURCE_TYPE_KEY, "");
+            SourceType sourceType = !StringUtils.isBlank(sourceTypeStr) ? SourceType.valueOf(sourceTypeStr) : null;
+            if (null != sourceType) {
+                switch (sourceType) {
                     case ZOOKEEPER:
                         config = (T) new ZookeeperConfig();
                         break;
@@ -67,15 +66,15 @@ public  abstract class Config {
                     case KAFKA:
                         config = (T) new KafkaConfig();
                         break;
-                    case EMAIL_ALERT:
-                        config = (T) new EmailAlertConfig();
+                    case EMAIL:
+                        config = (T) new EmailConfig();
                         break;
-                    case PUBLIC_SOURCE:
-                        config = (T) new SourceConfig();
+                    case NAME_SOURCE:
+                        config = (T) new NameSourceConfig();
                         break;
                 }
-            } else if (properties.containsKey(PUBLIC_SOURCE_NAME_KEY)) {
-                config = (T) new SourceConfig();
+            } else if (properties.containsKey(NAME_SOURCE_KEY)) {
+                config = (T) new NameSourceConfig();
             }
             if (null != config) {
                 config.setProperties(properties);

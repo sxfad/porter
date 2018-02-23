@@ -40,5 +40,5 @@ public interface ConsumeClient extends Client{
         <F, O> F  accept(O o) throws ParseException;
     }
 
-
+    String getSwimlaneId();
 }

@@ -13,6 +13,7 @@ import com.suixingpay.datas.common.exception.ClientException;
 import com.suixingpay.datas.common.exception.ConfigParseException;
 import com.suixingpay.datas.common.exception.DataConsumerBuildException;
 import com.suixingpay.datas.common.exception.DataLoaderBuildException;
+import com.suixingpay.datas.common.statistics.TaskLog;
 import com.suixingpay.datas.common.util.DefaultNamedThreadFactory;
 import com.suixingpay.datas.node.core.consumer.DataConsumer;
 import com.suixingpay.datas.node.core.task.TableMapper;
@@ -92,8 +93,8 @@ public class TaskWorker {
 
     public void stopJob(List<DataConsumer> consumerSourceId) {
         consumerSourceId.forEach(c -> {
-            if (JOBS.containsKey(c.getSourceId())) {
-                JOBS.get(c.getSourceId()).stop();
+            if (JOBS.containsKey(c.getSwimlaneId())) {
+                JOBS.get(c.getSwimlaneId()).stop();
             }
         });
     }
@@ -109,12 +110,13 @@ public class TaskWorker {
             TaskWork job = null;
             try {
                 //启动JOB
-                job = new TaskWork(c, task.getLoader(), task.getTaskId(), this);
+                job = new TaskWork(c, task.getLoader(), task.getTaskId(), task.getReceivers(), this);
                 job.start();
-                JOBS.put(c.getSourceId(), job);
+                JOBS.put(c.getSwimlaneId(), job);
             } catch (Exception e){
                 if (null != job) job.stop();
-                LOGGER.error("Consumer JOB[{}] failed to start!", c.getSourceId(), e);
+                LOGGER.error("Consumer JOB[{}] failed to start!", c.getSwimlaneId(), e);
+                TaskLog.upload(task.getTaskId(), "任务启动失败" , e.getMessage(), c.getSwimlaneId());
             }
         });
     }

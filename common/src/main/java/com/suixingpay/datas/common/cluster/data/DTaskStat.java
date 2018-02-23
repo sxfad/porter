@@ -19,16 +19,16 @@ import java.util.concurrent.atomic.AtomicLong;
 
 /**
  *
- * 任务状态
+ * 任务进度状态汇总
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月20日 13:45
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月20日 13:45
  */
-public class DTaskStat  extends DObject {
+public class DTaskStat extends DObject {
     private String taskId;
     private String nodeId;
-    @Getter @Setter private String resourceId;
+    @Getter @Setter private String swimlaneId;
     private String schema;
     private String table;
 
@@ -76,11 +76,11 @@ public class DTaskStat  extends DObject {
         registeredTime = new Date();
         heartbeatTime = new Date();
     }
-    public DTaskStat(String taskId, String nodeId, String resourceId, String schema, String table) {
+    public DTaskStat(String taskId, String nodeId, String swimlaneId, String schema, String table) {
         this();
         this.taskId = taskId;
         this.nodeId = nodeId;
-        this.resourceId = resourceId;
+        this.swimlaneId = swimlaneId;
         this.schema = schema;
         this.table = table;
     }
@@ -125,7 +125,7 @@ public class DTaskStat  extends DObject {
     @Override
     public <T> void merge(T data) {
         DTaskStat stat = (DTaskStat) data;
-        if (taskId.equals(stat.getTaskId()) && stat.getResourceId().equals(resourceId) && table.equals(stat.table)
+        if (taskId.equals(stat.getTaskId()) && stat.getSwimlaneId().equals(swimlaneId) && table.equals(stat.table)
                 && schema.equals(stat.schema)) {
             if (!StringUtils.isBlank(stat.nodeId)) this.nodeId = stat.nodeId;
             if (!StringUtils.isBlank(stat.progress)) this.progress = stat.progress;

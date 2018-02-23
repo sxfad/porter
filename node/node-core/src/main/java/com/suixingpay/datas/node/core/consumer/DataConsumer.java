@@ -51,10 +51,11 @@ public interface DataConsumer {
     boolean isMatch(String consumerName);
 
     /**
-     * 区分同一个任务的不同消费资源，用于分布式锁抢占、任务统计等
+     * 区分同一个任务的不同消费通道，用于分布式锁抢占、任务统计等
+     * 获取消费器泳道ID
      * @return
      */
-    String getSourceId();
+    String getSwimlaneId();
 
     /**
      * 资源控制

@@ -62,7 +62,7 @@ public class AlerterFactory {
                     public void run() {
                         //执行任务
                         try {
-                            alerter.check(dataConsumer, dataLoader, stat, getCheckMeta(work, stat.getSchema(), stat.getTable()));
+                            alerter.check(dataConsumer, dataLoader, stat, getCheckMeta(work, stat.getSchema(), stat.getTable()), work.getReceivers());
                         } finally {
                             try {
                                 barrier.await();
@@ -83,7 +83,7 @@ public class AlerterFactory {
             }
         } else {
             for (DTaskStat stat : stats) {
-                alerter.check(dataConsumer, dataLoader, stat, getCheckMeta(work, stat.getSchema(), stat.getTable()));
+                alerter.check(dataConsumer, dataLoader, stat, getCheckMeta(work, stat.getSchema(), stat.getTable()), work.getReceivers());
             }
         }
     }

@@ -14,10 +14,10 @@ import com.suixingpay.datas.common.client.ClusterClient;
 import com.suixingpay.datas.common.cluster.ClusterListener;
 import com.suixingpay.datas.common.cluster.ClusterMonitor;
 import com.suixingpay.datas.common.cluster.ClusterProvider;
+import com.suixingpay.datas.common.cluster.ClusterStrategy;
 import com.suixingpay.datas.common.cluster.command.*;
 import com.suixingpay.datas.common.cluster.command.broadcast.*;
-import com.suixingpay.datas.common.config.Config;
-import com.suixingpay.datas.common.config.ConfigType;
+import com.suixingpay.datas.common.config.ClusterConfig;
 import com.suixingpay.datas.common.exception.ClientException;
 import com.suixingpay.datas.common.exception.ClientMatchException;
 import com.suixingpay.datas.common.task.TaskEventListener;
@@ -38,15 +38,16 @@ import java.util.function.Consumer;
  */
 public abstract class AbstractClusterProvider<C extends Client> implements ClusterProvider {
     private final AtomicBoolean status = new AtomicBoolean(false);
-    protected abstract ConfigType getMatchType();
+    protected abstract ClusterStrategy getMatchType();
     protected abstract ClusterMonitor newMonitor();
     protected abstract Class getClusterListenerClass();
+    protected abstract C initClient(ClusterConfig clusterConfig);
     private C client;
     private ClusterMonitor monitor;
 
     @Override
-    public boolean matches(ConfigType type) {
-        return ConfigType.ZOOKEEPER == getMatchType();
+    public boolean matches(ClusterStrategy type) {
+        return ClusterStrategy.ZOOKEEPER == getMatchType();
     }
 
     @Override
@@ -103,7 +104,7 @@ public abstract class AbstractClusterProvider<C extends Client> implements Clust
     }
 
     @Override
-    public void start(Config config) throws IOException, ClientException {
+    public void start(ClusterConfig config) throws IOException, ClientException {
         if (status.compareAndSet(false, true)) {
             initialize(config);
             client.start();
@@ -128,8 +129,8 @@ public abstract class AbstractClusterProvider<C extends Client> implements Clust
         }
     }
 
-    private void initialize(Config config) throws ClientException, IOException {
-        client = (C) AbstractClient.getClient(config);
+    private void initialize(ClusterConfig config) throws ClientException, IOException {
+        client = initClient(config);
         if (null == client || ! (client instanceof ClusterClient)) {
             throw new ClientMatchException();
         }

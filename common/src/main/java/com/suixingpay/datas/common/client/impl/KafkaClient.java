@@ -13,6 +13,7 @@ import com.suixingpay.datas.common.client.AbstractClient;
 import com.suixingpay.datas.common.client.ConsumeClient;
 import com.suixingpay.datas.common.config.source.KafkaConfig;
 import com.suixingpay.datas.common.exception.ClientException;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
@@ -100,6 +101,12 @@ public class KafkaClient extends AbstractClient<KafkaConfig> implements ConsumeC
         }
         return clients;
     }
+
+    @Override
+    public String getSwimlaneId() {
+        return StringUtils.join(getConfig().getTopics(), "_");
+    }
+
 
     @Override
     protected void doShutdown() {

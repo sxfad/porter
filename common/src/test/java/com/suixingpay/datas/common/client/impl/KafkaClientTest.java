@@ -13,7 +13,6 @@ import com.alibaba.fastjson.JSON;
 import com.suixingpay.datas.common.client.ConsumeClient;
 import com.suixingpay.datas.common.config.source.KafkaConfig;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.text.ParseException;

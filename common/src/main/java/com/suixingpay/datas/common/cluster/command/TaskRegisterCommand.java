@@ -20,10 +20,10 @@ import lombok.Setter;
  */
 public class TaskRegisterCommand implements ClusterCommand {
     @Setter @Getter private String taskId;
-    @Setter @Getter private String resourceId;
+    @Setter @Getter private String swimlaneId;
 
-    public TaskRegisterCommand(String taskId, String resourceId) {
+    public TaskRegisterCommand(String taskId, String swimlaneId) {
         this.taskId = taskId;
-        this.resourceId = resourceId;
+        this.swimlaneId = swimlaneId;
     }
 }

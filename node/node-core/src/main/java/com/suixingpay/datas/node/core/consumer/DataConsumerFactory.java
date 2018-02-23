@@ -13,8 +13,8 @@ import com.suixingpay.datas.common.client.AbstractClient;
 import com.suixingpay.datas.common.client.Client;
 import com.suixingpay.datas.common.client.ConsumeClient;
 import com.suixingpay.datas.common.client.MetaQueryClient;
-import com.suixingpay.datas.common.config.Config;
 import com.suixingpay.datas.common.config.DataConsumerConfig;
+import com.suixingpay.datas.common.config.SourceConfig;
 import com.suixingpay.datas.common.exception.ClientException;
 import com.suixingpay.datas.common.exception.ConfigParseException;
 import com.suixingpay.datas.common.exception.DataConsumerBuildException;
@@ -36,25 +36,32 @@ public enum DataConsumerFactory {
     private final List<DataConsumer> CONSUMER_TEMPLATE = SpringFactoriesLoader.loadFactories(DataConsumer.class, null);
 
     public List<DataConsumer> getConsumer(DataConsumerConfig config) throws ClientException, ConfigParseException, DataConsumerBuildException {
-        List<DataConsumer> consumers = new ArrayList<>();
+        //消息转换器
         EventConverter converter = ConverterFactory.INSTANCE.getConverter(config.getConverter());
 
+        List<DataConsumer> consumers = new ArrayList<>();
+
+
         //获取源数据查询配置
-        Client tempClient = AbstractClient.getClient(Config.getConfig(config.getMetaSource()));
+        Client tempMetaQueryClient = AbstractClient.getClient(SourceConfig.getConfig(config.getMetaSource()));
 
         MetaQueryClient metaQueryClient = null;
-        if (null != tempClient && tempClient instanceof MetaQueryClient) {
-            metaQueryClient = (MetaQueryClient) tempClient;
+        if (null != tempMetaQueryClient && tempMetaQueryClient instanceof MetaQueryClient) {
+            metaQueryClient = (MetaQueryClient) tempMetaQueryClient;
         }
-
         if (null == metaQueryClient) throw new ClientException("MetaQueryClient初始化失败:" + config.getMetaSource());
 
-        Client client = AbstractClient.getClient( Config.getConfig(config.getSource()));
+
+        //消费数据获取来源
+        Client tempConsumeclient = AbstractClient.getClient( SourceConfig.getConfig(config.getSource()));
+
         ConsumeClient consumeClient = null;
-        if (null != client && client instanceof ConsumeClient) {
-            consumeClient = (ConsumeClient)client;
+        if (null != tempConsumeclient && tempConsumeclient instanceof ConsumeClient) {
+            consumeClient = (ConsumeClient)tempConsumeclient;
         }
         if (null == consumeClient) throw new ClientException("ConsumeClient初始化失败:" + config.getSource());
+
+
 
         List<ConsumeClient> consumeClients = consumeClient.split();
         //释放浪费创建的对象
@@ -67,7 +74,6 @@ public enum DataConsumerFactory {
             consumer.setIncludes(config.getIncludes());
             consumers.add(consumer);
         }
-
         return consumers;
     }
 

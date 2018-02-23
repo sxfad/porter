@@ -9,8 +9,7 @@
 
 package com.suixingpay.datas.common.config.source;
 
-import com.suixingpay.datas.common.config.Config;
-import com.suixingpay.datas.common.config.ConfigType;
+import com.suixingpay.datas.common.config.SourceConfig;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,7 +23,7 @@ import java.util.stream.Collectors;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月02日 14:24
  */
-public class KafkaConfig  extends Config {
+public class KafkaConfig  extends SourceConfig {
     private static final String TOPIC_SPLIT_CHARACTER = ",";
     @Setter @Getter private String servers;
     @Setter @Getter private String group;
@@ -35,7 +34,7 @@ public class KafkaConfig  extends Config {
     @Setter @Getter private boolean autoCommit = Boolean.TRUE;
 
     public   KafkaConfig() {
-        configType = ConfigType.KAFKA;
+        sourceType = SourceType.KAFKA;
     }
 
     @Override

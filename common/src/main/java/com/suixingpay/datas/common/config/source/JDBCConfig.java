@@ -9,8 +9,7 @@
 
 package com.suixingpay.datas.common.config.source;
 
-import com.suixingpay.datas.common.config.Config;
-import com.suixingpay.datas.common.config.ConfigType;
+import com.suixingpay.datas.common.config.SourceConfig;
 import com.suixingpay.datas.common.db.meta.DbType;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,7 +21,7 @@ import org.apache.commons.lang3.StringUtils;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月02日 14:24
  */
-public class JDBCConfig extends Config {
+public class JDBCConfig extends SourceConfig {
     //驱动类型
     @Setter @Getter private String driverClassName;
     @Setter @Getter private String url;
@@ -35,7 +34,7 @@ public class JDBCConfig extends Config {
     @Setter @Getter private DbType dbType;
 
     public  JDBCConfig() {
-        configType =  ConfigType.JDBC;
+        sourceType =  SourceType.JDBC;
     }
 
     @Override

@@ -84,8 +84,19 @@ public interface DataLoader {
     TableSchema findTable(String finalSchema, String finalTable);
 
     /**
+     * 在transform阶段调用,用于映射到目标端表结构
+     * @param finalSchema
+     * @param finalTable
+     * @param cache 是否缓存TableSchema对象
+     * @return
+     */
+    TableSchema findTable(String finalSchema, String finalTable, boolean cache);
+
+    /**
      * 在transform阶段调用,用于自定义处理数据行
      * @param row
      */
     void mouldRow(ETLRow row);
+
+
 }

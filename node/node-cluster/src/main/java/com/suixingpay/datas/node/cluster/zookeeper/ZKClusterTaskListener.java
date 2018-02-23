@@ -140,22 +140,22 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
 
         //创建任务统计节点
         try {
-            String alertNode = statPath + "/" + task.getResourceId();
+            String alertNode = statPath + "/" + task.getSwimlaneId();
             if (null == client.exists(alertNode, true)) {
                 client.create(alertNode,false ,"{}");
             }
         } catch (Exception e) {
-            LOGGER.error("创建任务统计节点失败->task:{},node:{},consume-resource:{},", task.getTaskId(), nodeId, task.getResourceId(), e);
+            LOGGER.error("创建任务统计节点失败->task:{},node:{},consume-resource:{},", task.getTaskId(), nodeId, task.getSwimlaneId(), e);
         }
 
         //任务分配
-        String topicPath = assignPath + "/" + task.getResourceId();
+        String topicPath = assignPath + "/" + task.getSwimlaneId();
         Stat ifAssignTopic = client.exists(topicPath, true);
         if (null == ifAssignTopic) {
             //为当前工作节点分配任务topic
-            client.create(topicPath,false, new DTaskLock(task.getTaskId(), nodeId, task.getResourceId()).toString());
+            client.create(topicPath,false, new DTaskLock(task.getTaskId(), nodeId, task.getSwimlaneId()).toString());
             //通知对此感兴趣的Listener
-            ClusterProviderProxy.INSTANCE.broadcast(new TaskAssignedCommand(task.getTaskId(),task.getResourceId()));
+            ClusterProviderProxy.INSTANCE.broadcast(new TaskAssignedCommand(task.getTaskId(),task.getSwimlaneId()));
         } else {
             throw  new TaskLockException(topicPath+",锁定资源失败。");
         }
@@ -165,14 +165,14 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
     public void uploadStat(TaskStatCommand command) throws Exception {
         DTaskStat dataStat = command.getStat();
         //.intern()保证全局唯一字符串对象
-        String node = (listenPath() + "/" +dataStat.getTaskId() + "/stat/" + dataStat.getResourceId()
+        String node = (listenPath() + "/" +dataStat.getTaskId() + "/stat/" + dataStat.getSwimlaneId()
                 + "/" + dataStat.getSchema()+ "." + dataStat.getTable()).intern();
         //控制锁的粒度到每个consume-resource节点，
         synchronized (node) {
             Stat stat = client.exists(node, true);
             //节点不存在，创建新节点
             if (null == stat) {
-                DTaskStat thisStat = new DTaskStat(dataStat.getTaskId(), nodeId, dataStat.getResourceId(), dataStat.getSchema(), dataStat.getTable());
+                DTaskStat thisStat = new DTaskStat(dataStat.getTaskId(), nodeId, dataStat.getSwimlaneId(), dataStat.getSchema(), dataStat.getTable());
                 client.create(node,false ,thisStat.toString());
                 stat = client.exists(node, true);
             }
@@ -197,7 +197,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
 
     @Override
     public void stopTask(TaskStopCommand command) throws Exception {
-        String node = listenPath() + "/" + command.getTaskId() + "/lock/" + command.getResourceId();
+        String node = listenPath() + "/" + command.getTaskId() + "/lock/" + command.getSwimlaneId();
         Stat stat = client.exists(node, false);
         if (null != stat) {
             Pair<String, Stat> remoteData = client.getData(node);
@@ -211,7 +211,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
 
     @Override
     public void queryTaskStat(TaskStatQueryCommand command) {
-        String node = listenPath() + "/" +command.getTaskId() + "/stat/" + command.getResourceId();
+        String node = listenPath() + "/" +command.getTaskId() + "/stat/" + command.getSwimlaneId();
         LOGGER.debug("query \"{}\" children node.", node);
 
         List<String> children = client.getChildren(node);

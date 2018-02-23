@@ -9,14 +9,14 @@
 package com.suixingpay.datas.node.task.worker;
 
 import com.alibaba.fastjson.JSON;
+import com.suixingpay.datas.common.alert.AlertReceiver;
 import com.suixingpay.datas.common.cluster.ClusterProviderProxy;
-import com.suixingpay.datas.common.cluster.command.TaskRegisterCommand;
-import com.suixingpay.datas.common.cluster.command.TaskStatCommand;
-import com.suixingpay.datas.common.cluster.command.TaskStatQueryCommand;
-import com.suixingpay.datas.common.cluster.command.TaskStopCommand;
+import com.suixingpay.datas.common.cluster.command.*;
 import com.suixingpay.datas.common.cluster.data.DCallback;
 import com.suixingpay.datas.common.cluster.data.DObject;
 import com.suixingpay.datas.common.cluster.data.DTaskStat;
+import com.suixingpay.datas.common.statistics.TaskLog;
+import com.suixingpay.datas.common.statistics.TaskPerformance;
 import com.suixingpay.datas.node.core.consumer.DataConsumer;
 import com.suixingpay.datas.node.core.loader.DataLoader;
 import com.suixingpay.datas.node.core.task.StageJob;
@@ -64,15 +64,18 @@ public class TaskWork {
     private final Map<String, TableMapper> mappers;
     private final TaskWorker worker;
 
+    private final List<AlertReceiver> receivers;
 
-    public TaskWork(DataConsumer dataConsumer, DataLoader dataLoader, String taskId, TaskWorker worker) throws Exception {
+
+    public TaskWork(DataConsumer dataConsumer, DataLoader dataLoader, String taskId, List<AlertReceiver> receivers, TaskWorker worker) throws Exception {
         this.dataConsumer = dataConsumer;
         this.dataLoader = dataLoader;
-        basicThreadName = "TaskWork-[taskId:" + taskId + "]-[consumer:" + dataConsumer.getSourceId() + "]";
+        basicThreadName = "TaskWork-[taskId:" + taskId + "]-[consumer:" + dataConsumer.getSwimlaneId() + "]";
         this.taskId = taskId;
         this.stats = new ConcurrentHashMap<>();
         this.mappers = new ConcurrentHashMap<>();
         this.worker = worker;
+        this.receivers = Collections.unmodifiableList(receivers);
         TaskWork work = this;
         JOBS = new LinkedHashMap<StageType, StageJob>(){
             {
@@ -85,7 +88,7 @@ public class TaskWork {
         };
 
         //从集群模块获取任务状态统计信息
-        ClusterProviderProxy.INSTANCE.broadcast(new TaskStatQueryCommand(taskId, dataConsumer.getSourceId(), new DCallback() {
+        ClusterProviderProxy.INSTANCE.broadcast(new TaskStatQueryCommand(taskId, dataConsumer.getSwimlaneId(), new DCallback() {
             @Override
             public void callback(List<DObject> objects) {
                 for ( DObject object : objects) {
@@ -98,7 +101,7 @@ public class TaskWork {
 
     public void stop() {
         try {
-            LOGGER.info("终止执行任务[{}-{}]", taskId, dataConsumer.getSourceId());
+            LOGGER.info("终止执行任务[{}-{}]", taskId, dataConsumer.getSwimlaneId());
             //终止阶段性工作,需要
             for (Map.Entry<StageType, StageJob> jobs : JOBS.entrySet()) {
                 jobs.getValue().stop();
@@ -106,16 +109,17 @@ public class TaskWork {
             //上传消费进度
             submitStat();
             //广播任务结束消息
-            ClusterProviderProxy.INSTANCE.broadcast(new TaskStopCommand(taskId,dataConsumer.getSourceId()));
+            ClusterProviderProxy.INSTANCE.broadcast(new TaskStopCommand(taskId,dataConsumer.getSwimlaneId()));
         } catch (Exception e) {
-            LOGGER.error("终止执行任务[{}-{}]异常", taskId, dataConsumer.getSourceId(), e);
+            TaskLog.upload(taskId, "任务关闭失败" , e.getMessage(), dataConsumer.getSwimlaneId());
+            LOGGER.error("终止执行任务[{}-{}]异常", taskId, dataConsumer.getSwimlaneId(), e);
         }
     }
 
     public void start() throws Exception {
-        LOGGER.info("开始执行任务[{}-{}]", taskId, dataConsumer.getSourceId());
+        LOGGER.info("开始执行任务[{}-{}]", taskId, dataConsumer.getSwimlaneId());
         //会抛出分布式锁任务抢占异常
-        ClusterProviderProxy.INSTANCE.broadcast(new TaskRegisterCommand(taskId, dataConsumer.getSourceId()));
+        ClusterProviderProxy.INSTANCE.broadcast(new TaskRegisterCommand(taskId, dataConsumer.getSwimlaneId()));
         //开始阶段性工作
         for (Map.Entry<StageType, StageJob> jobs : JOBS.entrySet()) {
             jobs.getValue().start();
@@ -173,6 +177,7 @@ public class TaskWork {
                         }));
                         //上传统计
                         //TaskPerformance
+                        ClusterProviderProxy.INSTANCE.broadcast(new StatisticUploadCommand(new TaskPerformance(newStat)));
                     }
                 } catch (Exception e) {
                     LOGGER.error("上传任务消费进度出错", e);
@@ -186,7 +191,7 @@ public class TaskWork {
         DTaskStat stat = stats.computeIfAbsent(key, new Function<String, DTaskStat>() {
             @Override
             public DTaskStat apply(String s) {
-                DTaskStat tmp = new DTaskStat(taskId, null, dataConsumer.getSourceId(), schema, table);
+                DTaskStat tmp = new DTaskStat(taskId, null, dataConsumer.getSwimlaneId(), schema, table);
                 return tmp;
             }
         });
@@ -229,5 +234,9 @@ public class TaskWork {
 
     public DataLoader getDataLoader() {
         return dataLoader;
+    }
+
+    public List<AlertReceiver> getReceivers() {
+        return receivers;
     }
 }

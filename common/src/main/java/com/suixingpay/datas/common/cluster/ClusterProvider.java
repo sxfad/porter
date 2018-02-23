@@ -10,8 +10,7 @@
 package com.suixingpay.datas.common.cluster;
 
 import com.suixingpay.datas.common.cluster.command.ClusterCommand;
-import com.suixingpay.datas.common.config.Config;
-import com.suixingpay.datas.common.config.ConfigType;
+import com.suixingpay.datas.common.config.ClusterConfig;
 import com.suixingpay.datas.common.exception.ClientException;
 import com.suixingpay.datas.common.task.TaskEventListener;
 
@@ -40,14 +39,14 @@ public interface ClusterProvider {
      * 启动集群模块
      * @throws IOException
      */
-    void start(Config config) throws IOException, ClientException;
+    void start(ClusterConfig config) throws IOException, ClientException;
 
     /**
      * 匹配配置文件指定的集群实现
      * @param type
      * @return
      */
-    boolean matches(ConfigType type);
+    boolean matches(ClusterStrategy type);
 
     /**
      * 退出集群

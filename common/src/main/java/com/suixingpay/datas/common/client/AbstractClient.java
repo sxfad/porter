@@ -9,14 +9,14 @@
 
 package com.suixingpay.datas.common.client;
 
+import com.suixingpay.datas.common.client.impl.EmailClient;
 import com.suixingpay.datas.common.client.impl.JDBCClient;
 import com.suixingpay.datas.common.client.impl.KafkaClient;
 import com.suixingpay.datas.common.client.impl.ZookeeperClient;
-import com.suixingpay.datas.common.config.Config;
+import com.suixingpay.datas.common.config.SourceConfig;
 import com.suixingpay.datas.common.config.source.*;
 import com.suixingpay.datas.common.exception.ClientException;
 import com.suixingpay.datas.common.exception.ClientMatchException;
-import com.suixingpay.datas.common.exception.ConfigParseException;
 import lombok.Getter;
 import lombok.Setter;
 import org.slf4j.Logger;
@@ -31,7 +31,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月02日 14:06
  */
-public abstract class AbstractClient<T extends Config> implements Client {
+public abstract class AbstractClient<T extends SourceConfig> implements Client {
 
     protected final Logger LOGGER = LoggerFactory.getLogger(AbstractClient.class);
     private final AtomicBoolean status = new AtomicBoolean(false);
@@ -84,24 +84,23 @@ public abstract class AbstractClient<T extends Config> implements Client {
         return true;
     }
 
-    public static Client getClient(Config config) throws ClientException {
-        if (config instanceof SourceConfig) {
-            return PublicClientContext.INSTANCE.getSource(((SourceConfig) config).getSourceName());
+    public static Client getClient(SourceConfig config) throws ClientException {
+        if (config instanceof NameSourceConfig) {
+            return PublicClientContext.INSTANCE.getSource(((NameSourceConfig) config).getSourceName());
         }
-        try {
-            switch (config.getConfigType()) {
-                case KAFKA:
-                    return new KafkaClient((KafkaConfig) config);
-                case JDBC:
-                    return new JDBCClient((JDBCConfig) config);
-                case ZOOKEEPER:
-                    return new ZookeeperClient((ZookeeperConfig) config);
-                default:
-                    throw  new ClientMatchException();
-            }
-        } catch (Exception e) {
-            throw  new ClientException(e.getMessage());
+        if (config instanceof JDBCConfig) {
+            return new JDBCClient((JDBCConfig) config);
         }
+        if (config instanceof KafkaConfig) {
+            return new KafkaClient((KafkaConfig) config);
+        }
+        if (config instanceof ZookeeperConfig) {
+            return new ZookeeperClient((ZookeeperConfig) config);
+        }
+        if (config instanceof EmailConfig) {
+            return new EmailClient((EmailConfig) config);
+        }
+        throw  new ClientMatchException();
     }
 
     @Override

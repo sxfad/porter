@@ -21,12 +21,12 @@ import lombok.Getter;
  */
 public class TaskStatQueryCommand implements ClusterCommand {
     @Getter private final String taskId;
-    @Getter private final String resourceId;
+    @Getter private final String swimlaneId;
     @Getter private final DCallback callback;
 
-    public TaskStatQueryCommand(String taskId, String resourceId, DCallback dCallback) {
+    public TaskStatQueryCommand(String taskId, String swimlaneId, DCallback dCallback) {
         this.taskId = taskId;
-        this.resourceId = resourceId;
+        this.swimlaneId = swimlaneId;
         this.callback = dCallback;
     }
 }

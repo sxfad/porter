@@ -9,8 +9,7 @@
 
 package com.suixingpay.datas.common.config.source;
 
-import com.suixingpay.datas.common.config.Config;
-import com.suixingpay.datas.common.config.ConfigType;
+import com.suixingpay.datas.common.config.SourceConfig;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,11 +20,11 @@ import lombok.Setter;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月04日 23:38
  */
-public class SourceConfig extends Config{
+public class NameSourceConfig extends SourceConfig {
     @Setter @Getter private String sourceName;
 
-    public SourceConfig() {
-        configType =  ConfigType.PUBLIC_SOURCE;
+    public NameSourceConfig() {
+        sourceType =  SourceType.NAME_SOURCE;
     }
 
     @Override

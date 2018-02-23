@@ -15,14 +15,12 @@ import com.suixingpay.datas.node.core.event.s.EventConverter;
 import com.suixingpay.datas.node.core.event.s.MessageEvent;
 import lombok.Getter;
 import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -97,4 +95,11 @@ public abstract class AbstractDataConsumer implements DataConsumer {
     }
 
     protected abstract List<MessageEvent> doFetch();
+
+
+    @Override
+    public String getSwimlaneId() {
+        return consumeClient.getSwimlaneId();
+
+    }
 }

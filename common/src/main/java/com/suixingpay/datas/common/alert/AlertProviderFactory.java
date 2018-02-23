@@ -10,13 +10,15 @@
 package com.suixingpay.datas.common.alert;
 
 import com.suixingpay.datas.common.alert.provider.AlertProvider;
-import com.suixingpay.datas.common.alert.provider.EmailAlertProvider;
-import com.suixingpay.datas.common.config.Config;
-import com.suixingpay.datas.common.config.ConfigType;
-import com.suixingpay.datas.common.config.EmailAlertConfig;
-import com.suixingpay.datas.common.util.ApplicationContextUtils;
-import org.springframework.mail.javamail.JavaMailSender;
+import com.suixingpay.datas.common.alert.provider.NormalAlertProvider;
+import com.suixingpay.datas.common.client.AlertClient;
+import com.suixingpay.datas.common.client.impl.EmailClient;
+import com.suixingpay.datas.common.config.AlertConfig;
+import com.suixingpay.datas.common.config.source.EmailConfig;
+import com.suixingpay.datas.common.exception.ClientConnectionException;
+import com.suixingpay.datas.common.exception.ConfigParseException;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -30,14 +32,24 @@ public enum AlertProviderFactory {
     INSTANCE();
     private final AtomicBoolean isInitialized = new AtomicBoolean(false);
     private AlertProvider alert;
-    public void initialize(Config config) {
+    public void initialize(AlertConfig config) throws ConfigParseException, ClientConnectionException {
+        //校验配置文件参数
+        if ( null == config || null == config.getStrategy() || null == config.getClient()
+                || config.getClient().isEmpty() ) {
+            return;
+        }
+
         if (isInitialized.compareAndSet(false, true)) {
-            if (config.getConfigType() == ConfigType.EMAIL_ALERT) {
-                alert = new EmailAlertProvider(config, ApplicationContextUtils.INSTANCE.getBean(JavaMailSender.class));
+            if (config.getStrategy() == AlertStrategy.EMAIL) {
+                AlertClient client = new EmailClient(new EmailConfig(config.getClient()).stuff(), config.getReceiver());
+                alert = new NormalAlertProvider(client);
             }
         }
     }
-    public void notice(String msg) {
-        alert.notice(msg);
+
+    public void notice(String msg, List<AlertReceiver> receiverList) {
+       if (null != alert && isInitialized.get()) {
+           alert.notice(msg, receiverList);
+       }
     }
 }

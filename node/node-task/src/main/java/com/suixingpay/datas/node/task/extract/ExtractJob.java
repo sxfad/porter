@@ -8,6 +8,7 @@
  */
 package com.suixingpay.datas.node.task.extract;
 
+import com.suixingpay.datas.common.statistics.TaskLog;
 import com.suixingpay.datas.common.util.ApplicationContextUtils;
 import com.suixingpay.datas.node.core.consumer.DataConsumer;
 import com.suixingpay.datas.node.core.event.etl.ETLBucket;
@@ -90,6 +91,7 @@ public class ExtractJob extends AbstractStageJob {
                     });
                 }
             } catch (Exception e) {
+                TaskLog.upload(work.getTaskId(), "extract MessageEvent error" , e.getMessage(), work.getDataConsumer().getSwimlaneId());
                 LOGGER.error("extract MessageEvent error!", e);
             }
         } while (null != events && null != events.getRight() && ! events.getRight().isEmpty());
