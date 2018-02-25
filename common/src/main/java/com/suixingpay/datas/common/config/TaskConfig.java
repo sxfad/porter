@@ -10,6 +10,7 @@
 package com.suixingpay.datas.common.config;
 
 import com.suixingpay.datas.common.alert.AlertReceiver;
+import com.suixingpay.datas.common.task.TaskStatusType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -23,6 +24,7 @@ import java.util.List;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月04日 18:10
  */
 public class TaskConfig {
+    @Setter @Getter private TaskStatusType status = TaskStatusType.WORKING;
     @Setter @Getter private String taskId;
     @Setter @Getter private DataConsumerConfig consumer;
     @Setter @Getter private DataLoaderConfig loader;

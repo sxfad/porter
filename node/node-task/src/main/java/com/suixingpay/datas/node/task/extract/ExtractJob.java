@@ -9,7 +9,7 @@
 package com.suixingpay.datas.node.task.extract;
 
 import com.suixingpay.datas.common.statistics.TaskLog;
-import com.suixingpay.datas.common.util.ApplicationContextUtils;
+import com.suixingpay.datas.node.core.NodeContext;
 import com.suixingpay.datas.node.core.consumer.DataConsumer;
 import com.suixingpay.datas.node.core.event.etl.ETLBucket;
 import com.suixingpay.datas.node.core.event.s.MessageEvent;
@@ -41,15 +41,15 @@ public class ExtractJob extends AbstractStageJob {
     private final ExtractorFactory extractorFactory;
     public ExtractJob(TaskWork work) {
         super(work.getBasicThreadName(), 1000L);
-        extractorFactory = ApplicationContextUtils.INSTANCE.getBean(ExtractorFactory.class);
+        extractorFactory = NodeContext.INSTANCE.getBean(ExtractorFactory.class);
         this.work = work;
         //线程阻塞时，在调用者线程中执行
         executorService = new ThreadPoolExecutor(LOGIC_THREAD_SIZE, LOGIC_THREAD_SIZE,
                 0L, TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<Runnable>(LOGIC_THREAD_SIZE * 2),
                 getThreadFactory(), new ThreadPoolExecutor.CallerRunsPolicy());
-        carrier = ApplicationContextUtils.INSTANCE.getBean(DataCarrierFactory.class).newDataCarrier(BUFFER_SIZE, 1);
-        orderedBucket = ApplicationContextUtils.INSTANCE.getBean(DataCarrierFactory.class).newDataCarrier(BUFFER_SIZE, 1);
+        carrier = NodeContext.INSTANCE.getBean(DataCarrierFactory.class).newDataCarrier(BUFFER_SIZE, 1);
+        orderedBucket = NodeContext.INSTANCE.getBean(DataCarrierFactory.class).newDataCarrier(BUFFER_SIZE, 1);
     }
 
     @Override

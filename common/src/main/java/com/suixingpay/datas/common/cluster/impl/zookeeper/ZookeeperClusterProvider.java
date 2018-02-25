@@ -14,6 +14,7 @@ import com.suixingpay.datas.common.cluster.*;
 import com.suixingpay.datas.common.cluster.impl.AbstractClusterProvider;
 import com.suixingpay.datas.common.config.ClusterConfig;
 import com.suixingpay.datas.common.config.source.ZookeeperConfig;
+import com.suixingpay.datas.common.exception.ConfigParseException;
 
 /**
  * zookeeper集群提供者
@@ -39,8 +40,8 @@ public class ZookeeperClusterProvider extends AbstractClusterProvider {
     }
 
     @Override
-    protected Client initClient(ClusterConfig clusterConfig) {
-        ZookeeperConfig config = new ZookeeperConfig(clusterConfig.getClient());
+    protected Client initClient(ClusterConfig clusterConfig) throws ConfigParseException {
+        ZookeeperConfig config = new ZookeeperConfig(clusterConfig.getClient()).stuff();
         return new ZookeeperClient(config);
     }
 }

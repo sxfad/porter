@@ -83,12 +83,12 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
 
     @Override
     public String  create(String path, boolean isTemp, String data) throws KeeperException, InterruptedException {
-        return zk.create(path, data.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, isTemp ? CreateMode.EPHEMERAL : CreateMode.PERSISTENT);
+        return zk.create(path, null != data ? data.getBytes() : "".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, isTemp ? CreateMode.EPHEMERAL : CreateMode.PERSISTENT);
     }
 
     @Override
     public Stat setData(String path, String data, int version) throws KeeperException, InterruptedException {
-        return zk.setData(path, data.getBytes(), version);
+        return zk.setData(path, null != data ? data.getBytes() : "".getBytes(), version);
     }
 
     @Override
@@ -96,8 +96,20 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
         return zk.exists(path, watch);
     }
 
+    public void  createWhenNotExists(String path, boolean isTemp, boolean watch,  String data) {
+        try {
+            Stat stat = exists(path, watch);
+            if (null == stat) {
+                create(path, isTemp, data);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
     @Override
-    public void delete(String path) throws KeeperException, InterruptedException {
+    public void delete(String path) {
         try {
             Stat stat = zk.exists(path, false);
             if (null != stat) {

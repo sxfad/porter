@@ -1,0 +1,111 @@
+/**
+ * All rights Reserved, Designed By Suixingpay.
+ *
+ * @author: zhangkewei[zhang_kw@suixingpay.com]
+ * @date: 2017年12月15日 10:09
+ * @Copyright ©2017 Suixingpay. All rights reserved.
+ * 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
+ */
+package com.suixingpay.datas.node.cluster.zookeeper;
+
+import ch.qos.logback.classic.Level;
+import ch.qos.logback.classic.Logger;
+import ch.qos.logback.classic.LoggerContext;
+import com.alibaba.fastjson.JSONObject;
+import com.suixingpay.datas.common.alert.AlertProviderFactory;
+import com.suixingpay.datas.common.cluster.ClusterListenerFilter;
+import com.suixingpay.datas.common.cluster.event.ClusterEvent;
+import com.suixingpay.datas.common.cluster.event.EventType;
+import com.suixingpay.datas.common.cluster.impl.zookeeper.ZookeeperClusterEvent;
+import com.suixingpay.datas.common.cluster.impl.zookeeper.ZookeeperClusterListener;
+import com.suixingpay.datas.common.cluster.impl.zookeeper.ZookeeperClusterListenerFilter;
+import com.suixingpay.datas.common.config.AlertConfig;
+import com.suixingpay.datas.common.config.LogConfig;
+import com.suixingpay.datas.common.exception.ClientConnectionException;
+import com.suixingpay.datas.common.exception.ConfigParseException;
+import com.suixingpay.datas.node.core.NodeContext;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.zookeeper.data.Stat;
+import org.slf4j.LoggerFactory;
+
+/**
+ * 节点监听
+ * @author: zhangkewei[zhang_kw@suixingpay.com]
+ * @date: 2017年12月15日 10:09
+ * @version: V1.0
+ * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月15日 10:09
+ */
+public class ZKClusterConfigListener extends ZookeeperClusterListener {
+    private static final String ZK_PATH = BASE_CATALOG + "/config";
+    private static final String LOG_CONFIG_PATH = ZK_PATH + "/log";
+    private static final String ALERT_CONFIG_PATH = ZK_PATH + "/alert";
+
+    @Override
+    public String listenPath() {
+        return ZK_PATH;
+    }
+
+    @Override
+    public void onEvent(ClusterEvent event) {
+        ZookeeperClusterEvent zkEvent = (ZookeeperClusterEvent) event;
+        LOGGER.info("集群配置参数监听:{},{},{}", zkEvent.getPath(), zkEvent.getData(), zkEvent.getEventType());
+        if (zkEvent.isDataChanged() || zkEvent.isOnline()) {
+            //日志
+            if (zkEvent.getPath().equals(LOG_CONFIG_PATH)) {
+                //转换配置参数问java对象
+                LogConfig config = JSONObject.parseObject(event.getData(), LogConfig.class);
+                //获取Logger上下文
+                LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
+                //设置日志级别
+                loggerContext.getLogger(Logger.ROOT_LOGGER_NAME).setLevel(Level.toLevel(config.getLevel(), Level.INFO));
+            }
+            //告警
+            if (zkEvent.getPath().equals(ALERT_CONFIG_PATH)) {
+                AlertConfig config = JSONObject.parseObject(event.getData(), AlertConfig.class);
+                try {
+                    AlertProviderFactory.INSTANCE.initialize(config);
+                } catch (ConfigParseException e) {
+                    e.printStackTrace();
+                } catch (ClientConnectionException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    @Override
+    public void start() {
+        try {
+            Pair<String, Stat> logData = client.getData(LOG_CONFIG_PATH);
+            if (null != logData && !StringUtils.isBlank(logData.getLeft()))
+                onEvent(new ZookeeperClusterEvent(EventType.DATA_CHANGED, logData.getLeft(), LOG_CONFIG_PATH));
+        } catch (Exception e) {
+
+        }
+        
+        try {
+            Pair<String, Stat> alertData = client.getData(ALERT_CONFIG_PATH);
+            if (null != alertData && !StringUtils.isBlank(alertData.getLeft()))
+                onEvent(new ZookeeperClusterEvent(EventType.DATA_CHANGED, alertData.getLeft(), ALERT_CONFIG_PATH));
+        } catch (Exception e){
+
+        }
+    }
+
+
+    @Override
+    public ClusterListenerFilter filter() {
+        return new ZookeeperClusterListenerFilter(){
+            @Override
+            protected String getPath() {
+                return listenPath();
+            }
+            @Override
+            protected boolean doFilter(ZookeeperClusterEvent event) {
+                //应用自身，跳过
+                return ! event.getPath().equals(getPath() + "/" + NodeContext.INSTANCE.getNodeId());
+            }
+        };
+    }
+}

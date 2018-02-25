@@ -8,9 +8,8 @@
  */
 package com.suixingpay.datas.node.task.alert;
 
-import com.suixingpay.datas.common.alert.AlertReceiver;
 import com.suixingpay.datas.common.statistics.TaskLog;
-import com.suixingpay.datas.common.util.ApplicationContextUtils;
+import com.suixingpay.datas.node.core.NodeContext;
 import com.suixingpay.datas.node.core.consumer.DataConsumer;
 import com.suixingpay.datas.node.core.loader.DataLoader;
 import com.suixingpay.datas.node.core.task.AbstractStageJob;
@@ -35,7 +34,7 @@ public class AlertJob extends AbstractStageJob {
         super(work.getBasicThreadName(), 1000 * 60 * 5L );
         this.dataConsumer = work.getDataConsumer();
         this.dataLoader = work.getDataLoader();
-        alerterFactory = ApplicationContextUtils.INSTANCE.getBean(AlerterFactory.class);
+        alerterFactory = NodeContext.INSTANCE.getBean(AlerterFactory.class);
         this.work = work;
     }
 

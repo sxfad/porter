@@ -40,7 +40,7 @@ public class ZookeeperClusterMonitor extends AbstractClusterMonitor implements W
     }
 
     @Override
-    public void start() {
+    public void doStart() {
         try {
             ready.await();
             Stat preStat = client.exists(ZookeeperClusterListener.PREFIX_ATALOG, false);
@@ -115,6 +115,13 @@ public class ZookeeperClusterMonitor extends AbstractClusterMonitor implements W
                     }
                 }
 
+                //删除旧节点
+                localChildren.stream().forEach(s -> {
+                    String remotePath = s.replace(path + "/", "");
+                    if (! remoteChildren.contains(remotePath)) {
+                        localChildren.remove(s);
+                    }
+                });
             }
         } catch (Exception e) {
             //do something

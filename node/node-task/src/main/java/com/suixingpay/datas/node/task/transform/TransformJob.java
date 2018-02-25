@@ -8,7 +8,7 @@
  */
 package com.suixingpay.datas.node.task.transform;
 
-import com.suixingpay.datas.common.util.ApplicationContextUtils;
+import com.suixingpay.datas.node.core.NodeContext;
 import com.suixingpay.datas.node.core.event.etl.ETLBucket;
 import com.suixingpay.datas.node.core.task.AbstractStageJob;
 import com.suixingpay.datas.node.core.task.StageType;
@@ -34,7 +34,7 @@ public class TransformJob extends AbstractStageJob {
     public TransformJob(TaskWork work) {
         super(work.getBasicThreadName());
         this.work = work;
-        transformFactory = ApplicationContextUtils.INSTANCE.getBean(TransformFactory.class);
+        transformFactory = NodeContext.INSTANCE.getBean(TransformFactory.class);
         //线程阻塞时，在调用者线程中执行
         executorService = new ThreadPoolExecutor(LOGIC_THREAD_SIZE, LOGIC_THREAD_SIZE * 2,
                 0L, TimeUnit.MILLISECONDS,

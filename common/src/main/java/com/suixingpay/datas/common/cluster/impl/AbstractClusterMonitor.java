@@ -29,6 +29,8 @@ import java.util.Map;
 public abstract class AbstractClusterMonitor implements ClusterMonitor {
     protected final Map<String, ClusterListener> listeners = new LinkedHashMap<>();
 
+    protected abstract void doStart();
+
     @Override
     public void addListener(ClusterListener listener) {
         listeners.put(listener.getName(),listener);
@@ -56,5 +58,18 @@ public abstract class AbstractClusterMonitor implements ClusterMonitor {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void start() {
+        doStart();
+        //监听器初始化
+        listeners.forEach((k,v) -> {
+            try {
+                v.start();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
     }
 }

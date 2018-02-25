@@ -9,7 +9,7 @@
 package com.suixingpay.datas.node.task.select;
 
 import com.suixingpay.datas.common.statistics.TaskLog;
-import com.suixingpay.datas.common.util.ApplicationContextUtils;
+import com.suixingpay.datas.node.core.NodeContext;
 import com.suixingpay.datas.node.core.consumer.DataConsumer;
 import com.suixingpay.datas.node.core.event.s.MessageEvent;
 import com.suixingpay.datas.node.core.task.AbstractStageJob;
@@ -41,7 +41,7 @@ public class SelectJob extends AbstractStageJob {
         super(work.getBasicThreadName());
         this.work = work;
         consumer = work.getDataConsumer();
-        carrier = ApplicationContextUtils.INSTANCE.getBean(DataCarrierFactory.class).newDataCarrier(BUFFER_SIZE,PULL_BATCH_SIZE);
+        carrier = NodeContext.INSTANCE.getBean(DataCarrierFactory.class).newDataCarrier(BUFFER_SIZE,PULL_BATCH_SIZE);
     }
 
     /**

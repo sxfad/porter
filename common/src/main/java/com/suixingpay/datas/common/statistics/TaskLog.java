@@ -69,6 +69,10 @@ public class TaskLog extends StatisticData {
     }
 
     public static void upload(String taskId, String title, String error) {
-        upload(taskId, title, error);
+        upload(taskId, title, error, "");
+    }
+
+    public static void upload(String title, String error) {
+        upload("", title, error, "");
     }
 }

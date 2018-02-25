@@ -12,10 +12,8 @@ package com.suixingpay.datas.node.plugin.consumer.kafka;
 
 import com.alibaba.fastjson.JSONObject;
 import com.suixingpay.datas.common.client.ConsumeClient;
-import com.suixingpay.datas.common.config.source.KafkaConfig;
 import com.suixingpay.datas.node.core.consumer.AbstractDataConsumer;
 import com.suixingpay.datas.node.core.event.s.MessageEvent;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
 import java.text.ParseException;

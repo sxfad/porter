@@ -8,6 +8,8 @@
  */
 package com.suixingpay.datas.common.task;
 
+import com.suixingpay.datas.common.config.TaskConfig;
+
 /**
  * 一期任务发布采用配置文件形式，后期增加管理节点配置实现
  * 没采用管理节点轮询实现,基于ZOOKEEPER监听实现
@@ -17,5 +19,5 @@ package com.suixingpay.datas.common.task;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月21日 17:13
  */
 public interface TaskEventListener {
-    void onEvent(TaskEvent event);
+    void onEvent(TaskConfig event);
 }

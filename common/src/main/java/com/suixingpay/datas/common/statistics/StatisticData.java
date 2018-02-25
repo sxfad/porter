@@ -10,6 +10,7 @@
 package com.suixingpay.datas.common.statistics;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -26,10 +27,12 @@ import java.util.UUID;
 public abstract class StatisticData {
     @Setter @Getter private String nodeId;
 
+    @JSONField(serialize = false, deserialize = false)
     public abstract String getCategory();
 
+    @JSONField(serialize = false, deserialize = false)
     public String getId() {
-        return UUID.randomUUID().toString() + " " +System.currentTimeMillis();
+        return UUID.randomUUID().toString();
     }
 
     public String toString() {

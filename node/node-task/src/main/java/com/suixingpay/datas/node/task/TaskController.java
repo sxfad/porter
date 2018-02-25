@@ -12,15 +12,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.suixingpay.datas.common.cluster.ClusterProviderProxy;
 import com.suixingpay.datas.common.config.TaskConfig;
 import com.suixingpay.datas.common.exception.ClientException;
-import com.suixingpay.datas.common.exception.ConfigParseException;
-import com.suixingpay.datas.common.exception.DataConsumerBuildException;
-import com.suixingpay.datas.common.exception.DataLoaderBuildException;
 import com.suixingpay.datas.common.statistics.TaskLog;
-import com.suixingpay.datas.common.task.TaskEvent;
 import com.suixingpay.datas.common.task.TaskEventListener;
 import com.suixingpay.datas.common.util.MachineUtils;
+import com.suixingpay.datas.node.core.NodeContext;
 import com.suixingpay.datas.node.core.task.Task;
-import com.suixingpay.datas.node.task.worker.TaskWork;
 import com.suixingpay.datas.node.task.worker.TaskWorker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -157,16 +153,16 @@ public class TaskController implements TaskEventListener {
 
 
     @Override
-    public void onEvent(TaskEvent event) {
-        if (event.getType().isCreate()) {
+    public void onEvent(TaskConfig event) {
+        if (event.getStatus().isWorking() && NodeContext.INSTANCE.getNodeStatus().isWorking()) {
             try {
-                startTask(event.getConfig());
+                startTask(event);
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        } else if (event.getType().isDelete()) {
+        } else if (event.getStatus().isStopped()) {
             try {
-                stopTask(Task.fromConfig(event.getConfig()));
+                stopTask(Task.fromConfig(event));
             } catch (Exception e) {
                 e.printStackTrace();
             }

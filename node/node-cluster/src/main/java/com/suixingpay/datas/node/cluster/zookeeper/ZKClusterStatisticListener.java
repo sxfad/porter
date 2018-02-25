@@ -16,6 +16,7 @@ import com.suixingpay.datas.common.cluster.impl.zookeeper.ZookeeperClusterEvent;
 import com.suixingpay.datas.common.cluster.impl.zookeeper.ZookeeperClusterListener;
 import com.suixingpay.datas.common.cluster.impl.zookeeper.ZookeeperClusterListenerFilter;
 import com.suixingpay.datas.common.statistics.StatisticData;
+import com.suixingpay.datas.node.core.NodeContext;
 import org.apache.zookeeper.data.Stat;
 
 /**
@@ -25,9 +26,8 @@ import org.apache.zookeeper.data.Stat;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月15日 10:09
  */
-public class ZKClusterStatisticListener extends ZookeeperClusterListener implements StatisticUpload, NodeRegister {
+public class ZKClusterStatisticListener extends ZookeeperClusterListener implements StatisticUpload {
     private static final String ZK_PATH = BASE_CATALOG + "/statistic";
-    private String nodeId;
 
     @Override
     public String listenPath() {
@@ -42,7 +42,6 @@ public class ZKClusterStatisticListener extends ZookeeperClusterListener impleme
     @Override
     public ClusterListenerFilter filter() {
         return new ZookeeperClusterListenerFilter(){
-
             @Override
             protected String getPath() {
                 return listenPath();
@@ -58,7 +57,7 @@ public class ZKClusterStatisticListener extends ZookeeperClusterListener impleme
     @Override
     public void upload(StatisticUploadCommand command) throws Exception {
         StatisticData data = command.getStatisticData();
-        data.setNodeId(nodeId);
+        data.setNodeId(NodeContext.INSTANCE.getNodeId());
         String statisticPath = listenPath() + "/" + data.getCategory();
         Stat stat = client.exists(statisticPath, false);
         if (null == stat) {
@@ -66,10 +65,5 @@ public class ZKClusterStatisticListener extends ZookeeperClusterListener impleme
         }
         String dataNode = statisticPath + "/" + data.getId();
         client.create(dataNode, true,data.toString());
-    }
-
-    @Override
-    public void nodeRegister(NodeRegisterCommand command) throws Exception {
-        this.nodeId = command.getId();
     }
 }

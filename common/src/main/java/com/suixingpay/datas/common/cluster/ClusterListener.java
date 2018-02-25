@@ -38,4 +38,8 @@ public interface ClusterListener {
      * @param client
      */
     void setClient(Client client);
+
+    default void start() {
+
+    }
 }

@@ -19,7 +19,10 @@ import com.suixingpay.datas.common.exception.ClientConnectionException;
 import com.suixingpay.datas.common.exception.ConfigParseException;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  *
@@ -30,7 +33,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public enum AlertProviderFactory {
     INSTANCE();
-    private final AtomicBoolean isInitialized = new AtomicBoolean(false);
+    private final ReadWriteLock initializedLock = new ReentrantReadWriteLock();
     private AlertProvider alert;
     public void initialize(AlertConfig config) throws ConfigParseException, ClientConnectionException {
         //校验配置文件参数
@@ -39,17 +42,23 @@ public enum AlertProviderFactory {
             return;
         }
 
-        if (isInitialized.compareAndSet(false, true)) {
+        initializedLock.writeLock().lock();
+        try {
             if (config.getStrategy() == AlertStrategy.EMAIL) {
                 AlertClient client = new EmailClient(new EmailConfig(config.getClient()).stuff(), config.getReceiver());
                 alert = new NormalAlertProvider(client);
             }
+        } finally {
+            initializedLock.writeLock().unlock();
         }
     }
 
     public void notice(String msg, List<AlertReceiver> receiverList) {
-       if (null != alert && isInitialized.get()) {
-           alert.notice(msg, receiverList);
-       }
+        try {
+            if (initializedLock.readLock().tryLock(5,TimeUnit.SECONDS)) {
+                if (null != alert) alert.notice(msg, receiverList);
+                initializedLock.readLock().unlock();
+            }
+        } catch (InterruptedException e) {}
     }
 }

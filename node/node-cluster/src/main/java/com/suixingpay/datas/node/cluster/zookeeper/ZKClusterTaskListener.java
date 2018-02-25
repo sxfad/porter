@@ -23,11 +23,9 @@ import com.suixingpay.datas.common.cluster.impl.zookeeper.ZookeeperClusterListen
 import com.suixingpay.datas.common.cluster.data.DTaskStat;
 import com.suixingpay.datas.common.config.TaskConfig;
 import com.suixingpay.datas.common.exception.TaskLockException;
-import com.suixingpay.datas.common.task.TaskEvent;
-import com.suixingpay.datas.common.task.TaskEventListener;
-import com.suixingpay.datas.common.task.TaskEventProvider;
-import com.suixingpay.datas.common.task.TaskEventType;
+import com.suixingpay.datas.common.task.*;
 import com.suixingpay.datas.common.util.MachineUtils;
+import com.suixingpay.datas.node.core.NodeContext;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.zookeeper.data.Stat;
@@ -44,12 +42,12 @@ import java.util.regex.Pattern;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月15日 10:09
  */
-public class ZKClusterTaskListener extends ZookeeperClusterListener implements TaskEventProvider, NodeRegister,
+public class ZKClusterTaskListener extends ZookeeperClusterListener implements TaskEventProvider,
         TaskRegister, TaskStatUpload, TaskStop, TaskStatQuery {
     private static final String ZK_PATH = BASE_CATALOG + "/task";
-    private static final Pattern TASK_PUSH_PATTERN = Pattern.compile(ZK_PATH + "/[0-9]*/dist/.*");
+    private static final Pattern TASK_DIST_PATTERN = Pattern.compile(ZK_PATH + "/[0-9]*/dist/.*");
+    private static final Pattern TASK_UNLOCKED_PATTERN = Pattern.compile(ZK_PATH + "/[0-9]*/lock/.*");
     private final List<TaskEventListener> TASK_LISTENER;
-    private String nodeId;
 
     public ZKClusterTaskListener() {
         this.TASK_LISTENER = new ArrayList<>();
@@ -67,25 +65,21 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
         //注册
         LOGGER.debug("{},{},{}", zkEvent.getPath(), zkEvent.getData(), zkEvent.getEventType());
         //任务分配
-        Matcher taskMatcher = TASK_PUSH_PATTERN.matcher(zkEvent.getPath());
+        Matcher taskMatcher = TASK_DIST_PATTERN.matcher(zkEvent.getPath());
         if (taskMatcher.matches()) {
-            TaskEventType type = null;
             TaskConfig config = JSONObject.parseObject(zkEvent.getData(), TaskConfig.class);
-            if (zkEvent.isOnline()) { //任务创建
-                type = TaskEventType.CREATE;
+            if (zkEvent.isOnline() || zkEvent.isDataChanged()) { //任务创建 、任务修改
+                triggerTaskEvent(config);
             }
+        }
 
-            if (zkEvent.isOffline()) {
-                /**
-                 * 任务停止,如果同一个任务配置多个消费资源的话（如果是kafka，指的是多个topic），
-                 * 会重复停止同一个任务多次,相关逻辑需要实现幂等。
-                 */
-                type = TaskEventType.DELETE;
+        //任务释放
+        if(TASK_UNLOCKED_PATTERN.matcher(zkEvent.getPath()).matches() && event.isOffline() && NodeContext.INSTANCE.getNodeStatus().isWorking()) {
+            Pair<String,Stat> taskConfig = client.getData(zkEvent.getPath().replace("/lock/", "/dist/"));
+            if (null != taskConfig && !StringUtils.isBlank(taskConfig.getLeft())) {
+                TaskConfig config = JSONObject.parseObject(taskConfig.getLeft(), TaskConfig.class);
+                triggerTaskEvent(config);
             }
-
-            TaskEvent taskEvent = new TaskEvent(config, type);
-
-            if (null != type) triggerTaskEvent(taskEvent);
         }
     }
 
@@ -115,14 +109,8 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
         TASK_LISTENER.remove(listener);
     }
 
-    private void triggerTaskEvent(TaskEvent event) {
+    private void triggerTaskEvent(TaskConfig event) {
         TASK_LISTENER.forEach(l -> l.onEvent(event));
-    }
-
-
-    @Override
-    public void nodeRegister(NodeRegisterCommand command) throws Exception {
-        this.nodeId = command.getId();
     }
 
     @Override
@@ -145,7 +133,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
                 client.create(alertNode,false ,"{}");
             }
         } catch (Exception e) {
-            LOGGER.error("创建任务统计节点失败->task:{},node:{},consume-resource:{},", task.getTaskId(), nodeId, task.getSwimlaneId(), e);
+            LOGGER.error("创建任务统计节点失败->task:{},node:{},consume-resource:{},", task.getTaskId(), NodeContext.INSTANCE.getNodeId(), task.getSwimlaneId(), e);
         }
 
         //任务分配
@@ -153,7 +141,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
         Stat ifAssignTopic = client.exists(topicPath, true);
         if (null == ifAssignTopic) {
             //为当前工作节点分配任务topic
-            client.create(topicPath,false, new DTaskLock(task.getTaskId(), nodeId, task.getSwimlaneId()).toString());
+            client.create(topicPath,false, new DTaskLock(task.getTaskId(), NodeContext.INSTANCE.getNodeId(), task.getSwimlaneId()).toString());
             //通知对此感兴趣的Listener
             ClusterProviderProxy.INSTANCE.broadcast(new TaskAssignedCommand(task.getTaskId(),task.getSwimlaneId()));
         } else {
@@ -172,7 +160,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
             Stat stat = client.exists(node, true);
             //节点不存在，创建新节点
             if (null == stat) {
-                DTaskStat thisStat = new DTaskStat(dataStat.getTaskId(), nodeId, dataStat.getSwimlaneId(), dataStat.getSchema(), dataStat.getTable());
+                DTaskStat thisStat = new DTaskStat(dataStat.getTaskId(), NodeContext.INSTANCE.getNodeId(), dataStat.getSwimlaneId(), dataStat.getSchema(), dataStat.getTable());
                 client.create(node,false ,thisStat.toString());
                 stat = client.exists(node, true);
             }
@@ -202,7 +190,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
         if (null != stat) {
             Pair<String, Stat> remoteData = client.getData(node);
             DTaskLock taskLock = DTaskLock.fromString(remoteData.getLeft(), DTaskLock.class);
-            if (taskLock.getNodeId().equals(nodeId) && taskLock.getAddress().equals(MachineUtils.IP_ADDRESS)
+            if (taskLock.getNodeId().equals(NodeContext.INSTANCE.getNodeId()) && taskLock.getAddress().equals(MachineUtils.IP_ADDRESS)
                     && taskLock.getProcessId().equals(MachineUtils.CURRENT_JVM_PID + "")) {
                 client.delete(node);
             }

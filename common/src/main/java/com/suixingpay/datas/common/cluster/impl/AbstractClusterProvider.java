@@ -8,7 +8,6 @@
  */
 package com.suixingpay.datas.common.cluster.impl;
 
-import com.suixingpay.datas.common.client.AbstractClient;
 import com.suixingpay.datas.common.client.Client;
 import com.suixingpay.datas.common.client.ClusterClient;
 import com.suixingpay.datas.common.cluster.ClusterListener;
@@ -20,6 +19,7 @@ import com.suixingpay.datas.common.cluster.command.broadcast.*;
 import com.suixingpay.datas.common.config.ClusterConfig;
 import com.suixingpay.datas.common.exception.ClientException;
 import com.suixingpay.datas.common.exception.ClientMatchException;
+import com.suixingpay.datas.common.exception.ConfigParseException;
 import com.suixingpay.datas.common.task.TaskEventListener;
 import com.suixingpay.datas.common.task.TaskEventProvider;
 import org.springframework.core.io.support.SpringFactoriesLoader;
@@ -41,7 +41,7 @@ public abstract class AbstractClusterProvider<C extends Client> implements Clust
     protected abstract ClusterStrategy getMatchType();
     protected abstract ClusterMonitor newMonitor();
     protected abstract Class getClusterListenerClass();
-    protected abstract C initClient(ClusterConfig clusterConfig);
+    protected abstract C initClient(ClusterConfig clusterConfig) throws ConfigParseException;
     private C client;
     private ClusterMonitor monitor;
 
@@ -100,11 +100,14 @@ public abstract class AbstractClusterProvider<C extends Client> implements Clust
             if (listener instanceof TaskStatQuery && command instanceof TaskStatQueryCommand) {
                 ((TaskStatQuery) listener).queryTaskStat((TaskStatQueryCommand) command);
             }
+            if (listener instanceof StatisticUpload && command instanceof StatisticUploadCommand) {
+                ((StatisticUpload) listener).upload((StatisticUploadCommand) command);
+            }
         }
     }
 
     @Override
-    public void start(ClusterConfig config) throws IOException, ClientException {
+    public void start(ClusterConfig config) throws IOException, ClientException, ConfigParseException {
         if (status.compareAndSet(false, true)) {
             initialize(config);
             client.start();
@@ -129,7 +132,7 @@ public abstract class AbstractClusterProvider<C extends Client> implements Clust
         }
     }
 
-    private void initialize(ClusterConfig config) throws ClientException, IOException {
+    private void initialize(ClusterConfig config) throws ClientException, IOException, ConfigParseException {
         client = initClient(config);
         if (null == client || ! (client instanceof ClusterClient)) {
             throw new ClientMatchException();

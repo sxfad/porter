@@ -9,6 +9,7 @@
 package com.suixingpay.datas.common.cluster.data;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.suixingpay.datas.common.node.NodeStatusType;
 import com.suixingpay.datas.common.util.MachineUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,6 +30,7 @@ public class DNode extends DObject {
     @Getter @Setter private String address = MachineUtils.IP_ADDRESS;
     @Getter @Setter private String hostName = MachineUtils.HOST_NAME;
     @Getter @Setter private String processId = MachineUtils.CURRENT_JVM_PID + "";
+    @Getter @Setter private NodeStatusType status;
     @Getter @Setter private Map<String,List<String>> tasks;
     public DNode() {
         heartbeat = new Date();

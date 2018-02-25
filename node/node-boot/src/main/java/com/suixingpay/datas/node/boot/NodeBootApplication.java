@@ -12,7 +12,8 @@ import com.suixingpay.datas.common.alert.AlertProviderFactory;
 import com.suixingpay.datas.common.client.PublicClientContext;
 import com.suixingpay.datas.common.cluster.ClusterProviderProxy;
 import com.suixingpay.datas.common.cluster.command.NodeRegisterCommand;
-import com.suixingpay.datas.common.util.ApplicationContextUtils;
+import com.suixingpay.datas.common.statistics.TaskLog;
+import com.suixingpay.datas.node.core.NodeContext;
 import com.suixingpay.datas.common.util.ProcessUtils;
 import com.suixingpay.datas.node.boot.config.*;
 import com.suixingpay.datas.node.task.TaskController;
@@ -49,7 +50,7 @@ public class NodeBootApplication {
         app.setWebEnvironment(false);
         ConfigurableApplicationContext context = app.run(args);
         //注入spring工具类
-        ApplicationContextUtils.INSTANCE.init(context);
+        NodeContext.INSTANCE.setApplicationContext(context);
         //获取配置类
         NodeConfig config = context.getBean(NodeConfig.class);
 
@@ -103,7 +104,6 @@ public class NodeBootApplication {
         //启动节点任务执行容器，并尝试执行本地配置文件任务
         controller.start(null != config.getTask() && ! config.getTask().isEmpty() ? config.getTask() : null);
         LOGGER.info("NodeBootApplication started");
-
         //保持进程持续运行不退出
         ProcessUtils.keepRunning();
     }

@@ -1,1 +1,5 @@
-com.suixingpay.datas.common.cluster.impl.zookeeper.ZookeeperClusterListener=com.suixingpay.datas.node.cluster.zookeeper.ZKClusterTaskListener,com.suixingpay.datas.node.cluster.zookeeper.ZKClusterNodeListener
+com.suixingpay.datas.common.cluster.impl.zookeeper.ZookeeperClusterListener=\
+  com.suixingpay.datas.node.cluster.zookeeper.ZKClusterTaskListener,\
+  com.suixingpay.datas.node.cluster.zookeeper.ZKClusterNodeListener,\
+  com.suixingpay.datas.node.cluster.zookeeper.ZKClusterStatisticListener,\
+  com.suixingpay.datas.node.cluster.zookeeper.ZKClusterConfigListener
