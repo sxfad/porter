@@ -12,7 +12,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.suixingpay.datas.common.cluster.ClusterProviderProxy;
 import com.suixingpay.datas.common.config.TaskConfig;
 import com.suixingpay.datas.common.exception.ClientException;
-import com.suixingpay.datas.common.statistics.TaskLog;
+import com.suixingpay.datas.common.statistics.NodeLog;
 import com.suixingpay.datas.common.task.TaskEventListener;
 import com.suixingpay.datas.common.util.MachineUtils;
 import com.suixingpay.datas.node.core.NodeContext;
@@ -26,12 +26,10 @@ import sun.misc.Signal;
 import sun.misc.SignalHandler;
 
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -107,7 +105,7 @@ public class TaskController implements TaskEventListener {
             worker.alloc(task);
             worker.start();
         } catch (Exception e) {
-            TaskLog.upload(task.getTaskId(), "任务启动失败" , e.getMessage());
+            NodeLog.upload(task.getTaskId(), "任务启动失败" , e.getMessage());
             e.printStackTrace();
             LOGGER.error("failed to start task:{}", JSONObject.toJSONString(task),e);
         }

@@ -15,7 +15,7 @@ import com.suixingpay.datas.common.cluster.command.*;
 import com.suixingpay.datas.common.cluster.data.DCallback;
 import com.suixingpay.datas.common.cluster.data.DObject;
 import com.suixingpay.datas.common.cluster.data.DTaskStat;
-import com.suixingpay.datas.common.statistics.TaskLog;
+import com.suixingpay.datas.common.statistics.NodeLog;
 import com.suixingpay.datas.common.statistics.TaskPerformance;
 import com.suixingpay.datas.node.core.consumer.DataConsumer;
 import com.suixingpay.datas.node.core.loader.DataLoader;
@@ -111,7 +111,7 @@ public class TaskWork {
             //广播任务结束消息
             ClusterProviderProxy.INSTANCE.broadcast(new TaskStopCommand(taskId,dataConsumer.getSwimlaneId()));
         } catch (Exception e) {
-            TaskLog.upload(taskId, "任务关闭失败" , e.getMessage(), dataConsumer.getSwimlaneId());
+            NodeLog.upload(taskId, "任务关闭失败" , e.getMessage(), dataConsumer.getSwimlaneId());
             LOGGER.error("终止执行任务[{}-{}]异常", taskId, dataConsumer.getSwimlaneId(), e);
         }
     }

@@ -8,15 +8,13 @@
  */
 package com.suixingpay.datas.node.task.alert;
 
-import com.suixingpay.datas.common.statistics.TaskLog;
+import com.suixingpay.datas.common.statistics.NodeLog;
 import com.suixingpay.datas.node.core.NodeContext;
 import com.suixingpay.datas.node.core.consumer.DataConsumer;
 import com.suixingpay.datas.node.core.loader.DataLoader;
 import com.suixingpay.datas.node.core.task.AbstractStageJob;
 import com.suixingpay.datas.node.task.alert.alerter.AlerterFactory;
 import com.suixingpay.datas.node.task.worker.TaskWork;
-
-import java.util.List;
 
 /**
  * 单线程执行，但存在多线程执行的可能性，前期单线程执行
@@ -54,7 +52,7 @@ public class AlertJob extends AbstractStageJob {
         try {
             alerterFactory.check(dataConsumer, dataLoader, work);
         } catch (Exception e) {
-            TaskLog.upload(work.getTaskId(), "db check error" , e.getMessage(), work.getDataConsumer().getSwimlaneId());
+            NodeLog.upload(work.getTaskId(), "db check error" , e.getMessage(), work.getDataConsumer().getSwimlaneId());
             LOGGER.error("[{}][{}]db check error!",work.getTaskId(), dataConsumer.getSwimlaneId(), e);
         }
     }

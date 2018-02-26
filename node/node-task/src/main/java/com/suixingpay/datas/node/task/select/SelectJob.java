@@ -8,7 +8,7 @@
  */
 package com.suixingpay.datas.node.task.select;
 
-import com.suixingpay.datas.common.statistics.TaskLog;
+import com.suixingpay.datas.common.statistics.NodeLog;
 import com.suixingpay.datas.node.core.NodeContext;
 import com.suixingpay.datas.node.core.consumer.DataConsumer;
 import com.suixingpay.datas.node.core.event.s.MessageEvent;
@@ -70,7 +70,7 @@ public class SelectJob extends AbstractStageJob {
                 events = consumer.fetch();
                 if (null != events && ! events.isEmpty()) carrier.push(events);
             } catch (InterruptedException e) {
-                TaskLog.upload(work.getTaskId(), "fetch MessageEvent error" , e.getMessage(), consumer.getSwimlaneId());
+                NodeLog.upload(work.getTaskId(), "fetch MessageEvent error" , e.getMessage(), consumer.getSwimlaneId());
                 LOGGER.error("fetch MessageEvent error!", e);
             }
         } while (null != events && ! events.isEmpty());

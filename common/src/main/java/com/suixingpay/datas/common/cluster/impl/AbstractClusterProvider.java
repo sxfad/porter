@@ -100,8 +100,17 @@ public abstract class AbstractClusterProvider<C extends Client> implements Clust
             if (listener instanceof TaskStatQuery && command instanceof TaskStatQueryCommand) {
                 ((TaskStatQuery) listener).queryTaskStat((TaskStatQueryCommand) command);
             }
+
             if (listener instanceof StatisticUpload && command instanceof StatisticUploadCommand) {
                 ((StatisticUpload) listener).upload((StatisticUploadCommand) command);
+            }
+
+            if (listener instanceof TaskPush && command instanceof TaskPushCommand) {
+                ((TaskPush) listener).push((TaskPushCommand) command);
+            }
+
+            if (listener instanceof NodeOrderPush && command instanceof NodeOrderPushCommand) {
+                ((NodeOrderPush) listener).push((NodeOrderPushCommand) command);
             }
         }
     }

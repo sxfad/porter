@@ -45,8 +45,8 @@ import java.util.regex.Pattern;
 public class ZKClusterTaskListener extends ZookeeperClusterListener implements TaskEventProvider,
         TaskRegister, TaskStatUpload, TaskStop, TaskStatQuery {
     private static final String ZK_PATH = BASE_CATALOG + "/task";
-    private static final Pattern TASK_DIST_PATTERN = Pattern.compile(ZK_PATH + "/[0-9]*/dist/.*");
-    private static final Pattern TASK_UNLOCKED_PATTERN = Pattern.compile(ZK_PATH + "/[0-9]*/lock/.*");
+    private static final Pattern TASK_DIST_PATTERN = Pattern.compile(ZK_PATH + "/.*/dist/.*");
+    private static final Pattern TASK_UNLOCKED_PATTERN = Pattern.compile(ZK_PATH + "/.*/lock/.*");
     private final List<TaskEventListener> TASK_LISTENER;
 
     public ZKClusterTaskListener() {

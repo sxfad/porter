@@ -9,6 +9,7 @@
 
 package com.suixingpay.datas.common.config;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.suixingpay.datas.common.alert.AlertReceiver;
 import com.suixingpay.datas.common.alert.AlertStrategy;
 import lombok.Getter;
@@ -23,6 +24,8 @@ import java.util.Map;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月23日 10:29
  */
 public class AlertConfig {
+    @JSONField(deserialize = false, serialize = false)
+
     @Getter @Setter private AlertStrategy strategy;
     @Getter @Setter private AlertReceiver[] receiver = new AlertReceiver[0];
     //告警客户端

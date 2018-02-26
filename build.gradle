@@ -12,7 +12,7 @@ buildscript {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:1.5.9.RELEASE"
     }
 }
-//将子项目包复制到根目录
+
 
 subprojects {
     apply plugin: 'java'
@@ -23,6 +23,7 @@ subprojects {
         junitVersion = '4.12'
         version '2.0'
         springVersion = '1.5.9.RELEASE'
+        swaggerVersion = '2.7.0'
     }
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
@@ -51,6 +52,7 @@ subprojects {
         )
         compileOnly 'org.projectlombok:lombok:1.16.20'
     }
+    //将子项目包复制到根目录
     build.doLast {
         def rootPath = rootProject.buildDir.getPath() + "/distributions"
         copy {
