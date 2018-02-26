@@ -58,7 +58,7 @@ public class ZookeeperClusterMonitor extends AbstractClusterMonitor implements W
                     client.create(zkListener.listenPath(), false,"{}");
                 }
                 //watch children changed
-                client.getChildren(zkListener.listenPath());
+                triggerTreeEvent(zkListener.listenPath());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -75,7 +75,6 @@ public class ZookeeperClusterMonitor extends AbstractClusterMonitor implements W
      */
     @Override
     public synchronized void process(WatchedEvent event) {
-        List<ClusterEvent> localEvent = new ArrayList<>();
         //zookeeper event
         Event.EventType eventType = event.getType();
         String path = event.getPath();
@@ -86,55 +85,51 @@ public class ZookeeperClusterMonitor extends AbstractClusterMonitor implements W
             if (eventType == Event.EventType.None && state == Event.KeeperState.SyncConnected && path == null) {
                 ready.countDown();
             } else if (eventType == Event.EventType.NodeDeleted) {
-                localEvent.add(new ZookeeperClusterEvent(EventType.OFFLINE, null, path));
+                onEvent(new ZookeeperClusterEvent(EventType.OFFLINE, null, path));
             } else if (eventType == Event.EventType.NodeCreated) {
-                localEvent.add(new ZookeeperClusterEvent(EventType.ONLINE, client.getData(path).getLeft(), path));
+                onEvent(new ZookeeperClusterEvent(EventType.ONLINE, client.getData(path).getLeft(), path));
             } else if (eventType == Event.EventType.NodeDataChanged) {
-                localEvent.add(new ZookeeperClusterEvent(EventType.DATA_CHANGED, client.getData(path).getLeft(), path));
+                onEvent(new ZookeeperClusterEvent(EventType.DATA_CHANGED, client.getData(path).getLeft(), path));
             } else if (eventType == Event.EventType.NodeChildrenChanged) { //子节点创建、删除会触发该事件
-                //构造子节点集合
-                List<String> localChildren = nodeChildren.computeIfAbsent(path, new Function<String, List<String>>() {
-                    @Override
-                    public List<String> apply(String s) {
-                        return new ArrayList<>();
-                    }
-                });
-
-                //create a watch event:NodeChildrenChanged
-                List<String> remoteChildren = client.getChildren(path);
-
-                //判断是否新节点创建
-                for (String child : remoteChildren) {
-                    String childFullPath = path + "/" +child;
-                    //new node
-                    if (! localChildren.contains(childFullPath)) {
-                        localChildren.add(childFullPath);
-                        //only for trigger watcher "getChildren"
-                        client.getChildren(childFullPath);
-                        localEvent.add(new ZookeeperClusterEvent(EventType.ONLINE, client.getData(childFullPath).getLeft(), childFullPath));
-                    }
-                }
-
-                //删除旧节点
-                localChildren.stream().forEach(s -> {
-                    String remotePath = s.replace(path + "/", "");
-                    if (! remoteChildren.contains(remotePath)) {
-                        localChildren.remove(s);
-                    }
-                });
+                triggerTreeEvent(path);
             }
         } catch (Exception e) {
             //do something
         }
-        //拿到事件，根据事件类型发送通知
-        onEvent(localEvent);
     }
 
-    private void onEvent(List<ClusterEvent> events) {
-        if (null != events && !events.isEmpty()) {
-            for (ClusterEvent localEvent : events) {
-                super.onEvent(localEvent);
+    private void triggerTreeEvent(String path) {
+        //构造子节点集合
+        List<String> localChildren = nodeChildren.computeIfAbsent(path, new Function<String, List<String>>() {
+            @Override
+            public List<String> apply(String s) {
+                return new ArrayList<>();
+            }
+        });
+
+        //create a watch event:NodeChildrenChanged
+        List<String> remoteChildren = client.getChildren(path);
+
+        //判断是否新节点创建
+        for (String child : remoteChildren) {
+            String childFullPath = path + "/" +child;
+
+            //new node
+            if (! localChildren.contains(childFullPath)) {
+                triggerTreeEvent(childFullPath);
+                //only for trigger watcher "getChildren"
+                client.getChildren(childFullPath);
+                localChildren.add(childFullPath);
+                onEvent(new ZookeeperClusterEvent(EventType.ONLINE, client.getData(childFullPath).getLeft(), childFullPath));
             }
         }
+
+        //删除旧节点
+        localChildren.stream().forEach(s -> {
+            String remotePath = s.replace(path + "/", "");
+            if (! remoteChildren.contains(remotePath)) {
+                localChildren.remove(s);
+            }
+        });
     }
 }

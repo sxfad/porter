@@ -8,12 +8,10 @@
  */
 package com.suixingpay.datas.node.task.extract;
 
-import com.suixingpay.datas.common.statistics.TaskLog;
+import com.suixingpay.datas.common.statistics.NodeLog;
 import com.suixingpay.datas.node.core.NodeContext;
-import com.suixingpay.datas.node.core.consumer.DataConsumer;
 import com.suixingpay.datas.node.core.event.etl.ETLBucket;
 import com.suixingpay.datas.node.core.event.s.MessageEvent;
-import com.suixingpay.datas.node.core.loader.DataLoader;
 import com.suixingpay.datas.node.core.task.AbstractStageJob;
 import com.suixingpay.datas.node.core.task.StageType;
 import com.suixingpay.datas.node.datacarrier.DataCarrier;
@@ -91,7 +89,7 @@ public class ExtractJob extends AbstractStageJob {
                     });
                 }
             } catch (Exception e) {
-                TaskLog.upload(work.getTaskId(), "extract MessageEvent error" , e.getMessage(), work.getDataConsumer().getSwimlaneId());
+                NodeLog.upload(work.getTaskId(), "extract MessageEvent error" , e.getMessage(), work.getDataConsumer().getSwimlaneId());
                 LOGGER.error("extract MessageEvent error!", e);
             }
         } while (null != events && null != events.getRight() && ! events.getRight().isEmpty());

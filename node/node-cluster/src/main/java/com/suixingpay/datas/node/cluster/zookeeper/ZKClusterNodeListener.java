@@ -52,9 +52,9 @@ import java.util.regex.Pattern;
  */
 public class ZKClusterNodeListener extends ZookeeperClusterListener  implements TaskEventProvider, NodeRegister, Shutdown, TaskAssigned, TaskStop {
     private static final String ZK_PATH = BASE_CATALOG + "/node";
-    private static final Pattern NODE_ORDER_PATTERN = Pattern.compile(ZK_PATH + "/[0-9]*/order/.*");
-    private static final Pattern NODE_STAT_PATTERN = Pattern.compile(ZK_PATH + "/[0-9]*/stat");
-    private static final Pattern NODE_LOCK_PATTERN = Pattern.compile(ZK_PATH + "/[0-9]*/lock");
+    private static final Pattern NODE_ORDER_PATTERN = Pattern.compile(ZK_PATH + "/.*/order/.*");
+    private static final Pattern NODE_STAT_PATTERN = Pattern.compile(ZK_PATH + "/.*/stat");
+    private static final Pattern NODE_LOCK_PATTERN = Pattern.compile(ZK_PATH + "/.*/lock");
 
     private final List<TaskEventListener> TASK_LISTENER = new ArrayList<>();
     private final ReentrantLock lock =  new ReentrantLock();

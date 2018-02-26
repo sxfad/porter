@@ -13,7 +13,7 @@ import com.suixingpay.datas.common.exception.ClientException;
 import com.suixingpay.datas.common.exception.ConfigParseException;
 import com.suixingpay.datas.common.exception.DataConsumerBuildException;
 import com.suixingpay.datas.common.exception.DataLoaderBuildException;
-import com.suixingpay.datas.common.statistics.TaskLog;
+import com.suixingpay.datas.common.statistics.NodeLog;
 import com.suixingpay.datas.common.util.DefaultNamedThreadFactory;
 import com.suixingpay.datas.node.core.consumer.DataConsumer;
 import com.suixingpay.datas.node.core.task.TableMapper;
@@ -116,7 +116,7 @@ public class TaskWorker {
             } catch (Exception e){
                 if (null != job) job.stop();
                 LOGGER.error("Consumer JOB[{}] failed to start!", c.getSwimlaneId(), e);
-                TaskLog.upload(task.getTaskId(), "任务启动失败" , e.getMessage(), c.getSwimlaneId());
+                NodeLog.upload(task.getTaskId(), "任务启动失败" , e.getMessage(), c.getSwimlaneId());
             }
         });
     }

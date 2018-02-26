@@ -75,26 +75,6 @@ public class ZKClusterConfigListener extends ZookeeperClusterListener {
     }
 
     @Override
-    public void start() {
-        try {
-            Pair<String, Stat> logData = client.getData(LOG_CONFIG_PATH);
-            if (null != logData && !StringUtils.isBlank(logData.getLeft()))
-                onEvent(new ZookeeperClusterEvent(EventType.DATA_CHANGED, logData.getLeft(), LOG_CONFIG_PATH));
-        } catch (Exception e) {
-
-        }
-        
-        try {
-            Pair<String, Stat> alertData = client.getData(ALERT_CONFIG_PATH);
-            if (null != alertData && !StringUtils.isBlank(alertData.getLeft()))
-                onEvent(new ZookeeperClusterEvent(EventType.DATA_CHANGED, alertData.getLeft(), ALERT_CONFIG_PATH));
-        } catch (Exception e){
-
-        }
-    }
-
-
-    @Override
     public ClusterListenerFilter filter() {
         return new ZookeeperClusterListenerFilter(){
             @Override

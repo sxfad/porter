@@ -12,7 +12,6 @@ package com.suixingpay.datas.common.statistics;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.suixingpay.datas.common.cluster.ClusterProviderProxy;
 import com.suixingpay.datas.common.cluster.command.StatisticUploadCommand;
-import com.suixingpay.datas.common.cluster.data.DTaskStat;
 import com.suixingpay.datas.common.util.MachineUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,7 +25,7 @@ import java.util.Date;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月09日 16:16
  */
-public class TaskLog extends StatisticData {
+public class NodeLog extends StatisticData {
     private static final String NAME = "log";
     @Setter @Getter private String taskId;
     @Getter @Setter private String address = MachineUtils.IP_ADDRESS;
@@ -39,11 +38,11 @@ public class TaskLog extends StatisticData {
     @JSONField(format = "yyyyMMddHHmmss")
     @Setter @Getter private Date time;
 
-    public TaskLog() {
+    public NodeLog() {
         this.time = new Date();
     }
 
-    public TaskLog(String taskId, String title,  String error, String swimlaneId) {
+    public NodeLog(String taskId, String title, String error, String swimlaneId) {
         this();
         this.taskId = taskId;
         this.title = title;
@@ -51,7 +50,7 @@ public class TaskLog extends StatisticData {
         this.swimlaneId = swimlaneId;
     }
 
-    public TaskLog(String taskId, String title, String content) {
+    public NodeLog(String taskId, String title, String content) {
         this(taskId, title, "", content);
     }
 
@@ -62,7 +61,7 @@ public class TaskLog extends StatisticData {
 
     public static void upload(String taskId, String title, String error, String swimlaneId) {
         try {
-            ClusterProviderProxy.INSTANCE.broadcast(new StatisticUploadCommand(new TaskLog(taskId, title, error, swimlaneId)));
+            ClusterProviderProxy.INSTANCE.broadcast(new StatisticUploadCommand(new NodeLog(taskId, title, error, swimlaneId)));
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -12,7 +12,7 @@ package com.suixingpay.datas.node.task.transform.transformer;
 import com.alibaba.fastjson.JSON;
 import com.suixingpay.datas.common.db.meta.TableColumn;
 import com.suixingpay.datas.common.db.meta.TableSchema;
-import com.suixingpay.datas.common.statistics.TaskLog;
+import com.suixingpay.datas.common.statistics.NodeLog;
 import com.suixingpay.datas.node.core.event.etl.ETLBucket;
 import com.suixingpay.datas.node.core.event.etl.ETLColumn;
 import com.suixingpay.datas.node.core.event.etl.ETLRow;
@@ -114,7 +114,7 @@ public class ETLRowTransformer implements Transformer {
         try {
             table = loader.findTable(finalSchema, finalTable, cache);
         } catch (Exception e) {
-            TaskLog.upload(work.getTaskId(), "查询数据库表结构出错" , e.getMessage(), work.getDataConsumer().getSwimlaneId());
+            NodeLog.upload(work.getTaskId(), "查询数据库表结构出错" , e.getMessage(), work.getDataConsumer().getSwimlaneId());
             e.printStackTrace();
             LOGGER.error("查询目标仓库表结构{}.{}出错!", finalSchema, finalTable, e);
         }
