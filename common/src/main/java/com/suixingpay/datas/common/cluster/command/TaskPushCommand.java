@@ -9,9 +9,9 @@
 package com.suixingpay.datas.common.cluster.command;
 
 import com.suixingpay.datas.common.config.TaskConfig;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
 /**
  * 任务状态上报
@@ -22,5 +22,5 @@ import lombok.Setter;
  */
 @AllArgsConstructor
 public class TaskPushCommand implements ClusterCommand {
-    @Getter @Setter private final TaskConfig config;
+    @Getter private final TaskConfig config;
 }
