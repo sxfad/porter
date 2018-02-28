@@ -7,7 +7,7 @@ cd "$PRGDIR/../"
 locate_str=`pwd`
 signal_id=`kill -l USR2`
 
-node_pid=`jps -v |grep "ManagerApplication"|grep "$locate_str"|awk '{printf  " "$1}'`
+node_pid=`jps -v |grep "ManagerBootApplication"|grep "$locate_str"|awk '{printf  " "$1}'`
 
 if [ -n "$node_pid" ]
 then

@@ -30,12 +30,12 @@ import com.suixingpay.datas.manager.config.ManagerConfig;
  */
 @ServletComponentScan
 @SpringBootApplication(scanBasePackages = {"com.suixingpay"}, exclude = {DataSourceAutoConfiguration.class})
-public class ManagerApplication {
+public class ManagerBootApplication {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ManagerApplication.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ManagerBootApplication.class);
 
     public static void main(String[] args) throws Exception {
-        SpringApplication app = new SpringApplication(ManagerApplication.class);
+        SpringApplication app = new SpringApplication(ManagerBootApplication.class);
         app.setBannerMode(Banner.Mode.OFF);
         ConfigurableApplicationContext context = app.run(args);
         LOGGER.info("ManagerApplication is success!");
