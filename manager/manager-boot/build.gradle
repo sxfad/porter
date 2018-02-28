@@ -1,0 +1,58 @@
+apply plugin: 'application'
+archivesBaseName = 'datas-manager'
+mainClassName = "com.suixingpay.datas.manager.ManagerApplication"
+
+applicationDefaultJvmArgs = ["-Dapp.home=DEFINE_APP_HOME/", "-Xms2G", "-Xmx2G"]
+
+sourceSets {
+    main {
+    }
+}
+processResources {
+    exclude(
+            // "**/**"
+    )
+}
+
+task moveOutFromJar(type: Copy) {
+    sourceSets.main.resources.srcDirs.each {
+        from it
+        into buildDir.getPath() + "/config"
+    }
+}
+
+processResources.dependsOn moveOutFromJar
+
+
+startScripts {
+    doLast {
+        unixScript.text = unixScript.text.replace('CLASSPATH=', 'cd $APP_HOME;\nCLASSPATH=').replace("DEFINE_APP_HOME",'$APP_HOME')
+        windowsScript.text = windowsScript.text.replace('set CLASSPATH=', 'cd %APP_HOME%\nset CLASSPATH=').replace("DEFINE_APP_HOME",'%APP_HOME%')
+    }
+}
+
+distributions {
+    main {
+        contents {
+            from ("bin") {
+                into "bin"
+                fileMode = 0755
+            }
+            from (buildDir.getPath() + "/config") {
+                into "config"
+            }
+        }
+    }
+}
+
+
+dependencies {
+    compile(
+            project(":common"),
+            "org.springframework.boot:spring-boot-starter-web:${springVersion}",
+            "io.springfox:springfox-swagger2:${swaggerVersion}",
+            "io.springfox:springfox-swagger-ui:${swaggerVersion}",
+
+    )
+
+}

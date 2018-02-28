@@ -18,4 +18,6 @@ findProject(':node:node-plugin:kafka-consumer')?.name = 'kafka-consumer'
 include 'node:node-plugin:jdbc-loader'
 findProject(':node:node-plugin:jdbc-loader')?.name = 'jdbc-loader'
 include 'manager'
+include 'manager:manager-boot'
+findProject(':manager:manager-boot')?.name = 'manager-boot'
 
