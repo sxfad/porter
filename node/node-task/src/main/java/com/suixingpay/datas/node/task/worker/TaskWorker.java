@@ -15,16 +15,18 @@ import com.suixingpay.datas.common.exception.DataConsumerBuildException;
 import com.suixingpay.datas.common.exception.DataLoaderBuildException;
 import com.suixingpay.datas.common.statistics.NodeLog;
 import com.suixingpay.datas.common.util.DefaultNamedThreadFactory;
-import com.suixingpay.datas.node.core.consumer.DataConsumer;
 import com.suixingpay.datas.node.core.task.TableMapper;
 import com.suixingpay.datas.node.core.task.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -45,9 +47,8 @@ public class TaskWorker {
     /**
      * consumeSourceId -> work
      */
-    private final Map<String,TaskWork> JOBS;
-    private final Map<String,TableMapper> TABLE_MAPPERS;
-
+    private final Map<String, TaskWork> JOBS;
+    private final Map<String, TableMapper> TABLE_MAPPERS;
     public TaskWorker() {
         STAT_WORKER = Executors.newSingleThreadScheduledExecutor(new DefaultNamedThreadFactory("TaskStat"));
         JOBS = new ConcurrentHashMap<>();
@@ -64,7 +65,7 @@ public class TaskWorker {
                     //如果没有JOB，让线程睡眠1分钟.
                     if (JOBS.isEmpty()) {
                         try {
-                            Thread.sleep(60000L);
+                            Thread.sleep(60000);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
@@ -74,11 +75,12 @@ public class TaskWorker {
                         job.submitStat();
                     }
                 }
-            }, 0 ,1 , TimeUnit.SECONDS);
+            }, 0, 1, TimeUnit.SECONDS);
         } else {
             LOGGER.warn("TaskWorker[] has started already", workerSequence);
         }
     }
+
     public void stop() {
         if (STAT.compareAndSet(true, false)) {
             LOGGER.info("工人下线.......");
@@ -91,10 +93,10 @@ public class TaskWorker {
         }
     }
 
-    public void stopJob(List<DataConsumer> consumerSourceId) {
-        consumerSourceId.forEach(c -> {
-            if (JOBS.containsKey(c.getSwimlaneId())) {
-                JOBS.get(c.getSwimlaneId()).stop();
+    public void stopJob(String... swimlaneId) {
+        Arrays.stream(swimlaneId).forEach(c -> {
+            if (JOBS.containsKey(swimlaneId)) {
+                JOBS.get(swimlaneId).stop();
             }
         });
     }
@@ -113,15 +115,15 @@ public class TaskWorker {
                 job = new TaskWork(c, task.getLoader(), task.getTaskId(), task.getReceivers(), this);
                 job.start();
                 JOBS.put(c.getSwimlaneId(), job);
-            } catch (Exception e){
+            } catch (Exception e) {
                 if (null != job) job.stop();
                 LOGGER.error("Consumer JOB[{}] failed to start!", c.getSwimlaneId(), e);
-                NodeLog.upload(task.getTaskId(), "任务启动失败" , e.getMessage(), c.getSwimlaneId());
+                NodeLog.upload(task.getTaskId(), "任务启动失败", e.getMessage(), c.getSwimlaneId());
             }
         });
     }
 
-    public Map<String,TableMapper> getTableMapper() {
+    public Map<String, TableMapper> getTableMapper() {
         return Collections.unmodifiableMap(TABLE_MAPPERS);
     }
 

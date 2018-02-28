@@ -25,7 +25,7 @@ import java.io.IOException;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月24日 11:19
  */
-public class LoadJob extends AbstractStageJob{
+public class LoadJob extends AbstractStageJob {
     private final DataLoader dataLoder;
     private final TaskWork work;
     public LoadJob(TaskWork work) {
@@ -56,10 +56,10 @@ public class LoadJob extends AbstractStageJob{
             try {
                 bucket = work.waitEvent(StageType.TRANSFORM);
                 if (null != bucket) {
-                    dataLoder.load(bucket, new CallbackMethodCreator(){
+                    dataLoder.load(bucket, new CallbackMethodCreator() {
                         @Override
                         public <T> T invokeWithResult(Object... params) {
-                            if (null == params || params.length !=2) return null;
+                            if (null == params || params.length != 2) return null;
                             String schema = String.valueOf(params[0]);
                             String table =  String.valueOf(params[1]);
                             return (T) work.getDTaskStat(schema, table);
@@ -67,7 +67,7 @@ public class LoadJob extends AbstractStageJob{
                     });
                 }
             } catch (Exception e) {
-                NodeLog.upload(work.getTaskId(), "Load ETLRow error" , e.getMessage(), work.getDataConsumer().getSwimlaneId());
+                NodeLog.upload(work.getTaskId(), "Load ETLRow error", e.getMessage(), work.getDataConsumer().getSwimlaneId());
                 LOGGER.error("Load ETLRow error!", e);
             }
         } while (null != bucket);

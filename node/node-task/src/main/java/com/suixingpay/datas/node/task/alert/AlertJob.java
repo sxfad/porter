@@ -29,7 +29,7 @@ public class AlertJob extends AbstractStageJob {
     private final AlerterFactory alerterFactory;
     private final TaskWork work;
     public AlertJob(TaskWork work) {
-        super(work.getBasicThreadName(), 1000 * 60 * 5L );
+        super(work.getBasicThreadName(), 1000 * 60 * 5L);
         this.dataConsumer = work.getDataConsumer();
         this.dataLoader = work.getDataLoader();
         alerterFactory = NodeContext.INSTANCE.getBean(AlerterFactory.class);
@@ -52,8 +52,8 @@ public class AlertJob extends AbstractStageJob {
         try {
             alerterFactory.check(dataConsumer, dataLoader, work);
         } catch (Exception e) {
-            NodeLog.upload(work.getTaskId(), "db check error" , e.getMessage(), work.getDataConsumer().getSwimlaneId());
-            LOGGER.error("[{}][{}]db check error!",work.getTaskId(), dataConsumer.getSwimlaneId(), e);
+            NodeLog.upload(work.getTaskId(), "db check error", e.getMessage(), work.getDataConsumer().getSwimlaneId());
+            LOGGER.error("[{}][{}]db check error!", work.getTaskId(), dataConsumer.getSwimlaneId(), e);
         }
     }
 

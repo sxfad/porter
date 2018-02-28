@@ -31,7 +31,7 @@ public class DNode extends DObject {
     @Getter @Setter private String hostName = MachineUtils.HOST_NAME;
     @Getter @Setter private String processId = MachineUtils.CURRENT_JVM_PID + "";
     @Getter @Setter private NodeStatusType status;
-    @Getter @Setter private Map<String,List<String>> tasks;
+    @Getter @Setter private Map<String, List<String>> tasks;
     public DNode() {
         heartbeat = new Date();
         tasks = new LinkedHashMap<>();

@@ -56,7 +56,7 @@ public class DdlUtils {
     }
 
     /**
-     * !!! Only supports MySQL
+     * !!!Only supports MySQL
      */
     @SuppressWarnings("unchecked")
     public static List<String> findSchemas(JdbcTemplate jdbcTemplate, final String schemaPattern) {
@@ -74,7 +74,7 @@ public class DdlUtils {
     }
 
     /**
-     * !!! Only supports MySQL
+     * !!!Only supports MySQL
      */
     public static List<String> findSchemas(JdbcTemplate jdbcTemplate, final String schemaPattern,
                                            final DdlSchemaFilter ddlSchemaFilter) {

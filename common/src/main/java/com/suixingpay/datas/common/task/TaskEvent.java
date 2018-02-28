@@ -9,6 +9,7 @@
 package com.suixingpay.datas.common.task;
 
 import com.suixingpay.datas.common.config.TaskConfig;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
@@ -17,17 +18,8 @@ import lombok.Getter;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月21日 17:19
  */
+@AllArgsConstructor
 public class TaskEvent {
     @Getter private final TaskConfig config;
     @Getter private final TaskEventType type;
-
-    public TaskEvent(TaskConfig config, TaskEventType type) {
-        this.config = config;
-        this.type = type;
-    }
-
-
-    public TaskEventType getType() {
-        return type;
-    }
 }

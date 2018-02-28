@@ -9,6 +9,9 @@
 
 package com.suixingpay.datas.common.db.meta;
 
+/**
+ *
+ */
 public interface DdlSchemaFilter {
 
     boolean accept(String schemaName);

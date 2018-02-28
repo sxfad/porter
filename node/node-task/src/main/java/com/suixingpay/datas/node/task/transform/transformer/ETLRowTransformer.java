@@ -24,7 +24,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -93,9 +94,10 @@ public class ETLRowTransformer implements Transformer {
         //反向查找
         List<String> inColumnNames = row.getColumns().stream().map(p  -> p.getFinalName()).collect(Collectors.toList());
         //如果目标库表中有新增必填的字段需要补充上去
-        table.getColumns().stream().filter(p -> ! inColumnNames.contains(p.getName()) && p.isRequired() && null == p.getDefaultValue())
+        table.getColumns().stream().filter(p -> !inColumnNames.contains(p.getName()) && p.isRequired() && null == p.getDefaultValue())
                 .forEach(p -> {
-                    ETLColumn column = new ETLColumn(p.getName(), p.getDefaultValue(), p.getDefaultValue(), p.getDefaultValue(), p.isPrimaryKey(), p.isRequired(), p.getTypeCode());
+                    ETLColumn column = new ETLColumn(p.getName(), p.getDefaultValue(), p.getDefaultValue(), p.getDefaultValue(),
+                            p.isPrimaryKey(), p.isRequired(), p.getTypeCode());
                     if (row.getOpType() == EventType.INSERT) {
                         row.getColumns().add(column);
                     }
@@ -114,7 +116,7 @@ public class ETLRowTransformer implements Transformer {
         try {
             table = loader.findTable(finalSchema, finalTable, cache);
         } catch (Exception e) {
-            NodeLog.upload(work.getTaskId(), "查询数据库表结构出错" , e.getMessage(), work.getDataConsumer().getSwimlaneId());
+            NodeLog.upload(work.getTaskId(), "查询数据库表结构出错", e.getMessage(), work.getDataConsumer().getSwimlaneId());
             e.printStackTrace();
             LOGGER.error("查询目标仓库表结构{}.{}出错!", finalSchema, finalTable, e);
         }

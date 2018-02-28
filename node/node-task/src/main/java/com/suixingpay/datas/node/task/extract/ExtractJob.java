@@ -21,7 +21,10 @@ import com.suixingpay.datas.node.task.worker.TaskWork;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 完成事件的进一步转换、过滤。多线程执行
@@ -67,7 +70,7 @@ public class ExtractJob extends AbstractStageJob {
         do {
             try {
                 events = work.waitEvent(StageType.SELECT);
-                if (null != events && ! events.getRight().isEmpty()) {
+                if (null != events && !events.getRight().isEmpty()) {
                     final Pair<String, List<MessageEvent>> inThreadEvents = events;
                     LOGGER.debug("extract MessageEvent batch {}.", inThreadEvents.getLeft());
                     //在单线程执行，保证将来DataLoader load顺序
@@ -79,7 +82,7 @@ public class ExtractJob extends AbstractStageJob {
                             try {
                                 //将MessageEvent转换为ETLBucket
                                 ETLBucket bucket = ETLBucket.from(inThreadEvents);
-                                extractorFactory.extract(bucket,work.getDataConsumer().getExcludes(), work.getDataConsumer().getIncludes());
+                                extractorFactory.extract(bucket, work.getDataConsumer().getExcludes(), work.getDataConsumer().getIncludes());
                                 carrier.push(bucket);
                                 LOGGER.debug("push bucket {} into carrier after extract.", inThreadEvents.getLeft());
                             } catch (Exception e) {
@@ -89,10 +92,10 @@ public class ExtractJob extends AbstractStageJob {
                     });
                 }
             } catch (Exception e) {
-                NodeLog.upload(work.getTaskId(), "extract MessageEvent error" , e.getMessage(), work.getDataConsumer().getSwimlaneId());
+                NodeLog.upload(work.getTaskId(), "extract MessageEvent error", e.getMessage(), work.getDataConsumer().getSwimlaneId());
                 LOGGER.error("extract MessageEvent error!", e);
             }
-        } while (null != events && null != events.getRight() && ! events.getRight().isEmpty());
+        } while (null != events && null != events.getRight() && !events.getRight().isEmpty());
     }
 
     @Override

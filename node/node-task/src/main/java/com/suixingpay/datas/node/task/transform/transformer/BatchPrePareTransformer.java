@@ -23,7 +23,7 @@ import java.util.List;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月28日 13:38
  */
-public class BatchPrePareTransformer implements Transformer{
+public class BatchPrePareTransformer implements Transformer {
 
     @Override
     public int order() {
@@ -52,7 +52,7 @@ public class BatchPrePareTransformer implements Transformer{
                 break;
             }
         }
-        if (! groupOne.isEmpty()) bucket.getBatchRows().add(groupOne);
+        if (!groupOne.isEmpty()) bucket.getBatchRows().add(groupOne);
         if (from < size) groupRows(bucket, from);
     }
 }

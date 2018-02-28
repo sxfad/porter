@@ -143,7 +143,7 @@ public abstract class AbstractClusterProvider<C extends Client> implements Clust
 
     private void initialize(ClusterConfig config) throws ClientException, IOException, ConfigParseException {
         client = initClient(config);
-        if (null == client || ! (client instanceof ClusterClient)) {
+        if (null == client || !(client instanceof ClusterClient)) {
             throw new ClientMatchException();
         }
         monitor = newMonitor();

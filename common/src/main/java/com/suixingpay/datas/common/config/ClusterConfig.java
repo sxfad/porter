@@ -24,5 +24,5 @@ import java.util.Map;
 public class ClusterConfig {
     @Getter @Setter private ClusterStrategy strategy;
     //告警客户端
-    @Getter @Setter private Map<String,String> client;
+    @Getter @Setter private Map<String, String> client;
 }

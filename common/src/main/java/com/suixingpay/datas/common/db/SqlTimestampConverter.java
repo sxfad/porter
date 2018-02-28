@@ -43,7 +43,7 @@ public class SqlTimestampConverter implements Converter {
     /**
      * Create a {@link Converter} that will throw a {@link ConversionException} if a conversion error occurs.
      */
-    public SqlTimestampConverter(){
+    public SqlTimestampConverter() {
         this.defaultValue = null;
         this.useDefault = false;
     }
@@ -53,7 +53,7 @@ public class SqlTimestampConverter implements Converter {
      *
      * @param defaultValue The default value to be returned
      */
-    public SqlTimestampConverter(Object defaultValue){
+    public SqlTimestampConverter(Object defaultValue) {
         this.defaultValue = defaultValue;
         this.useDefault = true;
     }

@@ -9,6 +9,9 @@
 
 package com.suixingpay.datas.common.db.meta;
 
+/**
+ *
+ */
 public interface DdlTableNameFilter {
 
     boolean accept(String catalogName, String schemaName, String tableName);

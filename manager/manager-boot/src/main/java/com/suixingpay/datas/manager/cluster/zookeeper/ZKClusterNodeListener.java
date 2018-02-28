@@ -75,7 +75,7 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements N
 
     @Override
     public ClusterListenerFilter filter() {
-        return new ZookeeperClusterListenerFilter(){
+        return new ZookeeperClusterListenerFilter() {
             @Override
             protected String getPath() {
                 return listenPath();

@@ -41,7 +41,7 @@ public class ZKClusterConfigListener extends ZookeeperClusterListener implements
 
     @Override
     public ClusterListenerFilter filter() {
-        return new ZookeeperClusterListenerFilter(){
+        return new ZookeeperClusterListenerFilter() {
             @Override
             protected String getPath() {
                 return listenPath();
@@ -63,7 +63,7 @@ public class ZKClusterConfigListener extends ZookeeperClusterListener implements
             configPath = ALERT_CONFIG_PATH;
         }
 
-        if (! StringUtils.isBlank(configPath)) {
+        if (!StringUtils.isBlank(configPath)) {
             client.changeData(configPath, false, false, command.render());
         }
     }

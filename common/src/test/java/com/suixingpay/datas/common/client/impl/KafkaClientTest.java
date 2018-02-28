@@ -26,24 +26,24 @@ import java.util.UUID;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月06日 17:01
  */
 public class KafkaClientTest {
-    private static KafkaClient kafkaClient;
-    private static KafkaConfig config;
+    private static KafkaClient KAFKA_CLIENT;
+    private static KafkaConfig CONFIG;
 
     @BeforeClass
     public static void initSource() {
-        config = new KafkaConfig();
-        config.setTopics(Arrays.asList("zkw.t_user_debug_001"));
-        config.setGroup(UUID.randomUUID().toString());
-        config.setOncePollSize(1);
-        config.setServers("172.16.135.30:9092,172.16.135.30:9093");
-        kafkaClient = new KafkaClient(config);
+        CONFIG = new KafkaConfig();
+        CONFIG.setTopics(Arrays.asList("zkw.t_user_debug_001"));
+        CONFIG.setGroup(UUID.randomUUID().toString());
+        CONFIG.setOncePollSize(1);
+        CONFIG.setServers("172.16.135.30:9092,172.16.135.30:9093");
+        KAFKA_CLIENT = new KafkaClient(CONFIG);
     }
 
 
 
     @Test
     public void fetch() {
-        kafkaClient.fetch(new ConsumeClient.FetchCallback<Object, Object>() {
+        KAFKA_CLIENT.fetch(new ConsumeClient.FetchCallback<Object, Object>() {
             @Override
             public <F, O> F accept(O o) throws ParseException {
                 System.out.println(JSON.toJSONString(o));

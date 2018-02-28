@@ -24,12 +24,12 @@ public class ByteArrayConverter implements Converter {
     protected final Object         defaultValue;
     protected final boolean        useDefault;
 
-    public ByteArrayConverter(){
+    public ByteArrayConverter() {
         this.defaultValue = null;
         this.useDefault = false;
     }
 
-    public ByteArrayConverter(Object defaultValue){
+    public ByteArrayConverter(Object defaultValue) {
         this.defaultValue = defaultValue;
         this.useDefault = true;
     }

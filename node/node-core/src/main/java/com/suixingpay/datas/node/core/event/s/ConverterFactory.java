@@ -24,12 +24,12 @@ public enum  ConverterFactory {
 
     private final List<EventConverter> CONVERTERS;
 
-    private ConverterFactory() {
+    ConverterFactory() {
         CONVERTERS = SpringFactoriesLoader.loadFactories(EventConverter.class, null);
     }
 
     public  EventConverter getConverter(String name) {
-        for(EventConverter converter : CONVERTERS) {
+        for (EventConverter converter : CONVERTERS) {
             if (converter.getName().equals(name)) {
                 return converter;
             }

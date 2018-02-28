@@ -83,7 +83,7 @@ public abstract class BaseJdbcLoader extends AbstractDataLoader {
                 break;
             }
         }
-        if (! currentGroup.isEmpty()) reGroupList.add(new ImmutablePair<>(currentSql, currentGroup));
+        if (!currentGroup.isEmpty()) reGroupList.add(new ImmutablePair<>(currentSql, currentGroup));
         if (from < count) groupSql4Batch(reGroupList, sqlList, from);
     }
 
@@ -151,7 +151,7 @@ public abstract class BaseJdbcLoader extends AbstractDataLoader {
             sqlList.add(new ImmutablePair<>(template.getInsertSql(row.getFinalSchema(), row.getFinalTable(), allColumnNames),
                     allNewValues));
         } else if (row.getOpType() == EventType.TRUNCATE) {
-            sqlList.add(new ImmutablePair<>(template.getTruncateSql(row.getFinalSchema(), row.getFinalTable()),new Object[]{}));
+            sqlList.add(new ImmutablePair<>(template.getTruncateSql(row.getFinalSchema(), row.getFinalTable()), new Object[]{}));
         }
         return sqlList;
     }
@@ -165,7 +165,7 @@ public abstract class BaseJdbcLoader extends AbstractDataLoader {
      * @param result
      * @param stat
      */
-    protected void updateStat(Pair<Integer, ETLRow> result, DTaskStat stat){
+    protected void updateStat(Pair<Integer, ETLRow> result, DTaskStat stat) {
         //虽然每个状态值的变更都有stat对象锁，但在最外层加对象锁避免了多次请求的问题（锁可重入），同时保证状态各字段变更一致性
         synchronized (stat) {
             ETLRow row = result.getRight();

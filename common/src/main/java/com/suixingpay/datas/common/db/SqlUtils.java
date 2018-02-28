@@ -122,21 +122,22 @@ public class SqlUtils {
         // 设置变量
         String sourceValue = value;
         if (SqlUtils.isTextType(sqlType)) {
-            if ((sourceValue == null) || (true == StringUtils.isEmpty(sourceValue) && isEmptyStringNulled)) {
+            if ((sourceValue == null) || (StringUtils.isEmpty(sourceValue) && isEmptyStringNulled)) {
                 return isRequired ? REQUIRED_FIELD_NULL_SUBSTITUTE : null;
             } else {
                 return sourceValue;
             }
         } else {
             if (StringUtils.isEmpty(sourceValue)) {
-                return isEmptyStringNulled ? null : sourceValue;// oracle的返回null，保持兼容
+                // oracle的返回null，保持兼容
+                return isEmptyStringNulled ? null : sourceValue;
             } else {
                 Class<?> requiredType = sqlTypeToJavaTypeMap.get(sqlType);
                 if (requiredType == null) {
                     throw new IllegalArgumentException("unknow java.sql.Types - " + sqlType);
                 } else if (requiredType.equals(String.class)) {
                     return sourceValue;
-                } else if (true == isNumeric(sqlType)) {
+                } else if (isNumeric(sqlType)) {
                     return convertUtilsBean.convert(sourceValue.trim(), requiredType);
                 } else {
                     return convertUtilsBean.convert(sourceValue, requiredType);
@@ -227,7 +228,8 @@ public class SqlUtils {
             // try {
             // value = rs.getTime(index);
             // } catch (SQLException e) {
-            value = rs.getString(index);// 尝试拿为string对象，0000无法用Time表示
+            value = rs.getString(index);
+            // 尝试拿为string对象，0000无法用Time表示
             // if (value == null && !rs.wasNull()) {
             // value = "00:00:00"; //
             // mysql设置了zeroDateTimeBehavior=convertToNull，出现0值时返回为null
@@ -258,7 +260,8 @@ public class SqlUtils {
                 if (bytes == null) {
                     value = null;
                 } else {
-                    value = new String(bytes, "ISO-8859-1");// 将binary转化为iso-8859-1的字符串
+                    // 将binary转化为iso-8859-1的字符串
+                    value = new String(bytes, "ISO-8859-1");
                 }
             } catch (UnsupportedEncodingException e) {
                 throw new SQLException(e);

@@ -85,14 +85,14 @@ public class EmailClient  extends AbstractClient<EmailConfig> implements AlertCl
         message.setText(notice);
 
         List<String> emails = new ArrayList<>();
-        if (null != receivers && ! receivers.isEmpty()) {
+        if (null != receivers && !receivers.isEmpty()) {
             receivers.stream().filter(r -> !StringUtils.isBlank(r.getEmail())).forEach(r -> emails.add(r.getEmail()));
         }
         if (!globalReceiver.isEmpty()) {
             globalReceiver.stream().filter(r -> !StringUtils.isBlank(r.getEmail())).forEach(r -> emails.add(r.getEmail()));
         }
 
-        if (! receivers.isEmpty()) {
+        if (!receivers.isEmpty()) {
             message.setTo(receivers.toArray(new String[0]));
             sender.send(message);
         }

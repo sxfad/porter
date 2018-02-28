@@ -25,7 +25,7 @@ import java.util.List;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月27日 10:59
  */
-public class IgnoreRowExtractor implements Extractor{
+public class IgnoreRowExtractor implements Extractor {
     private  static final Logger LOGGER = LoggerFactory.getLogger(IgnoreRowExtractor.class);
 
     @Override
@@ -36,13 +36,13 @@ public class IgnoreRowExtractor implements Extractor{
             LOGGER.debug("trying extract row:{}", JSON.toJSONString(row));
 
             //包含、不包含表判断
-            if (! includeTables.isEmpty()) {
+            if (!includeTables.isEmpty()) {
                 String strSeg = new StringBuffer().append(row.getSchema()).append(".")
                         .append(row.getTable()).toString().toUpperCase().intern();
 
                 if (!includeTables.contains(strSeg)) removals.add(row);
 
-            } else if (includeTables.isEmpty() && ! excludeTables.isEmpty()) { //不包含表
+            } else if (includeTables.isEmpty() && !excludeTables.isEmpty()) { //不包含表
                 String strSeg = new StringBuffer().append(row.getSchema()).append(".")
                         .append(row.getTable()).toString().toUpperCase().intern();
 
@@ -50,7 +50,8 @@ public class IgnoreRowExtractor implements Extractor{
             }
 
             //当前仅支持插入、更新、删除、截断表
-            if (row.getOpType() == EventType.INSERT || row.getOpType() == EventType.UPDATE || row.getOpType() == EventType.DELETE || row.getOpType() == EventType.TRUNCATE) {
+            if (row.getOpType() == EventType.INSERT || row.getOpType() == EventType.UPDATE
+                    || row.getOpType() == EventType.DELETE || row.getOpType() == EventType.TRUNCATE) {
                 //插入、删除、更新字段为空
                 if ((null == row.getColumns() || row.getColumns().isEmpty()) && row.getOpType() != EventType.TRUNCATE) {
                     LOGGER.debug("removing row:{}", JSON.toJSONString(row));

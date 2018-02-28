@@ -52,7 +52,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
 
     @Override
     public ClusterListenerFilter filter() {
-        return new ZookeeperClusterListenerFilter(){
+        return new ZookeeperClusterListenerFilter() {
 
             @Override
             protected String getPath() {

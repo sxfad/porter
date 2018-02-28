@@ -32,7 +32,7 @@ import java.util.List;
 public class SelectJob extends AbstractStageJob {
     private static final int PULL_BATCH_SIZE = 1000;
     //只需要保证select出来的数据不致使ExtractJob的所有消费线程饥饿即可
-    private static final int BUFFER_SIZE = PULL_BATCH_SIZE*10;
+    private static final int BUFFER_SIZE = PULL_BATCH_SIZE * 10;
 
     private final DataConsumer consumer;
     private final TaskWork work;
@@ -41,7 +41,7 @@ public class SelectJob extends AbstractStageJob {
         super(work.getBasicThreadName());
         this.work = work;
         consumer = work.getDataConsumer();
-        carrier = NodeContext.INSTANCE.getBean(DataCarrierFactory.class).newDataCarrier(BUFFER_SIZE,PULL_BATCH_SIZE);
+        carrier = NodeContext.INSTANCE.getBean(DataCarrierFactory.class).newDataCarrier(BUFFER_SIZE, PULL_BATCH_SIZE);
     }
 
     /**
@@ -62,18 +62,18 @@ public class SelectJob extends AbstractStageJob {
     }
 
     @Override
-    protected void loopLogic(){
+    protected void loopLogic() {
         //只要队列有消息，持续读取
         List<MessageEvent> events = null;
         do {
             try {
                 events = consumer.fetch();
-                if (null != events && ! events.isEmpty()) carrier.push(events);
+                if (null != events && !events.isEmpty()) carrier.push(events);
             } catch (InterruptedException e) {
-                NodeLog.upload(work.getTaskId(), "fetch MessageEvent error" , e.getMessage(), consumer.getSwimlaneId());
+                NodeLog.upload(work.getTaskId(), "fetch MessageEvent error", e.getMessage(), consumer.getSwimlaneId());
                 LOGGER.error("fetch MessageEvent error!", e);
             }
-        } while (null != events && ! events.isEmpty());
+        } while (null != events && !events.isEmpty());
     }
 
     @Override

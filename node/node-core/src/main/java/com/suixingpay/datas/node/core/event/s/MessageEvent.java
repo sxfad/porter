@@ -8,7 +8,12 @@
  */
 package com.suixingpay.datas.node.core.event.s;
 
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 /**
  * 消息事件
@@ -28,9 +33,9 @@ public class MessageEvent {
     //解析事件的时间
     private Date currentTs;
     //修改之后的值
-    private Map<String,Object> after;
+    private Map<String, Object> after;
     //修改之前的值
-    private Map<String,Object> before;
+    private Map<String, Object> before;
     private List<String> primaryKeys;
 
     public EventHeader getHead() {

@@ -23,7 +23,8 @@ import java.util.Map;
  */
 public class BeanUtils {
 
-    public static void copyProperties(Map<String, String> source, Object target, String... ignoreProperties) throws InvocationTargetException, IllegalAccessException {
+    public static void copyProperties(Map<String, String> source, Object target, String... ignoreProperties)
+            throws InvocationTargetException, IllegalAccessException {
         PropertyDescriptor[] targetPds = org.springframework.beans.BeanUtils.getPropertyDescriptors(target.getClass());
         List<String> ignoreList = (ignoreProperties != null ? Arrays.asList(ignoreProperties) : null);
         for (PropertyDescriptor targetPd : targetPds) {

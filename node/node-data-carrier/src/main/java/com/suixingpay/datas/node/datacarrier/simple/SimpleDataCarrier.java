@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -34,7 +33,7 @@ public class SimpleDataCarrier implements DataCarrier {
 
     @Override
     public void push(List list) throws InterruptedException {
-        if ( null != list && !list.isEmpty()) {
+        if (null != list && !list.isEmpty()) {
             for (Object t : list) {
                 push(t);
             }
@@ -55,7 +54,7 @@ public class SimpleDataCarrier implements DataCarrier {
     @Override
     public synchronized Pair pullByOrder() {
         Object item = pull();
-        return null != item ? new ImmutablePair(generateId(), item) :null;
+        return null != item ? new ImmutablePair(generateId(), item) : null;
     }
 
     /**
@@ -87,7 +86,7 @@ public class SimpleDataCarrier implements DataCarrier {
         Object item = null;
         while ((item = pull()) != null) {
             list.add(item);
-            currentCount ++;
+            currentCount++;
             if (currentCount >= pullBatchSize) break;
         }
         return list;

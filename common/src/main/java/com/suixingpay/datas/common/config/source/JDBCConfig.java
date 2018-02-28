@@ -40,7 +40,7 @@ public class JDBCConfig extends SourceConfig {
     @Override
     protected void childStuff() {
         String typeStr = getProperties().getOrDefault("dbType", "");
-        DbType enumType = ! StringUtils.isBlank(typeStr) ? DbType.valueOf(typeStr) : null;
+        DbType enumType = !StringUtils.isBlank(typeStr) ? DbType.valueOf(typeStr) : null;
         if (null != enumType) {
             dbType = enumType;
         }

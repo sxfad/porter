@@ -28,7 +28,7 @@ public class DefaultNamedThreadFactory implements ThreadFactory {
 
     @Override
     public Thread newThread(Runnable r) {
-        Thread t = new Thread(r,namePrefix + threadSeq.getAndIncrement());
+        Thread t = new Thread(r, namePrefix + threadSeq.getAndIncrement());
         if (t.isDaemon()) t.setDaemon(false);
         return t;
     }

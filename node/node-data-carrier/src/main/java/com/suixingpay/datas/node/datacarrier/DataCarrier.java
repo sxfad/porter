@@ -15,10 +15,12 @@ import java.util.List;
 /**
  *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
+ * @param <E>
  * @date: 2017年12月25日 14:01
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月25日 14:01
  */
+
 public interface DataCarrier<E> {
     void push(List<E> list) throws InterruptedException;
     void push(E item) throws InterruptedException;

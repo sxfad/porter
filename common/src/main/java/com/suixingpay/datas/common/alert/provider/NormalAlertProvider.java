@@ -23,20 +23,19 @@ import java.util.List;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月30日 11:47
  */
-public class NormalAlertProvider implements  AlertProvider{
-    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+public class NormalAlertProvider implements  AlertProvider {
     private final AlertClient client;
     public  NormalAlertProvider(AlertClient client) {
         this.client = client;
 
     }
-    public boolean notice(String notice, List<AlertReceiver> receivers) {
-        String title = "[" + DATE_FORMAT.format(new Date()) + "][" + MachineUtils.localhost() + ":" + MachineUtils.getPID() + "]数据同步告警";
+
+    public boolean notice(String title, String notice, List<AlertReceiver> receivers) {
         client.send(notice, title, receivers);
         return true;
     }
 
-    public boolean notice(String notice) {
-        return notice(notice, null);
+    public boolean notice(String title, String notice) {
+        return notice(title, notice, null);
     }
 }

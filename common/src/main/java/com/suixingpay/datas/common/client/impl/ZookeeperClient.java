@@ -53,7 +53,7 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
     }
 
     @Override
-    public List<String> getChildren(String path){
+    public List<String> getChildren(String path) {
         List<String> children = null;
         try {
             children = zk.getChildren(path, true);
@@ -78,7 +78,7 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        return new ImmutablePair(new String(dataBytes), stat) ;
+        return new ImmutablePair(new String(dataBytes), stat);
     }
 
     @Override

@@ -22,5 +22,5 @@ import lombok.Setter;
  */
 @AllArgsConstructor
 public class TaskPushCommand implements ClusterCommand {
-    @Getter @Setter private final TaskConfig config;
+    @Getter private final TaskConfig config;
 }

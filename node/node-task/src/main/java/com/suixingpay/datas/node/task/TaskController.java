@@ -16,6 +16,7 @@ import com.suixingpay.datas.common.statistics.NodeLog;
 import com.suixingpay.datas.common.task.TaskEventListener;
 import com.suixingpay.datas.common.util.MachineUtils;
 import com.suixingpay.datas.node.core.NodeContext;
+import com.suixingpay.datas.node.core.consumer.DataConsumer;
 import com.suixingpay.datas.node.core.task.Task;
 import com.suixingpay.datas.node.task.worker.TaskWorker;
 import org.slf4j.Logger;
@@ -49,7 +50,7 @@ public class TaskController implements TaskEventListener {
     /**
      * taskId -> worker
      */
-    private final Map<String,TaskWorker> WORKER_MAP = new ConcurrentHashMap<>();
+    private final Map<String, TaskWorker> WORKER_MAP = new ConcurrentHashMap<>();
 
     public void start() throws IllegalAccessException, ClientException, InstantiationException {
         start(null);
@@ -71,12 +72,11 @@ public class TaskController implements TaskEventListener {
             }
         } finally {
             //进程退出钩子
-            final TaskController controller = this;
-
             //因为JVM不能保证ShutdownHook一定能执行，通过自定义信号实现优雅下线。
             Signal graceShutdown = new Signal("USR2");
             //不同的操作系统USR2信号量数值不一样，不支持windows操作系统
-            LOGGER.info("Shutdown gracefully with signal {}. [kill -{} {}]", graceShutdown.getName(), graceShutdown.getNumber(), MachineUtils.getPID());
+            LOGGER.info("Shutdown gracefully with signal {}. [kill -{} {}]", graceShutdown.getName(), graceShutdown.getNumber(),
+                    MachineUtils.getPID());
             Signal.handle(graceShutdown, new SignalHandler() {
                 @Override
                 public void handle(Signal signal) {
@@ -84,7 +84,7 @@ public class TaskController implements TaskEventListener {
                 }
             });
 
-            Runtime.getRuntime().addShutdownHook(new Thread("suixingpay-task-shutdownHook"){
+            Runtime.getRuntime().addShutdownHook(new Thread("suixingpay-task-shutdownHook") {
                 @Override
                 public void run() {
                     shutdownHook(false);
@@ -92,63 +92,6 @@ public class TaskController implements TaskEventListener {
             });
         }
     }
-
-    public void startTask(TaskConfig task) {
-        TaskWorker worker = WORKER_MAP.computeIfAbsent(task.getTaskId(), new Function<String, TaskWorker>() {
-            @Override
-            public TaskWorker apply(String s) {
-                return new TaskWorker();
-            }
-        });
-        //尝试通过ClusterProvider的分布式锁功能锁定资源。
-        try {
-            worker.alloc(task);
-            worker.start();
-        } catch (Exception e) {
-            NodeLog.upload(task.getTaskId(), "任务启动失败" , e.getMessage());
-            e.printStackTrace();
-            LOGGER.error("failed to start task:{}", JSONObject.toJSONString(task),e);
-        }
-        //考虑到任务启动失败造成的worker闲置(内存、线程),检查worker是否有工作，如果空闲，释放worker资源
-        stopWorkerWhenNoWork(worker, task.getTaskId());
-    }
-
-    public void stopTask(Task task) {
-        if (WORKER_MAP.containsKey(task.getTaskId())) {
-            TaskWorker worker = WORKER_MAP.get(task.getTaskId());
-            //停止worker的某个work
-            worker.stopJob(task.getConsumers());
-            //如果worker没有work可做就解雇worker
-            stopWorkerWhenNoWork(worker, task.getTaskId());
-        }
-    }
-
-    private void stopWorkerWhenNoWork(TaskWorker worker, String taskId) {
-        if (worker.isNoWork()) {
-            synchronized (WORKER_MAP) {
-                if (worker.isNoWork()) {
-                    worker.stop();
-                    WORKER_MAP.remove(taskId);
-                }
-            }
-        }
-    }
-
-    private boolean stop() {
-        if (stat.compareAndSet(true, false)) {
-            LOGGER.info("监工下线.......");
-            WORKER_MAP.keySet().stream().collect(Collectors.toList()).forEach( k -> {
-                TaskWorker worker = WORKER_MAP.getOrDefault(k, null);
-                if (null != worker) worker.stop();
-                WORKER_MAP.remove(k);
-            });
-            return true;
-        } else {
-            LOGGER.warn("Task controller has stopped already");
-            return false;
-        }
-    }
-
 
     @Override
     public void onEvent(TaskConfig event) {
@@ -167,12 +110,76 @@ public class TaskController implements TaskEventListener {
         }
     }
 
+
+    public void stopTask(String taskId, String... swimlaneId) {
+        if (WORKER_MAP.containsKey(taskId)) {
+            TaskWorker worker = WORKER_MAP.get(taskId);
+            //停止worker的某个work
+            worker.stopJob(swimlaneId);
+            //如果worker没有work可做就解雇worker
+            stopWorkerWhenNoWork(worker, taskId);
+        }
+    }
+
+    private void startTask(TaskConfig task) {
+        TaskWorker worker = WORKER_MAP.computeIfAbsent(task.getTaskId(), new Function<String, TaskWorker>() {
+            @Override
+            public TaskWorker apply(String s) {
+                return new TaskWorker();
+            }
+        });
+        //尝试通过ClusterProvider的分布式锁功能锁定资源。
+        try {
+            worker.alloc(task);
+            worker.start();
+        } catch (Exception e) {
+            NodeLog.upload(task.getTaskId(), "任务启动失败", e.getMessage());
+            e.printStackTrace();
+            LOGGER.error("failed to start task:{}", JSONObject.toJSONString(task), e);
+        }
+        //考虑到任务启动失败造成的worker闲置(内存、线程),检查worker是否有工作，如果空闲，释放worker资源
+        stopWorkerWhenNoWork(worker, task.getTaskId());
+    }
+
+    private boolean stop() {
+        if (stat.compareAndSet(true, false)) {
+            LOGGER.info("监工下线.......");
+            WORKER_MAP.keySet().stream().collect(Collectors.toList()).forEach(k -> {
+                TaskWorker worker = WORKER_MAP.getOrDefault(k, null);
+                if (null != worker) worker.stop();
+                WORKER_MAP.remove(k);
+            });
+            return true;
+        } else {
+            LOGGER.warn("Task controller has stopped already");
+            return false;
+        }
+    }
+
+    private void stopTask(Task task) {
+        List<String> swimlaneIdList = task.getConsumers().stream().map(DataConsumer::getSwimlaneId).collect(Collectors.toList());
+        stopTask(task.getTaskId(), swimlaneIdList.toArray(new String[0]));
+    }
+
+    private void stopWorkerWhenNoWork(TaskWorker worker, String taskId) {
+        if (worker.isNoWork()) {
+            synchronized (WORKER_MAP) {
+                if (worker.isNoWork()) {
+                    worker.stop();
+                    WORKER_MAP.remove(taskId);
+                }
+            }
+        }
+    }
+
+
+
     private void shutdownHook(boolean exit) {
         if (this.stop()) {
             //退出群聊需在业务代码执行之后才能执行
             LOGGER.info("退出群聊.......");
             ClusterProviderProxy.INSTANCE.stop();
-            if(exit) {
+            if (exit) {
                 System.exit(-1);
             }
         }

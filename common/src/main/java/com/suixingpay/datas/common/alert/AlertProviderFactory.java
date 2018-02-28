@@ -37,7 +37,7 @@ public enum AlertProviderFactory {
     private AlertProvider alert;
     public void initialize(AlertConfig config) throws ConfigParseException, ClientConnectionException {
         //校验配置文件参数
-        if ( null == config || null == config.getStrategy() || null == config.getClient()
+        if (null == config || null == config.getStrategy() || null == config.getClient()
                 || config.getClient().isEmpty() ) {
             return;
         }
@@ -53,10 +53,10 @@ public enum AlertProviderFactory {
         }
     }
 
-    public void notice(String msg, List<AlertReceiver> receiverList) {
+    public void notice(String title, String msg, List<AlertReceiver> receiverList) {
         try {
-            if (initializedLock.readLock().tryLock(5,TimeUnit.SECONDS)) {
-                if (null != alert) alert.notice(msg, receiverList);
+            if (initializedLock.readLock().tryLock(5, TimeUnit.SECONDS)) {
+                if (null != alert) alert.notice(title, msg, receiverList);
                 initializedLock.readLock().unlock();
             }
         } catch (InterruptedException e) {}

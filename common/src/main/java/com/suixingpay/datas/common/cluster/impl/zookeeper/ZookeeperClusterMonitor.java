@@ -30,7 +30,7 @@ import java.util.function.Function;
  */
 public class ZookeeperClusterMonitor extends AbstractClusterMonitor implements Watcher {
     private ZookeeperClient client;
-    private final Map<String,List<String>> nodeChildren = new HashMap<>();
+    private final Map<String, List<String>> nodeChildren = new HashMap<>();
     private final CountDownLatch ready = new CountDownLatch(1);
 
     @Override
@@ -45,13 +45,13 @@ public class ZookeeperClusterMonitor extends AbstractClusterMonitor implements W
             ready.await();
             Stat preStat = client.exists(ZookeeperClusterListener.PREFIX_ATALOG, false);
             if (null == preStat) {
-                client.create(ZookeeperClusterListener.PREFIX_ATALOG,false,"{}");
+                client.create(ZookeeperClusterListener.PREFIX_ATALOG, false,"{}");
             }
             Stat stat = client.exists(ZookeeperClusterListener.BASE_CATALOG, false);
             if (null == stat) {
-                client.create(ZookeeperClusterListener.BASE_CATALOG,false,"{}");
+                client.create(ZookeeperClusterListener.BASE_CATALOG, false,"{}");
             }
-            for (ClusterListener listener : listeners.values()){
+            for (ClusterListener listener : listeners.values()) {
                 ZookeeperClusterListener zkListener = (ZookeeperClusterListener)listener;
                 Stat listenerStat = client.exists(zkListener.listenPath(), false);
                 if (null == listenerStat) {
@@ -112,10 +112,10 @@ public class ZookeeperClusterMonitor extends AbstractClusterMonitor implements W
 
         //判断是否新节点创建
         for (String child : remoteChildren) {
-            String childFullPath = path + "/" +child;
+            String childFullPath = path + "/" + child;
 
             //new node
-            if (! localChildren.contains(childFullPath)) {
+            if (!localChildren.contains(childFullPath)) {
                 triggerTreeEvent(childFullPath);
                 //only for trigger watcher "getChildren"
                 client.getChildren(childFullPath);
@@ -127,7 +127,7 @@ public class ZookeeperClusterMonitor extends AbstractClusterMonitor implements W
         //删除旧节点
         localChildren.stream().forEach(s -> {
             String remotePath = s.replace(path + "/", "");
-            if (! remoteChildren.contains(remotePath)) {
+            if (!remoteChildren.contains(remotePath)) {
                 localChildren.remove(s);
             }
         });

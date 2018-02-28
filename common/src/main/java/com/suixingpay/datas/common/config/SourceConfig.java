@@ -40,7 +40,7 @@ public abstract class SourceConfig {
 
     public  <T extends SourceConfig> T stuff() throws ConfigParseException {
         try {
-            BeanUtils.copyProperties(properties, this, ArrayUtils.addAll(childStuffColumns(),SOURCE_TYPE_KEY));
+            BeanUtils.copyProperties(properties, this, ArrayUtils.addAll(childStuffColumns(), SOURCE_TYPE_KEY));
             childStuff();
             return (T) this;
         } catch (Exception e) {

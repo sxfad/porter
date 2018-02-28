@@ -21,7 +21,7 @@ public enum ManagerContext {
     INSTANCE();
     private ApplicationContext context;
     public <T> T getBean(Class<T> clazz) {
-        return null !=context ? context.getBean(clazz) : null;
+        return null != context ? context.getBean(clazz) : null;
     }
 
     public void setApplicationContext(ApplicationContext context) {

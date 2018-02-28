@@ -1,6 +1,6 @@
 apply plugin: 'java'
-
 version '2.0'
+
 repositories {
     maven{ url"http://maven.aliyun.com/nexus/content/groups/public"}
 }
@@ -14,10 +14,12 @@ buildscript {
 }
 
 
+
 subprojects {
     apply plugin: 'java'
     apply plugin: 'maven'
-    apply plugin: "idea"
+    apply plugin: 'idea'
+    apply plugin: 'checkstyle'
     ext {
         group = 'com.suixingpay.datas'
         junitVersion = '4.12'
@@ -62,5 +64,11 @@ subprojects {
 
     clean.doFirst {
         delete "${buildDir}/../out"
+    }
+
+    checkstyle {
+        toolVersion = 7.7
+        ignoreFailures = true
+        configFile = file(rootProject.getRootDir().getPath() + "/checkstyle.xml")
     }
 }

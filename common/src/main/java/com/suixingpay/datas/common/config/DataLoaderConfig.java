@@ -22,5 +22,5 @@ import java.util.Map;
  */
 public class DataLoaderConfig {
     @Getter @Setter private String loaderName;
-    @Getter @Setter private Map<String,String> source;
+    @Getter @Setter private Map<String, String> source;
 }

@@ -102,14 +102,4 @@ public abstract class AbstractClient<T extends SourceConfig> implements Client {
         }
         throw  new ClientMatchException();
     }
-
-    @Override
-    public void setPublic(boolean isPublic) {
-        this.isPublic = isPublic;
-    }
-
-    @Override
-    public boolean isPublic() {
-        return isPublic;
-    }
 }

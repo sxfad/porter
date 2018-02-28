@@ -14,6 +14,9 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 
+/**
+ *
+ */
 public abstract class DdlUtilsFilter {
 
     /**

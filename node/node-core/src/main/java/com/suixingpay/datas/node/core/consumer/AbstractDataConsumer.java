@@ -37,7 +37,7 @@ public abstract class AbstractDataConsumer implements DataConsumer {
 
     @Override
     public void setExcludes(String exclude) {
-        if(!StringUtils.isBlank(exclude)) {
+        if (!StringUtils.isBlank(exclude)) {
             CollectionUtils.addAll(excludes, exclude.trim().toUpperCase().split(","));
             excludes.forEach(k -> k.trim());
         }
@@ -45,7 +45,7 @@ public abstract class AbstractDataConsumer implements DataConsumer {
 
     @Override
     public void setIncludes(String include) {
-        if(!StringUtils.isBlank(include)) {
+        if (!StringUtils.isBlank(include)) {
             CollectionUtils.addAll(includes, include.trim().toUpperCase().split(","));
             includes.forEach(k -> k.trim());
         }

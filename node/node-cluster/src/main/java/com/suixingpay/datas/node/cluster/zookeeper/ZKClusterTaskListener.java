@@ -12,8 +12,15 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.suixingpay.datas.common.cluster.ClusterListenerFilter;
 import com.suixingpay.datas.common.cluster.ClusterProviderProxy;
-import com.suixingpay.datas.common.cluster.command.*;
-import com.suixingpay.datas.common.cluster.command.broadcast.*;
+import com.suixingpay.datas.common.cluster.command.TaskAssignedCommand;
+import com.suixingpay.datas.common.cluster.command.TaskRegisterCommand;
+import com.suixingpay.datas.common.cluster.command.TaskStatCommand;
+import com.suixingpay.datas.common.cluster.command.TaskStopCommand;
+import com.suixingpay.datas.common.cluster.command.TaskStatQueryCommand;
+import com.suixingpay.datas.common.cluster.command.broadcast.TaskRegister;
+import com.suixingpay.datas.common.cluster.command.broadcast.TaskStatQuery;
+import com.suixingpay.datas.common.cluster.command.broadcast.TaskStatUpload;
+import com.suixingpay.datas.common.cluster.command.broadcast.TaskStop;
 import com.suixingpay.datas.common.cluster.data.DObject;
 import com.suixingpay.datas.common.cluster.data.DTaskLock;
 import com.suixingpay.datas.common.cluster.event.ClusterEvent;
@@ -23,7 +30,8 @@ import com.suixingpay.datas.common.cluster.impl.zookeeper.ZookeeperClusterListen
 import com.suixingpay.datas.common.cluster.data.DTaskStat;
 import com.suixingpay.datas.common.config.TaskConfig;
 import com.suixingpay.datas.common.exception.TaskLockException;
-import com.suixingpay.datas.common.task.*;
+import com.suixingpay.datas.common.task.TaskEventListener;
+import com.suixingpay.datas.common.task.TaskEventProvider;
 import com.suixingpay.datas.common.util.MachineUtils;
 import com.suixingpay.datas.node.core.NodeContext;
 import org.apache.commons.lang3.StringUtils;
@@ -74,8 +82,9 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
         }
 
         //任务释放
-        if(TASK_UNLOCKED_PATTERN.matcher(zkEvent.getPath()).matches() && event.isOffline() && NodeContext.INSTANCE.getNodeStatus().isWorking()) {
-            Pair<String,Stat> taskConfig = client.getData(zkEvent.getPath().replace("/lock/", "/dist/"));
+        if (TASK_UNLOCKED_PATTERN.matcher(zkEvent.getPath()).matches() && event.isOffline()
+                && NodeContext.INSTANCE.getNodeStatus().isWorking()) {
+            Pair<String, Stat> taskConfig = client.getData(zkEvent.getPath().replace("/lock/", "/dist/"));
             if (null != taskConfig && !StringUtils.isBlank(taskConfig.getLeft())) {
                 TaskConfig config = JSONObject.parseObject(taskConfig.getLeft(), TaskConfig.class);
                 triggerTaskEvent(config);
@@ -85,7 +94,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
 
     @Override
     public ClusterListenerFilter filter() {
-        return new ZookeeperClusterListenerFilter(){
+        return new ZookeeperClusterListenerFilter() {
 
             @Override
             protected String getPath() {
@@ -121,19 +130,20 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
         //任务分配、工作节点注册目录创建
         Stat stat = client.exists(listenPath() + "/" + task.getTaskId(), true);
         if (null == stat) {
-            client.create(taskPath,false,"{}");
-            client.create(assignPath,false,"{}");
-            client.create(statPath,false,"{}");
+            client.create(taskPath, false, "{}");
+            client.create(assignPath, false, "{}");
+            client.create(statPath, false, "{}");
         }
 
         //创建任务统计节点
         try {
             String alertNode = statPath + "/" + task.getSwimlaneId();
             if (null == client.exists(alertNode, true)) {
-                client.create(alertNode,false ,"{}");
+                client.create(alertNode, false, "{}");
             }
         } catch (Exception e) {
-            LOGGER.error("创建任务统计节点失败->task:{},node:{},consume-resource:{},", task.getTaskId(), NodeContext.INSTANCE.getNodeId(), task.getSwimlaneId(), e);
+            LOGGER.error("创建任务统计节点失败->task:{},node:{},consume-resource:{},", task.getTaskId(),
+                    NodeContext.INSTANCE.getNodeId(), task.getSwimlaneId(), e);
         }
 
         //任务分配
@@ -141,11 +151,12 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
         Stat ifAssignTopic = client.exists(topicPath, true);
         if (null == ifAssignTopic) {
             //为当前工作节点分配任务topic
-            client.create(topicPath,false, new DTaskLock(task.getTaskId(), NodeContext.INSTANCE.getNodeId(), task.getSwimlaneId()).toString());
+            client.create(topicPath, false, new DTaskLock(task.getTaskId(), NodeContext.INSTANCE.getNodeId(),
+                    task.getSwimlaneId()).toString());
             //通知对此感兴趣的Listener
-            ClusterProviderProxy.INSTANCE.broadcast(new TaskAssignedCommand(task.getTaskId(),task.getSwimlaneId()));
+            ClusterProviderProxy.INSTANCE.broadcast(new TaskAssignedCommand(task.getTaskId(), task.getSwimlaneId()));
         } else {
-            throw  new TaskLockException(topicPath+",锁定资源失败。");
+            throw  new TaskLockException(topicPath + ",锁定资源失败。");
         }
     }
 
@@ -153,15 +164,16 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
     public void uploadStat(TaskStatCommand command) throws Exception {
         DTaskStat dataStat = command.getStat();
         //.intern()保证全局唯一字符串对象
-        String node = (listenPath() + "/" +dataStat.getTaskId() + "/stat/" + dataStat.getSwimlaneId()
-                + "/" + dataStat.getSchema()+ "." + dataStat.getTable()).intern();
+        String node = (listenPath() + "/" + dataStat.getTaskId() + "/stat/" + dataStat.getSwimlaneId()
+                + "/" + dataStat.getSchema() + "." + dataStat.getTable()).intern();
         //控制锁的粒度到每个consume-resource节点，
         synchronized (node) {
             Stat stat = client.exists(node, true);
             //节点不存在，创建新节点
             if (null == stat) {
-                DTaskStat thisStat = new DTaskStat(dataStat.getTaskId(), NodeContext.INSTANCE.getNodeId(), dataStat.getSwimlaneId(), dataStat.getSchema(), dataStat.getTable());
-                client.create(node,false ,thisStat.toString());
+                DTaskStat thisStat = new DTaskStat(dataStat.getTaskId(), NodeContext.INSTANCE.getNodeId(),
+                        dataStat.getSwimlaneId(), dataStat.getSchema(), dataStat.getTable());
+                client.create(node, false, thisStat.toString());
                 stat = client.exists(node, true);
             }
 
@@ -199,13 +211,13 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
 
     @Override
     public void queryTaskStat(TaskStatQueryCommand command) {
-        String node = listenPath() + "/" +command.getTaskId() + "/stat/" + command.getSwimlaneId();
+        String node = listenPath() + "/" + command.getTaskId() + "/stat/" + command.getSwimlaneId();
         LOGGER.debug("query \"{}\" children node.", node);
 
         List<String> children = client.getChildren(node);
         List<DObject> stats = new ArrayList<>();
         for (String child : children) {
-            String fullChild = node + "/" +child;
+            String fullChild = node + "/" + child;
             LOGGER.debug("got \"{}\" children node \"{}\".", node, fullChild);
             try {
                 Pair<String, Stat> nodePair = client.getData(fullChild);
@@ -218,6 +230,6 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
                 e.printStackTrace();
             }
         }
-        if(null != command.getCallback()) command.getCallback().callback(stats);
+        if (null != command.getCallback()) command.getCallback().callback(stats);
     }
 }
