@@ -14,10 +14,18 @@ import com.suixingpay.datas.common.client.ConsumeClient;
 import com.suixingpay.datas.common.config.source.KafkaConfig;
 import com.suixingpay.datas.common.exception.ClientException;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.kafka.clients.consumer.*;
+import org.apache.kafka.clients.consumer.Consumer;
+import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
-import java.util.*;
+import java.util.Properties;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 /**

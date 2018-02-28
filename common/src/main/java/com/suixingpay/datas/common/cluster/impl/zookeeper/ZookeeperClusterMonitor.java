@@ -10,15 +10,17 @@ package com.suixingpay.datas.common.cluster.impl.zookeeper;
 
 import com.suixingpay.datas.common.client.Client;
 import com.suixingpay.datas.common.client.impl.ZookeeperClient;
-import com.suixingpay.datas.common.cluster.*;
-import com.suixingpay.datas.common.cluster.event.ClusterEvent;
+import com.suixingpay.datas.common.cluster.ClusterListener;
 import com.suixingpay.datas.common.cluster.event.EventType;
 import com.suixingpay.datas.common.cluster.impl.AbstractClusterMonitor;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.data.Stat;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Function;
 
@@ -45,17 +47,17 @@ public class ZookeeperClusterMonitor extends AbstractClusterMonitor implements W
             ready.await();
             Stat preStat = client.exists(ZookeeperClusterListener.PREFIX_ATALOG, false);
             if (null == preStat) {
-                client.create(ZookeeperClusterListener.PREFIX_ATALOG, false,"{}");
+                client.create(ZookeeperClusterListener.PREFIX_ATALOG, false, "{}");
             }
             Stat stat = client.exists(ZookeeperClusterListener.BASE_CATALOG, false);
             if (null == stat) {
-                client.create(ZookeeperClusterListener.BASE_CATALOG, false,"{}");
+                client.create(ZookeeperClusterListener.BASE_CATALOG, false, "{}");
             }
             for (ClusterListener listener : listeners.values()) {
-                ZookeeperClusterListener zkListener = (ZookeeperClusterListener)listener;
+                ZookeeperClusterListener zkListener = (ZookeeperClusterListener) listener;
                 Stat listenerStat = client.exists(zkListener.listenPath(), false);
                 if (null == listenerStat) {
-                    client.create(zkListener.listenPath(), false,"{}");
+                    client.create(zkListener.listenPath(), false, "{}");
                 }
                 //watch children changed
                 triggerTreeEvent(zkListener.listenPath());

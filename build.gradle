@@ -76,3 +76,4 @@ subprojects {
         configFile = file(rootProject.getRootDir().getPath() + "/checkstyle.xml")
     }
 }
+

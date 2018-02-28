@@ -29,7 +29,7 @@ import com.suixingpay.datas.manager.config.ManagerConfig;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月15日 14:09
  */
 @ServletComponentScan
-@SpringBootApplication(scanBasePackages= {"com.suixingpay"},exclude={DataSourceAutoConfiguration.class})
+@SpringBootApplication(scanBasePackages = {"com.suixingpay"}, exclude = {DataSourceAutoConfiguration.class})
 public class ManagerApplication {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ManagerApplication.class);
@@ -38,8 +38,7 @@ public class ManagerApplication {
         SpringApplication app = new SpringApplication(ManagerApplication.class);
         app.setBannerMode(Banner.Mode.OFF);
         ConfigurableApplicationContext context = app.run(args);
-        LOGGER.info(print());
-        LOGGER.info("ManagerApplication is sussess!");
+        LOGGER.info("ManagerApplication is success!");
         //注入spring工具类
         ManagerContext.INSTANCE.setApplicationContext(context);
         //获取配置
@@ -51,30 +50,5 @@ public class ManagerApplication {
             LOGGER.error("集群模块初始化失败, 数据同步管理后台退出!error:" + e.getMessage());
             throw new RuntimeException("集群模块初始化失败, 数据同步管理后台退出!error:" + e.getMessage());
         }
-    }
-    
-    private static String print(){
-        StringBuffer sb = new StringBuffer();
-        sb.append("                        \n");
-        sb.append("                   _ooOoo_\n");
-        sb.append("                  o8888888o\n");
-        sb.append("                  88\" . \"88\n");
-        sb.append("                  (| -_- |)\n");
-        sb.append("                  O\\  =  /O\n");
-        sb.append("               ____/`---'\\____\n");
-        sb.append("             .'  \\\\|     |//  `.\n");
-        sb.append("            /  \\\\|||  :  |||//  \\ \n");
-        sb.append("           /  _||||| -:- |||||-  \\ \n");
-        sb.append("           |   | \\\\\\  -  /// |   |\n");
-        sb.append("           | \\_|  ''\\---/''  |   |\n");
-        sb.append("           \\  .-\\__  `-`  ___/-. /\n");
-        sb.append("         ___`. .'  /--.--\\  `. . __\n");
-        sb.append("      .\"\" '<  `.___\\_<|>_/___.'  >'\"\".\n");
-        sb.append("     | | :  `- \\`.;`\\ _ /`;.`/ - ` : | |\n");
-        sb.append("     \\  \\ `-.   \\_ __\\ /__ _/   .-` /  /\n");
-        sb.append("======`-.____`-.___\\_____/___.-`____.-'======\n");
-        sb.append("                   `=---='\n");
-        sb.append("...................................................\n");
-       return sb.toString();
     }
 }

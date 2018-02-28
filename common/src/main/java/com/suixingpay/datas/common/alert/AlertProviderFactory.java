@@ -20,7 +20,6 @@ import com.suixingpay.datas.common.exception.ConfigParseException;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -38,7 +37,7 @@ public enum AlertProviderFactory {
     public void initialize(AlertConfig config) throws ConfigParseException, ClientConnectionException {
         //校验配置文件参数
         if (null == config || null == config.getStrategy() || null == config.getClient()
-                || config.getClient().isEmpty() ) {
+                || config.getClient().isEmpty()) {
             return;
         }
 
@@ -59,6 +58,8 @@ public enum AlertProviderFactory {
                 if (null != alert) alert.notice(title, msg, receiverList);
                 initializedLock.readLock().unlock();
             }
-        } catch (InterruptedException e) {}
+        } catch (InterruptedException e) {
+
+        }
     }
 }

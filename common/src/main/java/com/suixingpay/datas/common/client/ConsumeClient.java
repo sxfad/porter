@@ -35,7 +35,11 @@ public interface ConsumeClient extends Client {
         return Arrays.asList((T) this);
     }
 
-
+    /**
+     * 回调函数
+     * @param <F>
+     * @param <O>
+     */
     interface FetchCallback<F, O> {
         <F, O> F  accept(O o) throws ParseException;
     }

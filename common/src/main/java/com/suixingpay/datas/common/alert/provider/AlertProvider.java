@@ -12,6 +12,9 @@ import com.suixingpay.datas.common.alert.AlertReceiver;
 
 import java.util.List;
 
+/**
+ * 告警提供者接口定义
+ */
 public interface AlertProvider {
     boolean notice(String title, String notice, List<AlertReceiver> receivers);
     boolean notice(String title, String notice);

@@ -9,7 +9,12 @@
 
 package com.suixingpay.datas.common.config;
 
-import com.suixingpay.datas.common.config.source.*;
+import com.suixingpay.datas.common.config.source.JDBCConfig;
+import com.suixingpay.datas.common.config.source.KafkaConfig;
+import com.suixingpay.datas.common.config.source.ZookeeperConfig;
+import com.suixingpay.datas.common.config.source.EmailConfig;
+import com.suixingpay.datas.common.config.source.NameSourceConfig;
+import com.suixingpay.datas.common.config.source.SourceType;
 import com.suixingpay.datas.common.exception.ConfigParseException;
 import com.suixingpay.datas.common.util.BeanUtils;
 import lombok.Getter;

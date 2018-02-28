@@ -15,7 +15,11 @@ import com.suixingpay.datas.common.config.source.ZookeeperConfig;
 import lombok.Setter;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.zookeeper.*;
+import org.apache.zookeeper.CreateMode;
+import org.apache.zookeeper.KeeperException;
+import org.apache.zookeeper.Watcher;
+import org.apache.zookeeper.ZooDefs;
+import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.Stat;
 
 import java.io.IOException;
@@ -83,7 +87,8 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
 
     @Override
     public String  create(String path, boolean isTemp, String data) throws KeeperException, InterruptedException {
-        return zk.create(path, null != data ? data.getBytes() : "".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, isTemp ? CreateMode.EPHEMERAL : CreateMode.PERSISTENT);
+        return zk.create(path, null != data ? data.getBytes() : "".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, isTemp
+                ? CreateMode.EPHEMERAL : CreateMode.PERSISTENT);
     }
 
     @Override

@@ -14,7 +14,11 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.sql.*;
+import java.sql.Clob;
+import java.sql.Blob;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Types;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,70 +30,66 @@ import java.util.Map;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月27日 15:31
  */
 public class SqlUtils {
-
-    public static final String                  REQUIRED_FIELD_NULL_SUBSTITUTE = " ";
-    public static final String                  SQLDATE_FORMAT                 = "yyyy-MM-dd";
-    public static final String                  TIMESTAMP_FORMAT               = "yyyy-MM-dd HH:mm:ss";
-    private static final Map<Integer, Class<?>> sqlTypeToJavaTypeMap           = new HashMap<Integer, Class<?>>();
-    private static final ConvertUtilsBean convertUtilsBean               = new ConvertUtilsBean();
+    private static final Map<Integer, Class<?>> SQL_TYPE_TO_JAVA_TYPE_MAP           = new HashMap<Integer, Class<?>>();
+    private static final ConvertUtilsBean CONVERT_UTILS_BEAN               = new ConvertUtilsBean();
 
     static {
         // regist Converter
-        convertUtilsBean.register(SqlTimestampConverter.SQL_TIMESTAMP, java.sql.Date.class);
-        convertUtilsBean.register(SqlTimestampConverter.SQL_TIMESTAMP, java.sql.Time.class);
-        convertUtilsBean.register(SqlTimestampConverter.SQL_TIMESTAMP, java.sql.Timestamp.class);
-        convertUtilsBean.register(ByteArrayConverter.SQL_BYTES, byte[].class);
+        CONVERT_UTILS_BEAN.register(SqlTimestampConverter.SQL_TIMESTAMP, java.sql.Date.class);
+        CONVERT_UTILS_BEAN.register(SqlTimestampConverter.SQL_TIMESTAMP, java.sql.Time.class);
+        CONVERT_UTILS_BEAN.register(SqlTimestampConverter.SQL_TIMESTAMP, java.sql.Timestamp.class);
+        CONVERT_UTILS_BEAN.register(ByteArrayConverter.SQL_BYTES, byte[].class);
 
         // bool
-        sqlTypeToJavaTypeMap.put(Types.BOOLEAN, Boolean.class);
+        SQL_TYPE_TO_JAVA_TYPE_MAP.put(Types.BOOLEAN, Boolean.class);
 
         // int
-        sqlTypeToJavaTypeMap.put(Types.TINYINT, Integer.class);
-        sqlTypeToJavaTypeMap.put(Types.SMALLINT, Integer.class);
-        sqlTypeToJavaTypeMap.put(Types.INTEGER, Integer.class);
+        SQL_TYPE_TO_JAVA_TYPE_MAP.put(Types.TINYINT, Integer.class);
+        SQL_TYPE_TO_JAVA_TYPE_MAP.put(Types.SMALLINT, Integer.class);
+        SQL_TYPE_TO_JAVA_TYPE_MAP.put(Types.INTEGER, Integer.class);
 
         // long
-        sqlTypeToJavaTypeMap.put(Types.BIGINT, Long.class);
+        SQL_TYPE_TO_JAVA_TYPE_MAP.put(Types.BIGINT, Long.class);
         // mysql bit最多64位，无符号
-        sqlTypeToJavaTypeMap.put(Types.BIT, BigInteger.class);
+        SQL_TYPE_TO_JAVA_TYPE_MAP.put(Types.BIT, BigInteger.class);
 
         // decimal
-        sqlTypeToJavaTypeMap.put(Types.REAL, Float.class);
-        sqlTypeToJavaTypeMap.put(Types.FLOAT, Float.class);
-        sqlTypeToJavaTypeMap.put(Types.DOUBLE, Double.class);
-        sqlTypeToJavaTypeMap.put(Types.NUMERIC, BigDecimal.class);
-        sqlTypeToJavaTypeMap.put(Types.DECIMAL, BigDecimal.class);
+        SQL_TYPE_TO_JAVA_TYPE_MAP.put(Types.REAL, Float.class);
+        SQL_TYPE_TO_JAVA_TYPE_MAP.put(Types.FLOAT, Float.class);
+        SQL_TYPE_TO_JAVA_TYPE_MAP.put(Types.DOUBLE, Double.class);
+        SQL_TYPE_TO_JAVA_TYPE_MAP.put(Types.NUMERIC, BigDecimal.class);
+        SQL_TYPE_TO_JAVA_TYPE_MAP.put(Types.DECIMAL, BigDecimal.class);
 
         // date
-        sqlTypeToJavaTypeMap.put(Types.DATE, java.sql.Date.class);
-        sqlTypeToJavaTypeMap.put(Types.TIME, java.sql.Time.class);
-        sqlTypeToJavaTypeMap.put(Types.TIMESTAMP, java.sql.Timestamp.class);
+        SQL_TYPE_TO_JAVA_TYPE_MAP.put(Types.DATE, java.sql.Date.class);
+        SQL_TYPE_TO_JAVA_TYPE_MAP.put(Types.TIME, java.sql.Time.class);
+        SQL_TYPE_TO_JAVA_TYPE_MAP.put(Types.TIMESTAMP, java.sql.Timestamp.class);
 
         // blob
-        sqlTypeToJavaTypeMap.put(Types.BLOB, byte[].class);
+        SQL_TYPE_TO_JAVA_TYPE_MAP.put(Types.BLOB, byte[].class);
 
         // byte[]
-        sqlTypeToJavaTypeMap.put(Types.REF, byte[].class);
-        sqlTypeToJavaTypeMap.put(Types.OTHER, byte[].class);
-        sqlTypeToJavaTypeMap.put(Types.ARRAY, byte[].class);
-        sqlTypeToJavaTypeMap.put(Types.STRUCT, byte[].class);
-        sqlTypeToJavaTypeMap.put(Types.SQLXML, byte[].class);
-        sqlTypeToJavaTypeMap.put(Types.BINARY, byte[].class);
-        sqlTypeToJavaTypeMap.put(Types.DATALINK, byte[].class);
-        sqlTypeToJavaTypeMap.put(Types.DISTINCT, byte[].class);
-        sqlTypeToJavaTypeMap.put(Types.VARBINARY, byte[].class);
-        sqlTypeToJavaTypeMap.put(Types.JAVA_OBJECT, byte[].class);
-        sqlTypeToJavaTypeMap.put(Types.LONGVARBINARY, byte[].class);
+        SQL_TYPE_TO_JAVA_TYPE_MAP.put(Types.REF, byte[].class);
+        SQL_TYPE_TO_JAVA_TYPE_MAP.put(Types.OTHER, byte[].class);
+        SQL_TYPE_TO_JAVA_TYPE_MAP.put(Types.ARRAY, byte[].class);
+        SQL_TYPE_TO_JAVA_TYPE_MAP.put(Types.STRUCT, byte[].class);
+        SQL_TYPE_TO_JAVA_TYPE_MAP.put(Types.SQLXML, byte[].class);
+        SQL_TYPE_TO_JAVA_TYPE_MAP.put(Types.BINARY, byte[].class);
+        SQL_TYPE_TO_JAVA_TYPE_MAP.put(Types.DATALINK, byte[].class);
+        SQL_TYPE_TO_JAVA_TYPE_MAP.put(Types.DISTINCT, byte[].class);
+        SQL_TYPE_TO_JAVA_TYPE_MAP.put(Types.VARBINARY, byte[].class);
+        SQL_TYPE_TO_JAVA_TYPE_MAP.put(Types.JAVA_OBJECT, byte[].class);
+        SQL_TYPE_TO_JAVA_TYPE_MAP.put(Types.LONGVARBINARY, byte[].class);
 
         // String
-        sqlTypeToJavaTypeMap.put(Types.CHAR, String.class);
-        sqlTypeToJavaTypeMap.put(Types.VARCHAR, String.class);
-        sqlTypeToJavaTypeMap.put(Types.LONGVARCHAR, String.class);
-        sqlTypeToJavaTypeMap.put(Types.LONGNVARCHAR, String.class);
-        sqlTypeToJavaTypeMap.put(Types.NCHAR, String.class);
-        sqlTypeToJavaTypeMap.put(Types.NVARCHAR, String.class);
-        sqlTypeToJavaTypeMap.put(Types.NCLOB, String.class);
-        sqlTypeToJavaTypeMap.put(Types.CLOB, String.class);
+        SQL_TYPE_TO_JAVA_TYPE_MAP.put(Types.CHAR, String.class);
+        SQL_TYPE_TO_JAVA_TYPE_MAP.put(Types.VARCHAR, String.class);
+        SQL_TYPE_TO_JAVA_TYPE_MAP.put(Types.LONGVARCHAR, String.class);
+        SQL_TYPE_TO_JAVA_TYPE_MAP.put(Types.LONGNVARCHAR, String.class);
+        SQL_TYPE_TO_JAVA_TYPE_MAP.put(Types.NCHAR, String.class);
+        SQL_TYPE_TO_JAVA_TYPE_MAP.put(Types.NVARCHAR, String.class);
+        SQL_TYPE_TO_JAVA_TYPE_MAP.put(Types.NCLOB, String.class);
+        SQL_TYPE_TO_JAVA_TYPE_MAP.put(Types.CLOB, String.class);
     }
 
     /**
@@ -102,7 +102,7 @@ public class SqlUtils {
      * @throws SQLException
      */
     public static String sqlValueToString(ResultSet rs, int index, int sqlType) throws SQLException {
-        Class<?> requiredType = sqlTypeToJavaTypeMap.get(sqlType);
+        Class<?> requiredType = SQL_TYPE_TO_JAVA_TYPE_MAP.get(sqlType);
         if (requiredType == null) {
             throw new IllegalArgumentException("unknow java.sql.Types - " + sqlType);
         }
@@ -123,7 +123,7 @@ public class SqlUtils {
         String sourceValue = value;
         if (SqlUtils.isTextType(sqlType)) {
             if ((sourceValue == null) || (StringUtils.isEmpty(sourceValue) && isEmptyStringNulled)) {
-                return isRequired ? REQUIRED_FIELD_NULL_SUBSTITUTE : null;
+                return isRequired ? " " : null;
             } else {
                 return sourceValue;
             }
@@ -132,15 +132,15 @@ public class SqlUtils {
                 // oracle的返回null，保持兼容
                 return isEmptyStringNulled ? null : sourceValue;
             } else {
-                Class<?> requiredType = sqlTypeToJavaTypeMap.get(sqlType);
+                Class<?> requiredType = SQL_TYPE_TO_JAVA_TYPE_MAP.get(sqlType);
                 if (requiredType == null) {
                     throw new IllegalArgumentException("unknow java.sql.Types - " + sqlType);
                 } else if (requiredType.equals(String.class)) {
                     return sourceValue;
                 } else if (isNumeric(sqlType)) {
-                    return convertUtilsBean.convert(sourceValue.trim(), requiredType);
+                    return CONVERT_UTILS_BEAN.convert(sourceValue.trim(), requiredType);
                 } else {
-                    return convertUtilsBean.convert(sourceValue, requiredType);
+                    return CONVERT_UTILS_BEAN.convert(sourceValue, requiredType);
                 }
             }
         }
@@ -156,7 +156,7 @@ public class SqlUtils {
             case Types.LONGNVARCHAR:
             case Types.CLOB:
             case Types.NCLOB:
-                if (false == StringUtils.isEmpty(source)) {
+                if (!StringUtils.isEmpty(source)) {
                     String fromEncoding = StringUtils.isBlank(sourceEncoding) ? "UTF-8" : sourceEncoding;
                     String toEncoding = StringUtils.isBlank(targetEncoding) ? "UTF-8" : targetEncoding;
 
@@ -277,7 +277,7 @@ public class SqlUtils {
             value = null;
         }
 
-        return (value == null) ? null : convertUtilsBean.convert(value);
+        return (value == null) ? null : CONVERT_UTILS_BEAN.convert(value);
     }
 
     /**
@@ -303,7 +303,7 @@ public class SqlUtils {
      */
     private static String getResultSetValue(ResultSet rs, int index) throws SQLException {
         Object obj = rs.getObject(index);
-        return (obj == null) ? null : convertUtilsBean.convert(obj);
+        return (obj == null) ? null : CONVERT_UTILS_BEAN.convert(obj);
     }
 
     /**
@@ -317,12 +317,8 @@ public class SqlUtils {
     }
 
     public static boolean isTextType(int sqlType) {
-        if (sqlType == Types.CHAR || sqlType == Types.VARCHAR || sqlType == Types.CLOB || sqlType == Types.LONGVARCHAR
+        return sqlType == Types.CHAR || sqlType == Types.VARCHAR || sqlType == Types.CLOB || sqlType == Types.LONGVARCHAR
                 || sqlType == Types.NCHAR || sqlType == Types.NVARCHAR || sqlType == Types.NCLOB
-                || sqlType == Types.LONGNVARCHAR) {
-            return true;
-        } else {
-            return false;
-        }
+                || sqlType == Types.LONGNVARCHAR;
     }
 }

@@ -158,7 +158,7 @@
 
         <!-- methods -->
         <module name="MethodName">
-            <property name="format" value="(^[a-z][a-zA-Z0-9]{0,29}$)"/>
+            <property name="format" value="(^[a-z][a-zA-Z0-9]{0,50}$)"/>
         </module>
 
         <!-- non-static fields -->

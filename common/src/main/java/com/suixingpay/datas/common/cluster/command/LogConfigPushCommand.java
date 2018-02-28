@@ -24,7 +24,7 @@ import lombok.Setter;
 public class LogConfigPushCommand extends ConfigPushCommand  {
     @Getter @Setter private LogConfig config;
 
-    public LogConfigPushCommand () {
+    public LogConfigPushCommand() {
         setType(ConfigPushType.LOG);
     }
 

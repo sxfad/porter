@@ -13,8 +13,12 @@ import com.suixingpay.datas.common.client.impl.EmailClient;
 import com.suixingpay.datas.common.client.impl.JDBCClient;
 import com.suixingpay.datas.common.client.impl.KafkaClient;
 import com.suixingpay.datas.common.client.impl.ZookeeperClient;
+import com.suixingpay.datas.common.config.source.EmailConfig;
 import com.suixingpay.datas.common.config.SourceConfig;
-import com.suixingpay.datas.common.config.source.*;
+import com.suixingpay.datas.common.config.source.JDBCConfig;
+import com.suixingpay.datas.common.config.source.KafkaConfig;
+import com.suixingpay.datas.common.config.source.NameSourceConfig;
+import com.suixingpay.datas.common.config.source.ZookeeperConfig;
 import com.suixingpay.datas.common.exception.ClientException;
 import com.suixingpay.datas.common.exception.ClientMatchException;
 import lombok.Getter;
@@ -27,6 +31,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
+ * @param <T>
  * @date: 2018年02月02日 14:06
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月02日 14:06
