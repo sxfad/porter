@@ -8,18 +8,17 @@
  */
 package com.suixingpay.datas.manager;
 
-import com.suixingpay.datas.common.cluster.ClusterProviderProxy;
-import com.suixingpay.datas.manager.config.ManagerConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.annotation.ComponentScan;
+
+import com.suixingpay.datas.common.cluster.ClusterProviderProxy;
+import com.suixingpay.datas.manager.config.ManagerConfig;
 
 
 /**
@@ -29,17 +28,18 @@ import org.springframework.context.annotation.ComponentScan;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月15日 14:09
  */
-@ComponentScan({"com.suixingpay"})
 @ServletComponentScan
-@SpringBootApplication
-@EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class})
+@SpringBootApplication(scanBasePackages= {"com.suixingpay"},exclude={DataSourceAutoConfiguration.class})
 public class ManagerApplication {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ManagerApplication.class);
 
     public static void main(String[] args) throws Exception {
         SpringApplication app = new SpringApplication(ManagerApplication.class);
         app.setBannerMode(Banner.Mode.OFF);
         ConfigurableApplicationContext context = app.run(args);
+        LOGGER.info(print());
+        LOGGER.info("ManagerApplication is sussess!");
         //注入spring工具类
         ManagerContext.INSTANCE.setApplicationContext(context);
         //获取配置
@@ -48,7 +48,33 @@ public class ManagerApplication {
             ClusterProviderProxy.INSTANCE.initialize(config.getCluster());
         } catch (Exception e) {
             ClusterProviderProxy.INSTANCE.stop();
+            LOGGER.error("集群模块初始化失败, 数据同步管理后台退出!error:" + e.getMessage());
             throw new RuntimeException("集群模块初始化失败, 数据同步管理后台退出!error:" + e.getMessage());
         }
+    }
+    
+    private static String print(){
+        StringBuffer sb = new StringBuffer();
+        sb.append("                        \n");
+        sb.append("                   _ooOoo_\n");
+        sb.append("                  o8888888o\n");
+        sb.append("                  88\" . \"88\n");
+        sb.append("                  (| -_- |)\n");
+        sb.append("                  O\\  =  /O\n");
+        sb.append("               ____/`---'\\____\n");
+        sb.append("             .'  \\\\|     |//  `.\n");
+        sb.append("            /  \\\\|||  :  |||//  \\ \n");
+        sb.append("           /  _||||| -:- |||||-  \\ \n");
+        sb.append("           |   | \\\\\\  -  /// |   |\n");
+        sb.append("           | \\_|  ''\\---/''  |   |\n");
+        sb.append("           \\  .-\\__  `-`  ___/-. /\n");
+        sb.append("         ___`. .'  /--.--\\  `. . __\n");
+        sb.append("      .\"\" '<  `.___\\_<|>_/___.'  >'\"\".\n");
+        sb.append("     | | :  `- \\`.;`\\ _ /`;.`/ - ` : | |\n");
+        sb.append("     \\  \\ `-.   \\_ __\\ /__ _/   .-` /  /\n");
+        sb.append("======`-.____`-.___\\_____/___.-`____.-'======\n");
+        sb.append("                   `=---='\n");
+        sb.append("...................................................\n");
+       return sb.toString();
     }
 }

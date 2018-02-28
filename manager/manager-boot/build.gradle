@@ -47,12 +47,14 @@ distributions {
 
 
 dependencies {
-    compile(
-            project(":common"),
-            "org.springframework.boot:spring-boot-starter-web:${springVersion}",
-            "io.springfox:springfox-swagger2:${swaggerVersion}",
-            "io.springfox:springfox-swagger-ui:${swaggerVersion}",
-
-    )
+    compile project(":common")
+    compile "org.springframework.boot:spring-boot-starter-web:${springVersion}"
+    compile "io.springfox:springfox-swagger2:${swaggerVersion}"
+    compile "io.springfox:springfox-swagger-ui:${swaggerVersion}"
+    
+    compile 'com.alibaba:fastjson:1.2.37'
+    compileOnly('org.projectlombok:lombok')
+    testCompile 'org.springframework.boot:spring-boot-starter-actuator'
+    testCompile 'org.springframework.boot:spring-boot-starter-test'
 
 }
