@@ -22,5 +22,6 @@ gradlew*
 application.properties
 *.cache
 *.log
+*.sh
 .factorypath
 
