@@ -12,6 +12,9 @@ import com.alibaba.fastjson.JSONObject;
 
 import java.text.ParseException;
 
+/**
+ * 消费器消息转换器
+ */
 public interface EventConverter {
     String getName();
     <T> MessageEvent convert(JSONObject head, JSONObject value) throws ParseException;

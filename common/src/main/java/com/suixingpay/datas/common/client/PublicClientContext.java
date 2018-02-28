@@ -26,7 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public enum PublicClientContext {
     INSTANCE();
-    private final Map<String,Client> allSources = new ConcurrentHashMap<String, Client>();
+    private final Map<String, Client> allSources = new ConcurrentHashMap<>();
 
     /**
      * 初始化公用DataSource

@@ -26,7 +26,7 @@ public class MachineUtils {
     public static final String HOST_NAME = System.getProperty("user.name");
     public static final long CURRENT_JVM_PID = getPID();
     public static final String IP_ADDRESS = localhost();
-    private static final String LOCAL_EXCEPT_IP="127.0.0.1,192.168.2.1,192.168.122.1";
+    private static final String LOCAL_EXCEPT_IP = "127.0.0.1,192.168.2.1,192.168.122.1";
     public static long getPID() {
         String processName = java.lang.management.ManagementFactory.getRuntimeMXBean().getName();
         if (processName != null && processName.length() > 0) {
@@ -46,9 +46,9 @@ public class MachineUtils {
             while (enumeration.hasMoreElements()) {
                 NetworkInterface networkInterface = enumeration.nextElement();
                 Enumeration<InetAddress> addrs = networkInterface.getInetAddresses();
-                boolean ifUnUse=networkInterface.isLoopback()||networkInterface.isPointToPoint()||
-                        networkInterface.isVirtual()||!networkInterface.isUp();
-                while (addrs.hasMoreElements()&&!ifUnUse) {
+                boolean ifUnUse = networkInterface.isLoopback() || networkInterface.isPointToPoint()
+                        || networkInterface.isVirtual() || !networkInterface.isUp();
+                while (addrs.hasMoreElements() && !ifUnUse) {
                     inetAddressList.add(addrs.nextElement().getHostAddress());
                 }
             }
@@ -60,10 +60,10 @@ public class MachineUtils {
         return inetAddressList;
     }
 
-    public static String localhost(){
-        List<String>  list=getLocalInetAddress();
-        for(String i:list){
-            if(!LOCAL_EXCEPT_IP.contains(i)&&i.indexOf(":")<0){
+    public static String localhost() {
+        List<String>  list = getLocalInetAddress();
+        for (String i : list) {
+            if (!LOCAL_EXCEPT_IP.contains(i) && i.indexOf(":") < 0) {
                 return i;
             }
         }

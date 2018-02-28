@@ -1,6 +1,6 @@
 apply plugin: 'java'
-
 version '0.3.2'
+
 repositories {
     maven{ url"http://maven.aliyun.com/nexus/content/groups/public"}
 }
@@ -12,17 +12,20 @@ buildscript {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:1.5.9.RELEASE"
     }
 }
-//将子项目包复制到根目录
+
+
 
 subprojects {
     apply plugin: 'java'
     apply plugin: 'maven'
-    apply plugin: "idea"
+    apply plugin: 'idea'
+    apply plugin: 'checkstyle'
     ext {
         group = 'com.suixingpay.datas'
         junitVersion = '4.12'
         version '0.3.2'
         springVersion = '1.5.9.RELEASE'
+        swaggerVersion = '2.7.0'
     }
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
@@ -40,7 +43,6 @@ subprojects {
                 'com.alibaba:fastjson:1.2.28',
                 'com.alibaba:druid:1.0.16',
                 'org.apache.commons:commons-lang3:3.7',
-                'org.apache.zookeeper:zookeeper:3.4.10',
                 "org.springframework.boot:spring-boot-starter:${springVersion}",
                 "org.springframework.boot:spring-boot-starter-jdbc:${springVersion}",
                 'org.apache.kafka:kafka-clients:1.0.0',
@@ -49,8 +51,14 @@ subprojects {
                 "org.springframework.boot:spring-boot-starter-mail:${springVersion}",
                 'mysql:mysql-connector-java:5.1.45'
         )
+        compile('org.apache.zookeeper:zookeeper:3.4.10'){
+            exclude group:'org.slf4j',module:'slf4j-api'
+            exclude group:'org.slf4j',module:'slf4j-log4j12'
+            exclude group:'log4j',module:'log4j'
+        }
         compileOnly 'org.projectlombok:lombok:1.16.20'
     }
+    //将子项目包复制到根目录
     build.doLast {
         def rootPath = rootProject.buildDir.getPath() + "/distributions"
         copy {
@@ -61,4 +69,11 @@ subprojects {
     clean.doFirst {
         delete "${buildDir}/../out"
     }
+
+    checkstyle {
+        toolVersion = 7.7
+        ignoreFailures = true
+        configFile = file(rootProject.getRootDir().getPath() + "/checkstyle.xml")
+    }
 }
+

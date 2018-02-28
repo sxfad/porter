@@ -10,7 +10,6 @@
 package com.suixingpay.datas.common.cluster.command;
 
 import com.alibaba.fastjson.JSONObject;
-import com.suixingpay.datas.common.config.LogConfig;
 import com.suixingpay.datas.common.config.TaskConfig;
 import lombok.Getter;
 import lombok.Setter;

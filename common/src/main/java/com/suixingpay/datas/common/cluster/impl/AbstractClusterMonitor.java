@@ -33,13 +33,13 @@ public abstract class AbstractClusterMonitor implements ClusterMonitor {
 
     @Override
     public void addListener(ClusterListener listener) {
-        listeners.put(listener.getName(),listener);
+        listeners.put(listener.getName(), listener);
     }
 
     @Override
     public void onEvent(ClusterEvent e) {
         if (null == e || null == listeners || listeners.isEmpty()) return;
-        for (ClusterListener listener : listeners.values()){
+        for (ClusterListener listener : listeners.values()) {
             ClusterListenerFilter filter = listener.filter();
             if (null == filter || filter.onFilter(e)) listener.onEvent(e);
         }
@@ -64,7 +64,7 @@ public abstract class AbstractClusterMonitor implements ClusterMonitor {
     public void start() {
         doStart();
         //监听器初始化
-        listeners.forEach((k,v) -> {
+        listeners.forEach((k, v) -> {
             try {
                 v.start();
             } catch (Exception e) {

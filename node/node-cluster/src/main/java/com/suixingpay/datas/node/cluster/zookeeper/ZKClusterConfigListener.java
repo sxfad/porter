@@ -15,7 +15,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.suixingpay.datas.common.alert.AlertProviderFactory;
 import com.suixingpay.datas.common.cluster.ClusterListenerFilter;
 import com.suixingpay.datas.common.cluster.event.ClusterEvent;
-import com.suixingpay.datas.common.cluster.event.EventType;
 import com.suixingpay.datas.common.cluster.impl.zookeeper.ZookeeperClusterEvent;
 import com.suixingpay.datas.common.cluster.impl.zookeeper.ZookeeperClusterListener;
 import com.suixingpay.datas.common.cluster.impl.zookeeper.ZookeeperClusterListenerFilter;
@@ -24,9 +23,6 @@ import com.suixingpay.datas.common.config.LogConfig;
 import com.suixingpay.datas.common.exception.ClientConnectionException;
 import com.suixingpay.datas.common.exception.ConfigParseException;
 import com.suixingpay.datas.node.core.NodeContext;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.zookeeper.data.Stat;
 import org.slf4j.LoggerFactory;
 
 /**
@@ -76,7 +72,7 @@ public class ZKClusterConfigListener extends ZookeeperClusterListener {
 
     @Override
     public ClusterListenerFilter filter() {
-        return new ZookeeperClusterListenerFilter(){
+        return new ZookeeperClusterListenerFilter() {
             @Override
             protected String getPath() {
                 return listenPath();
@@ -84,7 +80,7 @@ public class ZKClusterConfigListener extends ZookeeperClusterListener {
             @Override
             protected boolean doFilter(ZookeeperClusterEvent event) {
                 //应用自身，跳过
-                return ! event.getPath().equals(getPath() + "/" + NodeContext.INSTANCE.getNodeId());
+                return !event.getPath().equals(getPath() + "/" + NodeContext.INSTANCE.getNodeId());
             }
         };
     }

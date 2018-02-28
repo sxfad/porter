@@ -1,5 +1,0 @@
-group 'com.suixingpay.datas'
-jar.baseName = 'datas-plugin'
-
-dependencies {
-}

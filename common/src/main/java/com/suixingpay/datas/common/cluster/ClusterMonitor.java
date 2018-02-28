@@ -9,7 +9,6 @@
 package com.suixingpay.datas.common.cluster;
 
 import com.suixingpay.datas.common.client.Client;
-import com.suixingpay.datas.common.client.ClusterClient;
 import com.suixingpay.datas.common.cluster.event.ClusterEvent;
 
 import java.util.Map;

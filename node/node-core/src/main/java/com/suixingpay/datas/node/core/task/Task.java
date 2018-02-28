@@ -19,7 +19,6 @@ import com.suixingpay.datas.node.core.consumer.DataConsumerFactory;
 import com.suixingpay.datas.node.core.loader.DataLoader;
 import com.suixingpay.datas.node.core.loader.DataLoaderFactory;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -78,7 +77,8 @@ public class Task {
         this.receivers = receivers;
     }
 
-    public static Task  fromConfig(TaskConfig config) throws ConfigParseException, ClientException, DataLoaderBuildException, DataConsumerBuildException {
+    public static Task  fromConfig(TaskConfig config) throws ConfigParseException, ClientException, DataLoaderBuildException,
+            DataConsumerBuildException {
         Task task = new Task();
         task.setTaskId(config.getTaskId());
         task.setMappers(new ArrayList<>());

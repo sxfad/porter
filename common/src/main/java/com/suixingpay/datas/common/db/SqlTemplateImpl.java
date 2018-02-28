@@ -29,7 +29,8 @@ public class SqlTemplateImpl implements SqlTemplate {
         sql.append(" from ").append(getFullName(schemaName, tableName)).append(" where ( ");
         appendColumnEquals(sql, pkNames, "and");
         sql.append(" ) ");
-        return sql.toString().intern();// 不使用intern，避免方法区内存消耗过多
+        // 不使用intern，避免方法区内存消耗过多
+        return sql.toString().intern();
     }
 
     public String getUpdateSql(String schemaName, String tableName, String[] pkNames, String[] columnNames) {
@@ -38,7 +39,8 @@ public class SqlTemplateImpl implements SqlTemplate {
         sql.append(" where (");
         appendColumnEquals(sql, pkNames, "and");
         sql.append(")");
-        return sql.toString().intern(); // 不使用intern，避免方法区内存消耗过多
+        // 不使用intern，避免方法区内存消耗过多
+        return sql.toString().intern();
     }
 
     public String getUpdateSql(String schemaName, String tableName, String[] columns) {
@@ -56,13 +58,15 @@ public class SqlTemplateImpl implements SqlTemplate {
         sql.append(") values (");
         appendColumnQuestions(sql, allColumns);
         sql.append(")");
-        return sql.toString().intern();// intern优化，避免出现大量相同的字符串
+        // intern优化，避免出现大量相同的字符串
+        return sql.toString().intern();
     }
 
     public String getDeleteSql(String schemaName, String tableName, String[] pkNames) {
         StringBuilder sql = new StringBuilder("delete from " + getFullName(schemaName, tableName) + " where ");
         appendColumnEquals(sql, pkNames, "and");
-        return sql.toString().intern();// intern优化，避免出现大量相同的字符串
+        // intern优化，避免出现大量相同的字符串
+        return sql.toString().intern();
     }
 
     protected String getFullName(String schemaName, String tableName) {

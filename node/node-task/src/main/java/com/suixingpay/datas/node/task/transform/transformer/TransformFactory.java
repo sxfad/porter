@@ -42,7 +42,7 @@ public class TransformFactory {
     }
 
     private void sort() {
-        if (isSort.compareAndSet(false,true)) {
+        if (isSort.compareAndSet(false, true)) {
             extractors.sort(new Comparator<Transformer>() {
                 @Override
                 public int compare(Transformer o1, Transformer o2) {

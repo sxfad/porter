@@ -32,6 +32,6 @@ public abstract class ZookeeperClusterListener implements ClusterListener {
     }
     @Override
     public void setClient(Client client) {
-        this.client = (ZookeeperClient)client;
+        this.client = (ZookeeperClient) client;
     }
 }

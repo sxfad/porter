@@ -16,7 +16,7 @@ package com.suixingpay.datas.node.core.util;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月06日 11:20
  */
 public interface CallbackMethodCreator {
-    default void invoke(Object ... prams) {
+    default void invoke(Object... prams) {
         throw new UnsupportedOperationException();
     }
 
@@ -24,7 +24,7 @@ public interface CallbackMethodCreator {
         throw new UnsupportedOperationException();
     }
 
-    default <T> T invokeWithResult(Object ... params) {
+    default <T> T invokeWithResult(Object... params) {
         throw new UnsupportedOperationException();
     }
 

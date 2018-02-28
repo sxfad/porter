@@ -31,32 +31,46 @@ import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.util.Assert;
 
-import java.sql.*;
-import java.util.*;
 
+import java.sql.PreparedStatement;
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Types;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+/**
+ *
+ */
 public class DdlUtils {
 
-    private static final Logger logger                = LoggerFactory.getLogger(DdlUtils.class);
-    private static TableType[]                SUPPORTED_TABLE_TYPES = new TableType[] { TableType.view, TableType.table };
-    private final static Map<Integer, String> _defaultSizes         = new HashMap<Integer, String>();
+    private static final Logger LOGGER                = LoggerFactory.getLogger(DdlUtils.class);
+    private static TableType[]                SUPPORTED_TABLE_TYPES = new TableType[] {TableType.view, TableType.table};
+    private static final  Map<Integer, String> DEFAULT_SIZES = new HashMap<>();
     static {
-        _defaultSizes.put(new Integer(1), "254");
-        _defaultSizes.put(new Integer(12), "254");
-        _defaultSizes.put(new Integer(-1), "254");
-        _defaultSizes.put(new Integer(-2), "254");
-        _defaultSizes.put(new Integer(-3), "254");
-        _defaultSizes.put(new Integer(-4), "254");
-        _defaultSizes.put(new Integer(4), "32");
-        _defaultSizes.put(new Integer(-5), "64");
-        _defaultSizes.put(new Integer(7), "7,0");
-        _defaultSizes.put(new Integer(6), "15,0");
-        _defaultSizes.put(new Integer(8), "15,0");
-        _defaultSizes.put(new Integer(3), "15,15");
-        _defaultSizes.put(new Integer(2), "15,15");
+        DEFAULT_SIZES.put(new Integer(1), "254");
+        DEFAULT_SIZES.put(new Integer(12), "254");
+        DEFAULT_SIZES.put(new Integer(-1), "254");
+        DEFAULT_SIZES.put(new Integer(-2), "254");
+        DEFAULT_SIZES.put(new Integer(-3), "254");
+        DEFAULT_SIZES.put(new Integer(-4), "254");
+        DEFAULT_SIZES.put(new Integer(4), "32");
+        DEFAULT_SIZES.put(new Integer(-5), "64");
+        DEFAULT_SIZES.put(new Integer(7), "7,0");
+        DEFAULT_SIZES.put(new Integer(6), "15,0");
+        DEFAULT_SIZES.put(new Integer(8), "15,0");
+        DEFAULT_SIZES.put(new Integer(3), "15,15");
+        DEFAULT_SIZES.put(new Integer(2), "15,15");
     }
 
     /**
-     * !!! Only supports MySQL
+     * !!!Only supports MySQL
      */
     @SuppressWarnings("unchecked")
     public static List<String> findSchemas(JdbcTemplate jdbcTemplate, final String schemaPattern) {
@@ -65,16 +79,16 @@ public class DdlUtils {
                 return jdbcTemplate.query("show databases", new SingleColumnRowMapper(String.class));
             }
             return jdbcTemplate.query("show databases like ?",
-                new Object[] { schemaPattern },
+                new Object[] {schemaPattern},
                 new SingleColumnRowMapper(String.class));
         } catch (Exception e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             return new ArrayList<String>();
         }
     }
 
     /**
-     * !!! Only supports MySQL
+     * !!!Only supports MySQL
      */
     public static List<String> findSchemas(JdbcTemplate jdbcTemplate, final String schemaPattern,
                                            final DdlSchemaFilter ddlSchemaFilter) {
@@ -155,7 +169,7 @@ public class DdlUtils {
                         JdbcUtils.closeResultSet(tableData);
                     }
                 } catch (Exception e) {
-                    logger.error(e.getMessage(), e);
+                    LOGGER.error(e.getMessage(), e);
                 }
 
                 makeAllColumnsPrimaryKeysIfNoPrimaryKeysFound(table);
@@ -230,7 +244,7 @@ public class DdlUtils {
                         JdbcUtils.closeResultSet(tableData);
                     }
                 } catch (Exception e) {
-                    logger.error(e.getMessage(), e);
+                    LOGGER.error(e.getMessage(), e);
                 }
 
                 for (Table table : tables) {
@@ -263,7 +277,7 @@ public class DdlUtils {
                                                           final String tableName) {
         String shardColumns = getShardKeyByDRDS(jdbcTemplate, catalogName, schemaName, tableName);
         if (StringUtils.isNotEmpty(shardColumns)) {
-            String columns[] = StringUtils.split(shardColumns, ',');
+            String[] columns = StringUtils.split(shardColumns, ',');
             for (String key : columns) {
                 Column col = table.findColumn(key, false);
                 if (col != null) {
@@ -476,7 +490,7 @@ public class DdlUtils {
         String size = (String) values.get("COLUMN_SIZE");
 
         if (size == null) {
-            size = (String) _defaultSizes.get(new Integer(column.getTypeCode()));
+            size = (String) DEFAULT_SIZES.get(new Integer(column.getTypeCode()));
         }
 
         // we're setting the size after the precision and radix in case
@@ -484,12 +498,12 @@ public class DdlUtils {
         column.setSize(size);
 
         int scale = 0;
-        Object dec_digits = values.get("DECIMAL_DIGITS");
+        Object decDigits = values.get("DECIMAL_DIGITS");
 
-        if (dec_digits instanceof String) {
-            scale = (dec_digits == null) ? 0 : NumberUtils.toInt(dec_digits.toString());
-        } else if (dec_digits instanceof Integer) {
-            scale = (dec_digits == null) ? 0 : (Integer) dec_digits;
+        if (decDigits instanceof String) {
+            scale = (decDigits == null) ? 0 : NumberUtils.toInt(decDigits.toString());
+        } else if (decDigits instanceof Integer) {
+            scale = (decDigits == null) ? 0 : (Integer) decDigits;
         }
 
         if (scale != 0) {

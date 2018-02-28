@@ -14,8 +14,27 @@ import com.suixingpay.datas.common.cluster.ClusterListener;
 import com.suixingpay.datas.common.cluster.ClusterMonitor;
 import com.suixingpay.datas.common.cluster.ClusterProvider;
 import com.suixingpay.datas.common.cluster.ClusterStrategy;
-import com.suixingpay.datas.common.cluster.command.*;
-import com.suixingpay.datas.common.cluster.command.broadcast.*;
+import com.suixingpay.datas.common.cluster.command.ClusterCommand;
+import com.suixingpay.datas.common.cluster.command.TaskStatCommand;
+import com.suixingpay.datas.common.cluster.command.TaskStopCommand;
+import com.suixingpay.datas.common.cluster.command.NodeOrderPushCommand;
+import com.suixingpay.datas.common.cluster.command.StatisticUploadCommand;
+import com.suixingpay.datas.common.cluster.command.TaskPushCommand;
+import com.suixingpay.datas.common.cluster.command.TaskStatQueryCommand;
+import com.suixingpay.datas.common.cluster.command.NodeRegisterCommand;
+import com.suixingpay.datas.common.cluster.command.ShutdownCommand;
+import com.suixingpay.datas.common.cluster.command.TaskAssignedCommand;
+import com.suixingpay.datas.common.cluster.command.TaskRegisterCommand;
+import com.suixingpay.datas.common.cluster.command.broadcast.NodeOrderPush;
+import com.suixingpay.datas.common.cluster.command.broadcast.TaskPush;
+import com.suixingpay.datas.common.cluster.command.broadcast.StatisticUpload;
+import com.suixingpay.datas.common.cluster.command.broadcast.TaskStatQuery;
+import com.suixingpay.datas.common.cluster.command.broadcast.TaskStatUpload;
+import com.suixingpay.datas.common.cluster.command.broadcast.TaskStop;
+import com.suixingpay.datas.common.cluster.command.broadcast.NodeRegister;
+import com.suixingpay.datas.common.cluster.command.broadcast.Shutdown;
+import com.suixingpay.datas.common.cluster.command.broadcast.TaskAssigned;
+import com.suixingpay.datas.common.cluster.command.broadcast.TaskRegister;
 import com.suixingpay.datas.common.config.ClusterConfig;
 import com.suixingpay.datas.common.exception.ClientException;
 import com.suixingpay.datas.common.exception.ClientMatchException;
@@ -31,6 +50,7 @@ import java.util.function.Consumer;
 
 /**
  * 集群提供者
+ * @param <C>
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月14日 16:32
  * @version: V1.0
@@ -143,7 +163,7 @@ public abstract class AbstractClusterProvider<C extends Client> implements Clust
 
     private void initialize(ClusterConfig config) throws ClientException, IOException, ConfigParseException {
         client = initClient(config);
-        if (null == client || ! (client instanceof ClusterClient)) {
+        if (null == client || !(client instanceof ClusterClient)) {
             throw new ClientMatchException();
         }
         monitor = newMonitor();

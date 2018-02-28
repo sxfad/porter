@@ -13,7 +13,6 @@ import com.suixingpay.datas.common.client.ConsumeClient;
 import com.suixingpay.datas.common.client.MetaQueryClient;
 import com.suixingpay.datas.node.core.event.s.EventConverter;
 import com.suixingpay.datas.node.core.event.s.MessageEvent;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
 
 import java.io.IOException;
 import java.util.Date;

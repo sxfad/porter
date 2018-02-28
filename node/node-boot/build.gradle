@@ -29,7 +29,7 @@ processResources.dependsOn moveOutFromJar
 distributions {
     main {
         contents {
-            from ("bin") {
+            from ("script") {
                 into "bin"
                 fileMode = 0755
             }

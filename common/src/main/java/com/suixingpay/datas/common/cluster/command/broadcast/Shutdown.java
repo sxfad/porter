@@ -11,7 +11,6 @@ package com.suixingpay.datas.common.cluster.command.broadcast;
 
 
 import com.suixingpay.datas.common.cluster.command.ShutdownCommand;
-import org.apache.zookeeper.KeeperException;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]

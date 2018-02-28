@@ -17,5 +17,5 @@ package com.suixingpay.datas.common.db.meta;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月02日 16:27
  */
 public enum  DbType {
-    MYSQL,ORACLE;
+    MYSQL, ORACLE;
 }

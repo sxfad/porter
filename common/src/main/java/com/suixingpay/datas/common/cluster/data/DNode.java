@@ -14,7 +14,10 @@ import com.suixingpay.datas.common.util.MachineUtils;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.*;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 集群节点
@@ -31,7 +34,7 @@ public class DNode extends DObject {
     @Getter @Setter private String hostName = MachineUtils.HOST_NAME;
     @Getter @Setter private String processId = MachineUtils.CURRENT_JVM_PID + "";
     @Getter @Setter private NodeStatusType status;
-    @Getter @Setter private Map<String,List<String>> tasks;
+    @Getter @Setter private Map<String, List<String>> tasks;
     public DNode() {
         heartbeat = new Date();
         tasks = new LinkedHashMap<>();

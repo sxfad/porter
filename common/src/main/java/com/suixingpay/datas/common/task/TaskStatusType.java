@@ -19,10 +19,10 @@ package com.suixingpay.datas.common.task;
 public enum TaskStatusType {
     NEW, STOPPED, WORKING;
 
-    public boolean isStopped () {
+    public boolean isStopped() {
         return this == STOPPED;
     }
-    public boolean isWorking () {
+    public boolean isWorking() {
         return this == WORKING;
     }
 }

@@ -31,24 +31,24 @@ public enum EventType {
     public static final int BEGIN_INDEX = 3;
     public static final int END_INDEX = 4;
     public static final int TRUNCATE_INDEX = 5;
-    private EventType(int index, String value) {
+    EventType(int index, String value) {
         this.index =  index;
         this.value = value;
     }
 
 
     public static EventType type(String kafkaEvent) {
-        if(kafkaEvent.equals("I")) {
+        if (kafkaEvent.equals("I")) {
             return  INSERT;
-        } else if(kafkaEvent.equals("U")) {
+        } else if (kafkaEvent.equals("U")) {
             return  UPDATE;
-        } else if(kafkaEvent.equals("D")) {
+        } else if (kafkaEvent.equals("D")) {
             return  DELETE;
-        } else if(kafkaEvent.equals("BEGIN")) {
+        } else if (kafkaEvent.equals("BEGIN")) {
             return  TRANSACTION_BEGIN;
-        } else if(kafkaEvent.equals("END")) {
+        } else if (kafkaEvent.equals("END")) {
             return  TRANSACTION_END;
-        } else if(kafkaEvent.equals("T")) {
+        } else if (kafkaEvent.equals("T")) {
             return  TRUNCATE;
         } else {
             return UNKNOWN;

@@ -66,7 +66,7 @@ public class AlerterFactory {
                         } finally {
                             try {
                                 barrier.await();
-                            }catch (Exception e) {
+                            } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }

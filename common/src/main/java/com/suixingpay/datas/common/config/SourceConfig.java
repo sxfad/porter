@@ -9,7 +9,12 @@
 
 package com.suixingpay.datas.common.config;
 
-import com.suixingpay.datas.common.config.source.*;
+import com.suixingpay.datas.common.config.source.JDBCConfig;
+import com.suixingpay.datas.common.config.source.KafkaConfig;
+import com.suixingpay.datas.common.config.source.ZookeeperConfig;
+import com.suixingpay.datas.common.config.source.EmailConfig;
+import com.suixingpay.datas.common.config.source.NameSourceConfig;
+import com.suixingpay.datas.common.config.source.SourceType;
 import com.suixingpay.datas.common.exception.ConfigParseException;
 import com.suixingpay.datas.common.util.BeanUtils;
 import lombok.Getter;
@@ -40,7 +45,7 @@ public abstract class SourceConfig {
 
     public  <T extends SourceConfig> T stuff() throws ConfigParseException {
         try {
-            BeanUtils.copyProperties(properties, this, ArrayUtils.addAll(childStuffColumns(),SOURCE_TYPE_KEY));
+            BeanUtils.copyProperties(properties, this, ArrayUtils.addAll(childStuffColumns(), SOURCE_TYPE_KEY));
             childStuff();
             return (T) this;
         } catch (Exception e) {

@@ -9,14 +9,17 @@
 
 package com.suixingpay.datas.common.db;
 
+/**
+ *
+ */
 public interface SqlTemplate {
-    public String getSelectSql(String schemaName, String tableName, String[] pkNames, String[] columnNames);
-    public String getUpdateSql(String schemaName, String tableName, String[] pkNames, String[] columnNames);
-    public String getUpdateSql(String schemaName, String tableName, String[] allColumnNames);
-    public String getDeleteSql(String schemaName, String tableName, String[] pkNames);
+    String getSelectSql(String schemaName, String tableName, String[] pkNames, String[] columnNames);
+    String getUpdateSql(String schemaName, String tableName, String[] pkNames, String[] columnNames);
+    String getUpdateSql(String schemaName, String tableName, String[] allColumnNames);
+    String getDeleteSql(String schemaName, String tableName, String[] pkNames);
 
-    public String getInsertSql(String schemaName, String tableName, String[] columns);
-    public String getTruncateSql(String schemaName, String tableName);
+    String getInsertSql(String schemaName, String tableName, String[] columns);
+    String getTruncateSql(String schemaName, String tableName);
 
-    public String getDataChangedCountSql(String schemaName, String tableName, String autoUpdateColumn);
+    String getDataChangedCountSql(String schemaName, String tableName, String autoUpdateColumn);
 }

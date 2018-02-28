@@ -41,7 +41,7 @@ public class OggConverter implements EventConverter {
 
         EventType eventType = EventType.type(obj.getString("op_type"));
         //不能解析的事件跳过
-        if(null == eventType ||  eventType == EventType.UNKNOWN) return null;
+        if (null == eventType ||  eventType == EventType.UNKNOWN) return null;
 
         EventHeader eventHeader = new EventHeader();
         if (null != head) {
@@ -61,17 +61,21 @@ public class OggConverter implements EventConverter {
         try {
             String poTS = obj.getString("op_ts");
             event.setOpTs(OP_TS_F.parse(poTS.substring(0, poTS.length() - 3)));
-        } catch (Exception e) {}
+        } catch (Exception e) {
+
+        }
 
         try {
             String currentTS = obj.getString("current_ts");
             event.setCurrentTs(C_TS_F.parse(currentTS.substring(0, currentTS.length() - 3)));
-        } catch (Exception e) {}
+        } catch (Exception e) {
+
+        }
 
         JSONArray pkeys = obj.containsKey("primary_keys") ? obj.getJSONArray("primary_keys") : null;
         if (null != pkeys) event.setPrimaryKeys(pkeys.toJavaList(String.class));
-        event.setBefore(obj.getObject("before",Map.class));
-        event.setAfter(obj.getObject("after",Map.class));
+        event.setBefore(obj.getObject("before", Map.class));
+        event.setAfter(obj.getObject("after", Map.class));
         event.setHead(eventHeader);
         return event;
     }

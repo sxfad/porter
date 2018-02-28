@@ -38,9 +38,9 @@ public class DataConsumerConfig {
     @Getter @Setter private String includes;
 
     //消费数据的数据源
-    @Getter @Setter private Map<String,String> source;
+    @Getter @Setter private Map<String, String> source;
 
     //元数据查询的数据源
     //公用配置
-    @Getter @Setter private Map<String,String> metaSource;
+    @Getter @Setter private Map<String, String> metaSource;
 }

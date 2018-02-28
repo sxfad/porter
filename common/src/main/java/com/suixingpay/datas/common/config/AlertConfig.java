@@ -29,5 +29,5 @@ public class AlertConfig {
     @Getter @Setter private AlertStrategy strategy;
     @Getter @Setter private AlertReceiver[] receiver = new AlertReceiver[0];
     //告警客户端
-    @Getter @Setter private Map<String,String> client;
+    @Getter @Setter private Map<String, String> client;
 }

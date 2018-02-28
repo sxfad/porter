@@ -33,7 +33,7 @@ public class DataCarrierFactory {
         List<String> clazz = SpringFactoriesLoader.loadFactoryNames(DataCarrier.class, null);
         String providerString = clazz.get(0);
         Class tmpProvider = null;
-        if (! StringUtils.isBlank(providerString)) {
+        if (!StringUtils.isBlank(providerString)) {
             try {
                 tmpProvider = ClassUtils.forName(providerString, DataCarrierFactory.class.getClassLoader());
             } catch (ClassNotFoundException e) {
@@ -42,7 +42,7 @@ public class DataCarrierFactory {
         }
         provider = tmpProvider;
     }
-    public <E> DataCarrier<E> newDataCarrier(Object ... initPrams) {
+    public <E> DataCarrier<E> newDataCarrier(Object... initPrams) {
         Class[] paramsTypes = new Class[initPrams.length];
         for (int i = 0; i < initPrams.length; i++) {
             paramsTypes[i] =  initPrams[i].getClass();

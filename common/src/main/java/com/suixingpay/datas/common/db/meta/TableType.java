@@ -56,7 +56,7 @@ public enum TableType {
     /**
      * Synonym
      */
-    synonym, ;
+    synonym;
 
     /**
      * Converts an array of table types to an array of their corresponding string values.

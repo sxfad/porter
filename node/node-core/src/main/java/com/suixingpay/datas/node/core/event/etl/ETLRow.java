@@ -1,4 +1,4 @@
-package com.suixingpay.datas.node.core.event.etl;/**
+/**
  * All rights Reserved, Designed By Suixingpay.
  *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -6,11 +6,17 @@ package com.suixingpay.datas.node.core.event.etl;/**
  * @Copyright ©2017 Suixingpay. All rights reserved.
  * 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
  */
+package com.suixingpay.datas.node.core.event.etl;
 
 import com.suixingpay.datas.node.core.event.s.EventType;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.*;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.ArrayList;
+
 
 /**
  *
@@ -29,8 +35,8 @@ public class ETLRow {
     private final EventType opType;
     private final List<ETLColumn> columns;
 
-    private Map<String, Pair<Object,Object>> sqlKeys = new LinkedHashMap<>();
-    private Map<String, Pair<Object,Object>> sqlColumns = new LinkedHashMap<>();
+    private Map<String, Pair<Object, Object>> sqlKeys = new LinkedHashMap<>();
+    private Map<String, Pair<Object, Object>> sqlColumns = new LinkedHashMap<>();
 
     //当Row类型为更新时并且更新失败的情况下尝试插入，插入时补充目标库缺失必填字段
     private List<ETLColumn> appendsWhenUInsert = new ArrayList<>();
@@ -85,19 +91,19 @@ public class ETLRow {
         this.finalTable = finalTable;
     }
 
-    public Map<String, Pair<Object,Object>> getSqlKeys() {
+    public Map<String, Pair<Object, Object>> getSqlKeys() {
         return sqlKeys;
     }
 
-    public void setSqlKeys(Map<String, Pair<Object,Object>> sqlKeys) {
+    public void setSqlKeys(Map<String, Pair<Object, Object>> sqlKeys) {
         this.sqlKeys = sqlKeys;
     }
 
-    public Map<String, Pair<Object,Object>> getSqlColumns() {
+    public Map<String, Pair<Object, Object>> getSqlColumns() {
         return sqlColumns;
     }
 
-    public void setSqlColumns(Map<String, Pair<Object,Object>> sqlColumns) {
+    public void setSqlColumns(Map<String, Pair<Object, Object>> sqlColumns) {
         this.sqlColumns = sqlColumns;
     }
 

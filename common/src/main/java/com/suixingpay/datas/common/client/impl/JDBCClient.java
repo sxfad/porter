@@ -35,7 +35,11 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Map;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
@@ -76,8 +80,10 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
         } else if (config.getDbType() == DbType.ORACLE) {
             dataSource.setValidationQuery("select 1 from dual");
             dataSource.addConnectionProperty("restrictGetTables", "true");
-            dataSource.addConnectionProperty("zeroDateTimeBehavior", "convertToNull");// 将0000-00-00的时间类型返回null
-            dataSource.addConnectionProperty("yearIsDateType", "false");// 直接返回字符串，不做year转换date处理
+            // 将0000-00-00的时间类型返回null
+            dataSource.addConnectionProperty("zeroDateTimeBehavior", "convertToNull");
+            // 直接返回字符串，不做year转换date处理
+            dataSource.addConnectionProperty("yearIsDateType", "false");
         }
         jdbcTemplate = new JdbcTemplate(dataSource);
         transactionTemplate = new TransactionTemplate();
@@ -203,7 +209,7 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
                     return jdbcTemplate.batchUpdate(sql, batchArgs);
                 }
             });
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         if (null == affect || affect.length == 0) {
@@ -221,14 +227,14 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
         jdbcTemplate.query(sql, rch, args);
     }
 
-    private void batchErroUpdate(int batchSize, String sql, List<Object[]> batchArgs,int from, List<Integer> affect) {
+    private void batchErroUpdate(int batchSize, String sql, List<Object[]> batchArgs, int from, List<Integer> affect) {
         int size = batchArgs.size();
         int batchEnd = from + batchSize;
         //获取当前分组
         List<Object[]> subArgs = new ArrayList<>();
         while (from < batchEnd && from < size) {
             subArgs.add(batchArgs.get(from));
-            from ++;
+            from++;
         }
 
         //根据当前分组批量插入

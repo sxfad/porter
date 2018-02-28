@@ -11,7 +11,11 @@ package com.suixingpay.datas.node.task.worker;
 import com.alibaba.fastjson.JSON;
 import com.suixingpay.datas.common.alert.AlertReceiver;
 import com.suixingpay.datas.common.cluster.ClusterProviderProxy;
-import com.suixingpay.datas.common.cluster.command.*;
+import com.suixingpay.datas.common.cluster.command.TaskRegisterCommand;
+import com.suixingpay.datas.common.cluster.command.TaskStatCommand;
+import com.suixingpay.datas.common.cluster.command.TaskStatQueryCommand;
+import com.suixingpay.datas.common.cluster.command.TaskStopCommand;
+import com.suixingpay.datas.common.cluster.command.StatisticUploadCommand;
 import com.suixingpay.datas.common.cluster.data.DCallback;
 import com.suixingpay.datas.common.cluster.data.DObject;
 import com.suixingpay.datas.common.cluster.data.DTaskStat;
@@ -67,7 +71,8 @@ public class TaskWork {
     private final List<AlertReceiver> receivers;
 
 
-    public TaskWork(DataConsumer dataConsumer, DataLoader dataLoader, String taskId, List<AlertReceiver> receivers, TaskWorker worker) throws Exception {
+    public TaskWork(DataConsumer dataConsumer, DataLoader dataLoader, String taskId, List<AlertReceiver> receivers,
+                    TaskWorker worker) throws Exception {
         this.dataConsumer = dataConsumer;
         this.dataLoader = dataLoader;
         basicThreadName = "TaskWork-[taskId:" + taskId + "]-[consumer:" + dataConsumer.getSwimlaneId() + "]";
@@ -77,7 +82,7 @@ public class TaskWork {
         this.worker = worker;
         this.receivers = Collections.unmodifiableList(receivers);
         TaskWork work = this;
-        JOBS = new LinkedHashMap<StageType, StageJob>(){
+        JOBS = new LinkedHashMap<StageType, StageJob>() {
             {
                 put(StageType.SELECT, new SelectJob(work));
                 put(StageType.EXTRACT, new ExtractJob(work));
@@ -91,7 +96,7 @@ public class TaskWork {
         ClusterProviderProxy.INSTANCE.broadcast(new TaskStatQueryCommand(taskId, dataConsumer.getSwimlaneId(), new DCallback() {
             @Override
             public void callback(List<DObject> objects) {
-                for ( DObject object : objects) {
+                for (DObject object : objects) {
                     DTaskStat stat = (DTaskStat) object;
                     getDTaskStat(stat.getSchema(), stat.getTable());
                 }
@@ -99,7 +104,7 @@ public class TaskWork {
         }));
     }
 
-    public void stop() {
+    protected void stop() {
         try {
             LOGGER.info("终止执行任务[{}-{}]", taskId, dataConsumer.getSwimlaneId());
             //终止阶段性工作,需要
@@ -109,14 +114,14 @@ public class TaskWork {
             //上传消费进度
             submitStat();
             //广播任务结束消息
-            ClusterProviderProxy.INSTANCE.broadcast(new TaskStopCommand(taskId,dataConsumer.getSwimlaneId()));
+            ClusterProviderProxy.INSTANCE.broadcast(new TaskStopCommand(taskId, dataConsumer.getSwimlaneId()));
         } catch (Exception e) {
-            NodeLog.upload(taskId, "任务关闭失败" , e.getMessage(), dataConsumer.getSwimlaneId());
+            NodeLog.upload(taskId, "任务关闭失败", e.getMessage(), dataConsumer.getSwimlaneId());
             LOGGER.error("终止执行任务[{}-{}]异常", taskId, dataConsumer.getSwimlaneId(), e);
         }
     }
 
-    public void start() throws Exception {
+    protected void start() throws Exception {
         LOGGER.info("开始执行任务[{}-{}]", taskId, dataConsumer.getSwimlaneId());
         //会抛出分布式锁任务抢占异常
         ClusterProviderProxy.INSTANCE.broadcast(new TaskRegisterCommand(taskId, dataConsumer.getSwimlaneId()));
@@ -134,7 +139,7 @@ public class TaskWork {
         return JOBS.get(type).output();
     }
     public <T> T waitSequence() {
-        return ((ExtractJob)JOBS.get(StageType.EXTRACT)).getNextSequence();
+        return ((ExtractJob) JOBS.get(StageType.EXTRACT)).getNextSequence();
     }
 
     public boolean isPoolEmpty(StageType type) {
@@ -163,7 +168,7 @@ public class TaskWork {
                             @Override
                             public void callback(DObject object) {
                                 DTaskStat remoteData = (DTaskStat) object;
-                                if(stat.getUpdateStat().compareAndSet(false, true)) {
+                                if (stat.getUpdateStat().compareAndSet(false, true)) {
                                     //最后检查点
                                     if (null == stat.getLastCheckedTime()) {
                                         stat.setLastLoadedDataTime(remoteData.getLastLoadedDataTime());

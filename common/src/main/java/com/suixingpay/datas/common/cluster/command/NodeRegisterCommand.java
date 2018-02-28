@@ -17,7 +17,7 @@ package com.suixingpay.datas.common.cluster.command;
  */
 public class NodeRegisterCommand implements ClusterCommand {
     private final String id;
-    public NodeRegisterCommand (String id) {
+    public NodeRegisterCommand(String id) {
         this.id = id;
     }
 

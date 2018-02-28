@@ -53,11 +53,11 @@ public enum DataConsumerFactory {
 
 
         //消费数据获取来源
-        Client tempConsumeclient = AbstractClient.getClient( SourceConfig.getConfig(config.getSource()));
+        Client tempConsumeclient = AbstractClient.getClient(SourceConfig.getConfig(config.getSource()));
 
         ConsumeClient consumeClient = null;
         if (null != tempConsumeclient && tempConsumeclient instanceof ConsumeClient) {
-            consumeClient = (ConsumeClient)tempConsumeclient;
+            consumeClient = (ConsumeClient) tempConsumeclient;
         }
         if (null == consumeClient) throw new ClientException("ConsumeClient初始化失败:" + config.getSource());
 

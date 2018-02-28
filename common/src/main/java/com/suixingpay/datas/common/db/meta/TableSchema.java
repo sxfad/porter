@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 public class TableSchema {
     @Setter @Getter private String schemaName;
     @Setter @Getter private String tableName;
-    private Map<String,TableColumn> columns = new HashMap<>();
+    private Map<String, TableColumn> columns = new HashMap<>();
 
     public TableColumn findColumn(String columnsName) {
         return columns.getOrDefault(columnsName, null);

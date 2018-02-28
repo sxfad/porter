@@ -19,17 +19,17 @@ import org.apache.commons.beanutils.converters.ByteConverter;
 public class ByteArrayConverter implements Converter {
 
     public static final Converter  SQL_BYTES = new ByteArrayConverter(null);
-    private static final Converter converter = new ArrayConverter(byte[].class, new ByteConverter());
+    private static final Converter CONVERTER = new ArrayConverter(byte[].class, new ByteConverter());
 
     protected final Object         defaultValue;
     protected final boolean        useDefault;
 
-    public ByteArrayConverter(){
+    public ByteArrayConverter() {
         this.defaultValue = null;
         this.useDefault = false;
     }
 
-    public ByteArrayConverter(Object defaultValue){
+    public ByteArrayConverter(Object defaultValue) {
         this.defaultValue = defaultValue;
         this.useDefault = true;
     }
@@ -56,6 +56,6 @@ public class ByteArrayConverter implements Converter {
             }
         }
 
-        return converter.convert(type, value); // byteConvertor进行转化
+        return CONVERTER.convert(type, value); // byteConvertor进行转化
     }
 }

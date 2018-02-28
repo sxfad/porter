@@ -1,4 +1,4 @@
-package com.suixingpay.datas.node.core.event.etl;/**
+/**
  * All rights Reserved, Designed By Suixingpay.
  *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -6,6 +6,7 @@ package com.suixingpay.datas.node.core.event.etl;/**
  * @Copyright ©2017 Suixingpay. All rights reserved.
  * 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
  */
+package com.suixingpay.datas.node.core.event.etl;
 
 import com.alibaba.fastjson.JSON;
 import com.suixingpay.datas.node.core.event.s.EventType;
@@ -44,7 +45,7 @@ public class ETLBucket {
     }
 
     public List<ETLRow> getRows() {
-        return null == rows ? new ArrayList<>(): rows;
+        return null == rows ? new ArrayList<>() : rows;
     }
 
     /**
@@ -57,16 +58,16 @@ public class ETLBucket {
         for (MessageEvent event : events.getRight()) {
             LOGGER.debug(JSON.toJSONString(event));
             List<ETLColumn> columns = new ArrayList<>();
-            Boolean loopAfter = ! event.getAfter().isEmpty();
-            for (Map.Entry<String,Object> entity : loopAfter ? event.getAfter().entrySet() : event.getBefore().entrySet()) {
+            Boolean loopAfter = !event.getAfter().isEmpty();
+            for (Map.Entry<String, Object> entity : loopAfter ? event.getAfter().entrySet() : event.getBefore().entrySet()) {
                 Object newValue = "";
                 Object oldValue = "";
 
                 if (loopAfter) {
                     newValue = entity.getValue();
-                    oldValue = event.getBefore().getOrDefault(entity.getKey(),null);
+                    oldValue = event.getBefore().getOrDefault(entity.getKey(), null);
                 } else {
-                    newValue = event.getBefore().getOrDefault(entity.getKey(),null);
+                    newValue = event.getBefore().getOrDefault(entity.getKey(), null);
                     oldValue = entity.getValue();
                 }
                 Object finalValue = newValue;
@@ -74,20 +75,21 @@ public class ETLBucket {
                     finalValue = oldValue;
                 }
 
-                String newValueStr= String.valueOf(newValue);
+                String newValueStr = String.valueOf(newValue);
                 newValueStr = newValueStr.equals("null") ? null : newValueStr;
-                String oldValueStr= String.valueOf(oldValue);
+                String oldValueStr = String.valueOf(oldValue);
                 oldValueStr = oldValueStr.equals("null") ? null : oldValueStr;
-                String finalValueStr= String.valueOf(finalValue);
+                String finalValueStr = String.valueOf(finalValue);
                 finalValueStr = finalValueStr.equals("null") ? null : finalValueStr;
 
                 //源数据事件精度损失，转字符串也会有精度损失。后续观察处理
-                ETLColumn column = new ETLColumn(entity.getKey(), newValueStr, oldValueStr, finalValueStr, event.getPrimaryKeys().contains(entity.getKey()));
+                ETLColumn column = new ETLColumn(entity.getKey(), newValueStr, oldValueStr, finalValueStr,
+                        event.getPrimaryKeys().contains(entity.getKey()));
                 columns.add(column);
             }
 
             ETLRow row = new ETLRow(event.getSchema(), event.getTable(), event.getOpType(), columns, event.getOpTs());
-            row.setIndex(event.getHead().getOffset()+"");
+            row.setIndex(event.getHead().getOffset() + "");
             rows.add(row);
             LOGGER.debug(JSON.toJSONString(row));
         }

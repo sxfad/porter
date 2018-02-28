@@ -15,6 +15,7 @@ import java.util.List;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
+ * @param <S>
  * @date: 2018年02月07日 14:08
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月07日 14:08

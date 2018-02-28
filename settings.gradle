@@ -17,5 +17,4 @@ include 'node:node-plugin:kafka-consumer'
 findProject(':node:node-plugin:kafka-consumer')?.name = 'kafka-consumer'
 include 'node:node-plugin:jdbc-loader'
 findProject(':node:node-plugin:jdbc-loader')?.name = 'jdbc-loader'
-include 'manager'
 

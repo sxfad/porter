@@ -24,7 +24,7 @@ public abstract class ZookeeperClusterListenerFilter implements ClusterListenerF
 
     @Override
     public boolean onFilter(ClusterEvent event) {
-        ZookeeperClusterEvent zkEvent = (ZookeeperClusterEvent)event;
+        ZookeeperClusterEvent zkEvent = (ZookeeperClusterEvent) event;
         //是否路径匹配
         boolean isPathMatch = zkEvent.getPath().startsWith(getPath());
         return isPathMatch && doFilter(zkEvent);

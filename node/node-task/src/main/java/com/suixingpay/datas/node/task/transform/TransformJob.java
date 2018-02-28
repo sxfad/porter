@@ -16,8 +16,16 @@ import com.suixingpay.datas.node.task.transform.transformer.TransformFactory;
 import com.suixingpay.datas.node.task.worker.TaskWork;
 
 import java.util.Map;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.function.BiFunction;
+
 
 /**
  * 多线程执行,完成字段、表的映射转化。

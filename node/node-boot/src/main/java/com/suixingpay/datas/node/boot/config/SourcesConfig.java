@@ -31,7 +31,7 @@ import java.util.Map;
 @ConfigurationProperties(prefix = "node")
 @Component
 public class SourcesConfig {
-    private Map<String,Map<String, String>> source;
+    private Map<String, Map<String, String>> source;
 
     public Map<String, Map<String, String>> getSource() {
         return source;
