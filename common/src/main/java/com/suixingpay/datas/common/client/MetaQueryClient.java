@@ -22,6 +22,5 @@ import java.util.Date;
  */
 public interface MetaQueryClient extends Client {
     TableSchema getTable(String schema, String tableName) throws Exception;
-    TableSchema getTable(String schema, String tableName, boolean cache) throws Exception;
     int getDataCount(String schema, String table, String updateDateColumn, Date startTime, Date endTime);
 }

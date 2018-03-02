@@ -123,7 +123,7 @@ public class TaskWork {
                     //上传消费进度
                     submitStat();
                 } catch (Exception e) {
-                    NodeLog.upload(NodeLog.LogType.TASK_LOG, taskId, dataConsumer.getSwimlaneId(), "停止任务时上传消费进度失败:" + e.getMessage());
+                    NodeLog.upload(NodeLog.LogType.TASK_LOG, taskId, dataConsumer.getSwimlaneId(), "停止上传消费进度失败:" + e.getMessage());
                 }
                 try {
                     //广播任务结束消息

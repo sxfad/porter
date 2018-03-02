@@ -75,7 +75,7 @@ public class TaskWorker {
                         job.submitStat();
                     }
                 }
-            }, 0, 1, TimeUnit.SECONDS);
+            }, 0, 1, TimeUnit.MINUTES);
         } else {
             LOGGER.warn("TaskWorker[] has started already", workerSequence);
         }

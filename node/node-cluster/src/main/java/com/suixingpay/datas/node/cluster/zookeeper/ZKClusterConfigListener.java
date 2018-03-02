@@ -71,7 +71,7 @@ public class ZKClusterConfigListener extends ZookeeperClusterListener {
             }
             if (zkEvent.getPath().equals(STATISTIC_CONFIG_PATH)) {
                 StatisticConfig config = JSONObject.parseObject(event.getData(), StatisticConfig.class);
-                NodeContext.INSTANCE.syncUploadStatistic(config.isUploadStatistic());
+                NodeContext.INSTANCE.syncUploadStatistic(config.isUpload());
             }
         }
     }

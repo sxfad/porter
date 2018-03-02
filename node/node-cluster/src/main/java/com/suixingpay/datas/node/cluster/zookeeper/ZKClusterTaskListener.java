@@ -136,19 +136,16 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
         String assignPath = taskPath + "/lock";
         String statPath = taskPath + "/stat";
         String errorPath = taskPath + "/error";
-        //任务分配、工作节点注册目录创建
-        Stat stat = client.exists(listenPath() + "/" + task.getTaskId(), true);
-        if (null == stat) {
-            client.create(taskPath, false, "{}");
-            client.create(assignPath, false, "{}");
-            client.create(statPath, false, "{}");
-            client.create(errorPath, false, "{}");
-        }
+        client.createWhenNotExists(taskPath, false, true, null);
+        client.createWhenNotExists(assignPath, false, true, null);
+        client.createWhenNotExists(statPath, false, true, null);
+        client.createWhenNotExists(errorPath, false, true, null);
+
 
         //创建任务统计节点
         try {
             String alertNode = statPath + "/" + task.getSwimlaneId();
-            if (null == client.exists(alertNode, true)) {
+            if (!client.isExists(alertNode, true)) {
                 client.create(alertNode, false, "{}");
             }
         } catch (Exception e) {
@@ -158,8 +155,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
 
         //任务分配
         String topicPath = assignPath + "/" + task.getSwimlaneId();
-        Stat ifAssignTopic = client.exists(topicPath, true);
-        if (null == ifAssignTopic) {
+        if (!client.isExists(topicPath, true)) {
             //为当前工作节点分配任务topic
             client.create(topicPath, false, new DTaskLock(task.getTaskId(), NodeContext.INSTANCE.getNodeId(),
                     task.getSwimlaneId()).toString());

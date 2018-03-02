@@ -49,7 +49,7 @@ public class ETLRowTransformer implements Transformer {
             LOGGER.debug("try tranform row:{},{}", row.getIndex(), JSON.toJSONString(row));
             TableMapper tableMapper = work.getTableMapper(row.getSchema(), row.getTable());
             mappingRowData(tableMapper, row);
-            TableSchema table = findTable(work.getDataLoader(), row.getFinalSchema(), row.getFinalTable(), false, work);
+            TableSchema table = findTable(work.getDataLoader(), row.getFinalSchema(), row.getFinalTable(), work);
             if (null != table) remedyColumns(table, row);
 
             //DataLoader自定义处理
@@ -111,11 +111,11 @@ public class ETLRowTransformer implements Transformer {
     }
 
 
-    private TableSchema findTable(DataLoader loader, String finalSchema, String finalTable, boolean cache, TaskWork work)
+    private TableSchema findTable(DataLoader loader, String finalSchema, String finalTable, TaskWork work)
             throws TaskStopTriggerException {
         TableSchema table = null;
         try {
-            table  = loader.findTable(finalSchema, finalTable, cache);
+            table  = loader.findTable(finalSchema, finalTable);
         } catch (Throwable e) {
             e.printStackTrace();
             LOGGER.error("查询目标仓库表结构{}.{}出错!", finalSchema, finalTable, e);

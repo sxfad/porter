@@ -106,35 +106,39 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
 
     @Override
     public TableSchema getTable(String schema, String tableName) throws Exception {
-        TableSchema table = getTable(schema, tableName, true);
-        return null != table ? table : getTable(schema, tableName, false);
+        return getTable(schema, tableName, true);
     }
 
-    @Override
-    public TableSchema getTable(String schema, String tableName, boolean cache) throws Exception {
+    private TableSchema getTable(String schema, String tableName, boolean cache) throws Exception {
         List<String> keyList = Arrays.asList(schema, tableName);
-        if (!cache) tables.remove(keyList);
+        if (!cache) {
+            return getTableSchema(schema, tableName);
+        }
 
         return tables.computeIfAbsent(keyList, new Function<List<String>, TableSchema>() {
             //从代码块中抛出异常
             @SneakyThrows(Exception.class)
             public TableSchema apply(List<String> strings) {
-                Table dbTable = DdlUtils.findTable(jdbcTemplate, schema, schema, tableName, null);
-                TableSchema tableSchema = new TableSchema();
-                tableSchema.setSchemaName(dbTable.getSchema());
-                tableSchema.setTableName(dbTable.getName());
-                Arrays.stream(dbTable.getColumns()).forEach(c -> {
-                    TableColumn column = new TableColumn();
-                    column.setDefaultValue(c.getDefaultValue());
-                    column.setName(c.getName());
-                    column.setPrimaryKey(c.isPrimaryKey());
-                    column.setRequired(c.isRequired());
-                    column.setTypeCode(c.getTypeCode());
-                    tableSchema.addColumn(column);
-                });
-                return tableSchema;
+                return getTableSchema(schema, tableName);
             }
         });
+    }
+
+    private TableSchema getTableSchema(String schema, String tableName) {
+        Table dbTable = DdlUtils.findTable(jdbcTemplate, schema, schema, tableName, null);
+        TableSchema tableSchema = new TableSchema();
+        tableSchema.setSchemaName(dbTable.getSchema());
+        tableSchema.setTableName(dbTable.getName());
+        Arrays.stream(dbTable.getColumns()).forEach(c -> {
+            TableColumn column = new TableColumn();
+            column.setDefaultValue(c.getDefaultValue());
+            column.setName(c.getName());
+            column.setPrimaryKey(c.isPrimaryKey());
+            column.setRequired(c.isRequired());
+            column.setTypeCode(c.getTypeCode());
+            tableSchema.addColumn(column);
+        });
+        return tableSchema;
     }
 
     @Override
