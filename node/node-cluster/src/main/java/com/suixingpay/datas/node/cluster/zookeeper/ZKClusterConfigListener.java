@@ -20,6 +20,7 @@ import com.suixingpay.datas.common.cluster.impl.zookeeper.ZookeeperClusterListen
 import com.suixingpay.datas.common.cluster.impl.zookeeper.ZookeeperClusterListenerFilter;
 import com.suixingpay.datas.common.config.AlertConfig;
 import com.suixingpay.datas.common.config.LogConfig;
+import com.suixingpay.datas.common.config.StatisticConfig;
 import com.suixingpay.datas.common.exception.ClientConnectionException;
 import com.suixingpay.datas.common.exception.ConfigParseException;
 import com.suixingpay.datas.node.core.NodeContext;
@@ -36,6 +37,7 @@ public class ZKClusterConfigListener extends ZookeeperClusterListener {
     private static final String ZK_PATH = BASE_CATALOG + "/config";
     private static final String LOG_CONFIG_PATH = ZK_PATH + "/log";
     private static final String ALERT_CONFIG_PATH = ZK_PATH + "/alert";
+    private static final String STATISTIC_CONFIG_PATH = ZK_PATH + "/statistic";
 
     @Override
     public String listenPath() {
@@ -66,6 +68,10 @@ public class ZKClusterConfigListener extends ZookeeperClusterListener {
                 } catch (ClientConnectionException e) {
                     e.printStackTrace();
                 }
+            }
+            if (zkEvent.getPath().equals(STATISTIC_CONFIG_PATH)) {
+                StatisticConfig config = JSONObject.parseObject(event.getData(), StatisticConfig.class);
+                NodeContext.INSTANCE.syncUploadStatistic(config.isUploadStatistic());
             }
         }
     }

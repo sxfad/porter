@@ -21,6 +21,8 @@ import com.suixingpay.datas.common.cluster.command.broadcast.TaskRegister;
 import com.suixingpay.datas.common.cluster.command.broadcast.TaskStatQuery;
 import com.suixingpay.datas.common.cluster.command.broadcast.TaskStatUpload;
 import com.suixingpay.datas.common.cluster.command.broadcast.TaskStop;
+import com.suixingpay.datas.common.cluster.command.TaskStoppedByErrorCommand;
+import com.suixingpay.datas.common.cluster.command.broadcast.TaskStoppedByError;
 import com.suixingpay.datas.common.cluster.data.DObject;
 import com.suixingpay.datas.common.cluster.data.DTaskLock;
 import com.suixingpay.datas.common.cluster.event.ClusterEvent;
@@ -51,7 +53,7 @@ import java.util.regex.Pattern;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月15日 10:09
  */
 public class ZKClusterTaskListener extends ZookeeperClusterListener implements TaskEventProvider,
-        TaskRegister, TaskStatUpload, TaskStop, TaskStatQuery {
+        TaskRegister, TaskStatUpload, TaskStop, TaskStatQuery, TaskStoppedByError {
     private static final String ZK_PATH = BASE_CATALOG + "/task";
     private static final Pattern TASK_DIST_PATTERN = Pattern.compile(ZK_PATH + "/.*/dist/.*");
     private static final Pattern TASK_UNLOCKED_PATTERN = Pattern.compile(ZK_PATH + "/.*/lock/.*");
@@ -84,10 +86,16 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
         //任务释放
         if (TASK_UNLOCKED_PATTERN.matcher(zkEvent.getPath()).matches() && event.isOffline()
                 && NodeContext.INSTANCE.getNodeStatus().isWorking()) {
-            Pair<String, Stat> taskConfig = client.getData(zkEvent.getPath().replace("/lock/", "/dist/"));
-            if (null != taskConfig && !StringUtils.isBlank(taskConfig.getLeft())) {
-                TaskConfig config = JSONObject.parseObject(taskConfig.getLeft(), TaskConfig.class);
-                triggerTaskEvent(config);
+
+            String stoppedErrorPath = zkEvent.getPath().replace("/lock/", "/error/");
+            //如果不是因为错误停止任务
+            if (!client.isExists(stoppedErrorPath, false)) {
+                Pair<String, Stat> taskConfig = client.getData(zkEvent.getPath().replace("/lock/", "/dist/"));
+                //获取任务配置信息
+                if (null != taskConfig && !StringUtils.isBlank(taskConfig.getLeft())) {
+                    TaskConfig config = JSONObject.parseObject(taskConfig.getLeft(), TaskConfig.class);
+                    triggerTaskEvent(config);
+                }
             }
         }
     }
@@ -127,12 +135,14 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
         String taskPath = listenPath() + "/" + task.getTaskId();
         String assignPath = taskPath + "/lock";
         String statPath = taskPath + "/stat";
+        String errorPath = taskPath + "/error";
         //任务分配、工作节点注册目录创建
         Stat stat = client.exists(listenPath() + "/" + task.getTaskId(), true);
         if (null == stat) {
             client.create(taskPath, false, "{}");
             client.create(assignPath, false, "{}");
             client.create(statPath, false, "{}");
+            client.create(errorPath, false, "{}");
         }
 
         //创建任务统计节点
@@ -198,8 +208,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
     @Override
     public void stopTask(TaskStopCommand command) throws Exception {
         String node = listenPath() + "/" + command.getTaskId() + "/lock/" + command.getSwimlaneId();
-        Stat stat = client.exists(node, false);
-        if (null != stat) {
+        if (client.isExists(node, true)) {
             Pair<String, Stat> remoteData = client.getData(node);
             DTaskLock taskLock = DTaskLock.fromString(remoteData.getLeft(), DTaskLock.class);
             if (taskLock.getNodeId().equals(NodeContext.INSTANCE.getNodeId()) && taskLock.getAddress().equals(MachineUtils.IP_ADDRESS)
@@ -231,5 +240,11 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
             }
         }
         if (null != command.getCallback()) command.getCallback().callback(stats);
+    }
+
+    @Override
+    public void tagError(TaskStoppedByErrorCommand command) {
+        String errorPath = listenPath() + "/" + command.getTaskId() + "/error/" + command.getSwimlaneId();
+        client.createWhenNotExists(errorPath, false, false, null);
     }
 }

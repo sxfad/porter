@@ -21,7 +21,9 @@ import com.suixingpay.datas.common.db.meta.DbType;
 import com.suixingpay.datas.common.db.DdlUtils;
 import com.suixingpay.datas.common.db.meta.TableColumn;
 import com.suixingpay.datas.common.db.meta.TableSchema;
+import com.suixingpay.datas.common.exception.TaskStopTriggerException;
 import lombok.Getter;
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ddlutils.model.Table;
 import org.springframework.dao.DataAccessException;
@@ -35,11 +37,11 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Map;
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
@@ -74,6 +76,8 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
         dataSource.setUsername(config.getUserName());
         dataSource.setPassword(config.getPassword());
         dataSource.setMaxWait(config.getMaxWait());
+        //连接错误重试次数
+        dataSource.setConnectionErrorRetryAttempts(config.getConnectionErrorRetryAttempts());
 
         if (config.getDbType() == DbType.MYSQL) {
             dataSource.setValidationQuery("select 1");
@@ -101,36 +105,34 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
     }
 
     @Override
-    public TableSchema getTable(String schema, String tableName) {
+    public TableSchema getTable(String schema, String tableName) throws Exception {
         TableSchema table = getTable(schema, tableName, true);
         return null != table ? table : getTable(schema, tableName, false);
     }
 
     @Override
-    public TableSchema getTable(String schema, String tableName, boolean cache) {
+    public TableSchema getTable(String schema, String tableName, boolean cache) throws Exception {
         List<String> keyList = Arrays.asList(schema, tableName);
         if (!cache) tables.remove(keyList);
+
         return tables.computeIfAbsent(keyList, new Function<List<String>, TableSchema>() {
-            @Override
+            //从代码块中抛出异常
+            @SneakyThrows(Exception.class)
             public TableSchema apply(List<String> strings) {
-                try {
-                    Table dbTable = DdlUtils.findTable(jdbcTemplate, schema, schema, tableName, null);
-                    TableSchema tableSchema = new TableSchema();
-                    tableSchema.setSchemaName(dbTable.getSchema());
-                    tableSchema.setTableName(dbTable.getName());
-                    Arrays.stream(dbTable.getColumns()).forEach(c -> {
-                        TableColumn column = new TableColumn();
-                        column.setDefaultValue(c.getDefaultValue());
-                        column.setName(c.getName());
-                        column.setPrimaryKey(c.isPrimaryKey());
-                        column.setRequired(c.isRequired());
-                        column.setTypeCode(c.getTypeCode());
-                        tableSchema.addColumn(column);
-                    });
-                    return tableSchema;
-                } catch (Exception e) {
-                    return null;
-                }
+                Table dbTable = DdlUtils.findTable(jdbcTemplate, schema, schema, tableName, null);
+                TableSchema tableSchema = new TableSchema();
+                tableSchema.setSchemaName(dbTable.getSchema());
+                tableSchema.setTableName(dbTable.getName());
+                Arrays.stream(dbTable.getColumns()).forEach(c -> {
+                    TableColumn column = new TableColumn();
+                    column.setDefaultValue(c.getDefaultValue());
+                    column.setName(c.getName());
+                    column.setPrimaryKey(c.isPrimaryKey());
+                    column.setRequired(c.isRequired());
+                    column.setTypeCode(c.getTypeCode());
+                    tableSchema.addColumn(column);
+                });
+                return tableSchema;
             }
         });
     }
@@ -144,72 +146,36 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
     private int countQuery(String sql, Date startDate, Date endDate) {
         //数组形式仅仅是为了处理回调代码块儿对final局部变量的要求
         int[] count = {0};
-        this.query(sql, new RowCallbackHandler() {
-            @Override
-            public void processRow(ResultSet rs) throws SQLException {
-                if (null != rs) {
-                    String value = rs.getString(1);
-                    if (!StringUtils.isBlank(value) && StringUtils.isNumeric(value)) {
-                        count[0] = Integer.valueOf(value).intValue();
+        try {
+            this.query(sql, new RowCallbackHandler() {
+                @Override
+                public void processRow(ResultSet rs) throws SQLException {
+                    if (null != rs) {
+                        String value = rs.getString(1);
+                        if (!StringUtils.isBlank(value) && StringUtils.isNumeric(value)) {
+                            count[0] = Integer.valueOf(value).intValue();
+                        }
                     }
                 }
-            }
-        }, startDate, endDate);
+            }, startDate, endDate);
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
         return  count[0];
     }
 
-
-
-    public int update(String sql, Object... args) {
-        int affect = 0;
-        try {
-            affect = transactionTemplate.execute(new TransactionCallback<Integer>() {
-                @Override
-                public Integer doInTransaction(TransactionStatus status) {
-                    return jdbcTemplate.update(sql, args);
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        if (affect < 1) {
-            LOGGER.error("sql:{},params:{},affect:{}", sql, JSON.toJSONString(Arrays.asList(args)), affect);
-        } else {
-            LOGGER.debug("sql:{},params:{},affect:{}", sql, JSON.toJSONString(Arrays.asList(args)), affect);
-        }
-        return  affect;
-    }
-
-    public int update(String sql) {
-        int affect = 0;
-        try {
-            affect = transactionTemplate.execute(new TransactionCallback<Integer>() {
-                @Override
-                public Integer doInTransaction(TransactionStatus status) {
-                    return jdbcTemplate.update(sql);
-                }
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        if (affect < 1) {
-            LOGGER.error("sql:{},affect:{}", sql, affect);
-        } else {
-            LOGGER.debug("sql:{},affect:{}", sql, affect);
-        }
-        return affect;
-    }
-
-    public int[] batchUpdate(String sql, List<Object[]> batchArgs) {
+    public int[] batchUpdate(String sql, List<Object[]> batchArgs) throws TaskStopTriggerException {
         int[] affect = new int[]{};
         try {
             affect = transactionTemplate.execute(new TransactionCallback<int[]>() {
                 @Override
+                @SneakyThrows(Throwable.class)
                 public int[] doInTransaction(TransactionStatus status) {
                     return jdbcTemplate.batchUpdate(sql, batchArgs);
                 }
             });
-        } catch (Exception e) {
+        } catch (Throwable e) {
+            if (TaskStopTriggerException.isMatch(e)) throw new TaskStopTriggerException(e);
             e.printStackTrace();
         }
         if (null == affect || affect.length == 0) {
@@ -223,11 +189,42 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
         return affect;
     }
 
-    public void query(String sql, RowCallbackHandler rch, Object... args) throws DataAccessException {
-        jdbcTemplate.query(sql, rch, args);
+
+    public int update(String sql, Object... args) throws TaskStopTriggerException {
+        int affect = 0;
+        try {
+            affect = transactionTemplate.execute(new TransactionCallback<Integer>() {
+                @Override
+                @SneakyThrows(Throwable.class)
+                public Integer doInTransaction(TransactionStatus status) {
+                    return jdbcTemplate.update(sql, args);
+                }
+            });
+        } catch (Throwable e) {
+            if (TaskStopTriggerException.isMatch(e)) throw new TaskStopTriggerException(e);
+            e.printStackTrace();
+        }
+        if (affect < 1) {
+            LOGGER.error("sql:{},params:{},affect:{}", sql, JSON.toJSONString(Arrays.asList(args)), affect);
+        } else {
+            LOGGER.debug("sql:{},params:{},affect:{}", sql, JSON.toJSONString(Arrays.asList(args)), affect);
+        }
+        return  affect;
     }
 
-    private void batchErroUpdate(int batchSize, String sql, List<Object[]> batchArgs, int from, List<Integer> affect) {
+    public void query(String sql, RowCallbackHandler rch, Object... args) throws TaskStopTriggerException {
+        try {
+            jdbcTemplate.query(sql, rch, args);
+        } catch (DataAccessException accessException) {
+            throw new TaskStopTriggerException(accessException);
+        } catch (Throwable e) {
+            if (TaskStopTriggerException.isMatch(e)) throw new TaskStopTriggerException(e);
+        }
+    }
+
+
+    private void batchErroUpdate(int batchSize, String sql, List<Object[]> batchArgs, int from, List<Integer> affect)
+            throws TaskStopTriggerException {
         int size = batchArgs.size();
         int batchEnd = from + batchSize;
         //获取当前分组
@@ -241,12 +238,12 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
         int[] reGroupAffect = null;
         try {
             reGroupAffect = transactionTemplate.execute(new TransactionCallback<int[]>() {
-                @Override
+                @SneakyThrows(Throwable.class)
                 public int[] doInTransaction(TransactionStatus status) {
                     return jdbcTemplate.batchUpdate(sql, subArgs);
                 }
             });
-        } catch (Exception e) {
+        } catch (Throwable e) {
             e.printStackTrace();
         }
 
@@ -261,5 +258,4 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
         //递归下次分组
         if (batchEnd < size) batchErroUpdate(batchSize, sql, batchArgs, from, affect);
     }
-
 }

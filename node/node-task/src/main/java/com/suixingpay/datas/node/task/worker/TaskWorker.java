@@ -95,8 +95,9 @@ public class TaskWorker {
 
     public void stopJob(String... swimlaneId) {
         Arrays.stream(swimlaneId).forEach(c -> {
-            if (JOBS.containsKey(swimlaneId)) {
-                JOBS.get(swimlaneId).stop();
+            if (JOBS.containsKey(c)) {
+                JOBS.get(c).stop();
+                JOBS.remove(c);
             }
         });
     }
@@ -118,7 +119,7 @@ public class TaskWorker {
             } catch (Exception e) {
                 if (null != job) job.stop();
                 LOGGER.error("Consumer JOB[{}] failed to start!", c.getSwimlaneId(), e);
-                NodeLog.upload(task.getTaskId(), "任务启动失败", e.getMessage(), c.getSwimlaneId());
+                NodeLog.upload(NodeLog.LogType.TASK_LOG, task.getTaskId(), c.getSwimlaneId(), e.getMessage());
             }
         });
     }

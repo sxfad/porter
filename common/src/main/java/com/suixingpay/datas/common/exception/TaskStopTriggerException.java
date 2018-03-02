@@ -1,0 +1,47 @@
+/**
+ * All rights Reserved, Designed By Suixingpay.
+ *
+ * @author: zhangkewei[zhang_kw@suixingpay.com]
+ * @date: 2018年03月01日 16:17
+ * @Copyright ©2018 Suixingpay. All rights reserved.
+ * 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
+ */
+
+package com.suixingpay.datas.common.exception;
+
+import com.suixingpay.datas.common.db.SqlErrorCode;
+import org.springframework.jdbc.CannotGetJdbcConnectionException;
+import org.springframework.jdbc.UncategorizedSQLException;
+
+import java.sql.SQLException;
+
+/**
+ * @author: zhangkewei[zhang_kw@suixingpay.com]
+ * @date: 2018年03月01日 16:17
+ * @version: V1.0
+ * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年03月01日 16:17
+ */
+public class TaskStopTriggerException extends TaskException {
+
+    public TaskStopTriggerException(String message) {
+        super(message);
+    }
+
+    public TaskStopTriggerException(Throwable cause) {
+        super(cause);
+    }
+
+    public static boolean isMatch(Throwable cause) {
+        boolean match = false;
+        if (cause instanceof CannotGetJdbcConnectionException || cause instanceof UncategorizedSQLException) {
+            return true;
+        }
+
+        if (cause instanceof SQLException) {
+            SQLException sqlError = (SQLException) cause;
+            return sqlError.getErrorCode() == SqlErrorCode.ERROR_904.code || sqlError.getErrorCode() == SqlErrorCode.ERROR_942.code
+                    || sqlError.getErrorCode() == SqlErrorCode.ERROR_1438.code || sqlError.getErrorCode() == SqlErrorCode.ERROR_12899.code;
+        }
+        return match;
+    }
+}

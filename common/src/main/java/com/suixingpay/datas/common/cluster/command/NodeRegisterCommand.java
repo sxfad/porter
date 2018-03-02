@@ -8,6 +8,8 @@
  */
 package com.suixingpay.datas.common.cluster.command;
 
+import lombok.Getter;
+
 /**
  * 节点注册
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -16,12 +18,10 @@ package com.suixingpay.datas.common.cluster.command;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月19日 18:42
  */
 public class NodeRegisterCommand implements ClusterCommand {
-    private final String id;
-    public NodeRegisterCommand(String id) {
+    @Getter private final String id;
+    @Getter private final boolean uploadStatistic;
+    public NodeRegisterCommand(String id, boolean uploadStatistic) {
         this.id = id;
-    }
-
-    public String getId() {
-        return id;
+        this.uploadStatistic = uploadStatistic;
     }
 }

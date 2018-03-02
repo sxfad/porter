@@ -12,7 +12,7 @@ package com.suixingpay.datas.node.task.transform.transformer;
 import com.alibaba.fastjson.JSON;
 import com.suixingpay.datas.common.db.meta.TableColumn;
 import com.suixingpay.datas.common.db.meta.TableSchema;
-import com.suixingpay.datas.common.statistics.NodeLog;
+import com.suixingpay.datas.common.exception.TaskStopTriggerException;
 import com.suixingpay.datas.node.core.event.etl.ETLBucket;
 import com.suixingpay.datas.node.core.event.etl.ETLColumn;
 import com.suixingpay.datas.node.core.event.etl.ETLRow;
@@ -43,7 +43,7 @@ public class ETLRowTransformer implements Transformer {
     }
 
     @Override
-    public void transform(ETLBucket bucket, TaskWork work) {
+    public void transform(ETLBucket bucket, TaskWork work) throws TaskStopTriggerException {
         LOGGER.debug("start tranforming bucket:{},size:{}", bucket.getSequence(), bucket.getRows().size());
         for (ETLRow row : bucket.getRows()) {
             LOGGER.debug("try tranform row:{},{}", row.getIndex(), JSON.toJSONString(row));
@@ -111,14 +111,15 @@ public class ETLRowTransformer implements Transformer {
     }
 
 
-    private TableSchema findTable(DataLoader loader, String finalSchema, String finalTable, boolean cache, TaskWork work) {
+    private TableSchema findTable(DataLoader loader, String finalSchema, String finalTable, boolean cache, TaskWork work)
+            throws TaskStopTriggerException {
         TableSchema table = null;
         try {
-            table = loader.findTable(finalSchema, finalTable, cache);
-        } catch (Exception e) {
-            NodeLog.upload(work.getTaskId(), "查询数据库表结构出错", e.getMessage(), work.getDataConsumer().getSwimlaneId());
+            table  = loader.findTable(finalSchema, finalTable, cache);
+        } catch (Throwable e) {
             e.printStackTrace();
             LOGGER.error("查询目标仓库表结构{}.{}出错!", finalSchema, finalTable, e);
+            if (TaskStopTriggerException.isMatch(e)) throw new TaskStopTriggerException(e);
         }
         return table;
     }

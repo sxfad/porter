@@ -11,21 +11,24 @@ package com.suixingpay.datas.node.task.worker;
 import com.alibaba.fastjson.JSON;
 import com.suixingpay.datas.common.alert.AlertReceiver;
 import com.suixingpay.datas.common.cluster.ClusterProviderProxy;
+import com.suixingpay.datas.common.cluster.command.StatisticUploadCommand;
+import com.suixingpay.datas.common.cluster.command.TaskStoppedByErrorCommand;
 import com.suixingpay.datas.common.cluster.command.TaskRegisterCommand;
 import com.suixingpay.datas.common.cluster.command.TaskStatCommand;
 import com.suixingpay.datas.common.cluster.command.TaskStatQueryCommand;
 import com.suixingpay.datas.common.cluster.command.TaskStopCommand;
-import com.suixingpay.datas.common.cluster.command.StatisticUploadCommand;
 import com.suixingpay.datas.common.cluster.data.DCallback;
 import com.suixingpay.datas.common.cluster.data.DObject;
 import com.suixingpay.datas.common.cluster.data.DTaskStat;
 import com.suixingpay.datas.common.statistics.NodeLog;
 import com.suixingpay.datas.common.statistics.TaskPerformance;
+import com.suixingpay.datas.node.core.NodeContext;
 import com.suixingpay.datas.node.core.consumer.DataConsumer;
 import com.suixingpay.datas.node.core.loader.DataLoader;
 import com.suixingpay.datas.node.core.task.StageJob;
 import com.suixingpay.datas.node.core.task.StageType;
 import com.suixingpay.datas.node.core.task.TableMapper;
+import com.suixingpay.datas.node.task.TaskController;
 import com.suixingpay.datas.node.task.alert.AlertJob;
 import com.suixingpay.datas.node.task.extract.ExtractJob;
 import com.suixingpay.datas.node.task.load.LoadJob;
@@ -39,6 +42,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -51,8 +55,11 @@ import java.util.stream.Collectors;
  */
 public class TaskWork {
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskWork.class);
+    private final AtomicBoolean STAT = new AtomicBoolean(false);
+
     private final String taskId;
 
+    //单消费泳道
     private final DataConsumer dataConsumer;
     private final DataLoader dataLoader;
     /**
@@ -105,29 +112,42 @@ public class TaskWork {
     }
 
     protected void stop() {
-        try {
-            LOGGER.info("终止执行任务[{}-{}]", taskId, dataConsumer.getSwimlaneId());
-            //终止阶段性工作,需要
-            for (Map.Entry<StageType, StageJob> jobs : JOBS.entrySet()) {
-                jobs.getValue().stop();
+        if (STAT.compareAndSet(true, false)) {
+            try {
+                LOGGER.info("终止执行任务[{}-{}]", taskId, dataConsumer.getSwimlaneId());
+                //终止阶段性工作,需要
+                for (Map.Entry<StageType, StageJob> jobs : JOBS.entrySet()) {
+                    jobs.getValue().stop();
+                }
+                try {
+                    //上传消费进度
+                    submitStat();
+                } catch (Exception e) {
+                    NodeLog.upload(NodeLog.LogType.TASK_LOG, taskId, dataConsumer.getSwimlaneId(), "停止任务时上传消费进度失败:" + e.getMessage());
+                }
+                try {
+                    //广播任务结束消息
+                    ClusterProviderProxy.INSTANCE.broadcast(new TaskStopCommand(taskId, dataConsumer.getSwimlaneId()));
+                } catch (Exception e) {
+                    NodeLog.upload(NodeLog.LogType.TASK_LOG, taskId, dataConsumer.getSwimlaneId(), "广播TaskStopCommand失败:" + e.getMessage());
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                NodeLog.upload(NodeLog.LogType.TASK_LOG, taskId, dataConsumer.getSwimlaneId(), "任务关闭失败:" + e.getMessage());
+                LOGGER.error("终止执行任务[{}-{}]异常", taskId, dataConsumer.getSwimlaneId(), e);
             }
-            //上传消费进度
-            submitStat();
-            //广播任务结束消息
-            ClusterProviderProxy.INSTANCE.broadcast(new TaskStopCommand(taskId, dataConsumer.getSwimlaneId()));
-        } catch (Exception e) {
-            NodeLog.upload(taskId, "任务关闭失败", e.getMessage(), dataConsumer.getSwimlaneId());
-            LOGGER.error("终止执行任务[{}-{}]异常", taskId, dataConsumer.getSwimlaneId(), e);
         }
     }
 
     protected void start() throws Exception {
-        LOGGER.info("开始执行任务[{}-{}]", taskId, dataConsumer.getSwimlaneId());
-        //会抛出分布式锁任务抢占异常
-        ClusterProviderProxy.INSTANCE.broadcast(new TaskRegisterCommand(taskId, dataConsumer.getSwimlaneId()));
-        //开始阶段性工作
-        for (Map.Entry<StageType, StageJob> jobs : JOBS.entrySet()) {
-            jobs.getValue().start();
+        if (STAT.compareAndSet(false, true)) {
+            LOGGER.info("开始执行任务[{}-{}]", taskId, dataConsumer.getSwimlaneId());
+            //会抛出分布式锁任务抢占异常
+            ClusterProviderProxy.INSTANCE.broadcast(new TaskRegisterCommand(taskId, dataConsumer.getSwimlaneId()));
+            //开始阶段性工作
+            for (Map.Entry<StageType, StageJob> jobs : JOBS.entrySet()) {
+                jobs.getValue().start();
+            }
         }
     }
 
@@ -182,6 +202,7 @@ public class TaskWork {
                         }));
                         //上传统计
                         //TaskPerformance
+                        if (!NodeContext.INSTANCE.isUploadStatistic()) return;
                         ClusterProviderProxy.INSTANCE.broadcast(new StatisticUploadCommand(new TaskPerformance(newStat)));
                     }
                 } catch (Exception e) {
@@ -243,5 +264,23 @@ public class TaskWork {
 
     public List<AlertReceiver> getReceivers() {
         return receivers;
+    }
+
+
+    public void stopAndAlarm(String notice) {
+        new Thread("suixingpay-TaskStopByErrorTrigger-stopTask-" + taskId + "-" + dataConsumer.getSwimlaneId()) {
+            @Override
+            public void run() {
+                try {
+                    ClusterProviderProxy.INSTANCE.broadcast(new TaskStoppedByErrorCommand(taskId, dataConsumer.getSwimlaneId()));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    NodeLog.upload(NodeLog.LogType.TASK_LOG, taskId, dataConsumer.getSwimlaneId(), "在集群策略存储引擎标识任务因错误失败出错:" + e.getMessage(),
+                            getReceivers());
+                }
+                NodeLog.upload(NodeLog.LogType.TASK_ALARM, taskId, dataConsumer.getSwimlaneId(), notice, getReceivers());
+                NodeContext.INSTANCE.getBean(TaskController.class).stopTask(taskId, dataConsumer.getSwimlaneId());
+            }
+        }.start();
     }
 }

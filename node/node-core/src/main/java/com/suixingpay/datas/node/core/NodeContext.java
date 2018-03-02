@@ -70,4 +70,22 @@ public enum  NodeContext {
             nodeLock.readLock().unlock();
         }
     }
+
+    public void syncUploadStatistic(boolean uploadStatistic) {
+        try {
+            nodeLock.writeLock().lock();
+            node.setUploadStatistic(uploadStatistic);
+        } finally {
+            nodeLock.writeLock().unlock();
+        }
+    }
+
+    public boolean isUploadStatistic() {
+        try {
+            nodeLock.readLock().lock();
+            return node.isUploadStatistic();
+        } finally {
+            nodeLock.readLock().unlock();
+        }
+    }
 }

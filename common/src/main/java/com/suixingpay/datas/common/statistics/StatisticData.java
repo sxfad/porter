@@ -38,4 +38,13 @@ public abstract class StatisticData {
     public String toString() {
         return JSONObject.toJSONString(this);
     }
+
+    public String toPrintln() {
+        JSONObject jsonObject = JSONObject.parseObject(toString());
+        StringBuilder sb = new StringBuilder();
+        jsonObject.entrySet().forEach(p -> {
+            sb.append(p.getKey() + ":" + (null != p.getValue() ? p.getValue() : "")).append(System.lineSeparator());
+        });
+        return sb.toString();
+    }
 }

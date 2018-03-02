@@ -111,7 +111,8 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener  implements 
                         List<String> distPathList = client.getChildren(taskNode + "/" + id + "/dist");
                         distPathList.forEach(swimlaneId -> {
                             TaskConfig taskConfig = getTaskConfig(id, swimlaneId);
-                            if (!isTaskLocked(id, swimlaneId) && null != taskConfig && taskConfig.getStatus().isWorking()) {
+                            if (!isTaskStoppedByError(id, swimlaneId) && !isTaskLocked(id, swimlaneId)
+                                    && null != taskConfig && taskConfig.getStatus().isWorking()) {
                                 //分配任务
                                 triggerTaskEvent(taskConfig);
                             }
@@ -149,6 +150,7 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener  implements 
     @Override
     public void nodeRegister(NodeRegisterCommand nrCommend) throws Exception {
         NodeContext.INSTANCE.syncNodeId(nrCommend.getId());
+        NodeContext.INSTANCE.syncUploadStatistic(nrCommend.isUploadStatistic());
         String nodePath = listenPath() + "/" + nrCommend.getId();
         String lockPath = nodePath + "/lock";
         String statPath = nodePath + "/stat";
@@ -212,9 +214,10 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener  implements 
         String path = listenPath() + "/" + NodeContext.INSTANCE.getNodeId() + "/stat";
         lock.lock();
         DNode nodeData = getDNode(path);
-        nodeData.getTasks().getOrDefault(command.getTaskId(), new ArrayList<>()).remove(command.getSwimlaneId());
-        if (nodeData.getTasks().get(command.getTaskId()).isEmpty()) {
-            nodeData.getTasks().remove(command.getTaskId());
+        if (null != nodeData.getTasks() && !nodeData.getTasks().isEmpty()) {
+            List<String> swimlaneIdList = nodeData.getTasks().getOrDefault(command.getTaskId(), new ArrayList<>());
+            if (swimlaneIdList.contains(command.getSwimlaneId())) swimlaneIdList.remove(command.getSwimlaneId());
+            if (swimlaneIdList.isEmpty()) nodeData.getTasks().remove(command.getTaskId());
         }
         Stat nowStat = client.exists(path, true);
         client.setData(path, nodeData.toString(), nowStat.getVersion());
@@ -250,7 +253,17 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener  implements 
         String lockPath = BASE_CATALOG + "/task/" + taskId + "/lock/" + swimlaneId;
         try {
             Stat lockStat = client.exists(lockPath, true);
-            return null == lockStat;
+            return null != lockStat;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    private boolean isTaskStoppedByError(String taskId, String swimlaneId) {
+        String lockPath = BASE_CATALOG + "/task/" + taskId + "/error/" + swimlaneId;
+        try {
+            Stat lockStat = client.exists(lockPath, false);
+            return null != lockStat;
         } catch (Exception e) {
             return false;
         }

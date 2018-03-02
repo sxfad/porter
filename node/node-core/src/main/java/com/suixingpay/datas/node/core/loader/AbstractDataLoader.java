@@ -68,12 +68,12 @@ public abstract class AbstractDataLoader implements DataLoader {
     }
 
     @Override
-    public TableSchema findTable(String finalSchema, String finalTable) {
+    public TableSchema findTable(String finalSchema, String finalTable) throws Exception {
         return metaQueryClient.getTable(finalSchema, finalTable);
     }
 
     @Override
-    public TableSchema findTable(String finalSchema, String finalTable, boolean cache) {
+    public TableSchema findTable(String finalSchema, String finalTable, boolean cache) throws Exception {
         return metaQueryClient.getTable(finalSchema, finalTable, cache);
     }
 }

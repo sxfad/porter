@@ -1,4 +1,8 @@
 com.suixingpay.datas.node.task.extract.extractor.Extractor = com.suixingpay.datas.node.task.extract.extractor.IgnoreRowExtractor
-com.suixingpay.datas.node.task.load.loader.Loader = com.suixingpay.datas.node.task.load.loader.SQLSingleLoader,com.suixingpay.datas.node.task.load.loader.SQLBatchLoader
-com.suixingpay.datas.node.task.transform.transformer.Transformer = com.suixingpay.datas.node.task.transform.transformer.BatchPrePareTransformer,com.suixingpay.datas.node.task.transform.transformer.ETLRowTransformer
+com.suixingpay.datas.node.task.load.loader.Loader = \
+  com.suixingpay.datas.node.task.load.loader.SQLSingleLoader,\
+  com.suixingpay.datas.node.task.load.loader.SQLBatchLoader
+com.suixingpay.datas.node.task.transform.transformer.Transformer = \
+  com.suixingpay.datas.node.task.transform.transformer.BatchPrePareTransformer,\
+  com.suixingpay.datas.node.task.transform.transformer.ETLRowTransformer
 com.suixingpay.datas.node.task.alert.alerter.Alerter= com.suixingpay.datas.node.task.alert.alerter.ScanDataAlerter
