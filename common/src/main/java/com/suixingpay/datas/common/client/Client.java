@@ -8,6 +8,8 @@
  */
 package com.suixingpay.datas.common.client;
 
+import com.suixingpay.datas.common.exception.ClientConnectionException;
+
 import java.io.IOException;
 
 /**
@@ -25,5 +27,9 @@ public interface Client {
     void setPublic(boolean isPublic);
     default boolean isPublic() {
         return false;
+    }
+
+    default void testConnection() throws ClientConnectionException {
+
     }
 }

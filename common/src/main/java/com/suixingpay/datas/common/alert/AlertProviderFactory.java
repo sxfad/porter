@@ -44,7 +44,8 @@ public enum AlertProviderFactory {
         initializedLock.writeLock().lock();
         try {
             if (config.getStrategy() == AlertStrategy.EMAIL) {
-                AlertClient client = new EmailClient(new EmailConfig(config.getClient()).stuff(), config.getReceiver());
+                AlertClient client = new EmailClient(new EmailConfig(config.getClient()).stuff(), config.getReceiver(),
+                        config.getFrequencyOfSeconds());
                 alert = new NormalAlertProvider(client);
             }
         } finally {

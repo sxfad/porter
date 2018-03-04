@@ -101,6 +101,17 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
         return zk.exists(path, watch);
     }
 
+    public boolean isExists(String path, boolean watch) {
+        try {
+            Stat stat = zk.exists(path, watch);
+            return null != stat;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
     public void  changeData(String path, boolean isTemp, boolean watch,  String data) {
         try {
             Stat stat = exists(path, watch);

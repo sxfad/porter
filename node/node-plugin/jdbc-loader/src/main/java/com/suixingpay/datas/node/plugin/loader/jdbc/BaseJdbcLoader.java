@@ -13,6 +13,7 @@ import com.suixingpay.datas.common.client.impl.JDBCClient;
 import com.suixingpay.datas.common.cluster.data.DTaskStat;
 import com.suixingpay.datas.common.db.SqlTemplate;
 import com.suixingpay.datas.common.db.SqlUtils;
+import com.suixingpay.datas.common.exception.TaskStopTriggerException;
 import com.suixingpay.datas.node.core.event.etl.ETLColumn;
 import com.suixingpay.datas.node.core.event.etl.ETLRow;
 import com.suixingpay.datas.node.core.event.s.EventType;
@@ -38,7 +39,7 @@ public abstract class BaseJdbcLoader extends AbstractDataLoader {
      * @param sqlList
      * @return
      */
-    protected int loadSql(List<Pair<String, Object[]>> sqlList) {
+    protected int loadSql(List<Pair<String, Object[]>> sqlList) throws TaskStopTriggerException {
         JDBCClient client = getLoadClient();
         int affect = 0;
         for (Pair<String, Object[]> sqlOnce : sqlList) {
@@ -53,7 +54,7 @@ public abstract class BaseJdbcLoader extends AbstractDataLoader {
      * @param sqlList
      * @return
      */
-    protected int[] batchLoadSql(List<Pair<String, Object[]>> sqlList) {
+    protected int[] batchLoadSql(List<Pair<String, Object[]>> sqlList) throws TaskStopTriggerException {
         JDBCClient client = getLoadClient();
         List<Pair<String, List<Object[]>>> reGroupList = new ArrayList<Pair<String, List<Object[]>>>();
         groupSql4Batch(reGroupList, sqlList, 0);

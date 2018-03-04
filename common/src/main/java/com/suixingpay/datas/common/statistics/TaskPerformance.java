@@ -37,7 +37,7 @@ public class TaskPerformance extends StatisticData {
     @Setter @Getter private Long errorDeleteRow = 0L;
     //告警次数
     @Setter @Getter private  Long alertedTimes = 0L;
-    @JSONField(format = "yyyyMMddHHmmss")
+    @JSONField(format = "yyyyMMddHHmm")
     @Setter @Getter private Date time;
 
     public TaskPerformance() {

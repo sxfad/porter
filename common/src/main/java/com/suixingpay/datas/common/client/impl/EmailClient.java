@@ -10,6 +10,7 @@
 package com.suixingpay.datas.common.client.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.suixingpay.datas.common.alert.AlertFrequency;
 import com.suixingpay.datas.common.alert.AlertReceiver;
 import com.suixingpay.datas.common.client.AbstractClient;
 import com.suixingpay.datas.common.client.AlertClient;
@@ -34,10 +35,12 @@ import java.util.stream.Collectors;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月23日 11:58
  */
 public class EmailClient  extends AbstractClient<EmailConfig> implements AlertClient {
-    private JavaMailSender sender;
-    private List<AlertReceiver> globalReceiver = new ArrayList<>();
+    private final JavaMailSender sender;
+    private final AlertFrequency frequencyStat = new AlertFrequency();
+    private volatile List<AlertReceiver> globalReceiver = new ArrayList<>();
 
-    public EmailClient(EmailConfig config, AlertReceiver[] receiver) throws ClientConnectionException {
+
+    public EmailClient(EmailConfig config, AlertReceiver[] receiver, int frequencyOfSecond) throws ClientConnectionException {
         super(config);
 
         if (null != receiver && receiver.length > 0) {
@@ -62,10 +65,11 @@ public class EmailClient  extends AbstractClient<EmailConfig> implements AlertCl
             throw new ClientConnectionException("邮件客户端连接失败:" + JSONObject.toJSONString(config));
         }
         sender = senderImpl;
+        frequencyStat.setFrequencyOfSecond(frequencyOfSecond);
     }
 
     public EmailClient(EmailConfig config)  throws ClientConnectionException {
-        this(config, null);
+        this(config, null, 60);
     }
 
     @Override
@@ -79,6 +83,9 @@ public class EmailClient  extends AbstractClient<EmailConfig> implements AlertCl
 
     @Override
     public void send(String notice, String title, List<AlertReceiver> receivers) {
+        String checkContent = new StringBuffer(StringUtils.trimToEmpty(notice)).append(StringUtils.trimToEmpty(title))
+                .toString();
+        if (!frequencyStat.canSend(checkContent)) return;
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(getConfig().getUsername());
         message.setSubject(title);
@@ -93,8 +100,9 @@ public class EmailClient  extends AbstractClient<EmailConfig> implements AlertCl
         }
 
         if (!receivers.isEmpty()) {
-            message.setTo(receivers.toArray(new String[0]));
+            message.setTo(emails.toArray(new String[0]));
             sender.send(message);
         }
+        frequencyStat.updateFrequency(checkContent);
     }
 }

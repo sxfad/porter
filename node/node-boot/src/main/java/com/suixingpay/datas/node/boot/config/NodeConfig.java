@@ -10,6 +10,7 @@ package com.suixingpay.datas.node.boot.config;
 
 import com.suixingpay.datas.common.config.AlertConfig;
 import com.suixingpay.datas.common.config.ClusterConfig;
+import com.suixingpay.datas.common.config.StatisticConfig;
 import com.suixingpay.datas.common.config.TaskConfig;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,6 +30,7 @@ import java.util.List;
 @Component
 public class  NodeConfig {
     @Setter @Getter private String id;
+    @Setter @Getter private StatisticConfig statistic = new StatisticConfig();
     @Setter @Getter private AlertConfig alert;
     @Setter @Getter private ClusterConfig cluster;
     @Setter @Getter private List<TaskConfig> task = new ArrayList<>();

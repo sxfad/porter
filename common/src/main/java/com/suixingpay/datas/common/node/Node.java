@@ -21,5 +21,5 @@ import lombok.Setter;
 public class Node {
     @Getter @Setter private String nodeId;
     @Getter @Setter private NodeStatusType status = NodeStatusType.SUSPEND;
-
+    @Getter @Setter private boolean uploadStatistic = true;
 }

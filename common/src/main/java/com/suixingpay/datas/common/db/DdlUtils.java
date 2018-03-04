@@ -111,7 +111,7 @@ public class DdlUtils {
     }
 
     public static Table findTable(final JdbcTemplate jdbcTemplate, final String catalogName, final String schemaName,
-                                  final String tableName, final DdlUtilsFilter filter) throws Exception {
+                                  final String tableName, final DdlUtilsFilter filter) throws DataAccessException {
         return (Table) jdbcTemplate.execute(new ConnectionCallback() {
 
             public Object doInConnection(Connection con) throws SQLException, DataAccessException {

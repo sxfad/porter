@@ -133,7 +133,7 @@ public class TaskController implements TaskEventListener {
             worker.alloc(task);
             worker.start();
         } catch (Exception e) {
-            NodeLog.upload(task.getTaskId(), "任务启动失败", e.getMessage());
+            NodeLog.upload(task.getTaskId(), NodeLog.LogType.TASK_ALARM, e.getMessage());
             e.printStackTrace();
             LOGGER.error("failed to start task:{}", JSONObject.toJSONString(task), e);
         }

@@ -8,6 +8,7 @@
  */
 package com.suixingpay.datas.node.task.transform;
 
+import com.suixingpay.datas.common.exception.TaskStopTriggerException;
 import com.suixingpay.datas.node.core.NodeContext;
 import com.suixingpay.datas.node.core.event.etl.ETLBucket;
 import com.suixingpay.datas.node.core.task.AbstractStageJob;
@@ -75,6 +76,8 @@ public class TransformJob extends AbstractStageJob {
                         public ETLBucket call() throws Exception {
                             try {
                                 transformFactory.transform(inThreadBucket, work);
+                            } catch (TaskStopTriggerException e) {
+                                work.stopAndAlarm(e.getMessage());
                             } catch (Exception e) {
                                 LOGGER.error("批次[{}]执行TransformJob失败!", inThreadBucket.getSequence(), e);
                             }

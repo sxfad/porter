@@ -10,6 +10,7 @@
 package com.suixingpay.datas.node.plugin.loader.jdbc;
 
 import com.suixingpay.datas.common.cluster.data.DTaskStat;
+import com.suixingpay.datas.common.exception.TaskStopTriggerException;
 import com.suixingpay.datas.node.core.event.etl.ETLBucket;
 import com.suixingpay.datas.node.core.event.etl.ETLRow;
 import com.suixingpay.datas.node.core.util.CallbackMethodCreator;
@@ -34,7 +35,7 @@ public class JdbcBatchLoader extends BaseJdbcLoader {
     }
 
     @Override
-    public void load(ETLBucket bucket, CallbackMethodCreator getter) {
+    public void load(ETLBucket bucket, CallbackMethodCreator getter) throws TaskStopTriggerException {
         LOGGER.info("start loading bucket:{},size:{}", bucket.getSequence(), bucket.getRows().size());
         for (List<ETLRow> rows : bucket.getBatchRows()) {
             if (rows.size() == 1) {

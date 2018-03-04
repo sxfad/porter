@@ -27,10 +27,11 @@ public class JDBCConfig extends SourceConfig {
     @Setter @Getter private String url;
     @Setter @Getter private String userName;
     @Setter @Getter private String password;
-    @Setter @Getter private int maxWait = 30000;
+    @Setter @Getter private int maxWait = 10000;
     @Setter @Getter private int minPoolSize = 20;
     @Setter @Getter private int maxPoolSize = 20;
     @Setter @Getter private int initialPoolSize = 5;
+    @Setter @Getter private int connectionErrorRetryAttempts = 2;
     @Setter @Getter private DbType dbType;
 
     public  JDBCConfig() {

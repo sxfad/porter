@@ -25,6 +25,7 @@ import com.suixingpay.datas.common.cluster.command.NodeRegisterCommand;
 import com.suixingpay.datas.common.cluster.command.ShutdownCommand;
 import com.suixingpay.datas.common.cluster.command.TaskAssignedCommand;
 import com.suixingpay.datas.common.cluster.command.TaskRegisterCommand;
+import com.suixingpay.datas.common.cluster.command.TaskStoppedByErrorCommand;
 import com.suixingpay.datas.common.cluster.command.broadcast.NodeOrderPush;
 import com.suixingpay.datas.common.cluster.command.broadcast.TaskPush;
 import com.suixingpay.datas.common.cluster.command.broadcast.StatisticUpload;
@@ -35,6 +36,7 @@ import com.suixingpay.datas.common.cluster.command.broadcast.NodeRegister;
 import com.suixingpay.datas.common.cluster.command.broadcast.Shutdown;
 import com.suixingpay.datas.common.cluster.command.broadcast.TaskAssigned;
 import com.suixingpay.datas.common.cluster.command.broadcast.TaskRegister;
+import com.suixingpay.datas.common.cluster.command.broadcast.TaskStoppedByError;
 import com.suixingpay.datas.common.config.ClusterConfig;
 import com.suixingpay.datas.common.exception.ClientException;
 import com.suixingpay.datas.common.exception.ClientMatchException;
@@ -132,6 +134,11 @@ public abstract class AbstractClusterProvider<C extends Client> implements Clust
             if (listener instanceof NodeOrderPush && command instanceof NodeOrderPushCommand) {
                 ((NodeOrderPush) listener).push((NodeOrderPushCommand) command);
             }
+
+            if (listener instanceof TaskStoppedByError && command instanceof TaskStoppedByErrorCommand) {
+                ((TaskStoppedByError) listener).tagError((TaskStoppedByErrorCommand) command);
+            }
+
         }
     }
 

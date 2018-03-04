@@ -8,6 +8,7 @@
  */
 package com.suixingpay.datas.node.task.transform.transformer;
 
+import com.suixingpay.datas.common.exception.TaskStopTriggerException;
 import com.suixingpay.datas.node.core.event.etl.ETLBucket;
 import com.suixingpay.datas.node.task.worker.TaskWork;
 import org.springframework.context.annotation.Scope;
@@ -35,7 +36,7 @@ public class TransformFactory {
         sort();
     }
 
-    public void transform(ETLBucket bucket, TaskWork work) {
+    public void transform(ETLBucket bucket, TaskWork work) throws TaskStopTriggerException {
         for (Transformer transformer : extractors) {
             transformer.transform(bucket, work);
         }

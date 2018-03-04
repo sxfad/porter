@@ -89,7 +89,7 @@ public class NodeBootApplication {
         LOGGER.info("建群.......");
         try {
             //注册节点，注册失败退出进程
-            ClusterProviderProxy.INSTANCE.broadcast(new NodeRegisterCommand(config.getId()));
+            ClusterProviderProxy.INSTANCE.broadcast(new NodeRegisterCommand(config.getId(), config.getStatistic().isUpload()));
         } catch (Exception e) {
             throw  new RuntimeException(e.getMessage() + "数据同步节点退出!error:" + e.getMessage());
         }

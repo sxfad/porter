@@ -24,8 +24,9 @@ import java.util.Map;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月23日 10:29
  */
 public class AlertConfig {
+    //second
+    @Getter @Setter private Integer frequencyOfSeconds = 60;
     @JSONField(deserialize = false, serialize = false)
-
     @Getter @Setter private AlertStrategy strategy;
     @Getter @Setter private AlertReceiver[] receiver = new AlertReceiver[0];
     //告警客户端
