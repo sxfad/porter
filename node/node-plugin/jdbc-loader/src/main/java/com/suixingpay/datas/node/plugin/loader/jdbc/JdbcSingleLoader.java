@@ -31,7 +31,7 @@ public class JdbcSingleLoader extends BaseJdbcLoader {
     }
 
     @Override
-    public void load(ETLBucket bucket, CallbackMethodCreator getter) throws TaskStopTriggerException {
+    public boolean load(ETLBucket bucket, CallbackMethodCreator getter) throws TaskStopTriggerException {
         LOGGER.info("start loading bucket:{},size:{}", bucket.getSequence(), bucket.getRows().size());
         for (ETLRow row : bucket.getRows()) {
             DTaskStat stat = getter.invokeWithResult(row.getSchema(), row.getTable());
@@ -40,5 +40,6 @@ public class JdbcSingleLoader extends BaseJdbcLoader {
             //更新状态
             updateStat(new ImmutablePair<>(affect, row), stat);
         }
+        return true;
     }
 }

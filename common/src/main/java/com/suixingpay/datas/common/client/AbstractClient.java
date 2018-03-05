@@ -26,7 +26,6 @@ import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -47,7 +46,7 @@ public abstract class AbstractClient<T extends SourceConfig> implements Client {
         this.config = config;
     }
     @Override
-    public void start() throws IOException {
+    public void start() throws Exception {
         if (status.compareAndSet(false, true)) {
             LOGGER.info("starting");
             doStart();
@@ -66,7 +65,7 @@ public abstract class AbstractClient<T extends SourceConfig> implements Client {
         }
     }
 
-    protected abstract void doStart() throws IOException;
+    protected abstract void doStart() throws Exception;
     protected abstract void doShutdown() throws InterruptedException;
 
     @Override

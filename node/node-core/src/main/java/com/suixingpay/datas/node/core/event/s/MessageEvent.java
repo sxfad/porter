@@ -23,7 +23,7 @@ import java.util.HashMap;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月13日 18:22
  */
 public class MessageEvent {
-    private EventHeader head;
+    private String position;
     private String schema;
     private String table;
     //操作类型 I U D T
@@ -38,12 +38,12 @@ public class MessageEvent {
     private Map<String, Object> before;
     private List<String> primaryKeys;
 
-    public EventHeader getHead() {
-        return head;
+    public String getPosition() {
+        return position;
     }
 
-    public void setHead(EventHeader head) {
-        this.head = head;
+    public void setPosition(String position) {
+        this.position = position;
     }
 
     public String getSchema() {

@@ -43,10 +43,10 @@ public class ETLRowTransformer implements Transformer {
     }
 
     @Override
-    public void transform(ETLBucket bucket, TaskWork work) throws TaskStopTriggerException {
+    public void transform(ETLBucket bucket, TaskWork work) throws Exception {
         LOGGER.debug("start tranforming bucket:{},size:{}", bucket.getSequence(), bucket.getRows().size());
         for (ETLRow row : bucket.getRows()) {
-            LOGGER.debug("try tranform row:{},{}", row.getIndex(), JSON.toJSONString(row));
+            LOGGER.debug("try tranform row:{},{}", row.getPosition(), JSON.toJSONString(row));
             TableMapper tableMapper = work.getTableMapper(row.getSchema(), row.getTable());
             mappingRowData(tableMapper, row);
             TableSchema table = findTable(work.getDataLoader(), row.getFinalSchema(), row.getFinalTable(), work);
@@ -55,7 +55,7 @@ public class ETLRowTransformer implements Transformer {
             //DataLoader自定义处理
             work.getDataLoader().mouldRow(row);
 
-            LOGGER.debug("after tranform row:{},{}", row.getIndex(), JSON.toJSONString(row));
+            LOGGER.debug("after tranform row:{},{}", row.getPosition(), JSON.toJSONString(row));
         }
     }
 

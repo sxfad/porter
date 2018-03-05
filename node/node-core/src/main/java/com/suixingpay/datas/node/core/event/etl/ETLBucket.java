@@ -34,10 +34,11 @@ public class ETLBucket {
     private final String sequence;
     private final List<ETLRow> rows;
     private final List<List<ETLRow>> batchRows;
+    private Throwable exception = null;
     public ETLBucket(String sequence, List<ETLRow> rows) {
         this.sequence = sequence;
         this.rows = rows;
-        this.batchRows = new ArrayList<List<ETLRow>>();
+        this.batchRows = new ArrayList<>();
     }
 
     public String getSequence() {
@@ -87,9 +88,7 @@ public class ETLBucket {
                         event.getPrimaryKeys().contains(entity.getKey()));
                 columns.add(column);
             }
-
-            ETLRow row = new ETLRow(event.getSchema(), event.getTable(), event.getOpType(), columns, event.getOpTs());
-            row.setIndex(event.getHead().getOffset() + "");
+            ETLRow row = new ETLRow(event.getSchema(), event.getTable(), event.getOpType(), columns, event.getOpTs(), event.getPosition());
             rows.add(row);
             LOGGER.debug(JSON.toJSONString(row));
         }
@@ -98,5 +97,13 @@ public class ETLBucket {
 
     public List<List<ETLRow>> getBatchRows() {
         return batchRows;
+    }
+
+    public Throwable getException() {
+        return exception;
+    }
+
+    public void tagException(Throwable e) {
+        this.exception = e;
     }
 }

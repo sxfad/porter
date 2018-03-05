@@ -8,7 +8,6 @@
  */
 package com.suixingpay.datas.node.task.transform.transformer;
 
-import com.suixingpay.datas.common.exception.TaskStopTriggerException;
 import com.suixingpay.datas.node.core.event.etl.ETLBucket;
 import com.suixingpay.datas.node.task.worker.TaskWork;
 
@@ -20,5 +19,5 @@ import com.suixingpay.datas.node.task.worker.TaskWork;
  */
 public interface Transformer {
     int order();
-    void transform(ETLBucket bucket, TaskWork work) throws TaskStopTriggerException;
+    void transform(ETLBucket bucket, TaskWork work) throws Exception;
 }

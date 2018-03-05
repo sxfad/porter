@@ -10,7 +10,6 @@ package com.suixingpay.datas.common.client;
 
 import com.suixingpay.datas.common.exception.ClientConnectionException;
 
-import java.io.IOException;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -19,7 +18,7 @@ import java.io.IOException;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月14日 17:00
  */
 public interface Client {
-    void start() throws IOException;
+    void start() throws Exception;
     void shutdown() throws InterruptedException;
     boolean isStarted();
     <T> T getConfig();

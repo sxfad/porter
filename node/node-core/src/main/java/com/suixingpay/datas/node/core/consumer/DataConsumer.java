@@ -11,6 +11,7 @@ package com.suixingpay.datas.node.core.consumer;
 
 import com.suixingpay.datas.common.client.ConsumeClient;
 import com.suixingpay.datas.common.client.MetaQueryClient;
+import com.suixingpay.datas.common.exception.TaskStopTriggerException;
 import com.suixingpay.datas.node.core.event.s.EventConverter;
 import com.suixingpay.datas.node.core.event.s.MessageEvent;
 
@@ -62,11 +63,13 @@ public interface DataConsumer {
      */
     void shutdown() throws InterruptedException;
 
+
     /**
-     * 资源控制
-     * @throws IOException
+     * 启动消费插件
+     * @throws Exception
      */
-    void startup() throws IOException;
+    void startup() throws Exception;
+
 
     /**
      * 资源控制
@@ -100,4 +103,10 @@ public interface DataConsumer {
     List<String> getExcludes();
 
     List<String> getIncludes();
+
+    void initializePosition(String position) throws TaskStopTriggerException;
+
+    void commitPosition(String position) throws TaskStopTriggerException;
+
+    boolean isAutoCommitPosition();
 }

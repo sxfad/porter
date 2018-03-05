@@ -12,6 +12,8 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.suixingpay.datas.common.cluster.ClusterListenerFilter;
 import com.suixingpay.datas.common.cluster.ClusterProviderProxy;
+import com.suixingpay.datas.common.cluster.command.TaskPositionQueryCommand;
+import com.suixingpay.datas.common.cluster.command.TaskPositionUploadCommand;
 import com.suixingpay.datas.common.cluster.command.TaskAssignedCommand;
 import com.suixingpay.datas.common.cluster.command.TaskRegisterCommand;
 import com.suixingpay.datas.common.cluster.command.TaskStatCommand;
@@ -23,6 +25,7 @@ import com.suixingpay.datas.common.cluster.command.broadcast.TaskStatUpload;
 import com.suixingpay.datas.common.cluster.command.broadcast.TaskStop;
 import com.suixingpay.datas.common.cluster.command.TaskStoppedByErrorCommand;
 import com.suixingpay.datas.common.cluster.command.broadcast.TaskStoppedByError;
+import com.suixingpay.datas.common.cluster.command.broadcast.TaskPosition;
 import com.suixingpay.datas.common.cluster.data.DObject;
 import com.suixingpay.datas.common.cluster.data.DTaskLock;
 import com.suixingpay.datas.common.cluster.event.ClusterEvent;
@@ -53,7 +56,7 @@ import java.util.regex.Pattern;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月15日 10:09
  */
 public class ZKClusterTaskListener extends ZookeeperClusterListener implements TaskEventProvider,
-        TaskRegister, TaskStatUpload, TaskStop, TaskStatQuery, TaskStoppedByError {
+        TaskRegister, TaskStatUpload, TaskStop, TaskStatQuery, TaskStoppedByError, TaskPosition {
     private static final String ZK_PATH = BASE_CATALOG + "/task";
     private static final Pattern TASK_DIST_PATTERN = Pattern.compile(ZK_PATH + "/.*/dist/.*");
     private static final Pattern TASK_UNLOCKED_PATTERN = Pattern.compile(ZK_PATH + "/.*/lock/.*");
@@ -136,10 +139,12 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
         String assignPath = taskPath + "/lock";
         String statPath = taskPath + "/stat";
         String errorPath = taskPath + "/error";
+        String position = taskPath + "/position";
         client.createWhenNotExists(taskPath, false, true, null);
         client.createWhenNotExists(assignPath, false, true, null);
         client.createWhenNotExists(statPath, false, true, null);
         client.createWhenNotExists(errorPath, false, true, null);
+        client.createWhenNotExists(position, false, false, StringUtils.EMPTY);
 
 
         //创建任务统计节点
@@ -242,5 +247,20 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
     public void tagError(TaskStoppedByErrorCommand command) {
         String errorPath = listenPath() + "/" + command.getTaskId() + "/error/" + command.getSwimlaneId();
         client.createWhenNotExists(errorPath, false, false, null);
+    }
+
+    @Override
+    public void upload(TaskPositionUploadCommand command) throws Exception {
+        String position = listenPath() + "/" + command.getTaskId() + "/position/" + command.getSwimlaneId();
+        client.changeData(position, false, false, command.getPosition().toString());
+    }
+
+    @Override
+    public void query(TaskPositionQueryCommand command) throws Exception {
+        String positionPath = listenPath() + "/" + command.getTaskId() + "/position/" + command.getSwimlaneId();
+        Pair<String, Stat> positionPair = client.getData(positionPath);
+        String position = null != positionPair && !StringUtils.isBlank(positionPair.getLeft())
+                ? positionPair.getLeft() : StringUtils.EMPTY;
+        if (null != command.getCallback()) command.getCallback().callback(position);
     }
 }

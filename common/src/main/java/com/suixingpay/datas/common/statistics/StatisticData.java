@@ -43,7 +43,8 @@ public abstract class StatisticData {
         JSONObject jsonObject = JSONObject.parseObject(toString());
         StringBuilder sb = new StringBuilder();
         jsonObject.entrySet().forEach(p -> {
-            sb.append(p.getKey() + ":" + (null != p.getValue() ? p.getValue() : "")).append(System.lineSeparator());
+            sb.append(p.getKey()).append(":").append("      ").append((null != p.getValue() ? p.getValue() : ""))
+                    .append(System.lineSeparator());
         });
         return sb.toString();
     }

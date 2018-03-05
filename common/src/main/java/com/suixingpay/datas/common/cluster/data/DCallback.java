@@ -21,6 +21,9 @@ public interface DCallback {
     default void callback(DObject object) {
         return;
     }
+    default void callback(String data) {
+        return;
+    }
     default void callback(List<DObject> objects) {
         return;
     }

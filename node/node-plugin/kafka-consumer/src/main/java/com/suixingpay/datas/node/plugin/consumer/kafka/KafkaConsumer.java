@@ -34,12 +34,11 @@ public class KafkaConsumer extends AbstractDataConsumer {
             public <F, O> F accept(O o) throws ParseException {
                 ConsumerRecord<String, String> record = (ConsumerRecord<String, String>) o;
                 JSONObject value = JSONObject.parseObject(record.value());
-                JSONObject head = new JSONObject();
-                head.put("offset", record.offset());
-                head.put("topic", record.topic());
-                head.put("partition", record.partition());
-                head.put("key", record.key());
-                return (F) converter.convert(head, value);
+                JSONObject position = new JSONObject();
+                position.put("offset", record.offset());
+                position.put("topic", record.topic());
+                position.put("partition", record.partition());
+                return (F) converter.convert(position, value);
             }
         });
     }

@@ -31,7 +31,7 @@ public class KafkaConfig  extends SourceConfig {
     @Setter @Getter private int pollTimeOut  = 30000;
     @Setter @Getter private int oncePollSize = 1000;
     @Setter @Getter private String firstConsumeFrom = "earliest";
-    @Setter @Getter private boolean autoCommit = Boolean.TRUE;
+    @Setter @Getter private boolean autoCommit = Boolean.FALSE;
 
     public   KafkaConfig() {
         sourceType = SourceType.KAFKA;

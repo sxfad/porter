@@ -10,6 +10,7 @@
 package com.suixingpay.datas.common.client;
 
 import com.suixingpay.datas.common.exception.ClientException;
+import com.suixingpay.datas.common.exception.TaskStopTriggerException;
 
 import java.text.ParseException;
 import java.util.Arrays;
@@ -23,17 +24,50 @@ import java.util.List;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月04日 13:13
  */
 public interface ConsumeClient extends Client {
-    <F, O> List<F> fetch(FetchCallback<F, O> callback);
+    /**
+     * 是否自动提交消费同步点
+     * @return
+     */
+    boolean isAutoCommitPosition();
 
     /**
-     * 消费源客户端拆分
+     * 提交消费同步点，只有是手动提交时才会更新消费器客户端
+     * @param position
+     * @throws TaskStopTriggerException
+     */
+    void commitPosition(String position) throws TaskStopTriggerException;
+
+    /**
+     * 初始化消费同步点，只有是手动提交时才会更新消费器客户端
+     * @param position
+     * @throws TaskStopTriggerException
+     */
+    void initializePosition(String position) throws TaskStopTriggerException;
+
+    /**
+     * 获取消费泳道编号
+     * @return
+     */
+    String getSwimlaneId();
+
+    /**
+     * 根据消费源客户端配置，拆分消费泳道
      * @param <T>
      * @return
      * @throws ClientException
      */
-    default <T> List<T> split() throws ClientException {
+    default <T> List<T> splitSwimlanes() throws ClientException {
         return Arrays.asList((T) this);
     }
+
+    /**
+     * 提取数据
+     * @param callback
+     * @param <F>  同步中间件统一对象模型
+     * @param <O>  消费客户端数据结构
+     * @return 同步中间件统一对象模型列表
+     */
+    <F, O> List<F> fetch(FetchCallback<F, O> callback);
 
     /**
      * 回调函数
@@ -43,6 +77,4 @@ public interface ConsumeClient extends Client {
     interface FetchCallback<F, O> {
         <F, O> F  accept(O o) throws ParseException;
     }
-
-    String getSwimlaneId();
 }

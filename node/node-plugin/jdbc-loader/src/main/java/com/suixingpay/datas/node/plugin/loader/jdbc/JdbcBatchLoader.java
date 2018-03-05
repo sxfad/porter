@@ -35,7 +35,7 @@ public class JdbcBatchLoader extends BaseJdbcLoader {
     }
 
     @Override
-    public void load(ETLBucket bucket, CallbackMethodCreator getter) throws TaskStopTriggerException {
+    public boolean load(ETLBucket bucket, CallbackMethodCreator getter) throws TaskStopTriggerException {
         LOGGER.info("start loading bucket:{},size:{}", bucket.getSequence(), bucket.getRows().size());
         for (List<ETLRow> rows : bucket.getBatchRows()) {
             if (rows.size() == 1) {
@@ -67,5 +67,6 @@ public class JdbcBatchLoader extends BaseJdbcLoader {
                 }
             }
         }
+        return true;
     }
 }
