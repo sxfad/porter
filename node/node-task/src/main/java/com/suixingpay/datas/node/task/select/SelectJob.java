@@ -18,7 +18,6 @@ import com.suixingpay.datas.node.datacarrier.DataCarrierFactory;
 import com.suixingpay.datas.node.task.worker.TaskWork;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -57,7 +56,7 @@ public class SelectJob extends AbstractStageJob {
     }
 
     @Override
-    protected void doStart() throws IOException {
+    protected void doStart() throws Exception {
         consumer.startup();
     }
 
@@ -84,11 +83,6 @@ public class SelectJob extends AbstractStageJob {
     @Override
     public Pair<String, List<MessageEvent>> output() {
         return carrier.greedyPullByOrder();
-    }
-
-    @Override
-    public boolean stopWaiting() {
-        return false;
     }
 
     @Override

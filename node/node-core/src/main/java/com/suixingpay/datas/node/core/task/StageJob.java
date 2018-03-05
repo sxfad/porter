@@ -8,8 +8,6 @@
  */
 package com.suixingpay.datas.node.core.task;
 
-import java.io.IOException;
-
 /**
  * 阶段性工作
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -18,14 +16,14 @@ import java.io.IOException;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月24日 11:04
  */
 public interface StageJob {
-    void start() throws IOException;
+    void start() throws Exception;
     default boolean canStart() {
         return true;
     }
     void stop();
     <T> T output() throws Exception;
     default boolean stopWaiting() {
-        return true;
+        return false;
     }
     default boolean isPoolEmpty() {
         return true;

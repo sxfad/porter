@@ -63,7 +63,7 @@ public enum DataConsumerFactory {
 
 
 
-        List<ConsumeClient> consumeClients = consumeClient.split();
+        List<ConsumeClient> consumeClients = consumeClient.splitSwimlanes();
         //释放浪费创建的对象
         for (ConsumeClient c : consumeClients) {
             DataConsumer consumer = newConsumer(config.getConsumerName());

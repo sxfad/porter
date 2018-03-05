@@ -12,12 +12,12 @@ package com.suixingpay.datas.node.core.loader;
 import com.suixingpay.datas.common.client.LoadClient;
 import com.suixingpay.datas.common.client.MetaQueryClient;
 import com.suixingpay.datas.common.db.meta.TableSchema;
+import com.suixingpay.datas.common.exception.TaskDataException;
 import com.suixingpay.datas.common.exception.TaskStopTriggerException;
 import com.suixingpay.datas.node.core.event.etl.ETLBucket;
 import com.suixingpay.datas.node.core.event.etl.ETLRow;
 import com.suixingpay.datas.node.core.util.CallbackMethodCreator;
 
-import java.io.IOException;
 import java.util.Date;
 
 /**
@@ -42,13 +42,12 @@ public interface DataLoader {
 
     /**
      * 资源控制接口方法
-     * @throws InterruptedException
+     * @throws Exception
      */
-    void startup() throws IOException;
+    void startup() throws Exception;
 
     /**
      * 资源控制接口方法
-     * @throws InterruptedException
      */
     default boolean canStart() {
         return true;
@@ -56,11 +55,12 @@ public interface DataLoader {
 
 
     /**
-     * load数据接口
+     * load数据接口,
      * @param bucket
      * @param getter
+     * @return true 会提交同步点， false不会提交同步点
      */
-    void load(ETLBucket bucket, CallbackMethodCreator getter) throws TaskStopTriggerException;
+    boolean load(ETLBucket bucket, CallbackMethodCreator getter) throws TaskStopTriggerException;
 
     void setLoadClient(LoadClient c);
     void setMetaQueryClient(MetaQueryClient c);
@@ -88,7 +88,7 @@ public interface DataLoader {
      * 在transform阶段调用,用于自定义处理数据行
      * @param row
      */
-    void mouldRow(ETLRow row);
+    void mouldRow(ETLRow row) throws TaskDataException;
 
 
 }

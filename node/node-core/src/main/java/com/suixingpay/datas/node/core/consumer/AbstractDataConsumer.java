@@ -11,13 +11,13 @@ package com.suixingpay.datas.node.core.consumer;
 
 import com.suixingpay.datas.common.client.ConsumeClient;
 import com.suixingpay.datas.common.client.MetaQueryClient;
+import com.suixingpay.datas.common.exception.TaskStopTriggerException;
 import com.suixingpay.datas.node.core.event.s.EventConverter;
 import com.suixingpay.datas.node.core.event.s.MessageEvent;
 import lombok.Getter;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -85,7 +85,12 @@ public abstract class AbstractDataConsumer implements DataConsumer {
     }
 
     @Override
-    public void startup() throws IOException {
+    public void initializePosition(String position) throws TaskStopTriggerException {
+        consumeClient.initializePosition(position);
+    }
+
+    @Override
+    public void startup() throws Exception {
         consumeClient.start();
         metaQueryClient.start();
     }
@@ -101,5 +106,15 @@ public abstract class AbstractDataConsumer implements DataConsumer {
     public String getSwimlaneId() {
         return consumeClient.getSwimlaneId();
 
+    }
+
+    @Override
+    public void commitPosition(String position) throws TaskStopTriggerException {
+        consumeClient.commitPosition(position);
+    }
+
+    @Override
+    public boolean isAutoCommitPosition() {
+        return consumeClient.isAutoCommitPosition();
     }
 }

@@ -9,10 +9,8 @@
 package com.suixingpay.datas.common.client;
 
 import com.suixingpay.datas.common.config.SourceConfig;
-import com.suixingpay.datas.common.exception.ClientException;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -32,7 +30,7 @@ public enum PublicClientContext {
      * 初始化公用DataSource
      * @param configs
      */
-    public void initialize(List<Pair<String, SourceConfig>> configs) throws ClientException, IOException {
+    public void initialize(List<Pair<String, SourceConfig>> configs) throws Exception {
         for (Pair<String, SourceConfig> p : configs) {
             Client client = AbstractClient.getClient(p.getRight());
             client.setPublic(true);

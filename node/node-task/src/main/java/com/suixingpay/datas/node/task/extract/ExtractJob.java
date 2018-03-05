@@ -8,6 +8,7 @@
  */
 package com.suixingpay.datas.node.task.extract;
 
+import com.suixingpay.datas.common.exception.TaskStopTriggerException;
 import com.suixingpay.datas.common.statistics.NodeLog;
 import com.suixingpay.datas.node.core.NodeContext;
 import com.suixingpay.datas.node.core.event.etl.ETLBucket;
@@ -76,18 +77,16 @@ public class ExtractJob extends AbstractStageJob {
                     //在单线程执行，保证将来DataLoader load顺序
                     orderedBucket.push(inThreadEvents.getLeft());
                     //暂无Extractor失败处理方案
-                    executorService.submit(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                //将MessageEvent转换为ETLBucket
-                                ETLBucket bucket = ETLBucket.from(inThreadEvents);
-                                extractorFactory.extract(bucket, work.getDataConsumer().getExcludes(), work.getDataConsumer().getIncludes());
-                                carrier.push(bucket);
-                                LOGGER.debug("push bucket {} into carrier after extract.", inThreadEvents.getLeft());
-                            } catch (Exception e) {
-                                LOGGER.error("批次[{}]执行ExtractJob失败!", inThreadEvents.getLeft(), e);
-                            }
+                    executorService.submit(() -> {
+                        //将MessageEvent转换为ETLBucket
+                        ETLBucket bucket = ETLBucket.from(inThreadEvents);
+                        try {
+                            extractorFactory.extract(bucket, work.getDataConsumer().getExcludes(), work.getDataConsumer().getIncludes());
+                            carrier.push(bucket);
+                            LOGGER.debug("push bucket {} into carrier after extract.", inThreadEvents.getLeft());
+                        } catch (Exception e) {
+                            bucket.tagException(new TaskStopTriggerException(e));
+                            LOGGER.error("批次[{}]执行ExtractJob失败!", inThreadEvents.getLeft(), e);
                         }
                     });
                 }
@@ -115,5 +114,10 @@ public class ExtractJob extends AbstractStageJob {
     @Override
     public boolean isPrevPoolEmpty() {
         return work.isPoolEmpty(StageType.SELECT);
+    }
+
+    @Override
+    public boolean stopWaiting() {
+        return work.getDataConsumer().isAutoCommitPosition();
     }
 }

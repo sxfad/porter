@@ -12,7 +12,6 @@ import com.suixingpay.datas.common.util.DefaultNamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -48,10 +47,10 @@ public abstract class AbstractStageJob implements StageJob {
     }
     protected abstract void doStop() throws InterruptedException;
 
-    protected abstract void doStart() throws IOException;
+    protected abstract void doStart() throws Exception;
 
     @Override
-    public void start() throws IOException {
+    public void start() throws Exception {
         if (canStart() && stat.compareAndSet(false, true)) {
             doStart();
             loopService.start();
@@ -109,4 +108,5 @@ public abstract class AbstractStageJob implements StageJob {
     protected ThreadFactory getThreadFactory() {
         return threadFactory;
     }
+
 }

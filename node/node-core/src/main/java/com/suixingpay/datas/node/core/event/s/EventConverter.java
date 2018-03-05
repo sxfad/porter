@@ -17,5 +17,5 @@ import java.text.ParseException;
  */
 public interface EventConverter {
     String getName();
-    <T> MessageEvent convert(JSONObject head, JSONObject value) throws ParseException;
+    <T> MessageEvent convert(JSONObject position, JSONObject value) throws ParseException;
 }

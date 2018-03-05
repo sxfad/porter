@@ -12,7 +12,6 @@ package com.suixingpay.datas.node.core.event.s.converter;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.suixingpay.datas.node.core.event.s.EventConverter;
-import com.suixingpay.datas.node.core.event.s.EventHeader;
 import com.suixingpay.datas.node.core.event.s.EventType;
 import com.suixingpay.datas.node.core.event.s.MessageEvent;
 import java.text.DateFormat;
@@ -37,18 +36,11 @@ public class OggConverter implements EventConverter {
     }
 
     @Override
-    public <T> MessageEvent convert(JSONObject head, JSONObject obj) throws ParseException {
+    public <T> MessageEvent convert(JSONObject position, JSONObject obj) throws ParseException {
 
         EventType eventType = EventType.type(obj.getString("op_type"));
         //不能解析的事件跳过
         if (null == eventType ||  eventType == EventType.UNKNOWN) return null;
-
-        EventHeader eventHeader = new EventHeader();
-        if (null != head) {
-            if (head.containsKey("offset")) eventHeader.setOffset(head.getString("offset"));
-            if (head.containsKey("partition")) eventHeader.setPartition(head.getString("partition"));
-        }
-
         //body
         MessageEvent event = new MessageEvent();
         String schemaAndTable = obj.getString("table");
@@ -76,7 +68,7 @@ public class OggConverter implements EventConverter {
         if (null != pkeys) event.setPrimaryKeys(pkeys.toJavaList(String.class));
         event.setBefore(obj.getObject("before", Map.class));
         event.setAfter(obj.getObject("after", Map.class));
-        event.setHead(eventHeader);
+        event.setPosition(position.toJSONString());
         return event;
     }
 }

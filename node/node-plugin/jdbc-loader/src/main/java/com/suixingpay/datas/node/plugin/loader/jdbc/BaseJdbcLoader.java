@@ -9,10 +9,12 @@
 
 package com.suixingpay.datas.node.plugin.loader.jdbc;
 
+import com.alibaba.fastjson.JSONObject;
 import com.suixingpay.datas.common.client.impl.JDBCClient;
 import com.suixingpay.datas.common.cluster.data.DTaskStat;
 import com.suixingpay.datas.common.db.SqlTemplate;
 import com.suixingpay.datas.common.db.SqlUtils;
+import com.suixingpay.datas.common.exception.TaskDataException;
 import com.suixingpay.datas.common.exception.TaskStopTriggerException;
 import com.suixingpay.datas.node.core.event.etl.ETLColumn;
 import com.suixingpay.datas.node.core.event.etl.ETLRow;
@@ -204,22 +206,30 @@ public abstract class BaseJdbcLoader extends AbstractDataLoader {
             //更新最后执行消息事件的产生时间，用于计算从消息产生到加载如路时间、计算数据同步检查时间
             if (null != row.getOpTime()) stat.setLastLoadedDataTime(row.getOpTime());
             stat.setLastLoadedSystemTime(new Date());
-            if (!StringUtils.isBlank(row.getIndex())) {
-                stat.setProgress(row.getIndex());
+            if (!StringUtils.isBlank(row.getPosition())) {
+                stat.setProgress(row.getPosition());
             }
         }
     }
 
     @Override
-    public void mouldRow(ETLRow row) {
+    public void mouldRow(ETLRow row) throws TaskDataException {
         if (null != row.getColumns()) {
             for (ETLColumn c : row.getColumns()) {
-                Object newValue = SqlUtils.stringToSqlValue(c.getFinalValue(), c.getFinalType(), c.isRequired(), true);
-                Object oldValue = SqlUtils.stringToSqlValue(c.getOldValue(), c.getFinalType(), c.isRequired(), true);
-                if (c.isKey()) {
-                    row.getSqlKeys().put(c.getFinalName(), new ImmutablePair<>(oldValue, newValue));
-                } else {
-                    row.getSqlColumns().put(c.getFinalName(), new ImmutablePair<>(oldValue, newValue));
+                try {
+                    Object newValue = SqlUtils.stringToSqlValue(c.getFinalValue(), c.getFinalType(), c.isRequired(), true);
+                    Object oldValue = SqlUtils.stringToSqlValue(c.getOldValue(), c.getFinalType(), c.isRequired(), true);
+                    if (c.isKey()) {
+                        row.getSqlKeys().put(c.getFinalName(), new ImmutablePair<>(oldValue, newValue));
+                    } else {
+                        row.getSqlColumns().put(c.getFinalName(), new ImmutablePair<>(oldValue, newValue));
+                    }
+                } catch (Exception e) {
+                    StringBuilder log = new StringBuilder();
+                    log.append("记录:").append(JSONObject.toJSONString(row))
+                            .append(",点位:").append(row.getPosition())
+                            .append(",字段名:").append(c.getName()).append(",错误信息:").append(e.getMessage());
+                    throw new TaskDataException(log.toString());
                 }
             }
         }

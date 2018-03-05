@@ -17,7 +17,6 @@ import com.suixingpay.datas.node.task.transform.transformer.TransformFactory;
 import com.suixingpay.datas.node.task.worker.TaskWork;
 
 import java.util.Map;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -25,7 +24,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
-import java.util.function.BiFunction;
 
 
 /**
@@ -71,18 +69,17 @@ public class TransformJob extends AbstractStageJob {
                 if (null != bucket) {
                     LOGGER.debug("transform ETLBucket batch {} begin.", bucket.getSequence());
                     final ETLBucket inThreadBucket = bucket;
-                    Future<ETLBucket> result = executorService.submit(new Callable<ETLBucket>() {
-                        @Override
-                        public ETLBucket call() throws Exception {
-                            try {
+                    Future<ETLBucket> result = executorService.submit(() -> {
+                        try {
+                            //上个流程处理没有异常
+                            if (null == inThreadBucket.getException()) {
                                 transformFactory.transform(inThreadBucket, work);
-                            } catch (TaskStopTriggerException e) {
-                                work.stopAndAlarm(e.getMessage());
-                            } catch (Exception e) {
-                                LOGGER.error("批次[{}]执行TransformJob失败!", inThreadBucket.getSequence(), e);
                             }
-                            return inThreadBucket;
+                        } catch (Exception e) {
+                            inThreadBucket.tagException(new TaskStopTriggerException(e));
+                            LOGGER.error("批次[{}]执行TransformJob失败!", inThreadBucket.getSequence(), e);
                         }
+                        return inThreadBucket;
                     });
                     LOGGER.debug("transform ETLBucket batch {} end.", bucket.getSequence());
                     carrier.put(inThreadBucket.getSequence(), result);
@@ -99,21 +96,24 @@ public class TransformJob extends AbstractStageJob {
         Future<ETLBucket> result = null;
         if (null != sequence) {
             LOGGER.info("got sequence:{}, Future: {}", sequence, carrier.containsKey(sequence));
+            long waitTime = 0;
             //等待该sequence对应的ETLBucket transform完成。捕获InterruptedException异常,是为了保证该sequence能够被处理。
             while (null != sequence && !carrier.containsKey(sequence)) {
                 LOGGER.debug("waiting sequence Future:{}", sequence);
+                //等待超过5分钟，释放任务
+                if (waitTime > 1000 * 60 * 5) {
+                    work.stopAndAlarm("等待批次" + sequence + "SET完成超时(5m)，任务退出。");
+                }
                 try {
+                    waitTime += 500;
                     Thread.sleep(500);
                 } catch (InterruptedException e) {
                 }
             }
             LOGGER.info("got sequence:{}, Future: {}", sequence, carrier.containsKey(sequence));
-            result = carrier.computeIfPresent(sequence, new BiFunction<String, Future<ETLBucket>, Future<ETLBucket>>() {
-                @Override
-                public Future<ETLBucket> apply(String key, Future<ETLBucket> etlBucketFuture) {
-                    carrier.remove(key);
-                    return etlBucketFuture;
-                }
+            result = carrier.computeIfPresent(sequence, (key, etlBucketFuture) -> {
+                carrier.remove(key);
+                return etlBucketFuture;
             });
         }
         return null != result ? result.get() : null;
@@ -127,5 +127,10 @@ public class TransformJob extends AbstractStageJob {
     @Override
     public boolean isPrevPoolEmpty() {
         return work.isPoolEmpty(StageType.EXTRACT);
+    }
+
+    @Override
+    public boolean stopWaiting() {
+        return work.getDataConsumer().isAutoCommitPosition();
     }
 }

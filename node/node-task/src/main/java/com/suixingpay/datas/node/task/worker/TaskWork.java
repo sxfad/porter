@@ -12,14 +12,16 @@ import com.alibaba.fastjson.JSON;
 import com.suixingpay.datas.common.alert.AlertReceiver;
 import com.suixingpay.datas.common.cluster.ClusterProviderProxy;
 import com.suixingpay.datas.common.cluster.command.StatisticUploadCommand;
+import com.suixingpay.datas.common.cluster.command.TaskPositionQueryCommand;
+import com.suixingpay.datas.common.cluster.command.TaskStatCommand;
 import com.suixingpay.datas.common.cluster.command.TaskStoppedByErrorCommand;
 import com.suixingpay.datas.common.cluster.command.TaskRegisterCommand;
-import com.suixingpay.datas.common.cluster.command.TaskStatCommand;
 import com.suixingpay.datas.common.cluster.command.TaskStatQueryCommand;
 import com.suixingpay.datas.common.cluster.command.TaskStopCommand;
 import com.suixingpay.datas.common.cluster.data.DCallback;
 import com.suixingpay.datas.common.cluster.data.DObject;
 import com.suixingpay.datas.common.cluster.data.DTaskStat;
+import com.suixingpay.datas.common.exception.TaskStopTriggerException;
 import com.suixingpay.datas.common.statistics.NodeLog;
 import com.suixingpay.datas.common.statistics.TaskPerformance;
 import com.suixingpay.datas.node.core.NodeContext;
@@ -34,6 +36,8 @@ import com.suixingpay.datas.node.task.extract.ExtractJob;
 import com.suixingpay.datas.node.task.load.LoadJob;
 import com.suixingpay.datas.node.task.select.SelectJob;
 import com.suixingpay.datas.node.task.transform.TransformJob;
+import lombok.SneakyThrows;
+import org.apache.zookeeper.KeeperException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +47,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -142,12 +145,24 @@ public class TaskWork {
     protected void start() throws Exception {
         if (STAT.compareAndSet(false, true)) {
             LOGGER.info("开始执行任务[{}-{}]", taskId, dataConsumer.getSwimlaneId());
+
             //会抛出分布式锁任务抢占异常
             ClusterProviderProxy.INSTANCE.broadcast(new TaskRegisterCommand(taskId, dataConsumer.getSwimlaneId()));
             //开始阶段性工作
             for (Map.Entry<StageType, StageJob> jobs : JOBS.entrySet()) {
                 jobs.getValue().start();
             }
+
+            LOGGER.info("开始获取任务消费泳道[{}-{}]上次同步点", taskId, dataConsumer.getSwimlaneId());
+            //获取上次任务进度
+            ClusterProviderProxy.INSTANCE.broadcast(new TaskPositionQueryCommand(taskId, dataConsumer.getSwimlaneId(), new DCallback() {
+                @Override
+                @SneakyThrows(TaskStopTriggerException.class)
+                public void callback(String position) {
+                    LOGGER.info("获取任务消费泳道[{}-{}]上次同步点->{}，通知SelectJob", taskId, dataConsumer.getSwimlaneId(), position);
+                    dataConsumer.initializePosition(position);
+                }
+            }));
         }
     }
 
@@ -172,42 +187,43 @@ public class TaskWork {
     }
 
     public void submitStat() {
-        stats.forEach(new BiConsumer<String, DTaskStat>() {
-            @Override
-            public void accept(String s, DTaskStat stat) {
-                try {
-                    LOGGER.debug("stat before submit:{}", JSON.toJSONString(stat));
-                    //多线程访问情况下（目前是两个线程:状态上报线程、任务状态更新线程），获取JOB的运行状态。
-                    DTaskStat newStat = null;
-                    synchronized (stat) {
-                        newStat = stat.snapshot(DTaskStat.class);
-                        LOGGER.debug("stat snapshot:{}", JSON.toJSONString(newStat));
-                        stat.reset();
-                        LOGGER.debug("stat after reset:{}", JSON.toJSONString(stat));
-                        ClusterProviderProxy.INSTANCE.broadcast(new TaskStatCommand(newStat, new DCallback() {
-                            @Override
-                            public void callback(DObject object) {
-                                DTaskStat remoteData = (DTaskStat) object;
-                                if (stat.getUpdateStat().compareAndSet(false, true)) {
-                                    //最后检查点
-                                    if (null == stat.getLastCheckedTime()) {
-                                        stat.setLastLoadedDataTime(remoteData.getLastLoadedDataTime());
-                                    }
-                                    //最初启动时间
-                                    if (null != remoteData.getRegisteredTime()) {
-                                        stat.setRegisteredTime(remoteData.getRegisteredTime());
-                                    }
+        stats.forEach((s, stat) -> {
+            try {
+                LOGGER.debug("stat before submit:{}", JSON.toJSONString(stat));
+                //多线程访问情况下（目前是两个线程:状态上报线程、任务状态更新线程），获取JOB的运行状态。
+                DTaskStat newStat = null;
+                synchronized (stat) {
+                    newStat = stat.snapshot(DTaskStat.class);
+                    LOGGER.debug("stat snapshot:{}", JSON.toJSONString(newStat));
+                    stat.reset();
+                    LOGGER.debug("stat after reset:{}", JSON.toJSONString(stat));
+                    ClusterProviderProxy.INSTANCE.broadcast(new TaskStatCommand(newStat, new DCallback() {
+                        @Override
+                        public void callback(DObject object) {
+                            DTaskStat remoteData = (DTaskStat) object;
+                            if (stat.getUpdateStat().compareAndSet(false, true)) {
+                                //最后检查点
+                                if (null == stat.getLastCheckedTime()) {
+                                    stat.setLastLoadedDataTime(remoteData.getLastLoadedDataTime());
+                                }
+                                //最初启动时间
+                                if (null != remoteData.getRegisteredTime()) {
+                                    stat.setRegisteredTime(remoteData.getRegisteredTime());
                                 }
                             }
-                        }));
-                        //上传统计
-                        //TaskPerformance
-                        if (!NodeContext.INSTANCE.isUploadStatistic()) return;
-                        ClusterProviderProxy.INSTANCE.broadcast(new StatisticUploadCommand(new TaskPerformance(newStat)));
-                    }
-                } catch (Exception e) {
-                    LOGGER.error("上传任务消费进度出错", e);
+                        }
+                    }));
+                    //上传统计
+                    //TaskPerformance
+                    if (!NodeContext.INSTANCE.isUploadStatistic()) return;
+                    ClusterProviderProxy.INSTANCE.broadcast(new StatisticUploadCommand(new TaskPerformance(newStat)));
                 }
+            } catch (Exception e) {
+                NodeLog.LogType type = NodeLog.LogType.TASK_LOG;
+                if (e instanceof KeeperException.SessionExpiredException) {
+                    type = NodeLog.LogType.TASK_ALARM;
+                }
+                NodeLog.upload(type, taskId, dataConsumer.getSwimlaneId(), "上传任务消费进度失败:" + e.getMessage());
             }
         });
     }
@@ -226,26 +242,23 @@ public class TaskWork {
 
     public TableMapper getTableMapper(String schema, String table) {
         String key = schema + "." + table;
-        TableMapper mapper = mappers.computeIfAbsent(key, new Function<String, TableMapper>() {
-            @Override
-            public TableMapper apply(String s) {
-                TableMapper tmp = null;
-                String mapperKey = taskId + "_" + schema + "_" + table;
+        TableMapper mapper = mappers.computeIfAbsent(key, s -> {
+            TableMapper tmp = null;
+            String mapperKey = taskId + "_" + schema + "_" + table;
+            tmp = worker.getTableMapper().get(mapperKey.toUpperCase());
+            if (null == tmp) {
+                mapperKey = taskId + "__" + table;
                 tmp = worker.getTableMapper().get(mapperKey.toUpperCase());
-                if (null == tmp) {
-                    mapperKey = taskId + "__" + table;
-                    tmp = worker.getTableMapper().get(mapperKey.toUpperCase());
-                }
-                if (null == tmp) {
-                    mapperKey = taskId + "_" + schema + "_";
-                    tmp = worker.getTableMapper().get(mapperKey.toUpperCase());
-                }
-                if (null == tmp) {
-                    mapperKey = taskId + "_" + "_";
-                    tmp = worker.getTableMapper().get(mapperKey.toUpperCase());
-                }
-                return tmp;
             }
+            if (null == tmp) {
+                mapperKey = taskId + "_" + schema + "_";
+                tmp = worker.getTableMapper().get(mapperKey.toUpperCase());
+            }
+            if (null == tmp) {
+                mapperKey = taskId + "_" + "_";
+                tmp = worker.getTableMapper().get(mapperKey.toUpperCase());
+            }
+            return tmp;
         });
         return mapper;
     }
