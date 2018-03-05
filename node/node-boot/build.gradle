@@ -11,7 +11,7 @@ sourceSets {
 }
 processResources {
     exclude(
-           // "**/**"
+            "**/**"
     )
 }
 
