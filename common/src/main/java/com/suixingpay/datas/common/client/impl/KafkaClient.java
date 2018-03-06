@@ -76,7 +76,7 @@ public class KafkaClient extends AbstractClient<KafkaConfig> implements ConsumeC
     }
 
     @Override
-    public void initializePosition(String position) throws TaskStopTriggerException {
+    public void initializePosition(String taskId, String swimlaneId, String position) throws TaskStopTriggerException {
         try {
             if (!isAutoCommitPosition()) {
                 if (!StringUtils.isBlank(position)) {
@@ -86,6 +86,9 @@ public class KafkaClient extends AbstractClient<KafkaConfig> implements ConsumeC
                         consumer.assign(Arrays.asList(tp));
                         consumer.seek(tp, kafkaPosition.offset + 1);
                     }
+                } else {
+                    //默认消费分区0
+                    consumer.assign(Arrays.asList(new TopicPartition(swimlaneId, 0)));
                 }
                 canFetch.countDown();
             }
