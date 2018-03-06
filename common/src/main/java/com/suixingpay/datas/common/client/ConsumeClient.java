@@ -39,10 +39,12 @@ public interface ConsumeClient extends Client {
 
     /**
      * 初始化消费同步点，只有是手动提交时才会更新消费器客户端
-     * @param position
-     * @throws TaskStopTriggerException
+     *
+     * @param taskId
+     * @param swimlaneId
+     *@param position  @throws TaskStopTriggerException
      */
-    void initializePosition(String position) throws TaskStopTriggerException;
+    void initializePosition(String taskId, String swimlaneId, String position) throws TaskStopTriggerException;
 
     /**
      * 获取消费泳道编号

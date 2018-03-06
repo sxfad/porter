@@ -104,7 +104,7 @@ public interface DataConsumer {
 
     List<String> getIncludes();
 
-    void initializePosition(String position) throws TaskStopTriggerException;
+    void initializePosition(String taskId, String swimlaneId, String position) throws TaskStopTriggerException;
 
     void commitPosition(String position) throws TaskStopTriggerException;
 

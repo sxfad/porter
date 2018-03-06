@@ -160,7 +160,7 @@ public class TaskWork {
                 @SneakyThrows(TaskStopTriggerException.class)
                 public void callback(String position) {
                     LOGGER.info("获取任务消费泳道[{}-{}]上次同步点->{}，通知SelectJob", taskId, dataConsumer.getSwimlaneId(), position);
-                    dataConsumer.initializePosition(position);
+                    dataConsumer.initializePosition(taskId, dataConsumer.getSwimlaneId(), position);
                 }
             }));
         }

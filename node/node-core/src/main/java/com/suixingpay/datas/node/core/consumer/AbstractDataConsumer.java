@@ -85,8 +85,8 @@ public abstract class AbstractDataConsumer implements DataConsumer {
     }
 
     @Override
-    public void initializePosition(String position) throws TaskStopTriggerException {
-        consumeClient.initializePosition(position);
+    public void initializePosition(String taskId, String swimlaneId, String position) throws TaskStopTriggerException {
+        consumeClient.initializePosition(taskId, swimlaneId, position);
     }
 
     @Override
