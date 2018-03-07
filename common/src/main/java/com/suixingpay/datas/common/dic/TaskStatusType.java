@@ -9,6 +9,7 @@
 
 package com.suixingpay.datas.common.dic;
 
+import com.alibaba.fastjson.JSONObject;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -44,5 +45,12 @@ public enum TaskStatusType {
     }
     public boolean isWorking() {
         return this == WORKING;
+    }
+
+    public String toString() {
+        JSONObject object = new JSONObject();
+        object.put("code", code);
+        object.put("name", name);
+        return object.toJSONString();
     }
 }
