@@ -8,14 +8,17 @@
  */
 package com.suixingpay.datas.node.core.event.s;
 
-import com.alibaba.fastjson.JSONObject;
-
-import java.text.ParseException;
+import java.util.List;
 
 /**
  * 消费器消息转换器
  */
 public interface EventConverter {
     String getName();
-    <T> MessageEvent convert(JSONObject position, JSONObject value) throws ParseException;
+    default <T> MessageEvent convert(Object... params) {
+        return null;
+    }
+    default <T> List<MessageEvent> convertList(Object... params) {
+        return null;
+    }
 }

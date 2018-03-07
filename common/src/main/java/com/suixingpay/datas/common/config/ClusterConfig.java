@@ -9,7 +9,7 @@
 
 package com.suixingpay.datas.common.config;
 
-import com.suixingpay.datas.common.cluster.ClusterStrategy;
+import com.suixingpay.datas.common.dic.ClusterPlugin;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,7 +22,7 @@ import java.util.Map;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月23日 14:22
  */
 public class ClusterConfig {
-    @Getter @Setter private ClusterStrategy strategy;
+    @Getter @Setter private ClusterPlugin strategy;
     //告警客户端
     @Getter @Setter private Map<String, String> client;
 }

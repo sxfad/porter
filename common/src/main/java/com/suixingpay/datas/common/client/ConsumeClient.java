@@ -9,10 +9,10 @@
 
 package com.suixingpay.datas.common.client;
 
+import com.google.protobuf.InvalidProtocolBufferException;
 import com.suixingpay.datas.common.exception.ClientException;
 import com.suixingpay.datas.common.exception.TaskStopTriggerException;
 
-import java.text.ParseException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -77,6 +77,11 @@ public interface ConsumeClient extends Client {
      * @param <O>
      */
     interface FetchCallback<F, O> {
-        <F, O> F  accept(O o) throws ParseException;
+        default <F, O> F  accept(O o) {
+            return null;
+        }
+        default <F, O> List<F>  acceptAll(O o) throws InvalidProtocolBufferException {
+            return null;
+        }
     }
 }

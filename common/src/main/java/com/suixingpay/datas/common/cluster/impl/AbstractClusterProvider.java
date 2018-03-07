@@ -13,7 +13,7 @@ import com.suixingpay.datas.common.client.ClusterClient;
 import com.suixingpay.datas.common.cluster.ClusterListener;
 import com.suixingpay.datas.common.cluster.ClusterMonitor;
 import com.suixingpay.datas.common.cluster.ClusterProvider;
-import com.suixingpay.datas.common.cluster.ClusterStrategy;
+import com.suixingpay.datas.common.dic.ClusterPlugin;
 import com.suixingpay.datas.common.cluster.command.NodeOrderPushCommand;
 import com.suixingpay.datas.common.cluster.command.TaskPositionQueryCommand;
 import com.suixingpay.datas.common.cluster.command.TaskPositionUploadCommand;
@@ -62,7 +62,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public abstract class AbstractClusterProvider<C extends Client> implements ClusterProvider {
     private final AtomicBoolean status = new AtomicBoolean(false);
-    protected abstract ClusterStrategy getMatchType();
+    protected abstract ClusterPlugin getMatchType();
     protected abstract ClusterMonitor newMonitor();
     protected abstract Class getClusterListenerClass();
     protected abstract C initClient(ClusterConfig clusterConfig) throws ConfigParseException;
@@ -70,8 +70,8 @@ public abstract class AbstractClusterProvider<C extends Client> implements Clust
     private ClusterMonitor monitor;
 
     @Override
-    public boolean matches(ClusterStrategy type) {
-        return ClusterStrategy.ZOOKEEPER == getMatchType();
+    public boolean matches(ClusterPlugin type) {
+        return ClusterPlugin.ZOOKEEPER == getMatchType();
     }
 
     @Override

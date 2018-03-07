@@ -17,7 +17,7 @@ import com.suixingpay.datas.common.client.MetaQueryClient;
 import com.suixingpay.datas.common.db.SqlTemplate;
 import com.suixingpay.datas.common.config.source.JDBCConfig;
 import com.suixingpay.datas.common.db.SqlTemplateImpl;
-import com.suixingpay.datas.common.db.meta.DbType;
+import com.suixingpay.datas.common.dic.DbType;
 import com.suixingpay.datas.common.db.DdlUtils;
 import com.suixingpay.datas.common.db.meta.TableColumn;
 import com.suixingpay.datas.common.db.meta.TableSchema;

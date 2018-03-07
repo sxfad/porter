@@ -1,1 +1,3 @@
-com.suixingpay.datas.node.core.event.s.EventConverter = com.suixingpay.datas.node.core.event.s.converter.OggConverter
+com.suixingpay.datas.node.core.event.s.EventConverter = \
+  com.suixingpay.datas.node.core.event.s.converter.OggJsonConverter,\
+  com.suixingpay.datas.node.core.event.s.converter.CanalRowConverter

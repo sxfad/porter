@@ -10,6 +10,7 @@
 package com.suixingpay.datas.node.plugin.loader.jdbc;
 
 import com.suixingpay.datas.common.cluster.data.DTaskStat;
+import com.suixingpay.datas.common.dic.LoaderPlugin;
 import com.suixingpay.datas.common.exception.TaskStopTriggerException;
 import com.suixingpay.datas.node.core.event.etl.ETLBucket;
 import com.suixingpay.datas.node.core.event.etl.ETLRow;
@@ -23,11 +24,10 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月04日 11:38
  */
 public class JdbcSingleLoader extends BaseJdbcLoader {
-    private static final String LOADER_NAME = "JdbcSingle";
 
     @Override
     protected String getPluginName() {
-        return LOADER_NAME;
+        return LoaderPlugin.JDBC_SINGLE.getCode();
     }
 
     @Override

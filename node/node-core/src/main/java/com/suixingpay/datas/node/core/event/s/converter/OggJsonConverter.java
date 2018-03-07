@@ -9,13 +9,14 @@
 
 package com.suixingpay.datas.node.core.event.s.converter;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.suixingpay.datas.common.dic.ConsumeConverterPlugin;
 import com.suixingpay.datas.node.core.event.s.EventConverter;
 import com.suixingpay.datas.node.core.event.s.EventType;
 import com.suixingpay.datas.node.core.event.s.MessageEvent;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Map;
 
@@ -26,17 +27,18 @@ import java.util.Map;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年01月05日 11:50
  */
-public class OggConverter implements EventConverter {
+public class OggJsonConverter implements EventConverter {
     private static final DateFormat OP_TS_F = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
     private static final DateFormat C_TS_F = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS");
-    private static final String NAME = "ogg";
     @Override
     public String getName() {
-        return NAME;
+        return ConsumeConverterPlugin.OGG_JSON.getCode();
     }
 
     @Override
-    public <T> MessageEvent convert(JSONObject position, JSONObject obj) throws ParseException {
+    public <T> MessageEvent convert(Object... params) {
+        JSONObject position = (JSONObject) params[0];
+        JSONObject obj = JSON.parseObject((String) params[1]);
 
         EventType eventType = EventType.type(obj.getString("op_type"));
         //不能解析的事件跳过

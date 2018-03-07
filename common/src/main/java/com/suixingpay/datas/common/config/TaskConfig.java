@@ -10,7 +10,7 @@
 package com.suixingpay.datas.common.config;
 
 import com.suixingpay.datas.common.alert.AlertReceiver;
-import com.suixingpay.datas.common.task.TaskStatusType;
+import com.suixingpay.datas.common.dic.TaskStatusType;
 import lombok.Getter;
 import lombok.Setter;
 

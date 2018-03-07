@@ -45,7 +45,6 @@ subprojects {
                 'org.apache.commons:commons-lang3:3.7',
                 "org.springframework.boot:spring-boot-starter:${springVersion}",
                 "org.springframework.boot:spring-boot-starter-jdbc:${springVersion}",
-                'org.apache.kafka:kafka-clients:1.0.0',
                 'oracle:ojdbc14:10.2.0.1.0',
                 'commons-beanutils:commons-beanutils:1.9.2',
                 "org.springframework.boot:spring-boot-starter-mail:${springVersion}",

@@ -20,4 +20,6 @@ findProject(':node:node-plugin:jdbc-loader')?.name = 'jdbc-loader'
 include 'manager'
 include 'manager:manager-boot'
 findProject(':manager:manager-boot')?.name = 'manager-boot'
+include 'node:node-plugin:canal-consumer'
+findProject(':node:node-plugin:canal-consumer')?.name = 'canal-consumer'
 

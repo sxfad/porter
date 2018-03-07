@@ -9,6 +9,8 @@
 
 package com.suixingpay.datas.common.client;
 
+import com.suixingpay.datas.common.client.impl.CanalClient;
+import com.suixingpay.datas.common.config.source.CanalConfig;
 import com.suixingpay.datas.common.client.impl.EmailClient;
 import com.suixingpay.datas.common.client.impl.JDBCClient;
 import com.suixingpay.datas.common.client.impl.KafkaClient;
@@ -103,6 +105,9 @@ public abstract class AbstractClient<T extends SourceConfig> implements Client {
         }
         if (config instanceof EmailConfig) {
             return new EmailClient((EmailConfig) config);
+        }
+        if (config instanceof CanalConfig) {
+            return new CanalClient((CanalConfig) config);
         }
         throw  new ClientMatchException();
     }

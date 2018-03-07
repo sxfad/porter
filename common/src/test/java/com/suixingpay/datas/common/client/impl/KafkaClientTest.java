@@ -15,7 +15,6 @@ import com.suixingpay.datas.common.config.source.KafkaConfig;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.text.ParseException;
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -45,7 +44,7 @@ public class KafkaClientTest {
     public void fetch() {
         KAFKA_CLIENT.fetch(new ConsumeClient.FetchCallback<Object, Object>() {
             @Override
-            public <F, O> F accept(O o) throws ParseException {
+            public <F, O> F accept(O o) {
                 System.out.println(JSON.toJSONString(o));
                 return null;
             }

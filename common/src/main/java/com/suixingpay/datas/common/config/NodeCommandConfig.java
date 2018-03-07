@@ -10,7 +10,7 @@
 package com.suixingpay.datas.common.config;
 
 import com.suixingpay.datas.common.node.NodeCommandType;
-import com.suixingpay.datas.common.node.NodeStatusType;
+import com.suixingpay.datas.common.dic.NodeStatusType;
 import lombok.Getter;
 import lombok.Setter;
 

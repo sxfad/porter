@@ -1,0 +1,7 @@
+jar.baseName = 'datas-plugin-canal-consumer'
+dependencies {
+    compile (
+            project(":node:node-core")
+
+    )
+}

@@ -7,7 +7,13 @@
  * 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
  */
 
-package com.suixingpay.datas.common.node;
+package com.suixingpay.datas.common.dic;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 节点状态
@@ -16,8 +22,21 @@ package com.suixingpay.datas.common.node;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月24日 10:32
  */
+
+@AllArgsConstructor
 public enum  NodeStatusType {
-    WORKING, SUSPEND;
+
+    WORKING("WORKING", "工作中"), SUSPEND("SUSPEND", "已暂停");
+
+    @Getter private final String code;
+    @Getter private final String name;
+
+    public static final List<NodeStatusType> STATUSES = new ArrayList<NodeStatusType>() {
+        {
+            add(WORKING);
+            add(SUSPEND);
+        }
+    };
 
     public boolean isSuspend() {
         return this == SUSPEND;
@@ -26,4 +45,7 @@ public enum  NodeStatusType {
     public boolean isWorking() {
         return this == WORKING;
     }
+
+
+
 }

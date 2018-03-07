@@ -12,11 +12,11 @@ package com.suixingpay.datas.node.plugin.consumer.kafka;
 
 import com.alibaba.fastjson.JSONObject;
 import com.suixingpay.datas.common.client.ConsumeClient;
+import com.suixingpay.datas.common.dic.ConsumerPlugin;
 import com.suixingpay.datas.node.core.consumer.AbstractDataConsumer;
 import com.suixingpay.datas.node.core.event.s.MessageEvent;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
-import java.text.ParseException;
 import java.util.List;
 
 /**
@@ -26,25 +26,23 @@ import java.util.List;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月02日 11:53
  */
 public class KafkaConsumer extends AbstractDataConsumer {
-    private static final String CONSUMER_NAME = "KafkaFetch";
 
     public List<MessageEvent> doFetch() {
         return consumeClient.fetch(new ConsumeClient.FetchCallback<MessageEvent, Object>() {
             @Override
-            public <F, O> F accept(O o) throws ParseException {
+            public <F, O> F accept(O o) {
                 ConsumerRecord<String, String> record = (ConsumerRecord<String, String>) o;
-                JSONObject value = JSONObject.parseObject(record.value());
                 JSONObject position = new JSONObject();
                 position.put("offset", record.offset());
                 position.put("topic", record.topic());
                 position.put("partition", record.partition());
-                return (F) converter.convert(position, value);
+                return (F) converter.convert(position, record.value());
             }
         });
     }
 
     @Override
     protected String getPluginName() {
-        return CONSUMER_NAME;
+        return ConsumerPlugin.KAFKA.getCode();
     }
 }

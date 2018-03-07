@@ -11,7 +11,7 @@ package com.suixingpay.datas.common.config;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.suixingpay.datas.common.alert.AlertReceiver;
-import com.suixingpay.datas.common.alert.AlertStrategy;
+import com.suixingpay.datas.common.dic.AlertPlugin;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -27,7 +27,7 @@ public class AlertConfig {
     //second
     @Getter @Setter private Integer frequencyOfSeconds = 60;
     @JSONField(deserialize = false, serialize = false)
-    @Getter @Setter private AlertStrategy strategy;
+    @Getter @Setter private AlertPlugin strategy;
     @Getter @Setter private AlertReceiver[] receiver = new AlertReceiver[0];
     //告警客户端
     @Getter @Setter private Map<String, String> client;

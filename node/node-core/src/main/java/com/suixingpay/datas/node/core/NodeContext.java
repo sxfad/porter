@@ -10,7 +10,7 @@
 package com.suixingpay.datas.node.core;
 
 import com.suixingpay.datas.common.node.Node;
-import com.suixingpay.datas.common.node.NodeStatusType;
+import com.suixingpay.datas.common.dic.NodeStatusType;
 import org.springframework.context.ApplicationContext;
 
 import java.util.concurrent.locks.ReadWriteLock;

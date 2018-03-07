@@ -7,7 +7,13 @@
  * 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
  */
 
-package com.suixingpay.datas.common.db.meta;
+package com.suixingpay.datas.common.dic;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -16,6 +22,18 @@ package com.suixingpay.datas.common.db.meta;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月02日 16:27
  */
+@AllArgsConstructor
 public enum  DbType {
-    MYSQL, ORACLE;
+
+    MYSQL("MYSQL", "MYSQL"), ORACLE("ORACLE","ORACLE");
+
+    @Getter private final String code;
+    @Getter private final String name;
+
+    public static final List<DbType> TYPES = new ArrayList<DbType>() {
+        {
+            add(MYSQL);
+            add(ORACLE);
+        }
+    };
 }

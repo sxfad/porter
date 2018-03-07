@@ -9,12 +9,13 @@
 
 package com.suixingpay.datas.common.config;
 
+import com.suixingpay.datas.common.config.source.CanalConfig;
 import com.suixingpay.datas.common.config.source.JDBCConfig;
 import com.suixingpay.datas.common.config.source.KafkaConfig;
 import com.suixingpay.datas.common.config.source.ZookeeperConfig;
 import com.suixingpay.datas.common.config.source.EmailConfig;
 import com.suixingpay.datas.common.config.source.NameSourceConfig;
-import com.suixingpay.datas.common.config.source.SourceType;
+import com.suixingpay.datas.common.dic.SourceType;
 import com.suixingpay.datas.common.exception.ConfigParseException;
 import com.suixingpay.datas.common.util.BeanUtils;
 import lombok.Getter;
@@ -76,6 +77,9 @@ public abstract class SourceConfig {
                         break;
                     case NAME_SOURCE:
                         config = (T) new NameSourceConfig();
+                        break;
+                    case CANAL:
+                        config = (T) new CanalConfig();
                         break;
                 }
             } else if (properties.containsKey(NAME_SOURCE_KEY)) {
