@@ -51,7 +51,9 @@ dependencies {
     compile "org.springframework.boot:spring-boot-starter-web:${springVersion}"
     compile "io.springfox:springfox-swagger2:${swaggerVersion}"
     compile "io.springfox:springfox-swagger-ui:${swaggerVersion}"
+    
+    
     compile 'com.alibaba:fastjson:1.2.37'
-    testCompile 'org.springframework.boot:spring-boot-starter-actuator'
-    testCompile 'org.springframework.boot:spring-boot-starter-test'
+    testCompile "org.springframework.boot:spring-boot-starter-actuator:${springVersion}"
+    testCompile "org.springframework.boot:spring-boot-starter-test:${springVersion}"
 }

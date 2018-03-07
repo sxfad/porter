@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 集群方案
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年02月23日 11:42
  * @version: V1.0

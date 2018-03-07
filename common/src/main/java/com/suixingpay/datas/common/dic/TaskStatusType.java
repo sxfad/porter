@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 节点状态
+ * 任务状态
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年02月24日 10:32
  * @version: V1.0
