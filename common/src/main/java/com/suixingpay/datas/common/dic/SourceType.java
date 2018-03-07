@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 数据源类型
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年02月02日 18:07
  * @version: V1.0

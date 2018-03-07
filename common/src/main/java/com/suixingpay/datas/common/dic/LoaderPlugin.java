@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * 载入器插件
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年03月07日 10:00
  * @version: V1.0
