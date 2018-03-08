@@ -9,7 +9,7 @@
 
 package com.suixingpay.datas.common.dic;
 
-import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -24,10 +24,11 @@ import java.util.List;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年03月07日 10:00
  */
 @AllArgsConstructor
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum LoaderPlugin {
 
-    JDBC_BATCH("JdbcBatch","JDBC批量"),
-    JDBC_SINGLE("JdbcSingle","JDBC单行");
+    JDBC_BATCH("JdbcBatch", "JDBC批量"),
+    JDBC_SINGLE("JdbcSingle", "JDBC单行");
 
     @Getter private final String code;
     @Getter private final String name;
@@ -38,12 +39,5 @@ public enum LoaderPlugin {
             add(JDBC_SINGLE);
         }
     };
-
-    public String toString() {
-        JSONObject object = new JSONObject();
-        object.put("code", code);
-        object.put("name", name);
-        return object.toJSONString();
-    }
 
 }

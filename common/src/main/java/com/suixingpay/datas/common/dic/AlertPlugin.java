@@ -9,8 +9,7 @@
 
 package com.suixingpay.datas.common.dic;
 
-import com.alibaba.fastjson.JSONObject;
-import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -26,6 +25,7 @@ import java.util.List;
  */
 
 @AllArgsConstructor
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum AlertPlugin {
 
     EMAIL("EMAIL", "邮件");
@@ -38,15 +38,4 @@ public enum AlertPlugin {
             add(EMAIL);
         }
     };
-
-    public String toString() {
-        JSONObject object = new JSONObject();
-        object.put("code", code);
-        object.put("name", name);
-        return object.toJSONString();
-    }
-
-    public static void main(String[] args) {
-        System.out.println(JSONObject.toJSONString(PLUGINS, SerializerFeature.WriteEnumUsingToString));
-    }
 }

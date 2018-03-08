@@ -9,7 +9,7 @@
 
 package com.suixingpay.datas.common.dic;
 
-import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -25,6 +25,7 @@ import java.util.List;
  */
 
 @AllArgsConstructor
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum  NodeStatusType {
 
     WORKING("WORKING", "工作中"), SUSPEND("SUSPEND", "已暂停");
@@ -45,13 +46,6 @@ public enum  NodeStatusType {
 
     public boolean isWorking() {
         return this == WORKING;
-    }
-
-    public String toString() {
-        JSONObject object = new JSONObject();
-        object.put("code", code);
-        object.put("name", name);
-        return object.toJSONString();
     }
 
 }

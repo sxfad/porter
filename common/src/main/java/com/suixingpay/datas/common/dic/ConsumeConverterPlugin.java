@@ -9,7 +9,7 @@
 
 package com.suixingpay.datas.common.dic;
 
-import com.alibaba.fastjson.JSONObject;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -24,9 +24,10 @@ import java.util.List;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年03月07日 10:00
  */
 @AllArgsConstructor
+@JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum ConsumeConverterPlugin {
-    CANAL_ROW("canalRow","Canal行格式"),
-    OGG_JSON("oggJson","oggJson格式");
+    CANAL_ROW("canalRow", "Canal行格式"),
+    OGG_JSON("oggJson", "oggJson格式");
 
     @Getter private final String code;
     @Getter private final String name;
@@ -37,12 +38,5 @@ public enum ConsumeConverterPlugin {
             add(OGG_JSON);
         }
     };
-
-    public String toString() {
-        JSONObject object = new JSONObject();
-        object.put("code", code);
-        object.put("name", name);
-        return object.toJSONString();
-    }
 
 }
