@@ -10,17 +10,21 @@ import java.util.List;
 public class Page<T> {
 
     public Page() {
+
+    }
+
+    public Page(int pageNo, int pageSize) {
+        this.pageNo = pageNo;
+        this.pageSize = pageSize;
     }
 
     private int pageNo = 1; // 当前页
 
     private int pageSize = 10; // 一页内记录数
 
-    private long totalItems = 0; // 总记录数
+    private long totalItems = 0; // 总数
 
     private List<T> result = new ArrayList<T>(); // 当前页数据
-
-    private long totalPages = 0; // 总页数
 
     public int getOffset() {
         return ((pageNo - 1) * pageSize);
@@ -46,11 +50,7 @@ public class Page<T> {
         if (totalItems < 0) {
             return -1;
         }
-        long count = totalItems / pageSize;
-        if (totalItems % pageSize > 0) {
-            count++;
-        }
-        return count;
+        return totalItems;
     }
 
     public void setTotalItems(long totalItems) {
@@ -66,11 +66,11 @@ public class Page<T> {
     }
 
     public long getTotalPages() {
-        return totalPages;
-    }
-
-    public void setTotalPages(long totalPages) {
-        this.totalPages = totalPages;
+        long count = totalItems / pageSize;
+        if (totalItems % pageSize > 0) {
+            count++;
+        }
+        return count;
     }
 
 }
