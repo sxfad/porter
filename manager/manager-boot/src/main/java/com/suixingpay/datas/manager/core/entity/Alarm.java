@@ -6,9 +6,9 @@ import java.util.Date;
  * 告警配置表 实体Entity
  * 
  * @author: FairyHood
- * @date: 2018-03-08 10:44:50
+ * @date: 2018-03-08 11:10:56
  * @version: V1.0-auto
- * @review: FairyHood/2018-03-08 10:44:50
+ * @review: FairyHood/2018-03-08 11:10:56
  */
 public class Alarm implements java.io.Serializable {
 
@@ -17,17 +17,8 @@ public class Alarm implements java.io.Serializable {
     /** 主键. */
     private Long id;
 
-    /** 发件人. */
-    private String addResser;
-
-    /** 邮件服务器. */
-    private String emailServer;
-
-    /** 邮箱账户. */
-    private String emailAccount;
-
-    /** 邮箱密码. */
-    private String emailPasswd;
+    /** 告警方式. */
+    private Long alarmType;
 
     /** 创建人. */
     private Long createUserId;
@@ -60,44 +51,14 @@ public class Alarm implements java.io.Serializable {
         this.id = id;
     }
 
-    /** 发件人 get方法. */
-    public String getAddResser() {
-        return addResser == null ? null : addResser.trim();
+    /** 告警方式 get方法. */
+    public Long getAlarmType() {
+        return alarmType;
     }
 
-    /** 发件人 set方法. */
-    public void setAddResser(String addResser) {
-        this.addResser = addResser == null ? null : addResser.trim();
-    }
-
-    /** 邮件服务器 get方法. */
-    public String getEmailServer() {
-        return emailServer == null ? null : emailServer.trim();
-    }
-
-    /** 邮件服务器 set方法. */
-    public void setEmailServer(String emailServer) {
-        this.emailServer = emailServer == null ? null : emailServer.trim();
-    }
-
-    /** 邮箱账户 get方法. */
-    public String getEmailAccount() {
-        return emailAccount == null ? null : emailAccount.trim();
-    }
-
-    /** 邮箱账户 set方法. */
-    public void setEmailAccount(String emailAccount) {
-        this.emailAccount = emailAccount == null ? null : emailAccount.trim();
-    }
-
-    /** 邮箱密码 get方法. */
-    public String getEmailPasswd() {
-        return emailPasswd == null ? null : emailPasswd.trim();
-    }
-
-    /** 邮箱密码 set方法. */
-    public void setEmailPasswd(String emailPasswd) {
-        this.emailPasswd = emailPasswd == null ? null : emailPasswd.trim();
+    /** 告警方式 set方法. */
+    public void setAlarmType(Long alarmType) {
+        this.alarmType = alarmType;
     }
 
     /** 创建人 get方法. */
