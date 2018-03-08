@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.suixingpay.datas.manager.core.mapper.DicAlarmPluginMapper">
+    <!-- 通用查询映射结果 
+    <resultMap id="BaseResultMap" type="com.suixingpay.datas.manager.core.entity.DicAlarmPlugin">
+        <result column="id" property="id" />
+        <result column="alert_type" property="alertType" />
+        <result column="code" property="code" />
+        <result column="name" property="name" />
+        <result column="state" property="state" />
+        <result column="remark" property="remark" />
+    </resultMap>-->
+
+    <!-- 通用查询结果列 
+    <sql id="Base_Column_List">
+        select id, alert_type AS alertType, code, name, state, remark from d_alarm_plugin
+    </sql>-->
+</mapper>

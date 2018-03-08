@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.suixingpay.datas.manager.core.mapper.AlarmPluginMapper">
+    <!-- 通用查询映射结果 
+    <resultMap id="BaseResultMap" type="com.suixingpay.datas.manager.core.entity.AlarmPlugin">
+        <result column="id" property="id" />
+        <result column="alarm_id" property="alarmId" />
+        <result column="alarm_type" property="alarmType" />
+        <result column="plugin_code" property="pluginCode" />
+        <result column="plugin_name" property="pluginName" />
+        <result column="plugin_value" property="pluginValue" />
+    </resultMap>-->
+
+    <!-- 通用查询结果列 
+    <sql id="Base_Column_List">
+        select id, alarm_id AS alarmId, alarm_type AS alarmType, plugin_code AS pluginCode, plugin_name AS pluginName, plugin_value AS pluginValue from s_alarm_plugin
+    </sql>-->
+</mapper>
