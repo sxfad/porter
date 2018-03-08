@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.suixingpay.datas.manager.core.mapper.DataSourceMapper">
+    <!-- 通用查询映射结果 
+    <resultMap id="BaseResultMap" type="com.suixingpay.datas.manager.core.entity.DataSource">
+        <result column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="data_type" property="dataType" />
+        <result column="data_json" property="dataJson" />
+        <result column="date_user" property="dateUser" />
+        <result column="date_passwd" property="datePasswd" />
+        <result column="date_url" property="dateUrl" />
+        <result column="date_servers" property="dateServers" />
+        <result column="date_topics" property="dateTopics" />
+        <result column="creater" property="creater" />
+        <result column="create_time" property="createTime" />
+        <result column="state" property="state" />
+        <result column="iscancel" property="iscancel" />
+        <result column="remark" property="remark" />
+    </resultMap>-->
+
+    <!-- 通用查询结果列 
+    <sql id="Base_Column_List">
+        select id, name, data_type AS dataType, data_json AS dataJson, date_user AS dateUser, date_passwd AS datePasswd, date_url AS dateUrl, date_servers AS dateServers, date_topics AS dateTopics, creater, create_time AS createTime, state, iscancel, remark from b_data_source
+    </sql>-->
+</mapper>

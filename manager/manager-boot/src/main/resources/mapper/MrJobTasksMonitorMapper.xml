@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.suixingpay.datas.manager.core.mapper.MrJobTasksMonitorMapper">
+    <!-- 通用查询映射结果 
+    <resultMap id="BaseResultMap" type="com.suixingpay.datas.manager.core.entity.MrJobTasksMonitor">
+        <result column="id" property="id" />
+        <result column="consume_lane" property="consumeLane" />
+        <result column="monitor_date" property="monitorDate" />
+        <result column="monitor_ymd" property="monitorYmd" />
+        <result column="monitor_hour" property="monitorHour" />
+        <result column="monitor_minute" property="monitorMinute" />
+        <result column="monitor_second" property="monitorSecond" />
+        <result column="insert_succes" property="insertSucces" />
+        <result column="insert_failure" property="insertFailure" />
+        <result column="update_succes" property="updateSucces" />
+        <result column="update_failure" property="updateFailure" />
+        <result column="delete_succes" property="deleteSucces" />
+        <result column="delete_failure" property="deleteFailure" />
+    </resultMap>-->
+
+    <!-- 通用查询结果列 
+    <sql id="Base_Column_List">
+        select id, consume_lane AS consumeLane, monitor_date AS monitorDate, monitor_ymd AS monitorYmd, monitor_hour AS monitorHour, monitor_minute AS monitorMinute, monitor_second AS monitorSecond, insert_succes AS insertSucces, insert_failure AS insertFailure, update_succes AS updateSucces, update_failure AS updateFailure, delete_succes AS deleteSucces, delete_failure AS deleteFailure from mr_job_tasks_monitor
+    </sql>-->
+</mapper>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.suixingpay.datas.manager.core.mapper.MrNodesScheduleMapper">
+    <!-- 通用查询映射结果 
+    <resultMap id="BaseResultMap" type="com.suixingpay.datas.manager.core.entity.MrNodesSchedule">
+        <result column="id" property="id" />
+        <result column="node_id" property="nodeId" />
+        <result column="computer_name" property="computerName" />
+        <result column="ip_address" property="ipAddress" />
+        <result column="heart_beat_date" property="heartBeatDate" />
+        <result column="process_number" property="processNumber" />
+        <result column="job_json" property="jobJson" />
+        <result column="create_user_id" property="createUserId" />
+        <result column="update_user_id" property="updateUserId" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="state" property="state" />
+        <result column="iscancel" property="iscancel" />
+        <result column="remark" property="remark" />
+    </resultMap>-->
+
+    <!-- 通用查询结果列 
+    <sql id="Base_Column_List">
+        select id, node_id AS nodeId, computer_name AS computerName, ip_address AS ipAddress, heart_beat_date AS heartBeatDate, process_number AS processNumber, job_json AS jobJson, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, remark from mr_nodes_schedule
+    </sql>-->
+</mapper>
