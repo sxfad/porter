@@ -26,6 +26,7 @@ public class MachineUtils {
     public static final String HOST_NAME = System.getProperty("user.name");
     public static final long CURRENT_JVM_PID = getPID();
     public static final String IP_ADDRESS = localhost();
+    public static final int CPU_NUMBER = Runtime.getRuntime().availableProcessors();
     private static final String LOCAL_EXCEPT_IP = "127.0.0.1,192.168.2.1,192.168.122.1";
     public static long getPID() {
         String processName = java.lang.management.ManagementFactory.getRuntimeMXBean().getName();

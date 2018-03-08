@@ -49,7 +49,7 @@ public class ETLRowTransformer implements Transformer {
             LOGGER.debug("try tranform row:{},{}", row.getPosition(), JSON.toJSONString(row));
             TableMapper tableMapper = work.getTableMapper(row.getSchema(), row.getTable());
             mappingRowData(tableMapper, row);
-            TableSchema table = findTable(work.getDataLoader(), row.getFinalSchema(), row.getFinalTable(), work);
+            TableSchema table = findTable(work.getDataLoader(), row.getFinalSchema(), row.getFinalTable());
             if (null != table) remedyColumns(table, row);
 
             //DataLoader自定义处理
@@ -98,20 +98,14 @@ public class ETLRowTransformer implements Transformer {
                 .forEach(p -> {
                     ETLColumn column = new ETLColumn(p.getName(), p.getDefaultValue(), p.getDefaultValue(), p.getDefaultValue(),
                             p.isPrimaryKey(), p.isRequired(), p.getTypeCode());
-                    if (row.getOpType() == EventType.INSERT) {
-                        row.getColumns().add(column);
-                    }
-                    //更新失败需要插入时才需要
-                    if (row.getOpType() == EventType.UPDATE) {
-                        row.getAppendsWhenUInsert().add(column);
-                    }
+                    row.getAdditionalRequired().add(column);
                 });
 
         row.getColumns().removeAll(removeables);
     }
 
 
-    private TableSchema findTable(DataLoader loader, String finalSchema, String finalTable, TaskWork work)
+    private TableSchema findTable(DataLoader loader, String finalSchema, String finalTable)
             throws TaskStopTriggerException {
         TableSchema table = null;
         try {

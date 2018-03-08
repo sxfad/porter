@@ -9,8 +9,6 @@
 package com.suixingpay.datas.node.core.event.etl;
 
 import com.suixingpay.datas.node.core.event.s.EventType;
-import org.apache.commons.lang3.tuple.Pair;
-
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -35,17 +33,22 @@ public class ETLRow {
     private final EventType opType;
     private final List<ETLColumn> columns;
 
-    private Map<String, Pair<Object, Object>> sqlKeys = new LinkedHashMap<>();
-    private Map<String, Pair<Object, Object>> sqlColumns = new LinkedHashMap<>();
+    /**
+     * 不包含在columns中
+     * 源端没有，目标端必填且没有默认值的字段
+     */
+    private List<ETLColumn> additionalRequired= new ArrayList<>();
 
-    //当Row类型为更新时并且更新失败的情况下尝试插入，插入时补充目标库缺失必填字段
-    private List<ETLColumn> appendsWhenUInsert = new ArrayList<>();
     //操作时间，保留该字段可以在需要的时候计算出与最终执行时间间隔
     private final Date opTime;
 
-
     //当前消息所在消费源的下标、顺序位置
     private final String position;
+
+    /**
+     * 扩展字段，不同的载入器插件有不同的值
+     */
+    private Map<String, Object> extendsField = new LinkedHashMap<>();
 
     public ETLRow(String schema, String table, EventType opType, List<ETLColumn> columns, Date opTime, String position) {
         this.schema = schema;
@@ -95,27 +98,19 @@ public class ETLRow {
         this.finalTable = finalTable;
     }
 
-    public Map<String, Pair<Object, Object>> getSqlKeys() {
-        return sqlKeys;
-    }
-
-    public void setSqlKeys(Map<String, Pair<Object, Object>> sqlKeys) {
-        this.sqlKeys = sqlKeys;
-    }
-
-    public Map<String, Pair<Object, Object>> getSqlColumns() {
-        return sqlColumns;
-    }
-
-    public void setSqlColumns(Map<String, Pair<Object, Object>> sqlColumns) {
-        this.sqlColumns = sqlColumns;
-    }
-
-    public List<ETLColumn> getAppendsWhenUInsert() {
-        return appendsWhenUInsert;
-    }
-
     public String getPosition() {
         return position;
+    }
+
+    public List<ETLColumn> getAdditionalRequired() {
+        return additionalRequired;
+    }
+
+    public void setAdditionalRequired(List<ETLColumn> additionalRequired) {
+        this.additionalRequired = additionalRequired;
+    }
+
+    public Map<String, Object> getExtendsField() {
+        return extendsField;
     }
 }

@@ -14,38 +14,28 @@ import com.suixingpay.datas.common.dic.SourceType;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
 /**
+ * Kudu配置
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年02月02日 14:24
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月02日 14:24
  */
-public class KafkaConfig  extends SourceConfig {
-    private static final String TOPIC_SPLIT_CHARACTER = ",";
-    @Setter @Getter private String servers;
-    @Setter @Getter private String group;
-    @Setter @Getter private List<String> topics;
-    @Setter @Getter private int pollTimeOut  = 30000;
-    @Setter @Getter private int oncePollSize = 1000;
-    @Setter @Getter private String firstConsumeFrom = "earliest";
-    @Setter @Getter private boolean autoCommit = Boolean.FALSE;
+public class KuduConfig extends SourceConfig {
+    //ip:port
+    @Setter @Getter private String server;
+    @Setter @Getter private int workerCount  = 30000;
 
-    public   KafkaConfig() {
-        sourceType = SourceType.KAFKA;
+    public KuduConfig() {
+        sourceType = SourceType.KUDU;
     }
 
     @Override
     protected void childStuff() {
-        String topicStr = getProperties().getOrDefault("topics", "");
-        topics = Arrays.stream(topicStr.split(TOPIC_SPLIT_CHARACTER)).collect(Collectors.toList());
     }
 
     @Override
     protected String[] childStuffColumns() {
-        return new String[] {"topics"};
+        return new String[] {};
     }
 }

@@ -5,5 +5,7 @@ dependencies {
             'org.apache.kafka:kafka-clients:1.0.0',
             'com.alibaba.otter:canal.client:1.0.25',
             'com.alibaba.otter:canal.protocol:1.0.25',
+            'org.apache.kudu:kudu-client:1.6.0',
+            'com.fasterxml.jackson.core:jackson-annotations:2.8.5'
     )
 }

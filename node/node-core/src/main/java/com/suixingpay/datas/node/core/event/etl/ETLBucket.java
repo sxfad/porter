@@ -32,9 +32,20 @@ public class ETLBucket {
      * 综上，将序列号改为UUID+timestamp组合
      */
     private final String sequence;
+    /**
+     * 单行LOAD
+     */
     private final List<ETLRow> rows;
+    /**
+     * 拆分为批次处理的行
+     */
     private final List<List<ETLRow>> batchRows;
+
+    /**
+     * 在SETL过程中的异常,如果有值，意味着改批次的数据就要回滚
+     */
     private Throwable exception = null;
+
     public ETLBucket(String sequence, List<ETLRow> rows) {
         this.sequence = sequence;
         this.rows = rows;

@@ -14,6 +14,7 @@ import org.springframework.core.io.support.SpringFactoriesLoader;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -24,7 +25,8 @@ import java.util.List;
 @Component
 @Scope("singleton")
 public class ExtractorFactory {
-    private List<Extractor> extractors = SpringFactoriesLoader.loadFactories(Extractor.class, null);
+    private final AtomicBoolean isSort = new AtomicBoolean(false);
+    private final List<Extractor> extractors = SpringFactoriesLoader.loadFactories(Extractor.class, null);
     public void extract(ETLBucket bucket, List<String> excludeTables, List<String> includeTables) {
         for (Extractor extractor : extractors) {
             extractor.extract(bucket, excludeTables, includeTables);

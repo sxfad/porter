@@ -43,12 +43,7 @@ public class TransformFactory {
 
     private void sort() {
         if (isSort.compareAndSet(false, true)) {
-            extractors.sort(new Comparator<Transformer>() {
-                @Override
-                public int compare(Transformer o1, Transformer o2) {
-                    return o1.order() - o2.order();
-                }
-            });
+            extractors.sort((o1, o2) -> o1.order() - o2.order());
         }
     }
 }
