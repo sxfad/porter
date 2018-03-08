@@ -8,12 +8,12 @@
  */
 package com.suixingpay.datas.manager;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.context.ConfigurableApplicationContext;
 
@@ -28,7 +28,8 @@ import com.suixingpay.datas.manager.config.ManagerConfig;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月15日 14:09
  */
 @ServletComponentScan
-@SpringBootApplication(scanBasePackages = { "com.suixingpay" }, exclude = { DataSourceAutoConfiguration.class })
+@SpringBootApplication(scanBasePackages = { "com.suixingpay" })
+@MapperScan("com.suixingpay.datas.manager.core.mapper")
 public class ManagerBootApplication {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ManagerBootApplication.class);
