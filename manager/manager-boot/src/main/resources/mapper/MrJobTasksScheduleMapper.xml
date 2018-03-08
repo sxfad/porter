@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.suixingpay.datas.manager.core.mapper.MrJobTasksScheduleMapper">
+    <!-- 通用查询映射结果 
+    <resultMap id="BaseResultMap" type="com.suixingpay.datas.manager.core.entity.MrJobTasksSchedule">
+        <result column="id" property="id" />
+        <result column="consume_lane" property="consumeLane" />
+        <result column="assign_node" property="assignNode" />
+        <result column="data_table" property="dataTable" />
+        <result column="register_time" property="registerTime" />
+        <result column="heart_beat_date" property="heartBeatDate" />
+        <result column="dispose_schedule" property="disposeSchedule" />
+        <result column="alarm_number" property="alarmNumber" />
+        <result column="insert_number" property="insertNumber" />
+        <result column="update_number" property="updateNumber" />
+        <result column="del_number" property="delNumber" />
+        <result column="create_user_id" property="createUserId" />
+        <result column="update_user_id" property="updateUserId" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="state" property="state" />
+        <result column="iscancel" property="iscancel" />
+        <result column="remark" property="remark" />
+    </resultMap>-->
+
+    <!-- 通用查询结果列 
+    <sql id="Base_Column_List">
+        select id, consume_lane AS consumeLane, assign_node AS assignNode, data_table AS dataTable, register_time AS registerTime, heart_beat_date AS heartBeatDate, dispose_schedule AS disposeSchedule, alarm_number AS alarmNumber, insert_number AS insertNumber, update_number AS updateNumber, del_number AS delNumber, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, remark from mr_job_tasks_schedule
+    </sql>-->
+</mapper>

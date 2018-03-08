@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.suixingpay.datas.manager.core.mapper.JobTasksFieldMapper">
+    <!-- 通用查询映射结果 
+    <resultMap id="BaseResultMap" type="com.suixingpay.datas.manager.core.entity.JobTasksField">
+        <result column="id" property="id" />
+        <result column="job_task_id" property="jobTaskId" />
+        <result column="job_table_id" property="jobTableId" />
+        <result column="source_table_id" property="sourceTableId" />
+        <result column="target_table_id" property="targetTableId" />
+        <result column="source_field" property="sourceField" />
+        <result column="target_field" property="targetField" />
+    </resultMap>-->
+
+    <!-- 通用查询结果列 
+    <sql id="Base_Column_List">
+        select id, job_task_id AS jobTaskId, job_table_id AS jobTableId, source_table_id AS sourceTableId, target_table_id AS targetTableId, source_field AS sourceField, target_field AS targetField from job_tasks_field
+    </sql>-->
+</mapper>

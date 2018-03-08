@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.suixingpay.datas.manager.core.mapper.JobTasksMapper">
+    <!-- 通用查询映射结果 
+    <resultMap id="BaseResultMap" type="com.suixingpay.datas.manager.core.entity.JobTasks">
+        <result column="id" property="id" />
+        <result column="job_name" property="jobName" />
+        <result column="source_consume_adt" property="sourceConsumeAdt" />
+        <result column="source_convert_adt" property="sourceConvertAdt" />
+        <result column="source_data_type" property="sourceDataType" />
+        <result column="source_data_source" property="sourceDataSource" />
+        <result column="target_load_adt" property="targetLoadAdt" />
+        <result column="target_data_type" property="targetDataType" />
+        <result column="target_data_source" property="targetDataSource" />
+        <result column="creater" property="creater" />
+        <result column="create_time" property="createTime" />
+        <result column="state" property="state" />
+        <result column="iscancel" property="iscancel" />
+        <result column="remark" property="remark" />
+    </resultMap>-->
+
+    <!-- 通用查询结果列 
+    <sql id="Base_Column_List">
+        select id, job_name AS jobName, source_consume_adt AS sourceConsumeAdt, source_convert_adt AS sourceConvertAdt, source_data_type AS sourceDataType, source_data_source AS sourceDataSource, target_load_adt AS targetLoadAdt, target_data_type AS targetDataType, target_data_source AS targetDataSource, creater, create_time AS createTime, state, iscancel, remark from job_tasks
+    </sql>-->
+</mapper>

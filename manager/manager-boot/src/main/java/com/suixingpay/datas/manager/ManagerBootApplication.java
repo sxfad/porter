@@ -20,7 +20,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import com.suixingpay.datas.common.cluster.ClusterProviderProxy;
 import com.suixingpay.datas.manager.config.ManagerConfig;
 
-
 /**
  *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -29,7 +28,7 @@ import com.suixingpay.datas.manager.config.ManagerConfig;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月15日 14:09
  */
 @ServletComponentScan
-@SpringBootApplication(scanBasePackages = {"com.suixingpay"}, exclude = {DataSourceAutoConfiguration.class})
+@SpringBootApplication(scanBasePackages = { "com.suixingpay" }, exclude = { DataSourceAutoConfiguration.class })
 public class ManagerBootApplication {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ManagerBootApplication.class);
@@ -39,9 +38,9 @@ public class ManagerBootApplication {
         app.setBannerMode(Banner.Mode.OFF);
         ConfigurableApplicationContext context = app.run(args);
         LOGGER.info("ManagerApplication is success!");
-        //注入spring工具类
+        // 注入spring工具类
         ManagerContext.INSTANCE.setApplicationContext(context);
-        //获取配置
+        // 获取配置
         ManagerConfig config = context.getBean(ManagerConfig.class);
         try {
             ClusterProviderProxy.INSTANCE.initialize(config.getCluster());

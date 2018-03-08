@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.suixingpay.datas.manager.core.mapper.CUserMapper">
+    <!-- 通用查询映射结果 
+    <resultMap id="BaseResultMap" type="com.suixingpay.datas.manager.core.entity.CUser">
+        <result column="id" property="id" />
+        <result column="loginname" property="loginname" />
+        <result column="loginpw" property="loginpw" />
+        <result column="nickname" property="nickname" />
+        <result column="email" property="email" />
+        <result column="mobile" property="mobile" />
+        <result column="state" property="state" />
+        <result column="remark" property="remark" />
+    </resultMap>-->
+
+    <!-- 通用查询结果列 
+    <sql id="Base_Column_List">
+        select id, loginname, loginpw, nickname, email, mobile, state, remark from c_user
+    </sql>-->
+</mapper>

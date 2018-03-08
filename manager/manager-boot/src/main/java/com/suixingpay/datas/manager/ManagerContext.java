@@ -20,6 +20,7 @@ import org.springframework.context.ApplicationContext;
 public enum ManagerContext {
     INSTANCE();
     private ApplicationContext context;
+
     public <T> T getBean(Class<T> clazz) {
         return null != context ? context.getBean(clazz) : null;
     }

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.suixingpay.datas.manager.core.mapper.NodesMapper">
+    <!-- 通用查询映射结果 
+    <resultMap id="BaseResultMap" type="com.suixingpay.datas.manager.core.entity.Nodes">
+        <result column="id" property="id" />
+        <result column="node_id" property="nodeId" />
+        <result column="machine_name" property="machineName" />
+        <result column="ip_address" property="ipAddress" />
+        <result column="pid_number" property="pidNumber" />
+        <result column="heart_beat_time" property="heartBeatTime" />
+        <result column="state" property="state" />
+        <result column="type" property="type" />
+        <result column="creater" property="creater" />
+        <result column="create_time" property="createTime" />
+        <result column="iscancel" property="iscancel" />
+        <result column="remark" property="remark" />
+    </resultMap>-->
+
+    <!-- 通用查询结果列 
+    <sql id="Base_Column_List">
+        select id, node_id AS nodeId, machine_name AS machineName, ip_address AS ipAddress, pid_number AS pidNumber, heart_beat_time AS heartBeatTime, state, type, creater, create_time AS createTime, iscancel, remark from b_nodes
+    </sql>-->
+</mapper>

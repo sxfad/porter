@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.suixingpay.datas.manager.core.mapper.MrNodesMonitorMapper">
+    <!-- 通用查询映射结果 
+    <resultMap id="BaseResultMap" type="com.suixingpay.datas.manager.core.entity.MrNodesMonitor">
+        <result column="id" property="id" />
+        <result column="schedule_id" property="scheduleId" />
+        <result column="node_id" property="nodeId" />
+        <result column="monitor_date" property="monitorDate" />
+        <result column="monitor_ymd" property="monitorYmd" />
+        <result column="monitor_hour" property="monitorHour" />
+        <result column="monitor_minute" property="monitorMinute" />
+        <result column="monitor_second" property="monitorSecond" />
+        <result column="monitor_tps" property="monitorTps" />
+        <result column="monitor_alarm" property="monitorAlarm" />
+    </resultMap>-->
+
+    <!-- 通用查询结果列 
+    <sql id="Base_Column_List">
+        select id, schedule_id AS scheduleId, node_id AS nodeId, monitor_date AS monitorDate, monitor_ymd AS monitorYmd, monitor_hour AS monitorHour, monitor_minute AS monitorMinute, monitor_second AS monitorSecond, monitor_tps AS monitorTps, monitor_alarm AS monitorAlarm from mr_nodes_monitor
+    </sql>-->
+</mapper>
