@@ -13,8 +13,9 @@ import org.springframework.stereotype.Service;
 import com.suixingpay.datas.manager.core.mapper.DicAlarmPluginMapper;
 import com.suixingpay.datas.manager.service.DicAlarmPluginService;
 
- /**  
+/**
  * 告警配置策略字典表 服务实现类
+ * 
  * @author: FairyHood
  * @date: 2018-03-08 10:46:01
  * @version: V1.0-auto
@@ -22,9 +23,8 @@ import com.suixingpay.datas.manager.service.DicAlarmPluginService;
  */
 @Service
 public class DicAlarmPluginServiceImpl implements DicAlarmPluginService {
-	
-	@Autowired
-	private DicAlarmPluginMapper dicAlarmPluginMapper;
-	
-	
+
+    @Autowired
+    private DicAlarmPluginMapper dicAlarmPluginMapper;
+
 }

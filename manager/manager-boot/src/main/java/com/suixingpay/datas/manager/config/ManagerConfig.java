@@ -25,5 +25,7 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "manager")
 @Component
 public class ManagerConfig {
-    @Setter @Getter private ClusterConfig cluster;
+    @Setter
+    @Getter
+    private ClusterConfig cluster;
 }

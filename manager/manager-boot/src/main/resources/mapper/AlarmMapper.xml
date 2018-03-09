@@ -14,10 +14,10 @@
         <result column="remark" property="remark" />
     </resultMap>-->
 
-    <!-- 通用查询结果列 -->
+    <!-- 通用查询结果列
     <sql id="Base_Column_List">
         select id, alarm_type AS alarmType, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, remark from s_alarm
-    </sql>
+    </sql> -->
     <!-- 新增 -->
     <insert id="insert">
 	    insert into s_alarm (alarm_type, create_user_id, 

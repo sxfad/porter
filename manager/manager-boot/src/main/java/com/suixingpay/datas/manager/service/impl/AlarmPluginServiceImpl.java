@@ -13,8 +13,9 @@ import org.springframework.stereotype.Service;
 import com.suixingpay.datas.manager.core.mapper.AlarmPluginMapper;
 import com.suixingpay.datas.manager.service.AlarmPluginService;
 
- /**  
+/**
  * 告警配置策略内容表 服务实现类
+ * 
  * @author: FairyHood
  * @date: 2018-03-08 10:46:01
  * @version: V1.0-auto
@@ -22,9 +23,8 @@ import com.suixingpay.datas.manager.service.AlarmPluginService;
  */
 @Service
 public class AlarmPluginServiceImpl implements AlarmPluginService {
-	
-	@Autowired
-	private AlarmPluginMapper alarmPluginMapper;
-	
-	
+
+    @Autowired
+    private AlarmPluginMapper alarmPluginMapper;
+
 }

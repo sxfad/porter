@@ -19,6 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 
 /**
  * 后台配置推送
+ * 
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月15日 10:09
  * @version: V1.0
@@ -46,13 +47,13 @@ public class ZKClusterConfigListener extends ZookeeperClusterListener implements
             protected String getPath() {
                 return listenPath();
             }
+
             @Override
             protected boolean doFilter(ZookeeperClusterEvent event) {
                 return false;
             }
         };
     }
-
 
     @Override
     public void push(ConfigPushCommand command) throws Exception {
@@ -67,6 +68,5 @@ public class ZKClusterConfigListener extends ZookeeperClusterListener implements
             client.changeData(configPath, false, false, command.render());
         }
     }
-
 
 }

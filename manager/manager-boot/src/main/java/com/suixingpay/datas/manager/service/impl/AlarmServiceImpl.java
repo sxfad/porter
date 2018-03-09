@@ -35,8 +35,8 @@ public class AlarmServiceImpl implements AlarmService {
     }
 
     @Override
-    public Integer update(Long id,Alarm alarm) {
-        return alarmMapper.update(id,alarm);
+    public Integer update(Long id, Alarm alarm) {
+        return alarmMapper.update(id, alarm);
     }
 
     @Override
@@ -52,7 +52,7 @@ public class AlarmServiceImpl implements AlarmService {
     @Override
     public Page<Alarm> page(Page<Alarm> page) {
         Integer total = alarmMapper.pageAll(1);
-        if(total>0) {
+        if (total > 0) {
             page.setTotalItems(total);
             page.setResult(alarmMapper.page(page, 1));
         }

@@ -12,7 +12,6 @@ import org.springframework.test.context.junit4.SpringRunner;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT, classes = ManagerBootApplication.class)
-//@ActiveProfiles("dev")// 开发环境
-public class BaseTest{
-
+// @ActiveProfiles("dev")// 开发环境
+public class BaseTest {
 }

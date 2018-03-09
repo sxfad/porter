@@ -94,7 +94,7 @@ public class ResponseMessage implements Serializable {
             System.out.println(str);
         }
     }
-    
+
     public ResponseMessage include(Class<?> type, Collection<String> fields) {
         if (includes == null)
             includes = new HashMap<>();

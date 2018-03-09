@@ -10,10 +10,12 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.suixingpay.datas.manager.exception.BaseException;
+import com.suixingpay.datas.manager.exception.ExceptionCode;
 import com.suixingpay.datas.manager.web.message.ResponseMessage;
 
 /**
  * web层异常拦截
+ * 
  * @author guohongjian[guo_hj@suixingpay.com]
  *
  */

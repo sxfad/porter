@@ -16,43 +16,49 @@ import com.suixingpay.datas.manager.web.page.Page;
  * @review: FairyHood/2018-03-08 10:46:01
  */
 public interface AlarmMapper {
-    
+
     /**
      * 新增
+     * 
      * @param alarm
      */
-    public Integer insert(Alarm alarm);
-    
+    Integer insert(Alarm alarm);
+
     /**
      * 修改
+     * 
      * @param alarm
      */
-    public Integer update(@Param("id")Long id,@Param("alarm") Alarm alarm);
-    
+    Integer update(@Param("id") Long id, @Param("alarm") Alarm alarm);
+
     /**
      * 刪除
+     * 
      * @param id
      * @return
      */
-    public Integer delete(Long id);
-    
+    Integer delete(Long id);
+
     /**
      * 根據主鍵id查找數據
+     * 
      * @param id
      * @return
      */
-    public Alarm selectById(Long id);
-    
+    Alarm selectById(Long id);
+
     /**
      * 分頁
+     * 
      * @return
      */
-    public List<Alarm> page(@Param("page")Page<Alarm> page,@Param("state")Integer state);
-    
+    List<Alarm> page(@Param("page") Page<Alarm> page, @Param("state") Integer state);
+
     /**
      * 分頁All
+     * 
      * @return
      */
-    public Integer pageAll(@Param("state")Integer state);
+    Integer pageAll(@Param("state") Integer state);
 
 }

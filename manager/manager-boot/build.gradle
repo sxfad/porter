@@ -51,6 +51,8 @@ dependencies {
     compile "org.springframework.boot:spring-boot-starter-web:${springVersion}"
     compile "io.springfox:springfox-swagger2:${swaggerVersion}"
     compile "io.springfox:springfox-swagger-ui:${swaggerVersion}"
+    //token
+    compile 'io.jsonwebtoken:jjwt:0.6.0'
     //数据源
     compile 'com.alibaba:druid-spring-boot-starter:1.1.2'
     compile 'mysql:mysql-connector-java:6.0.6'

@@ -16,6 +16,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.suixingpay.datas.common.cluster.ClusterProviderProxy;
 import com.suixingpay.datas.manager.config.ManagerConfig;
@@ -27,6 +29,8 @@ import com.suixingpay.datas.manager.config.ManagerConfig;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月15日 14:09
  */
+@EnableScheduling
+@EnableTransactionManagement
 @ServletComponentScan
 @SpringBootApplication(scanBasePackages = { "com.suixingpay" })
 @MapperScan("com.suixingpay.datas.manager.core.mapper")

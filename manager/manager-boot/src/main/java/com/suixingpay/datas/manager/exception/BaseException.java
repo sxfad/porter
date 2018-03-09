@@ -30,6 +30,7 @@ public class BaseException extends RuntimeException {
     public BaseException(Throwable t) {
         super(t);
     }
+
     public BaseException(String message, Throwable t) {
         super(message, t);
     }

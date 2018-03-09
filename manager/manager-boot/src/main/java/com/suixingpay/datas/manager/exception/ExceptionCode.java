@@ -1,7 +1,8 @@
-package com.suixingpay.datas.manager.web.handler;
+package com.suixingpay.datas.manager.exception;
 
 /**
  * 异常
+ * 
  * @author guohongjian[guo_hj@suixingpay.com]
  *
  */
