@@ -13,7 +13,7 @@ import com.suixingpay.datas.manager.web.page.Page;
  * @review: FairyHood/2018-03-08 10:46:01
  */
 
-public interface DicAlarmPluginService{
+public interface DicAlarmPluginService {
 
     Integer insert(DicAlarmPlugin dicAlarmPlugin);
 

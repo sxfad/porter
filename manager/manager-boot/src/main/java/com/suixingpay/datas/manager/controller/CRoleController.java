@@ -1,7 +1,10 @@
 package com.suixingpay.datas.manager.controller;
 
-import static com.suixingpay.datas.manager.web.message.ResponseMessage.ok;
-
+import com.suixingpay.datas.manager.core.entity.CRole;
+import com.suixingpay.datas.manager.service.CRoleService;
+import com.suixingpay.datas.manager.web.message.ResponseMessage;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,12 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.suixingpay.datas.manager.core.entity.CRole;
-import com.suixingpay.datas.manager.service.CRoleService;
-import com.suixingpay.datas.manager.web.message.ResponseMessage;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import static com.suixingpay.datas.manager.web.message.ResponseMessage.ok;
 
 /**
  * 角色表 controller控制器

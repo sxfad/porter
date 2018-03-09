@@ -7,13 +7,12 @@
  */
 package com.suixingpay.datas.manager.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.suixingpay.datas.manager.core.entity.Alarm;
 import com.suixingpay.datas.manager.core.mapper.AlarmMapper;
 import com.suixingpay.datas.manager.service.AlarmService;
 import com.suixingpay.datas.manager.web.page.Page;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * 告警配置表 服务实现类

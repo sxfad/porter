@@ -11,7 +11,7 @@ import com.suixingpay.datas.manager.web.page.Page;
  * @version: V1.0-auto
  * @review: FairyHood/2018-03-08 10:46:01
  */
-public interface AlarmPluginService{
+public interface AlarmPluginService {
 
     Integer insert(AlarmPlugin alarmPlugin);
 

@@ -2,13 +2,10 @@ package com.suixingpay.datas.manager.service;
 
 import com.suixingpay.datas.manager.core.entity.MrJobTasksMonitor;
 import com.suixingpay.datas.manager.web.page.Page;
-import org.apache.ibatis.annotations.Param;
-
-import java.util.List;
 
 /**
  * 任务泳道实时监控表 服务接口类
- * 
+ *
  * @author: FairyHood
  * @date: 2018-03-07 13:40:30
  * @version: V1.0-auto
