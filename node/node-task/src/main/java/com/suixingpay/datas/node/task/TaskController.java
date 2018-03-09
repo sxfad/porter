@@ -19,6 +19,7 @@ import com.suixingpay.datas.node.core.NodeContext;
 import com.suixingpay.datas.node.core.consumer.DataConsumer;
 import com.suixingpay.datas.node.core.task.Task;
 import com.suixingpay.datas.node.task.worker.TaskWorker;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
@@ -95,6 +96,11 @@ public class TaskController implements TaskEventListener {
     @Override
     public void onEvent(TaskConfig event) {
         if (event.getStatus().isWorking() && NodeContext.INSTANCE.getNodeStatus().isWorking()) {
+            //新建任务如果指定了节点ID,但与当前节点不符时，停止抢占任务
+            if (!StringUtils.isBlank(event.getNodeId())
+                    && !("," + event.getNodeId() + ",").contains(("," + NodeContext.INSTANCE.getNodeId() + ","))) {
+                return;
+            }
             try {
                 startTask(event);
             } catch (Exception e) {

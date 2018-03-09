@@ -69,10 +69,13 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
 
     @Override
     public void push(TaskPushCommand command) throws Exception {
+        //泳道id从现有api无法获得，随后修改
+        String swimlaneId = "";
         String taskPath = ZK_PATH + "/" + command.getConfig().getTaskId();
-        String pushPath = taskPath + "/dist/" + "";
-
+        String pushPath = taskPath + "/dist/" + swimlaneId;
+        String errorPath = taskPath + "/error/" + swimlaneId;
         client.createWhenNotExists(taskPath, false, false, null);
         client.changeData(pushPath, false, false, JSONObject.toJSONString(command.getConfig()));
+        client.delete(errorPath);
     }
 }
