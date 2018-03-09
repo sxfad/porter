@@ -17,4 +17,62 @@
     <sql id="Base_Column_List">
         select id, loginname, loginpw, nickname, email, mobile, state, remark from c_user
     </sql>-->
+
+    <!-- 新增 -->
+    <insert id="insert">
+        insert into c_user(
+        loginname,
+        loginpw,
+        nickname,
+        email,
+        mobile,
+        state,
+        remark
+        ) values (
+        #{loginname},
+        #{loginpw},
+        #{nickname},
+        #{email},
+        #{mobile},
+        #{state},
+        #{remark}
+        )
+    </insert>
+
+    <!-- 修改 -->
+    <update id="update">
+        update c_user
+        set
+        loginname = #{cuser.loginname},
+        loginpw = #{cuser.loginpw},
+        nickname = #{cuser.nickname},
+        email = #{cuser.email},
+        mobile = #{cuser.mobile},
+        state = #{cuser.state},
+        remark = #{cuser.remark}
+        where id = #{id}
+    </update>
+
+    <!-- 刪除 -->
+    <delete id="delete">
+        delete from c_user where id = #{id}
+    </delete>
+
+    <!-- 根据主鍵查找 -->
+    <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.CUser">
+        select id, loginname, loginpw, nickname, email, mobile, state, remark from c_user
+        where id = #{id}
+    </select>
+
+    <!-- 分页All -->
+    <select id="pageAll" resultType="java.lang.Integer">
+        select count(id) from c_user
+        where 1=1
+    </select>
+
+    <!-- 分页 -->
+    <select id="page" resultType="com.suixingpay.datas.manager.core.entity.CUser">
+        select id, loginname, loginpw, nickname, email, mobile, state, remark from c_user
+        where 1=1 limit #{page.offset},#{page.pageSize}
+    </select>
 </mapper>

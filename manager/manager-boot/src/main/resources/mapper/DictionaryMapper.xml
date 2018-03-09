@@ -17,4 +17,62 @@
     <sql id="Base_Column_List">
         select id, code, name, parentcode, level, dictype, state, remark from d_dictionary
     </sql>-->
+
+    <!-- 新增 -->
+    <insert id="insert">
+        insert into d_dictionary(
+        code,
+        name,
+        parentcode,
+        level,
+        dictype,
+        state,
+        remark
+        ) values (
+        #{code},
+        #{name},
+        #{parentcode},
+        #{level},
+        #{dictype},
+        #{state},
+        #{remark}
+        )
+    </insert>
+
+    <!-- 修改 -->
+    <update id="update">
+        update d_dictionary
+        set
+        code = #{dictionary.code},
+        name = #{dictionary.name},
+        parentcode = #{dictionary.parentcode},
+        level = #{dictionary.level},
+        dictype = #{dictionary.dictype},
+        state = #{dictionary.state},
+        remark = #{dictionary.remark}
+        where id = #{id}
+    </update>
+
+    <!-- 刪除 -->
+    <delete id="delete">
+        delete from d_dictionary where id = #{id}
+    </delete>
+
+    <!-- 根据主鍵查找 -->
+    <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.Dictionary">
+        select id, code, name, parentcode, level, dictype, state, remark from d_dictionary
+        where id = #{id}
+    </select>
+
+    <!-- 分页All -->
+    <select id="pageAll" resultType="java.lang.Integer">
+        select count(id) from d_dictionary
+        where 1=1
+    </select>
+
+    <!-- 分页 -->
+    <select id="page" resultType="com.suixingpay.datas.manager.core.entity.Dictionary">
+        select id, code, name, parentcode, level, dictype, state, remark from d_dictionary
+        where 1=1 limit #{page.offset},#{page.pageSize}
+    </select>
 </mapper>

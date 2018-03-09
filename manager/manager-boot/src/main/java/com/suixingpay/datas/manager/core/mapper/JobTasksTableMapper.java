@@ -1,5 +1,11 @@
 package com.suixingpay.datas.manager.core.mapper;
 
+import com.suixingpay.datas.manager.core.entity.JobTasksTable;
+import com.suixingpay.datas.manager.web.page.Page;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+
 /**
  * 任务数据表对照关系表 Mapper接口
  * 
@@ -9,5 +15,44 @@ package com.suixingpay.datas.manager.core.mapper;
  * @review: FairyHood/2018-03-07 13:40:30
  */
 public interface JobTasksTableMapper {
+
+    /**
+     * 新增
+     * @param jobTasksTable
+     */
+    Integer insert(JobTasksTable jobTasksTable);
+
+    /**
+     * 修改
+     * @param jobTasksTable
+     */
+    Integer update(@Param("id") Long id, @Param("jobTasksTable") JobTasksTable jobTasksTable);
+
+    /**
+     * 刪除
+     * @param id
+     * @return
+     */
+    Integer delete(Long id);
+
+    /**
+     * 根據主鍵id查找數據
+     * @param id
+     * @return
+     */
+    JobTasksTable selectById(Long id);
+
+    /**
+     * 分頁
+     * @return
+     */
+    List<JobTasksTable> page(@Param("page") Page<JobTasksTable> page, @Param("state") Integer state);
+
+    /**
+     * 分頁All
+     * @return
+     */
+    Integer pageAll(@Param("state") Integer state);
+
 
 }

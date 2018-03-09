@@ -22,4 +22,77 @@
     <sql id="Base_Column_List">
         select id, consume_lane AS consumeLane, monitor_date AS monitorDate, monitor_ymd AS monitorYmd, monitor_hour AS monitorHour, monitor_minute AS monitorMinute, monitor_second AS monitorSecond, insert_succes AS insertSucces, insert_failure AS insertFailure, update_succes AS updateSucces, update_failure AS updateFailure, delete_succes AS deleteSucces, delete_failure AS deleteFailure from mr_job_tasks_monitor
     </sql>-->
+
+    <!-- 新增 -->
+    <insert id="insert">
+        insert into mr_job_tasks_monitor(
+        consume_lane,
+        monitor_date,
+        monitor_ymd,
+        monitor_hour,
+        monitor_minute,
+        monitor_second,
+        insert_succes,
+        insert_failure,
+        update_succes,
+        update_failure,
+        delete_succes,
+        delete_failure
+        ) values (
+        #{consumeLane},
+        #{monitorDate},
+        #{monitorYmd},
+        #{monitorHour},
+        #{monitorMinute},
+        #{monitorSecond},
+        #{insertSucces},
+        #{insertFailure},
+        #{updateSucces},
+        #{updateFailure},
+        #{deleteSucces},
+        #{deleteFailure}
+        )
+    </insert>
+
+    <!-- 修改 -->
+    <update id="update">
+        update mr_job_tasks_monitor
+        set
+        consume_lane = #{mrJobTasksMonitor.consumeLane},
+        monitor_date = #{mrJobTasksMonitor.monitorDate},
+        monitor_ymd = #{mrJobTasksMonitor.monitorYmd},
+        monitor_hour = #{mrJobTasksMonitor.monitorHour},
+        monitor_minute = #{mrJobTasksMonitor.monitorMinute},
+        monitor_second = #{mrJobTasksMonitor.monitorSecond},
+        insert_succes = #{mrJobTasksMonitor.insertSucces},
+        insert_failure = #{mrJobTasksMonitor.insertFailure},
+        update_succes = #{mrJobTasksMonitor.updateSucces},
+        update_failure = #{mrJobTasksMonitor.updateFailure},
+        delete_succes = #{mrJobTasksMonitor.deleteSucces},
+        delete_failure = #{mrJobTasksMonitor.deleteFailure}
+        where id = #{id}
+    </update>
+
+    <!-- 刪除 -->
+    <delete id="delete">
+        delete from mr_job_tasks_monitor where id = #{id}
+    </delete>
+
+    <!-- 根据主鍵查找 -->
+    <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.MrJobTasksMonitor">
+        select id, consume_lane AS consumeLane, monitor_date AS monitorDate, monitor_ymd AS monitorYmd, monitor_hour AS monitorHour, monitor_minute AS monitorMinute, monitor_second AS monitorSecond, insert_succes AS insertSucces, insert_failure AS insertFailure, update_succes AS updateSucces, update_failure AS updateFailure, delete_succes AS deleteSucces, delete_failure AS deleteFailure from mr_job_tasks_monitor
+        where id = #{id}
+    </select>
+
+    <!-- 分页All -->
+    <select id="pageAll" resultType="java.lang.Integer">
+        select count(id) from mr_job_tasks_monitor
+        where 1=1
+    </select>
+
+    <!-- 分页 -->
+    <select id="page" resultType="com.suixingpay.datas.manager.core.entity.MrJobTasksMonitor">
+        select id, consume_lane AS consumeLane, monitor_date AS monitorDate, monitor_ymd AS monitorYmd, monitor_hour AS monitorHour, monitor_minute AS monitorMinute, monitor_second AS monitorSecond, insert_succes AS insertSucces, insert_failure AS insertFailure, update_succes AS updateSucces, update_failure AS updateFailure, delete_succes AS deleteSucces, delete_failure AS deleteFailure from mr_job_tasks_monitor
+        where 1=1 limit #{page.offset},#{page.pageSize}
+    </select>
 </mapper>

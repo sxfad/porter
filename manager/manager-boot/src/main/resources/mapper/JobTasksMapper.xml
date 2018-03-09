@@ -23,4 +23,80 @@
     <sql id="Base_Column_List">
         select id, job_name AS jobName, source_consume_adt AS sourceConsumeAdt, source_convert_adt AS sourceConvertAdt, source_data_type AS sourceDataType, source_data_source AS sourceDataSource, target_load_adt AS targetLoadAdt, target_data_type AS targetDataType, target_data_source AS targetDataSource, creater, create_time AS createTime, state, iscancel, remark from job_tasks
     </sql>-->
+
+    <!-- 新增 -->
+    <insert id="insert">
+        insert into job_tasks(
+        job_name,
+        source_consume_adt,
+        source_convert_adt,
+        source_data_type,
+        source_data_source,
+        target_load_adt,
+        target_data_type,
+        target_data_source,
+        creater,
+        create_time,
+        state,
+        iscancel,
+        remark
+        ) values (
+        #{jobName},
+        #{sourceConsumeAdt},
+        #{sourceConvertAdt},
+        #{sourceDataType},
+        #{sourceDataSource},
+        #{targetLoadAdt},
+        #{targetDataType},
+        #{targetDataSource},
+        #{creater},
+        #{createTime},
+        #{state},
+        #{iscancel},
+        #{remark}
+        )
+    </insert>
+
+    <!-- 修改 -->
+    <update id="update">
+        update job_tasks
+        set
+        job_name = #{jobTasks.jobName},
+        source_consume_adt = #{jobTasks.sourceConsumeAdt},
+        source_convert_adt = #{jobTasks.sourceConvertAdt},
+        source_data_type = #{jobTasks.sourceDataType},
+        source_data_source = #{jobTasks.sourceDataSource},
+        target_load_adt = #{jobTasks.targetLoadAdt},
+        target_data_type = #{jobTasks.targetDataType},
+        target_data_source = #{jobTasks.targetDataSource},
+        creater = #{jobTasks.creater},
+        create_time = #{jobTasks.createTime},
+        state = #{jobTasks.state},
+        iscancel = #{jobTasks.iscancel},
+        remark = #{jobTasks.remark}
+        where id = #{id}
+    </update>
+
+    <!-- 刪除 -->
+    <delete id="delete">
+        delete from job_tasks where id = #{id}
+    </delete>
+
+    <!-- 根据主鍵查找 -->
+    <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.JobTasks">
+        select id, job_name AS jobName, source_consume_adt AS sourceConsumeAdt, source_convert_adt AS sourceConvertAdt, source_data_type AS sourceDataType, source_data_source AS sourceDataSource, target_load_adt AS targetLoadAdt, target_data_type AS targetDataType, target_data_source AS targetDataSource, creater, create_time AS createTime, state, iscancel, remark from job_tasks
+        where id = #{id}
+    </select>
+
+    <!-- 分页All -->
+    <select id="pageAll" resultType="java.lang.Integer">
+        select count(id) from job_tasks
+        where 1=1
+    </select>
+
+    <!-- 分页 -->
+    <select id="page" resultType="com.suixingpay.datas.manager.core.entity.JobTasks">
+        select id, job_name AS jobName, source_consume_adt AS sourceConsumeAdt, source_convert_adt AS sourceConvertAdt, source_data_type AS sourceDataType, source_data_source AS sourceDataSource, target_load_adt AS targetLoadAdt, target_data_type AS targetDataType, target_data_source AS targetDataSource, creater, create_time AS createTime, state, iscancel, remark from job_tasks
+        where 1=1 limit #{page.offset},#{page.pageSize}
+    </select>
 </mapper>

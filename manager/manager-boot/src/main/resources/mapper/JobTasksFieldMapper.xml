@@ -16,4 +16,59 @@
     <sql id="Base_Column_List">
         select id, job_task_id AS jobTaskId, job_table_id AS jobTableId, source_table_id AS sourceTableId, target_table_id AS targetTableId, source_field AS sourceField, target_field AS targetField from job_tasks_field
     </sql>-->
+
+    <!-- 新增 -->
+    <insert id="insert">
+        insert into job_tasks_field(
+        job_task_id,
+        job_table_id,
+        source_table_id,
+        target_table_id,
+        source_field,
+        target_field
+        ) values (
+        #{jobTaskId},
+        #{jobTableId},
+        #{sourceTableId},
+        #{targetTableId},
+        #{sourceField},
+        #{targetField}
+        )
+    </insert>
+
+    <!-- 修改 -->
+    <update id="update">
+        update job_tasks_field
+        set
+        job_task_id = #{jobTasksField.jobTaskId},
+        job_table_id = #{jobTasksField.jobTableId},
+        source_table_id = #{jobTasksField.sourceTableId},
+        target_table_id = #{jobTasksField.targetTableId},
+        source_field = #{jobTasksField.sourceField},
+        target_field = #{jobTasksField.targetField}
+        where id = #{id}
+    </update>
+
+    <!-- 刪除 -->
+    <delete id="delete">
+        delete from job_tasks_field where id = #{id}
+    </delete>
+
+    <!-- 根据主鍵查找 -->
+    <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.JobTasksField">
+        select id, job_task_id AS jobTaskId, job_table_id AS jobTableId, source_table_id AS sourceTableId, target_table_id AS targetTableId, source_field AS sourceField, target_field AS targetField from job_tasks_field
+        where id = #{id}
+    </select>
+
+    <!-- 分页All -->
+    <select id="pageAll" resultType="java.lang.Integer">
+        select count(id) from job_tasks_field
+        where 1=1
+    </select>
+
+    <!-- 分页 -->
+    <select id="page" resultType="com.suixingpay.datas.manager.core.entity.JobTasksField">
+        select id, job_task_id AS jobTaskId, job_table_id AS jobTableId, source_table_id AS sourceTableId, target_table_id AS targetTableId, source_field AS sourceField, target_field AS targetField from job_tasks_field
+        where 1=1 limit #{page.offset},#{page.pageSize}
+    </select>
 </mapper>

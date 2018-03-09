@@ -1,5 +1,11 @@
 package com.suixingpay.datas.manager.core.mapper;
 
+import com.suixingpay.datas.manager.core.entity.AlarmPlugin;
+import com.suixingpay.datas.manager.web.page.Page;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+
 /**
  * 告警配置策略内容表 Mapper接口
  * 
@@ -9,5 +15,43 @@ package com.suixingpay.datas.manager.core.mapper;
  * @review: FairyHood/2018-03-08 10:46:01
  */
 public interface AlarmPluginMapper {
+
+    /**
+     * 新增
+     * @param alarmPlugin
+     */
+    Integer insert(AlarmPlugin alarmPlugin);
+
+    /**
+     * 修改
+     * @param alarmPlugin
+     */
+    Integer update(@Param("id") Long id, @Param("alarmPlugin") AlarmPlugin alarmPlugin);
+
+    /**
+     * 刪除
+     * @param id
+     * @return
+     */
+    Integer delete(Long id);
+
+    /**
+     * 根據主鍵id查找數據
+     * @param id
+     * @return
+     */
+    AlarmPlugin selectById(Long id);
+
+    /**
+     * 分頁
+     * @return
+     */
+    List<AlarmPlugin> page(@Param("page") Page<AlarmPlugin> page, @Param("state") Integer state);
+
+    /**
+     * 分頁All
+     * @return
+     */
+    Integer pageAll(@Param("state") Integer state);
 
 }

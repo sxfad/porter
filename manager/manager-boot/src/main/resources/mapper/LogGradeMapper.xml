@@ -18,4 +18,65 @@
     <sql id="Base_Column_List">
         select id, log_level AS logLevel, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, remark from s_log_grade
     </sql>-->
+
+    <!-- 新增 -->
+    <insert id="insert">
+        insert into s_log_grade(
+        log_level,
+        create_user_id,
+        update_user_id,
+        create_time,
+        update_time,
+        state,
+        iscancel,
+        remark
+        ) values (
+        #{logLevel},
+        #{createUserId},
+        #{updateUserId},
+        #{createTime},
+        #{updateTime},
+        #{state},
+        #{iscancel},
+        #{remark}
+        )
+    </insert>
+
+    <!-- 修改 -->
+    <update id="update">
+        update s_log_grade
+        set
+        log_level = #{logGrade.logLevel},
+        create_user_id = #{logGrade.createUserId},
+        update_user_id = #{logGrade.updateUserId},
+        create_time = #{logGrade.createTime},
+        update_time = #{logGrade.updateTime},
+        state = #{logGrade.state},
+        iscancel = #{logGrade.iscancel},
+        remark = #{logGrade.remark}
+        where id = #{id}
+    </update>
+
+    <!-- 刪除 -->
+    <delete id="delete">
+        delete from s_log_grade where id = #{id}
+    </delete>
+
+    <!-- 根据主鍵查找 -->
+    <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.LogGrade">
+        select id, log_level AS logLevel, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, remark from s_log_grade
+        where id = #{id}
+    </select>
+
+    <!-- 分页All -->
+    <select id="pageAll" resultType="java.lang.Integer">
+        select count(id) from s_log_grade
+        where 1=1
+    </select>
+
+    <!-- 分页 -->
+    <select id="page" resultType="com.suixingpay.datas.manager.core.entity.LogGrade">
+        select id, log_level AS logLevel, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, remark from s_log_grade
+        where 1=1 limit #{page.offset},#{page.pageSize}
+    </select>
 </mapper>

@@ -7,6 +7,8 @@
  */
 package com.suixingpay.datas.manager.service.impl;
 
+import com.suixingpay.datas.manager.core.entity.DataSource;
+import com.suixingpay.datas.manager.web.page.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,5 +28,35 @@ public class DataSourceServiceImpl implements DataSourceService {
 
     @Autowired
     private DataSourceMapper dataSourceMapper;
+
+    @Override
+    public Integer insert(DataSource dataSource) {
+        return dataSourceMapper.insert(dataSource);
+    }
+
+    @Override
+    public Integer update(Long id, DataSource dataSource) {
+        return dataSourceMapper.update(id, dataSource);
+    }
+
+    @Override
+    public Integer delete(Long id) {
+        return dataSourceMapper.delete(id);
+    }
+
+    @Override
+    public DataSource selectById(Long id) {
+        return dataSourceMapper.selectById(id);
+    }
+
+    @Override
+    public Page<DataSource> page(Page<DataSource> page) {
+        Integer total = dataSourceMapper.pageAll(1);
+        if(total>0) {
+            page.setTotalItems(total);
+            page.setResult(dataSourceMapper.page(page, 1));
+        }
+        return page;
+    }
 
 }

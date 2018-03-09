@@ -2,6 +2,8 @@ package com.suixingpay.datas.manager.controller;
 
 import static com.suixingpay.datas.manager.web.message.ResponseMessage.ok;
 
+import com.suixingpay.datas.manager.core.entity.MrNodesMonitor;
+import com.suixingpay.datas.manager.web.page.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,37 +41,37 @@ public class MrNodesScheduleController {
     @PostMapping
     @ApiOperation(value = "新增", notes = "新增")
     public ResponseMessage add(@RequestBody MrNodesSchedule mrNodesSchedule) {
-        /** Integer number = mrNodesScheduleService.insert(mrNodesSchedule); . */
-        return ok(null);
+        Integer number = mrNodesScheduleService.insert(mrNodesSchedule);
+        return ok(number);
     }
 
     @PutMapping("/{id}")
     @ApiOperation(value = "修改", notes = "修改")
     public ResponseMessage update(@PathVariable("id") Long id, @RequestBody MrNodesSchedule mrNodesSchedule) {
-
-        return ok(null);
+        Integer number = mrNodesScheduleService.update(id, mrNodesSchedule);
+        return ok(number);
     }
 
     @DeleteMapping("/{id}")
     @ApiOperation(value = "删除", notes = "删除")
     public ResponseMessage delete(@PathVariable("id") Long id) {
-
+        mrNodesScheduleService.delete(id);
         return ok();
     }
 
     @GetMapping("/{id}")
     @ApiOperation(value = "查询明细", notes = "查询明细")
     public ResponseMessage info(@PathVariable("id") Long id) {
-
-        return ok(null);
+        MrNodesSchedule mrNodesSchedule = mrNodesScheduleService.selectById(id);
+        return ok(mrNodesSchedule);
     }
 
     @ApiOperation(value = "查询列表", notes = "查询列表")
     @GetMapping
-    public ResponseMessage list(MrNodesSchedule t, @RequestParam(value = "pageNum", required = false) Integer pageNum,
+    public ResponseMessage list(@RequestParam(value = "pageNo", required = false) Integer pageNo,
             @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-
-        return ok(null);
+        Page<MrNodesSchedule> page = mrNodesScheduleService.page(new Page<MrNodesSchedule>(pageNo, pageSize));
+        return ok(page);
     }
 
 }

@@ -19,4 +19,68 @@
     <sql id="Base_Column_List">
         select id, table_id AS tableId, field_name AS fieldName, field_type AS fieldType, field_comment AS fieldComment, creater, create_time AS createTime, state, iscancel, remark from b_data_field
     </sql>-->
+
+    <!-- 新增 -->
+    <insert id="insert">
+        insert into b_data_field(
+        table_id,
+        field_name,
+        field_type,
+        field_comment,
+        creater,
+        create_time,
+        state,
+        iscancel,
+        remark
+        ) values (
+        #{tableId},
+        #{fieldName},
+        #{fieldType},
+        #{fieldComment},
+        #{creater},
+        #{createTime},
+        #{state},
+        #{iscancel},
+        #{remark}
+        )
+    </insert>
+
+    <!-- 修改 -->
+    <update id="update">
+        update b_data_field
+        set
+        table_id = #{dataField.tableId},
+        field_name = #{dataField.fieldName},
+        field_type = #{dataField.fieldType},
+        field_comment = #{dataField.fieldComment},
+        creater = #{dataField.creater},
+        create_time = #{dataField.createTime},
+        state = #{dataField.state},
+        iscancel = #{dataField.iscancel},
+        remark = #{dataField.remark}
+        where id = #{id}
+    </update>
+
+    <!-- 刪除 -->
+    <delete id="delete">
+        delete from b_data_field where id = #{id}
+    </delete>
+
+    <!-- 根据主鍵查找 -->
+    <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.DataField">
+        select id, table_id AS tableId, field_name AS fieldName, field_type AS fieldType, field_comment AS fieldComment, creater, create_time AS createTime, state, iscancel, remark from b_data_field
+        where id = #{id}
+    </select>
+
+    <!-- 分页All -->
+    <select id="pageAll" resultType="java.lang.Integer">
+        select count(id) from b_data_field
+        where 1=1
+    </select>
+
+    <!-- 分页 -->
+    <select id="page" resultType="com.suixingpay.datas.manager.core.entity.DataField">
+        select id, table_id AS tableId, field_name AS fieldName, field_type AS fieldType, field_comment AS fieldComment, creater, create_time AS createTime, state, iscancel, remark from b_data_field
+        where 1=1 limit #{page.offset},#{page.pageSize}
+    </select>
 </mapper>

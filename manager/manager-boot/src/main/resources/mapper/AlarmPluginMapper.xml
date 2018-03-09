@@ -15,4 +15,56 @@
     <sql id="Base_Column_List">
         select id, alarm_id AS alarmId, alarm_type AS alarmType, plugin_code AS pluginCode, plugin_name AS pluginName, plugin_value AS pluginValue from s_alarm_plugin
     </sql>-->
+
+    <!-- 新增 -->
+    <insert id="insert">
+        insert into s_alarm_plugin(
+            alarm_id,
+            alarm_type,
+            plugin_code,
+            plugin_name,
+            plugin_value
+        ) values (
+            #{alarmId},
+            #{alarmType},
+            #{pluginCode},
+            #{pluginName},
+            #{pluginValue}
+        )
+    </insert>
+
+    <!-- 修改 -->
+    <update id="update">
+        update s_alarm_plugin
+        set
+        alarm_id = #{alarmPlugin.alarmId},
+        alarm_type = #{alarmPlugin.alarmType},
+        plugin_code = #{alarmPlugin.pluginCode},
+        plugin_name = #{alarmPlugin.pluginName},
+        plugin_value = #{alarmPlugin.pluginValue}
+        where id = #{id}
+    </update>
+
+    <!-- 刪除 -->
+    <delete id="delete">
+        delete from s_alarm_plugin where id = #{id}
+    </delete>
+
+    <!-- 根据主鍵查找 -->
+    <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.AlarmPlugin">
+        select id, alarm_id AS alarmId, alarm_type AS alarmType, plugin_code AS pluginCode, plugin_name AS pluginName, plugin_value AS pluginValue from s_alarm_plugin
+        where id = #{id}
+    </select>
+
+    <!-- 分页All -->
+    <select id="pageAll" resultType="java.lang.Integer">
+        select count(id) from s_alarm_plugin
+        where 1=1
+    </select>
+
+    <!-- 分页 -->
+    <select id="page" resultType="com.suixingpay.datas.manager.core.entity.AlarmPlugin">
+        select id, alarm_id AS alarmId, alarm_type AS alarmType, plugin_code AS pluginCode, plugin_name AS pluginName, plugin_value AS pluginValue from s_alarm_plugin
+        where 1=1 limit #{page.offset},#{page.pageSize}
+    </select>
 </mapper>

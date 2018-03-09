@@ -1,5 +1,8 @@
 package com.suixingpay.datas.manager.service;
 
+import com.suixingpay.datas.manager.core.entity.CUser;
+import com.suixingpay.datas.manager.web.page.Page;
+
 /**
  * 登陆用户表 服务接口类
  * 
@@ -10,4 +13,13 @@ package com.suixingpay.datas.manager.service;
  */
 public interface CUserService {
 
+    Integer insert(CUser cuser);
+
+    Integer update(Long id, CUser cuser);
+
+    Integer delete(Long id);
+
+    CUser selectById(Long id);
+
+    Page<CUser> page(Page<CUser> page);
 }

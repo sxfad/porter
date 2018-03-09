@@ -7,6 +7,8 @@
  */
 package com.suixingpay.datas.manager.service.impl;
 
+import com.suixingpay.datas.manager.core.entity.LogGrade;
+import com.suixingpay.datas.manager.web.page.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,5 +28,35 @@ public class LogGradeServiceImpl implements LogGradeService {
 
     @Autowired
     private LogGradeMapper logGradeMapper;
+
+    @Override
+    public Integer insert(LogGrade logGrade) {
+        return logGradeMapper.insert(logGrade);
+    }
+
+    @Override
+    public Integer update(Long id, LogGrade logGrade) {
+        return logGradeMapper.update(id, logGrade);
+    }
+
+    @Override
+    public Integer delete(Long id) {
+        return logGradeMapper.delete(id);
+    }
+
+    @Override
+    public LogGrade selectById(Long id) {
+        return logGradeMapper.selectById(id);
+    }
+
+    @Override
+    public Page<LogGrade> page(Page<LogGrade> page) {
+        Integer total = logGradeMapper.pageAll(1);
+        if(total>0) {
+            page.setTotalItems(total);
+            page.setResult(logGradeMapper.page(page, 1));
+        }
+        return page;
+    }
 
 }

@@ -7,6 +7,8 @@
  */
 package com.suixingpay.datas.manager.service.impl;
 
+import com.suixingpay.datas.manager.core.entity.Dictionary;
+import com.suixingpay.datas.manager.web.page.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,5 +28,35 @@ public class DictionaryServiceImpl implements DictionaryService {
 
     @Autowired
     private DictionaryMapper dictionaryMapper;
+
+    @Override
+    public Integer insert(Dictionary dictionary) {
+        return dictionaryMapper.insert(dictionary);
+    }
+
+    @Override
+    public Integer update(Long id, Dictionary dictionary) {
+        return dictionaryMapper.update(id, dictionary);
+    }
+
+    @Override
+    public Integer delete(Long id) {
+        return dictionaryMapper.delete(id);
+    }
+
+    @Override
+    public Dictionary selectById(Long id) {
+        return dictionaryMapper.selectById(id);
+    }
+
+    @Override
+    public Page<Dictionary> page(Page<Dictionary> page) {
+        Integer total = dictionaryMapper.pageAll(1);
+        if(total>0) {
+            page.setTotalItems(total);
+            page.setResult(dictionaryMapper.page(page, 1));
+        }
+        return page;
+    }
 
 }
