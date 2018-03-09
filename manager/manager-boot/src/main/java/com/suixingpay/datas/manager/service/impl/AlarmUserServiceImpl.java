@@ -1,23 +1,23 @@
-/**  
+/**
  * All rights Reserved, Designed By Suixingpay.
- * @author: FairyHood 
- * @date: 2018-03-07 13:40:30  
- * @Copyright ©2017 Suixingpay. All rights reserved. 
+ *
+ * @author: FairyHood
+ * @date: 2018-03-07 13:40:30
+ * @Copyright ©2017 Suixingpay. All rights reserved.
  * 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
  */
 package com.suixingpay.datas.manager.service.impl;
 
 import com.suixingpay.datas.manager.core.entity.AlarmUser;
+import com.suixingpay.datas.manager.core.mapper.AlarmUserMapper;
+import com.suixingpay.datas.manager.service.AlarmUserService;
 import com.suixingpay.datas.manager.web.page.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.suixingpay.datas.manager.core.mapper.AlarmUserMapper;
-import com.suixingpay.datas.manager.service.AlarmUserService;
-
 /**
  * 告警用户关联表 服务实现类
- * 
+ *
  * @author: FairyHood
  * @date: 2018-03-07 13:40:30
  * @version: V1.0-auto
@@ -52,7 +52,7 @@ public class AlarmUserServiceImpl implements AlarmUserService {
     @Override
     public Page<AlarmUser> page(Page<AlarmUser> page) {
         Integer total = alarmUserMapper.pageAll(1);
-        if(total>0) {
+        if (total > 0) {
             page.setTotalItems(total);
             page.setResult(alarmUserMapper.page(page, 1));
         }

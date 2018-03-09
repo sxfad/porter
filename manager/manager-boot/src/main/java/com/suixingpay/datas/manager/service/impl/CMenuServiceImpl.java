@@ -7,11 +7,10 @@
  */
 package com.suixingpay.datas.manager.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.suixingpay.datas.manager.core.mapper.CMenuMapper;
 import com.suixingpay.datas.manager.service.CMenuService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * 菜单目录表 服务实现类
