@@ -7,6 +7,8 @@
  */
 package com.suixingpay.datas.manager.service.impl;
 
+import com.suixingpay.datas.manager.core.entity.CUser;
+import com.suixingpay.datas.manager.web.page.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,5 +28,35 @@ public class CUserServiceImpl implements CUserService {
 
     @Autowired
     private CUserMapper cuserMapper;
+
+    @Override
+    public Integer insert(CUser cuser) {
+        return cuserMapper.insert(cuser);
+    }
+
+    @Override
+    public Integer update(Long id, CUser cuser) {
+        return cuserMapper.update(id, cuser);
+    }
+
+    @Override
+    public Integer delete(Long id) {
+        return cuserMapper.delete(id);
+    }
+
+    @Override
+    public CUser selectById(Long id) {
+        return cuserMapper.selectById(id);
+    }
+
+    @Override
+    public Page<CUser> page(Page<CUser> page) {
+        Integer total = cuserMapper.pageAll(1);
+        if(total>0) {
+            page.setTotalItems(total);
+            page.setResult(cuserMapper.page(page, 1));
+        }
+        return page;
+    }
 
 }

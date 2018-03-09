@@ -19,4 +19,68 @@
     <sql id="Base_Column_List">
         select id, source_id AS sourceId, data_type AS dataType, bank_name AS bankName, table_name AS tableName, creater, create_time AS createTime, state, iscancel, remark from b_data_table
     </sql>-->
+
+    <!-- 新增 -->
+    <insert id="insert">
+        insert into b_data_table(
+        source_id,
+        data_type,
+        bank_name,
+        table_name,
+        creater,
+        create_time,
+        state,
+        iscancel,
+        remark
+        ) values (
+        #{sourceId},
+        #{dataType},
+        #{bankName},
+        #{tableName},
+        #{creater},
+        #{createTime},
+        #{state},
+        #{iscancel},
+        #{remark}
+        )
+    </insert>
+
+    <!-- 修改 -->
+    <update id="update">
+        update b_data_table
+        set
+        source_id = #{dataTable.sourceId},
+        data_type = #{dataTable.dataType},
+        bank_name = #{dataTable.bankName},
+        table_name = #{dataTable.tableName},
+        creater = #{dataTable.creater},
+        create_time = #{dataTable.createTime},
+        state = #{dataTable.state},
+        iscancel = #{dataTable.iscancel},
+        remark = #{dataTable.remark}
+        where id = #{id}
+    </update>
+
+    <!-- 刪除 -->
+    <delete id="delete">
+        delete from b_data_table where id = #{id}
+    </delete>
+
+    <!-- 根据主鍵查找 -->
+    <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.DataTable">
+        select id, source_id AS sourceId, data_type AS dataType, bank_name AS bankName, table_name AS tableName, creater, create_time AS createTime, state, iscancel, remark from b_data_table
+        where id = #{id}
+    </select>
+
+    <!-- 分页All -->
+    <select id="pageAll" resultType="java.lang.Integer">
+        select count(id) from b_data_table
+        where 1=1
+    </select>
+
+    <!-- 分页 -->
+    <select id="page" resultType="com.suixingpay.datas.manager.core.entity.DataTable">
+        select id, source_id AS sourceId, data_type AS dataType, bank_name AS bankName, table_name AS tableName, creater, create_time AS createTime, state, iscancel, remark from b_data_table
+        where 1=1 limit #{page.offset},#{page.pageSize}
+    </select>
 </mapper>

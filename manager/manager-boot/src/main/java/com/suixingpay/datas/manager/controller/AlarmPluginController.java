@@ -2,6 +2,7 @@ package com.suixingpay.datas.manager.controller;
 
 import static com.suixingpay.datas.manager.web.message.ResponseMessage.ok;
 
+import com.suixingpay.datas.manager.web.page.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,37 +40,37 @@ public class AlarmPluginController {
     @PostMapping
     @ApiOperation(value = "新增", notes = "新增")
     public ResponseMessage add(@RequestBody AlarmPlugin alarmPlugin) {
-        /** Integer number = alarmPluginService.insert(alarmPlugin); . */
-        return ok(null);
+        Integer number = alarmPluginService.insert(alarmPlugin);
+        return ok(number);
     }
 
     @PutMapping("/{id}")
     @ApiOperation(value = "修改", notes = "修改")
     public ResponseMessage update(@PathVariable("id") Long id, @RequestBody AlarmPlugin alarmPlugin) {
-
-        return ok(null);
+        Integer number = alarmPluginService.update(id, alarmPlugin);
+        return ok(number);
     }
 
     @DeleteMapping("/{id}")
     @ApiOperation(value = "删除", notes = "删除")
     public ResponseMessage delete(@PathVariable("id") Long id) {
-
+        alarmPluginService.delete(id);
         return ok();
     }
 
     @GetMapping("/{id}")
     @ApiOperation(value = "查询明细", notes = "查询明细")
     public ResponseMessage info(@PathVariable("id") Long id) {
-
-        return ok(null);
+        AlarmPlugin alarmPlugin = alarmPluginService.selectById(id);
+        return ok(alarmPlugin);
     }
 
     @ApiOperation(value = "查询列表", notes = "查询列表")
     @GetMapping
-    public ResponseMessage list(AlarmPlugin t, @RequestParam(value = "pageNum", required = false) Integer pageNum,
+    public ResponseMessage list(@RequestParam(value = "pageNo", required = false) Integer pageNo,
             @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-
-        return ok(null);
+        Page<AlarmPlugin> page = alarmPluginService.page(new Page<AlarmPlugin>(pageNo, pageSize));
+        return ok(page);
     }
 
 }

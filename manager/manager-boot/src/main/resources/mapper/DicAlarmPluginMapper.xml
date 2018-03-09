@@ -15,4 +15,56 @@
     <sql id="Base_Column_List">
         select id, alert_type AS alertType, code, name, state, remark from d_alarm_plugin
     </sql>-->
+
+    <!-- 新增 -->
+    <insert id="insert">
+        insert into d_alarm_plugin(
+        alert_type,
+        code,
+        name,
+        state,
+        remark
+        ) values (
+        #{alertType},
+        #{code},
+        #{name},
+        #{state},
+        #{remark}
+        )
+    </insert>
+
+    <!-- 修改 -->
+    <update id="update">
+        update d_alarm_plugin
+        set
+        alert_type = #{dicAlarmPlugin.alertType},
+        code = #{dicAlarmPlugin.code},
+        name = #{dicAlarmPlugin.name},
+        state = #{dicAlarmPlugin.state},
+        remark = #{dicAlarmPlugin.remark}
+        where id = #{id}
+    </update>
+
+    <!-- 刪除 -->
+    <delete id="delete">
+        delete from d_alarm_plugin where id = #{id}
+    </delete>
+
+    <!-- 根据主鍵查找 -->
+    <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.DicAlarmPlugin">
+        select id, alert_type AS alertType, code, name, state, remark from d_alarm_plugin
+        where id = #{id}
+    </select>
+
+    <!-- 分页All -->
+    <select id="pageAll" resultType="java.lang.Integer">
+        select count(id) from d_alarm_plugin
+        where 1=1
+    </select>
+
+    <!-- 分页 -->
+    <select id="page" resultType="com.suixingpay.datas.manager.core.entity.DicAlarmPlugin">
+        select id, alert_type AS alertType, code, name, state, remark from d_alarm_plugin
+        where 1=1 limit #{page.offset},#{page.pageSize}
+    </select>
 </mapper>

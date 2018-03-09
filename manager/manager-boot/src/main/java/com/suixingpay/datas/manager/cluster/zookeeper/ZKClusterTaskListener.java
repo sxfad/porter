@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
 
 /**
  * 任务信息监听
+ * 
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月15日 10:09
  * @version: V1.0
@@ -42,10 +43,10 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
         String zkPath = zkEvent.getPath();
         LOGGER.debug("TaskListener:{},{},{}", zkEvent.getPath(), zkEvent.getData(), zkEvent.getEventType());
 
-        //任务进度更新
+        // 任务进度更新
         if (TASK_STAT_PATTERN.matcher(zkPath).matches() && zkEvent.isDataChanged()) {
             DTaskStat stat = DTaskStat.fromString(zkEvent.getData(), DTaskStat.class);
-            //do something
+            // do something
 
         }
     }

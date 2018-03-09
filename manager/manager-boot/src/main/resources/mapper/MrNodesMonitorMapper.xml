@@ -19,4 +19,68 @@
     <sql id="Base_Column_List">
         select id, schedule_id AS scheduleId, node_id AS nodeId, monitor_date AS monitorDate, monitor_ymd AS monitorYmd, monitor_hour AS monitorHour, monitor_minute AS monitorMinute, monitor_second AS monitorSecond, monitor_tps AS monitorTps, monitor_alarm AS monitorAlarm from mr_nodes_monitor
     </sql>-->
+
+    <!-- 新增 -->
+    <insert id="insert">
+        insert into mr_nodes_monitor(
+        schedule_id,
+        node_id,
+        monitor_date,
+        monitor_ymd,
+        monitor_hour,
+        monitor_minute,
+        monitor_second,
+        monitor_tps,
+        monitor_alarm
+        ) values (
+        #{scheduleId},
+        #{nodeId},
+        #{monitorDate},
+        #{monitorYmd},
+        #{monitorHour},
+        #{monitorMinute},
+        #{monitorSecond},
+        #{monitorTps},
+        #{monitorAlarm}
+        )
+    </insert>
+
+    <!-- 修改 -->
+    <update id="update">
+        update mr_nodes_monitor
+        set
+        schedule_id = #{mrNodesMonitor.scheduleId},
+        node_id = #{mrNodesMonitor.nodeId},
+        monitor_date = #{mrNodesMonitor.monitorDate},
+        monitor_ymd = #{mrNodesMonitor.monitorYmd},
+        monitor_hour = #{mrNodesMonitor.monitorHour},
+        monitor_minute = #{mrNodesMonitor.monitorMinute},
+        monitor_second = #{mrNodesMonitor.monitorSecond},
+        monitor_tps = #{mrNodesMonitor.monitorTps},
+        monitor_alarm = #{mrNodesMonitor.monitorAlarm}
+        where id = #{id}
+    </update>
+
+    <!-- 刪除 -->
+    <delete id="delete">
+        delete from mr_nodes_monitor where id = #{id}
+    </delete>
+
+    <!-- 根据主鍵查找 -->
+    <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.MrNodesMonitor">
+        select id, schedule_id AS scheduleId, node_id AS nodeId, monitor_date AS monitorDate, monitor_ymd AS monitorYmd, monitor_hour AS monitorHour, monitor_minute AS monitorMinute, monitor_second AS monitorSecond, monitor_tps AS monitorTps, monitor_alarm AS monitorAlarm from mr_nodes_monitor
+        where id = #{id}
+    </select>
+
+    <!-- 分页All -->
+    <select id="pageAll" resultType="java.lang.Integer">
+        select count(id) from mr_nodes_monitor
+        where 1=1
+    </select>
+
+    <!-- 分页 -->
+    <select id="page" resultType="com.suixingpay.datas.manager.core.entity.MrNodesMonitor">
+        select id, schedule_id AS scheduleId, node_id AS nodeId, monitor_date AS monitorDate, monitor_ymd AS monitorYmd, monitor_hour AS monitorHour, monitor_minute AS monitorMinute, monitor_second AS monitorSecond, monitor_tps AS monitorTps, monitor_alarm AS monitorAlarm from mr_nodes_monitor
+        where 1=1 limit #{page.offset},#{page.pageSize}
+    </select>
 </mapper>

@@ -1,5 +1,8 @@
 package com.suixingpay.datas.manager.service;
 
+import com.suixingpay.datas.manager.core.entity.MrNodesSchedule;
+import com.suixingpay.datas.manager.web.page.Page;
+
 /**
  * 节点任务监控表 服务接口类
  * 
@@ -9,5 +12,15 @@ package com.suixingpay.datas.manager.service;
  * @review: FairyHood/2018-03-07 13:40:30
  */
 public interface MrNodesScheduleService {
+
+    Integer insert(MrNodesSchedule mrNodesSchedule);
+
+    Integer update(Long id, MrNodesSchedule mrNodesSchedule);
+
+    Integer delete(Long id);
+
+    MrNodesSchedule selectById(Long id);
+
+    Page<MrNodesSchedule> page(Page<MrNodesSchedule> page);
 
 }

@@ -12,4 +12,47 @@
     <sql id="Base_Column_List">
         select id, job_task_id AS jobTaskId, user_id AS userId from job_tasks_user
     </sql>-->
+
+    <!-- 新增 -->
+    <insert id="insert">
+        insert into job_tasks_user(
+        job_task_id,
+        user_id
+        ) values (
+        #{jobTaskId},
+        #{userId}
+        )
+    </insert>
+
+    <!-- 修改 -->
+    <update id="update">
+        update job_tasks_user
+        set
+        job_task_id = #{jobTasksUser.jobTaskId},
+        user_id = #{jobTasksUser.userId}
+        where id = #{id}
+    </update>
+
+    <!-- 刪除 -->
+    <delete id="delete">
+        delete from job_tasks_user where id = #{id}
+    </delete>
+
+    <!-- 根据主鍵查找 -->
+    <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.JobTasksUser">
+        select id, job_task_id AS jobTaskId, user_id AS userId from job_tasks_user
+        where id = #{id}
+    </select>
+
+    <!-- 分页All -->
+    <select id="pageAll" resultType="java.lang.Integer">
+        select count(id) from job_tasks_user
+        where 1=1
+    </select>
+
+    <!-- 分页 -->
+    <select id="page" resultType="com.suixingpay.datas.manager.core.entity.JobTasksUser">
+        select id, job_task_id AS jobTaskId, user_id AS userId from job_tasks_user
+        where 1=1 limit #{page.offset},#{page.pageSize}
+    </select>
 </mapper>

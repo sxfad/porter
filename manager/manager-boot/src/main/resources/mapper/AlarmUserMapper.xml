@@ -12,4 +12,47 @@
     <sql id="Base_Column_List">
         select id, alarm_id AS alarmId, user_id AS userId from s_alarm_user
     </sql>-->
+
+    <!-- 新增 -->
+    <insert id="insert">
+        insert into s_alarm_user(
+        alarm_id,
+        user_id
+        ) values (
+        #{alarmId},
+        #{userId}
+        )
+    </insert>
+
+    <!-- 修改 -->
+    <update id="update">
+        update s_alarm_user
+        set
+        alarm_id = #{alarmUser.alarmId},
+        user_id = #{alarmUser.userId}
+        where id = #{id}
+    </update>
+
+    <!-- 刪除 -->
+    <delete id="delete">
+        delete from s_alarm_user where id = #{id}
+    </delete>
+
+    <!-- 根据主鍵查找 -->
+    <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.AlarmUser">
+        select id, alarm_id AS alarmId, user_id AS userId from s_alarm_user
+        where id = #{id}
+    </select>
+
+    <!-- 分页All -->
+    <select id="pageAll" resultType="java.lang.Integer">
+        select count(id) from s_alarm_user
+        where 1=1
+    </select>
+
+    <!-- 分页 -->
+    <select id="page" resultType="com.suixingpay.datas.manager.core.entity.AlarmUser">
+        select id, alarm_id AS alarmId, user_id AS userId from s_alarm_user
+        where 1=1 limit #{page.offset},#{page.pageSize}
+    </select>
 </mapper>

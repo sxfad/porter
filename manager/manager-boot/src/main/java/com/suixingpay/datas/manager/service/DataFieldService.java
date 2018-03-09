@@ -1,5 +1,8 @@
 package com.suixingpay.datas.manager.service;
 
+import com.suixingpay.datas.manager.core.entity.DataField;
+import com.suixingpay.datas.manager.web.page.Page;
+
 /**
  * 数据字段对应表 服务接口类
  * 
@@ -10,4 +13,13 @@ package com.suixingpay.datas.manager.service;
  */
 public interface DataFieldService {
 
+    Integer insert(DataField dataField);
+
+    Integer update(Long id, DataField dataField);
+
+    Integer delete(Long id);
+
+    DataField selectById(Long id);
+
+    Page<DataField> page(Page<DataField> page);
 }

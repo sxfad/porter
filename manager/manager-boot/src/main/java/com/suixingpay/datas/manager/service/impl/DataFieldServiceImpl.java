@@ -7,6 +7,8 @@
  */
 package com.suixingpay.datas.manager.service.impl;
 
+import com.suixingpay.datas.manager.core.entity.DataField;
+import com.suixingpay.datas.manager.web.page.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,5 +28,35 @@ public class DataFieldServiceImpl implements DataFieldService {
 
     @Autowired
     private DataFieldMapper dataFieldMapper;
+
+    @Override
+    public Integer insert(DataField dataField) {
+        return dataFieldMapper.insert(dataField);
+    }
+
+    @Override
+    public Integer update(Long id, DataField dataField) {
+        return dataFieldMapper.update(id, dataField);
+    }
+
+    @Override
+    public Integer delete(Long id) {
+        return dataFieldMapper.delete(id);
+    }
+
+    @Override
+    public DataField selectById(Long id) {
+        return dataFieldMapper.selectById(id);
+    }
+
+    @Override
+    public Page<DataField> page(Page<DataField> page) {
+        Integer total = dataFieldMapper.pageAll(1);
+        if(total>0) {
+            page.setTotalItems(total);
+            page.setResult(dataFieldMapper.page(page, 1));
+        }
+        return page;
+    }
 
 }

@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
 
 /**
  * 统计信息下载
+ * 
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月15日 10:09
  * @version: V1.0
@@ -43,20 +44,20 @@ public class ZKClusterStatisticListener extends ZookeeperClusterListener {
         String zkPath = zkEvent.getPath();
 
         if (zkEvent.isOnline()) {
-            //日志
+            // 日志
             if (LOG_PATTERN.matcher(zkPath).matches()) {
                 NodeLog log = JSONObject.parseObject(zkEvent.getData(), NodeLog.class);
 
-                //do something
+                // do something
             }
 
-            //性能指标数据
+            // 性能指标数据
             if (TASK_PATTERN.matcher(zkPath).matches()) {
                 TaskPerformance performance = JSONObject.parseObject(zkEvent.getData(), TaskPerformance.class);
 
-                //do something
+                // do something
             }
-            //删除已获取的事件
+            // 删除已获取的事件
             client.delete(zkPath);
         }
     }

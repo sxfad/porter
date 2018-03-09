@@ -23,4 +23,80 @@
     <sql id="Base_Column_List">
         select id, name, data_type AS dataType, data_json AS dataJson, date_user AS dateUser, date_passwd AS datePasswd, date_url AS dateUrl, date_servers AS dateServers, date_topics AS dateTopics, creater, create_time AS createTime, state, iscancel, remark from b_data_source
     </sql>-->
+
+    <!-- 新增 -->
+    <insert id="insert">
+        insert into b_data_source(
+        name,
+        data_type,
+        data_json,
+        date_user,
+        date_passwd,
+        date_url,
+        date_servers,
+        date_topics,
+        creater,
+        create_time,
+        state,
+        iscancel,
+        remark
+        ) values (
+        #{name},
+        #{dataType},
+        #{dataJson},
+        #{dateUser},
+        #{datePasswd},
+        #{dateUrl},
+        #{dateServers},
+        #{dateTopics},
+        #{creater},
+        #{createTime},
+        #{state},
+        #{iscancel},
+        #{remark}
+        )
+    </insert>
+
+    <!-- 修改 -->
+    <update id="update">
+        update b_data_source
+        set
+        name = #{dataSource.name},
+        data_type = #{dataSource.dataType},
+        data_json = #{dataSource.dataJson},
+        date_user = #{dataSource.dateUser},
+        date_passwd = #{dataSource.datePasswd},
+        date_url = #{dataSource.dateUrl},
+        date_servers = #{dataSource.dateServers},
+        date_topics = #{dataSource.dateTopics},
+        creater = #{dataSource.creater},
+        create_time = #{dataSource.createTime},
+        state = #{dataSource.state},
+        iscancel = #{dataSource.iscancel},
+        remark = #{dataSource.remark}
+        where id = #{id}
+    </update>
+
+    <!-- 刪除 -->
+    <delete id="delete">
+        delete from b_data_source where id = #{id}
+    </delete>
+
+    <!-- 根据主鍵查找 -->
+    <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.DataSource">
+        select id, name, data_type AS dataType, data_json AS dataJson, date_user AS dateUser, date_passwd AS datePasswd, date_url AS dateUrl, date_servers AS dateServers, date_topics AS dateTopics, creater, create_time AS createTime, state, iscancel, remark from b_data_source
+        where id = #{id}
+    </select>
+
+    <!-- 分页All -->
+    <select id="pageAll" resultType="java.lang.Integer">
+        select count(id) from b_data_source
+        where 1=1
+    </select>
+
+    <!-- 分页 -->
+    <select id="page" resultType="com.suixingpay.datas.manager.core.entity.DataSource">
+        select id, name, data_type AS dataType, data_json AS dataJson, date_user AS dateUser, date_passwd AS datePasswd, date_url AS dateUrl, date_servers AS dateServers, date_topics AS dateTopics, creater, create_time AS createTime, state, iscancel, remark from b_data_source
+        where 1=1 limit #{page.offset},#{page.pageSize}
+    </select>
 </mapper>

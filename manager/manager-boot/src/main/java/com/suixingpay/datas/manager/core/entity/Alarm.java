@@ -2,6 +2,8 @@ package com.suixingpay.datas.manager.core.entity;
 
 import java.util.Date;
 
+import com.suixingpay.datas.common.dic.AlertPlugin;
+
 /**
  * 告警配置表 实体Entity
  * 
@@ -18,7 +20,7 @@ public class Alarm implements java.io.Serializable {
     private Long id;
 
     /** 告警方式. */
-    private Long alarmType;
+    private AlertPlugin alarmType;
 
     /** 创建人. */
     private Long createUserId;
@@ -52,12 +54,12 @@ public class Alarm implements java.io.Serializable {
     }
 
     /** 告警方式 get方法. */
-    public Long getAlarmType() {
+    public AlertPlugin getAlarmType() {
         return alarmType;
     }
 
     /** 告警方式 set方法. */
-    public void setAlarmType(Long alarmType) {
+    public void setAlarmType(AlertPlugin alarmType) {
         this.alarmType = alarmType;
     }
 

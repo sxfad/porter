@@ -15,4 +15,56 @@
     <sql id="Base_Column_List">
         select id, job_task_id AS jobTaskId, source_table_id AS sourceTableId, source_table_name AS sourceTableName, target_table_id AS targetTableId, target_table_name AS targetTableName from job_tasks_table
     </sql>-->
+
+    <!-- 新增 -->
+    <insert id="insert">
+        insert into job_tasks_table(
+        job_task_id,
+        source_table_id,
+        source_table_name,
+        target_table_id,
+        target_table_name
+        ) values (
+        #{jobTaskId},
+        #{sourceTableId},
+        #{sourceTableName},
+        #{targetTableId},
+        #{targetTableName}
+        )
+    </insert>
+
+    <!-- 修改 -->
+    <update id="update">
+        update job_tasks_table
+        set
+        job_task_id = #{jobTasksTable.jobTaskId},
+        source_table_id = #{jobTasksTable.sourceTableId},
+        source_table_name = #{jobTasksTable.sourceTableName},
+        target_table_id = #{jobTasksTable.targetTableId},
+        target_table_name = #{jobTasksTable.targetTableName}
+        where id = #{id}
+    </update>
+
+    <!-- 刪除 -->
+    <delete id="delete">
+        delete from job_tasks_table where id = #{id}
+    </delete>
+
+    <!-- 根据主鍵查找 -->
+    <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.JobTasksTable">
+        select id, job_task_id AS jobTaskId, source_table_id AS sourceTableId, source_table_name AS sourceTableName, target_table_id AS targetTableId, target_table_name AS targetTableName from job_tasks_table
+        where id = #{id}
+    </select>
+
+    <!-- 分页All -->
+    <select id="pageAll" resultType="java.lang.Integer">
+        select count(id) from job_tasks_table
+        where 1=1
+    </select>
+
+    <!-- 分页 -->
+    <select id="page" resultType="com.suixingpay.datas.manager.core.entity.JobTasksTable">
+        select id, job_task_id AS jobTaskId, source_table_id AS sourceTableId, source_table_name AS sourceTableName, target_table_id AS targetTableId, target_table_name AS targetTableName from job_tasks_table
+        where 1=1 limit #{page.offset},#{page.pageSize}
+    </select>
 </mapper>

@@ -21,4 +21,74 @@
     <sql id="Base_Column_List">
         select id, node_id AS nodeId, machine_name AS machineName, ip_address AS ipAddress, pid_number AS pidNumber, heart_beat_time AS heartBeatTime, state, type, creater, create_time AS createTime, iscancel, remark from b_nodes
     </sql>-->
+
+    <!-- 新增 -->
+    <insert id="insert">
+        insert into b_nodes(
+        node_id,
+        machine_name,
+        ip_address,
+        pid_number,
+        heart_beat_time,
+        state,
+        type,
+        creater,
+        create_time,
+        iscancel,
+        remark
+        ) values (
+        #{nodeId},
+        #{machineName},
+        #{ipAddress},
+        #{pidNumber},
+        #{heartBeatTime},
+        #{state},
+        #{type},
+        #{creater},
+        #{createTime},
+        #{iscancel},
+        #{remark}
+        )
+    </insert>
+
+    <!-- 修改 -->
+    <update id="update">
+        update b_nodes
+        set
+        node_id = #{nodes.nodeId},
+        machine_name = #{nodes.machineName},
+        ip_address = #{nodes.ipAddress},
+        pid_number = #{nodes.pidNumber},
+        heart_beat_time = #{nodes.heartBeatTime},
+        state = #{nodes.state},
+        type = #{nodes.type},
+        creater = #{nodes.creater},
+        create_time = #{nodes.createTime},
+        iscancel = #{nodes.iscancel},
+        remark = #{nodes.remark}
+        where id = #{id}
+    </update>
+
+    <!-- 刪除 -->
+    <delete id="delete">
+        delete from b_nodes where id = #{id}
+    </delete>
+
+    <!-- 根据主鍵查找 -->
+    <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.Nodes">
+        select id, node_id AS nodeId, machine_name AS machineName, ip_address AS ipAddress, pid_number AS pidNumber, heart_beat_time AS heartBeatTime, state, type, creater, create_time AS createTime, iscancel, remark from b_nodes
+        where id = #{id}
+    </select>
+
+    <!-- 分页All -->
+    <select id="pageAll" resultType="java.lang.Integer">
+        select count(id) from b_nodes
+        where 1=1
+    </select>
+
+    <!-- 分页 -->
+    <select id="page" resultType="com.suixingpay.datas.manager.core.entity.Nodes">
+        select id, node_id AS nodeId, machine_name AS machineName, ip_address AS ipAddress, pid_number AS pidNumber, heart_beat_time AS heartBeatTime, state, type, creater, create_time AS createTime, iscancel, remark from b_nodes
+        where 1=1 limit #{page.offset},#{page.pageSize}
+    </select>
 </mapper>

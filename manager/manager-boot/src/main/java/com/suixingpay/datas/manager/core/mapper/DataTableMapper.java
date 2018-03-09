@@ -1,5 +1,11 @@
 package com.suixingpay.datas.manager.core.mapper;
 
+import com.suixingpay.datas.manager.core.entity.DataTable;
+import com.suixingpay.datas.manager.web.page.Page;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+
 /**
  * 数据表信息表 Mapper接口
  * 
@@ -10,4 +16,41 @@ package com.suixingpay.datas.manager.core.mapper;
  */
 public interface DataTableMapper {
 
+    /**
+     * 新增
+     * @param dataTable
+     */
+    Integer insert(DataTable dataTable);
+
+    /**
+     * 修改
+     * @param dataTable
+     */
+    Integer update(@Param("id") Long id, @Param("dataTable") DataTable dataTable);
+
+    /**
+     * 刪除
+     * @param id
+     * @return
+     */
+    Integer delete(Long id);
+
+    /**
+     * 根據主鍵id查找數據
+     * @param id
+     * @return
+     */
+    DataTable selectById(Long id);
+
+    /**
+     * 分頁
+     * @return
+     */
+    List<DataTable> page(@Param("page") Page<DataTable> page, @Param("state") Integer state);
+
+    /**
+     * 分頁All
+     * @return
+     */
+    Integer pageAll(@Param("state") Integer state);
 }

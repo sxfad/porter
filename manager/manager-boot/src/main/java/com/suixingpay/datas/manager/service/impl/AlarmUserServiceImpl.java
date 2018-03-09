@@ -7,6 +7,8 @@
  */
 package com.suixingpay.datas.manager.service.impl;
 
+import com.suixingpay.datas.manager.core.entity.AlarmUser;
+import com.suixingpay.datas.manager.web.page.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,4 +29,33 @@ public class AlarmUserServiceImpl implements AlarmUserService {
     @Autowired
     private AlarmUserMapper alarmUserMapper;
 
+    @Override
+    public Integer insert(AlarmUser alarmUser) {
+        return alarmUserMapper.insert(alarmUser);
+    }
+
+    @Override
+    public Integer update(Long id, AlarmUser alarmUser) {
+        return alarmUserMapper.update(id, alarmUser);
+    }
+
+    @Override
+    public Integer delete(Long id) {
+        return alarmUserMapper.delete(id);
+    }
+
+    @Override
+    public AlarmUser selectById(Long id) {
+        return alarmUserMapper.selectById(id);
+    }
+
+    @Override
+    public Page<AlarmUser> page(Page<AlarmUser> page) {
+        Integer total = alarmUserMapper.pageAll(1);
+        if(total>0) {
+            page.setTotalItems(total);
+            page.setResult(alarmUserMapper.page(page, 1));
+        }
+        return page;
+    }
 }

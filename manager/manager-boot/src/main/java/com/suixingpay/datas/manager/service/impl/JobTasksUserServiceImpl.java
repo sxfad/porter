@@ -7,6 +7,8 @@
  */
 package com.suixingpay.datas.manager.service.impl;
 
+import com.suixingpay.datas.manager.core.entity.JobTasksUser;
+import com.suixingpay.datas.manager.web.page.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -26,5 +28,35 @@ public class JobTasksUserServiceImpl implements JobTasksUserService {
 
     @Autowired
     private JobTasksUserMapper jobTasksUserMapper;
+
+    @Override
+    public Integer insert(JobTasksUser jobTasksUser) {
+        return jobTasksUserMapper.insert(jobTasksUser);
+    }
+
+    @Override
+    public Integer update(Long id, JobTasksUser jobTasksUser) {
+        return jobTasksUserMapper.update(id, jobTasksUser);
+    }
+
+    @Override
+    public Integer delete(Long id) {
+        return jobTasksUserMapper.delete(id);
+    }
+
+    @Override
+    public JobTasksUser selectById(Long id) {
+        return jobTasksUserMapper.selectById(id);
+    }
+
+    @Override
+    public Page<JobTasksUser> page(Page<JobTasksUser> page) {
+        Integer total = jobTasksUserMapper.pageAll(1);
+        if(total>0) {
+            page.setTotalItems(total);
+            page.setResult(jobTasksUserMapper.page(page, 1));
+        }
+        return page;
+    }
 
 }

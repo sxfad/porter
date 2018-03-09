@@ -1,5 +1,8 @@
 package com.suixingpay.datas.manager.service;
 
+import com.suixingpay.datas.manager.core.entity.MrNodesMonitor;
+import com.suixingpay.datas.manager.web.page.Page;
+
 /**
  * 节点任务实时监控表 服务接口类
  * 
@@ -9,5 +12,15 @@ package com.suixingpay.datas.manager.service;
  * @review: FairyHood/2018-03-07 13:40:30
  */
 public interface MrNodesMonitorService {
+
+    Integer insert(MrNodesMonitor mrNodesMonitor);
+
+    Integer update(Long id, MrNodesMonitor mrNodesMonitor);
+
+    Integer delete(Long id);
+
+    MrNodesMonitor selectById(Long id);
+
+    Page<MrNodesMonitor> page(Page<MrNodesMonitor> page);
 
 }

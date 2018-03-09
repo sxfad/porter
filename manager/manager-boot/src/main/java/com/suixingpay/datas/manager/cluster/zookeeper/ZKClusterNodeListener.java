@@ -24,6 +24,7 @@ import java.util.regex.Pattern;
 
 /**
  * 节点监听
+ * 
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月15日 10:09
  * @version: V1.0
@@ -45,27 +46,27 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements N
         ZookeeperClusterEvent zkEvent = (ZookeeperClusterEvent) event;
         LOGGER.debug("NodeListener:{},{},{}", zkEvent.getPath(), zkEvent.getData(), zkEvent.getEventType());
 
-        //节点上下线
+        // 节点上下线
         if (NODE_LOCK_PATTERN.matcher(zkEvent.getPath()).matches()) {
             String nodeInfoPath = zkEvent.getPath().replace("/lock", "/stat");
             DNode node = getDNode(nodeInfoPath);
 
-            if (zkEvent.isOnline()) { //节点上线
+            if (zkEvent.isOnline()) { // 节点上线
                 LOGGER.info("节点[{}]上线", node.getNodeId());
-                //do something
+                // do something
 
             }
-            if (zkEvent.isOffline()) { //节点下线
-                //do something
+            if (zkEvent.isOffline()) { // 节点下线
+                // do something
                 LOGGER.info("节点[{}]下线", node.getNodeId());
             }
         }
 
-        //节点状态更新
+        // 节点状态更新
         if (NODE_STAT_PATTERN.matcher(zkEvent.getPath()).matches()) {
             DNode node = getDNode(zkEvent.getPath());
 
-            //do something
+            // do something
             LOGGER.info("节点[{}]状态上报", node.getNodeId());
 
         }
@@ -79,6 +80,7 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements N
             protected String getPath() {
                 return listenPath();
             }
+
             @Override
             protected boolean doFilter(ZookeeperClusterEvent event) {
                 return true;

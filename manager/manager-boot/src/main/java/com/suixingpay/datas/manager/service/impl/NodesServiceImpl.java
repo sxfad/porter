@@ -7,6 +7,8 @@
  */
 package com.suixingpay.datas.manager.service.impl;
 
+import com.suixingpay.datas.manager.core.entity.Nodes;
+import com.suixingpay.datas.manager.web.page.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,4 +29,33 @@ public class NodesServiceImpl implements NodesService {
     @Autowired
     private NodesMapper nodesMapper;
 
+    @Override
+    public Integer insert(Nodes nodes) {
+        return nodesMapper.insert(nodes);
+    }
+
+    @Override
+    public Integer update(Long id, Nodes nodes) {
+        return nodesMapper.update(id, nodes);
+    }
+
+    @Override
+    public Integer delete(Long id) {
+        return nodesMapper.delete(id);
+    }
+
+    @Override
+    public Nodes selectById(Long id) {
+        return nodesMapper.selectById(id);
+    }
+
+    @Override
+    public Page<Nodes> page(Page<Nodes> page) {
+        Integer total = nodesMapper.pageAll(1);
+        if(total>0) {
+            page.setTotalItems(total);
+            page.setResult(nodesMapper.page(page, 1));
+        }
+        return page;
+    }
 }

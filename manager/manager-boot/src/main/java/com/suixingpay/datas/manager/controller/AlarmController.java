@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.suixingpay.datas.manager.core.entity.Alarm;
 import com.suixingpay.datas.manager.service.AlarmService;
 import com.suixingpay.datas.manager.web.message.ResponseMessage;
+import com.suixingpay.datas.manager.web.page.Page;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -39,37 +40,37 @@ public class AlarmController {
     @PostMapping
     @ApiOperation(value = "新增", notes = "新增")
     public ResponseMessage add(@RequestBody Alarm alarm) {
-        /** Integer number = alarmService.insert(alarm); . */
-        return ok(null);
+        Integer number = alarmService.insert(alarm);
+        return ok(number);
     }
 
     @PutMapping("/{id}")
     @ApiOperation(value = "修改", notes = "修改")
     public ResponseMessage update(@PathVariable("id") Long id, @RequestBody Alarm alarm) {
-
-        return ok(null);
+        Integer number = alarmService.update(id, alarm);
+        return ok(number);
     }
 
     @DeleteMapping("/{id}")
     @ApiOperation(value = "删除", notes = "删除")
     public ResponseMessage delete(@PathVariable("id") Long id) {
-
-        return ok();
+        Integer number = alarmService.delete(id);
+        return ok(number);
     }
 
     @GetMapping("/{id}")
     @ApiOperation(value = "查询明细", notes = "查询明细")
     public ResponseMessage info(@PathVariable("id") Long id) {
-
-        return ok(null);
+        Alarm alarm = alarmService.selectById(id);
+        return ok(alarm);
     }
 
     @ApiOperation(value = "查询列表", notes = "查询列表")
     @GetMapping
-    public ResponseMessage list(Alarm t, @RequestParam(value = "pageNum", required = false) Integer pageNum,
+    public ResponseMessage list(@RequestParam(value = "pageNo", required = false) Integer pageNo,
             @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-
-        return ok(null);
+        Page<Alarm> page = alarmService.page(new Page<Alarm>(pageNo, pageSize));
+        return ok(page);
     }
 
 }

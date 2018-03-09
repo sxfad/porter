@@ -27,4 +27,92 @@
     <sql id="Base_Column_List">
         select id, consume_lane AS consumeLane, assign_node AS assignNode, data_table AS dataTable, register_time AS registerTime, heart_beat_date AS heartBeatDate, dispose_schedule AS disposeSchedule, alarm_number AS alarmNumber, insert_number AS insertNumber, update_number AS updateNumber, del_number AS delNumber, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, remark from mr_job_tasks_schedule
     </sql>-->
+
+    <!-- 新增 -->
+    <insert id="insert">
+        insert into mr_job_tasks_schedule(
+        consume_lane,
+        assign_node,
+        data_table,
+        register_time,
+        heart_beat_date,
+        dispose_schedule,
+        alarm_number,
+        insert_number,
+        update_number,
+        del_number,
+        create_user_id,
+        update_user_id,
+        create_time,
+        update_time,
+        state,
+        iscancel,
+        remark
+        ) values (
+        #{consumeLane},
+        #{assignNode},
+        #{dataTable},
+        #{registerTime},
+        #{heartBeatDate},
+        #{disposeSchedule},
+        #{alarmNumber},
+        #{insertNumber},
+        #{updateNumber},
+        #{delNumber},
+        #{createUserId},
+        #{updateUserId},
+        #{createTime},
+        #{updateTime},
+        #{state},
+        #{iscancel},
+        #{remark}
+        )
+    </insert>
+
+    <!-- 修改 -->
+    <update id="update">
+        update mr_job_tasks_schedule
+        set
+        consume_lane = #{mrJobTasksSchedule.consumeLane},
+        assign_node = #{mrJobTasksSchedule.assignNode},
+        data_table = #{mrJobTasksSchedule.dataTable},
+        register_time = #{mrJobTasksSchedule.registerTime},
+        heart_beat_date = #{mrJobTasksSchedule.heartBeatDate},
+        dispose_schedule = #{mrJobTasksSchedule.disposeSchedule},
+        alarm_number = #{mrJobTasksSchedule.alarmNumber},
+        insert_number = #{mrJobTasksSchedule.insertNumber},
+        update_number = #{mrJobTasksSchedule.updateNumber},
+        del_number = #{mrJobTasksSchedule.delNumber},
+        create_user_id = #{mrJobTasksSchedule.createUserId},
+        update_user_id = #{mrJobTasksSchedule.updateUserId},
+        create_time = #{mrJobTasksSchedule.createTime},
+        update_time = #{mrJobTasksSchedule.updateTime},
+        state = #{mrJobTasksSchedule.state},
+        iscancel = #{mrJobTasksSchedule.iscancel},
+        remark = #{mrJobTasksSchedule.remark}
+        where id = #{id}
+    </update>
+
+    <!-- 刪除 -->
+    <delete id="delete">
+        delete from mr_job_tasks_schedule where id = #{id}
+    </delete>
+
+    <!-- 根据主鍵查找 -->
+    <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.MrJobTasksSchedule">
+        select id, consume_lane AS consumeLane, assign_node AS assignNode, data_table AS dataTable, register_time AS registerTime, heart_beat_date AS heartBeatDate, dispose_schedule AS disposeSchedule, alarm_number AS alarmNumber, insert_number AS insertNumber, update_number AS updateNumber, del_number AS delNumber, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, remark from mr_job_tasks_schedule
+        where id = #{id}
+    </select>
+
+    <!-- 分页All -->
+    <select id="pageAll" resultType="java.lang.Integer">
+        select count(id) from mr_job_tasks_schedule
+        where 1=1
+    </select>
+
+    <!-- 分页 -->
+    <select id="page" resultType="com.suixingpay.datas.manager.core.entity.MrJobTasksSchedule">
+        select id, consume_lane AS consumeLane, assign_node AS assignNode, data_table AS dataTable, register_time AS registerTime, heart_beat_date AS heartBeatDate, dispose_schedule AS disposeSchedule, alarm_number AS alarmNumber, insert_number AS insertNumber, update_number AS updateNumber, del_number AS delNumber, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, remark from mr_job_tasks_schedule
+        where 1=1 limit #{page.offset},#{page.pageSize}
+    </select>
 </mapper>

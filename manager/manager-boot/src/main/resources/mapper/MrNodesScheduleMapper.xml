@@ -23,4 +23,80 @@
     <sql id="Base_Column_List">
         select id, node_id AS nodeId, computer_name AS computerName, ip_address AS ipAddress, heart_beat_date AS heartBeatDate, process_number AS processNumber, job_json AS jobJson, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, remark from mr_nodes_schedule
     </sql>-->
+
+    <!-- 新增 -->
+    <insert id="insert">
+        insert into mr_nodes_schedule(
+        node_id,
+        computer_name,
+        ip_address,
+        heart_beat_date,
+        process_number,
+        job_json,
+        create_user_id,
+        update_user_id,
+        create_time,
+        update_time,
+        state,
+        iscancel,
+        remark
+        ) values (
+        #{nodeId},
+        #{computerName},
+        #{ipAddress},
+        #{heartBeatDate},
+        #{processNumber},
+        #{jobJson},
+        #{createUserId},
+        #{updateUserId},
+        #{createTime},
+        #{updateTime},
+        #{state},
+        #{iscancel},
+        #{remark}
+        )
+    </insert>
+
+    <!-- 修改 -->
+    <update id="update">
+        update mr_nodes_schedule
+        set
+        node_id = #{mrNodesSchedule.nodeId},
+        computer_name = #{mrNodesSchedule.computerName},
+        ip_address = #{mrNodesSchedule.ipAddress},
+        heart_beat_date = #{mrNodesSchedule.heartBeatDate},
+        process_number = #{mrNodesSchedule.processNumber},
+        job_json = #{mrNodesSchedule.jobJson},
+        create_user_id = #{mrNodesSchedule.createUserId},
+        update_user_id = #{mrNodesSchedule.updateUserId},
+        create_time = #{mrNodesSchedule.createTime},
+        update_time = #{mrNodesSchedule.updateTime},
+        state = #{mrNodesSchedule.state},
+        iscancel = #{mrNodesSchedule.iscancel},
+        remark = #{mrNodesSchedule.remark}
+        where id = #{id}
+    </update>
+
+    <!-- 刪除 -->
+    <delete id="delete">
+        delete from mr_nodes_schedule where id = #{id}
+    </delete>
+
+    <!-- 根据主鍵查找 -->
+    <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.MrNodesSchedule">
+        select id, node_id AS nodeId, computer_name AS computerName, ip_address AS ipAddress, heart_beat_date AS heartBeatDate, process_number AS processNumber, job_json AS jobJson, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, remark from mr_nodes_schedule
+        where id = #{id}
+    </select>
+
+    <!-- 分页All -->
+    <select id="pageAll" resultType="java.lang.Integer">
+        select count(id) from mr_nodes_schedule
+        where 1=1
+    </select>
+
+    <!-- 分页 -->
+    <select id="page" resultType="com.suixingpay.datas.manager.core.entity.MrNodesSchedule">
+        select id, node_id AS nodeId, computer_name AS computerName, ip_address AS ipAddress, heart_beat_date AS heartBeatDate, process_number AS processNumber, job_json AS jobJson, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, remark from mr_nodes_schedule
+        where 1=1 limit #{page.offset},#{page.pageSize}
+    </select>
 </mapper>

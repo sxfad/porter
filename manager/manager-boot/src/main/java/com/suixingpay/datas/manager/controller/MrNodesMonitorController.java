@@ -2,6 +2,7 @@ package com.suixingpay.datas.manager.controller;
 
 import static com.suixingpay.datas.manager.web.message.ResponseMessage.ok;
 
+import com.suixingpay.datas.manager.web.page.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,37 +40,37 @@ public class MrNodesMonitorController {
     @PostMapping
     @ApiOperation(value = "新增", notes = "新增")
     public ResponseMessage add(@RequestBody MrNodesMonitor mrNodesMonitor) {
-        /** Integer number = mrNodesMonitorService.insert(mrNodesMonitor); . */
-        return ok(null);
+        Integer number = mrNodesMonitorService.insert(mrNodesMonitor);
+        return ok(number);
     }
 
     @PutMapping("/{id}")
     @ApiOperation(value = "修改", notes = "修改")
     public ResponseMessage update(@PathVariable("id") Long id, @RequestBody MrNodesMonitor mrNodesMonitor) {
-
-        return ok(null);
+        Integer number = mrNodesMonitorService.update(id, mrNodesMonitor);
+        return ok(number);
     }
 
     @DeleteMapping("/{id}")
     @ApiOperation(value = "删除", notes = "删除")
     public ResponseMessage delete(@PathVariable("id") Long id) {
-
+        mrNodesMonitorService.delete(id);
         return ok();
     }
 
     @GetMapping("/{id}")
     @ApiOperation(value = "查询明细", notes = "查询明细")
     public ResponseMessage info(@PathVariable("id") Long id) {
-
-        return ok(null);
+        MrNodesMonitor mrNodesMonitor = mrNodesMonitorService.selectById(id);
+        return ok(mrNodesMonitor);
     }
 
     @ApiOperation(value = "查询列表", notes = "查询列表")
     @GetMapping
-    public ResponseMessage list(MrNodesMonitor t, @RequestParam(value = "pageNum", required = false) Integer pageNum,
+    public ResponseMessage list(@RequestParam(value = "pageNo", required = false) Integer pageNo,
             @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-
-        return ok(null);
+        Page<MrNodesMonitor> page = mrNodesMonitorService.page(new Page<MrNodesMonitor>(pageNo, pageSize));
+        return ok(page);
     }
 
 }
