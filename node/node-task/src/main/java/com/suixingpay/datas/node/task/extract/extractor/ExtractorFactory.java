@@ -9,12 +9,12 @@
 package com.suixingpay.datas.node.task.extract.extractor;
 
 import com.suixingpay.datas.node.core.event.etl.ETLBucket;
+import com.suixingpay.datas.node.task.extract.ExtractMetadata;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -25,11 +25,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Component
 @Scope("singleton")
 public class ExtractorFactory {
-    private final AtomicBoolean isSort = new AtomicBoolean(false);
     private final List<Extractor> extractors = SpringFactoriesLoader.loadFactories(Extractor.class, null);
-    public void extract(ETLBucket bucket, List<String> excludeTables, List<String> includeTables) {
+    public void extract(ETLBucket bucket, ExtractMetadata metadata) {
         for (Extractor extractor : extractors) {
-            extractor.extract(bucket, excludeTables, includeTables);
+            extractor.extract(bucket, metadata);
         }
     }
 }

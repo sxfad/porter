@@ -17,14 +17,34 @@ import java.sql.Types;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月26日 10:59
  */
 public class ETLColumn {
+    //原始字段名
     private final String name;
+    //原始更新后值
     private final String newValue;
-    private String oldValue;
-    private  boolean isKey = false;
-    private boolean required = false;
+    //原始更新前值
+    private final String oldValue;
+
+
+    /**
+     * 用户自定义转换插件
+     * 可修改字段,用于最终目标端数据插入
+     * 2018-03-08 18:00:00
+     */
+
+    //最终目标端字段名
     private String finalName;
+    //最终目标端字段值
     private String finalValue;
+    //最终目标端字段值
+    private String finalOldValue;
+
+    //是否主键
+    private  boolean isKey = false;
+    //是否必填
+    private boolean required = false;
+    //目标端类型 java.sql.Types
     private int finalType;
+
 
     public ETLColumn(String name, String newValue, String oldValue, String finalValue, boolean isKey) {
         this(name, newValue, oldValue, finalValue, isKey, isKey, Types.VARCHAR);
@@ -39,18 +59,7 @@ public class ETLColumn {
         this.finalType = type;
         this.finalName = name;
         this.finalValue = finalValue;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getNewValue() {
-        return newValue;
-    }
-
-    public String getOldValue() {
-        return oldValue;
+        this.finalOldValue = oldValue;
     }
 
     public boolean isKey() {
@@ -101,7 +110,11 @@ public class ETLColumn {
         return finalValue;
     }
 
-    public void setOldValue(String oldValue) {
-        this.oldValue = oldValue;
+    public String getFinalOldValue() {
+        return finalOldValue;
+    }
+
+    public void setFinalOldValue(String finalOldValue) {
+        this.finalOldValue = finalOldValue;
     }
 }

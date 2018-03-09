@@ -12,6 +12,7 @@ import com.alibaba.fastjson.JSON;
 import com.suixingpay.datas.node.core.event.etl.ETLBucket;
 import com.suixingpay.datas.node.core.event.etl.ETLRow;
 import com.suixingpay.datas.node.core.event.s.EventType;
+import com.suixingpay.datas.node.task.extract.ExtractMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,24 +30,24 @@ public class IgnoreRowExtractor implements Extractor {
     private  static final Logger LOGGER = LoggerFactory.getLogger(IgnoreRowExtractor.class);
 
     @Override
-    public void extract(ETLBucket bucket, List<String> excludeTables, List<String> includeTables) {
+    public void extract(ETLBucket bucket, ExtractMetadata metadata) {
         long initBucketSize = bucket.getRows().size();
         List<ETLRow> removals = new ArrayList<>();
         for (ETLRow row : bucket.getRows()) {
             LOGGER.debug("trying extract row:{}", JSON.toJSONString(row));
 
             //包含、不包含表判断
-            if (!includeTables.isEmpty()) {
+            if (!metadata.getIncludeTables().isEmpty()) {
                 String strSeg = new StringBuffer().append(row.getSchema()).append(".")
                         .append(row.getTable()).toString().toUpperCase().intern();
 
-                if (!includeTables.contains(strSeg)) removals.add(row);
+                if (!metadata.getIncludeTables().contains(strSeg)) removals.add(row);
 
-            } else if (includeTables.isEmpty() && !excludeTables.isEmpty()) { //不包含表
+            } else if (metadata.getIncludeTables().isEmpty() && !metadata.getExcludeTables().isEmpty()) { //不包含表
                 String strSeg = new StringBuffer().append(row.getSchema()).append(".")
                         .append(row.getTable()).toString().toUpperCase().intern();
 
-                if (excludeTables.contains(strSeg)) removals.add(row);
+                if (metadata.getExcludeTables().contains(strSeg)) removals.add(row);
             }
 
             //当前仅支持插入、更新、删除、截断表

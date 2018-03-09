@@ -36,7 +36,7 @@ public class OggJsonConverter implements EventConverter {
     }
 
     @Override
-    public <T> MessageEvent convert(Object... params) {
+    public MessageEvent convert(Object... params) {
         JSONObject position = (JSONObject) params[0];
         JSONObject obj = JSON.parseObject((String) params[1]);
 

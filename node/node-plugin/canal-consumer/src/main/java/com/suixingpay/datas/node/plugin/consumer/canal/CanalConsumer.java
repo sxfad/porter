@@ -33,19 +33,19 @@ public class CanalConsumer extends AbstractDataConsumer {
         return consumeClient.fetch(new ConsumeClient.FetchCallback<MessageEvent, Object>() {
             @Override
             public <F, O> List<F> acceptAll(O o) {
-                List<F> events = new ArrayList<>();
+                List<MessageEvent> events = new ArrayList<>();
                 Message msg = (Message) o;
                 for (CanalEntry.Entry entry : msg.getEntries()) {
                     JSONObject header = new JSONObject();
                     header.put("batchId", msg.getId());
                     header.put("offset", entry.getHeader().getLogfileOffset());
                     header.put("logfileName", entry.getHeader().getLogfileName());
-                    List<F> convertedObj = (List<F>) converter.convertList(header, entry);
+                    List<MessageEvent> convertedObj = converter.convertList(header, entry);
                     if (null != convertedObj && !convertedObj.isEmpty()) {
                         events.addAll(convertedObj);
                     }
                 }
-                return events;
+                return (List<F>) events;
             }
         });
     }

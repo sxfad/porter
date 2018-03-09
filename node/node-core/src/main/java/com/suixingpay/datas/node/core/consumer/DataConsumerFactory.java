@@ -18,8 +18,11 @@ import com.suixingpay.datas.common.config.SourceConfig;
 import com.suixingpay.datas.common.exception.ClientException;
 import com.suixingpay.datas.common.exception.ConfigParseException;
 import com.suixingpay.datas.common.exception.DataConsumerBuildException;
+import com.suixingpay.datas.common.util.compile.SourceCompiler;
 import com.suixingpay.datas.node.core.event.s.ConverterFactory;
 import com.suixingpay.datas.node.core.event.s.EventConverter;
+import com.suixingpay.datas.node.core.event.s.EventProcessor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 
 import java.util.ArrayList;
@@ -62,6 +65,15 @@ public enum DataConsumerFactory {
         if (null == consumeClient) throw new ClientException("ConsumeClient初始化失败:" + config.getSource());
 
 
+        //自定义消费数据处理器
+        EventProcessor processor = null;
+        if (!StringUtils.isBlank(config.getEventProcessor())) {
+            try {
+                processor = SourceCompiler.INSTANCE.newJavaObject(config.getEventProcessor(), EventProcessor.class);
+            } catch (Exception e) {
+                throw new ConfigParseException("EventProcessor转换java对象失败:" + e.getMessage());
+            }
+        }
 
         List<ConsumeClient> consumeClients = consumeClient.splitSwimlanes();
         //释放浪费创建的对象
@@ -72,6 +84,7 @@ public enum DataConsumerFactory {
             consumer.setMetaQueryClient(metaQueryClient);
             consumer.setExcludes(config.getExcludes());
             consumer.setIncludes(config.getIncludes());
+            consumer.setEventProcessor(processor);
             consumers.add(consumer);
         }
         return consumers;

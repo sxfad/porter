@@ -27,7 +27,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Component
 @Scope("singleton")
 public class TransformFactory {
-    private List<Transformer> extractors = SpringFactoriesLoader.loadFactories(Transformer.class, null);
+    private final List<Transformer> extractors = SpringFactoriesLoader.loadFactories(Transformer.class, null);
     private final AtomicBoolean isSort = new AtomicBoolean(false);
 
     public TransformFactory() {
@@ -43,7 +43,7 @@ public class TransformFactory {
 
     private void sort() {
         if (isSort.compareAndSet(false, true)) {
-            extractors.sort((o1, o2) -> o1.order() - o2.order());
+            extractors.sort(Comparator.comparingInt(Transformer::order));
         }
     }
 }

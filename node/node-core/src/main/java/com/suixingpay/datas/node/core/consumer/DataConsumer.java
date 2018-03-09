@@ -13,6 +13,7 @@ import com.suixingpay.datas.common.client.ConsumeClient;
 import com.suixingpay.datas.common.client.MetaQueryClient;
 import com.suixingpay.datas.common.exception.TaskStopTriggerException;
 import com.suixingpay.datas.node.core.event.s.EventConverter;
+import com.suixingpay.datas.node.core.event.s.EventProcessor;
 import com.suixingpay.datas.node.core.event.s.MessageEvent;
 
 import java.io.IOException;
@@ -109,4 +110,8 @@ public interface DataConsumer {
     void commitPosition(String position) throws TaskStopTriggerException;
 
     boolean isAutoCommitPosition();
+
+    EventProcessor getEventProcessor();
+
+    void setEventProcessor(EventProcessor eventProcessor);
 }

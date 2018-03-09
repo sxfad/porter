@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -122,12 +121,7 @@ public class TaskController implements TaskEventListener {
     }
 
     private void startTask(TaskConfig task) {
-        TaskWorker worker = WORKER_MAP.computeIfAbsent(task.getTaskId(), new Function<String, TaskWorker>() {
-            @Override
-            public TaskWorker apply(String s) {
-                return new TaskWorker();
-            }
-        });
+        TaskWorker worker = WORKER_MAP.computeIfAbsent(task.getTaskId(), s -> new TaskWorker());
         //尝试通过ClusterProvider的分布式锁功能锁定资源。
         try {
             worker.alloc(task);

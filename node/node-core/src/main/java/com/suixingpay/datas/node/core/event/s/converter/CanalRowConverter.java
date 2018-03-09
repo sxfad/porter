@@ -34,7 +34,7 @@ public class CanalRowConverter implements EventConverter {
     }
 
     @Override
-    public <T> List<MessageEvent> convertList(Object... params) {
+    public List<MessageEvent> convertList(Object... params) {
         JSONObject position = (JSONObject) params[0];
         CanalEntry.Entry entry = (CanalEntry.Entry) params[1];
         //非row data

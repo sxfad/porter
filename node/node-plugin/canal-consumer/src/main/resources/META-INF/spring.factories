@@ -1,1 +1,1 @@
-com.suixingpay.datas.node.core.consumer.DataConsumer=com.suixingpay.datas.node.plugin.consumer.kafka.KafkaConsumer
+com.suixingpay.datas.node.core.consumer.DataConsumer=com.suixingpay.datas.node.plugin.consumer.canal.CanalConsumer

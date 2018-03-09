@@ -15,10 +15,10 @@ import java.util.List;
  */
 public interface EventConverter {
     String getName();
-    default <T> MessageEvent convert(Object... params) {
+    default MessageEvent convert(Object... params) {
         return null;
     }
-    default <T> List<MessageEvent> convertList(Object... params) {
+    default List<MessageEvent> convertList(Object... params) {
         return null;
     }
 }

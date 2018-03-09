@@ -9,8 +9,7 @@
 package com.suixingpay.datas.node.task.extract.extractor;
 
 import com.suixingpay.datas.node.core.event.etl.ETLBucket;
-
-import java.util.List;
+import com.suixingpay.datas.node.task.extract.ExtractMetadata;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -19,5 +18,13 @@ import java.util.List;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月25日 19:18
  */
 public interface Extractor {
-    void extract(ETLBucket bucket, List<String> excludeTables, List<String> includeTables);
+    /**
+     * 执行顺序，数字越小越早执行
+     * @return
+     */
+    default int order() {
+        return 0;
+    }
+
+    void extract(ETLBucket bucket, ExtractMetadata metadata);
 }

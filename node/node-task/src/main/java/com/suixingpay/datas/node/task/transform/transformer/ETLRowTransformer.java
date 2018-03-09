@@ -16,11 +16,9 @@ import com.suixingpay.datas.common.exception.TaskStopTriggerException;
 import com.suixingpay.datas.node.core.event.etl.ETLBucket;
 import com.suixingpay.datas.node.core.event.etl.ETLColumn;
 import com.suixingpay.datas.node.core.event.etl.ETLRow;
-import com.suixingpay.datas.node.core.event.s.EventType;
 import com.suixingpay.datas.node.core.loader.DataLoader;
 import com.suixingpay.datas.node.core.task.TableMapper;
 import com.suixingpay.datas.node.task.worker.TaskWork;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,7 +65,7 @@ public class ETLRowTransformer implements Transformer {
             if (null != row.getColumns() && null != mapper.getColumn()) {
                 for (ETLColumn c : row.getColumns()) {
                     //替换字段名
-                    c.setFinalName(mapper.getColumn().getOrDefault(c.getName(), c.getName()));
+                    c.setFinalName(mapper.getColumn().getOrDefault(c.getFinalName(), c.getFinalName()));
                 }
             }
         }
@@ -82,10 +80,12 @@ public class ETLRowTransformer implements Transformer {
                 c.setFinalType(column.getTypeCode());
                 c.setKey(column.isPrimaryKey());
                 c.setRequired(column.isRequired());
-                //如果是更新并且原主键不存在
-                if (row.getOpType() == EventType.UPDATE && column.isRequired() && StringUtils.isBlank(c.getOldValue())) {
-                    c.setOldValue(c.getNewValue());
-                }
+
+                //如果是更新且字段必填，更新前的值不存在
+                //if (row.getOpType() == EventType.UPDATE && column.isRequired() && StringUtils.isBlank(c.getOldValue())) {
+                //    c.setOldValue(c.getNewValue());
+                //}
+
             } else {
                 removeables.add(c);
             }
@@ -93,8 +93,12 @@ public class ETLRowTransformer implements Transformer {
 
         //反向查找
         List<String> inColumnNames = row.getColumns().stream().map(p  -> p.getFinalName()).collect(Collectors.toList());
-        //如果目标库表中有新增必填的字段需要补充上去
-        table.getColumns().stream().filter(p -> !inColumnNames.contains(p.getName()) && p.isRequired() && null == p.getDefaultValue())
+
+        /**
+         * 如果目标库表中有新增必填的字段的话需要补充上去
+         */
+        //table.getColumns().stream().filter(p -> !inColumnNames.contains(p.getName()) && p.isRequired() && null == p.getDefaultValue())
+        table.getColumns().stream().filter(p -> !inColumnNames.contains(p.getName()) && p.isRequired())
                 .forEach(p -> {
                     ETLColumn column = new ETLColumn(p.getName(), p.getDefaultValue(), p.getDefaultValue(), p.getDefaultValue(),
                             p.isPrimaryKey(), p.isRequired(), p.getTypeCode());
