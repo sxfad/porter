@@ -9,6 +9,7 @@
 
 package com.suixingpay.datas.common.config.source;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.suixingpay.datas.common.config.SourceConfig;
 import com.suixingpay.datas.common.dic.SourceType;
 import lombok.Getter;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月02日 14:24
  */
 public class KafkaConfig  extends SourceConfig {
+    @JSONField(serialize = false, deserialize = false)
     private static final String TOPIC_SPLIT_CHARACTER = ",";
     @Setter @Getter private String servers;
     @Setter @Getter private String group;
