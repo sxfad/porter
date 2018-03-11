@@ -12,8 +12,10 @@ package com.suixingpay.datas.common.client.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.suixingpay.datas.common.client.AbstractClient;
 import com.suixingpay.datas.common.client.ConsumeClient;
+import com.suixingpay.datas.common.config.SourceConfig;
 import com.suixingpay.datas.common.config.source.KafkaConfig;
 import com.suixingpay.datas.common.exception.ClientException;
+import com.suixingpay.datas.common.exception.ConfigParseException;
 import com.suixingpay.datas.common.exception.TaskStopTriggerException;
 import lombok.AllArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -84,10 +86,11 @@ public class KafkaClient extends AbstractClient<KafkaConfig> implements ConsumeC
                     TopicPartition tp = new TopicPartition(kafkaPosition.topic, kafkaPosition.partition);
                     synchronized (consumer) {
                         consumer.assign(Arrays.asList(tp));
+                        //AUTO_OFFSET_RESET_CONFIG值等于none时，如果position大于topic有效offset时会抛出OffsetOutOfRangeException
                         consumer.seek(tp, kafkaPosition.offset + 1);
                     }
                 } else {
-                    //默认消费分区0
+                    //默认消费分区0,该消费组上次
                     consumer.assign(Arrays.asList(new TopicPartition(swimlaneId, 0)));
                 }
                 canFetch.countDown();
@@ -128,11 +131,11 @@ public class KafkaClient extends AbstractClient<KafkaConfig> implements ConsumeC
     }
 
     @Override
-    public <T> List<T> splitSwimlanes() throws ClientException {
+    public <T> List<T> splitSwimlanes() throws ClientException, ConfigParseException {
         List<T> clients = new ArrayList<>();
         if (canSplit()) {
             for (String topic : getConfig().getTopics()) {
-                KafkaConfig tmpConfig = getConfig();
+                KafkaConfig tmpConfig = SourceConfig.getConfig(getConfig().getProperties());
                 tmpConfig.setTopics(Arrays.asList(topic));
                 T tmpClient = (T) AbstractClient.getClient(tmpConfig);
                 clients.add(tmpClient);

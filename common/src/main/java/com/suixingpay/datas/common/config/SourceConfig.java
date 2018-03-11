@@ -9,6 +9,7 @@
 
 package com.suixingpay.datas.common.config;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.suixingpay.datas.common.config.source.JDBCConfig;
 import com.suixingpay.datas.common.config.source.KafkaConfig;
 import com.suixingpay.datas.common.config.source.ZookeeperConfig;
@@ -33,11 +34,13 @@ import java.util.Map;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月23日 11:53
  */
 public abstract class SourceConfig {
+    @JSONField(serialize = false, deserialize = false)
     protected static final Logger LOGGER = LoggerFactory.getLogger(SourceConfig.class);
+    @JSONField(serialize = false, deserialize = false)
     public static final String SOURCE_TYPE_KEY = "sourceType";
+    @JSONField(serialize = false, deserialize = false)
     public static final String NAME_SOURCE_KEY = "sourceName";
-    @Getter
-    protected SourceType sourceType;
+    @Getter protected SourceType sourceType;
     private Map<String, String> properties;
 
     protected abstract void childStuff();

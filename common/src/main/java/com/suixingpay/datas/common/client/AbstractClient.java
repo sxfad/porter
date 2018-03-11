@@ -37,7 +37,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public abstract class AbstractClient<T extends SourceConfig> implements Client {
 
-    protected final Logger LOGGER = LoggerFactory.getLogger(AbstractClient.class);
+    protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
     private final AtomicBoolean status = new AtomicBoolean(false);
     @Getter @Setter private boolean isPublic = false;
     private final T config;

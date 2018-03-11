@@ -10,6 +10,7 @@
 package com.suixingpay.datas.common.client;
 
 import com.suixingpay.datas.common.exception.ClientException;
+import com.suixingpay.datas.common.exception.ConfigParseException;
 import com.suixingpay.datas.common.exception.TaskStopTriggerException;
 
 import java.text.ParseException;
@@ -58,7 +59,7 @@ public interface ConsumeClient extends Client {
      * @return
      * @throws ClientException
      */
-    default <T> List<T> splitSwimlanes() throws ClientException {
+    default <T> List<T> splitSwimlanes() throws ClientException, ConfigParseException {
         return Arrays.asList((T) this);
     }
 
