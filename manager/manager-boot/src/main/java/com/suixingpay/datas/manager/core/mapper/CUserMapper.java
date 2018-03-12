@@ -43,6 +43,14 @@ public interface CUserMapper {
     CUser selectById(Long id);
 
     /**
+     * 根据登陆账户 密码查询
+     * @param LoginName
+     * @param passwd
+     * @return
+     */
+    CUser selectByNameAndpasswd(@Param("loginname")String LoginName, @Param("loginpw")String loginpw);
+
+    /**
      * 分頁
      * @return
      */

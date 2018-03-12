@@ -1,10 +1,5 @@
 /**
- * All rights Reserved, Designed By Suixingpay.
- *
- * @author: FairyHood
- * @date: 2018-03-07 13:40:30
- * @Copyright ©2017 Suixingpay. All rights reserved.
- * 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
+ * 
  */
 package com.suixingpay.datas.manager.service.impl;
 
@@ -47,6 +42,11 @@ public class CUserServiceImpl implements CUserService {
     @Override
     public CUser selectById(Long id) {
         return cuserMapper.selectById(id);
+    }
+
+    @Override
+    public CUser selectByNameAndpasswd(String LoginName, String passwd) {
+        return cuserMapper.selectByNameAndpasswd(LoginName,passwd);
     }
 
     @Override

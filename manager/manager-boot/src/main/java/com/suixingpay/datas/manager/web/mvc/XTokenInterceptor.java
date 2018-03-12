@@ -15,6 +15,7 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import com.alibaba.fastjson.JSON;
+import com.suixingpay.datas.manager.web.tl.WebToeknContext;
 import com.suixingpay.datas.manager.web.token.TokenUtil;
 
 /**
@@ -32,13 +33,20 @@ public class XTokenInterceptor extends HandlerInterceptorAdapter {
         String uri = request.getRequestURI();
         log.info("requestURI:{}", uri);
         try {
-            String handlerMethod = request.getMethod();
-            if ("OPTIONS".equals(handlerMethod)) {
+            String requestMethod = request.getMethod();
+            if ("OPTIONS".equals(requestMethod)) {
                 return true;
             }
             if (!(handler instanceof HandlerMethod)) {
                 return true;
             }
+//            // 从切点上获取目标方法
+//            HandlerMethod handlerMethod = (HandlerMethod) handler;
+//            Method method = handlerMethod.getMethod();
+//            // 若目标方法忽略了安全性检查，则直接调用目标方法
+//            if (method.isAnnotationPresent(IgnoreToken.class)) {
+//                return true;
+//            }
             // 校验token
             String token = request.getHeader("X-Token");
             log.info("传入的token值:{}", token);
@@ -48,6 +56,7 @@ public class XTokenInterceptor extends HandlerInterceptorAdapter {
                 response.getWriter().append(JSON.toJSONString(new AuthorizedBody("401", "token Check the error")));
                 return false;
             }
+            WebToeknContext.initToken(token);
             return true;
         } catch (Exception e) {
             return false;
