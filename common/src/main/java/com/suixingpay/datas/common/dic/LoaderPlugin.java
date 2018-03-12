@@ -14,10 +14,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
  * 载入器插件
+ * 
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年03月07日 10:00
  * @version: V1.0
@@ -27,11 +29,12 @@ import java.util.List;
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum LoaderPlugin {
 
-    JDBC_BATCH("JdbcBatch", "JDBC批量"),
-    JDBC_SINGLE("JdbcSingle", "JDBC单行");
+    JDBC_BATCH("JdbcBatch", "JDBC批量"), JDBC_SINGLE("JdbcSingle", "JDBC单行");
 
-    @Getter private final String code;
-    @Getter private final String name;
+    @Getter
+    private final String code;
+    @Getter
+    private final String name;
 
     public static final List<LoaderPlugin> PLUGINS = new ArrayList<LoaderPlugin>() {
         {
@@ -40,4 +43,10 @@ public enum LoaderPlugin {
         }
     };
 
+    public static final HashMap<String, Object> PLUGMAP = new HashMap<String, Object>() {
+        {
+            put(JDBC_BATCH.code, JDBC_BATCH.name);
+            put(JDBC_SINGLE.code, JDBC_SINGLE.name);
+        }
+    };
 }

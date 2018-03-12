@@ -64,6 +64,15 @@
         where id = #{id}
     </select>
 
+    <!-- 查询所有数据 -->
+    <select id="selectAll" resultType="com.suixingpay.datas.manager.core.entity.Dictionary">
+        select id, code, name, parentcode, level, dictype, state, remark from d_dictionary
+        where 1=1
+        <if test="state !=null and state != ''">
+            and state = #{state}
+        </if>
+    </select>
+
     <!-- 分页All -->
     <select id="pageAll" resultType="java.lang.Integer">
         select count(id) from d_dictionary

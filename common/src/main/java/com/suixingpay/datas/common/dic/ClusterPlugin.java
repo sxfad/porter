@@ -14,10 +14,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
  * 集群方案
+ * 
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年02月23日 11:42
  * @version: V1.0
@@ -28,12 +30,21 @@ import java.util.List;
 public enum ClusterPlugin {
     ZOOKEEPER("ZOOKEEPER", "zookeeper");
 
-    @Getter private final String code;
-    @Getter private final String name;
+    @Getter
+    private final String code;
+    @Getter
+    private final String name;
 
     public static final List<ClusterPlugin> PLUGINS = new ArrayList<ClusterPlugin>() {
         {
             add(ZOOKEEPER);
         }
     };
+
+    public static final HashMap<String, Object> PLUGMAP = new HashMap<String, Object>() {
+        {
+            put(ZOOKEEPER.code, ZOOKEEPER.name);
+        }
+    };
+ 
 }

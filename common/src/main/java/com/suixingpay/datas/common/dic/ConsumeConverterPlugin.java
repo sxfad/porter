@@ -14,10 +14,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
  * 转换器插件
+ * 
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年03月07日 10:00
  * @version: V1.0
@@ -26,16 +28,24 @@ import java.util.List;
 @AllArgsConstructor
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum ConsumeConverterPlugin {
-    CANAL_ROW("canalRow", "Canal行格式"),
-    OGG_JSON("oggJson", "oggJson格式");
+    CANAL_ROW("canalRow", "Canal行格式"), OGG_JSON("oggJson", "oggJson格式");
 
-    @Getter private final String code;
-    @Getter private final String name;
+    @Getter
+    private final String code;
+    @Getter
+    private final String name;
 
-    public static final List<ConsumeConverterPlugin> PLUGINS = new ArrayList<ConsumeConverterPlugin>()  {
+    public static final List<ConsumeConverterPlugin> PLUGINS = new ArrayList<ConsumeConverterPlugin>() {
         {
             add(CANAL_ROW);
             add(OGG_JSON);
+        }
+    };
+
+    public static final HashMap<String, Object> PLUGMAP = new HashMap<String, Object>() {
+        {
+            put(CANAL_ROW.code, CANAL_ROW.name);
+            put(OGG_JSON.code, OGG_JSON.name);
         }
     };
 

@@ -54,4 +54,10 @@ public interface DictionaryMapper {
      */
     Integer pageAll(@Param("state") Integer state);
 
+    /**
+     * 所有启用数据
+     * @return
+     */
+    List<Dictionary> selectAll(@Param("state") Integer state);
+
 }

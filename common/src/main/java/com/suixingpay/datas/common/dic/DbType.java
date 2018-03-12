@@ -14,10 +14,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
  * 关系数据库类型
+ * 
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年02月02日 16:27
  * @version: V1.0
@@ -25,17 +27,26 @@ import java.util.List;
  */
 @AllArgsConstructor
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
-public enum  DbType {
+public enum DbType {
 
     MYSQL("MYSQL", "MYSQL"), ORACLE("ORACLE", "ORACLE");
 
-    @Getter private final String code;
-    @Getter private final String name;
+    @Getter
+    private final String code;
+    @Getter
+    private final String name;
 
     public static final List<DbType> TYPES = new ArrayList<DbType>() {
         {
             add(MYSQL);
             add(ORACLE);
+        }
+    };
+
+    public static final HashMap<String, Object> PLUGMAP = new HashMap<String, Object>() {
+        {
+            put(MYSQL.code, MYSQL.name);
+            put(ORACLE.code, ORACLE.name);
         }
     };
 }
