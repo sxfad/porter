@@ -17,7 +17,7 @@
         <result column="create_user_id" property="createUserId" />
         <result column="update_user_id" property="updateUserId" />
         <result column="create_time" property="createTime" />
-        <result column="update_time" property="updateTime" />
+        <result column="update_time" property="upDATETIME" />
         <result column="state" property="state" />
         <result column="iscancel" property="iscancel" />
         <result column="remark" property="remark" />
@@ -25,7 +25,7 @@
 
     <!-- 通用查询结果列 
     <sql id="Base_Column_List">
-        select id, consume_lane AS consumeLane, assign_node AS assignNode, data_table AS dataTable, register_time AS registerTime, heart_beat_date AS heartBeatDate, dispose_schedule AS disposeSchedule, alarm_number AS alarmNumber, insert_number AS insertNumber, update_number AS updateNumber, del_number AS delNumber, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, remark from mr_job_tasks_schedule
+        select id, consume_lane AS consumeLane, assign_node AS assignNode, data_table AS dataTable, register_time AS registerTime, heart_beat_date AS heartBeatDate, dispose_schedule AS disposeSchedule, alarm_number AS alarmNumber, insert_number AS insertNumber, update_number AS updateNumber, del_number AS delNumber, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS upDATETIME, state, iscancel, remark from mr_job_tasks_schedule
     </sql>-->
 
     <!-- 新增 -->
@@ -62,7 +62,7 @@
         #{createUserId},
         #{updateUserId},
         #{createTime},
-        #{updateTime},
+        #{upDATETIME},
         #{state},
         #{iscancel},
         #{remark}
@@ -86,7 +86,7 @@
         create_user_id = #{mrJobTasksSchedule.createUserId},
         update_user_id = #{mrJobTasksSchedule.updateUserId},
         create_time = #{mrJobTasksSchedule.createTime},
-        update_time = #{mrJobTasksSchedule.updateTime},
+        update_time = #{mrJobTasksSchedule.upDATETIME},
         state = #{mrJobTasksSchedule.state},
         iscancel = #{mrJobTasksSchedule.iscancel},
         remark = #{mrJobTasksSchedule.remark}
@@ -100,7 +100,7 @@
 
     <!-- 根据主鍵查找 -->
     <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.MrJobTasksSchedule">
-        select id, consume_lane AS consumeLane, assign_node AS assignNode, data_table AS dataTable, register_time AS registerTime, heart_beat_date AS heartBeatDate, dispose_schedule AS disposeSchedule, alarm_number AS alarmNumber, insert_number AS insertNumber, update_number AS updateNumber, del_number AS delNumber, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, remark from mr_job_tasks_schedule
+        select id, consume_lane AS consumeLane, assign_node AS assignNode, data_table AS dataTable, register_time AS registerTime, heart_beat_date AS heartBeatDate, dispose_schedule AS disposeSchedule, alarm_number AS alarmNumber, insert_number AS insertNumber, update_number AS updateNumber, del_number AS delNumber, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS upDATETIME, state, iscancel, remark from mr_job_tasks_schedule
         where id = #{id}
     </select>
 
@@ -112,7 +112,178 @@
 
     <!-- 分页 -->
     <select id="page" resultType="com.suixingpay.datas.manager.core.entity.MrJobTasksSchedule">
-        select id, consume_lane AS consumeLane, assign_node AS assignNode, data_table AS dataTable, register_time AS registerTime, heart_beat_date AS heartBeatDate, dispose_schedule AS disposeSchedule, alarm_number AS alarmNumber, insert_number AS insertNumber, update_number AS updateNumber, del_number AS delNumber, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, remark from mr_job_tasks_schedule
+        select id, consume_lane AS consumeLane, assign_node AS assignNode, data_table AS dataTable, register_time AS registerTime, heart_beat_date AS heartBeatDate, dispose_schedule AS disposeSchedule, alarm_number AS alarmNumber, insert_number AS insertNumber, update_number AS updateNumber, del_number AS delNumber, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS upDATETIME, state, iscancel, remark from mr_job_tasks_schedule
         where 1=1 limit #{page.offset},#{page.pageSize}
     </select>
+
+    <!-- 验证新增 -->
+    <insert id="insertSelective">
+        insert into mr_job_tasks_schedule
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="consumeLane != null">
+                consume_lane,
+            </if>
+            <if test="assignNode != null">
+                assign_node,
+            </if>
+            <if test="dataTable != null">
+                data_table,
+            </if>
+            <if test="registerTime != null">
+                register_time,
+            </if>
+            <if test="heartBeatDate != null">
+                heart_beat_date,
+            </if>
+            <if test="disposeSchedule != null">
+                dispose_schedule,
+            </if>
+            <if test="alarmNumber != null">
+                alarm_number,
+            </if>
+            <if test="insertNumber != null">
+                insert_number,
+            </if>
+            <if test="updateNumber != null">
+                update_number,
+            </if>
+            <if test="delNumber != null">
+                del_number,
+            </if>
+            <if test="createUserId != null">
+                create_user_id,
+            </if>
+            <if test="updateUserId != null">
+                update_user_id,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="upDATETIME != null">
+                update_time,
+            </if>
+            <if test="state != null">
+                state,
+            </if>
+            <if test="iscancel != null">
+                iscancel,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="consumeLane != null">
+                #{consumeLane,jdbcType=VARCHAR},
+            </if>
+            <if test="assignNode != null">
+                #{assignNode,jdbcType=VARCHAR},
+            </if>
+            <if test="dataTable != null">
+                #{dataTable,jdbcType=VARCHAR},
+            </if>
+            <if test="registerTime != null">
+                #{registerTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="heartBeatDate != null">
+                #{heartBeatDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="disposeSchedule != null">
+                #{disposeSchedule,jdbcType=VARCHAR},
+            </if>
+            <if test="alarmNumber != null">
+                #{alarmNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="insertNumber != null">
+                #{insertNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="updateNumber != null">
+                #{updateNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="delNumber != null">
+                #{delNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="createUserId != null">
+                #{createUserId,jdbcType=BIGINT},
+            </if>
+            <if test="updateUserId != null">
+                #{updateUserId,jdbcType=BIGINT},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="upDATETIME != null">
+                #{upDATETIME,jdbcType=TIMESTAMP},
+            </if>
+            <if test="state != null">
+                #{state,jdbcType=INTEGER},
+            </if>
+            <if test="iscancel != null">
+                #{iscancel,jdbcType=INTEGER},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 验证修改 -->
+    <update id="updateSelective">
+        update mr_job_tasks_schedule
+        <set>
+            <if test="mrJobTasksSchedule.consumeLane != null">
+                consume_lane = #{mrJobTasksSchedule.consumeLane,jdbcType=VARCHAR},
+            </if>
+            <if test="mrJobTasksSchedule.assignNode != null">
+                assign_node = #{mrJobTasksSchedule.assignNode,jdbcType=VARCHAR},
+            </if>
+            <if test="mrJobTasksSchedule.dataTable != null">
+                data_table = #{mrJobTasksSchedule.dataTable,jdbcType=VARCHAR},
+            </if>
+            <if test="mrJobTasksSchedule.registerTime != null">
+                register_time = #{mrJobTasksSchedule.registerTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="mrJobTasksSchedule.heartBeatDate != null">
+                heart_beat_date = #{mrJobTasksSchedule.heartBeatDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="mrJobTasksSchedule.disposeSchedule != null">
+                dispose_schedule = #{mrJobTasksSchedule.disposeSchedule,jdbcType=VARCHAR},
+            </if>
+            <if test="mrJobTasksSchedule.alarmNumber != null">
+                alarm_number = #{mrJobTasksSchedule.alarmNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="mrJobTasksSchedule.insertNumber != null">
+                insert_number = #{mrJobTasksSchedule.insertNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="mrJobTasksSchedule.updateNumber != null">
+                update_number = #{mrJobTasksSchedule.updateNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="mrJobTasksSchedule.delNumber != null">
+                del_number = #{mrJobTasksSchedule.delNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="mrJobTasksSchedule.createUserId != null">
+                create_user_id = #{mrJobTasksSchedule.createUserId,jdbcType=BIGINT},
+            </if>
+            <if test="mrJobTasksSchedule.updateUserId != null">
+                update_user_id = #{mrJobTasksSchedule.updateUserId,jdbcType=BIGINT},
+            </if>
+            <if test="mrJobTasksSchedule.createTime != null">
+                create_time = #{mrJobTasksSchedule.createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="mrJobTasksSchedule.upDATETIME != null">
+                update_time = #{mrJobTasksSchedule.upDATETIME,jdbcType=TIMESTAMP},
+            </if>
+            <if test="mrJobTasksSchedule.state != null">
+                state = #{mrJobTasksSchedule.state,jdbcType=INTEGER},
+            </if>
+            <if test="mrJobTasksSchedule.iscancel != null">
+                iscancel = #{mrJobTasksSchedule.iscancel,jdbcType=INTEGER},
+            </if>
+            <if test="mrJobTasksSchedule.remark != null">
+                remark = #{mrJobTasksSchedule.remark,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
 </mapper>

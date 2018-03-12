@@ -71,4 +71,18 @@ public class AlarmController {
         return ok(page);
     }
 
+    @PostMapping("/insertSelective")
+    @ApiOperation(value = "验证新增", notes = "验证新增")
+    public ResponseMessage insertSelective(@RequestBody Alarm alarm) {
+        Integer number = alarmService.insertSelective(alarm);
+        return ok(number);
+    }
+
+    @PutMapping("/updateSelective/{id}")
+    @ApiOperation(value = "验证修改", notes = "验证修改")
+    public ResponseMessage updateSelective(@PathVariable("id") long id, @RequestBody Alarm alarm) {
+        Integer number = alarmService.updateSelective(id, alarm);
+        return ok(number);
+    }
+
 }

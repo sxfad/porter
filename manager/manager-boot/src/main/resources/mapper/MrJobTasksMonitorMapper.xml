@@ -95,4 +95,129 @@
         select id, consume_lane AS consumeLane, monitor_date AS monitorDate, monitor_ymd AS monitorYmd, monitor_hour AS monitorHour, monitor_minute AS monitorMinute, monitor_second AS monitorSecond, insert_succes AS insertSucces, insert_failure AS insertFailure, update_succes AS updateSucces, update_failure AS updateFailure, delete_succes AS deleteSucces, delete_failure AS deleteFailure from mr_job_tasks_monitor
         where 1=1 limit #{page.offset},#{page.pageSize}
     </select>
+
+    <!-- 验证新增 -->
+    <insert id="insertSelective">
+        insert into mr_job_tasks_monitor
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="consumeLane != null">
+                consume_lane,
+            </if>
+            <if test="monitorDate != null">
+                monitor_date,
+            </if>
+            <if test="monitorYmd != null">
+                monitor_ymd,
+            </if>
+            <if test="monitorHour != null">
+                monitor_hour,
+            </if>
+            <if test="monitorMinute != null">
+                monitor_minute,
+            </if>
+            <if test="monitorSecond != null">
+                monitor_second,
+            </if>
+            <if test="insertSucces != null">
+                insert_succes,
+            </if>
+            <if test="insertFailure != null">
+                insert_failure,
+            </if>
+            <if test="updateSucces != null">
+                update_succes,
+            </if>
+            <if test="updateFailure != null">
+                update_failure,
+            </if>
+            <if test="deleteSucces != null">
+                delete_succes,
+            </if>
+            <if test="deleteFailure != null">
+                delete_failure,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="consumeLane != null">
+                #{consumeLane,jdbcType=VARCHAR},
+            </if>
+            <if test="monitorDate != null">
+                #{monitorDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="monitorYmd != null">
+                #{monitorYmd,jdbcType=CHAR},
+            </if>
+            <if test="monitorHour != null">
+                #{monitorHour,jdbcType=INTEGER},
+            </if>
+            <if test="monitorMinute != null">
+                #{monitorMinute,jdbcType=INTEGER},
+            </if>
+            <if test="monitorSecond != null">
+                #{monitorSecond,jdbcType=INTEGER},
+            </if>
+            <if test="insertSucces != null">
+                #{insertSucces,jdbcType=BIGINT},
+            </if>
+            <if test="insertFailure != null">
+                #{insertFailure,jdbcType=BIGINT},
+            </if>
+            <if test="updateSucces != null">
+                #{updateSucces,jdbcType=BIGINT},
+            </if>
+            <if test="updateFailure != null">
+                #{updateFailure,jdbcType=BIGINT},
+            </if>
+            <if test="deleteSucces != null">
+                #{deleteSucces,jdbcType=BIGINT},
+            </if>
+            <if test="deleteFailure != null">
+                #{deleteFailure,jdbcType=BIGINT},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 验证修改 -->
+    <update id="updateSelective">
+        update mr_job_tasks_monitor
+        <set>
+            <if test="mrJobTasksMonitor.consumeLane != null">
+                consume_lane = #{mrJobTasksMonitor.consumeLane,jdbcType=VARCHAR},
+            </if>
+            <if test="mrJobTasksMonitor.monitorDate != null">
+                monitor_date = #{mrJobTasksMonitor.monitorDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="mrJobTasksMonitor.monitorYmd != null">
+                monitor_ymd = #{mrJobTasksMonitor.monitorYmd,jdbcType=CHAR},
+            </if>
+            <if test="mrJobTasksMonitor.monitorHour != null">
+                monitor_hour = #{mrJobTasksMonitor.monitorHour,jdbcType=INTEGER},
+            </if>
+            <if test="mrJobTasksMonitor.monitorMinute != null">
+                monitor_minute = #{mrJobTasksMonitor.monitorMinute,jdbcType=INTEGER},
+            </if>
+            <if test="mrJobTasksMonitor.monitorSecond != null">
+                monitor_second = #{mrJobTasksMonitor.monitorSecond,jdbcType=INTEGER},
+            </if>
+            <if test="mrJobTasksMonitor.insertSucces != null">
+                insert_succes = #{mrJobTasksMonitor.insertSucces,jdbcType=BIGINT},
+            </if>
+            <if test="mrJobTasksMonitor.insertFailure != null">
+                insert_failure = #{mrJobTasksMonitor.insertFailure,jdbcType=BIGINT},
+            </if>
+            <if test="mrJobTasksMonitor.updateSucces != null">
+                update_succes = #{mrJobTasksMonitor.updateSucces,jdbcType=BIGINT},
+            </if>
+            <if test="mrJobTasksMonitor.updateFailure != null">
+                update_failure = #{mrJobTasksMonitor.updateFailure,jdbcType=BIGINT},
+            </if>
+            <if test="mrJobTasksMonitor.deleteSucces != null">
+                delete_succes = #{mrJobTasksMonitor.deleteSucces,jdbcType=BIGINT},
+            </if>
+            <if test="mrJobTasksMonitor.deleteFailure != null">
+                delete_failure = #{mrJobTasksMonitor.deleteFailure,jdbcType=BIGINT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
 </mapper>

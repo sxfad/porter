@@ -99,4 +99,145 @@
         select id, node_id AS nodeId, computer_name AS computerName, ip_address AS ipAddress, heart_beat_date AS heartBeatDate, process_number AS processNumber, job_json AS jobJson, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, remark from mr_nodes_schedule
         where 1=1 limit #{page.offset},#{page.pageSize}
     </select>
+
+    <!-- 验证新增 -->
+    <insert id="insertSelective">
+        insert into mr_nodes_schedule
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="nodeId != null">
+                node_id,
+            </if>
+            <if test="computerName != null">
+                computer_name,
+            </if>
+            <if test="ipAddress != null">
+                ip_address,
+            </if>
+            <if test="heartBeatDate != null">
+                heart_beat_date,
+            </if>
+            <if test="processNumber != null">
+                process_number,
+            </if>
+            <if test="jobJson != null">
+                job_json,
+            </if>
+            <if test="createUserId != null">
+                create_user_id,
+            </if>
+            <if test="updateUserId != null">
+                update_user_id,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="state != null">
+                state,
+            </if>
+            <if test="iscancel != null">
+                iscancel,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="nodeId != null">
+                #{nodeId,jdbcType=VARCHAR},
+            </if>
+            <if test="computerName != null">
+                #{computerName,jdbcType=VARCHAR},
+            </if>
+            <if test="ipAddress != null">
+                #{ipAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="heartBeatDate != null">
+                #{heartBeatDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="processNumber != null">
+                #{processNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="jobJson != null">
+                #{jobJson,jdbcType=VARCHAR},
+            </if>
+            <if test="createUserId != null">
+                #{createUserId,jdbcType=BIGINT},
+            </if>
+            <if test="updateUserId != null">
+                #{updateUserId,jdbcType=BIGINT},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="state != null">
+                #{state,jdbcType=INTEGER},
+            </if>
+            <if test="iscancel != null">
+                #{iscancel,jdbcType=INTEGER},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 验证修改 -->
+    <update id="updateSelective">
+        update mr_nodes_schedule
+        <set>
+            <if test="mrNodesSchedule.nodeId != null">
+                node_id = #{mrNodesSchedule.nodeId,jdbcType=VARCHAR},
+            </if>
+            <if test="mrNodesSchedule.computerName != null">
+                computer_name = #{mrNodesSchedule.computerName,jdbcType=VARCHAR},
+            </if>
+            <if test="mrNodesSchedule.ipAddress != null">
+                ip_address = #{mrNodesSchedule.ipAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="mrNodesSchedule.heartBeatDate != null">
+                heart_beat_date = #{mrNodesSchedule.heartBeatDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="mrNodesSchedule.processNumber != null">
+                process_number = #{mrNodesSchedule.processNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="mrNodesSchedule.jobJson != null">
+                job_json = #{mrNodesSchedule.jobJson,jdbcType=VARCHAR},
+            </if>
+            <if test="mrNodesSchedule.createUserId != null">
+                create_user_id = #{mrNodesSchedule.createUserId,jdbcType=BIGINT},
+            </if>
+            <if test="mrNodesSchedule.updateUserId != null">
+                update_user_id = #{mrNodesSchedule.updateUserId,jdbcType=BIGINT},
+            </if>
+            <if test="mrNodesSchedule.createTime != null">
+                create_time = #{mrNodesSchedule.createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="mrNodesSchedule.updateTime != null">
+                update_time = #{mrNodesSchedule.updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="mrNodesSchedule.state != null">
+                state = #{mrNodesSchedule.state,jdbcType=INTEGER},
+            </if>
+            <if test="mrNodesSchedule.iscancel != null">
+                iscancel = #{mrNodesSchedule.iscancel,jdbcType=INTEGER},
+            </if>
+            <if test="mrNodesSchedule.remark != null">
+                remark = #{mrNodesSchedule.remark,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
 </mapper>

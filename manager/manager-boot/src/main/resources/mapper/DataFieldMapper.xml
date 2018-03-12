@@ -83,4 +83,102 @@
         select id, table_id AS tableId, field_name AS fieldName, field_type AS fieldType, field_comment AS fieldComment, creater, create_time AS createTime, state, iscancel, remark from b_data_field
         where 1=1 limit #{page.offset},#{page.pageSize}
     </select>
+
+    <!-- 验证新增 -->
+    <insert id="insertSelective">
+        insert into b_data_field
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="tableId != null">
+                table_id,
+            </if>
+            <if test="fieldName != null">
+                field_name,
+            </if>
+            <if test="fieldType != null">
+                field_type,
+            </if>
+            <if test="fieldComment != null">
+                field_comment,
+            </if>
+            <if test="creater != null">
+                creater,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="state != null">
+                state,
+            </if>
+            <if test="iscancel != null">
+                iscancel,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="tableId != null">
+                #{tableId,jdbcType=BIGINT},
+            </if>
+            <if test="fieldName != null">
+                #{fieldName,jdbcType=VARCHAR},
+            </if>
+            <if test="fieldType != null">
+                #{fieldType,jdbcType=VARCHAR},
+            </if>
+            <if test="fieldComment != null">
+                #{fieldComment,jdbcType=VARCHAR},
+            </if>
+            <if test="creater != null">
+                #{creater,jdbcType=BIGINT},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="state != null">
+                #{state,jdbcType=INTEGER},
+            </if>
+            <if test="iscancel != null">
+                #{iscancel,jdbcType=INTEGER},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 验证修改 -->
+    <update id="updateSelective">
+        update b_data_field
+        <set>
+            <if test="dataField.tableId != null">
+                table_id = #{dataField.tableId,jdbcType=BIGINT},
+            </if>
+            <if test="dataField.fieldName != null">
+                field_name = #{dataField.fieldName,jdbcType=VARCHAR},
+            </if>
+            <if test="dataField.fieldType != null">
+                field_type = #{dataField.fieldType,jdbcType=VARCHAR},
+            </if>
+            <if test="dataField.fieldComment != null">
+                field_comment = #{dataField.fieldComment,jdbcType=VARCHAR},
+            </if>
+            <if test="dataField.creater != null">
+                creater = #{dataField.creater,jdbcType=BIGINT},
+            </if>
+            <if test="dataField.createTime != null">
+                create_time = #{dataField.createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="dataField.state != null">
+                state = #{dataField.state,jdbcType=INTEGER},
+            </if>
+            <if test="dataField.iscancel != null">
+                iscancel = #{dataField.iscancel,jdbcType=INTEGER},
+            </if>
+            <if test="dataField.remark != null">
+                remark = #{dataField.remark,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
 </mapper>

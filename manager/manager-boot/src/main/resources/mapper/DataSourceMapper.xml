@@ -99,4 +99,138 @@
         select id, name, data_type AS dataType, data_json AS dataJson, date_user AS dateUser, date_passwd AS datePasswd, date_url AS dateUrl, date_servers AS dateServers, date_topics AS dateTopics, creater, create_time AS createTime, state, iscancel, remark from b_data_source
         where 1=1 limit #{page.offset},#{page.pageSize}
     </select>
+
+    <!-- 验证新增 -->
+    <insert id="insertSelective">
+        insert into b_data_source
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">
+                name,
+            </if>
+            <if test="dataType != null">
+                data_type,
+            </if>
+            <if test="dataJson != null">
+                data_json,
+            </if>
+            <if test="dateUser != null">
+                date_user,
+            </if>
+            <if test="datePasswd != null">
+                date_passwd,
+            </if>
+            <if test="dateUrl != null">
+                date_url,
+            </if>
+            <if test="dateServers != null">
+                date_servers,
+            </if>
+            <if test="dateTopics != null">
+                date_topics,
+            </if>
+            <if test="creater != null">
+                creater,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="state != null">
+                state,
+            </if>
+            <if test="iscancel != null">
+                iscancel,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="dataType != null">
+                #{dataType,jdbcType=VARCHAR},
+            </if>
+            <if test="dataJson != null">
+                #{dataJson,jdbcType=VARCHAR},
+            </if>
+            <if test="dateUser != null">
+                #{dateUser,jdbcType=VARCHAR},
+            </if>
+            <if test="datePasswd != null">
+                #{datePasswd,jdbcType=VARCHAR},
+            </if>
+            <if test="dateUrl != null">
+                #{dateUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="dateServers != null">
+                #{dateServers,jdbcType=VARCHAR},
+            </if>
+            <if test="dateTopics != null">
+                #{dateTopics,jdbcType=VARCHAR},
+            </if>
+            <if test="creater != null">
+                #{creater,jdbcType=BIGINT},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="state != null">
+                #{state,jdbcType=INTEGER},
+            </if>
+            <if test="iscancel != null">
+                #{iscancel,jdbcType=INTEGER},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 验证修改 -->
+    <update id="updateSelective">
+        update b_data_source
+        <set>
+            <if test="dataSource.name != null">
+                name = #{dataSource.name,jdbcType=VARCHAR},
+            </if>
+            <if test="dataSource.dataType != null">
+                data_type = #{dataSource.dataType,jdbcType=VARCHAR},
+            </if>
+            <if test="dataSource.dataJson != null">
+                data_json = #{dataSource.dataJson,jdbcType=VARCHAR},
+            </if>
+            <if test="dataSource.dateUser != null">
+                date_user = #{dataSource.dateUser,jdbcType=VARCHAR},
+            </if>
+            <if test="dataSource.datePasswd != null">
+                date_passwd = #{dataSource.datePasswd,jdbcType=VARCHAR},
+            </if>
+            <if test="dataSource.dateUrl != null">
+                date_url = #{dataSource.dateUrl,jdbcType=VARCHAR},
+            </if>
+            <if test="dataSource.dateServers != null">
+                date_servers = #{dataSource.dateServers,jdbcType=VARCHAR},
+            </if>
+            <if test="dataSource.dateTopics != null">
+                date_topics = #{dataSource.dateTopics,jdbcType=VARCHAR},
+            </if>
+            <if test="dataSource.creater != null">
+                creater = #{dataSource.creater,jdbcType=BIGINT},
+            </if>
+            <if test="dataSource.createTime != null">
+                create_time = #{dataSource.createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="dataSource.state != null">
+                state = #{dataSource.state,jdbcType=INTEGER},
+            </if>
+            <if test="dataSource.iscancel != null">
+                iscancel = #{dataSource.iscancel,jdbcType=INGETER},
+            </if>
+            <if test="dataSource.remark != null">
+                remark = #{dataSource.remark,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbc=BIGINT}
+    </update>
 </mapper>

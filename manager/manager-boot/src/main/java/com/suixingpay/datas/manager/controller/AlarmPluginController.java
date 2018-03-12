@@ -21,7 +21,7 @@ import static com.suixingpay.datas.manager.web.message.ResponseMessage.ok;
 
 /**
  * 告警配置策略内容表 controller控制器
- * 
+ *
  * @author: FairyHood
  * @date: 2018-03-08 10:46:01
  * @version: V1.0-auto
@@ -66,9 +66,31 @@ public class AlarmPluginController {
     @ApiOperation(value = "查询列表", notes = "查询列表")
     @GetMapping
     public ResponseMessage list(@RequestParam(value = "pageNo", required = false) Integer pageNo,
-            @RequestParam(value = "pageSize", required = false) Integer pageSize) {
+                                @RequestParam(value = "pageSize", required = false) Integer pageSize) {
         Page<AlarmPlugin> page = alarmPluginService.page(new Page<AlarmPlugin>(pageNo, pageSize));
         return ok(page);
     }
 
+    @PostMapping("/insertSelective")
+    @ApiOperation(value = "验证新增", notes = "验证新增")
+    public ResponseMessage insertSelective(@RequestBody AlarmPlugin alarmPlugin) {
+        Integer number = alarmPluginService.insertSelective(alarmPlugin);
+        return ok(number);
+    }
+
+    @PutMapping("/updateSelective/{id}")
+    @ApiOperation(value = "验证修改", notes = "验证修改")
+    public ResponseMessage updateSelective(@PathVariable("id") long id, @RequestBody AlarmPlugin alarmPlugin) {
+        Integer number = alarmPluginService.updateSelective(id, alarmPlugin);
+        return ok(number);
+    }
+
 }
+
+
+
+
+
+
+
+

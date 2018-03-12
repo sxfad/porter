@@ -20,8 +20,8 @@
     </sql> -->
     <!-- 新增 -->
     <insert id="insert">
-	    insert into s_alarm (alarm_type, create_user_id, 
-	      update_user_id, create_time, update_time, 
+	    insert into s_alarm (alarm_type, create_user_id,
+	      update_user_id, create_time, update_time,
 	      state, iscancel, remark
 	      )
 	    values (#{alarmType}, #{createUserId}, #{updateUserId},
@@ -59,4 +59,93 @@
         select id, alarm_type AS alarmType, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, remark from s_alarm
         where 1=1 limit #{page.offset},#{page.pageSize}
     </select>
+
+    <!-- 验证新增 -->
+    <insert id="insertSelective">
+        insert into s_alarm
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="alarmType != null">
+                alarm_type,
+            </if>
+            <if test="createUserId != null">
+                create_user_id,
+            </if>
+            <if test="updateUserId != null">
+                update_user_id,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="state != null">
+                state,
+            </if>
+            <if test="iscancel != null">
+                iscancel,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="alarmType != null">
+                #{alarmType,jdbcType=VARCHAR},
+            </if>
+            <if test="createUserId != null">
+                #{createUserId,jdbcType=BIGINT},
+            </if>
+            <if test="updateUserId != null">
+                #{updateUserId,jdbcType=BIGINT},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="state != null">
+                #{state,jdbcType=INTEGER},
+            </if>
+            <if test="iscancel != null">
+                #{iscancel,jdbcType=INTEGER},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 验证修改 -->
+    <update id="updateSelective">
+        update s_alarm
+        <set>
+            <if test="alarm.alarmType != null">
+                alarm_type = #{alarm.alarmType,jdbcType=VARCHAR},
+            </if>
+            <if test="alarm.createUserId != null">
+                create_user_id = #{alarm.createUserId,jdbcType=BIGINT},
+            </if>
+            <if test="alarm.updateUserId != null">
+                update_user_id = #{alarm.updateUserId,jdbcType=BIGINT},
+            </if>
+            <if test="alarm.createTime != null">
+                create_time = #{alarm.createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="alarm.updateTime != null">
+                update_time = #{alarm.updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="alarm.state != null">
+                state = #{alarm.state,jdbcType=INTEGER},
+            </if>
+            <if test="alarm.iscancel != null">
+                iscancel = #{alarm.iscancel,jdbcType=INTEGER},
+            </if>
+            <if test="alarm.remark != null">
+                remark = #{alarm.remark,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
 </mapper>
