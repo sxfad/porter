@@ -64,6 +64,12 @@
         where id = #{id}
     </select>
 
+    <!-- 根据主鍵查找 -->
+    <select id="selectByNameAndpasswd" resultType="com.suixingpay.datas.manager.core.entity.CUser">
+        select id, loginname, loginpw, nickname, email, mobile, state, remark from c_user
+        where loginname = #{loginname} and loginpw = #{loginpw}
+    </select>
+
     <!-- 分页All -->
     <select id="pageAll" resultType="java.lang.Integer">
         select count(id) from c_user
