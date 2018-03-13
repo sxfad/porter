@@ -13,6 +13,12 @@ import com.suixingpay.datas.common.config.SourceConfig;
 import com.suixingpay.datas.common.dic.SourceType;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Kudu配置
@@ -22,8 +28,9 @@ import lombok.Setter;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月02日 14:24
  */
 public class KuduConfig extends SourceConfig {
+    private static final String SERVER_SPLIT_CHARACTER = ",";
     //ip:port
-    @Setter @Getter private String server;
+    @Setter @Getter private List<String> servers = new ArrayList<>();
     @Setter @Getter private int workerCount  = 30000;
 
     public KuduConfig() {
@@ -32,10 +39,14 @@ public class KuduConfig extends SourceConfig {
 
     @Override
     protected void childStuff() {
+        String serversStr = getProperties().getOrDefault("servers", "");
+        if (!StringUtils.isBlank(serversStr)) {
+            servers.addAll(Arrays.stream(serversStr.split(SERVER_SPLIT_CHARACTER)).collect(Collectors.toList()));
+        }
     }
 
     @Override
     protected String[] childStuffColumns() {
-        return new String[] {};
+        return new String[] {"servers"};
     }
 }

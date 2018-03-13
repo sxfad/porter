@@ -25,6 +25,7 @@ import com.suixingpay.datas.common.exception.ClientException;
 import com.suixingpay.datas.common.exception.ClientMatchException;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.kudu.client.KuduException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +59,7 @@ public abstract class AbstractClient<T extends SourceConfig> implements Client {
     }
 
     @Override
-    public void shutdown() throws InterruptedException {
+    public void shutdown() throws Exception {
         if (status.compareAndSet(true, false)) {
             LOGGER.info("closing");
             doShutdown();
@@ -68,7 +69,7 @@ public abstract class AbstractClient<T extends SourceConfig> implements Client {
     }
 
     protected abstract void doStart() throws Exception;
-    protected abstract void doShutdown() throws InterruptedException;
+    protected abstract void doShutdown() throws InterruptedException, KuduException;
 
     @Override
     public boolean isStarted() {

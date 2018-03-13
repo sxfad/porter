@@ -50,7 +50,7 @@ public abstract class AbstractDataLoader implements DataLoader {
     }
 
     @Override
-    public void shutdown() throws InterruptedException {
+    public void shutdown() throws Exception {
         if (!loadClient.isPublic()) loadClient.shutdown();
         if (!metaQueryClient.isPublic()) metaQueryClient.shutdown();
     }
@@ -70,4 +70,6 @@ public abstract class AbstractDataLoader implements DataLoader {
     public TableSchema findTable(String finalSchema, String finalTable) throws Exception {
         return metaQueryClient.getTable(finalSchema, finalTable);
     }
+
+
 }

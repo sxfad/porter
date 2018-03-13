@@ -47,7 +47,7 @@ public enum  SourceCompiler {
     public  <T> T newJavaObject(String source, Class targetClass) throws Exception {
         JavaSource javaSource = new JavaSource(source);
         Class<?> sourceClass = compile(javaSource);
-        if (targetClass.isAssignableFrom(sourceClass)) {
+        if (null != sourceClass && targetClass.isAssignableFrom(sourceClass)) {
             return (T) sourceClass.newInstance();
         }
         throw new UnexpectedException(sourceClass.getName() + "不是" + targetClass.getName() + "的子类或接口实现");

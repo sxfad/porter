@@ -62,7 +62,7 @@ public interface DataConsumer {
      * 资源控制
      * @throws InterruptedException
      */
-    void shutdown() throws InterruptedException;
+    void shutdown() throws Exception;
 
 
     /**

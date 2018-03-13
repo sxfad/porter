@@ -23,6 +23,11 @@ public class TableColumn {
     @Getter @Setter private String defaultValue;
     @Getter @Setter private boolean required;
     @Getter @Setter private boolean primaryKey;
-    //java sql type
+    //
+    /**
+     * 不同的目标类型有不同的表示
+     * jdbc : java.sql.Types
+     * kudu : org.apache.kudu.Type
+     */
     @Getter @Setter private int typeCode;
 }

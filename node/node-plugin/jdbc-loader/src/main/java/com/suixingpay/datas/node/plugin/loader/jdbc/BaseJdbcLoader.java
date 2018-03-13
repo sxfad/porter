@@ -11,7 +11,6 @@ package com.suixingpay.datas.node.plugin.loader.jdbc;
 
 import com.alibaba.fastjson.JSONObject;
 import com.suixingpay.datas.common.client.impl.JDBCClient;
-import com.suixingpay.datas.common.cluster.data.DTaskStat;
 import com.suixingpay.datas.common.db.SqlTemplate;
 import com.suixingpay.datas.common.db.SqlUtils;
 import com.suixingpay.datas.common.exception.TaskDataException;
@@ -21,7 +20,6 @@ import com.suixingpay.datas.node.core.event.etl.ETLRow;
 import com.suixingpay.datas.node.core.event.s.EventType;
 import com.suixingpay.datas.node.core.loader.AbstractDataLoader;
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -29,7 +27,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Date;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -166,58 +163,7 @@ public abstract class BaseJdbcLoader extends AbstractDataLoader {
     }
 
 
-    /**
-     * 更新任务状态
-     *  For a prepared statement batch, it is not possible to know the number of rows affected in the database
-     *  by each individual statement in the batch.Therefore, all array elements have a value of -2.
-     *  According to the JDBC 2.0 specification, a value of -2 indicates that the operation was successful
-     *  but the number of rows affected is unknown.
-     * @param result
-     * @param stat
-     */
-    protected void updateStat(Pair<Integer, ETLRow> result, DTaskStat stat) {
-        //虽然每个状态值的变更都有stat对象锁，但在最外层加对象锁避免了多次请求的问题（锁可重入），同时保证状态各字段变更一致性
-        synchronized (stat) {
-            ETLRow row = result.getRight();
-            switch (result.getRight().getOpType().getIndex()) {
-                case EventType.DELETE_INDEX:
-                    if (result.getLeft() > 0 || result.getLeft() == -2) {
-                        stat.incrementDeleteRow();
-                    } else {
-                        stat.incrementErrorDeleteRow();
-                    }
-                    break;
-                case EventType.UPDATE_INDEX:
-                    if (result.getLeft() > 0 || result.getLeft() == -2) {
-                        stat.incrementUpdateRow();
-                    } else {
-                        stat.incrementErrorUpdateRow();
-                    }
-                    break;
-                case EventType.INSERT_INDEX:
-                    if (result.getLeft() > 0 || result.getLeft() == -2) {
-                        stat.incrementInsertRow();
-                    } else {
-                        stat.incrementErrorInsertRow();
-                    }
-                    break;
-                case EventType.TRUNCATE_INDEX:
-                    if (result.getLeft() > 0 || result.getLeft() == -2) {
-                        stat.incrementDeleteRow();
-                    } else {
-                        stat.incrementErrorDeleteRow();
-                    }
-                    break;
-            }
 
-            //更新最后执行消息事件的产生时间，用于计算从消息产生到加载如路时间、计算数据同步检查时间
-            if (null != row.getOpTime()) stat.setLastLoadedDataTime(row.getOpTime());
-            stat.setLastLoadedSystemTime(new Date());
-            if (!StringUtils.isBlank(row.getPosition())) {
-                stat.setProgress(row.getPosition());
-            }
-        }
-    }
 
     @Override
     public void mouldRow(ETLRow row) throws TaskDataException {

@@ -66,17 +66,10 @@ public class ETLColumn {
         return isKey;
     }
 
-    public String isFinalName() {
-        return finalName;
-    }
-
     public void setFinalName(String finalName) {
         this.finalName = finalName;
     }
 
-    public String isFinalValue() {
-        return finalValue;
-    }
 
     public void setFinalValue(String finalValue) {
         this.finalValue = finalValue;

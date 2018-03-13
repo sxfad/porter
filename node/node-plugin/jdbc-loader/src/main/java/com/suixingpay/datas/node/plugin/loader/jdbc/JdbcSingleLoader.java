@@ -9,13 +9,16 @@
 
 package com.suixingpay.datas.node.plugin.loader.jdbc;
 
-import com.suixingpay.datas.common.cluster.data.DTaskStat;
 import com.suixingpay.datas.common.dic.LoaderPlugin;
 import com.suixingpay.datas.common.exception.TaskStopTriggerException;
 import com.suixingpay.datas.node.core.event.etl.ETLBucket;
 import com.suixingpay.datas.node.core.event.etl.ETLRow;
-import com.suixingpay.datas.node.core.util.CallbackMethodCreator;
+import com.suixingpay.datas.node.core.loader.SubmitStatObject;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -31,15 +34,15 @@ public class JdbcSingleLoader extends BaseJdbcLoader {
     }
 
     @Override
-    public boolean load(ETLBucket bucket, CallbackMethodCreator getter) throws TaskStopTriggerException {
+    public Pair<Boolean, List<SubmitStatObject>> load(ETLBucket bucket) throws TaskStopTriggerException {
         LOGGER.info("start loading bucket:{},size:{}", bucket.getSequence(), bucket.getRows().size());
+        List<SubmitStatObject> affectRow = new ArrayList<>();
         for (ETLRow row : bucket.getRows()) {
-            DTaskStat stat = getter.invokeWithResult(row.getSchema(), row.getTable());
             //更新目标仓储
             int affect = loadSql(buildSql(row));
-            //更新状态
-            updateStat(new ImmutablePair<>(affect, row), stat);
+            //插入影响行数
+            affectRow.add(new SubmitStatObject(row.getSchema(), row.getTable(), row.getOpType(), affect, row.getPosition(), row.getOpTime()));
         }
-        return true;
+        return new ImmutablePair(Boolean.TRUE, affectRow);
     }
 }
