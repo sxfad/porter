@@ -170,7 +170,7 @@ public abstract class AbstractClusterProvider<C extends Client> implements Clust
                 if (null != client) {
                     try {
                         client.shutdown();
-                    } catch (InterruptedException e) {
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }

@@ -50,7 +50,7 @@ public class SelectJob extends AbstractStageJob {
     protected void doStop() {
         try {
             consumer.shutdown();
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

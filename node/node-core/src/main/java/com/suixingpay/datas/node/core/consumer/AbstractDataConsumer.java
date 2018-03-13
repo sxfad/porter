@@ -83,7 +83,7 @@ public abstract class AbstractDataConsumer implements DataConsumer {
     protected abstract String getPluginName();
 
     @Override
-    public void shutdown() throws InterruptedException {
+    public void shutdown() throws Exception {
         if (!consumeClient.isPublic()) consumeClient.shutdown();
         if (!metaQueryClient.isPublic()) metaQueryClient.shutdown();
     }

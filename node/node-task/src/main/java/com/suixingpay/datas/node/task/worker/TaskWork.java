@@ -47,7 +47,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -228,17 +227,7 @@ public class TaskWork {
         });
     }
 
-    public DTaskStat getDTaskStat(String schema, String table) {
-        String key = schema + "." + table;
-        DTaskStat stat = stats.computeIfAbsent(key, new Function<String, DTaskStat>() {
-            @Override
-            public DTaskStat apply(String s) {
-                DTaskStat tmp = new DTaskStat(taskId, null, dataConsumer.getSwimlaneId(), schema, table);
-                return tmp;
-            }
-        });
-        return stat;
-    }
+
 
     public TableMapper getTableMapper(String schema, String table) {
         String key = schema + "." + table;
@@ -263,22 +252,17 @@ public class TaskWork {
         return mapper;
     }
 
+    public DTaskStat getDTaskStat(String schema, String table) {
+        String key = schema + "." + table;
+        DTaskStat stat = stats.computeIfAbsent(key, s ->
+                new DTaskStat(taskId, null, dataConsumer.getSwimlaneId(), schema, table)
+        );
+        return stat;
+    }
+
     public List<DTaskStat>  getStats() {
         return Collections.unmodifiableList(stats.values().stream().collect(Collectors.toList()));
     }
-
-    public DataConsumer getDataConsumer() {
-        return dataConsumer;
-    }
-
-    public DataLoader getDataLoader() {
-        return dataLoader;
-    }
-
-    public List<AlertReceiver> getReceivers() {
-        return receivers;
-    }
-
 
     public void stopAndAlarm(String notice) {
         new Thread("suixingpay-TaskStopByErrorTrigger-stopTask-" + taskId + "-" + dataConsumer.getSwimlaneId()) {
@@ -295,5 +279,17 @@ public class TaskWork {
                 NodeContext.INSTANCE.getBean(TaskController.class).stopTask(taskId, dataConsumer.getSwimlaneId());
             }
         }.start();
+    }
+
+    public DataConsumer getDataConsumer() {
+        return dataConsumer;
+    }
+
+    public DataLoader getDataLoader() {
+        return dataLoader;
+    }
+
+    public List<AlertReceiver> getReceivers() {
+        return receivers;
     }
 }

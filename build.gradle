@@ -74,5 +74,9 @@ subprojects {
         ignoreFailures = true
         configFile = file(rootProject.getRootDir().getPath() + "/checkstyle.xml")
     }
+
+    test {
+        ignoreFailures true
+    }
 }
 

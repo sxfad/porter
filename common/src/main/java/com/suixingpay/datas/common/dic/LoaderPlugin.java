@@ -28,7 +28,8 @@ import java.util.List;
 public enum LoaderPlugin {
 
     JDBC_BATCH("JdbcBatch", "JDBC批量"),
-    JDBC_SINGLE("JdbcSingle", "JDBC单行");
+    JDBC_SINGLE("JdbcSingle", "JDBC单行"),
+    KUDU_SINGLE("KuduSingle", "kudu单行");
 
     @Getter private final String code;
     @Getter private final String name;

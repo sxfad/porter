@@ -16,9 +16,10 @@ import com.suixingpay.datas.common.exception.TaskDataException;
 import com.suixingpay.datas.common.exception.TaskStopTriggerException;
 import com.suixingpay.datas.node.core.event.etl.ETLBucket;
 import com.suixingpay.datas.node.core.event.etl.ETLRow;
-import com.suixingpay.datas.node.core.util.CallbackMethodCreator;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -38,7 +39,7 @@ public interface DataLoader {
      * 资源控制接口方法
      * @throws InterruptedException
      */
-    void shutdown() throws InterruptedException;
+    void shutdown() throws Exception;
 
     /**
      * 资源控制接口方法
@@ -57,10 +58,9 @@ public interface DataLoader {
     /**
      * load数据接口,
      * @param bucket
-     * @param getter
-     * @return true 会提交同步点， false不会提交同步点
+     * @return key : true 会提交同步点， false不会提交同步点 ; value : 影响行数
      */
-    boolean load(ETLBucket bucket, CallbackMethodCreator getter) throws TaskStopTriggerException;
+    Pair<Boolean, List<SubmitStatObject>> load(ETLBucket bucket) throws TaskStopTriggerException;
 
     void setLoadClient(LoadClient c);
     void setMetaQueryClient(MetaQueryClient c);
