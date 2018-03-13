@@ -22,4 +22,8 @@ public interface AlarmService {
     Alarm selectById(Long id);
 
     Page<Alarm> page(Page<Alarm> page);
+
+    Integer insertSelective(Alarm alarm);
+
+    Integer updateSelective(Long id, Alarm alarm);
 }

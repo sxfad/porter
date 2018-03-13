@@ -23,4 +23,8 @@ public interface AlarmPluginService {
 
     Page<AlarmPlugin> page(Page<AlarmPlugin> page);
 
+    Integer insertSelective(AlarmPlugin alarmPlugin);
+
+    Integer updateSelective(Long id, AlarmPlugin alarmPlugin);
+
 }

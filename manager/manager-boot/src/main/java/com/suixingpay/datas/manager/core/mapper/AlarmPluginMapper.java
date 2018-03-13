@@ -54,4 +54,17 @@ public interface AlarmPluginMapper {
      */
     Integer pageAll(@Param("state") Integer state);
 
+    /**
+     * 校验新增
+     * @param alarmPlugin
+     */
+    Integer insertSelective(AlarmPlugin alarmPlugin);
+
+    /**
+     * 检验修改
+     * @param id
+     * @param alarmPlugin
+     */
+    Integer updateSelective(@Param("id") Long id, @Param("alarmPlugin") AlarmPlugin alarmPlugin);
+
 }

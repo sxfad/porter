@@ -14,10 +14,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
  * 任务状态
+ * 
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年02月24日 10:32
  * @version: V1.0
@@ -30,8 +32,10 @@ public enum TaskStatusType {
 
     NEW("NEW", "新建"), STOPPED("STOPPED", "已停止"), WORKING("WORKING", "工作中");
 
-    @Getter private final String code;
-    @Getter private final String name;
+    @Getter
+    private final String code;
+    @Getter
+    private final String name;
 
     public static final List<TaskStatusType> STATUSES = new ArrayList<TaskStatusType>() {
         {
@@ -44,7 +48,16 @@ public enum TaskStatusType {
     public boolean isStopped() {
         return this == STOPPED;
     }
+
     public boolean isWorking() {
         return this == WORKING;
     }
+
+    public static final HashMap<String, Object> PLUGMAP = new HashMap<String, Object>() {
+        {
+            put(NEW.code, NEW.name);
+            put(WORKING.code, WORKING.name);
+            put(STOPPED.code, STOPPED.name);
+        }
+    };
 }

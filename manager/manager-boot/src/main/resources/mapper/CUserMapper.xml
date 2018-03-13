@@ -64,6 +64,12 @@
         where id = #{id}
     </select>
 
+    <!-- 根据主鍵查找 -->
+    <select id="selectByNameAndpasswd" resultType="com.suixingpay.datas.manager.core.entity.CUser">
+        select id, loginname, loginpw, nickname, email, mobile, state, remark from c_user
+        where loginname = #{loginname} and loginpw = #{loginpw}
+    </select>
+
     <!-- 分页All -->
     <select id="pageAll" resultType="java.lang.Integer">
         select count(id) from c_user
@@ -75,4 +81,85 @@
         select id, loginname, loginpw, nickname, email, mobile, state, remark from c_user
         where 1=1 limit #{page.offset},#{page.pageSize}
     </select>
+
+    <!-- 验证新增 -->
+    <insert id="insertSelective">
+        insert into c_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="loginname != null">
+                loginname,
+            </if>
+            <if test="loginpw != null">
+                loginpw,
+            </if>
+            <if test="nickname != null">
+                nickname,
+            </if>
+            <if test="email != null">
+                email,
+            </if>
+            <if test="mobile != null">
+                mobile,
+            </if>
+            <if test="state != null">
+                state,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="loginname != null">
+                #{loginname,jdbcType=VARCHAR},
+            </if>
+            <if test="loginpw != null">
+                #{loginpw,jdbcType=VARCHAR},
+            </if>
+            <if test="nickname != null">
+                #{nickname,jdbcType=VARCHAR},
+            </if>
+            <if test="email != null">
+                #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="mobile != null">
+                #{mobile,jdbcType=VARCHAR},
+            </if>
+            <if test="state != null">
+                #{state,jdbcType=INTEGER},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 验证修改 -->
+    <update id="updateSelective">
+        update c_user
+        <set>
+            <if test="cuser.loginname != null">
+                loginname = #{cuser.loginname,jdbcType=VARCHAR},
+            </if>
+            <if test="cuser.loginpw != null">
+                loginpw = #{cuser.loginpw,jdbcType=VARCHAR},
+            </if>
+            <if test="cuser.nickname != null">
+                nickname = #{cuser.nickname,jdbcType=VARCHAR},
+            </if>
+            <if test="cuser.email != null">
+                email = #{cuser.email,jdbcType=VARCHAR},
+            </if>
+            <if test="cuser.mobile != null">
+                mobile = #{cuser.mobile,jdbcType=VARCHAR},
+            </if>
+            <if test="cuser.state != null">
+                state = #{cuser.state,jdbcType=INTEGER},
+            </if>
+            <if test="cuser.remark != null">
+                remark = #{cuser.remark,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
 </mapper>
+

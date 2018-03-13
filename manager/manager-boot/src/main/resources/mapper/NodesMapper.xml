@@ -91,4 +91,126 @@
         select id, node_id AS nodeId, machine_name AS machineName, ip_address AS ipAddress, pid_number AS pidNumber, heart_beat_time AS heartBeatTime, state, type, creater, create_time AS createTime, iscancel, remark from b_nodes
         where 1=1 limit #{page.offset},#{page.pageSize}
     </select>
+
+    <!-- 验证新增 -->
+    <insert id="insertSelective">
+        insert into b_nodes
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="nodeId != null">
+                node_id,
+            </if>
+            <if test="machineName != null">
+                machine_name,
+            </if>
+            <if test="ipAddress != null">
+                ip_address,
+            </if>
+            <if test="pidNumber != null">
+                pid_number,
+            </if>
+            <if test="heartBeatTime != null">
+                heart_beat_time,
+            </if>
+            <if test="state != null">
+                state,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="creater != null">
+                creater,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="iscancel != null">
+                iscancel,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="nodeId != null">
+                #{nodeId,jdbcType=VARCHAR},
+            </if>
+            <if test="machineName != null">
+                #{machineName,jdbcType=VARCHAR},
+            </if>
+            <if test="ipAddress != null">
+                #{ipAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="pidNumber != null">
+                #{pidNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="heartBeatTime != null">
+                #{heartBeatTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="state != null">
+                #{state,jdbcType=INTEGER},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=INTEGER},
+            </if>
+            <if test="creater != null">
+                #{creater,jdbcType=BIGINT},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="iscancel != null">
+                #{iscancel,jdbcType=INTEGER},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 验证修改 -->
+    <update id="updateSelective">
+        update b_nodes
+        <set>
+            <if test="nodes.nodeId != null">
+                node_id = #{nodes.nodeId,jdbcType=VARCHAR},
+            </if>
+            <if test="nodes.machineName != null">
+                machine_name = #{nodes.machineName,jdbcType=VARCHAR},
+            </if>
+            <if test="nodes.ipAddress != null">
+                ip_address = #{nodes.ipAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="nodes.pidNumber != null">
+                pid_number = #{nodes.pidNumber,jdbcType=VARCHAR},
+            </if>
+            <if test="nodes.heartBeatTime != null">
+                heart_beat_time = #{nodes.heartBeatTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="nodes.state != null">
+                state = #{nodes.state,jdbcType=INTEGER},
+            </if>
+            <if test="nodes.type != null">
+                type = #{nodes.type,jdbcType=INTEGER},
+            </if>
+            <if test="nodes.creater != null">
+                creater = #{nodes.creater,jdbcType=BIGINT},
+            </if>
+            <if test="nodes.createTime != null">
+                create_time = #{nodes.createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="nodes.iscancel != null">
+                iscancel = #{nodes.iscancel,jdbcType=INTEGER},
+            </if>
+            <if test="nodes.remark != null">
+                remark = #{nodes.remark,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
 </mapper>

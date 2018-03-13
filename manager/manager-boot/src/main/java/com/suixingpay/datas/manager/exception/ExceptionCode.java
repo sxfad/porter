@@ -23,4 +23,7 @@ public class ExceptionCode {
     /** 幂等校验. */
     public static final int EXCEPTION_IDEMPOTENT = 304;
 
+    /** 登陆错误. */
+    public static final int EXCEPTION_LOGIN = 901;
+
 }

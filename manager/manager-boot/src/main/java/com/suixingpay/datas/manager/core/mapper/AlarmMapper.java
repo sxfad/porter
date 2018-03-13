@@ -54,4 +54,19 @@ public interface AlarmMapper {
      */
     Integer pageAll(@Param("state") Integer state);
 
+    /**
+     * 验证新增
+     * @param alarm
+     * @return
+     */
+    Integer insertSelective(Alarm alarm);
+
+    /**
+     * 验证修改
+     * @param id
+     * @param alarm
+     * @return
+     */
+    Integer updateSelective(@Param("id") Long id, @Param("alarm") Alarm alarm);
+
 }

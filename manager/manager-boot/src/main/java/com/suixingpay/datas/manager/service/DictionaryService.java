@@ -1,5 +1,7 @@
 package com.suixingpay.datas.manager.service;
 
+import java.util.Map;
+
 import com.suixingpay.datas.manager.core.entity.Dictionary;
 import com.suixingpay.datas.manager.web.page.Page;
 
@@ -23,4 +25,5 @@ public interface DictionaryService {
 
     Page<Dictionary> page(Page<Dictionary> page);
 
+    Map<String, Map<String, Object>> selectMap();
 }

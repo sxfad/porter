@@ -83,4 +83,107 @@
         select id, schedule_id AS scheduleId, node_id AS nodeId, monitor_date AS monitorDate, monitor_ymd AS monitorYmd, monitor_hour AS monitorHour, monitor_minute AS monitorMinute, monitor_second AS monitorSecond, monitor_tps AS monitorTps, monitor_alarm AS monitorAlarm from mr_nodes_monitor
         where 1=1 limit #{page.offset},#{page.pageSize}
     </select>
+
+    <!-- 验证新增 -->
+    <insert id="insertSelective">
+        insert into mr_nodes_monitor
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="scheduleId != null">
+                schedule_id,
+            </if>
+            <if test="nodeId != null">
+                node_id,
+            </if>
+            <if test="monitorDate != null">
+                monitor_date,
+            </if>
+            <if test="monitorYmd != null">
+                monitor_ymd,
+            </if>
+            <if test="monitorHour != null">
+                monitor_hour,
+            </if>
+            <if test="monitorMinute != null">
+                monitor_minute,
+            </if>
+            <if test="monitorSecond != null">
+                monitor_second,
+            </if>
+            <if test="monitorTps != null">
+                monitor_tps,
+            </if>
+            <if test="monitorAlarm != null">
+                monitor_alarm,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="scheduleId != null">
+                #{scheduleId,jdbcType=BIGINT},
+            </if>
+            <if test="nodeId != null">
+                #{nodeId,jdbcType=VARCHAR},
+            </if>
+            <if test="monitorDate != null">
+                #{monitorDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="monitorYmd != null">
+                #{monitorYmd,jdbcType=CHAR},
+            </if>
+            <if test="monitorHour != null">
+                #{monitorHour,jdbcType=INTEGER},
+            </if>
+            <if test="monitorMinute != null">
+                #{monitorMinute,jdbcType=INTEGER},
+            </if>
+            <if test="monitorSecond != null">
+                #{monitorSecond,jdbcType=INTEGER},
+            </if>
+            <if test="monitorTps != null">
+                #{monitorTps,jdbcType=INTEGER},
+            </if>
+            <if test="monitorAlarm != null">
+                #{monitorAlarm,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 验证修改 -->
+    <update id="updateSelective">
+        update mr_nodes_monitor
+        update mr_nodes_monitor
+        <set>
+            <if test="mrNodesMonitor.id != null">
+                id = #{mrNodesMonitor.id,jdbcType=BIGINT},
+            </if>
+            <if test="mrNodesMonitor.scheduleId != null">
+                schedule_id = #{mrNodesMonitor.scheduleId,jdbcType=BIGINT},
+            </if>
+            <if test="mrNodesMonitor.nodeId != null">
+                node_id = #{mrNodesMonitor.nodeId,jdbcType=VARCHAR},
+            </if>
+            <if test="mrNodesMonitor.monitorDate != null">
+                monitor_date = #{mrNodesMonitor.monitorDate,jdbcType=TIMESTAMP},
+            </if>
+            <if test="mrNodesMonitor.monitorYmd != null">
+                monitor_ymd = #{mrNodesMonitor.monitorYmd,jdbcType=CHAR},
+            </if>
+            <if test="mrNodesMonitor.monitorHour != null">
+                monitor_hour = #{mrNodesMonitor.monitorHour,jdbcType=INTEGER},
+            </if>
+            <if test="mrNodesMonitor.monitorMinute != null">
+                monitor_minute = #{mrNodesMonitor.monitorMinute,jdbcType=INTEGER},
+            </if>
+            <if test="mrNodesMonitor.monitorSecond != null">
+                monitor_second = #{mrNodesMonitor.monitorSecond,jdbcType=INTEGER},
+            </if>
+            <if test="mrNodesMonitor.monitorTps != null">
+                monitor_tps = #{mrNodesMonitor.monitorTps,jdbcType=INTEGER},
+            </if>
+            <if test="mrNodesMonitor.monitorAlarm != null">
+                monitor_alarm = #{mrNodesMonitor.monitorAlarm,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
 </mapper>

@@ -79,4 +79,94 @@
         select id, log_level AS logLevel, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, remark from s_log_grade
         where 1=1 limit #{page.offset},#{page.pageSize}
     </select>
+
+
+    <!-- 验证新增 -->
+    <insert id="insertSelective">
+        insert into s_log_grade
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="logLevel != null">
+                log_level,
+            </if>
+            <if test="createUserId != null">
+                create_user_id,
+            </if>
+            <if test="updateUserId != null">
+                update_user_id,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="state != null">
+                state,
+            </if>
+            <if test="iscancel != null">
+                iscancel,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="logLevel != null">
+                #{logLevel,jdbcType=VARCHAR},
+            </if>
+            <if test="createUserId != null">
+                #{createUserId,jdbcType=BIGINT},
+            </if>
+            <if test="updateUserId != null">
+                #{updateUserId,jdbcType=BIGINT},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="state != null">
+                #{state,jdbcType=INTEGER},
+            </if>
+            <if test="iscancel != null">
+                #{iscancel,jdbcType=INTEGER},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 验证修改 -->
+    <update id="updateSelective">
+        update s_log_grade
+        <set>
+            <if test="logGrade.logLevel != null">
+                log_level = #{logGrade.logLevel,jdbcType=VARCHAR},
+            </if>
+            <if test="logGrade.createUserId != null">
+                create_user_id = #{logGrade.createUserId,jdbcType=BIGINT},
+            </if>
+            <if test="logGrade.updateUserId != null">
+                update_user_id = #{logGrade.updateUserId,jdbcType=BIGINT},
+            </if>
+            <if test="logGrade.createTime != null">
+                create_time = #{logGrade.createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="logGrade.updateTime != null">
+                update_time = #{logGrade.updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="logGrade.state != null">
+                state = #{logGrade.state,jdbcType=INTEGER},
+            </if>
+            <if test="logGrade.iscancel != null">
+                iscancel = #{logGrade.iscancel,jdbcType=INTEGER},
+            </if>
+            <if test="logGrade.remark != null">
+                remark = #{logGrade.remark,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
 </mapper>

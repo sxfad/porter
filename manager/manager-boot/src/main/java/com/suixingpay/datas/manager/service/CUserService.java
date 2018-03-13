@@ -21,5 +21,7 @@ public interface CUserService {
 
     CUser selectById(Long id);
 
+    CUser selectByNameAndpasswd(String loginName,String passwd); 
+
     Page<CUser> page(Page<CUser> page);
 }

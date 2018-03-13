@@ -1,9 +1,5 @@
 /**  
- * All rights Reserved, Designed By Suixingpay.
- * @author: FairyHood 
- * @date: 2018-03-08 10:46:01  
- * @Copyright ©2017 Suixingpay. All rights reserved. 
- * 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
+ *
  */
 package com.suixingpay.datas.manager.service.impl;
 
@@ -56,5 +52,15 @@ public class AlarmServiceImpl implements AlarmService {
             page.setResult(alarmMapper.page(page, 1));
         }
         return page;
+    }
+
+    @Override
+    public Integer insertSelective(Alarm alarm) {
+        return alarmMapper.insertSelective(alarm);
+    }
+
+    @Override
+    public Integer updateSelective(Long id, Alarm alarm) {
+        return alarmMapper.updateSelective(id, alarm);
     }
 }

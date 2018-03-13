@@ -1,0 +1,45 @@
+/**
+ * 
+ */
+package com.suixingpay.datas.manager.controller;
+
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.suixingpay.datas.manager.service.DictService;
+import com.suixingpay.datas.manager.web.message.ResponseMessage;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+
+/**
+ * @author guohongjian[guo_hj@suixingpay.com]
+ *
+ */
+@Api(description = "字典数据")
+@RestController
+@RequestMapping("/dict")
+public class DictController {
+
+    @Autowired
+    private DictService dictService;
+
+    @PutMapping("/all")
+    @ApiOperation(value = "全部字典", notes = "全部字典")
+    public ResponseMessage dict() {
+        Map<String, Map<String, Object>> map = dictService.dictAll();
+        return ResponseMessage.ok(map);
+    }
+
+    @PutMapping("/{type}")
+    @ApiOperation(value = "标识字典", notes = "标识字典")
+    public ResponseMessage dictType(@PathVariable("type") String type) {
+        Map<String, Object> map = dictService.dictByType(type);
+        return ResponseMessage.ok(map);
+    }
+}

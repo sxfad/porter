@@ -14,10 +14,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
  * 节点状态
+ * 
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年02月24日 10:32
  * @version: V1.0
@@ -26,12 +28,14 @@ import java.util.List;
 
 @AllArgsConstructor
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
-public enum  NodeStatusType {
+public enum NodeStatusType {
 
     WORKING("WORKING", "工作中"), SUSPEND("SUSPEND", "已暂停");
 
-    @Getter private final String code;
-    @Getter private final String name;
+    @Getter
+    private final String code;
+    @Getter
+    private final String name;
 
     public static final List<NodeStatusType> STATUSES = new ArrayList<NodeStatusType>() {
         {
@@ -48,4 +52,10 @@ public enum  NodeStatusType {
         return this == WORKING;
     }
 
+    public static final HashMap<String, Object> PLUGMAP = new HashMap<String, Object>() {
+        {
+            put(WORKING.code, WORKING.name);
+            put(SUSPEND.code, SUSPEND.name);
+        }
+    };
 }

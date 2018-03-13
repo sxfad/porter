@@ -34,8 +34,8 @@ public class WebMvcConfigAdapter extends WebMvcConfigurerAdapter {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-       // registry.addInterceptor(xtokenInterceptor).addPathPatterns("/**")
-       //       .excludePathPatterns(SWAGER_URL_PATTERNS.split(",")).excludePathPatterns(LOGIN_URL_PATTERNS.split(","));
+//        registry.addInterceptor(xtokenInterceptor).addPathPatterns("/**")
+//              .excludePathPatterns(SWAGER_URL_PATTERNS.split(",")).excludePathPatterns(LOGIN_URL_PATTERNS.split(","));
     }
 
     @Override

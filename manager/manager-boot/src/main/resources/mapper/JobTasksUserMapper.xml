@@ -55,4 +55,39 @@
         select id, job_task_id AS jobTaskId, user_id AS userId from job_tasks_user
         where 1=1 limit #{page.offset},#{page.pageSize}
     </select>
+
+    <!-- 验证新增 -->
+    <insert id="insertSelective">
+        insert into job_tasks_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="jobTaskId != null">
+                job_task_id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="jobTaskId != null">
+                #{jobTaskId,jdbcType=BIGINT},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=BIGINT},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 验证修改 -->
+    <update id="updateSelective">
+        update job_tasks_user
+        <set>
+            <if test="jobTasksUser.jobTaskId != null">
+                job_task_id = #{jobTasksUser.jobTaskId,jdbcType=BIGINT},
+            </if>
+            <if test="jobTasksUser.userId != null">
+                user_id = #{jobTasksUser.userId,jdbcType=BIGINT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
 </mapper>

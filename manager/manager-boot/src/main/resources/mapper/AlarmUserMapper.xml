@@ -55,4 +55,39 @@
         select id, alarm_id AS alarmId, user_id AS userId from s_alarm_user
         where 1=1 limit #{page.offset},#{page.pageSize}
     </select>
+
+    <!-- 验证新增 -->
+    <insert id="insertSelective">
+        insert into s_alarm_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="alarmId != null">
+                alarm_id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="alarmId != null">
+                #{alarmId,jdbcType=BIGINT},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=BIGINT},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 验证修改 -->
+    <update id="updateSelective">
+        update s_alarm_user
+        <set>
+            <if test="alarmUser.alarmId != null">
+                alarm_id = #{alarmUser.alarmId,jdbcType=BIGINT},
+            </if>
+            <if test="alarmUser.userId != null">
+                user_id = #{alarmUser.userId,jdbcType=BIGINT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
 </mapper>

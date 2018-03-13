@@ -71,4 +71,76 @@
         select id, job_task_id AS jobTaskId, job_table_id AS jobTableId, source_table_id AS sourceTableId, target_table_id AS targetTableId, source_field AS sourceField, target_field AS targetField from job_tasks_field
         where 1=1 limit #{page.offset},#{page.pageSize}
     </select>
+
+    <!-- 验证新增 -->
+    <insert id="insertSelective">
+        insert into job_tasks_field
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="jobTaskId != null">
+                job_task_id,
+            </if>
+            <if test="jobTableId != null">
+                job_table_id,
+            </if>
+            <if test="sourceTableId != null">
+                source_table_id,
+            </if>
+            <if test="targetTableId != null">
+                target_table_id,
+            </if>
+            <if test="sourceField != null">
+                source_field,
+            </if>
+            <if test="targetField != null">
+                target_field,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="jobTaskId != null">
+                #{jobTaskId,jdbcType=BIGINT},
+            </if>
+            <if test="jobTableId != null">
+                #{jobTableId,jdbcType=BIGINT},
+            </if>
+            <if test="sourceTableId != null">
+                #{sourceTableId,jdbcType=BIGINT},
+            </if>
+            <if test="targetTableId != null">
+                #{targetTableId,jdbcType=BIGINT},
+            </if>
+            <if test="sourceField != null">
+                #{sourceField,jdbcType=VARCHAR},
+            </if>
+            <if test="targetField != null">
+                #{targetField,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 验证修改 -->
+    <update id="updateSelective">
+        update job_tasks_field
+        <set>
+            <if test="jobTasksField.jobTaskId != null">
+                job_task_id = #{jobTasksField.jobTaskId,jdbcType=BIGINT},
+            </if>
+            <if test="jobTasksField.jobTableId != null">
+                job_table_id = #{jobTasksField.jobTableId,jdbcType=BIGINT},
+            </if>
+            <if test="jobTasksField.sourceTableId != null">
+                source_table_id = #{jobTasksField.sourceTableId,jdbcType=BIGINT},
+            </if>
+            <if test="jobTasksField.targetTableId != null">
+                target_table_id = #{jobTasksField.targetTableId,jdbcType=BIGINT},
+            </if>
+            <if test="jobTasksField.sourceField != null">
+                source_field = #{jobTasksField.sourceField,jdbcType=VARCHAR},
+            </if>
+            <if test="jobTasksField.targetField != null">
+                target_field = #{jobTasksField.targetField,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
 </mapper>
