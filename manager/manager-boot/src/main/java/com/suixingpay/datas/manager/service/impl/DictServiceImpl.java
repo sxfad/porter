@@ -35,14 +35,14 @@ public class DictServiceImpl implements DictService {
     public Map<String, Map<String, Object>> dictAll() {
         Map<String, Map<String, Object>> map = new HashMap<>();
         map.put("AlertPlugin", AlertPlugin.PLUGMAP);// AlertPlugin - 告警策略
-        map.put("ClusterPlugin", ClusterPlugin.PLUGMAP);// - 集群方案
-        map.put("ConsumeConverterPlugin", ConsumeConverterPlugin.PLUGMAP);//
-        map.put("ConsumerPlugin", ConsumerPlugin.PLUGMAP);//
-        map.put("DbType", DbType.PLUGMAP);//
-        map.put("LoaderPlugin", LoaderPlugin.PLUGMAP);//
-        map.put("NodeStatusType", NodeStatusType.PLUGMAP);//
-        map.put("SourceType", SourceType.PLUGMAP);//
-        map.put("TaskStatusType", TaskStatusType.PLUGMAP);//
+        map.put("ClusterPlugin", ClusterPlugin.PLUGMAP);//ClusterPlugin - 集群方案
+        map.put("ConsumeConverterPlugin", ConsumeConverterPlugin.PLUGMAP);//ConsumeConverterPlugin 转换器插件
+        map.put("ConsumerPlugin", ConsumerPlugin.PLUGMAP);//ConsumerPlugin 消费器插件
+        map.put("DbType", DbType.PLUGMAP);//DbType 关系数据库类型
+        map.put("LoaderPlugin", LoaderPlugin.PLUGMAP);// LoaderPlugin 载入器插件
+        map.put("NodeStatusType", NodeStatusType.PLUGMAP);//NodeStatusType 节点状态
+        map.put("SourceType", SourceType.PLUGMAP);//SourceType 数据源类型
+        map.put("TaskStatusType", TaskStatusType.PLUGMAP);//TaskStatusType 任务状态
         map.putAll(dictionaryService.selectMap());
         return map;
     }

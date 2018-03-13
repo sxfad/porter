@@ -6,6 +6,7 @@ package com.suixingpay.datas.manager.controller;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,7 +38,7 @@ public class DictController {
 
     @PutMapping("/{type}")
     @ApiOperation(value = "标识字典", notes = "标识字典")
-    public ResponseMessage dictType(String type){
+    public ResponseMessage dictType(@PathVariable("type") String type) {
         Map<String, Object> map = dictService.dictByType(type);
         return ResponseMessage.ok(map);
     }
