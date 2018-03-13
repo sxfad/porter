@@ -9,13 +9,13 @@
 
 package com.suixingpay.datas.common.dic;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * 节点状态
@@ -37,13 +37,6 @@ public enum NodeStatusType {
     @Getter
     private final String name;
 
-    public static final List<NodeStatusType> STATUSES = new ArrayList<NodeStatusType>() {
-        {
-            add(WORKING);
-            add(SUSPEND);
-        }
-    };
-
     public boolean isSuspend() {
         return this == SUSPEND;
     }
@@ -52,7 +45,10 @@ public enum NodeStatusType {
         return this == WORKING;
     }
 
-    public static final HashMap<String, Object> PLUGMAP = new HashMap<String, Object>() {
+    public static final HashMap<String, Object> LINKMAP = new LinkedHashMap<String, Object>() {
+
+        private static final long serialVersionUID = 1L;
+
         {
             put(WORKING.code, WORKING.name);
             put(SUSPEND.code, SUSPEND.name);

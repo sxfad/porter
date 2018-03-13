@@ -9,13 +9,13 @@
 
 package com.suixingpay.datas.common.dic;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * 载入器插件
@@ -36,14 +36,10 @@ public enum LoaderPlugin {
     @Getter
     private final String name;
 
-    public static final List<LoaderPlugin> PLUGINS = new ArrayList<LoaderPlugin>() {
-        {
-            add(JDBC_BATCH);
-            add(JDBC_SINGLE);
-        }
-    };
+    public static final HashMap<String, Object> LINKMAP = new LinkedHashMap<String, Object>() {
 
-    public static final HashMap<String, Object> PLUGMAP = new HashMap<String, Object>() {
+        private static final long serialVersionUID = 1L;
+
         {
             put(JDBC_BATCH.code, JDBC_BATCH.name);
             put(JDBC_SINGLE.code, JDBC_SINGLE.name);

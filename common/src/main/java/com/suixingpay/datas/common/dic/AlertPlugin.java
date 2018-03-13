@@ -9,9 +9,7 @@
 
 package com.suixingpay.datas.common.dic;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -39,15 +37,13 @@ public enum AlertPlugin {
     @Getter
     private final String name;
 
-    public static final List<AlertPlugin> PLUGINS = new ArrayList<AlertPlugin>() {
-        {
-            add(EMAIL);
-        }
-    };
+    public static final Map<String, Object> LINKMAP = new LinkedHashMap<String, Object>() {
 
-    public static final Map<String, Object> PLUGMAP = new HashMap<String, Object>() {
+        private static final long serialVersionUID = 1L;
+
         {
             put(EMAIL.code, EMAIL.name);
         }
     };
+
 }

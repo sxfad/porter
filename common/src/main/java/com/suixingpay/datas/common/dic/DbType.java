@@ -9,13 +9,13 @@
 
 package com.suixingpay.datas.common.dic;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * 关系数据库类型
@@ -36,14 +36,10 @@ public enum DbType {
     @Getter
     private final String name;
 
-    public static final List<DbType> TYPES = new ArrayList<DbType>() {
-        {
-            add(MYSQL);
-            add(ORACLE);
-        }
-    };
+    public static final HashMap<String, Object> LINKMAP = new LinkedHashMap<String, Object>() {
 
-    public static final HashMap<String, Object> PLUGMAP = new HashMap<String, Object>() {
+        private static final long serialVersionUID = 1L;
+
         {
             put(MYSQL.code, MYSQL.name);
             put(ORACLE.code, ORACLE.name);

@@ -9,13 +9,13 @@
 
 package com.suixingpay.datas.common.dic;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * 集群方案
@@ -35,16 +35,13 @@ public enum ClusterPlugin {
     @Getter
     private final String name;
 
-    public static final List<ClusterPlugin> PLUGINS = new ArrayList<ClusterPlugin>() {
-        {
-            add(ZOOKEEPER);
-        }
-    };
+    public static final HashMap<String, Object> LINKMAP = new LinkedHashMap<String, Object>() {
 
-    public static final HashMap<String, Object> PLUGMAP = new HashMap<String, Object>() {
+        private static final long serialVersionUID = 1L;
+
         {
             put(ZOOKEEPER.code, ZOOKEEPER.name);
         }
     };
- 
+
 }

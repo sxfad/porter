@@ -9,13 +9,13 @@
 
 package com.suixingpay.datas.common.dic;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * 转换器插件
@@ -35,14 +35,10 @@ public enum ConsumeConverterPlugin {
     @Getter
     private final String name;
 
-    public static final List<ConsumeConverterPlugin> PLUGINS = new ArrayList<ConsumeConverterPlugin>() {
-        {
-            add(CANAL_ROW);
-            add(OGG_JSON);
-        }
-    };
+    public static final HashMap<String, Object> LINKMAP = new LinkedHashMap<String, Object>() {
 
-    public static final HashMap<String, Object> PLUGMAP = new HashMap<String, Object>() {
+        private static final long serialVersionUID = 1L;
+
         {
             put(CANAL_ROW.code, CANAL_ROW.name);
             put(OGG_JSON.code, OGG_JSON.name);

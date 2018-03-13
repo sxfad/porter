@@ -9,13 +9,13 @@
 
 package com.suixingpay.datas.common.dic;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * 数据源类型
@@ -35,19 +35,10 @@ public enum SourceType {
     @Getter
     private final String name;
 
-    public static final List<SourceType> TYPES = new ArrayList<SourceType>() {
-        {
-            add(ZOOKEEPER);
-            add(KAFKA);
-            add(JDBC);
-            add(EMAIL);
-            add(CANAL);
-            add(KUDU);
-            add(NAME_SOURCE);
-        }
-    };
+    public static final HashMap<String, Object> LINKMAP = new LinkedHashMap<String, Object>() {
 
-    public static final HashMap<String, Object> PLUGMAP = new HashMap<String, Object>() {
+        private static final long serialVersionUID = 1L;
+
         {
             put(ZOOKEEPER.code, ZOOKEEPER.name);
             put(KAFKA.code, KAFKA.name);
