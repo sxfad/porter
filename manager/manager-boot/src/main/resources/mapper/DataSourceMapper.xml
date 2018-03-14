@@ -6,12 +6,6 @@
         <result column="id" property="id" />
         <result column="name" property="name" />
         <result column="data_type" property="dataType" />
-        <result column="data_json" property="dataJson" />
-        <result column="date_user" property="dateUser" />
-        <result column="date_passwd" property="datePasswd" />
-        <result column="date_url" property="dateUrl" />
-        <result column="date_servers" property="dateServers" />
-        <result column="date_topics" property="dateTopics" />
         <result column="creater" property="creater" />
         <result column="create_time" property="createTime" />
         <result column="state" property="state" />
@@ -21,7 +15,7 @@
 
     <!-- 通用查询结果列 
     <sql id="Base_Column_List">
-        select id, name, data_type AS dataType, data_json AS dataJson, date_user AS dateUser, date_passwd AS datePasswd, date_url AS dateUrl, date_servers AS dateServers, date_topics AS dateTopics, creater, create_time AS createTime, state, iscancel, remark from b_data_source
+        select id, name, data_type AS dataType, creater, create_time AS createTime, state, iscancel, remark from b_data_source
     </sql>-->
 
     <!-- 新增 -->
@@ -29,12 +23,6 @@
         insert into b_data_source(
         name,
         data_type,
-        data_json,
-        date_user,
-        date_passwd,
-        date_url,
-        date_servers,
-        date_topics,
         creater,
         create_time,
         state,
@@ -43,12 +31,6 @@
         ) values (
         #{name},
         #{dataType},
-        #{dataJson},
-        #{dateUser},
-        #{datePasswd},
-        #{dateUrl},
-        #{dateServers},
-        #{dateTopics},
         #{creater},
         #{createTime},
         #{state},
@@ -63,12 +45,6 @@
         set
         name = #{dataSource.name},
         data_type = #{dataSource.dataType},
-        data_json = #{dataSource.dataJson},
-        date_user = #{dataSource.dateUser},
-        date_passwd = #{dataSource.datePasswd},
-        date_url = #{dataSource.dateUrl},
-        date_servers = #{dataSource.dateServers},
-        date_topics = #{dataSource.dateTopics},
         creater = #{dataSource.creater},
         create_time = #{dataSource.createTime},
         state = #{dataSource.state},
@@ -78,27 +54,55 @@
     </update>
 
     <!-- 刪除 -->
-    <delete id="delete">
-        delete from b_data_source where id = #{id}
-    </delete>
+    <update id="delete">
+        update b_data_source
+        SET
+        iscancel = 1
+        where id = #{id}
+    </update>
 
     <!-- 根据主鍵查找 -->
     <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.DataSource">
-        select id, name, data_type AS dataType, data_json AS dataJson, date_user AS dateUser, date_passwd AS datePasswd, date_url AS dateUrl, date_servers AS dateServers, date_topics AS dateTopics, creater, create_time AS createTime, state, iscancel, remark from b_data_source
+        select id, name, data_type AS dataType, creater, create_time AS createTime, state, iscancel, remark from b_data_source
         where id = #{id}
     </select>
 
     <!-- 分页All -->
     <select id="pageAll" resultType="java.lang.Integer">
         select count(id) from b_data_source
-        where 1=1
+        where iscancel = 0
     </select>
+    <!--<select id="pageAll" resultType="java.lang.Integer">
+        select count(id) from b_data_source
+        where 1=1
+    </select>-->
 
     <!-- 分页 -->
     <select id="page" resultType="com.suixingpay.datas.manager.core.entity.DataSource">
+        select id, name, data_type AS dataTypel, create_time AS createTime from b_data_source
+        <where>
+            <!--<if test="state != null and state != ''">-->
+                <!--state = #{state}-->
+            <!--</if>-->
+            1 = 1
+            <if test="name != null and name != ''">
+                and name LIKE CONCAT('%', #{name},'%')
+            </if>
+            <if test="beginTime != null and beginTime != ''">
+                and create_time &gt; #{beginTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                and create_time &lt; #{endTime}
+            </if>
+            and iscancel = 0
+        </where>
+            order by create_time, id
+            limit #{page.offset},#{page.pageSize}
+    </select>
+    <!--<select id="page" resultType="com.suixingpay.datas.manager.core.entity.DataSource">
         select id, name, data_type AS dataType, data_json AS dataJson, date_user AS dateUser, date_passwd AS datePasswd, date_url AS dateUrl, date_servers AS dateServers, date_topics AS dateTopics, creater, create_time AS createTime, state, iscancel, remark from b_data_source
         where 1=1 limit #{page.offset},#{page.pageSize}
-    </select>
+    </select>-->
 
     <!-- 验证新增 -->
     <insert id="insertSelective">
@@ -231,6 +235,6 @@
                 remark = #{dataSource.remark,jdbcType=VARCHAR},
             </if>
         </set>
-        where id = #{id,jdbc=BIGINT}
+        where id = #{id,jdbcType=BIGINT}
     </update>
 </mapper>

@@ -19,10 +19,13 @@ public class DicAlarmPlugin implements java.io.Serializable {
     private String alertType;
 
     /** 字段实际名. */
-    private String code;
+    private String fieldCode;
 
     /** 字段展示名. */
-    private String name;
+    private String fieldName;
+
+    /** 字段页面顺序. */
+    private Integer fieldOrder;
 
     /** 状态. */
     private Integer state;
@@ -50,24 +53,28 @@ public class DicAlarmPlugin implements java.io.Serializable {
         this.alertType = alertType == null ? null : alertType.trim();
     }
 
-    /** 字段实际名 get方法. */
-    public String getCode() {
-        return code == null ? null : code.trim();
+    public String getFieldCode() {
+        return fieldCode;
     }
 
-    /** 字段实际名 set方法. */
-    public void setCode(String code) {
-        this.code = code == null ? null : code.trim();
+    public void setFieldCode(String fieldCode) {
+        this.fieldCode = fieldCode;
     }
 
-    /** 字段展示名 get方法. */
-    public String getName() {
-        return name == null ? null : name.trim();
+    public String getFieldName() {
+        return fieldName;
     }
 
-    /** 字段展示名 set方法. */
-    public void setName(String name) {
-        this.name = name == null ? null : name.trim();
+    public void setFieldName(String fieldName) {
+        this.fieldName = fieldName;
+    }
+
+    public Integer getFieldOrder() {
+        return fieldOrder;
+    }
+
+    public void setFieldOrder(Integer fieldOrder) {
+        this.fieldOrder = fieldOrder;
     }
 
     /** 状态 get方法. */

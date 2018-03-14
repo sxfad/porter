@@ -10,6 +10,11 @@ import com.suixingpay.datas.manager.web.page.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
 /**
  * 数据源信息表 服务实现类
  *
@@ -26,12 +31,14 @@ public class DataSourceServiceImpl implements DataSourceService {
 
     @Override
     public Integer insert(DataSource dataSource) {
-        return dataSourceMapper.insert(dataSource);
+        //创建人
+        //dataSource.setCreater(1L);
+        return dataSourceMapper.insertSelective(dataSource);
     }
 
     @Override
     public Integer update(Long id, DataSource dataSource) {
-        return dataSourceMapper.update(id, dataSource);
+        return dataSourceMapper.updateSelective(id, dataSource);
     }
 
     @Override
@@ -45,13 +52,12 @@ public class DataSourceServiceImpl implements DataSourceService {
     }
 
     @Override
-    public Page<DataSource> page(Page<DataSource> page) {
+    public Page<DataSource> page(Page<DataSource> page, String name, String beginTime, String endTime) {
         Integer total = dataSourceMapper.pageAll(1);
         if (total > 0) {
             page.setTotalItems(total);
-            page.setResult(dataSourceMapper.page(page, 1));
+            page.setResult(dataSourceMapper.page(page, 1, name, beginTime, endTime));
         }
         return page;
     }
-
 }
