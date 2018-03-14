@@ -78,9 +78,12 @@
     </update>
 
     <!-- 刪除 -->
-    <delete id="delete">
-        delete from b_data_source where id = #{id}
-    </delete>
+    <update id="delete">
+        update b_data_source
+        SET
+        iscancel = 1
+        where id = #{id}
+    </update>
 
     <!-- 根据主鍵查找 -->
     <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.DataSource">
@@ -91,14 +94,39 @@
     <!-- 分页All -->
     <select id="pageAll" resultType="java.lang.Integer">
         select count(id) from b_data_source
-        where 1=1
+        where iscancel = 0
     </select>
+    <!--<select id="pageAll" resultType="java.lang.Integer">
+        select count(id) from b_data_source
+        where 1=1
+    </select>-->
 
     <!-- 分页 -->
     <select id="page" resultType="com.suixingpay.datas.manager.core.entity.DataSource">
+        select id, name, data_type AS dataType, date_url AS dateUrl, create_time AS createTime from b_data_source
+        <where>
+            <!--<if test="state != null and state != ''">-->
+                <!--state = #{state}-->
+            <!--</if>-->
+            1 = 1
+            <if test="name != null and name != ''">
+                and name LIKE CONCAT('%', #{name},'%')
+            </if>
+            <if test="beginTime != null and beginTime != ''">
+                and create_time &gt; #{beginTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                and create_time &lt; #{endTime}
+            </if>
+            and iscancel = 0
+        </where>
+            order by create_time, id
+            limit #{page.offset},#{page.pageSize}
+    </select>
+    <!--<select id="page" resultType="com.suixingpay.datas.manager.core.entity.DataSource">
         select id, name, data_type AS dataType, data_json AS dataJson, date_user AS dateUser, date_passwd AS datePasswd, date_url AS dateUrl, date_servers AS dateServers, date_topics AS dateTopics, creater, create_time AS createTime, state, iscancel, remark from b_data_source
         where 1=1 limit #{page.offset},#{page.pageSize}
-    </select>
+    </select>-->
 
     <!-- 验证新增 -->
     <insert id="insertSelective">
@@ -231,6 +259,6 @@
                 remark = #{dataSource.remark,jdbcType=VARCHAR},
             </if>
         </set>
-        where id = #{id,jdbc=BIGINT}
+        where id = #{id,jdbcType=BIGINT}
     </update>
 </mapper>

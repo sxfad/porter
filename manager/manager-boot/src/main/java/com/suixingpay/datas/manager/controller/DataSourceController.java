@@ -21,7 +21,7 @@ import static com.suixingpay.datas.manager.web.message.ResponseMessage.ok;
 
 /**
  * 数据源信息表 controller控制器
- * 
+ *
  * @author: FairyHood
  * @date: 2018-03-07 17:26:55
  * @version: V1.0-auto
@@ -35,7 +35,72 @@ public class DataSourceController {
     @Autowired
     protected DataSourceService dataSourceService;
 
+    /**
+     * 新增 数据源信息
+     *
+     * @author FuZizheng
+     * @date 2018/3/13 下午2:23
+     * @param: [dataSource]
+     * @return: com.suixingpay.datas.manager.web.message.ResponseMessage
+     */
     @PostMapping
+    @ApiOperation(value = "新增", notes = "新增")
+    public ResponseMessage add(@RequestBody DataSource dataSource) {
+        Integer number = dataSourceService.insert(dataSource);
+        return ok(number);
+    }
+
+    /**
+     * 修改 数据源信息
+     *
+     * @author FuZizheng
+     * @date 2018/3/13 下午3:00
+     * @param: [id, dataSource]
+     * @return: com.suixingpay.datas.manager.web.message.ResponseMessage
+     */
+    @PutMapping("/{id}")
+    @ApiOperation(value = "修改数据源信息", notes = "修改数据源信息")
+    public ResponseMessage update(@PathVariable("id") Long id, @RequestBody DataSource dataSource) {
+        Integer number = dataSourceService.update(id, dataSource);
+        return ok(number);
+    }
+
+
+    /**
+     * 逻辑删除数据源信息
+     *
+     * @author FuZizheng
+     * @date 2018/3/13 下午2:50
+     * @param: [id]
+     * @return: com.suixingpay.datas.manager.web.message.ResponseMessage
+     */
+    @DeleteMapping("/{id}")
+    @ApiOperation(value = "逻辑删除数据源信息", notes = "逻辑删除数据源信息")
+    public ResponseMessage delete(@PathVariable("id") Long id) {
+        Integer number = dataSourceService.delete(id);
+        return ok(number);
+    }
+
+    /**
+     * 查询数据源信息列表
+     *
+     * @author FuZizheng
+     * @date 2018/3/13 下午1:51
+     * @param: [pageNo, pageSize]
+     * @return: com.suixingpay.datas.manager.web.message.ResponseMessage
+     */
+    @GetMapping
+    @ApiOperation(value = "查询列表", notes = "查询列表")
+    public ResponseMessage page(@RequestParam(value = "pageNo", required = false) Integer pageNo,
+                                @RequestParam(value = "pageSize", required = false) Integer pageSize,
+                                @RequestParam(value = "name", required = false) String name,
+                                @RequestParam(value = "beginTime", required = false) String beginTime,
+                                @RequestParam(value = "endTime", required = false) String endTime) {
+        Page<DataSource> page = dataSourceService.page(new Page<DataSource>(pageNo, pageSize), name, beginTime, endTime);
+        return ok(page);
+    }
+
+    /*@PostMapping
     @ApiOperation(value = "新增", notes = "新增")
     public ResponseMessage add(@RequestBody DataSource dataSource) {
         Integer number = dataSourceService.insert(dataSource);
@@ -69,6 +134,6 @@ public class DataSourceController {
             @RequestParam(value = "pageSize", required = false) Integer pageSize) {
         Page<DataSource> page = dataSourceService.page(new Page<DataSource>(pageNo, pageSize));
         return ok(page);
-    }
+    }*/
 
 }

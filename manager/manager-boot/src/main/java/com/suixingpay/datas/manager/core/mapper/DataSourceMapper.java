@@ -4,11 +4,12 @@ import com.suixingpay.datas.manager.core.entity.DataSource;
 import com.suixingpay.datas.manager.web.page.Page;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 
 /**
  * 数据源信息表 Mapper接口
- * 
+ *
  * @author: FairyHood
  * @date: 2018-03-07 13:40:30
  * @version: V1.0-auto
@@ -18,18 +19,21 @@ public interface DataSourceMapper {
 
     /**
      * 新增
+     *
      * @param dataSource
      */
     Integer insert(DataSource dataSource);
 
     /**
      * 修改
+     *
      * @param dataSource
      */
     Integer update(@Param("id") Long id, @Param("dataSource") DataSource dataSource);
 
     /**
      * 刪除
+     *
      * @param id
      * @return
      */
@@ -37,6 +41,7 @@ public interface DataSourceMapper {
 
     /**
      * 根據主鍵id查找數據
+     *
      * @param id
      * @return
      */
@@ -44,13 +49,36 @@ public interface DataSourceMapper {
 
     /**
      * 分頁
+     * 条件查询:数据源名称 时间区间
      * @return
      */
-    List<DataSource> page(@Param("page") Page<DataSource> page, @Param("state") Integer state);
+    List<DataSource> page(@Param("page") Page<DataSource> page,
+                          @Param("state") Integer state,
+                          @Param("name") String name,
+                          @Param("beginTime") String beginTime,
+                          @Param("endTime") String endTime);
 
     /**
      * 分頁All
+     *
      * @return
      */
     Integer pageAll(@Param("state") Integer state);
+
+    /**
+     * 校验新增
+     *
+     * @return
+     */
+    Integer insertSelective(DataSource dataSource);
+
+    /**
+     * 校验修改
+     *
+     * @param id
+     * @param dataSource
+     * @return
+     */
+    Integer updateSelective(@Param("id") Long id, @Param("dataSource") DataSource dataSource);
+
 }

@@ -1,5 +1,9 @@
 package com.suixingpay.datas.manager.core.entity;
 
+import com.suixingpay.datas.common.dic.SourceType;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 /**
@@ -18,10 +22,11 @@ public class DataSource implements java.io.Serializable {
     private Long id;
 
     /** 数据源名称. */
+    @NotNull(message = "数据源名称不能为空")
     private String name;
 
     /** 数据源类型. */
-    private String dataType;
+    private SourceType dataType;
 
     /** 数据源组合json. */
     private String dataJson;
@@ -77,14 +82,24 @@ public class DataSource implements java.io.Serializable {
     }
 
     /** 数据源类型 get方法. */
-    public String getDataType() {
-        return dataType == null ? null : dataType.trim();
+    public SourceType getDataType() {
+        return dataType;
     }
 
     /** 数据源类型 set方法. */
-    public void setDataType(String dataType) {
-        this.dataType = dataType == null ? null : dataType.trim();
+    public void setDataType(SourceType dataType) {
+        this.dataType = dataType;
     }
+
+    //    /** 数据源类型 get方法. */
+//    public String getDataType() {
+//        return dataType == null ? null : dataType.trim();
+//    }
+//
+//    /** 数据源类型 set方法. */
+//    public void setDataType(String dataType) {
+//        this.dataType = dataType == null ? null : dataType.trim();
+//    }
 
     /** 数据源组合json get方法. */
     public String getDataJson() {

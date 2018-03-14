@@ -3,6 +3,9 @@ package com.suixingpay.datas.manager.service;
 import com.suixingpay.datas.manager.core.entity.DataSource;
 import com.suixingpay.datas.manager.web.page.Page;
 
+import java.util.Date;
+import java.util.List;
+
 /**
  * 数据源信息表 服务接口类
  * 
@@ -21,6 +24,6 @@ public interface DataSourceService {
 
     DataSource selectById(Long id);
 
-    Page<DataSource> page(Page<DataSource> page);
+    Page<DataSource> page(Page<DataSource> page, String name, String beginTime, String endTime);
 
 }
