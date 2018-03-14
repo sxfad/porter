@@ -91,16 +91,6 @@ public class DataSource implements java.io.Serializable {
         this.dataType = dataType;
     }
 
-    //    /** 数据源类型 get方法. */
-//    public String getDataType() {
-//        return dataType == null ? null : dataType.trim();
-//    }
-//
-//    /** 数据源类型 set方法. */
-//    public void setDataType(String dataType) {
-//        this.dataType = dataType == null ? null : dataType.trim();
-//    }
-
     /** 数据源组合json get方法. */
     public String getDataJson() {
         return dataJson == null ? null : dataJson.trim();
