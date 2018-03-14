@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.suixingpay.datas.manager.core.mapper.DataSourcePluginMapper">
+    <!-- 通用查询映射结果 
+    <resultMap id="BaseResultMap" type="com.suixingpay.datas.manager.core.entity.DataSourcePlugin">
+        <result column="id" property="id" />
+        <result column="source_id" property="sourceId" />
+        <result column="field_name" property="fieldName" />
+        <result column="field_code" property="fieldCode" />
+        <result column="field_value" property="fieldValue" />
+    </resultMap>-->
+
+    <!-- 通用查询结果列 
+    <sql id="Base_Column_List">
+        select id, source_id AS sourceId, field_name AS fieldName, field_code AS fieldCode, field_value AS fieldValue from b_data_source_plugin
+    </sql>-->
+
+    <!-- 新增 -->
+    <insert id="insert">
+        insert into b_data_source_plugin(
+            id,
+                source_id,
+                field_name,
+                field_code,
+                field_value,
+        ) values (
+            #{id},
+                #{sourceId},
+                #{fieldName},
+                #{fieldCode},
+                #{fieldValue},
+        )
+    </insert>
+
+    <!-- 修改 -->
+    <update id="update">
+        update b_data_source_plugin
+        set
+            id = #{dataSourcePlugin.id},
+                source_id = #{dataSourcePlugin.sourceId},
+                field_name = #{dataSourcePlugin.fieldName},
+                field_code = #{dataSourcePlugin.fieldCode},
+                field_value = #{dataSourcePlugin.fieldValue},
+                where id = #{id}
+    </update>
+
+    <!-- 刪除 -->
+    <delete id="delete">
+        delete from b_data_source_plugin where id = #{id}
+    </delete>
+
+    <!-- 根据主鍵查找 -->
+    <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.DataSourcePlugin">
+        select id, source_id AS sourceId, field_name AS fieldName, field_code AS fieldCode, field_value AS fieldValue from b_data_source_plugin
+        where id = #{id}
+    </select>
+
+    <!-- 分页All -->
+    <select id="pageAll" resultType="java.lang.Integer">
+        select count(id) from b_data_source_plugin
+        where 1=1
+    </select>
+
+    <!-- 分页 -->
+    <select id="page" resultType="com.suixingpay.datas.manager.core.entity.DataSourcePlugin">
+        select id, source_id AS sourceId, field_name AS fieldName, field_code AS fieldCode, field_value AS fieldValue from b_data_source_plugin
+        where 1=1 limit #{page.offset},#{page.pageSize}
+    </select>
+
+    <!-- 验证新增 -->
+    <insert id="insertSelective">
+        insert into b_data_source_plugin
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="id != null">
+            id,
+        </if>
+                    <if test="sourceId != null">
+            source_id,
+        </if>
+                    <if test="fieldName != null">
+            field_name,
+        </if>
+                    <if test="fieldCode != null">
+            field_code,
+        </if>
+                    <if test="fieldValue != null">
+            field_value,
+        </if>
+                </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+                <if test="id != null">
+            #{id,jdbcType=BIGINT},
+        </if>
+                    <if test="sourceId != null">
+            #{sourceId,jdbcType=BIGINT},
+        </if>
+                    <if test="fieldName != null">
+            #{fieldName,jdbcType=VARCHAR},
+        </if>
+                    <if test="fieldCode != null">
+            #{fieldCode,jdbcType=VARCHAR},
+        </if>
+                    <if test="fieldValue != null">
+            #{fieldValue,jdbcType=VARCHAR},
+        </if>
+                </trim>
+    </insert>
+
+    <!-- 验证修改 -->
+    <update id="updateSelective">
+        update b_data_source_plugin
+        <set>
+                <if test="dataSourcePlugin.id != null">
+            id = #{dataSourcePlugin.id,jdbcType=BIGINT},
+        </if>
+                    <if test="dataSourcePlugin.sourceId != null">
+            source_id = #{dataSourcePlugin.sourceId,jdbcType=BIGINT},
+        </if>
+                    <if test="dataSourcePlugin.fieldName != null">
+            field_name = #{dataSourcePlugin.fieldName,jdbcType=VARCHAR},
+        </if>
+                    <if test="dataSourcePlugin.fieldCode != null">
+            field_code = #{dataSourcePlugin.fieldCode,jdbcType=VARCHAR},
+        </if>
+                    <if test="dataSourcePlugin.fieldValue != null">
+            field_value = #{dataSourcePlugin.fieldValue,jdbcType=VARCHAR},
+        </if>
+                </set>
+        where id = #{id}
+    </update>
+
+</mapper>
