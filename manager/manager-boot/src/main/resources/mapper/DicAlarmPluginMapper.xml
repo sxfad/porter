@@ -5,31 +5,39 @@
     <resultMap id="BaseResultMap" type="com.suixingpay.datas.manager.core.entity.DicAlarmPlugin">
         <result column="id" property="id" />
         <result column="alert_type" property="alertType" />
-        <result column="code" property="code" />
-        <result column="name" property="name" />
+        <result column="field_name" property="fieldName" />
+        <result column="field_code" property="fieldCode" />
+        <result column="field_order" property="fieldOrder" />
         <result column="state" property="state" />
+        <result column="iscancel" property="iscancel" />
         <result column="remark" property="remark" />
     </resultMap>-->
 
-    <!-- 通用查询结果列 
+    <!-- 通用查询结果列
     <sql id="Base_Column_List">
-        select id, alert_type AS alertType, code, name, state, remark from d_alarm_plugin
+        select id, alert_type AS alertType, field_name AS fieldName, field_code AS fieldCode, field_order AS fieldOrder, state, iscancel, remark from d_alarm_plugin
     </sql>-->
 
     <!-- 新增 -->
     <insert id="insert">
         insert into d_alarm_plugin(
+        id,
         alert_type,
-        code,
-        name,
+        field_name,
+        field_code,
+        field_order,
         state,
-        remark
+        iscancel,
+        remark,
         ) values (
+        #{id},
         #{alertType},
-        #{code},
-        #{name},
+        #{fieldName},
+        #{fieldCode},
+        #{fieldOrder},
         #{state},
-        #{remark}
+        #{iscancel},
+        #{remark},
         )
     </insert>
 
@@ -37,11 +45,14 @@
     <update id="update">
         update d_alarm_plugin
         set
+        id = #{dicAlarmPlugin.id},
         alert_type = #{dicAlarmPlugin.alertType},
-        code = #{dicAlarmPlugin.code},
-        name = #{dicAlarmPlugin.name},
+        field_name = #{dicAlarmPlugin.fieldName},
+        field_code = #{dicAlarmPlugin.fieldCode},
+        field_order = #{dicAlarmPlugin.fieldOrder},
         state = #{dicAlarmPlugin.state},
-        remark = #{dicAlarmPlugin.remark}
+        iscancel = #{dicAlarmPlugin.iscancel},
+        remark = #{dicAlarmPlugin.remark},
         where id = #{id}
     </update>
 
@@ -52,7 +63,7 @@
 
     <!-- 根据主鍵查找 -->
     <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.DicAlarmPlugin">
-        select id, alert_type AS alertType, code, name, state, remark from d_alarm_plugin
+        select id, alert_type AS alertType, field_name AS fieldName, field_code AS fieldCode, field_order AS fieldOrder, state, iscancel, remark from d_alarm_plugin
         where id = #{id}
     </select>
 
@@ -64,7 +75,7 @@
 
     <!-- 分页 -->
     <select id="page" resultType="com.suixingpay.datas.manager.core.entity.DicAlarmPlugin">
-        select id, alert_type AS alertType, code, name, state, remark from d_alarm_plugin
+        select id, alert_type AS alertType, field_name AS fieldName, field_code AS fieldCode, field_order AS fieldOrder, state, iscancel, remark from d_alarm_plugin
         where 1=1 limit #{page.offset},#{page.pageSize}
     </select>
 
@@ -72,34 +83,52 @@
     <insert id="insertSelective">
         insert into d_alarm_plugin
         <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
             <if test="alertType != null">
                 alert_type,
             </if>
-            <if test="code != null">
-                code,
+            <if test="fieldName != null">
+                field_name,
             </if>
-            <if test="name != null">
-                name,
+            <if test="fieldCode != null">
+                field_code,
+            </if>
+            <if test="fieldOrder != null">
+                field_order,
             </if>
             <if test="state != null">
                 state,
+            </if>
+            <if test="iscancel != null">
+                iscancel,
             </if>
             <if test="remark != null">
                 remark,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
             <if test="alertType != null">
                 #{alertType,jdbcType=VARCHAR},
             </if>
-            <if test="code != null">
-                #{code,jdbcType=VARCHAR},
+            <if test="fieldName != null">
+                #{fieldName,jdbcType=VARCHAR},
             </if>
-            <if test="name != null">
-                #{name,jdbcType=VARCHAR},
+            <if test="fieldCode != null">
+                #{fieldCode,jdbcType=VARCHAR},
+            </if>
+            <if test="fieldOrder != null">
+                #{fieldOrder,jdbcType=INTEGER},
             </if>
             <if test="state != null">
                 #{state,jdbcType=INTEGER},
+            </if>
+            <if test="iscancel != null">
+                #{iscancel,jdbcType=INTEGER},
             </if>
             <if test="remark != null">
                 #{remark,jdbcType=VARCHAR},
@@ -111,17 +140,26 @@
     <update id="updateSelective">
         update d_alarm_plugin
         <set>
+            <if test="dicAlarmPlugin.id != null">
+                id = #{dicAlarmPlugin.id,jdbcType=BIGINT},
+            </if>
             <if test="dicAlarmPlugin.alertType != null">
                 alert_type = #{dicAlarmPlugin.alertType,jdbcType=VARCHAR},
             </if>
-            <if test="dicAlarmPlugin.code != null">
-                code = #{dicAlarmPlugin.code,jdbcType=VARCHAR},
+            <if test="dicAlarmPlugin.fieldName != null">
+                field_name = #{dicAlarmPlugin.fieldName,jdbcType=VARCHAR},
             </if>
-            <if test="dicAlarmPlugin.name != null">
-                name = #{dicAlarmPlugin.name,jdbcType=VARCHAR},
+            <if test="dicAlarmPlugin.fieldCode != null">
+                field_code = #{dicAlarmPlugin.fieldCode,jdbcType=VARCHAR},
+            </if>
+            <if test="dicAlarmPlugin.fieldOrder != null">
+                field_order = #{dicAlarmPlugin.fieldOrder,jdbcType=INTEGER},
             </if>
             <if test="dicAlarmPlugin.state != null">
                 state = #{dicAlarmPlugin.state,jdbcType=INTEGER},
+            </if>
+            <if test="dicAlarmPlugin.iscancel != null">
+                iscancel = #{dicAlarmPlugin.iscancel,jdbcType=INTEGER},
             </if>
             <if test="dicAlarmPlugin.remark != null">
                 remark = #{dicAlarmPlugin.remark,jdbcType=VARCHAR},
@@ -129,4 +167,5 @@
         </set>
         where id = #{id,jdbcType=BIGINT}
     </update>
+
 </mapper>
