@@ -10,6 +10,7 @@ dependencies {
 
     compile('org.apache.kudu:kudu-client:1.6.0'){
         exclude group:'org.slf4j',module:'slf4j-api'
+        exclude group:'jdk.tools',module:'jdk.tools'
     }
 
     compile('com.alibaba.otter:canal.client:1.0.25'){
