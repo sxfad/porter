@@ -26,17 +26,7 @@ public class DataTableServiceImpl implements DataTableService {
 
     @Override
     public Integer insert(DataTable dataTable) {
-        return dataTableMapper.insert(dataTable);
-    }
-
-    @Override
-    public Integer update(Long id, DataTable dataTable) {
-        return dataTableMapper.update(id, dataTable);
-    }
-
-    @Override
-    public Integer delete(Long id) {
-        return dataTableMapper.delete(id);
+        return dataTableMapper.insertSelective(dataTable);
     }
 
     @Override
@@ -45,13 +35,17 @@ public class DataTableServiceImpl implements DataTableService {
     }
 
     @Override
-    public Page<DataTable> page(Page<DataTable> page) {
-        Integer total = dataTableMapper.pageAll(1);
+    public Page<DataTable> page(Page<DataTable> page, String bankName, String beginTime, String endTime) {
+        Integer total = dataTableMapper.pageAll(1, bankName, beginTime, endTime);
         if (total > 0) {
             page.setTotalItems(total);
-            page.setResult(dataTableMapper.page(page, 1));
+            page.setResult(dataTableMapper.page(page, 1, bankName, beginTime, endTime));
         }
         return page;
     }
 
+    @Override
+    public Integer delete(Long id) {
+        return dataTableMapper.delete(id);
+    }
 }

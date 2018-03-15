@@ -62,26 +62,54 @@
     </update>
 
     <!-- 刪除 -->
-    <delete id="delete">
-        delete from b_data_table where id = #{id}
-    </delete>
+    <update id="delete">
+        UPDATE b_data_table
+        SET iscancel = 1
+        WHERE id = #{id}
+    </update>
 
     <!-- 根据主鍵查找 -->
     <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.DataTable">
-        select id, source_id AS sourceId, data_type AS dataType, bank_name AS bankName, table_name AS tableName, creater, create_time AS createTime, state, iscancel, remark from b_data_table
+        select id, source_id AS sourceId, data_type AS dataType, bank_name AS bankName, table_name AS tableName, creater AS creater, create_time AS createTime
+        from b_data_table
         where id = #{id}
     </select>
 
     <!-- 分页All -->
     <select id="pageAll" resultType="java.lang.Integer">
         select count(id) from b_data_table
-        where 1=1
+        <where>
+            iscancel = 0
+            <if test="bankName != null and bankName != ''">
+                and bank_name LIKE CONCAT('%',#{bankName},'%')
+            </if>
+            <if test="beginTime != null and beginTime != ''">
+                and create_time &gt; #{beginTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                and create_time &lt; #{endTime}
+            </if>
+        </where>
     </select>
 
     <!-- 分页 -->
     <select id="page" resultType="com.suixingpay.datas.manager.core.entity.DataTable">
-        select id, source_id AS sourceId, data_type AS dataType, bank_name AS bankName, table_name AS tableName, creater, create_time AS createTime, state, iscancel, remark from b_data_table
-        where 1=1 limit #{page.offset},#{page.pageSize}
+        SELECT id, source_id AS sourceId, data_type AS dataType, bank_name AS bankName, table_name AS tableName
+        from b_data_table
+        <where>
+            iscancel = 0
+            <if test="bankName != null and bankName != ''">
+                and bank_name LIKE CONCAT('%',#{bankName},'%')
+            </if>
+            <if test="beginTime != null and beginTime != ''">
+                and create_time &gt; #{beginTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                and create_time &lt; #{endTime}
+            </if>
+            order by create_time desc
+            limit #{page.offset},#{page.pageSize}
+        </where>
     </select>
 
     <!-- 验证新增 -->
