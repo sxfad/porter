@@ -1,0 +1,20 @@
+数据源配置
+
+数据表配置
+
+全局配置
+    告警策略字典：AlertPlugin 接口：/dict/all(get)
+    展示页面接口：/alarm/info(get)
+    数据保存接口：/alarm(post)
+    用户人员接口：
+    需前度处理实体字段：alarmType、alarmPlugins{alarmType、pluginCode、pluginName、pluginValue}、alarmUsers{userId}
+
+同步节点管理
+
+同步任务
+
+任务监控
+
+节点监控 
+
+运行日志

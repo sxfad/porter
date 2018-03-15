@@ -34,6 +34,11 @@ public class AlarmServiceImpl implements AlarmService {
     private AlarmUserService alarmUserService;
 
     @Override
+    public Alarm selectFinallyOne() {
+        return alarmMapper.selectFinallyOne();
+    }
+
+    @Override
     @Transactional
     public Integer insert(Alarm alarm) {
         Integer i = alarmMapper.insert(alarm);

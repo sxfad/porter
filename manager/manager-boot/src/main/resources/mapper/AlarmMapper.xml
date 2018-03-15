@@ -141,4 +141,9 @@
         </set>
         where id = #{id,jdbcType=BIGINT}
     </update>
+        
+    <select id="selectFinallyOne" resultType="com.suixingpay.datas.manager.core.entity.Alarm">
+        select id, alarm_type AS alarmType, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, remark from s_alarm
+            where iscancel = 0 ORDER BY id DESC LIMIT 1
+    </select>
 </mapper>

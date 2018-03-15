@@ -93,7 +93,7 @@ public class AlarmController {
     @GetMapping("/info")
     @ApiOperation(value = "查询明细", notes = "查询明细")
     public ResponseMessage info(@PathVariable("id") Long id) {
-        Alarm alarm = alarmService.selectById(id);
+        Alarm alarm = alarmService.selectFinallyOne();
         return ok(alarm);
     }
 }
