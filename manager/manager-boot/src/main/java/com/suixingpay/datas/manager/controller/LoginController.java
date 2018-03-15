@@ -37,14 +37,14 @@ public class LoginController {
     private Logger log = LoggerFactory.getLogger(LoginController.class);
 
     @Autowired
-    public CUserService cuUserService;
+    public CUserService cuserService;
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ApiOperation(value = "用户登录", notes = "用户登录")
     public ResponseMessage login(@RequestParam(required = true) String LoginName,
             @RequestParam(required = true) String passwd) throws Exception {
         LoginUserToken loginUserToken = new LoginUserToken();
-        CUser cuser = cuUserService.selectByNameAndpasswd(LoginName, passwd);
+        CUser cuser = cuserService.selectByNameAndpasswd(LoginName, passwd);
         if (cuser == null) {
             return ResponseMessage.error("Login error", ExceptionCode.EXCEPTION_LOGIN);
         } else {
@@ -64,8 +64,10 @@ public class LoginController {
     public ResponseMessage getCurrentUserInfo() throws Exception {
         LoginUserToken loginUserToken = WebToeknContext.getToken(LoginUserToken.class);
         Map<String, Object> map = new HashMap<>();
+        CUser cuser = cuserService.selectById(loginUserToken.getUserId());
         map.put("userId", loginUserToken.getUserId());
         map.put("loginName", loginUserToken.getLoginName());
+        map.put("nickName", cuser.getNickname());
         map.put("passwd", loginUserToken.getPasswd());
         return ResponseMessage.ok(map);
     }

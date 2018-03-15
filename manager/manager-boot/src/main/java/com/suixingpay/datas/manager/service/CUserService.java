@@ -1,5 +1,7 @@
 package com.suixingpay.datas.manager.service;
 
+import java.util.List;
+
 import com.suixingpay.datas.manager.core.entity.CUser;
 import com.suixingpay.datas.manager.web.page.Page;
 
@@ -24,4 +26,6 @@ public interface CUserService {
     CUser selectByNameAndpasswd(String loginName,String passwd); 
 
     Page<CUser> page(Page<CUser> page);
+
+    List<CUser> list();
 }

@@ -2,6 +2,8 @@ package com.suixingpay.datas.manager.controller;
 
 import static com.suixingpay.datas.manager.web.message.ResponseMessage.ok;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -60,12 +62,18 @@ public class CUserController {
         return ok(cUser);
     }*/
 
-    @ApiOperation(value = "查询列表", notes = "查询列表")
+    @ApiOperation(value = "分页列表", notes = "分页列表")
     @GetMapping
-    public ResponseMessage list(@RequestParam(value = "pageNo", required = false) Integer pageNo,
+    public ResponseMessage page(@RequestParam(value = "pageNo", required = false) Integer pageNo,
             @RequestParam(value = "pageSize", required = false) Integer pageSize) {
         Page<CUser> page = cuserService.page(new Page<CUser>(pageNo, pageSize));
         return ok(page);
     }
 
+    @ApiOperation(value = "全部列表", notes = "全部列表")
+    @GetMapping("/list")
+    public ResponseMessage list() {
+        List<CUser> list = cuserService.list();
+        return ok(list);
+    }
 }

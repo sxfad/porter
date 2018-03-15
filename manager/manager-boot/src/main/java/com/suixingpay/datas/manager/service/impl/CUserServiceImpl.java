@@ -7,6 +7,9 @@ import com.suixingpay.datas.manager.core.entity.CUser;
 import com.suixingpay.datas.manager.core.mapper.CUserMapper;
 import com.suixingpay.datas.manager.service.CUserService;
 import com.suixingpay.datas.manager.web.page.Page;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -59,4 +62,8 @@ public class CUserServiceImpl implements CUserService {
         return page;
     }
 
+    @Override
+    public List<CUser> list() {
+        return cuserMapper.list();
+    }
 }
