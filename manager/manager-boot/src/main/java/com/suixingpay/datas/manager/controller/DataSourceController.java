@@ -111,7 +111,7 @@ public class DataSourceController {
                                 @RequestParam(value = "name", required = false) String name,
                                 @RequestParam(value = "beginTime", required = false) String beginTime,
                                 @RequestParam(value = "endTime", required = false) String endTime) {
-         Page<DataSource> page = dataSourceService.page(new Page<DataSource>(pageNo, pageSize), name, beginTime, endTime);
+        Page<DataSource> page = dataSourceService.page(new Page<DataSource>(pageNo, pageSize), name, beginTime, endTime);
         return ok(page);
     }
 

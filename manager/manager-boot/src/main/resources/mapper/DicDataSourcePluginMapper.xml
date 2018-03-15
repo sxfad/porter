@@ -8,6 +8,8 @@
         <result column="field_name" property="fieldName" />
         <result column="field_code" property="fieldCode" />
         <result column="field_order" property="fieldOrder" />
+        <result column="field_type" property="fieldType" />
+        <result column="field_type_key" property="fieldTypeKey" />
         <result column="state" property="state" />
         <result column="iscancel" property="iscancel" />
         <result column="remark" property="remark" />
@@ -81,7 +83,10 @@
 
     <!-- 根据数据源类型查询数据源页面字段 -->
     <select id="findByType" resultType="com.suixingpay.datas.manager.core.entity.DicDataSourcePlugin">
-        SELECT id, source_type AS sourceType, field_name AS fieldName, field_code AS fieldCode, field_order AS fieldOrder FROM d_data_source_plugin
+        SELECT
+        id, source_type AS sourceType, field_name AS fieldName, field_code AS fieldCode,
+        field_order AS fieldOrder, field_type AS fieldType, field_type_key AS fieldTypeKey
+        FROM d_data_source_plugin
         <where>
             1 = 1
             <if test="sourceType != null and sourceType != ''">
