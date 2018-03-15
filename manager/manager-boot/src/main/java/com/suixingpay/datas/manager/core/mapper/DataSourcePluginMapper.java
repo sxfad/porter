@@ -36,7 +36,7 @@ public interface DataSourcePluginMapper {
      * @param id
      * @return
      */
-    Integer delete(Long id);
+    Integer delete(Long sourceId);
 
     /**
      * 根據主鍵id查找數據
@@ -59,5 +59,20 @@ public interface DataSourcePluginMapper {
      * @return
      */
     Integer pageAll(@Param("state") Integer state);
+
+    /**
+     * 批量新增数据源关联信息
+     *
+     * @param plugins
+     */
+    void insertDataSourcePlugins(List<DataSourcePlugin> plugins);
+
+    /**
+     * 根据数据源id查找关联信息
+     *
+     * @param sourceId
+     * @return
+     */
+    List<DataSourcePlugin> findListBySourceID(Long sourceId);
 
 }

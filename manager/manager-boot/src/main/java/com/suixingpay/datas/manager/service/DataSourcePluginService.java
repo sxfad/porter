@@ -1,7 +1,10 @@
 package com.suixingpay.datas.manager.service;
 
+import com.suixingpay.datas.manager.core.entity.DataSource;
 import com.suixingpay.datas.manager.core.entity.DataSourcePlugin;
 import com.suixingpay.datas.manager.web.page.Page;
+
+import java.util.List;
 
 /**
  * 数据源信息关联表 服务接口类
@@ -23,4 +26,7 @@ public interface DataSourcePluginService {
 
     Page<DataSourcePlugin> page(Page<DataSourcePlugin> page);
 
+    void insertSelective(DataSource dataSource);
+
+    List<DataSourcePlugin> findListBySourceID(Long sourceId);
 }

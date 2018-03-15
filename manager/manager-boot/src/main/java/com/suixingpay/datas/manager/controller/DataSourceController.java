@@ -82,6 +82,21 @@ public class DataSourceController {
     }
 
     /**
+     * 根据数据源id查询关联信息
+     *
+     * @author FuZizheng
+     * @date 2018/3/15 上午10:36
+     * @param: [id]
+     * @return: com.suixingpay.datas.manager.web.message.ResponseMessage
+     */
+    @GetMapping("/{id}")
+    @ApiOperation(value = "根据数据源id查询关联信息", notes = "入参 ： 数据源主键")
+    public ResponseMessage findOne(@PathVariable("id") Long id) {
+        DataSource dataSource = dataSourceService.selectById(id);
+        return ok(dataSource);
+    }
+
+    /**
      * 查询数据源信息列表
      *
      * @author FuZizheng
@@ -96,7 +111,7 @@ public class DataSourceController {
                                 @RequestParam(value = "name", required = false) String name,
                                 @RequestParam(value = "beginTime", required = false) String beginTime,
                                 @RequestParam(value = "endTime", required = false) String endTime) {
-        Page<DataSource> page = dataSourceService.page(new Page<DataSource>(pageNo, pageSize), name, beginTime, endTime);
+         Page<DataSource> page = dataSourceService.page(new Page<DataSource>(pageNo, pageSize), name, beginTime, endTime);
         return ok(page);
     }
 

@@ -3,7 +3,9 @@ package com.suixingpay.datas.manager.core.entity;
 import com.suixingpay.datas.common.dic.SourceType;
 
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 数据源信息表 实体Entity
@@ -57,6 +59,11 @@ public class DataSource implements java.io.Serializable {
      * 备注.
      */
     private String remark;
+
+    /**
+     * 数据源信息关联表list
+     */
+    private List<DataSourcePlugin> plugins = new ArrayList<>();
 
     /**
      * 主键 get方法.
@@ -170,4 +177,12 @@ public class DataSource implements java.io.Serializable {
         this.remark = remark == null ? null : remark.trim();
     }
 
+
+    public List<DataSourcePlugin> getPlugins() {
+        return plugins;
+    }
+
+    public void setPlugins(List<DataSourcePlugin> plugins) {
+        this.plugins = plugins;
+    }
 }
