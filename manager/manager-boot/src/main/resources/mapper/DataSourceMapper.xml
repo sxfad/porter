@@ -78,7 +78,18 @@
     <!-- 分页All -->
     <select id="pageAll" resultType="java.lang.Integer">
         select count(id) from b_data_source
-        where iscancel = 0
+        <where>
+            iscancel = 0
+            <if test="name != null and name != ''">
+                and name LIKE CONCAT('%', #{name},'%')
+            </if>
+            <if test="beginTime != null and beginTime != ''">
+                and create_time &gt; #{beginTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                and create_time &lt; #{endTime}
+            </if>
+        </where>
     </select>
 
     <!-- 分页 -->

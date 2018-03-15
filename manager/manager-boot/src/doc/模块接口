@@ -1,4 +1,22 @@
 数据源配置
+    数据源类型字典：DataSource
+        接口:/dict/all(get)
+        注释:查询全部数据字典值
+    展示页面接口：/datasource(get)
+    查看详细信息接口：
+        路径：/datasource/{id}(get)
+        目标表：DataSource 、DataSourcePlugin
+        注释：DataSource : DataSourcePlugin = 1 : n
+    数据保存页面展示字段:
+        路径：/dicdatasourceplugin/{sourceType}(get)
+        注释：选择完具体的数据源，根据不同的数据源类型，显示不同的页面展示字段（fieldName,fieldCode,fieldOrder,fieldType,fieldTypeKey）
+    数据保存接口：
+        路径：/datasource(post)
+        目标表：DataSource 、DataSourcePlugin
+        注释：DataSource : DataSourcePlugin = 1 : n
+    数据逻辑删除接口:
+        路径：/datasource/{id}(delete)
+        字段：iscancel
 
 数据表配置
 
@@ -15,6 +33,6 @@
 
 任务监控
 
-节点监控 
+节点监控
 
 运行日志
