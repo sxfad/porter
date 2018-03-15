@@ -2,7 +2,9 @@ package com.suixingpay.datas.manager.core.entity;
 
 import com.suixingpay.datas.common.dic.AlertPlugin;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 告警配置表 实体Entity
@@ -59,6 +61,16 @@ public class Alarm implements java.io.Serializable {
      * 备注.
      */
     private String remark;
+
+    /**
+     * 告警配置策略内容list
+     */
+    private List<AlarmPlugin> alarmPlugins = new ArrayList<>();
+
+    /**
+     * 用户列表
+     */
+    private List<AlarmUser> alarmUsers = new ArrayList<>();
 
     /**
      * 主键 get方法.
@@ -186,4 +198,19 @@ public class Alarm implements java.io.Serializable {
         this.remark = remark == null ? null : remark.trim();
     }
 
+    public List<AlarmPlugin> getAlarmPlugins() {
+        return alarmPlugins;
+    }
+
+    public void setAlarmPlugins(List<AlarmPlugin> alarmPlugins) {
+        this.alarmPlugins = alarmPlugins;
+    }
+
+    public List<AlarmUser> getAlarmUsers() {
+        return alarmUsers;
+    }
+
+    public void setAlarmUsers(List<AlarmUser> alarmUsers) {
+        this.alarmUsers = alarmUsers;
+    }
 }

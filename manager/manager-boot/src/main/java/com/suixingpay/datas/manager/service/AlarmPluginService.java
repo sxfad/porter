@@ -1,5 +1,6 @@
 package com.suixingpay.datas.manager.service;
 
+import com.suixingpay.datas.manager.core.entity.Alarm;
 import com.suixingpay.datas.manager.core.entity.AlarmPlugin;
 import com.suixingpay.datas.manager.web.page.Page;
 
@@ -12,6 +13,8 @@ import com.suixingpay.datas.manager.web.page.Page;
  * @review: FairyHood/2018-03-08 10:46:01
  */
 public interface AlarmPluginService {
+
+    void insert(Alarm alarm);
 
     Integer insert(AlarmPlugin alarmPlugin);
 

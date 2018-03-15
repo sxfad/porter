@@ -3,6 +3,7 @@
  */
 package com.suixingpay.datas.manager.service.impl;
 
+import com.suixingpay.datas.manager.core.entity.Alarm;
 import com.suixingpay.datas.manager.core.entity.AlarmUser;
 import com.suixingpay.datas.manager.core.mapper.AlarmUserMapper;
 import com.suixingpay.datas.manager.service.AlarmUserService;
@@ -23,6 +24,14 @@ public class AlarmUserServiceImpl implements AlarmUserService {
 
     @Autowired
     private AlarmUserMapper alarmUserMapper;
+
+    @Override
+    public void insert(Alarm alarm) {
+        for (AlarmUser alarmUser : alarm.getAlarmUsers()) {
+            alarmUser.setAlarmId(alarm.getId());
+            insert(alarmUser);
+        }
+    }
 
     @Override
     public Integer insert(AlarmUser alarmUser) {

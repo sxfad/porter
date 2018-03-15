@@ -5,10 +5,13 @@ package com.suixingpay.datas.manager.service.impl;
 
 import com.suixingpay.datas.manager.core.entity.Alarm;
 import com.suixingpay.datas.manager.core.mapper.AlarmMapper;
+import com.suixingpay.datas.manager.service.AlarmPluginService;
 import com.suixingpay.datas.manager.service.AlarmService;
+import com.suixingpay.datas.manager.service.AlarmUserService;
 import com.suixingpay.datas.manager.web.page.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 告警配置表 服务实现类
@@ -24,9 +27,19 @@ public class AlarmServiceImpl implements AlarmService {
     @Autowired
     private AlarmMapper alarmMapper;
 
+    @Autowired
+    private AlarmPluginService alarmPluginService;
+
+    @Autowired
+    private AlarmUserService alarmUserService;
+
     @Override
+    @Transactional
     public Integer insert(Alarm alarm) {
-        return alarmMapper.insert(alarm);
+        Integer i = alarmMapper.insert(alarm);
+        alarmPluginService.insert(alarm);
+        alarmUserService.insert(alarm);
+        return i;
     }
 
     @Override

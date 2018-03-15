@@ -1,4 +1,4 @@
-package com.suixingpay.datas.manager.controller;
+/*package com.suixingpay.datas.manager.controller;
 
 import com.suixingpay.datas.manager.core.entity.AlarmPlugin;
 import com.suixingpay.datas.manager.service.AlarmPluginService;
@@ -19,14 +19,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import static com.suixingpay.datas.manager.web.message.ResponseMessage.ok;
 
-/**
+*//**
  * 告警配置策略内容表 controller控制器
  *
  * @author: FairyHood
  * @date: 2018-03-08 10:46:01
  * @version: V1.0-auto
  * @review: FairyHood/2018-03-08 10:46:01
- */
+ *//*
 @Api(description = "告警配置策略内容表管理")
 @RestController
 @RequestMapping("/alarmplugin")
@@ -94,3 +94,4 @@ public class AlarmPluginController {
 
 
 
+*/
