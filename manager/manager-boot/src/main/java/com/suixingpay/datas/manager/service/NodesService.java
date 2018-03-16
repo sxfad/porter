@@ -21,6 +21,6 @@ public interface NodesService {
 
     Nodes selectById(Long id);
 
-    Page<Nodes> page(Page<Nodes> page);
+    Page<Nodes> page(Page<Nodes> page, String ipAddress, Integer state, String machineName, Integer type);
 
 }
