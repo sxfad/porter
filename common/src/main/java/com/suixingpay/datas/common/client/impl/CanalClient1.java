@@ -12,15 +12,7 @@ package com.suixingpay.datas.common.client.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.otter.canal.client.CanalConnector;
 import com.alibaba.otter.canal.client.CanalConnectors;
-import com.alibaba.otter.canal.instance.core.CanalInstance;
-import com.alibaba.otter.canal.instance.core.CanalInstanceGenerator;
-import com.alibaba.otter.canal.instance.manager.CanalInstanceWithManager;
-import com.alibaba.otter.canal.instance.manager.model.Canal;
-import com.alibaba.otter.canal.instance.manager.model.CanalParameter;
-import com.alibaba.otter.canal.instance.manager.model.CanalStatus;
-import com.alibaba.otter.canal.protocol.ClientIdentity;
 import com.alibaba.otter.canal.protocol.Message;
-import com.alibaba.otter.canal.server.embedded.CanalServerWithEmbedded;
 import com.suixingpay.datas.common.client.AbstractClient;
 import com.suixingpay.datas.common.client.ConsumeClient;
 import com.suixingpay.datas.common.config.source.CanalConfig;
@@ -28,10 +20,8 @@ import com.suixingpay.datas.common.exception.ClientConnectionException;
 import com.suixingpay.datas.common.exception.ClientException;
 import com.suixingpay.datas.common.exception.TaskStopTriggerException;
 import lombok.AllArgsConstructor;
-import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 
-import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -44,29 +34,47 @@ import java.util.concurrent.TimeUnit;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月02日 15:14
  */
-public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeClient {
+public class CanalClient1 extends AbstractClient<CanalConfig> implements ConsumeClient {
+
     private int perPullSize;
-    private final CanalServerWithEmbedded canalServer;
-    private ClientIdentity clientId;
+    private CanalConnector connector;
     private CountDownLatch canFetch = new CountDownLatch(1);
 
-    public CanalClient(CanalConfig config) {
+    public CanalClient1(CanalConfig config) {
         super(config);
-        canalServer = new CanalServerWithEmbedded();
     }
 
     @Override
     protected void doStart() throws TaskStopTriggerException {
         CanalConfig config = getConfig();
         perPullSize = config.getOncePollSize();
-        clientId = new ClientIdentity(config.getDestination(), Short.valueOf("2017"), config.getFilter());
+        if (StringUtils.isBlank(config.getZkServers()) && config.getAddresses().isEmpty()) {
+            throw new TaskStopTriggerException(new ClientConnectionException("zkServers或addresses必须有一项必填"));
+        }
+        if (StringUtils.isBlank(config.getDestination())) {
+            throw new TaskStopTriggerException(new ClientConnectionException("destination必填"));
+        }
+        CanalConnector connector = null;
+        if (!StringUtils.isBlank(config.getZkServers())) {
+            connector = CanalConnectors.newClusterConnector(config.getZkServers(), config.getDestination(),
+                    config.getUsername(), config.getPassword());
+        } else if (null == connector && !config.getAddresses().isEmpty()) {
+            connector = CanalConnectors.newClusterConnector(config.getAddresses(), config.getDestination(),
+                    config.getUsername(), config.getPassword());
+        }
+        connector.connect();
+        connector.subscribe(StringUtils.trimToEmpty(config.getFilter()));
+        if (isAutoCommitPosition()) {
+            canFetch.countDown();
+        }
+        this.connector = connector;
     }
 
     @Override
     protected void doShutdown() {
-        if (null != canalServer) {
-            canalServer.stop(getConfig().getDestination());
-            canalServer.stop();
+        if (null != connector) {
+            connector.disconnect();
+            connector = null;
         }
         canFetch = new CountDownLatch(1);
     }
@@ -77,35 +85,16 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
          * 这里的批次提交和后续的处理批次不一致，会导致这里的一个批次被分配到不同的数据库事务执行。
          * 为了保证数据一致性，需要将zookeeper记录的消费同步点回滚后重新执行
          */
-        canalServer.setCanalInstanceGenerator(new CanalInstanceGenerator() {
-            @Override
-            @SneakyThrows
-            public CanalInstance generate(String destination) {
-                Canal canal = new Canal();
-                canal.setCanalParameter(new CanalParameter());
-                canal.setId(System.nanoTime());
-                canal.setStatus(CanalStatus.START);
-                canal.getCanalParameter().setSlaveId(System.nanoTime());
-                canal.getCanalParameter().setDdlIsolation(false);
-                canal.getCanalParameter().setFilterTableError(true);
-                canal.getCanalParameter().setMasterAddress(new InetSocketAddress("45.77.95.200", 3306));
-                canal.getCanalParameter().setDbPassword("zhuoluo1018");
-                canal.getCanalParameter().setDbUsername("root");
-                canal.getCanalParameter().setIndexMode(CanalParameter.IndexMode.MEMORY);
-                if (!StringUtils.isBlank(position)) {
-                    CanalPosition canalPosition = CanalPosition.getPosition(position);
-                    canal.getCanalParameter().setMasterLogfileName(canalPosition.logfileName);
-                    canal.getCanalParameter().setMasterLogfileOffest(canalPosition.offset);
-
+        if (!isAutoCommitPosition()) {
+            if (!StringUtils.isBlank(position)) {
+                CanalPosition canalPosition = CanalPosition.getPosition(position);
+                synchronized (connector) {
+                    connector.rollback(canalPosition.batchId);
                 }
-                return new CanalInstanceWithManager(canal, clientId.getFilter());
             }
-        });
+            canFetch.countDown();
+        }
 
-        canalServer.start();
-        canalServer.start(clientId.getDestination());
-        canalServer.subscribe(clientId);// 发起一次订阅
-        canFetch.countDown();
     }
 
     @Override
@@ -113,11 +102,11 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
         List<F> msgList = new ArrayList<>();
         if (isStarted()) {
             Message msg = null;
-            synchronized (canalServer) {
+            synchronized (connector) {
                 if (isAutoCommitPosition()) {
-                    msg = canalServer.get(clientId, perPullSize, 5L, TimeUnit.SECONDS);
+                    msg = connector.get(perPullSize, 5L, TimeUnit.SECONDS);
                 } else {
-                    msg = canalServer.getWithoutAck(clientId, perPullSize, 5L, TimeUnit.SECONDS);
+                    msg = connector.getWithoutAck(perPullSize, 5L, TimeUnit.SECONDS);
                 }
             }
             if (null != msg && msg.getId() != -1 && !msg.getEntries().isEmpty()) {
@@ -157,8 +146,8 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
         if (!isAutoCommitPosition()) {
             try {
                 CanalPosition canalPosition = CanalPosition.getPosition(position);
-                synchronized (canalServer) {
-                    canalServer.ack(clientId,canalPosition.batchId);
+                synchronized (connector) {
+                    connector.ack(canalPosition.batchId);
                 }
             } catch (Throwable e) {
                 throw new TaskStopTriggerException(e);

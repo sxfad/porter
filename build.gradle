@@ -45,11 +45,11 @@ subprojects {
                 'org.apache.commons:commons-lang3:3.7',
                 "org.springframework.boot:spring-boot-starter:${springVersion}",
                 "org.springframework.boot:spring-boot-starter-jdbc:${springVersion}",
-                'oracle:ojdbc14:10.2.0.1.0',
                 'commons-beanutils:commons-beanutils:1.9.2',
                 "org.springframework.boot:spring-boot-starter-mail:${springVersion}",
                 'mysql:mysql-connector-java:5.1.45'
         )
+        compile files(rootProject.getRootDir().path+'/other_dependencies/ojdbc7.jar')
         compile('org.apache.zookeeper:zookeeper:3.4.10'){
             exclude group:'org.slf4j',module:'slf4j-api'
             exclude group:'org.slf4j',module:'slf4j-log4j12'

@@ -13,6 +13,23 @@ dependencies {
         exclude group:'jdk.tools',module:'jdk.tools'
     }
 
+    compile('com.alibaba.otter:canal.server:1.0.25'){
+        exclude group:'ch.qos.logback',module:'logback-core'
+        exclude group:'ch.qos.logback',module:'logback-classic'
+        exclude group:'org.slf4j',module:'jcl-over-slf4j'
+        exclude group:'org.slf4j',module:'slf4j-api'
+        exclude group:'org.slf4j',module:'slf4j-log4j12'
+        exclude group:'log4j',module:'log4j'
+        exclude group:'org.springframework',module:'spring-orm'
+        exclude group:'org.springframework',module:'spring-jdbc'
+        exclude group:'org.springframework',module:'spring-context'
+        exclude group:'org.springframework',module:'spring-aop'
+        exclude group:'org.springframework',module:'spring-core'
+        exclude group:'org.apache.zookeeper',module:'zookeeper'
+        exclude group:'com.101tec',module:'zkclient'
+        exclude group:'com.alibaba',module:'druid'
+    }
+
     compile('com.alibaba.otter:canal.client:1.0.25'){
         exclude group:'ch.qos.logback',module:'logback-core'
         exclude group:'ch.qos.logback',module:'logback-classic'
@@ -27,5 +44,6 @@ dependencies {
         exclude group:'org.springframework',module:'spring-core'
         exclude group:'org.apache.zookeeper',module:'zookeeper'
         exclude group:'com.101tec',module:'zkclient'
+        exclude group:'com.alibaba',module:'druid'
     }
 }
