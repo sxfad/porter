@@ -6,6 +6,7 @@ package com.suixingpay.datas.manager.service.impl;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.suixingpay.datas.manager.core.enums.LogLevelEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -45,6 +46,7 @@ public class DictServiceImpl implements DictService {
         map.put("SourceType", SourceType.LINKMAP);//SourceType 数据源类型
         map.put("TaskStatusType", TaskStatusType.LINKMAP);//TaskStatusType 任务状态
         map.put("InputTypeEnum", InputTypeEnum.LINKMAP);//InputTypeEnum 页面输入框类型
+        map.put("LogLevelEnum", LogLevelEnum.LINKMAP);//LogLevelEnum 日志级别
         map.putAll(dictionaryService.selectMap());
         return map;
     }

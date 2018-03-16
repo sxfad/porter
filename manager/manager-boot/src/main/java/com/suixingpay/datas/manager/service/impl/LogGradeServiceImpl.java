@@ -4,6 +4,7 @@
 package com.suixingpay.datas.manager.service.impl;
 
 import com.suixingpay.datas.manager.core.entity.LogGrade;
+import com.suixingpay.datas.manager.core.enums.LogLevelEnum;
 import com.suixingpay.datas.manager.core.mapper.LogGradeMapper;
 import com.suixingpay.datas.manager.service.LogGradeService;
 import com.suixingpay.datas.manager.web.page.Page;
@@ -26,12 +27,18 @@ public class LogGradeServiceImpl implements LogGradeService {
 
     @Override
     public Integer insert(LogGrade logGrade) {
-        return logGradeMapper.insert(logGrade);
+        Integer number;
+        if (null != logGrade.getId() && !"".equals(logGrade.getId())) {
+            number = logGradeMapper.updateSelective(logGrade.getId(), logGrade);
+        } else {
+            number = logGradeMapper.insertSelective(logGrade);
+        }
+        return number;
     }
 
     @Override
     public Integer update(Long id, LogGrade logGrade) {
-        return logGradeMapper.update(id, logGrade);
+        return logGradeMapper.updateSelective(id, logGrade);
     }
 
     @Override
@@ -52,6 +59,21 @@ public class LogGradeServiceImpl implements LogGradeService {
             page.setResult(logGradeMapper.page(page, 1));
         }
         return page;
+    }
+
+    @Override
+    public LogGrade select() {
+
+        LogGrade logGrade = logGradeMapper.select();
+
+        if ( null != logGrade && !"".equals(logGrade)) {
+            return logGrade;
+        } else {
+            //默认为INFO
+            LogGrade logGradeDefault = new LogGrade();
+            logGradeDefault.setLogLevel(LogLevelEnum.INFO);
+            return logGradeDefault;
+        }
     }
 
 }

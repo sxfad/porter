@@ -1,5 +1,7 @@
 package com.suixingpay.datas.manager.core.entity;
 
+import com.suixingpay.datas.manager.core.enums.LogLevelEnum;
+
 import java.util.Date;
 
 /**
@@ -18,7 +20,7 @@ public class LogGrade implements java.io.Serializable {
     private Long id;
 
     /** 日志级别. */
-    private String logLevel;
+    private LogLevelEnum logLevel;
 
     /** 创建人. */
     private Long createUserId;
@@ -52,13 +54,13 @@ public class LogGrade implements java.io.Serializable {
     }
 
     /** 日志级别 get方法. */
-    public String getLogLevel() {
-        return logLevel == null ? null : logLevel.trim();
+    public LogLevelEnum getLogLevel() {
+        return logLevel;
     }
 
     /** 日志级别 set方法. */
-    public void setLogLevel(String logLevel) {
-        this.logLevel = logLevel == null ? null : logLevel.trim();
+    public void setLogLevel(LogLevelEnum logLevel) {
+        this.logLevel = logLevel;
     }
 
     /** 创建人 get方法. */

@@ -80,6 +80,13 @@
         where 1=1 limit #{page.offset},#{page.pageSize}
     </select>
 
+    <!-- 查询最大id数据 -->
+    <select id="select" resultType="com.suixingpay.datas.manager.core.entity.LogGrade">
+        select id, log_level AS logLevel
+        from s_log_grade
+        ORDER BY id desc limit 1
+    </select>
+
 
     <!-- 验证新增 -->
     <insert id="insertSelective">
@@ -97,7 +104,7 @@
             <if test="createTime != null">
                 create_time,
             </if>
-            <if test="updateTime != null">
+            <if test="createTime != null">
                 update_time,
             </if>
             <if test="state != null">
@@ -123,7 +130,7 @@
             <if test="createTime != null">
                 #{createTime,jdbcType=TIMESTAMP},
             </if>
-            <if test="updateTime != null">
+            <if test="createTime != null">
                 #{updateTime,jdbcType=TIMESTAMP},
             </if>
             <if test="state != null">
@@ -151,11 +158,8 @@
             <if test="logGrade.updateUserId != null">
                 update_user_id = #{logGrade.updateUserId,jdbcType=BIGINT},
             </if>
-            <if test="logGrade.createTime != null">
-                create_time = #{logGrade.createTime,jdbcType=TIMESTAMP},
-            </if>
             <if test="logGrade.updateTime != null">
-                update_time = #{logGrade.updateTime,jdbcType=TIMESTAMP},
+                update_time = #{logGrade.createTime,jdbcType=TIMESTAMP},
             </if>
             <if test="logGrade.state != null">
                 state = #{logGrade.state,jdbcType=INTEGER},

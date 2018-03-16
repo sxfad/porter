@@ -20,13 +20,13 @@ public interface LogGradeMapper {
      * 新增
      * @param logGrade
      */
-    Integer insert(LogGrade logGrade);
+    Integer insertSelective(LogGrade logGrade);
 
     /**
      * 修改
      * @param logGrade
      */
-    Integer update(@Param("id") Long id, @Param("logGrade") LogGrade logGrade);
+    Integer updateSelective(@Param("id") Long id, @Param("logGrade") LogGrade logGrade);
 
     /**
      * 刪除
@@ -43,6 +43,13 @@ public interface LogGradeMapper {
     LogGrade selectById(Long id);
 
     /**
+     * 根據主鍵id查找數據
+     * @param maxId
+     * @return
+     */
+    LogGrade selectByMaxId(Long maxId);
+
+    /**
      * 分頁
      * @return
      */
@@ -54,4 +61,10 @@ public interface LogGradeMapper {
      */
     Integer pageAll(@Param("state") Integer state);
 
+    /**
+     * 查询最大id数据
+     *
+     * @return
+     */
+    LogGrade select();
 }

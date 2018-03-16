@@ -23,4 +23,5 @@ public interface LogGradeService {
 
     Page<LogGrade> page(Page<LogGrade> page);
 
+    LogGrade select();
 }

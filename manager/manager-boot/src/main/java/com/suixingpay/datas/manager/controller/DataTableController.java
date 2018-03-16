@@ -44,7 +44,7 @@ public class DataTableController {
      */
     @PostMapping
     @ApiOperation(value = "新增", notes = "新增")
-    public ResponseMessage insert(@RequestBody DataTable dataTable) {
+    public ResponseMessage add(@RequestBody DataTable dataTable) {
 
         Integer number = dataTableService.insert(dataTable);
         return ok(number);
