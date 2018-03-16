@@ -21,6 +21,6 @@ public interface MrLogMonitorService {
 
     MrLogMonitor selectById(Long id);
 
-    Page<MrLogMonitor> page(Page<MrLogMonitor> page);
+    Page<MrLogMonitor> page(Page<MrLogMonitor> page, String ipAddress, Integer state, String beginTime, String endTime);
 
 }

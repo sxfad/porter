@@ -46,11 +46,18 @@ public interface MrLogMonitorMapper {
      * 分頁
      * @return
      */
-    List<MrLogMonitor> page(@Param("page") Page<MrLogMonitor> page, @Param("state") Integer state);
+    List<MrLogMonitor> page(@Param("page") Page<MrLogMonitor> page,
+                            @Param("ipAddress") String ipAddress,
+                            @Param("state") Integer state,
+                            @Param("beginTime") String beginTime,
+                            @Param("endTime") String endTime);
 
     /**
      * 分頁All
      * @return
      */
-    Integer pageAll(@Param("state") Integer state);
+    Integer pageAll(@Param("ipAddress") String ipAddress,
+                    @Param("state") Integer state,
+                    @Param("beginTime") String beginTime,
+                    @Param("endTime") String endTime);
 }

@@ -45,11 +45,11 @@ public class MrLogMonitorServiceImpl implements MrLogMonitorService {
     }
 
     @Override
-    public Page<MrLogMonitor> page(Page<MrLogMonitor> page) {
-        Integer total = mrLogMonitorMapper.pageAll(1);
+    public Page<MrLogMonitor> page(Page<MrLogMonitor> page, String ipAddress, Integer state, String beginTime, String endTime) {
+        Integer total = mrLogMonitorMapper.pageAll(ipAddress, state, beginTime, endTime);
         if (total > 0) {
             page.setTotalItems(total);
-            page.setResult(mrLogMonitorMapper.page(page, 1));
+            page.setResult(mrLogMonitorMapper.page(page, ipAddress, state, beginTime, endTime));
         }
         return page;
     }
