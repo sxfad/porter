@@ -9,10 +9,12 @@
 
 package com.suixingpay.datas.node.core.consumer;
 
-import com.suixingpay.datas.common.client.ConsumeClient;
+import com.suixingpay.datas.common.consumer.ConsumeClient;
 import com.suixingpay.datas.common.client.MetaQueryClient;
+import com.suixingpay.datas.common.consumer.Position;
 import com.suixingpay.datas.common.exception.TaskStopTriggerException;
 import com.suixingpay.datas.node.core.event.s.EventConverter;
+import com.suixingpay.datas.node.core.event.s.EventProcessor;
 import com.suixingpay.datas.node.core.event.s.MessageEvent;
 import lombok.Getter;
 import org.apache.commons.collections.CollectionUtils;
@@ -29,9 +31,12 @@ import java.util.List;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月09日 13:36
  */
 public abstract class AbstractDataConsumer implements DataConsumer {
+    private EventProcessor eventProcessor;
     protected EventConverter converter;
     private MetaQueryClient metaQueryClient;
     protected ConsumeClient consumeClient;
+
+
     @Getter private final List<String> includes = new ArrayList<>();
     @Getter private final List<String> excludes = new ArrayList<>();
 
@@ -79,7 +84,7 @@ public abstract class AbstractDataConsumer implements DataConsumer {
     protected abstract String getPluginName();
 
     @Override
-    public void shutdown() throws InterruptedException {
+    public void shutdown() throws Exception {
         if (!consumeClient.isPublic()) consumeClient.shutdown();
         if (!metaQueryClient.isPublic()) metaQueryClient.shutdown();
     }
@@ -109,12 +114,21 @@ public abstract class AbstractDataConsumer implements DataConsumer {
     }
 
     @Override
-    public void commitPosition(String position) throws TaskStopTriggerException {
+    public void commitPosition(Position position) throws TaskStopTriggerException {
         consumeClient.commitPosition(position);
     }
 
     @Override
     public boolean isAutoCommitPosition() {
         return consumeClient.isAutoCommitPosition();
+    }
+
+    @Override
+    public EventProcessor getEventProcessor() {
+        return eventProcessor;
+    }
+    @Override
+    public void setEventProcessor(EventProcessor eventProcessor) {
+        this.eventProcessor = eventProcessor;
     }
 }

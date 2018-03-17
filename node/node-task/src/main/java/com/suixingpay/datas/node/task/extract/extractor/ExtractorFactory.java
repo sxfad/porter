@@ -9,6 +9,7 @@
 package com.suixingpay.datas.node.task.extract.extractor;
 
 import com.suixingpay.datas.node.core.event.etl.ETLBucket;
+import com.suixingpay.datas.node.task.extract.ExtractMetadata;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 import org.springframework.stereotype.Component;
@@ -24,10 +25,10 @@ import java.util.List;
 @Component
 @Scope("singleton")
 public class ExtractorFactory {
-    private List<Extractor> extractors = SpringFactoriesLoader.loadFactories(Extractor.class, null);
-    public void extract(ETLBucket bucket, List<String> excludeTables, List<String> includeTables) {
+    private final List<Extractor> extractors = SpringFactoriesLoader.loadFactories(Extractor.class, null);
+    public void extract(ETLBucket bucket, ExtractMetadata metadata) {
         for (Extractor extractor : extractors) {
-            extractor.extract(bucket, excludeTables, includeTables);
+            extractor.extract(bucket, metadata);
         }
     }
 }

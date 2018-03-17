@@ -35,7 +35,7 @@ public class SelectJob extends AbstractStageJob {
 
     private final DataConsumer consumer;
     private final TaskWork work;
-    private final DataCarrier<MessageEvent> carrier;
+    private final DataCarrier<List<MessageEvent>> carrier;
     public SelectJob(TaskWork work) {
         super(work.getBasicThreadName());
         this.work = work;
@@ -50,7 +50,7 @@ public class SelectJob extends AbstractStageJob {
     protected void doStop() {
         try {
             consumer.shutdown();
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -82,7 +82,7 @@ public class SelectJob extends AbstractStageJob {
 
     @Override
     public Pair<String, List<MessageEvent>> output() {
-        return carrier.greedyPullByOrder();
+        return carrier.pullByOrder();
     }
 
     @Override

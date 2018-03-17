@@ -20,6 +20,8 @@ public enum  SqlErrorCode {
     ERROR_904(904),
     //ORA-00942: 表或视图不存在
     ERROR_942(942),
+    //HY000: Field 'c3' doesn't have a default value
+    ERROR_1364(1364),
     //ORA-01438: 值大于为此列指定的允许精度
     ERROR_1438(1438),
     //字段长度与插入内容不符

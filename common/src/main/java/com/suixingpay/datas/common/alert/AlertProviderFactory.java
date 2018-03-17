@@ -15,6 +15,7 @@ import com.suixingpay.datas.common.client.AlertClient;
 import com.suixingpay.datas.common.client.impl.EmailClient;
 import com.suixingpay.datas.common.config.AlertConfig;
 import com.suixingpay.datas.common.config.source.EmailConfig;
+import com.suixingpay.datas.common.dic.AlertPlugin;
 import com.suixingpay.datas.common.exception.ClientConnectionException;
 import com.suixingpay.datas.common.exception.ConfigParseException;
 
@@ -43,7 +44,7 @@ public enum AlertProviderFactory {
 
         initializedLock.writeLock().lock();
         try {
-            if (config.getStrategy() == AlertStrategy.EMAIL) {
+            if (config.getStrategy() == AlertPlugin.EMAIL) {
                 AlertClient client = new EmailClient(new EmailConfig(config.getClient()).stuff(), config.getReceiver(),
                         config.getFrequencyOfSeconds());
                 alert = new NormalAlertProvider(client);

@@ -9,7 +9,10 @@
 
 package com.suixingpay.datas.common.exception;
 
+import com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException;
 import com.suixingpay.datas.common.db.SqlErrorCode;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.jdbc.UncategorizedSQLException;
 
@@ -33,14 +36,17 @@ public class TaskStopTriggerException extends TaskException {
 
     public static boolean isMatch(Throwable cause) {
         boolean match = false;
-        if (cause instanceof CannotGetJdbcConnectionException || cause instanceof UncategorizedSQLException) {
+        if (cause instanceof CannotGetJdbcConnectionException || cause instanceof UncategorizedSQLException
+                || cause instanceof MySQLSyntaxErrorException || cause instanceof BadSqlGrammarException
+                || cause instanceof DataIntegrityViolationException) {
             return true;
         }
 
         if (cause instanceof SQLException) {
             SQLException sqlError = (SQLException) cause;
             return sqlError.getErrorCode() == SqlErrorCode.ERROR_904.code || sqlError.getErrorCode() == SqlErrorCode.ERROR_942.code
-                    || sqlError.getErrorCode() == SqlErrorCode.ERROR_1438.code || sqlError.getErrorCode() == SqlErrorCode.ERROR_12899.code;
+                    || sqlError.getErrorCode() == SqlErrorCode.ERROR_1438.code || sqlError.getErrorCode() == SqlErrorCode.ERROR_12899.code
+                    || sqlError.getErrorCode() == SqlErrorCode.ERROR_1364.code;
         }
         return match;
     }

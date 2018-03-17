@@ -9,6 +9,8 @@
 
 package com.suixingpay.datas.common.client;
 
+import com.suixingpay.datas.common.client.impl.CanalClient;
+import com.suixingpay.datas.common.config.source.CanalConfig;
 import com.suixingpay.datas.common.client.impl.EmailClient;
 import com.suixingpay.datas.common.client.impl.JDBCClient;
 import com.suixingpay.datas.common.client.impl.KafkaClient;
@@ -56,7 +58,7 @@ public abstract class AbstractClient<T extends SourceConfig> implements Client {
     }
 
     @Override
-    public void shutdown() throws InterruptedException {
+    public void shutdown() throws Exception {
         if (status.compareAndSet(true, false)) {
             LOGGER.info("closing");
             doShutdown();
@@ -66,7 +68,7 @@ public abstract class AbstractClient<T extends SourceConfig> implements Client {
     }
 
     protected abstract void doStart() throws Exception;
-    protected abstract void doShutdown() throws InterruptedException;
+    protected abstract void doShutdown() throws Exception;
 
     @Override
     public boolean isStarted() {
@@ -103,6 +105,9 @@ public abstract class AbstractClient<T extends SourceConfig> implements Client {
         }
         if (config instanceof EmailConfig) {
             return new EmailClient((EmailConfig) config);
+        }
+        if (config instanceof CanalConfig) {
+            return new CanalClient((CanalConfig) config);
         }
         throw  new ClientMatchException();
     }

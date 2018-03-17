@@ -9,7 +9,7 @@
 package com.suixingpay.datas.common.cluster.data;
 
 import com.alibaba.fastjson.annotation.JSONField;
-import com.suixingpay.datas.common.node.NodeStatusType;
+import com.suixingpay.datas.common.dic.NodeStatusType;
 import com.suixingpay.datas.common.util.MachineUtils;
 import lombok.Getter;
 import lombok.Setter;

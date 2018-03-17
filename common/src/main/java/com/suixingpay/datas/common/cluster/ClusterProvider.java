@@ -11,6 +11,7 @@ package com.suixingpay.datas.common.cluster;
 
 import com.suixingpay.datas.common.cluster.command.ClusterCommand;
 import com.suixingpay.datas.common.config.ClusterConfig;
+import com.suixingpay.datas.common.dic.ClusterPlugin;
 import com.suixingpay.datas.common.task.TaskEventListener;
 
 import java.io.IOException;
@@ -45,7 +46,7 @@ public interface ClusterProvider {
      * @param type
      * @return
      */
-    boolean matches(ClusterStrategy type);
+    boolean matches(ClusterPlugin type);
 
     /**
      * 退出集群

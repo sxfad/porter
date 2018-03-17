@@ -9,10 +9,12 @@
 
 package com.suixingpay.datas.node.core.consumer;
 
-import com.suixingpay.datas.common.client.ConsumeClient;
+import com.suixingpay.datas.common.consumer.ConsumeClient;
 import com.suixingpay.datas.common.client.MetaQueryClient;
+import com.suixingpay.datas.common.consumer.Position;
 import com.suixingpay.datas.common.exception.TaskStopTriggerException;
 import com.suixingpay.datas.node.core.event.s.EventConverter;
+import com.suixingpay.datas.node.core.event.s.EventProcessor;
 import com.suixingpay.datas.node.core.event.s.MessageEvent;
 
 import java.io.IOException;
@@ -61,7 +63,7 @@ public interface DataConsumer {
      * 资源控制
      * @throws InterruptedException
      */
-    void shutdown() throws InterruptedException;
+    void shutdown() throws Exception;
 
 
     /**
@@ -106,7 +108,11 @@ public interface DataConsumer {
 
     void initializePosition(String taskId, String swimlaneId, String position) throws TaskStopTriggerException;
 
-    void commitPosition(String position) throws TaskStopTriggerException;
+    void commitPosition(Position position) throws TaskStopTriggerException;
 
     boolean isAutoCommitPosition();
+
+    EventProcessor getEventProcessor();
+
+    void setEventProcessor(EventProcessor eventProcessor);
 }

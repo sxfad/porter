@@ -11,7 +11,7 @@ package com.suixingpay.datas.common.cluster.impl.zookeeper;
 import com.suixingpay.datas.common.client.Client;
 import com.suixingpay.datas.common.client.impl.ZookeeperClient;
 import com.suixingpay.datas.common.cluster.ClusterMonitor;
-import com.suixingpay.datas.common.cluster.ClusterStrategy;
+import com.suixingpay.datas.common.dic.ClusterPlugin;
 import com.suixingpay.datas.common.cluster.impl.AbstractClusterProvider;
 import com.suixingpay.datas.common.config.ClusterConfig;
 import com.suixingpay.datas.common.config.source.ZookeeperConfig;
@@ -26,8 +26,8 @@ import com.suixingpay.datas.common.exception.ConfigParseException;
  */
 public class ZookeeperClusterProvider extends AbstractClusterProvider {
     @Override
-    protected ClusterStrategy getMatchType() {
-        return ClusterStrategy.ZOOKEEPER;
+    protected ClusterPlugin getMatchType() {
+        return ClusterPlugin.ZOOKEEPER;
     }
 
     @Override

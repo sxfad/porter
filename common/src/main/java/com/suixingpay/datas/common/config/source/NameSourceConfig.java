@@ -10,6 +10,7 @@
 package com.suixingpay.datas.common.config.source;
 
 import com.suixingpay.datas.common.config.SourceConfig;
+import com.suixingpay.datas.common.dic.SourceType;
 import lombok.Getter;
 import lombok.Setter;
 

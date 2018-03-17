@@ -7,13 +7,14 @@
  * 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
  */
 
-package com.suixingpay.datas.common.client;
+package com.suixingpay.datas.common.consumer;
 
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.suixingpay.datas.common.client.Client;
 import com.suixingpay.datas.common.exception.ClientException;
 import com.suixingpay.datas.common.exception.ConfigParseException;
 import com.suixingpay.datas.common.exception.TaskStopTriggerException;
 
-import java.text.ParseException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -36,7 +37,7 @@ public interface ConsumeClient extends Client {
      * @param position
      * @throws TaskStopTriggerException
      */
-    void commitPosition(String position) throws TaskStopTriggerException;
+    void commitPosition(Position position) throws TaskStopTriggerException;
 
     /**
      * 初始化消费同步点，只有是手动提交时才会更新消费器客户端
@@ -78,6 +79,13 @@ public interface ConsumeClient extends Client {
      * @param <O>
      */
     interface FetchCallback<F, O> {
-        <F, O> F  accept(O o) throws ParseException;
+        default <F, O> F  accept(O o) {
+            return null;
+        }
+        default <F, O> List<F>  acceptAll(O o) throws InvalidProtocolBufferException {
+            return null;
+        }
     }
+
+
 }

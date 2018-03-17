@@ -9,6 +9,7 @@
 
 package com.suixingpay.datas.node.task.transform.transformer;
 
+import com.suixingpay.datas.common.consumer.Position;
 import com.suixingpay.datas.node.core.event.etl.ETLBucket;
 import com.suixingpay.datas.node.core.event.etl.ETLRow;
 import com.suixingpay.datas.node.core.event.s.EventType;
@@ -46,7 +47,12 @@ public class BatchPrePareTransformerTest {
         rows.add(new ETLRow("s", "t", EventType.INSERT, null, null, null));
         rows.add(new ETLRow("s", "t", EventType.INSERT, null, null, null));
 
-        ETLBucket bucket = new ETLBucket("0", rows);
+        ETLBucket bucket = new ETLBucket("0", rows, new Position() {
+            @Override
+            public boolean checksum() {
+                return true;
+            }
+        });
 
         BatchPrePareTransformer t = new BatchPrePareTransformer();
         t.transform(bucket, null);

@@ -46,16 +46,24 @@ public class ETLRowTransformer implements Transformer {
     public void transform(ETLBucket bucket, TaskWork work) throws Exception {
         LOGGER.debug("start tranforming bucket:{},size:{}", bucket.getSequence(), bucket.getRows().size());
         for (ETLRow row : bucket.getRows()) {
-            LOGGER.debug("try tranform row:{},{}", row.getPosition(), JSON.toJSONString(row));
+            LOGGER.debug("try tranform row:{},{}", row.getPosition().render(), JSON.toJSONString(row));
             TableMapper tableMapper = work.getTableMapper(row.getSchema(), row.getTable());
             mappingRowData(tableMapper, row);
-            TableSchema table = findTable(work.getDataLoader(), row.getFinalSchema(), row.getFinalTable(), work);
+            TableSchema table = findTable(work.getDataLoader(), row.getFinalSchema(), row.getFinalTable());
             if (null != table) remedyColumns(table, row);
+
+            //当是更新时，判断主键是否变更
+            if (row.getOpType() == EventType.UPDATE) {
+                boolean isChanged = !row.getColumns().stream().filter(c -> c.isKey()
+                        && !StringUtils.trimToEmpty(c.getFinalOldValue()).equals(StringUtils.trimToEmpty(c.getFinalValue())))
+                        .collect(Collectors.toList()).isEmpty();
+                row.setKeyChangedOnUpdate(isChanged);
+            }
 
             //DataLoader自定义处理
             work.getDataLoader().mouldRow(row);
 
-            LOGGER.debug("after tranform row:{},{}", row.getPosition(), JSON.toJSONString(row));
+            LOGGER.debug("after tranform row:{},{}", row.getPosition().render(), JSON.toJSONString(row));
         }
     }
 
@@ -67,7 +75,7 @@ public class ETLRowTransformer implements Transformer {
             if (null != row.getColumns() && null != mapper.getColumn()) {
                 for (ETLColumn c : row.getColumns()) {
                     //替换字段名
-                    c.setFinalName(mapper.getColumn().getOrDefault(c.getName(), c.getName()));
+                    c.setFinalName(mapper.getColumn().getOrDefault(c.getFinalName(), c.getFinalName()));
                 }
             }
         }
@@ -82,10 +90,12 @@ public class ETLRowTransformer implements Transformer {
                 c.setFinalType(column.getTypeCode());
                 c.setKey(column.isPrimaryKey());
                 c.setRequired(column.isRequired());
-                //如果是更新并且原主键不存在
-                if (row.getOpType() == EventType.UPDATE && column.isRequired() && StringUtils.isBlank(c.getOldValue())) {
-                    c.setOldValue(c.getNewValue());
-                }
+
+                //如果是更新且字段必填，更新前的值不存在
+                //if (row.getOpType() == EventType.UPDATE && column.isRequired() && StringUtils.isBlank(c.getOldValue())) {
+                //    c.setOldValue(c.getNewValue());
+                //}
+
             } else {
                 removeables.add(c);
             }
@@ -93,25 +103,23 @@ public class ETLRowTransformer implements Transformer {
 
         //反向查找
         List<String> inColumnNames = row.getColumns().stream().map(p  -> p.getFinalName()).collect(Collectors.toList());
-        //如果目标库表中有新增必填的字段需要补充上去
-        table.getColumns().stream().filter(p -> !inColumnNames.contains(p.getName()) && p.isRequired() && null == p.getDefaultValue())
+
+        /**
+         * 如果目标库表中有新增必填的字段的话需要补充上去
+         */
+        //table.getColumns().stream().filter(p -> !inColumnNames.contains(p.getName()) && p.isRequired() && null == p.getDefaultValue())
+        table.getColumns().stream().filter(p -> !inColumnNames.contains(p.getName()) && p.isRequired())
                 .forEach(p -> {
                     ETLColumn column = new ETLColumn(p.getName(), p.getDefaultValue(), p.getDefaultValue(), p.getDefaultValue(),
                             p.isPrimaryKey(), p.isRequired(), p.getTypeCode());
-                    if (row.getOpType() == EventType.INSERT) {
-                        row.getColumns().add(column);
-                    }
-                    //更新失败需要插入时才需要
-                    if (row.getOpType() == EventType.UPDATE) {
-                        row.getAppendsWhenUInsert().add(column);
-                    }
+                    row.getAdditionalRequired().add(column);
                 });
 
         row.getColumns().removeAll(removeables);
     }
 
 
-    private TableSchema findTable(DataLoader loader, String finalSchema, String finalTable, TaskWork work)
+    private TableSchema findTable(DataLoader loader, String finalSchema, String finalTable)
             throws TaskStopTriggerException {
         TableSchema table = null;
         try {

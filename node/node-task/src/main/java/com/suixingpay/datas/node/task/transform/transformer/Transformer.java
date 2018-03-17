@@ -18,6 +18,8 @@ import com.suixingpay.datas.node.task.worker.TaskWork;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月26日 15:59
  */
 public interface Transformer {
-    int order();
+    default int order() {
+        return 0;
+    }
     void transform(ETLBucket bucket, TaskWork work) throws Exception;
 }

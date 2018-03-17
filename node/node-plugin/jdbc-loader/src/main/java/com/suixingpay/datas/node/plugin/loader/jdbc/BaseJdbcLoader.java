@@ -11,7 +11,6 @@ package com.suixingpay.datas.node.plugin.loader.jdbc;
 
 import com.alibaba.fastjson.JSONObject;
 import com.suixingpay.datas.common.client.impl.JDBCClient;
-import com.suixingpay.datas.common.cluster.data.DTaskStat;
 import com.suixingpay.datas.common.db.SqlTemplate;
 import com.suixingpay.datas.common.db.SqlUtils;
 import com.suixingpay.datas.common.exception.TaskDataException;
@@ -21,13 +20,13 @@ import com.suixingpay.datas.node.core.event.etl.ETLRow;
 import com.suixingpay.datas.node.core.event.s.EventType;
 import com.suixingpay.datas.node.core.loader.AbstractDataLoader;
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -97,29 +96,39 @@ public abstract class BaseJdbcLoader extends AbstractDataLoader {
      * @return
      */
     protected List<Pair<String, Object[]>> buildSql(ETLRow row) {
-        JDBCClient client = getLoadClient();
-        SqlTemplate template = client.getSqlTemplate();
+        //build sql
         List<Pair<String, Object[]>> sqlList = new ArrayList<>();
 
-        //提前构造SQL参数
-        String[] keyNames = row.getSqlKeys().keySet().toArray(new String[]{});
-        keyNames = null == keyNames ? new String[]{} : keyNames;
-        String[] columnNames = row.getSqlColumns().keySet().toArray(new String[]{});
-        columnNames = null == columnNames ? new String[]{} : columnNames;
+        //获取自定义字段
+        Map<String, Pair<Object, Object>> sqlKeys = CustomETLRowField.getSqlKeys(row);
+        Map<String, Pair<Object, Object>> sqlColumns  = CustomETLRowField.getSqlColumns(row);
+
+        JDBCClient client = getLoadClient();
+        SqlTemplate template = client.getSqlTemplate();
+
+
+
+        //主键名
+        String[] keyNames = sqlKeys.keySet().toArray(new String[]{});
+        //非主键名
+        String[] columnNames = sqlColumns.keySet().toArray(new String[]{});
+        //所有字段名
         String[] allColumnNames = ArrayUtils.addAll(keyNames, columnNames);
 
-        Object[] keyNewValues = row.getSqlKeys().values().stream().map(p -> p.getRight()).toArray();
-        Object[] keyOldValues = row.getSqlKeys().values().stream().map(p -> p.getLeft()).toArray();
-        Object[] columnNewValues = row.getSqlColumns().values().stream().map(p -> p.getRight()).toArray();
-        Object[] columnOldValues = row.getSqlColumns().values().stream().map(p -> p.getLeft()).toArray();
-        keyNewValues = null == keyNewValues ? new String[]{} : keyNewValues;
-        keyOldValues = null == keyOldValues ? new String[]{} : keyOldValues;
-        columnNewValues = null == columnNewValues ? new String[]{} : columnNewValues;
-        columnOldValues = null == columnOldValues ? new String[]{} : columnOldValues;
+        //主键新值
+        Object[] keyNewValues = sqlKeys.values().stream().map(p -> p.getRight()).toArray();
+        //主键旧值
+        Object[] keyOldValues = sqlKeys.values().stream().map(p -> p.getLeft()).toArray();
 
+        //非主键新值
+        Object[] columnNewValues = sqlColumns.values().stream().map(p -> p.getRight()).toArray();
+        //非主键旧值
+        Object[] columnOldValues = sqlColumns.values().stream().map(p -> p.getLeft()).toArray();
+
+        //所有字段新值
         Object[] allNewValues = ArrayUtils.addAll(keyNewValues, columnNewValues);
+        //所有字段旧值
         Object[] allOldValues = ArrayUtils.addAll(keyOldValues, columnOldValues);
-
 
         if (row.getOpType() == EventType.DELETE) {
             //主键删除
@@ -129,28 +138,19 @@ public abstract class BaseJdbcLoader extends AbstractDataLoader {
             //全字段删除
             sqlList.add(new ImmutablePair<>(template.getDeleteSql(row.getFinalSchema(), row.getFinalTable(), allColumnNames), allNewValues));
         } else if (row.getOpType() == EventType.INSERT) {
+            //插入sql
             sqlList.add(new ImmutablePair<>(template.getInsertSql(row.getFinalSchema(), row.getFinalTable(), allColumnNames), allNewValues));
         } else if (row.getOpType() == EventType.UPDATE) {
-            //如果存在主键，根据主键更新
-            if (keyNames.length > 0 && null != columnNames && columnNames.length > 0)  {
+            //存在主键，主键值没变，根据主键更新
+            if (!row.isKeyChangedOnUpdate() && keyNames.length > 0 && null != columnNames && columnNames.length > 0) {
                 sqlList.add(new ImmutablePair<>(template.getUpdateSql(row.getFinalSchema(), row.getFinalTable(), keyNames, columnNames),
                         ArrayUtils.addAll(columnNewValues, keyOldValues)));
             }
-
             //全字段更新
             sqlList.add(new ImmutablePair<>(template.getUpdateSql(row.getFinalSchema(), row.getFinalTable(), allColumnNames),
                     ArrayUtils.addAll(allNewValues, allOldValues)));
+
             //插入
-            if (null != row.getAppendsWhenUInsert() && !row.getAppendsWhenUInsert().isEmpty()) {
-                List<String> appendC = new ArrayList<>();
-                List<Object> appendCV = new ArrayList<>();
-                row.getAppendsWhenUInsert().stream().forEach(c -> {
-                    appendC.add(c.getFinalName());
-                    appendCV.add(c.getNewValue());
-                });
-                allColumnNames = ArrayUtils.addAll(allColumnNames, appendC.toArray(new String[]{}));
-                allNewValues = ArrayUtils.addAll(allNewValues, appendCV.toArray());
-            }
             sqlList.add(new ImmutablePair<>(template.getInsertSql(row.getFinalSchema(), row.getFinalTable(), allColumnNames),
                     allNewValues));
         } else if (row.getOpType() == EventType.TRUNCATE) {
@@ -159,58 +159,8 @@ public abstract class BaseJdbcLoader extends AbstractDataLoader {
         return sqlList;
     }
 
-    /**
-     * 更新任务状态
-     *  For a prepared statement batch, it is not possible to know the number of rows affected in the database
-     *  by each individual statement in the batch.Therefore, all array elements have a value of -2.
-     *  According to the JDBC 2.0 specification, a value of -2 indicates that the operation was successful
-     *  but the number of rows affected is unknown.
-     * @param result
-     * @param stat
-     */
-    protected void updateStat(Pair<Integer, ETLRow> result, DTaskStat stat) {
-        //虽然每个状态值的变更都有stat对象锁，但在最外层加对象锁避免了多次请求的问题（锁可重入），同时保证状态各字段变更一致性
-        synchronized (stat) {
-            ETLRow row = result.getRight();
-            switch (result.getRight().getOpType().getIndex()) {
-                case EventType.DELETE_INDEX:
-                    if (result.getLeft() > 0 || result.getLeft() == -2) {
-                        stat.incrementDeleteRow();
-                    } else {
-                        stat.incrementErrorDeleteRow();
-                    }
-                    break;
-                case EventType.UPDATE_INDEX:
-                    if (result.getLeft() > 0 || result.getLeft() == -2) {
-                        stat.incrementUpdateRow();
-                    } else {
-                        stat.incrementErrorUpdateRow();
-                    }
-                    break;
-                case EventType.INSERT_INDEX:
-                    if (result.getLeft() > 0 || result.getLeft() == -2) {
-                        stat.incrementInsertRow();
-                    } else {
-                        stat.incrementErrorInsertRow();
-                    }
-                    break;
-                case EventType.TRUNCATE_INDEX:
-                    if (result.getLeft() > 0 || result.getLeft() == -2) {
-                        stat.incrementDeleteRow();
-                    } else {
-                        stat.incrementErrorDeleteRow();
-                    }
-                    break;
-            }
 
-            //更新最后执行消息事件的产生时间，用于计算从消息产生到加载如路时间、计算数据同步检查时间
-            if (null != row.getOpTime()) stat.setLastLoadedDataTime(row.getOpTime());
-            stat.setLastLoadedSystemTime(new Date());
-            if (!StringUtils.isBlank(row.getPosition())) {
-                stat.setProgress(row.getPosition());
-            }
-        }
-    }
+
 
     @Override
     public void mouldRow(ETLRow row) throws TaskDataException {
@@ -218,20 +168,39 @@ public abstract class BaseJdbcLoader extends AbstractDataLoader {
             for (ETLColumn c : row.getColumns()) {
                 try {
                     Object newValue = SqlUtils.stringToSqlValue(c.getFinalValue(), c.getFinalType(), c.isRequired(), true);
-                    Object oldValue = SqlUtils.stringToSqlValue(c.getOldValue(), c.getFinalType(), c.isRequired(), true);
+                    Object oldValue = SqlUtils.stringToSqlValue(c.getFinalOldValue(), c.getFinalType(), c.isRequired(), true);
                     if (c.isKey()) {
-                        row.getSqlKeys().put(c.getFinalName(), new ImmutablePair<>(oldValue, newValue));
+                        CustomETLRowField.getSqlKeys(row).put(c.getFinalName(), new ImmutablePair<>(oldValue, newValue));
                     } else {
-                        row.getSqlColumns().put(c.getFinalName(), new ImmutablePair<>(oldValue, newValue));
+                        CustomETLRowField.getSqlColumns(row).put(c.getFinalName(), new ImmutablePair<>(oldValue, newValue));
                     }
                 } catch (Exception e) {
                     StringBuilder log = new StringBuilder();
                     log.append("记录:").append(JSONObject.toJSONString(row))
-                            .append(",点位:").append(row.getPosition())
-                            .append(",字段名:").append(c.getName()).append(",错误信息:").append(e.getMessage());
+                            .append(",点位:").append(row.getPosition().render())
+                            .append(",字段名:").append(c.getFinalName()).append(",错误信息:").append(e.getMessage());
                     throw new TaskDataException(log.toString());
                 }
             }
+        }
+    }
+
+    /**
+     * 自定义扩展字段
+     */
+    protected static class CustomETLRowField {
+
+        private  static String SQL_KEYS_FIELD = "sqlKeys";
+        private  static String SQL_COLUMNS_FIELD = "sqlColumns";
+
+        protected static Map<String, Pair<Object, Object>> getSqlKeys(ETLRow row) {
+            return (Map<String, Pair<Object, Object>>) row.getExtendsField().computeIfAbsent(SQL_KEYS_FIELD,
+                k -> new LinkedHashMap<String, Pair<Object, Object>>());
+        }
+
+        protected static Map<String, Pair<Object, Object>> getSqlColumns(ETLRow row) {
+            return (Map<String, Pair<Object, Object>>) row.getExtendsField().computeIfAbsent(SQL_COLUMNS_FIELD,
+                k -> new LinkedHashMap<String, Pair<Object, Object>>());
         }
     }
 }

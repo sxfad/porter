@@ -19,6 +19,7 @@ import com.suixingpay.datas.node.core.NodeContext;
 import com.suixingpay.datas.node.core.consumer.DataConsumer;
 import com.suixingpay.datas.node.core.task.Task;
 import com.suixingpay.datas.node.task.worker.TaskWorker;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
@@ -31,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -96,6 +96,11 @@ public class TaskController implements TaskEventListener {
     @Override
     public void onEvent(TaskConfig event) {
         if (event.getStatus().isWorking() && NodeContext.INSTANCE.getNodeStatus().isWorking()) {
+            //新建任务如果指定了节点ID,但与当前节点不符时，停止抢占任务
+            if (!StringUtils.isBlank(event.getNodeId())
+                    && !("," + event.getNodeId() + ",").contains(("," + NodeContext.INSTANCE.getNodeId() + ","))) {
+                return;
+            }
             try {
                 startTask(event);
             } catch (Exception e) {
@@ -122,12 +127,7 @@ public class TaskController implements TaskEventListener {
     }
 
     private void startTask(TaskConfig task) {
-        TaskWorker worker = WORKER_MAP.computeIfAbsent(task.getTaskId(), new Function<String, TaskWorker>() {
-            @Override
-            public TaskWorker apply(String s) {
-                return new TaskWorker();
-            }
-        });
+        TaskWorker worker = WORKER_MAP.computeIfAbsent(task.getTaskId(), s -> new TaskWorker());
         //尝试通过ClusterProvider的分布式锁功能锁定资源。
         try {
             worker.alloc(task);

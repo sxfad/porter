@@ -6,6 +6,7 @@ dependencies {
             project(':node:node-data-carrier'),
             project(":node:node-core"),
             project(":node:node-plugin:kafka-consumer"),
-            project(":node:node-plugin:jdbc-loader")
+            project(":node:node-plugin:jdbc-loader"),
+            project(":node:node-plugin:canal-consumer")
     )
 }

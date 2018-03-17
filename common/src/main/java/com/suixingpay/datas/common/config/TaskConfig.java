@@ -10,7 +10,7 @@
 package com.suixingpay.datas.common.config;
 
 import com.suixingpay.datas.common.alert.AlertReceiver;
-import com.suixingpay.datas.common.task.TaskStatusType;
+import com.suixingpay.datas.common.dic.TaskStatusType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -25,6 +25,8 @@ import java.util.List;
  */
 public class TaskConfig {
     @Setter @Getter private TaskStatusType status = TaskStatusType.WORKING;
+    //指定任务由哪些节点执行,","分割
+    @Setter @Getter private String nodeId;
     @Setter @Getter private String taskId;
     @Setter @Getter private DataConsumerConfig consumer;
     @Setter @Getter private DataLoaderConfig loader;

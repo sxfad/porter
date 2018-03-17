@@ -43,4 +43,10 @@ public class DataConsumerConfig {
     //元数据查询的数据源
     //公用配置
     @Getter @Setter private Map<String, String> metaSource;
+
+    /**
+     * 事件处理器，自定义处理
+     * Base64编码,转换为class类的时候需要
+     */
+    @Getter @Setter private String eventProcessor;
 }

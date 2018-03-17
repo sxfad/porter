@@ -41,10 +41,13 @@ public class ExtractJob extends AbstractStageJob {
     private final DataCarrier<ETLBucket> carrier;
     private final DataCarrier<String> orderedBucket;
     private final ExtractorFactory extractorFactory;
+    private final ExtractMetadata metadata;
     public ExtractJob(TaskWork work) {
         super(work.getBasicThreadName(), 1000L);
         extractorFactory = NodeContext.INSTANCE.getBean(ExtractorFactory.class);
         this.work = work;
+        metadata = new ExtractMetadata(work.getDataConsumer().getExcludes(), work.getDataConsumer().getIncludes(),
+                work.getDataConsumer().getEventProcessor());
         //线程阻塞时，在调用者线程中执行
         executorService = new ThreadPoolExecutor(LOGIC_THREAD_SIZE, LOGIC_THREAD_SIZE,
                 0L, TimeUnit.MILLISECONDS,
@@ -81,7 +84,7 @@ public class ExtractJob extends AbstractStageJob {
                         //将MessageEvent转换为ETLBucket
                         ETLBucket bucket = ETLBucket.from(inThreadEvents);
                         try {
-                            extractorFactory.extract(bucket, work.getDataConsumer().getExcludes(), work.getDataConsumer().getIncludes());
+                            extractorFactory.extract(bucket, metadata);
                             carrier.push(bucket);
                             LOGGER.debug("push bucket {} into carrier after extract.", inThreadEvents.getLeft());
                         } catch (Exception e) {
@@ -95,7 +98,7 @@ public class ExtractJob extends AbstractStageJob {
                         "extract MessageEvent error" + e.getMessage());
                 LOGGER.error("extract MessageEvent error!", e);
             }
-        } while (null != events && null != events.getRight() && !events.getRight().isEmpty());
+        } while (null != events);
     }
 
     @Override

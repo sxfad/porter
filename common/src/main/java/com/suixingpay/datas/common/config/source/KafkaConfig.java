@@ -11,6 +11,7 @@ package com.suixingpay.datas.common.config.source;
 
 import com.alibaba.fastjson.annotation.JSONField;
 import com.suixingpay.datas.common.config.SourceConfig;
+import com.suixingpay.datas.common.dic.SourceType;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -9,6 +9,7 @@
 
 package com.suixingpay.datas.common.node;
 
+import com.suixingpay.datas.common.dic.NodeStatusType;
 import lombok.Getter;
 import lombok.Setter;
 

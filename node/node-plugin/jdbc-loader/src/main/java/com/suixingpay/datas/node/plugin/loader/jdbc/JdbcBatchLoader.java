@@ -9,11 +9,11 @@
 
 package com.suixingpay.datas.node.plugin.loader.jdbc;
 
-import com.suixingpay.datas.common.cluster.data.DTaskStat;
+import com.suixingpay.datas.common.dic.LoaderPlugin;
 import com.suixingpay.datas.common.exception.TaskStopTriggerException;
+import com.suixingpay.datas.node.core.loader.SubmitStatObject;
 import com.suixingpay.datas.node.core.event.etl.ETLBucket;
 import com.suixingpay.datas.node.core.event.etl.ETLRow;
-import com.suixingpay.datas.node.core.util.CallbackMethodCreator;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -27,24 +27,24 @@ import java.util.List;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月04日 11:38
  */
 public class JdbcBatchLoader extends BaseJdbcLoader {
-    private static final String LOADER_NAME = "JdbcBatch";
 
     @Override
     protected String getPluginName() {
-        return LOADER_NAME;
+        return LoaderPlugin.JDBC_BATCH.getCode();
     }
 
     @Override
-    public boolean load(ETLBucket bucket, CallbackMethodCreator getter) throws TaskStopTriggerException {
+    public Pair<Boolean, List<SubmitStatObject>> load(ETLBucket bucket) throws TaskStopTriggerException {
         LOGGER.info("start loading bucket:{},size:{}", bucket.getSequence(), bucket.getRows().size());
+        List<SubmitStatObject> affectRow = new ArrayList<>();
         for (List<ETLRow> rows : bucket.getBatchRows()) {
             if (rows.size() == 1) {
                 ETLRow row = rows.get(0);
-                DTaskStat stat = getter.invokeWithResult(row.getSchema(), row.getTable());
                 //更新目标仓储
                 int affect = loadSql(buildSql(row));
-                //更新状态
-                updateStat(new ImmutablePair<>(affect, row), stat);
+
+                //插入影响行数
+                affectRow.add(new SubmitStatObject(row.getSchema(), row.getTable(), row.getOpType(), affect, row.getPosition(), row.getOpTime()));
             } else if (rows.size() > 1) { //仅支持单条记录生成一个sql的情况
                 List<Pair<String, Object[]>> subList = new ArrayList<>();
 
@@ -62,11 +62,10 @@ public class JdbcBatchLoader extends BaseJdbcLoader {
                 for (int rindex = 0; rindex < rows.size(); rindex++) {
                     int affect = rindex < results.length ? results[rindex] : 0;
                     ETLRow row = rows.get(rindex);
-                    DTaskStat stat = getter.invokeWithResult(row.getSchema(), row.getTable());
-                    updateStat(new ImmutablePair<>(affect, row), stat);
+                    affectRow.add(new SubmitStatObject(row.getSchema(), row.getTable(), row.getOpType(), affect, row.getPosition(), row.getOpTime()));
                 }
             }
         }
-        return true;
+        return new ImmutablePair(Boolean.TRUE, affectRow);
     }
 }

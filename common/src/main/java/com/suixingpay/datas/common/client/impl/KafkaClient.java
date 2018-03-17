@@ -11,13 +11,14 @@ package com.suixingpay.datas.common.client.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.suixingpay.datas.common.client.AbstractClient;
-import com.suixingpay.datas.common.client.ConsumeClient;
+import com.suixingpay.datas.common.consumer.ConsumeClient;
 import com.suixingpay.datas.common.config.SourceConfig;
 import com.suixingpay.datas.common.config.source.KafkaConfig;
+import com.suixingpay.datas.common.consumer.Position;
 import com.suixingpay.datas.common.exception.ClientException;
 import com.suixingpay.datas.common.exception.ConfigParseException;
 import com.suixingpay.datas.common.exception.TaskStopTriggerException;
-import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
 import org.apache.kafka.common.TopicPartition;
@@ -157,11 +158,11 @@ public class KafkaClient extends AbstractClient<KafkaConfig> implements ConsumeC
     }
 
     @Override
-    public  void commitPosition(String position) throws TaskStopTriggerException {
+    public  void commitPosition(Position position) throws TaskStopTriggerException {
         //如果提交方式为手动提交
         if (!isAutoCommitPosition()) {
             try {
-                KafkaPosition kafkaPosition = KafkaPosition.getPosition(position);
+                KafkaPosition kafkaPosition = (KafkaPosition) position;
                 synchronized (consumer) {
                     consumer.commitSync(new HashMap<TopicPartition, OffsetAndMetadata>() {
                         {
@@ -197,12 +198,20 @@ public class KafkaClient extends AbstractClient<KafkaConfig> implements ConsumeC
         }
     }
 
-    @AllArgsConstructor
-    private static class KafkaPosition {
-        private final String topic;
-        private final long offset;
-        private final int partition;
-
+    /**
+     * kafka位点信息
+     */
+    public static class KafkaPosition extends Position {
+        @Getter private final String topic;
+        @Getter private final long offset;
+        @Getter private final int partition;
+        private final boolean checksum;
+        public KafkaPosition(String topic, long offset, int partition) {
+            this.topic = topic;
+            this.offset = offset;
+            this.partition = partition;
+            this.checksum = !StringUtils.isBlank(topic) && offset > -1 && partition > -1;
+        }
         private static KafkaPosition getPosition(String position) throws TaskStopTriggerException {
             try {
                 JSONObject object = JSONObject.parseObject(position);
@@ -213,6 +222,11 @@ public class KafkaClient extends AbstractClient<KafkaConfig> implements ConsumeC
             } catch (Throwable throwable) {
                 throw new TaskStopTriggerException(throwable);
             }
+        }
+
+        @Override
+        public boolean checksum() {
+            return checksum;
         }
     }
 }

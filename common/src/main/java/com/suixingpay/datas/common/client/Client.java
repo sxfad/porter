@@ -19,7 +19,7 @@ import com.suixingpay.datas.common.exception.ClientConnectionException;
  */
 public interface Client {
     void start() throws Exception;
-    void shutdown() throws InterruptedException;
+    void shutdown() throws Exception;
     boolean isStarted();
     <T> T getConfig();
 

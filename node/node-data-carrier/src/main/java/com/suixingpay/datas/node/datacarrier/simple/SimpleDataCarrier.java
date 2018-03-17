@@ -12,8 +12,6 @@ import com.suixingpay.datas.node.datacarrier.DataCarrier;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.ArrayBlockingQueue;
 
@@ -31,14 +29,6 @@ public class SimpleDataCarrier implements DataCarrier {
         pullBatchSize = segmentSize;
     }
 
-    @Override
-    public void push(List list) throws InterruptedException {
-        if (null != list && !list.isEmpty()) {
-            for (Object t : list) {
-                push(t);
-            }
-        }
-    }
 
     @Override
     public void push(Object item) throws InterruptedException {
@@ -57,39 +47,9 @@ public class SimpleDataCarrier implements DataCarrier {
         return null != item ? new ImmutablePair(generateId(), item) : null;
     }
 
-    /**
-     * 生成序列号和数据对儿，需要通过锁保证原子性
-     * 默认开启偏向锁(UseBiasedLocking),在单线程调用情况下，锁消耗可忽略
-     * 锁可重入
-     * @return
-     */
-    @Override
-    public synchronized Pair<String, List> greedyPullByOrder() {
-        List list = greedyPull();
-        return null == list || list.isEmpty() ? null : new ImmutablePair<>(generateId(), list);
-    }
-
     @Override
     public long size() {
         return buffer.size();
-    }
-
-    /**
-     * 默认开启偏向锁(UseBiasedLocking),在单线程调用情况下，锁消耗可忽略
-     * 锁可重入
-     * @return
-     */
-    @Override
-    public synchronized List greedyPull() {
-        List list = new ArrayList();
-        int currentCount = 0;
-        Object item = null;
-        while ((item = pull()) != null) {
-            list.add(item);
-            currentCount++;
-            if (currentCount >= pullBatchSize) break;
-        }
-        return list;
     }
 
     /**
