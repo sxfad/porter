@@ -10,7 +10,6 @@ package com.suixingpay.datas.node.datacarrier;
 
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.List;
 
 /**
  *
@@ -22,11 +21,8 @@ import java.util.List;
  */
 
 public interface DataCarrier<E> {
-    void push(List<E> list) throws InterruptedException;
     void push(E item) throws InterruptedException;
     Pair<String, E> pullByOrder();
-    Pair<String, List<E>> greedyPullByOrder();
     <E> E pull();
-    <E> List<E> greedyPull();
     long size();
 }

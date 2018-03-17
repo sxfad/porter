@@ -9,8 +9,9 @@
 
 package com.suixingpay.datas.node.core.consumer;
 
-import com.suixingpay.datas.common.client.ConsumeClient;
+import com.suixingpay.datas.common.consumer.ConsumeClient;
 import com.suixingpay.datas.common.client.MetaQueryClient;
+import com.suixingpay.datas.common.consumer.Position;
 import com.suixingpay.datas.common.exception.TaskStopTriggerException;
 import com.suixingpay.datas.node.core.event.s.EventConverter;
 import com.suixingpay.datas.node.core.event.s.EventProcessor;
@@ -113,7 +114,7 @@ public abstract class AbstractDataConsumer implements DataConsumer {
     }
 
     @Override
-    public void commitPosition(String position) throws TaskStopTriggerException {
+    public void commitPosition(Position position) throws TaskStopTriggerException {
         consumeClient.commitPosition(position);
     }
 

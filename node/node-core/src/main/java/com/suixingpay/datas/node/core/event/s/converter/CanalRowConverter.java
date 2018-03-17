@@ -9,8 +9,8 @@
 
 package com.suixingpay.datas.node.core.event.s.converter;
 
-import com.alibaba.fastjson.JSONObject;
 import com.alibaba.otter.canal.protocol.CanalEntry;
+import com.suixingpay.datas.common.consumer.Position;
 import com.suixingpay.datas.common.dic.ConsumeConverterPlugin;
 import com.suixingpay.datas.node.core.event.s.EventConverter;
 import com.suixingpay.datas.node.core.event.s.EventType;
@@ -35,8 +35,9 @@ public class CanalRowConverter implements EventConverter {
 
     @Override
     public List<MessageEvent> convertList(Object... params) {
-        JSONObject position = (JSONObject) params[0];
-        CanalEntry.Entry entry = (CanalEntry.Entry) params[1];
+        Position bucketPosition = (Position) params[0];
+        Position rowPosition = (Position) params[1];
+        CanalEntry.Entry entry = (CanalEntry.Entry) params[2];
         //非row data
         if (entry.getEntryType() != CanalEntry.EntryType.ROWDATA) return null;
 
@@ -46,26 +47,23 @@ public class CanalRowConverter implements EventConverter {
         } catch (Exception e) {
             return null;
         }
-
         //query
         CanalEntry.EventType eventType = rowChange.getEventType();
         if (eventType == CanalEntry.EventType.QUERY) return null;
-
         List<MessageEvent> events = new ArrayList<>();
 
         Date opTs = new Date(entry.getHeader().getExecuteTime());
         Date currentTs = new Date();
         String schema = entry.getHeader().getSchemaName();
         String table = entry.getHeader().getTableName();
-
         for (CanalEntry.RowData rowData : rowChange.getRowDatasList()) {
             MessageEvent event = new MessageEvent();
-            event.setPosition(position.toJSONString());
+            event.setBucketPosition(bucketPosition);
+            event.setRowPosition(rowPosition);
             event.setTable(table);
             event.setSchema(schema);
             event.setCurrentTs(currentTs);
             event.setOpTs(opTs);
-
             if (eventType == CanalEntry.EventType.DELETE) {
                 event.setOpType(EventType.DELETE);
                 rowData.getBeforeColumnsList().forEach(c -> {

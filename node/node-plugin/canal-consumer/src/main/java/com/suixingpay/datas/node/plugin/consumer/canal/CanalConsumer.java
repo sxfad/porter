@@ -10,16 +10,17 @@
 package com.suixingpay.datas.node.plugin.consumer.canal;
 
 
-import com.alibaba.fastjson.JSONObject;
 import com.alibaba.otter.canal.protocol.CanalEntry;
 import com.alibaba.otter.canal.protocol.Message;
-import com.suixingpay.datas.common.client.ConsumeClient;
+import com.suixingpay.datas.common.client.impl.CanalClient;
+import com.suixingpay.datas.common.consumer.ConsumeClient;
 import com.suixingpay.datas.common.dic.ConsumerPlugin;
 import com.suixingpay.datas.node.core.consumer.AbstractDataConsumer;
 import com.suixingpay.datas.node.core.event.s.MessageEvent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * canal row消费端
@@ -35,12 +36,26 @@ public class CanalConsumer extends AbstractDataConsumer {
             public <F, O> List<F> acceptAll(O o) {
                 List<MessageEvent> events = new ArrayList<>();
                 Message msg = (Message) o;
+
+                //批次消息同步提交点
+                CanalClient.CanalPosition bucketHeader = null;
+                List<CanalEntry.Entry> endEntries = msg.getEntries().stream().filter(e -> e.getEntryType() == CanalEntry.EntryType.TRANSACTIONEND)
+                        .collect(Collectors.toList());
+
+                if (!endEntries.isEmpty()) {
+                    CanalEntry.Entry lastEndEntry = endEntries.get(endEntries.size() - 1);
+                    bucketHeader = new CanalClient.CanalPosition(msg.getId(), lastEndEntry.getHeader().getLogfileOffset(),
+                            lastEndEntry.getHeader().getLogfileName());
+                } else {
+                    bucketHeader = new CanalClient.CanalPosition(msg.getId());
+                }
+
                 for (CanalEntry.Entry entry : msg.getEntries()) {
-                    JSONObject header = new JSONObject();
-                    header.put("batchId", msg.getId());
-                    header.put("offset", entry.getHeader().getLogfileOffset());
-                    header.put("logfileName", entry.getHeader().getLogfileName());
-                    List<MessageEvent> convertedObj = converter.convertList(header, entry);
+                    //事务消息同步点
+                    CanalClient.CanalPosition rowHeader = new CanalClient.CanalPosition(msg.getId(), entry.getHeader().getLogfileOffset(),
+                            entry.getHeader().getLogfileName());
+
+                    List<MessageEvent> convertedObj = converter.convertList(bucketHeader, rowHeader, entry);
                     if (null != convertedObj && !convertedObj.isEmpty()) {
                         events.addAll(convertedObj);
                     }

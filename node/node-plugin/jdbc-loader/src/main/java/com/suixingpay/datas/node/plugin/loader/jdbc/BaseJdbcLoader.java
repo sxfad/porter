@@ -130,8 +130,6 @@ public abstract class BaseJdbcLoader extends AbstractDataLoader {
         //所有字段旧值
         Object[] allOldValues = ArrayUtils.addAll(keyOldValues, columnOldValues);
 
-
-
         if (row.getOpType() == EventType.DELETE) {
             //主键删除
             if (keyNames.length > 0) {
@@ -143,12 +141,11 @@ public abstract class BaseJdbcLoader extends AbstractDataLoader {
             //插入sql
             sqlList.add(new ImmutablePair<>(template.getInsertSql(row.getFinalSchema(), row.getFinalTable(), allColumnNames), allNewValues));
         } else if (row.getOpType() == EventType.UPDATE) {
-            //如果存在主键，根据主键更新
-            if (keyNames.length > 0 && null != columnNames && columnNames.length > 0)  {
+            //存在主键，主键值没变，根据主键更新
+            if (!row.isKeyChangedOnUpdate() && keyNames.length > 0 && null != columnNames && columnNames.length > 0) {
                 sqlList.add(new ImmutablePair<>(template.getUpdateSql(row.getFinalSchema(), row.getFinalTable(), keyNames, columnNames),
                         ArrayUtils.addAll(columnNewValues, keyOldValues)));
             }
-
             //全字段更新
             sqlList.add(new ImmutablePair<>(template.getUpdateSql(row.getFinalSchema(), row.getFinalTable(), allColumnNames),
                     ArrayUtils.addAll(allNewValues, allOldValues)));
@@ -180,7 +177,7 @@ public abstract class BaseJdbcLoader extends AbstractDataLoader {
                 } catch (Exception e) {
                     StringBuilder log = new StringBuilder();
                     log.append("记录:").append(JSONObject.toJSONString(row))
-                            .append(",点位:").append(row.getPosition())
+                            .append(",点位:").append(row.getPosition().render())
                             .append(",字段名:").append(c.getFinalName()).append(",错误信息:").append(e.getMessage());
                     throw new TaskDataException(log.toString());
                 }

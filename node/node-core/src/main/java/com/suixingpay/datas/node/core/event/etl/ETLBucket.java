@@ -9,6 +9,7 @@
 package com.suixingpay.datas.node.core.event.etl;
 
 import com.alibaba.fastjson.JSON;
+import com.suixingpay.datas.common.consumer.Position;
 import com.suixingpay.datas.node.core.event.s.EventType;
 import com.suixingpay.datas.node.core.event.s.MessageEvent;
 import org.apache.commons.lang3.tuple.Pair;
@@ -46,10 +47,13 @@ public class ETLBucket {
      */
     private Throwable exception = null;
 
-    public ETLBucket(String sequence, List<ETLRow> rows) {
+    private final Position position;
+
+    public ETLBucket(String sequence, List<ETLRow> rows, Position position) {
         this.sequence = sequence;
         this.rows = rows;
         this.batchRows = new ArrayList<>();
+        this.position = position;
     }
 
     public String getSequence() {
@@ -99,11 +103,12 @@ public class ETLBucket {
                         event.getPrimaryKeys().contains(entity.getKey()));
                 columns.add(column);
             }
-            ETLRow row = new ETLRow(event.getSchema(), event.getTable(), event.getOpType(), columns, event.getOpTs(), event.getPosition());
+            ETLRow row = new ETLRow(event.getSchema(), event.getTable(), event.getOpType(), columns, event.getOpTs(), event.getRowPosition());
             rows.add(row);
             LOGGER.debug(JSON.toJSONString(row));
         }
-        return new ETLBucket(events.getKey(), rows);
+        Position position = !events.getRight().isEmpty() ? events.getRight().get(events.getRight().size() - 1).getBucketPosition() : null;
+        return new ETLBucket(events.getKey(), rows, position);
     }
 
     public List<List<ETLRow>> getBatchRows() {
@@ -116,5 +121,9 @@ public class ETLBucket {
 
     public void tagException(Throwable e) {
         this.exception = e;
+    }
+
+    public Position getPosition() {
+        return position;
     }
 }

@@ -16,9 +16,11 @@ import com.suixingpay.datas.common.exception.TaskStopTriggerException;
 import com.suixingpay.datas.node.core.event.etl.ETLBucket;
 import com.suixingpay.datas.node.core.event.etl.ETLColumn;
 import com.suixingpay.datas.node.core.event.etl.ETLRow;
+import com.suixingpay.datas.node.core.event.s.EventType;
 import com.suixingpay.datas.node.core.loader.DataLoader;
 import com.suixingpay.datas.node.core.task.TableMapper;
 import com.suixingpay.datas.node.task.worker.TaskWork;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,16 +46,24 @@ public class ETLRowTransformer implements Transformer {
     public void transform(ETLBucket bucket, TaskWork work) throws Exception {
         LOGGER.debug("start tranforming bucket:{},size:{}", bucket.getSequence(), bucket.getRows().size());
         for (ETLRow row : bucket.getRows()) {
-            LOGGER.debug("try tranform row:{},{}", row.getPosition(), JSON.toJSONString(row));
+            LOGGER.debug("try tranform row:{},{}", row.getPosition().render(), JSON.toJSONString(row));
             TableMapper tableMapper = work.getTableMapper(row.getSchema(), row.getTable());
             mappingRowData(tableMapper, row);
             TableSchema table = findTable(work.getDataLoader(), row.getFinalSchema(), row.getFinalTable());
             if (null != table) remedyColumns(table, row);
 
+            //当是更新时，判断主键是否变更
+            if (row.getOpType() == EventType.UPDATE) {
+                boolean isChanged = !row.getColumns().stream().filter(c -> c.isKey()
+                        && !StringUtils.trimToEmpty(c.getFinalOldValue()).equals(StringUtils.trimToEmpty(c.getFinalValue())))
+                        .collect(Collectors.toList()).isEmpty();
+                row.setKeyChangedOnUpdate(isChanged);
+            }
+
             //DataLoader自定义处理
             work.getDataLoader().mouldRow(row);
 
-            LOGGER.debug("after tranform row:{},{}", row.getPosition(), JSON.toJSONString(row));
+            LOGGER.debug("after tranform row:{},{}", row.getPosition().render(), JSON.toJSONString(row));
         }
     }
 

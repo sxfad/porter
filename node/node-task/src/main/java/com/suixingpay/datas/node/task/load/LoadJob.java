@@ -20,7 +20,6 @@ import com.suixingpay.datas.node.core.loader.SubmitStatObject;
 import com.suixingpay.datas.node.core.task.AbstractStageJob;
 import com.suixingpay.datas.node.core.task.StageType;
 import com.suixingpay.datas.node.task.worker.TaskWork;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Date;
@@ -74,15 +73,17 @@ public class LoadJob extends AbstractStageJob {
                     Pair<Boolean, List<SubmitStatObject>> loadResult = dataLoder.load(bucket);
                     //逻辑执行失败
                     if (!loadResult.getLeft()) throw new TaskStopTriggerException("批次" + bucket.getSequence() + "Load失败!");
-                    //批次数据不为空
-                    if (!bucket.getRows().isEmpty()) {
-                        String position = bucket.getRows().get(bucket.getRows().size() - 1).getPosition();
-                        LOGGER.debug("开始提交消费同步点:{}", position);
-                        ClusterProviderProxy.INSTANCE.broadcast(new TaskPositionUploadCommand(work.getTaskId(),
-                                work.getDataConsumer().getSwimlaneId(), position));
-                        LOGGER.debug("提交消费同步点到集群策略:{}", position);
-                        work.getDataConsumer().commitPosition(position);
-                        LOGGER.debug("提交消费同步点到消费器客户端:{}", position);
+
+                    //提交批次消费同步点
+                    if (null != bucket.getPosition()) {
+                        if (bucket.getPosition().checksum()) {
+                            LOGGER.debug("开始提交消费同步点:{}", bucket.getPosition().render());
+                            ClusterProviderProxy.INSTANCE.broadcast(new TaskPositionUploadCommand(work.getTaskId(),
+                                    work.getDataConsumer().getSwimlaneId(), bucket.getPosition().render()));
+                        }
+                        LOGGER.debug("提交消费同步点到集群策略:{}", bucket.getPosition().render());
+                        work.getDataConsumer().commitPosition(bucket.getPosition());
+                        LOGGER.debug("提交消费同步点到消费器客户端:{}", bucket.getPosition().render());
                     }
                     //更新消费统计数据
                     loadResult.getRight().forEach(o -> updateStat(o));
@@ -162,8 +163,8 @@ public class LoadJob extends AbstractStageJob {
             //更新最后执行消息事件的产生时间，用于计算从消息产生到加载如路时间、计算数据同步检查时间
             if (null != object.getOpTime()) stat.setLastLoadedDataTime(object.getOpTime());
             stat.setLastLoadedSystemTime(new Date());
-            if (!StringUtils.isBlank(object.getPosition())) {
-                stat.setProgress(object.getPosition());
+            if (null != object.getPosition()) {
+                stat.setProgress(object.getPosition().render());
             }
         }
     }

@@ -10,8 +10,9 @@
 package com.suixingpay.datas.node.plugin.consumer.kafka;
 
 
-import com.alibaba.fastjson.JSONObject;
-import com.suixingpay.datas.common.client.ConsumeClient;
+import com.suixingpay.datas.common.client.impl.KafkaClient;
+import com.suixingpay.datas.common.consumer.ConsumeClient;
+import com.suixingpay.datas.common.consumer.Position;
 import com.suixingpay.datas.common.dic.ConsumerPlugin;
 import com.suixingpay.datas.node.core.consumer.AbstractDataConsumer;
 import com.suixingpay.datas.node.core.event.s.MessageEvent;
@@ -32,10 +33,7 @@ public class KafkaConsumer extends AbstractDataConsumer {
             @Override
             public <F, O> F accept(O o) {
                 ConsumerRecord<String, String> record = (ConsumerRecord<String, String>) o;
-                JSONObject position = new JSONObject();
-                position.put("offset", record.offset());
-                position.put("topic", record.topic());
-                position.put("partition", record.partition());
+                Position position = new KafkaClient.KafkaPosition(record.topic(), record.offset(), record.partition());
                 return (F) converter.convert(position, record.value());
             }
         });

@@ -8,6 +8,7 @@
  */
 package com.suixingpay.datas.node.core.event.etl;
 
+import com.suixingpay.datas.common.consumer.Position;
 import com.suixingpay.datas.node.core.event.s.EventType;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -30,9 +31,11 @@ public class ETLRow {
     //操作时间，保留该字段可以在需要的时候计算出与最终执行时间间隔
     private final Date opTime;
     //当前消息所在消费源的下标、顺序位置
-    private final String position;
+    private final Position position;
     //操作类型 I U D T
     private final EventType opType;
+
+
 
     /**
      * 可修改自定义内容
@@ -52,10 +55,11 @@ public class ETLRow {
      */
     private final Map<String, Object> extendsField = new LinkedHashMap<>();
 
+    private boolean isKeyChangedOnUpdate = false;
 
 
 
-    public ETLRow(String schema, String table, EventType opType, List<ETLColumn> columns, Date opTime, String position) {
+    public ETLRow(String schema, String table, EventType opType, List<ETLColumn> columns, Date opTime, Position position) {
         this.schema = schema;
         this.table = table;
         this.opType = opType;
@@ -103,7 +107,7 @@ public class ETLRow {
         this.finalTable = finalTable;
     }
 
-    public String getPosition() {
+    public Position getPosition() {
         return position;
     }
 
@@ -113,5 +117,13 @@ public class ETLRow {
 
     public Map<String, Object> getExtendsField() {
         return extendsField;
+    }
+
+    public boolean isKeyChangedOnUpdate() {
+        return isKeyChangedOnUpdate;
+    }
+
+    public void setKeyChangedOnUpdate(boolean keyChangedOnUpdate) {
+        isKeyChangedOnUpdate = keyChangedOnUpdate;
     }
 }

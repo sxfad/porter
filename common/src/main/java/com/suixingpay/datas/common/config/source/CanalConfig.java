@@ -9,17 +9,14 @@
 
 package com.suixingpay.datas.common.config.source;
 
+import com.alibaba.otter.canal.instance.manager.model.CanalParameter;
 import com.suixingpay.datas.common.config.SourceConfig;
 import com.suixingpay.datas.common.dic.SourceType;
 import lombok.Getter;
 import lombok.Setter;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.math.NumberUtils;
 
 import java.net.InetSocketAddress;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.UUID;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -28,19 +25,18 @@ import java.util.List;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月02日 14:24
  */
 public class CanalConfig extends SourceConfig {
-    private static final String ADDRESS_SPLIT_CHARACTER = ",";
-    private static final String ADDRESS_ITEM_SPLIT_CHARACTER = ":";
-    //优先zookeeper
-    @Setter @Getter private String zkServers;
-    @Setter @Getter private List<InetSocketAddress> addresses = new ArrayList<>();
     //实例描述
-    @Setter @Getter private String destination;
+    @Setter @Getter private Long canalId = System.nanoTime();
+    @Setter @Getter private String canalName = UUID.randomUUID().toString();
+    @Setter @Getter private CanalParameter.SourcingType sourcingType = CanalParameter.SourcingType.MYSQL;
+    @Setter @Getter private Long slaveId;
+
+    @Setter @Getter private String address;
+    @Setter @Getter private String database;
     @Setter @Getter private String username;
     @Setter @Getter private String password;
-
-    @Setter @Getter private String filter;
+    @Setter @Getter private String filter = "";
     @Setter @Getter private int oncePollSize = 1000;
-    @Setter @Getter private boolean autoCommit = Boolean.FALSE;
 
     public CanalConfig() {
         sourceType = SourceType.CANAL;
@@ -48,22 +44,18 @@ public class CanalConfig extends SourceConfig {
 
     @Override
     protected void childStuff() {
-        String addressesStr = getProperties().getOrDefault("addresses", "");
-        if (!StringUtils.isBlank(addressesStr)) {
-            String[] addressArray = addressesStr.split(ADDRESS_SPLIT_CHARACTER);
-            if (null != addressArray && addressArray.length > 0) {
-                Arrays.stream(addressArray).filter(i -> !StringUtils.isBlank(i)).forEach(i -> {
-                    String[] item = i.split(ADDRESS_ITEM_SPLIT_CHARACTER);
-                    if (null != item && item.length == 2 && NumberUtils.isCreatable(item[1])) {
-                        addresses.add(new InetSocketAddress(item[0], Integer.parseInt(item[1])));
-                    }
-                });
-            }
+    }
+
+    public InetSocketAddress getSocketAddress() {
+        String[] addressArray = address.split(":");
+        if (null != addressArray && addressArray.length == 2) {
+            return new InetSocketAddress(addressArray[0], Integer.parseInt(addressArray[1]));
         }
+        return null;
     }
 
     @Override
     protected String[] childStuffColumns() {
-        return new String[] {"addresses"};
+        return new String[0];
     }
 }

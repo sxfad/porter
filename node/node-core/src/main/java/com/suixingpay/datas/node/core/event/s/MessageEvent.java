@@ -9,6 +9,7 @@
 package com.suixingpay.datas.node.core.event.s;
 
 
+import com.suixingpay.datas.common.consumer.Position;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -26,7 +27,10 @@ import java.util.HashMap;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月13日 18:22
  */
 public class MessageEvent {
-    @Getter @Setter private String position;
+    //行同步位点
+    @Getter @Setter private Position rowPosition;
+    //当前行所在批次位点
+    @Getter @Setter private Position bucketPosition;
     @Getter @Setter private String schema;
     @Getter @Setter private String table;
     //操作类型 I U D T

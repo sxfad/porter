@@ -9,6 +9,7 @@
 
 package com.suixingpay.datas.node.core.loader;
 
+import com.suixingpay.datas.common.consumer.Position;
 import com.suixingpay.datas.node.core.event.s.EventType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,6 +31,6 @@ public class SubmitStatObject {
     @Setter @Getter private String table;
     @Setter @Getter private EventType type;
     @Setter @Getter private int affect;
-    @Setter @Getter private String position;
+    @Setter @Getter private Position position;
     @Setter @Getter private Date opTime;
 }

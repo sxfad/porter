@@ -10,7 +10,7 @@
 package com.suixingpay.datas.common.client.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.suixingpay.datas.common.client.ConsumeClient;
+import com.suixingpay.datas.common.consumer.ConsumeClient;
 import com.suixingpay.datas.common.config.source.KafkaConfig;
 import org.junit.BeforeClass;
 import org.junit.Test;

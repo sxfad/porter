@@ -252,7 +252,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
     @Override
     public void upload(TaskPositionUploadCommand command) throws Exception {
         String position = listenPath() + "/" + command.getTaskId() + "/position/" + command.getSwimlaneId();
-        client.changeData(position, false, false, command.getPosition().toString());
+        client.changeData(position, false, false, command.getPosition());
     }
 
     @Override

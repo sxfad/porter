@@ -11,7 +11,7 @@ package com.suixingpay.datas.node.core.consumer;
 
 import com.suixingpay.datas.common.client.AbstractClient;
 import com.suixingpay.datas.common.client.Client;
-import com.suixingpay.datas.common.client.ConsumeClient;
+import com.suixingpay.datas.common.consumer.ConsumeClient;
 import com.suixingpay.datas.common.client.MetaQueryClient;
 import com.suixingpay.datas.common.config.DataConsumerConfig;
 import com.suixingpay.datas.common.config.SourceConfig;

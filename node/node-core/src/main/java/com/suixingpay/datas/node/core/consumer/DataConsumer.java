@@ -9,8 +9,9 @@
 
 package com.suixingpay.datas.node.core.consumer;
 
-import com.suixingpay.datas.common.client.ConsumeClient;
+import com.suixingpay.datas.common.consumer.ConsumeClient;
 import com.suixingpay.datas.common.client.MetaQueryClient;
+import com.suixingpay.datas.common.consumer.Position;
 import com.suixingpay.datas.common.exception.TaskStopTriggerException;
 import com.suixingpay.datas.node.core.event.s.EventConverter;
 import com.suixingpay.datas.node.core.event.s.EventProcessor;
@@ -107,7 +108,7 @@ public interface DataConsumer {
 
     void initializePosition(String taskId, String swimlaneId, String position) throws TaskStopTriggerException;
 
-    void commitPosition(String position) throws TaskStopTriggerException;
+    void commitPosition(Position position) throws TaskStopTriggerException;
 
     boolean isAutoCommitPosition();
 

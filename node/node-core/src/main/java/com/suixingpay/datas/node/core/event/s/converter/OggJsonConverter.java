@@ -12,6 +12,7 @@ package com.suixingpay.datas.node.core.event.s.converter;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.suixingpay.datas.common.consumer.Position;
 import com.suixingpay.datas.common.dic.ConsumeConverterPlugin;
 import com.suixingpay.datas.node.core.event.s.EventConverter;
 import com.suixingpay.datas.node.core.event.s.EventType;
@@ -37,7 +38,7 @@ public class OggJsonConverter implements EventConverter {
 
     @Override
     public MessageEvent convert(Object... params) {
-        JSONObject position = (JSONObject) params[0];
+        Position position = (Position) params[0];
         JSONObject obj = JSON.parseObject((String) params[1]);
 
         EventType eventType = EventType.type(obj.getString("op_type"));
@@ -70,7 +71,8 @@ public class OggJsonConverter implements EventConverter {
         if (null != pkeys) event.setPrimaryKeys(pkeys.toJavaList(String.class));
         event.setBefore(obj.getObject("before", Map.class));
         event.setAfter(obj.getObject("after", Map.class));
-        event.setPosition(position.toJSONString());
+        event.setRowPosition(position);
+        event.setBucketPosition(event.getRowPosition());
         return event;
     }
 }
