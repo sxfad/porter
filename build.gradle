@@ -1,5 +1,5 @@
 apply plugin: 'java'
-version '0.3.2'
+version '1.0'
 
 repositories {
     maven{ url"http://maven.aliyun.com/nexus/content/groups/public"}
@@ -23,7 +23,7 @@ subprojects {
     ext {
         group = 'com.suixingpay.datas'
         junitVersion = '4.12'
-        version '0.3.2'
+        version '1.0'
         springVersion = '1.5.9.RELEASE'
         swaggerVersion = '2.7.0'
     }
