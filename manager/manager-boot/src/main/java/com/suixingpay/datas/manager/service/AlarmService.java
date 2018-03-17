@@ -13,6 +13,8 @@ import com.suixingpay.datas.manager.web.page.Page;
  */
 public interface AlarmService {
 
+    Alarm selectFinallyOne();
+
     Integer insert(Alarm alarm);
 
     Integer update(Long id, Alarm alarm);

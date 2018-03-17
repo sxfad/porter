@@ -35,7 +35,37 @@ public class LogGradeController {
     @Autowired
     protected LogGradeService logGradeService;
 
+    /**
+     * 新增
+     *
+     * @author FuZizheng
+     * @date 2018/3/16 上午11:03
+     * @param: [logGrade]
+     * @return: com.suixingpay.datas.manager.web.message.ResponseMessage
+     */
     @PostMapping
+    @ApiOperation(value = "新增", notes = "新增")
+    public ResponseMessage add(@RequestBody LogGrade logGrade) {
+        Integer number = logGradeService.insert(logGrade);
+        return ok(number);
+    }
+
+    /**
+     * 查询
+     *
+     * @author FuZizheng
+     * @date 2018/3/16 上午11:30
+     * @param: []
+     * @return: com.suixingpay.datas.manager.web.message.ResponseMessage
+     */
+    @GetMapping
+    @ApiOperation(value = "查询当前日志级别", notes = "若无数据，默认为INFO")
+    public ResponseMessage info() {
+        LogGrade logGrade = logGradeService.select();
+        return ok(logGrade);
+    }
+
+    /*@PostMapping
     @ApiOperation(value = "新增", notes = "新增")
     public ResponseMessage add(@RequestBody LogGrade logGrade) {
         Integer number = logGradeService.insert(logGrade);
@@ -69,6 +99,6 @@ public class LogGradeController {
             @RequestParam(value = "pageSize", required = false) Integer pageSize) {
         Page<LogGrade> page = logGradeService.page(new Page<LogGrade>(pageNo, pageSize));
         return ok(page);
-    }
+    }*/
 
 }

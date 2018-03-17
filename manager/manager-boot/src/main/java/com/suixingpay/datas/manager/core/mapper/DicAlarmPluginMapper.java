@@ -54,5 +54,12 @@ public interface DicAlarmPluginMapper {
      */
     Integer pageAll(@Param("state") Integer state);
 
+    /**
+     * 
+     * @param alertType
+     * @return
+     */
+    List<DicAlarmPlugin> findByAlertType(String alertType);
+
 
 }

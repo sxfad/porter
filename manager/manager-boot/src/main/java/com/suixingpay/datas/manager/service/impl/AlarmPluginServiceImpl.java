@@ -3,12 +3,14 @@
  */
 package com.suixingpay.datas.manager.service.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.suixingpay.datas.manager.core.entity.Alarm;
 import com.suixingpay.datas.manager.core.entity.AlarmPlugin;
 import com.suixingpay.datas.manager.core.mapper.AlarmPluginMapper;
 import com.suixingpay.datas.manager.service.AlarmPluginService;
 import com.suixingpay.datas.manager.web.page.Page;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 /**
  * 告警配置策略内容表 服务实现类
@@ -23,6 +25,15 @@ public class AlarmPluginServiceImpl implements AlarmPluginService {
 
     @Autowired
     private AlarmPluginMapper alarmPluginMapper;
+
+    @Override
+    public void insert(Alarm alarm) {
+        for (AlarmPlugin alarmPlugin : alarm.getAlarmPlugins()) {
+            alarmPlugin.setAlarmId(alarm.getId());
+            alarmPlugin.setAlarmType(alarm.getAlarmType().getCode());
+            insert(alarmPlugin);
+        }
+    }
 
     @Override
     public Integer insert(AlarmPlugin alarmPlugin) {

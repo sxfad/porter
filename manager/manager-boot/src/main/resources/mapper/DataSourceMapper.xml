@@ -1,17 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.suixingpay.datas.manager.core.mapper.DataSourceMapper">
-    <!-- 通用查询映射结果 
-    <resultMap id="BaseResultMap" type="com.suixingpay.datas.manager.core.entity.DataSource">
-        <result column="id" property="id" />
-        <result column="name" property="name" />
-        <result column="data_type" property="dataType" />
-        <result column="creater" property="creater" />
-        <result column="create_time" property="createTime" />
-        <result column="state" property="state" />
-        <result column="iscancel" property="iscancel" />
-        <result column="remark" property="remark" />
-    </resultMap>-->
+    <!-- 通用查询映射结果 -->
+    <!--<resultMap id="BaseResultMap" type="com.suixingpay.datas.manager.core.entity.DataSource">-->
+        <!--<id column="id" property="id" />-->
+        <!--<result column="name" property="name" />-->
+        <!--<result column="data_type" property="dataType" />-->
+        <!--<result column="creater" property="creater" />-->
+        <!--<result column="create_time" property="createTime" />-->
+        <!--<result column="state" property="state" />-->
+        <!--<result column="iscancel" property="iscancel" />-->
+        <!--<result column="remark" property="remark" />-->
+        <!--<collection property="plugins" column="id" ofType="com.suixingpay.datas.manager.core.entity.DataSourcePlugin">-->
+            <!--<result column="source_id" property="sourceId"/>-->
+            <!--<result column="field_name" property="fieldName"/>-->
+            <!--<result column="field_code" property="fieldCode"/>-->
+            <!--<result column="field_value" property="fieldValue"/>-->
+        <!--</collection>-->
+    <!--</resultMap>-->
 
     <!-- 通用查询结果列 
     <sql id="Base_Column_List">
@@ -63,27 +69,34 @@
 
     <!-- 根据主鍵查找 -->
     <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.DataSource">
-        select id, name, data_type AS dataType, creater, create_time AS createTime, state, iscancel, remark from b_data_source
+        select
+        id, name, data_type AS dataType, creater AS creater, create_time AS createTime
+        from b_data_source
         where id = #{id}
     </select>
 
     <!-- 分页All -->
     <select id="pageAll" resultType="java.lang.Integer">
         select count(id) from b_data_source
-        where iscancel = 0
+        <where>
+            iscancel = 0
+            <if test="name != null and name != ''">
+                and name LIKE CONCAT('%', #{name},'%')
+            </if>
+            <if test="beginTime != null and beginTime != ''">
+                and create_time &gt; #{beginTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                and create_time &lt; #{endTime}
+            </if>
+        </where>
     </select>
-    <!--<select id="pageAll" resultType="java.lang.Integer">
-        select count(id) from b_data_source
-        where 1=1
-    </select>-->
 
     <!-- 分页 -->
     <select id="page" resultType="com.suixingpay.datas.manager.core.entity.DataSource">
-        select id, name, data_type AS dataTypel, create_time AS createTime from b_data_source
+        select id, name, data_type AS dataType, create_time AS createTime
+        from b_data_source
         <where>
-            <!--<if test="state != null and state != ''">-->
-                <!--state = #{state}-->
-            <!--</if>-->
             1 = 1
             <if test="name != null and name != ''">
                 and name LIKE CONCAT('%', #{name},'%')
@@ -96,16 +109,12 @@
             </if>
             and iscancel = 0
         </where>
-            order by create_time, id
-            limit #{page.offset},#{page.pageSize}
+        order by create_time desc
+        limit #{page.offset},#{page.pageSize}
     </select>
-    <!--<select id="page" resultType="com.suixingpay.datas.manager.core.entity.DataSource">
-        select id, name, data_type AS dataType, data_json AS dataJson, date_user AS dateUser, date_passwd AS datePasswd, date_url AS dateUrl, date_servers AS dateServers, date_topics AS dateTopics, creater, create_time AS createTime, state, iscancel, remark from b_data_source
-        where 1=1 limit #{page.offset},#{page.pageSize}
-    </select>-->
 
     <!-- 验证新增 -->
-    <insert id="insertSelective">
+    <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id">
         insert into b_data_source
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="name != null">
@@ -113,24 +122,6 @@
             </if>
             <if test="dataType != null">
                 data_type,
-            </if>
-            <if test="dataJson != null">
-                data_json,
-            </if>
-            <if test="dateUser != null">
-                date_user,
-            </if>
-            <if test="datePasswd != null">
-                date_passwd,
-            </if>
-            <if test="dateUrl != null">
-                date_url,
-            </if>
-            <if test="dateServers != null">
-                date_servers,
-            </if>
-            <if test="dateTopics != null">
-                date_topics,
             </if>
             <if test="creater != null">
                 creater,
@@ -154,24 +145,6 @@
             </if>
             <if test="dataType != null">
                 #{dataType,jdbcType=VARCHAR},
-            </if>
-            <if test="dataJson != null">
-                #{dataJson,jdbcType=VARCHAR},
-            </if>
-            <if test="dateUser != null">
-                #{dateUser,jdbcType=VARCHAR},
-            </if>
-            <if test="datePasswd != null">
-                #{datePasswd,jdbcType=VARCHAR},
-            </if>
-            <if test="dateUrl != null">
-                #{dateUrl,jdbcType=VARCHAR},
-            </if>
-            <if test="dateServers != null">
-                #{dateServers,jdbcType=VARCHAR},
-            </if>
-            <if test="dateTopics != null">
-                #{dateTopics,jdbcType=VARCHAR},
             </if>
             <if test="creater != null">
                 #{creater,jdbcType=BIGINT},
@@ -200,24 +173,6 @@
             </if>
             <if test="dataSource.dataType != null">
                 data_type = #{dataSource.dataType,jdbcType=VARCHAR},
-            </if>
-            <if test="dataSource.dataJson != null">
-                data_json = #{dataSource.dataJson,jdbcType=VARCHAR},
-            </if>
-            <if test="dataSource.dateUser != null">
-                date_user = #{dataSource.dateUser,jdbcType=VARCHAR},
-            </if>
-            <if test="dataSource.datePasswd != null">
-                date_passwd = #{dataSource.datePasswd,jdbcType=VARCHAR},
-            </if>
-            <if test="dataSource.dateUrl != null">
-                date_url = #{dataSource.dateUrl,jdbcType=VARCHAR},
-            </if>
-            <if test="dataSource.dateServers != null">
-                date_servers = #{dataSource.dateServers,jdbcType=VARCHAR},
-            </if>
-            <if test="dataSource.dateTopics != null">
-                date_topics = #{dataSource.dateTopics,jdbcType=VARCHAR},
             </if>
             <if test="dataSource.creater != null">
                 creater = #{dataSource.creater,jdbcType=BIGINT},

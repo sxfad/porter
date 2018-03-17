@@ -35,7 +35,26 @@ public class MrLogMonitorController {
     @Autowired
     protected MrLogMonitorService mrLogMonitorService;
 
-    @PostMapping
+    /**
+     * 查询列表
+     *
+     * @author FuZizheng
+     * @date 2018/3/16 下午5:09
+     * @param: []
+     * @return: com.suixingpay.datas.manager.web.message.ResponseMessage
+     */
+    @GetMapping
+    @ApiOperation(value = "查询列表", notes = "查询列表")
+    public ResponseMessage list(@RequestParam(value = "pageNo", required = false) Integer pageNo,
+                                @RequestParam(value = "pageSize", required = false) Integer pageSize,
+                                @RequestParam(value = "ipAddress", required = false) String ipAddress,
+                                @RequestParam(value = "state", required = false) Integer state,
+                                @RequestParam(value = "beginTime", required = false) String beginTime,
+                                @RequestParam(value = "endTime", required = false) String endTime) {
+        Page<MrLogMonitor> page = mrLogMonitorService.page(new Page<MrLogMonitor>(pageNo, pageSize), ipAddress, state, beginTime, endTime);
+        return ok(page);
+    }
+    /*@PostMapping
     @ApiOperation(value = "新增", notes = "新增")
     public ResponseMessage add(@RequestBody MrLogMonitor mrLogMonitor) {
         Integer number = mrLogMonitorService.insert(mrLogMonitor);
@@ -69,6 +88,6 @@ public class MrLogMonitorController {
             @RequestParam(value = "pageSize", required = false) Integer pageSize) {
         Page<MrLogMonitor> page = mrLogMonitorService.page(new Page<MrLogMonitor>(pageNo, pageSize));
         return ok(page);
-    }
+    }*/
 
 }

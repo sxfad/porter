@@ -46,12 +46,23 @@ public interface NodesMapper {
      * 分頁
      * @return
      */
-    List<Nodes> page(@Param("page") Page<Nodes> page, @Param("state") Integer state);
+    List<Nodes> page(@Param("page") Page<Nodes> page,
+                     @Param("ipAddress") String ipAddress,
+                     @Param("state") Integer state,
+                     @Param("machineName") String machineName,
+                     @Param("type") Integer type);
 
     /**
      * 分頁All
      * @return
+     * @param ipAddress
+     * @param state
+     * @param machineName
+     * @param type
      */
-    Integer pageAll(@Param("state") Integer state);
+    Integer pageAll(@Param("ipAddress") String ipAddress,
+                    @Param("state") Integer state,
+                    @Param("machineName") String machineName,
+                    @Param("type") Integer type);
 
 }

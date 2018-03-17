@@ -1,11 +1,14 @@
 package com.suixingpay.datas.manager.service.impl;
 
+import com.suixingpay.datas.manager.core.entity.DataSource;
 import com.suixingpay.datas.manager.core.entity.DataSourcePlugin;
 import com.suixingpay.datas.manager.core.mapper.DataSourcePluginMapper;
 import com.suixingpay.datas.manager.service.DataSourcePluginService;
 import com.suixingpay.datas.manager.web.page.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * 数据源信息关联表 服务实现类
@@ -49,5 +52,19 @@ public class DataSourcePluginServiceImpl implements DataSourcePluginService {
             page.setResult(dataSourcePluginMapper.page(page, 1));
         }
         return page;
+    }
+
+    @Override
+    public void insertSelective(DataSource dataSource) {
+        //获取 DataSource 新增成功的自增id
+        for (DataSourcePlugin dataSourcePlugin : dataSource.getPlugins()) {
+            dataSourcePlugin.setSourceId(dataSource.getId());
+        }
+        dataSourcePluginMapper.insertDataSourcePlugins(dataSource.getPlugins());
+    }
+
+    @Override
+    public List<DataSourcePlugin> findListBySourceID(Long sourceId) {
+        return dataSourcePluginMapper.findListBySourceID(sourceId);
     }
 }

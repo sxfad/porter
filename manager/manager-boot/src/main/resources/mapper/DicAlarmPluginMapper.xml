@@ -168,4 +168,8 @@
         where id = #{id,jdbcType=BIGINT}
     </update>
 
+    <select id="findByAlertType" resultType="com.suixingpay.datas.manager.core.entity.DicAlarmPlugin">
+        select id, alert_type AS alertType, field_name AS fieldName, field_code AS fieldCode, field_order AS fieldOrder,field_type as fieldType, field_type_key as fieldTypeKey, state, iscancel, remark from d_alarm_plugin
+        where alert_type = #{alertType} and iscancel =0 order by field_order
+    </select>
 </mapper>

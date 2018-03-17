@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,7 +20,7 @@ import static com.suixingpay.datas.manager.web.message.ResponseMessage.ok;
 
 /**
  * 数据表信息表 controller控制器
- * 
+ *
  * @author: FairyHood
  * @date: 2018-03-07 17:26:55
  * @version: V1.0-auto
@@ -35,7 +34,74 @@ public class DataTableController {
     @Autowired
     protected DataTableService dataTableService;
 
+    /**
+     * 新增
+     *
+     * @author FuZizheng
+     * @date 2018/3/15 下午5:06
+     * @param: []
+     * @return: com.suixingpay.datas.manager.web.message.ResponseMessage
+     */
     @PostMapping
+    @ApiOperation(value = "新增", notes = "新增")
+    public ResponseMessage add(@RequestBody DataTable dataTable) {
+
+        Integer number = dataTableService.insert(dataTable);
+        return ok(number);
+    }
+
+    /**
+     * 逻辑删除数据表信息
+     *
+     * @author FuZizheng
+     * @date 2018/3/15 下午4:50
+     * @param: [id]
+     * @return: com.suixingpay.datas.manager.web.message.ResponseMessage
+     */
+    @DeleteMapping("/{id}")
+    @ApiOperation(value = "逻辑删除数据表信息", notes = "数据表主键")
+    public ResponseMessage delete(@PathVariable("id") Long id) {
+
+        Integer number = dataTableService.delete(id);
+        return ok(number);
+    }
+
+    /**
+     * 查询明细
+     *
+     * @author FuZizheng
+     * @date 2018/3/15 下午5:25
+     * @param: [id]
+     * @return: com.suixingpay.datas.manager.web.message.ResponseMessage
+     */
+    @GetMapping("/{id}")
+    @ApiOperation(value = "查询明细", notes = "查询明细")
+    public ResponseMessage info(@PathVariable("id") Long id) {
+        DataTable dataTable = dataTableService.selectById(id);
+        return ok(dataTable);
+    }
+
+    /**
+     * 查询数据表信息（条件查询）
+     *
+     * @author FuZizheng
+     * @date 2018/3/15 下午4:46
+     * @param: [pageNo, pageSize, bankName, beginTime, endTime]
+     * @return: com.suixingpay.datas.manager.web.message.ResponseMessage
+     */
+    @GetMapping
+    @ApiOperation(value = "查询列表", notes = "查询列表")
+    public ResponseMessage list(@RequestParam(value = "pageNo", required = false) Integer pageNo,
+                                @RequestParam(value = "pageSize", required = false) Integer pageSize,
+                                @RequestParam(value = "bankName", required = false) String bankName,
+                                @RequestParam(value = "beginTime", required = false) String beginTime,
+                                @RequestParam(value = "endTime", required = false) String endTime) {
+
+        Page<DataTable> page = dataTableService.page(new Page<DataTable>(pageNo, pageSize), bankName, beginTime, endTime);
+        return ok(page);
+    }
+
+    /*@PostMapping
     @ApiOperation(value = "新增", notes = "新增")
     public ResponseMessage add(@RequestBody DataTable dataTable) {
         Integer number = dataTableService.insert(dataTable);
@@ -69,6 +135,6 @@ public class DataTableController {
             @RequestParam(value = "pageSize", required = false) Integer pageSize) {
         Page<DataTable> page = dataTableService.page(new Page<DataTable>(pageNo, pageSize));
         return ok(page);
-    }
+    }*/
 
 }

@@ -19,15 +19,8 @@
         select id, alarm_type AS alarmType, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, remark from s_alarm
     </sql> -->
     <!-- 新增 -->
-    <insert id="insert">
-	    insert into s_alarm (alarm_type, create_user_id,
-	      update_user_id, create_time, update_time,
-	      state, iscancel, remark
-	      )
-	    values (#{alarmType}, #{createUserId}, #{updateUserId},
-	       #{createTime}, #{updateTime},
-	       #{state}, #{iscancel}, #{remark}
-	      )
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        insert into s_alarm (alarm_type) values (#{alarmType})
     </insert>
     <!-- 修改 -->
     <update id="update">
@@ -148,4 +141,9 @@
         </set>
         where id = #{id,jdbcType=BIGINT}
     </update>
+        
+    <select id="selectFinallyOne" resultType="com.suixingpay.datas.manager.core.entity.Alarm">
+        select id, alarm_type AS alarmType, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, remark from s_alarm
+            where iscancel = 0 ORDER BY id DESC LIMIT 1
+    </select>
 </mapper>

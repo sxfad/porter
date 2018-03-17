@@ -27,6 +27,12 @@ public class DicAlarmPlugin implements java.io.Serializable {
     /** 字段页面顺序. */
     private Integer fieldOrder;
 
+    /** 字段类型.*/
+    private String fieldType;
+
+    /** 字段类型字典KEY.*/
+    private String fieldTypeKey;
+
     /** 状态. */
     private Integer state;
 
@@ -75,6 +81,22 @@ public class DicAlarmPlugin implements java.io.Serializable {
 
     public void setFieldOrder(Integer fieldOrder) {
         this.fieldOrder = fieldOrder;
+    }
+
+    public String getFieldType() {
+        return fieldType;
+    }
+
+    public void setFieldType(String fieldType) {
+        this.fieldType = fieldType;
+    }
+
+    public String getFieldTypeKey() {
+        return fieldTypeKey;
+    }
+
+    public void setFieldTypeKey(String fieldTypeKey) {
+        this.fieldTypeKey = fieldTypeKey;
     }
 
     /** 状态 get方法. */

@@ -61,5 +61,11 @@ public interface CUserMapper {
      * @return
      */
     Integer pageAll(@Param("state") Integer state);
+    
+    /**
+     * 全部
+     * @return
+     */
+    List<CUser> list();
 
 }

@@ -45,11 +45,11 @@ public class NodesServiceImpl implements NodesService {
     }
 
     @Override
-    public Page<Nodes> page(Page<Nodes> page) {
-        Integer total = nodesMapper.pageAll(1);
+    public Page<Nodes> page(Page<Nodes> page, String ipAddress, Integer state, String machineName, Integer type) {
+        Integer total = nodesMapper.pageAll(ipAddress, state, machineName, type);
         if (total > 0) {
             page.setTotalItems(total);
-            page.setResult(nodesMapper.page(page, 1));
+            page.setResult(nodesMapper.page(page, ipAddress, state, machineName, type));
         }
         return page;
     }

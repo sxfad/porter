@@ -1,23 +1,21 @@
 package com.suixingpay.datas.manager.controller;
 
-import com.suixingpay.datas.manager.core.entity.Alarm;
-import com.suixingpay.datas.manager.service.AlarmService;
-import com.suixingpay.datas.manager.web.message.ResponseMessage;
-import com.suixingpay.datas.manager.web.page.Page;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import static com.suixingpay.datas.manager.web.message.ResponseMessage.ok;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import static com.suixingpay.datas.manager.web.message.ResponseMessage.ok;
+import com.suixingpay.datas.manager.core.entity.Alarm;
+import com.suixingpay.datas.manager.service.AlarmService;
+import com.suixingpay.datas.manager.web.message.ResponseMessage;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 /**
  * 告警配置表 controller控制器
@@ -35,7 +33,7 @@ public class AlarmController {
     @Autowired
     protected AlarmService alarmService;
 
-    @PostMapping
+    /*@PostMapping
     @ApiOperation(value = "新增", notes = "新增")
     public ResponseMessage add(@RequestBody Alarm alarm) {
         Integer number = alarmService.insert(alarm);
@@ -83,6 +81,19 @@ public class AlarmController {
     public ResponseMessage updateSelective(@PathVariable("id") long id, @RequestBody Alarm alarm) {
         Integer number = alarmService.updateSelective(id, alarm);
         return ok(number);
+    }*/
+
+    @PostMapping
+    @ApiOperation(value = "新增", notes = "新增")
+    public ResponseMessage add(@RequestBody Alarm alarm) {
+        Integer number = alarmService.insert(alarm);
+        return ok(number);
     }
 
+    @GetMapping("/info")
+    @ApiOperation(value = "查询明细", notes = "查询明细")
+    public ResponseMessage info(@PathVariable("id") Long id) {
+        Alarm alarm = alarmService.selectFinallyOne();
+        return ok(alarm);
+    }
 }

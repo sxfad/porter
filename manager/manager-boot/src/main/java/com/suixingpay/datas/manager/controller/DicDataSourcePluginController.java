@@ -37,6 +37,14 @@ public class DicDataSourcePluginController {
     @Autowired
     protected DicDataSourcePluginService dicDataSourcePluginService;
 
+    /**
+     * 根据数据源类型查询页面字段
+     *
+     * @author FuZizheng
+     * @date 2018/3/14 下午5:12
+     * @param: [sourceType]
+     * @return: com.suixingpay.datas.manager.web.message.ResponseMessage
+     */
     @GetMapping("/{sourceType}")
     @ApiOperation(value = "查询页面字段", notes = "入参：sourceType")
     public ResponseMessage findByType(@PathVariable("sourceType") String sourceType){

@@ -1,5 +1,7 @@
 package com.suixingpay.datas.manager.core.entity;
 
+import com.suixingpay.datas.common.dic.NodeStatusType;
+
 import java.util.Date;
 
 /**
@@ -36,7 +38,7 @@ public class Nodes implements java.io.Serializable {
     private Integer state;
 
     /** 节点类型. */
-    private Integer type;
+    private NodeStatusType type;
 
     /** 创建人. */
     private Long creater;
@@ -121,12 +123,12 @@ public class Nodes implements java.io.Serializable {
     }
 
     /** 节点类型 get方法. */
-    public Integer getType() {
+    public NodeStatusType getType() {
         return type;
     }
 
     /** 节点类型 set方法. */
-    public void setType(Integer type) {
+    public void setType(NodeStatusType type) {
         this.type = type;
     }
 

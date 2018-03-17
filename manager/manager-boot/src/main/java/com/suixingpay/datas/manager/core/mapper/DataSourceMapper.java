@@ -4,7 +4,6 @@ import com.suixingpay.datas.manager.core.entity.DataSource;
 import com.suixingpay.datas.manager.web.page.Page;
 import org.apache.ibatis.annotations.Param;
 
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -63,7 +62,10 @@ public interface DataSourceMapper {
      *
      * @return
      */
-    Integer pageAll(@Param("state") Integer state);
+    Integer pageAll(@Param("state") Integer state,
+                    @Param("name") String name,
+                    @Param("beginTime") String beginTime,
+                    @Param("endTime") String endTime);
 
     /**
      * 校验新增

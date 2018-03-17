@@ -15,12 +15,10 @@ public interface DataTableService {
 
     Integer insert(DataTable dataTable);
 
-    Integer update(Long id, DataTable dataTable);
-
     Integer delete(Long id);
 
     DataTable selectById(Long id);
 
-    Page<DataTable> page(Page<DataTable> page);
+    Page<DataTable> page(Page<DataTable> page, String bankName, String beginTime, String endTime);
 
 }

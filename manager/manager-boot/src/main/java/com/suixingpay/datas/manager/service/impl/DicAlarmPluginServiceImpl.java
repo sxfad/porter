@@ -7,6 +7,9 @@ import com.suixingpay.datas.manager.core.entity.DicAlarmPlugin;
 import com.suixingpay.datas.manager.core.mapper.DicAlarmPluginMapper;
 import com.suixingpay.datas.manager.service.DicAlarmPluginService;
 import com.suixingpay.datas.manager.web.page.Page;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -54,4 +57,10 @@ public class DicAlarmPluginServiceImpl implements DicAlarmPluginService {
         return page;
     }
 
+    @Override
+    public List<DicAlarmPlugin> findByAlertType(String alertType) {
+        return dicAlarmPluginMapper.findByAlertType(alertType);
+    }
+
+    
 }

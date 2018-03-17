@@ -16,6 +16,8 @@ import java.util.List;
  */
 public interface AlarmMapper {
 
+    Alarm selectFinallyOne();
+
     /**
      * 新增
      * @param alarm

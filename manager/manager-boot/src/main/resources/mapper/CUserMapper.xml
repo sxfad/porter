@@ -161,5 +161,10 @@
         </set>
         where id = #{id,jdbcType=BIGINT}
     </update>
+    
+    <select id="list" resultType="com.suixingpay.datas.manager.core.entity.CUser">
+        select id, loginname, loginpw, nickname, email, mobile, state, remark from c_user
+        where state=1
+    </select>
 </mapper>
 
