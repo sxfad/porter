@@ -78,7 +78,11 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
         dataSource.setMaxWait(config.getMaxWait());
         //连接错误重试次数
         dataSource.setConnectionErrorRetryAttempts(config.getConnectionErrorRetryAttempts());
-
+        //连接错误重试时间间隔
+        //dataSource.setTimeBetweenConnectErrorMillis(1000);
+        //超出错误连接次数后是否退出尝试连接
+        dataSource.setBreakAfterAcquireFailure(true);
+        dataSource.setTestWhileIdle(true);
         if (config.getDbType() == DbType.MYSQL) {
             dataSource.setValidationQuery("select 1");
         } else if (config.getDbType() == DbType.ORACLE) {

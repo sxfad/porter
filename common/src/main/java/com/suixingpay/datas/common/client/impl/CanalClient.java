@@ -10,6 +10,7 @@
 package com.suixingpay.datas.common.client.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.otter.canal.common.alarm.CanalAlarmHandler;
 import com.alibaba.otter.canal.instance.core.CanalInstance;
 import com.alibaba.otter.canal.instance.core.CanalInstanceGenerator;
 import com.alibaba.otter.canal.instance.manager.CanalInstanceWithManager;
@@ -116,8 +117,35 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
                     canal.getCanalParameter().setMasterLogfileOffest(canalPosition.offset);
 
                 }
+                CanalInstanceWithManager instance = new CanalInstanceWithManager(canal, clientId.getFilter());
+                instance.setAlarmHandler(new CanalAlarmHandler() {
+                    private volatile boolean isRun = false;
 
-                return new CanalInstanceWithManager(canal, clientId.getFilter());
+                    @Override
+                    @SneakyThrows
+                    public void sendAlarm(String destination, String msg) {
+                        //master连接不上
+                        if (StringUtils.trimToEmpty(msg).contains("CanalParseException: java.io.IOException")) {
+                            throw new TaskStopTriggerException(config.getProperties() + ":链接建立失败");
+                        }
+                    }
+
+                    @Override
+                    public void start() {
+                        isRun = true;
+                    }
+
+                    @Override
+                    public void stop() {
+                        isRun = false;
+                    }
+
+                    @Override
+                    public boolean isStart() {
+                        return isRun;
+                    }
+                });
+                return instance;
             }
         });
         canalServer.start();
