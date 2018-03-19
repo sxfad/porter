@@ -29,12 +29,14 @@ import lombok.Getter;
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum DbType {
 
-    MYSQL("MYSQL", "MYSQL"), ORACLE("ORACLE", "ORACLE");
+    MYSQL("MYSQL", "MYSQL","com.mysql.cj.jdbc.Driver"), ORACLE("ORACLE", "ORACLE","oracle.jdbc.driver.OracleDriver");
 
     @Getter
     private final String code;
     @Getter
     private final String name;
+    @Getter
+    private final String driverName;
 
     public static final HashMap<String, Object> LINKMAP = new LinkedHashMap<String, Object>() {
 
