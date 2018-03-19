@@ -1,5 +1,7 @@
 package com.suixingpay.datas.manager.service;
 
+import java.util.List;
+
 import com.suixingpay.datas.manager.core.entity.DataTable;
 import com.suixingpay.datas.manager.web.page.Page;
 
@@ -21,4 +23,7 @@ public interface DataTableService {
 
     Page<DataTable> page(Page<DataTable> page, String bankName, String beginTime, String endTime);
 
+    List<String> prefixList(Long sourceId);
+    
+    Page<Object> tableList(Page<Object> page,Long sourceId,String prefix,String tableName);
 }

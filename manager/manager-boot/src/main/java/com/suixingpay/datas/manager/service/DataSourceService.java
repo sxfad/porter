@@ -2,10 +2,6 @@ package com.suixingpay.datas.manager.service;
 
 import com.suixingpay.datas.manager.core.entity.DataSource;
 import com.suixingpay.datas.manager.web.page.Page;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Date;
-import java.util.List;
 
 /**
  * 数据源信息表 服务接口类

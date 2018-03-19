@@ -3,12 +3,22 @@
  */
 package com.suixingpay.datas.manager.service.impl;
 
-import com.suixingpay.datas.manager.core.entity.DataTable;
-import com.suixingpay.datas.manager.core.mapper.DataTableMapper;
-import com.suixingpay.datas.manager.service.DataTableService;
-import com.suixingpay.datas.manager.web.page.Page;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.suixingpay.datas.manager.core.dto.JDBCVo;
+import com.suixingpay.datas.manager.core.entity.DataSource;
+import com.suixingpay.datas.manager.core.entity.DataSourcePlugin;
+import com.suixingpay.datas.manager.core.entity.DataTable;
+import com.suixingpay.datas.manager.core.enums.QuerySQL;
+import com.suixingpay.datas.manager.core.mapper.DataTableMapper;
+import com.suixingpay.datas.manager.core.util.ApplicationContextUtil;
+import com.suixingpay.datas.manager.service.DataSourceService;
+import com.suixingpay.datas.manager.service.DataTableService;
+import com.suixingpay.datas.manager.service.DbSelectService;
+import com.suixingpay.datas.manager.web.page.Page;
 
 /**
  * 数据表信息表 服务实现类
@@ -23,6 +33,9 @@ public class DataTableServiceImpl implements DataTableService {
 
     @Autowired
     private DataTableMapper dataTableMapper;
+
+    @Autowired
+    private DataSourceService dataSourceService;
 
     @Override
     public Integer insert(DataTable dataTable) {
@@ -47,5 +60,77 @@ public class DataTableServiceImpl implements DataTableService {
     @Override
     public Integer delete(Long id) {
         return dataTableMapper.delete(id);
+    }
+
+    @Override
+    public List<String> prefixList(Long sourceId) {
+        DataSource dataSource = dataSourceService.selectById(sourceId);
+        List<DataSourcePlugin> list = dataSource.getPlugins();
+        String url = null;
+        String username = null;
+        String password = null;
+        QuerySQL query = null;
+        for (DataSourcePlugin dataSourcePlugin : list) {
+            if (dataSourcePlugin.getFieldCode().equals("dbtype")) {
+                if (dataSourcePlugin.getFieldValue().toLowerCase().equals("mysql")) {
+                    query = QuerySQL.MYSQL;
+                }
+                if (dataSourcePlugin.getFieldValue().toLowerCase().equals("oracle")) {
+                    query = QuerySQL.ORACLE;
+                }
+            }
+            if (dataSourcePlugin.getFieldCode().equals("url")) {
+                url = dataSourcePlugin.getFieldValue();
+            }
+            if (dataSourcePlugin.getFieldCode().equals("userName")) {
+                username = dataSourcePlugin.getFieldValue();
+            }
+            if (dataSourcePlugin.getFieldCode().equals("password")) {
+                password = dataSourcePlugin.getFieldValue();
+            }
+        }
+
+        String sql = query.getPrefixSql();
+        DbSelectService dbSelectService = ApplicationContextUtil.getBean("db" + query.getDbType() + "SelectService");
+        List<String> lists = dbSelectService.list(new JDBCVo(query.getDriverName(), url, username, password), sql,null);
+        return lists;
+    }
+
+    @Override
+    public Page<Object> tableList(Page<Object> page, Long sourceId, String prefix, String tableName) {
+        DataSource dataSource = dataSourceService.selectById(sourceId);
+        List<DataSourcePlugin> list = dataSource.getPlugins();
+        String url = null;
+        String username = null;
+        String password = null;
+        QuerySQL query = null;
+        for (DataSourcePlugin dataSourcePlugin : list) {
+            if (dataSourcePlugin.getFieldCode().equals("dbtype")) {
+                if (dataSourcePlugin.getFieldValue().toLowerCase().equals("mysql")) {
+                    query = QuerySQL.MYSQL;
+                }
+                if (dataSourcePlugin.getFieldValue().toLowerCase().equals("oracle")) {
+                    query = QuerySQL.ORACLE;
+                }
+            }
+            if (dataSourcePlugin.getFieldCode().equals("url")) {
+                url = dataSourcePlugin.getFieldValue();
+            }
+            if (dataSourcePlugin.getFieldCode().equals("userName")) {
+                username = dataSourcePlugin.getFieldValue();
+            }
+            if (dataSourcePlugin.getFieldCode().equals("password")) {
+                password = dataSourcePlugin.getFieldValue();
+            }
+        }
+        String sql = query.getTablesSql();
+        DbSelectService dbSelectService = ApplicationContextUtil.getBean("db" + query.getDbType() + "SelectService");
+        Long total = dbSelectService.pageTotal(new JDBCVo(query.getDriverName(), url, username, password), sql, prefix, tableName);
+        if (total > 0) {
+            page.setTotalItems(total);
+            List<Object> lists = dbSelectService.page(new JDBCVo(query.getDriverName(), url, username, password), page, sql, prefix, tableName);
+            page.setResult(lists);
+        }
+        return page;
     }
 }
