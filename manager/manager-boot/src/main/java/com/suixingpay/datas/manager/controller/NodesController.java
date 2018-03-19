@@ -40,8 +40,8 @@ public class NodesController {
      */
     @GetMapping
     @ApiOperation(value = "查询列表", notes = "查询列表")
-    public ResponseMessage list(@RequestParam(value = "pageNo", required = false) Integer pageNo,
-                                @RequestParam(value = "pageSize", required = false) Integer pageSize,
+    public ResponseMessage list(@RequestParam(value = "pageNo", required = true) Integer pageNo,
+                                @RequestParam(value = "pageSize", required = true) Integer pageSize,
                                 @RequestParam(value = "ipAddress", required = false) String ipAddress,
                                 @RequestParam(value = "state", required = false) Integer state,
                                 @RequestParam(value = "machineName", required = false) String machineName,
