@@ -70,6 +70,7 @@ public class DataTableServiceImpl implements DataTableService {
         String username = null;
         String password = null;
         QuerySQL query = null;
+        //根据数据源id获取数据源信息
         for (DataSourcePlugin dataSourcePlugin : list) {
             if (dataSourcePlugin.getFieldCode().toLowerCase().equals("dbtype")) {
                 if (dataSourcePlugin.getFieldValue().toLowerCase().equals("mysql")) {
@@ -91,6 +92,7 @@ public class DataTableServiceImpl implements DataTableService {
         }
 
         String sql = query.getPrefixSql();
+        //根据DbType获取相应的实现类
         DbSelectService dbSelectService = ApplicationContextUtil.getBean("db" + query.getDbType() + "SelectService");
         List<String> lists = dbSelectService.list(new JDBCVo(query.getDriverName(), url, username, password), sql,null);
         return lists;
