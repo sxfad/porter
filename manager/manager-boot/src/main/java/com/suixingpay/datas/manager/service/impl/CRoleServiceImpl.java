@@ -3,10 +3,11 @@
  */
 package com.suixingpay.datas.manager.service.impl;
 
-import com.suixingpay.datas.manager.core.mapper.CRoleMapper;
-import com.suixingpay.datas.manager.service.CRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.suixingpay.datas.manager.core.mapper.CRoleMapper;
+import com.suixingpay.datas.manager.service.CRoleService;
 
 /**
  * 角色表 服务实现类
