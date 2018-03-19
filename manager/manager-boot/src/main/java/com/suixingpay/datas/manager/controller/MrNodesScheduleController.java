@@ -35,7 +35,13 @@ public class MrNodesScheduleController {
     @Autowired
     protected MrNodesScheduleService mrNodesScheduleService;
 
-    @PostMapping
+/*    @GetMapping
+    @ApiOperation(value = "查询列表", notes = "查询列表")
+    public ResponseMessage list(@RequestParam(value = "pageNo", required = false) Integer pageNo) {
+
+    }*/
+
+    /*@PostMapping
     @ApiOperation(value = "新增", notes = "新增")
     public ResponseMessage add(@RequestBody MrNodesSchedule mrNodesSchedule) {
         Integer number = mrNodesScheduleService.insert(mrNodesSchedule);
@@ -69,6 +75,6 @@ public class MrNodesScheduleController {
             @RequestParam(value = "pageSize", required = false) Integer pageSize) {
         Page<MrNodesSchedule> page = mrNodesScheduleService.page(new Page<MrNodesSchedule>(pageNo, pageSize));
         return ok(page);
-    }
+    }*/
 
 }
