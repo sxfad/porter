@@ -33,7 +33,8 @@ public class DbOracleSelectService implements DbSelectService{
 
     @Override
     public List<Object> page(JDBCVo jvo, Page<Object> page, String sql, String prefix,String tableName) {
-        // TODO Auto-generated method stub
+        String executeSql = "select * from (select t.*,rownum from ("+sql+") as t where 1=1) where rownum>? and  rownum<=?";
+        
         return null;
     }
 }
