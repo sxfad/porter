@@ -11,6 +11,8 @@ package com.suixingpay.datas.common.util.compile;
 
 import com.suixingpay.datas.common.config.JavaFileConfig;
 import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -21,22 +23,55 @@ import org.junit.Test;
  */
 public class JavaFileCompilerTest {
 
+    private static String RESOURCE_DIR;
+
+    @BeforeClass
+    public static void init() {
+        RESOURCE_DIR = JavaFileCompilerTest.class.getResource("/").getPath().replace("out/test/classes", "src/test/resources");
+
+    }
+
     @Test
     public void newJavaObject() throws Exception {
         JavaFileConfig config = new JavaFileConfig();
         config.setClassName("com.suixingpay.datas.common.util.compile.JavaFileSample");
-        config.setContent("package com.suixingpay.datas.common.util.compile;" +
-                "public class JavaFileSample {" +
-                "    " +
-                "    @Override" +
-                "    public String toString() {" +
-                "        return \"JavaFileSample\";" +
-                "    }" +
-                "}");
+        config.setContent("package com.suixingpay.datas.common.util.compile;"
+                + "public class JavaFileSample {"
+                + "    "
+                + "    @Override"
+                + "    public String toString() {"
+                + "        return \"JavaFileSample\";"
+                + "    }"
+                + "}");
 
-        Object obj = JavaFileCompiler.INSTANCE().newJavaObject(config, Object.class);
+        Object obj = JavaFileCompiler.getInstance().newJavaObject(config, Object.class);
         Assert.assertNotNull(obj);
         Assert.assertNotNull(obj.toString());
         System.out.println(obj.toString());
     }
+
+    @Test
+    @Ignore
+    public void newFromClassJavaObject() throws Exception {
+        JavaFileConfig config = new JavaFileConfig();
+        config.setClassName("com.suixingpay.datas.common.util.compile.JavaFileSample");
+        config.setContent(RESOURCE_DIR + "JavaFileSample.class");
+        Object obj = JavaFileCompiler.getInstance().newJavaObject(config, Object.class);
+        Assert.assertNotNull(obj);
+        Assert.assertNotNull(obj.toString());
+        System.out.println(obj.toString());
+    }
+
+    @Test
+    @Ignore
+    public void newFromJarJavaObject() throws Exception {
+        JavaFileConfig config = new JavaFileConfig();
+        config.setClassName("com.suixingpay.datas.compiler.JarClass");
+        config.setContent(RESOURCE_DIR + "/fromJarCompiler-1.0.jar");
+        Object obj = JavaFileCompiler.getInstance().newJavaObject(config, Object.class);
+        Assert.assertNotNull(obj);
+        Assert.assertNotNull(obj.toString());
+        System.out.println(obj.toString());
+    }
+
 }

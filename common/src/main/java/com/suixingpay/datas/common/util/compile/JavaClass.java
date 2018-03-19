@@ -13,6 +13,7 @@ import com.suixingpay.datas.common.config.JavaFileConfig;
 import lombok.Getter;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -37,13 +38,13 @@ public class JavaClass  implements JavaFile {
     }
 
     private byte[] readClassData(String filePath) throws IOException {
-        URL myUrl = new URL(filePath);
+        URL myUrl = new File(filePath).toURI().toURL();
         URLConnection connection = myUrl.openConnection();
         InputStream input = connection.getInputStream();
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         int data = input.read();
 
-        while(data != -1){
+        while (data != -1) {
             buffer.write(data);
             data = input.read();
         }

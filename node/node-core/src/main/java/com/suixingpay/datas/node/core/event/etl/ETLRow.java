@@ -40,6 +40,8 @@ public class ETLRow {
     /**
      * 可修改自定义内容
      */
+    //操作类型 I U D T
+    private EventType finalOpType;
     private String finalSchema;
     private String finalTable;
     private final List<ETLColumn> columns;
@@ -69,6 +71,7 @@ public class ETLRow {
         this.opTime = opTime;
 
         //数据映射时使用
+        this.finalOpType = opType;
         this.finalSchema = schema;
         this.finalTable = table;
         this.position = position;
@@ -127,5 +130,13 @@ public class ETLRow {
 
     public void setKeyChangedOnUpdate(boolean keyChangedOnUpdate) {
         isKeyChangedOnUpdate = keyChangedOnUpdate;
+    }
+
+    public EventType getFinalOpType() {
+        return finalOpType;
+    }
+
+    public void setFinalOpType(EventType finalOpType) {
+        this.finalOpType = finalOpType;
     }
 }

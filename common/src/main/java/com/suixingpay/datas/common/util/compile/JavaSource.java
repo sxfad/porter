@@ -12,7 +12,6 @@ package com.suixingpay.datas.common.util.compile;
 import com.suixingpay.datas.common.config.JavaFileConfig;
 import lombok.Getter;
 import org.apache.commons.lang.StringUtils;
-import org.apache.oro.text.regex.MalformedPatternException;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]

@@ -22,7 +22,6 @@ import com.suixingpay.datas.common.util.compile.JavaFileCompiler;
 import com.suixingpay.datas.node.core.event.s.ConverterFactory;
 import com.suixingpay.datas.node.core.event.s.EventConverter;
 import com.suixingpay.datas.node.core.event.s.EventProcessor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 
 import java.util.ArrayList;
@@ -69,7 +68,7 @@ public enum DataConsumerFactory {
         EventProcessor processor = null;
         if (null != config.getEventProcessor()) {
             try {
-                processor = JavaFileCompiler.INSTANCE().newJavaObject(config.getEventProcessor(), EventProcessor.class);
+                processor = JavaFileCompiler.getInstance().newJavaObject(config.getEventProcessor(), EventProcessor.class);
             } catch (Exception e) {
                 throw new ConfigParseException("EventProcessor转换java对象失败:" + e.getMessage());
             }

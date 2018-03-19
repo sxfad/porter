@@ -35,10 +35,15 @@ import java.nio.charset.StandardCharsets;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年03月09日 13:34
  */
-public class   JavaFileCompiler extends ClassLoader {
-    private static final JavaFileCompiler compiler = new JavaFileCompiler();
-    public static JavaFileCompiler INSTANCE() {
-        return compiler;
+public class   JavaFileCompiler extends URLClassLoader {
+    private static final JavaFileCompiler COMPILER = new JavaFileCompiler(new URL[0]);
+
+    public JavaFileCompiler(URL[] urls) {
+        super(urls);
+    }
+
+    public static JavaFileCompiler getInstance() {
+        return COMPILER;
     }
     /**
      *
@@ -54,6 +59,8 @@ public class   JavaFileCompiler extends ClassLoader {
         //class
         if (source.getContent().endsWith(".class")) {
             javaFile = new JavaClass(source);
+        } else if (source.getContent().endsWith(".jar")) {
+            javaFile = new JavaJarClass(source);
         } else { //source
             javaFile = new JavaSource(source);
         }
@@ -71,7 +78,11 @@ public class   JavaFileCompiler extends ClassLoader {
             if (null != javaClass.getClassData() && javaClass.getClassData().length > 0) {
                 return defineClass(javaClass.getClassName(), javaClass.getClassData(), 0, javaClass.getClassData().length);
             }
-        } else  if (null != javaFile && javaFile instanceof JavaSource){
+        } else if (null != javaFile && javaFile instanceof JavaJarClass) {
+            JavaJarClass javaClass = (JavaJarClass) javaFile;
+            this.addURL(javaClass.getJarFile());
+            return this.loadClass(javaClass.getClassName());
+        } else  if (null != javaFile && javaFile instanceof JavaSource) {
             JavaSource javaSource = (JavaSource) javaFile;
             JavaCompiler javaCompiler = ToolProvider.getSystemJavaCompiler();
             //临时工作目录
@@ -91,8 +102,9 @@ public class   JavaFileCompiler extends ClassLoader {
                     Collections.emptyList(), null, Arrays.asList(fileObject));
             if (task.call()) {
                 URL classUrl = tmpDir.toURI().toURL();
-                ClassLoader classLoader = new URLClassLoader(new URL[]{classUrl});
-                return Class.forName(javaSource.getClassName(), true, classLoader);
+                this.addURL(classUrl);
+                //ClassLoader classLoader = new URLClassLoader(new URL[]{classUrl});
+                return Class.forName(javaSource.getClassName(), true, this);
             }
         }
         return null;

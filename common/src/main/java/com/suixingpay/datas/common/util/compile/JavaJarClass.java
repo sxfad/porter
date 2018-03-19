@@ -12,11 +12,9 @@ package com.suixingpay.datas.common.util.compile;
 import com.suixingpay.datas.common.config.JavaFileConfig;
 import lombok.Getter;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -25,30 +23,12 @@ import java.net.URLConnection;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年03月09日 14:47
  */
 
-public class JavaClass  implements JavaFile {
-    @Getter private final String filePath;
+public class JavaJarClass implements JavaFile {
+    @Getter private final URL jarFile;
     @Getter private final String className;
-    @Getter private final byte[] classData;
 
-    public JavaClass(JavaFileConfig config) throws IOException {
-        this.filePath = config.getContent();
-        className = config.getClassName();
-        classData = readClassData(filePath);
-    }
-
-    private byte[] readClassData(String filePath) throws IOException {
-        URL myUrl = new URL(filePath);
-        URLConnection connection = myUrl.openConnection();
-        InputStream input = connection.getInputStream();
-        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        int data = input.read();
-
-        while(data != -1){
-            buffer.write(data);
-            data = input.read();
-        }
-        input.close();
-
-        return buffer.toByteArray();
+    public JavaJarClass(JavaFileConfig config) throws MalformedURLException {
+        this.className = config.getClassName();
+        this.jarFile = new File(config.getContent()).toURI().toURL();
     }
 }

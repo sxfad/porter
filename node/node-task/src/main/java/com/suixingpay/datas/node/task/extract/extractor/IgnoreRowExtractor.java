@@ -38,23 +38,23 @@ public class IgnoreRowExtractor implements Extractor {
 
             //包含、不包含表判断
             if (!metadata.getIncludeTables().isEmpty()) {
-                String strSeg = new StringBuffer().append(row.getSchema()).append(".")
-                        .append(row.getTable()).toString().toUpperCase().intern();
+                String strSeg = new StringBuffer().append(row.getFinalSchema()).append(".")
+                        .append(row.getFinalTable()).toString().toUpperCase().intern();
 
                 if (!metadata.getIncludeTables().contains(strSeg)) removals.add(row);
 
             } else if (metadata.getIncludeTables().isEmpty() && !metadata.getExcludeTables().isEmpty()) { //不包含表
-                String strSeg = new StringBuffer().append(row.getSchema()).append(".")
-                        .append(row.getTable()).toString().toUpperCase().intern();
+                String strSeg = new StringBuffer().append(row.getFinalSchema()).append(".")
+                        .append(row.getFinalTable()).toString().toUpperCase().intern();
 
                 if (metadata.getExcludeTables().contains(strSeg)) removals.add(row);
             }
 
             //当前仅支持插入、更新、删除、截断表
-            if (row.getOpType() == EventType.INSERT || row.getOpType() == EventType.UPDATE
-                    || row.getOpType() == EventType.DELETE || row.getOpType() == EventType.TRUNCATE) {
+            if (row.getFinalOpType() == EventType.INSERT || row.getFinalOpType() == EventType.UPDATE
+                    || row.getFinalOpType() == EventType.DELETE || row.getFinalOpType() == EventType.TRUNCATE) {
                 //插入、删除、更新字段为空
-                if ((null == row.getColumns() || row.getColumns().isEmpty()) && row.getOpType() != EventType.TRUNCATE) {
+                if ((null == row.getColumns() || row.getColumns().isEmpty()) && row.getFinalOpType() != EventType.TRUNCATE) {
                     LOGGER.debug("removing row:{}", JSON.toJSONString(row));
                     removals.add(row);
                 }
