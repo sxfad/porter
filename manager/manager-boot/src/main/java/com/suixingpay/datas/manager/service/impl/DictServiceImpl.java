@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.suixingpay.datas.manager.service.impl;
 
@@ -25,14 +25,13 @@ import com.suixingpay.datas.manager.service.DictionaryService;
 
 /**
  * @author guohongjian[guo_hj@suixingpay.com]
- *
  */
 @Service
 public class DictServiceImpl implements DictService {
 
     @Autowired
     public DictionaryService dictionaryService;
-    
+
     @Override
     public Map<String, Map<String, Object>> dictAll() {
         Map<String, Map<String, Object>> map = new HashMap<>();

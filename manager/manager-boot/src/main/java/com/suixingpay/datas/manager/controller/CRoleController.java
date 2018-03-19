@@ -20,7 +20,7 @@ import static com.suixingpay.datas.manager.web.message.ResponseMessage.ok;
 
 /**
  * 角色表 controller控制器
- * 
+ *
  * @author: FairyHood
  * @date: 2018-03-07 17:26:55
  * @version: V1.0-auto
@@ -65,7 +65,7 @@ public class CRoleController {
     @ApiOperation(value = "查询列表", notes = "查询列表")
     @GetMapping
     public ResponseMessage list(CRole t, @RequestParam(value = "pageNum", required = false) Integer pageNum,
-            @RequestParam(value = "pageSize", required = false) Integer pageSize) {
+                                @RequestParam(value = "pageSize", required = false) Integer pageSize) {
 
         return ok(null);
     }

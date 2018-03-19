@@ -36,7 +36,7 @@ import io.swagger.annotations.ApiOperation;
 public class DataTableController {
 
     @Autowired
-    protected DataTableService dataTableService;
+    private DataTableService dataTableService;
 
     /**
      * 新增
@@ -91,22 +91,30 @@ public class DataTableController {
      * @author FuZizheng
      * @date 2018/3/15 下午4:46
      * @param: [pageNo,
-     *             pageSize, bankName, beginTime, endTime]
+     * pageSize, bankName, beginTime, endTime]
      * @return: com.suixingpay.datas.manager.web.message.ResponseMessage
      */
     @GetMapping
     @ApiOperation(value = "查询列表", notes = "查询列表")
     public ResponseMessage list(@RequestParam(value = "pageNo", required = true) Integer pageNo,
-            @RequestParam(value = "pageSize", required = true) Integer pageSize,
-            @RequestParam(value = "bankName", required = false) String bankName,
-            @RequestParam(value = "beginTime", required = false) String beginTime,
-            @RequestParam(value = "endTime", required = false) String endTime) {
+                                @RequestParam(value = "pageSize", required = true) Integer pageSize,
+                                @RequestParam(value = "bankName", required = false) String bankName,
+                                @RequestParam(value = "beginTime", required = false) String beginTime,
+                                @RequestParam(value = "endTime", required = false) String endTime) {
 
         Page<DataTable> page = dataTableService.page(new Page<DataTable>(pageNo, pageSize), bankName, beginTime,
                 endTime);
         return ok(page);
     }
 
+    /**
+     * 数据源下有权限的前缀
+     *
+     * @author FuZizheng
+     * @date 2018/3/19 下午4:52
+     * @param: [sourceId]
+     * @return: com.suixingpay.datas.manager.web.message.ResponseMessage
+     */
     @GetMapping("/prefixs/{sourceId}")
     @ApiOperation(value = "数据源下有权限的前缀", notes = "数据源下有权限的前缀（oracle-用户 or mysql -数据库）")
     public ResponseMessage prefixList(@PathVariable("sourceId") Long sourceId) {
@@ -114,14 +122,22 @@ public class DataTableController {
         return ok(prefixs);
     }
 
+    /**
+     * 数据表名称分页方法
+     *
+     * @author FuZizheng
+     * @date 2018/3/19 下午4:52
+     * @param: [pageNo, pageSize, sourceId, prefix, tableName]
+     * @return: com.suixingpay.datas.manager.web.message.ResponseMessage
+     */
     @GetMapping("/tables")
     @ApiOperation(value = "数据表名称分页方法", notes = "数据表名称分页方法")
     public ResponseMessage tableList(@RequestParam(value = "pageNo", required = true) Integer pageNo,
-            @RequestParam(value = "pageSize", required = true) Integer pageSize,
-            @RequestParam(value = "sourceId", required = true) Long sourceId,
-            @RequestParam(value = "prefix", required = false) String prefix,
-            @RequestParam(value = "tableName", required = false) String tableName) {
-        Page<Object> page = dataTableService.tableList(new Page<Object>(pageNo, pageSize),sourceId,prefix, tableName);
+                                     @RequestParam(value = "pageSize", required = true) Integer pageSize,
+                                     @RequestParam(value = "sourceId", required = true) Long sourceId,
+                                     @RequestParam(value = "prefix", required = false) String prefix,
+                                     @RequestParam(value = "tableName", required = false) String tableName) {
+        Page<Object> page = dataTableService.tableList(new Page<Object>(pageNo, pageSize), sourceId, prefix, tableName);
         return ok(page);
     }
 

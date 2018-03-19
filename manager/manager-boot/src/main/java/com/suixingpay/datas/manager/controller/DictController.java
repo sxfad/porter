@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.suixingpay.datas.manager.controller;
 
@@ -20,7 +20,6 @@ import io.swagger.annotations.ApiOperation;
 
 /**
  * @author guohongjian[guo_hj@suixingpay.com]
- *
  */
 @Api(description = "字典数据")
 @RestController

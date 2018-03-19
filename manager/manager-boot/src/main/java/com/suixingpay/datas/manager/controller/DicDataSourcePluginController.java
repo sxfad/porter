@@ -43,7 +43,7 @@ public class DicDataSourcePluginController {
      */
     @GetMapping("/{sourceType}")
     @ApiOperation(value = "查询页面字段", notes = "入参：sourceType")
-    public ResponseMessage findByType(@PathVariable("sourceType") String sourceType){
+    public ResponseMessage findByType(@PathVariable("sourceType") String sourceType) {
         List<DicDataSourcePlugin> dicDataSourcePluginList = dicDataSourcePluginService.findByType(sourceType);
         return ok(dicDataSourcePluginList);
     }

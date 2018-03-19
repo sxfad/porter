@@ -62,5 +62,5 @@ public class DicAlarmPluginServiceImpl implements DicAlarmPluginService {
         return dicAlarmPluginMapper.findByAlertType(alertType);
     }
 
-    
+
 }

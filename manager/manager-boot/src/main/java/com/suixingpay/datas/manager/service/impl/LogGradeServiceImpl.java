@@ -66,7 +66,7 @@ public class LogGradeServiceImpl implements LogGradeService {
 
         LogGrade logGrade = logGradeMapper.select();
 
-        if ( null != logGrade && !"".equals(logGrade)) {
+        if (null != logGrade && !"".equals(logGrade)) {
             return logGrade;
         } else {
             //默认为INFO
