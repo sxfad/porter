@@ -18,7 +18,7 @@ import com.suixingpay.datas.common.config.SourceConfig;
 import com.suixingpay.datas.common.exception.ClientException;
 import com.suixingpay.datas.common.exception.ConfigParseException;
 import com.suixingpay.datas.common.exception.DataConsumerBuildException;
-import com.suixingpay.datas.common.util.compile.SourceCompiler;
+import com.suixingpay.datas.common.util.compile.JavaFileCompiler;
 import com.suixingpay.datas.node.core.event.s.ConverterFactory;
 import com.suixingpay.datas.node.core.event.s.EventConverter;
 import com.suixingpay.datas.node.core.event.s.EventProcessor;
@@ -67,9 +67,9 @@ public enum DataConsumerFactory {
 
         //自定义消费数据处理器
         EventProcessor processor = null;
-        if (!StringUtils.isBlank(config.getEventProcessor())) {
+        if (null != config.getEventProcessor()) {
             try {
-                processor = SourceCompiler.INSTANCE.newJavaObject(config.getEventProcessor(), EventProcessor.class);
+                processor = JavaFileCompiler.INSTANCE().newJavaObject(config.getEventProcessor(), EventProcessor.class);
             } catch (Exception e) {
                 throw new ConfigParseException("EventProcessor转换java对象失败:" + e.getMessage());
             }
