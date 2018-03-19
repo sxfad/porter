@@ -71,7 +71,7 @@ public class DataTableServiceImpl implements DataTableService {
         String password = null;
         QuerySQL query = null;
         for (DataSourcePlugin dataSourcePlugin : list) {
-            if (dataSourcePlugin.getFieldCode().equals("dbtype")) {
+            if (dataSourcePlugin.getFieldCode().toLowerCase().equals("dbtype")) {
                 if (dataSourcePlugin.getFieldValue().toLowerCase().equals("mysql")) {
                     query = QuerySQL.MYSQL;
                 }
@@ -79,13 +79,13 @@ public class DataTableServiceImpl implements DataTableService {
                     query = QuerySQL.ORACLE;
                 }
             }
-            if (dataSourcePlugin.getFieldCode().equals("url")) {
+            if (dataSourcePlugin.getFieldCode().toLowerCase().equals("url")) {
                 url = dataSourcePlugin.getFieldValue();
             }
-            if (dataSourcePlugin.getFieldCode().equals("userName")) {
+            if (dataSourcePlugin.getFieldCode().toLowerCase().equals("username")) {
                 username = dataSourcePlugin.getFieldValue();
             }
-            if (dataSourcePlugin.getFieldCode().equals("password")) {
+            if (dataSourcePlugin.getFieldCode().toLowerCase().equals("password")) {
                 password = dataSourcePlugin.getFieldValue();
             }
         }
@@ -105,7 +105,7 @@ public class DataTableServiceImpl implements DataTableService {
         String password = null;
         QuerySQL query = null;
         for (DataSourcePlugin dataSourcePlugin : list) {
-            if (dataSourcePlugin.getFieldCode().equals("dbtype")) {
+            if (dataSourcePlugin.getFieldCode().toLowerCase().equals("dbtype")) {
                 if (dataSourcePlugin.getFieldValue().toLowerCase().equals("mysql")) {
                     query = QuerySQL.MYSQL;
                 }
@@ -113,13 +113,13 @@ public class DataTableServiceImpl implements DataTableService {
                     query = QuerySQL.ORACLE;
                 }
             }
-            if (dataSourcePlugin.getFieldCode().equals("url")) {
+            if (dataSourcePlugin.getFieldCode().toLowerCase().equals("url")) {
                 url = dataSourcePlugin.getFieldValue();
             }
-            if (dataSourcePlugin.getFieldCode().equals("userName")) {
+            if (dataSourcePlugin.getFieldCode().toLowerCase().equals("username")) {
                 username = dataSourcePlugin.getFieldValue();
             }
-            if (dataSourcePlugin.getFieldCode().equals("password")) {
+            if (dataSourcePlugin.getFieldCode().toLowerCase().equals("password")) {
                 password = dataSourcePlugin.getFieldValue();
             }
         }

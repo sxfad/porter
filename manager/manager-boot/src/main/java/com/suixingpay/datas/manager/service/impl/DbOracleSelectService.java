@@ -50,15 +50,16 @@ public class DbOracleSelectService implements DbSelectService{
     @Override
     public Long pageTotal(JDBCVo jvo, String sql, String prefix, String tableName1) {
         Long total = 0l;
-        String executeSql = "select count(*) as tatal from ("+sql+") as t where %term";
+        String executeSql = "select count(*) as tatal from ("+sql+") t where %term";
         StringBuffer termSql = new StringBuffer("1=1");
         if(prefix!=null&&!prefix.equals("")) {
             termSql.append(" and lower(prefixName) = '"+prefix.toLowerCase()+"' ");
         }
-        if(tableName1!=null&&tableName1.equals("")) {
+        if(tableName1!=null&&!tableName1.equals("")) {
             termSql.append(" and lower(tableName) like '%"+tableName1.toLowerCase()+"%' ");
         }
         executeSql = executeSql.replace("%term", termSql);
+        //System.out.println(executeSql);
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet results = null;
@@ -82,15 +83,16 @@ public class DbOracleSelectService implements DbSelectService{
         int begin = (page.getPageNo()-1)*page.getPageSize();
         int end = page.getPageNo()*page.getPageSize();
         List<Object> list = new ArrayList<Object>();
-        String executeSql = "select * from (select t.*,rownum from ("+sql+") as t where %term) where rownum>? and  rownum<=?";
+        String executeSql = "select * from (select t.*,rownum rn from ("+sql+") t where %term) where rn>? and  rn<=?";
         StringBuffer termSql = new StringBuffer("1=1");
         if(prefix!=null&&!prefix.equals("")) {
             termSql.append(" and lower(prefixName) = '"+prefix.toLowerCase()+"' ");
         }
-        if(tableName1!=null&&tableName1.equals("")) {
+        if(tableName1!=null&&!tableName1.equals("")) {
             termSql.append(" and lower(tableName) like '%"+tableName1.toLowerCase()+"%' ");
         }
         executeSql = executeSql.replace("%term", termSql);
+        System.out.println(executeSql);
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet results = null;
@@ -98,7 +100,7 @@ public class DbOracleSelectService implements DbSelectService{
             connection = DataSourceUtil.getConnection(jvo.getDriverName(), jvo.getUrl(), jvo.getUsername(), jvo.getPassword());
             preparedStatement = connection.prepareStatement(executeSql);
             preparedStatement.setInt(1, begin);
-            preparedStatement.setInt(1, end);
+            preparedStatement.setInt(2, end);
             results = preparedStatement.executeQuery();
             while (results.next()) {
                 String prefixName = results.getString("prefixName");
