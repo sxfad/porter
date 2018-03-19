@@ -8,7 +8,7 @@ import com.suixingpay.datas.manager.web.page.Page;
 
 /**
  * 告警配置策略字典表 服务接口类
- * 
+ *
  * @author: FairyHood
  * @date: 2018-03-08 10:46:01
  * @version: V1.0-auto

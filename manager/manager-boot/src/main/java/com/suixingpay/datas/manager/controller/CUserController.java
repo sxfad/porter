@@ -20,7 +20,7 @@ import io.swagger.annotations.ApiOperation;
 
 /**
  * 登陆用户表 controller控制器
- * 
+ *
  * @author: FairyHood
  * @date: 2018-03-07 17:26:55
  * @version: V1.0-auto
@@ -65,7 +65,7 @@ public class CUserController {
     @ApiOperation(value = "分页列表", notes = "分页列表")
     @GetMapping
     public ResponseMessage page(@RequestParam(value = "pageNo", required = false) Integer pageNo,
-            @RequestParam(value = "pageSize", required = false) Integer pageSize) {
+                                @RequestParam(value = "pageSize", required = false) Integer pageSize) {
         Page<CUser> page = cuserService.page(new Page<CUser>(pageNo, pageSize));
         return ok(page);
     }

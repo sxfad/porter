@@ -106,8 +106,8 @@ public class DataSourceController {
      */
     @GetMapping
     @ApiOperation(value = "查询列表", notes = "查询列表")
-    public ResponseMessage page(@RequestParam(value = "pageNo", required = false) Integer pageNo,
-                                @RequestParam(value = "pageSize", required = false) Integer pageSize,
+    public ResponseMessage page(@RequestParam(value = "pageNo", required = true) Integer pageNo,
+                                @RequestParam(value = "pageSize", required = true) Integer pageSize,
                                 @RequestParam(value = "name", required = false) String name,
                                 @RequestParam(value = "beginTime", required = false) String beginTime,
                                 @RequestParam(value = "endTime", required = false) String endTime) {

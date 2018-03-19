@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.suixingpay.datas.manager.service;
 
@@ -11,13 +11,12 @@ import com.suixingpay.datas.manager.web.page.Page;
 
 /**
  * @author guohongjian[guo_hj@suixingpay.com]
- *
  */
 public interface DbSelectService {
 
-    List<String> list(JDBCVo jvo,String sql,Map<String, Object> map);
+    List<String> list(JDBCVo jvo, String sql, Map<String, Object> map);
 
-    Long pageTotal(JDBCVo jvo,String sql,String prefix, String tableName);
+    Long pageTotal(JDBCVo jvo, String sql, String prefix, String tableName);
 
-    List<Object> page(JDBCVo jvo,Page<Object> page,String sql,String prefix, String tableName);
+    List<Object> page(JDBCVo jvo, Page<Object> page, String sql, String prefix, String tableName);
 }

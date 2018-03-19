@@ -7,7 +7,7 @@ import com.suixingpay.datas.manager.web.page.Page;
 
 /**
  * 数据表信息表 服务接口类
- * 
+ *
  * @author: FairyHood
  * @date: 2018-03-07 13:40:30
  * @version: V1.0-auto
@@ -24,6 +24,6 @@ public interface DataTableService {
     Page<DataTable> page(Page<DataTable> page, String bankName, String beginTime, String endTime);
 
     List<String> prefixList(Long sourceId);
-    
-    Page<Object> tableList(Page<Object> page,Long sourceId,String prefix,String tableName);
+
+    Page<Object> tableList(Page<Object> page, Long sourceId, String prefix, String tableName);
 }

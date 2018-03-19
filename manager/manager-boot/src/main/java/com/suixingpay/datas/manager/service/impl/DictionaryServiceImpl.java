@@ -65,11 +65,11 @@ public class DictionaryServiceImpl implements DictionaryService {
         List<Dictionary> list = dictionaryMapper.selectAll(1);
         for (Dictionary dictionary : list) {
             Boolean iskey = map.containsKey(dictionary.getDictype());
-            if(iskey) {
+            if (iskey) {
                 Map<String, Object> childMap = map.get(dictionary.getDictype());
                 childMap.put(dictionary.getCode(), dictionary.getName());
                 map.put(dictionary.getDictype(), childMap);
-            }else {
+            } else {
                 @SuppressWarnings("serial")
                 Map<String, Object> childMap = new HashMap<String, Object>() {
                     {

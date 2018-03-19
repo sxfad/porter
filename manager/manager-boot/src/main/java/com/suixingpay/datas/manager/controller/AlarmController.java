@@ -19,7 +19,7 @@ import io.swagger.annotations.ApiOperation;
 
 /**
  * 告警配置表 controller控制器
- * 
+ *
  * @author: FairyHood
  * @date: 2018-03-08 10:46:01
  * @version: V1.0-auto

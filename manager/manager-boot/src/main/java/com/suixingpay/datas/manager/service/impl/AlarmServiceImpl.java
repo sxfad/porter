@@ -1,4 +1,4 @@
-/**  
+/**
  *
  */
 package com.suixingpay.datas.manager.service.impl;
@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 告警配置表 服务实现类
- * 
+ *
  * @author: FairyHood
  * @date: 2018-03-08 10:46:01
  * @version: V1.0-auto

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.suixingpay.datas.manager.service.impl;
 
@@ -20,10 +20,9 @@ import com.suixingpay.datas.manager.web.page.Page;
 
 /**
  * @author guohongjian[guo_hj@suixingpay.com]
- *
  */
 @Service("dbORACLESelectService")
-public class DbOracleSelectService implements DbSelectService{
+public class DbOracleSelectService implements DbSelectService {
 
     @Override
     public List<String> list(JDBCVo jvo, String sql, Map<String, Object> map) {
@@ -41,7 +40,7 @@ public class DbOracleSelectService implements DbSelectService{
             }
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             DataSourceUtil.closed(connection, preparedStatement, results);
         }
         return list;
@@ -50,13 +49,13 @@ public class DbOracleSelectService implements DbSelectService{
     @Override
     public Long pageTotal(JDBCVo jvo, String sql, String prefix, String tableName1) {
         Long total = 0l;
-        String executeSql = "select count(*) as tatal from ("+sql+") t where %term";
+        String executeSql = "select count(*) as tatal from (" + sql + ") t where %term";
         StringBuffer termSql = new StringBuffer("1=1");
-        if(prefix!=null&&!prefix.equals("")) {
-            termSql.append(" and lower(prefixName) = '"+prefix.toLowerCase()+"' ");
+        if (prefix != null && !prefix.equals("")) {
+            termSql.append(" and lower(prefixName) = '" + prefix.toLowerCase() + "' ");
         }
-        if(tableName1!=null&&!tableName1.equals("")) {
-            termSql.append(" and lower(tableName) like '%"+tableName1.toLowerCase()+"%' ");
+        if (tableName1 != null && !tableName1.equals("")) {
+            termSql.append(" and lower(tableName) like '%" + tableName1.toLowerCase() + "%' ");
         }
         executeSql = executeSql.replace("%term", termSql);
         //System.out.println(executeSql);
@@ -72,24 +71,24 @@ public class DbOracleSelectService implements DbSelectService{
             }
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             DataSourceUtil.closed(connection, preparedStatement, results);
         }
         return total;
     }
 
     @Override
-    public List<Object> page(JDBCVo jvo, Page<Object> page, String sql, String prefix,String tableName1) {
-        int begin = (page.getPageNo()-1)*page.getPageSize();
-        int end = page.getPageNo()*page.getPageSize();
+    public List<Object> page(JDBCVo jvo, Page<Object> page, String sql, String prefix, String tableName1) {
+        int begin = (page.getPageNo() - 1) * page.getPageSize();
+        int end = page.getPageNo() * page.getPageSize();
         List<Object> list = new ArrayList<Object>();
-        String executeSql = "select * from (select t.*,rownum rn from ("+sql+") t where %term) where rn>? and  rn<=?";
+        String executeSql = "select * from (select t.*,rownum rn from (" + sql + ") t where %term) where rn>? and  rn<=?";
         StringBuffer termSql = new StringBuffer("1=1");
-        if(prefix!=null&&!prefix.equals("")) {
-            termSql.append(" and lower(prefixName) = '"+prefix.toLowerCase()+"' ");
+        if (prefix != null && !prefix.equals("")) {
+            termSql.append(" and lower(prefixName) = '" + prefix.toLowerCase() + "' ");
         }
-        if(tableName1!=null&&!tableName1.equals("")) {
-            termSql.append(" and lower(tableName) like '%"+tableName1.toLowerCase()+"%' ");
+        if (tableName1 != null && !tableName1.equals("")) {
+            termSql.append(" and lower(tableName) like '%" + tableName1.toLowerCase() + "%' ");
         }
         executeSql = executeSql.replace("%term", termSql);
         System.out.println(executeSql);
@@ -106,12 +105,12 @@ public class DbOracleSelectService implements DbSelectService{
                 String prefixName = results.getString("prefixName");
                 String tableName = results.getString("tableName");
                 String tableAllName = results.getString("tableAllName");
-                String[] str = {prefixName,tableName,tableAllName};
+                String[] str = {prefixName, tableName, tableAllName};
                 list.add(str);
             }
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             DataSourceUtil.closed(connection, preparedStatement, results);
         }
         return list;

@@ -94,7 +94,7 @@ public class DataTableServiceImpl implements DataTableService {
         String sql = query.getPrefixSql();
         //根据DbType获取相应的实现类
         DbSelectService dbSelectService = ApplicationContextUtil.getBean("db" + query.getDbType() + "SelectService");
-        List<String> lists = dbSelectService.list(new JDBCVo(query.getDriverName(), url, username, password), sql,null);
+        List<String> lists = dbSelectService.list(new JDBCVo(query.getDriverName(), url, username, password), sql, null);
         return lists;
     }
 

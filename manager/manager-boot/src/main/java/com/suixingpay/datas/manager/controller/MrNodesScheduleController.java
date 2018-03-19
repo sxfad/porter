@@ -21,7 +21,7 @@ import static com.suixingpay.datas.manager.web.message.ResponseMessage.ok;
 
 /**
  * 节点任务监控表 controller控制器
- * 
+ *
  * @author: FairyHood
  * @date: 2018-03-07 17:26:55
  * @version: V1.0-auto

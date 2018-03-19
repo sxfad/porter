@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.suixingpay.datas.manager.service.impl;
 
@@ -49,7 +49,7 @@ public class CUserServiceImpl implements CUserService {
 
     @Override
     public CUser selectByNameAndpasswd(String LoginName, String passwd) {
-        return cuserMapper.selectByNameAndpasswd(LoginName,passwd);
+        return cuserMapper.selectByNameAndpasswd(LoginName, passwd);
     }
 
     @Override
