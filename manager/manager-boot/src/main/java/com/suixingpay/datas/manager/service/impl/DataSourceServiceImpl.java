@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.SimpleDateFormat;
+
 /**
  * 数据源信息表 服务实现类
  *
@@ -34,6 +36,9 @@ public class DataSourceServiceImpl implements DataSourceService {
     public Integer insert(DataSource dataSource) {
         //新增数据源信息表
         Integer number = dataSourceMapper.insertSelective(dataSource);
+        //新增数据源信息关联表
+        dataSourcePluginService.insertSelective(dataSource);
+
         return number;
     }
 
@@ -57,6 +62,7 @@ public class DataSourceServiceImpl implements DataSourceService {
     public DataSource selectById(Long id) {
         //根据主键查询数据源相信信息
         DataSource dataSource = dataSourceMapper.selectById(id);
+
         //根据数据源主键查询关联信息
         dataSource.setPlugins(dataSourcePluginService.findListBySourceID(id));
 
