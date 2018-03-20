@@ -37,6 +37,8 @@ import java.util.concurrent.TimeUnit;
 
 /**
  *
+ * mysql slave 默认最新位点消费
+ * 数据一致性通过上传位点到zookeeper保证
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年02月02日 15:14
  * @version: V1.0
@@ -160,24 +162,30 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
         List<F> msgList = new ArrayList<>();
         if (isStarted()) {
             Message msg = null;
+            msg = canalServer.get(clientId, perPullSize, 5L, TimeUnit.SECONDS);
+
+            /**
             if (isAutoCommitPosition()) {
                 msg = canalServer.get(clientId, perPullSize, 5L, TimeUnit.SECONDS);
             } else {
                 msg = canalServer.getWithoutAck(clientId, perPullSize, 5L, TimeUnit.SECONDS);
             }
+             **/
             if (null != msg && msg.getId() != -1) {
                 try {
                     List<F> f = callback.acceptAll(msg);
                     if (null != f && !f.isEmpty()) {
                         msgList.addAll(f);
                     }
-                } catch (Exception e) {
+                } catch (Throwable e) {
                     e.printStackTrace();
                 }
+
                 //没有要处理的数据时需要直接ack
-                if (msgList.isEmpty()) {
+                /**
+                if (!isAutoCommitPosition() && msgList.isEmpty()) {
                     canalServer.ack(clientId, msg.getId());
-                }
+                }**/
             }
         }
         return msgList;
@@ -192,7 +200,7 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
 
     @Override
     public boolean isAutoCommitPosition() {
-        return false;
+        return true;
     }
 
     @Override
@@ -203,6 +211,7 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
     @Override
     public  void commitPosition(Position position) throws TaskStopTriggerException {
         //如果提交方式为手动提交
+        /**
         if (!isAutoCommitPosition() && isStarted()) {
             try {
                 CanalPosition canalPosition = (CanalPosition) position;
@@ -211,6 +220,7 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
                 throw new TaskStopTriggerException(e);
             }
         }
+         **/
     }
 
     @Override

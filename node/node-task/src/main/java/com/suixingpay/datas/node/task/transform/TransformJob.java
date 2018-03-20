@@ -84,7 +84,7 @@ public class TransformJob extends AbstractStageJob {
                     LOGGER.debug("transform ETLBucket batch {} end.", bucket.getSequence());
                     carrier.put(inThreadBucket.getSequence(), result);
                 }
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 LOGGER.error("transform ETLBucket error!", e);
             }
         } while (null != bucket);

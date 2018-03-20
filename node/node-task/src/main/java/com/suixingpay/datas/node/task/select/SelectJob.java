@@ -68,7 +68,8 @@ public class SelectJob extends AbstractStageJob {
             try {
                 events = consumer.fetch();
                 if (null != events && !events.isEmpty()) carrier.push(events);
-            } catch (InterruptedException e) {
+            } catch (Throwable e) {
+                e.printStackTrace();
                 NodeLog.upload(NodeLog.LogType.TASK_LOG, work.getTaskId(), consumer.getSwimlaneId(), "fetch MessageEvent error" + e.getMessage());
                 LOGGER.error("fetch MessageEvent error!", e);
             }
