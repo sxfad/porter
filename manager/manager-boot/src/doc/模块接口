@@ -27,8 +27,13 @@
     数据保存页面接口：
         页面展示需要数据：
             数据源弹窗接口：/datatable(get)
-            候选表接口：(空)
-            选中表接口：(空)
+            根据数据源获取表前缀接口：
+                路径：/datatable/prefixs/{sourceId}
+                    mysql：获取数据库
+                    oracle：获取用户名
+            数据表名称接口
+                路径：/datatable/tables
+                参数：前缀 / 表名
         数据保存接口：/datatable(post)
     逻辑删除接口：
         路径：/datatable/{id}(delete)
