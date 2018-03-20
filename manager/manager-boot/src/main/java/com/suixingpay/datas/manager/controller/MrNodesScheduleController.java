@@ -35,11 +35,23 @@ public class MrNodesScheduleController {
     @Autowired
     protected MrNodesScheduleService mrNodesScheduleService;
 
-/*    @GetMapping
-    @ApiOperation(value = "查询列表", notes = "查询列表")
-    public ResponseMessage list(@RequestParam(value = "pageNo", required = false) Integer pageNo) {
-
-    }*/
+    /**
+     * 查询分页
+     *
+     * @author FuZizheng
+     * @date 2018/3/20 上午9:35
+     * @param: [pageNo]
+     * @return: com.suixingpay.datas.manager.web.message.ResponseMessage
+     */
+    @GetMapping
+    @ApiOperation(value = "查询分页", notes = "查询分页")
+    public ResponseMessage list(@RequestParam(value = "pageNo", required = true) Integer pageNo,
+                                @RequestParam(value = "pageSize", required = true) Integer pageSize,
+                                @RequestParam(value = "ipAddress", required = false) String ipAddress,
+                                @RequestParam(value = "computerName", required = false) String computerName) {
+        Page<MrNodesSchedule> page = mrNodesScheduleService.page(new Page<MrNodesSchedule>(pageNo, pageSize), ipAddress, computerName);
+        return ok(page);
+    }
 
     /*@PostMapping
     @ApiOperation(value = "新增", notes = "新增")

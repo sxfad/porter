@@ -21,6 +21,6 @@ public interface MrNodesScheduleService {
 
     MrNodesSchedule selectById(Long id);
 
-    Page<MrNodesSchedule> page(Page<MrNodesSchedule> page);
+    Page<MrNodesSchedule> page(Page<MrNodesSchedule> page, String ipAddress, String computerName);
 
 }
