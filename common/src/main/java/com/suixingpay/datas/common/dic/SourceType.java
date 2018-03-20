@@ -27,25 +27,36 @@ import java.util.LinkedHashMap;
 @AllArgsConstructor
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum SourceType {
-    ZOOKEEPER("ZOOKEEPER", "zookeeper"), KAFKA("KAFKA", "kafka"), JDBC("JDBC", "jdbc"), EMAIL("EMAIL",
-            "email"), NAME_SOURCE("NAME_SOURCE", "nameSource"), KUDU("KUDU", "kudu"), CANAL("CANAL", "canal");
+    ZOOKEEPER("ZOOKEEPER", "zookeeper", -1), KAFKA("KAFKA", "kafka", 1), JDBC("JDBC", "jdbc", 1), EMAIL("EMAIL",
+            "email",
+            -1), NAME_SOURCE("NAME_SOURCE", "nameSource", -1), KUDU("KUDU", "kudu", -1), CANAL("CANAL", "canal", -1);
     @Getter
     private final String code;
     @Getter
     private final String name;
+    @Getter
+    private final int state;
 
     public static final HashMap<String, Object> LINKMAP = new LinkedHashMap<String, Object>() {
 
         private static final long serialVersionUID = 1L;
 
         {
-            put(ZOOKEEPER.code, ZOOKEEPER.name);
-            put(KAFKA.code, KAFKA.name);
-            put(JDBC.code, JDBC.name);
-            put(EMAIL.code, EMAIL.name);
-            put(CANAL.code, CANAL.name);
-            put(KUDU.code, KUDU.name);
-            put(NAME_SOURCE.code, NAME_SOURCE.name);
+            if (ZOOKEEPER.state == 1)
+                put(ZOOKEEPER.code, ZOOKEEPER.name);
+            if (KAFKA.state == 1)
+                put(KAFKA.code, KAFKA.name);
+            if (JDBC.state == 1)
+                put(JDBC.code, JDBC.name);
+            if (EMAIL.state == 1)
+                put(EMAIL.code, EMAIL.name);
+            if (CANAL.state == 1)
+                put(CANAL.code, CANAL.name);
+            if (KUDU.state == 1)
+                put(KUDU.code, KUDU.name);
+            if (NAME_SOURCE.state == 1)
+                put(NAME_SOURCE.code, NAME_SOURCE.name);
+
         }
     };
 }
