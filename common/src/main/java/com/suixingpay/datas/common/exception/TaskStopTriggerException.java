@@ -12,11 +12,13 @@ package com.suixingpay.datas.common.exception;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException;
 import com.suixingpay.datas.common.db.SqlErrorCode;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.jdbc.UncategorizedSQLException;
 
 import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -36,6 +38,11 @@ public class TaskStopTriggerException extends TaskException {
 
     public static boolean isMatch(Throwable cause) {
         boolean match = false;
+
+        if (cause instanceof DuplicateKeyException || cause instanceof SQLIntegrityConstraintViolationException) {
+            return false;
+        }
+
         if (cause instanceof CannotGetJdbcConnectionException || cause instanceof UncategorizedSQLException
                 || cause instanceof MySQLSyntaxErrorException || cause instanceof BadSqlGrammarException
                 || cause instanceof DataIntegrityViolationException) {

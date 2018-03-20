@@ -12,6 +12,7 @@ import com.suixingpay.datas.common.alert.AlertProviderFactory;
 import com.suixingpay.datas.common.client.PublicClientContext;
 import com.suixingpay.datas.common.cluster.ClusterProviderProxy;
 import com.suixingpay.datas.common.cluster.command.NodeRegisterCommand;
+import com.suixingpay.datas.common.util.compile.JavaFileCompiler;
 import com.suixingpay.datas.node.boot.config.NodeConfig;
 import com.suixingpay.datas.node.boot.config.SourcesConfig;
 import com.suixingpay.datas.node.core.NodeContext;
@@ -27,6 +28,8 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerA
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
+
+import java.net.MalformedURLException;
 
 /**
  * node launcher
@@ -49,8 +52,19 @@ public class NodeBootApplication {
         app.setBannerMode(Banner.Mode.OFF);
         app.setWebEnvironment(false);
         ConfigurableApplicationContext context = app.run(args);
+
         //注入spring工具类
         NodeContext.INSTANCE.setApplicationContext(context);
+
+        //扫描plugins目录，加载插件
+        try {
+            JavaFileCompiler.getInstance().loadPlugin();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("初始化插件失败:" + e.getMessage());
+        }
+
+
         //获取配置类
         NodeConfig config = context.getBean(NodeConfig.class);
 

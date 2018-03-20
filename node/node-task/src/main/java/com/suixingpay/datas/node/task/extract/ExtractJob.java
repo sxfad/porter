@@ -93,7 +93,7 @@ public class ExtractJob extends AbstractStageJob {
                         }
                     });
                 }
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 NodeLog.upload(NodeLog.LogType.TASK_LOG, work.getTaskId(),  work.getDataConsumer().getSwimlaneId(),
                         "extract MessageEvent error" + e.getMessage());
                 LOGGER.error("extract MessageEvent error!", e);

@@ -11,6 +11,8 @@ package com.suixingpay.datas.common.util.compile;
 
 
 import com.suixingpay.datas.common.config.JavaFileConfig;
+import lombok.SneakyThrows;
+import org.springframework.util.FileSystemUtils;
 
 import javax.tools.JavaCompiler;
 import javax.tools.StandardJavaFileManager;
@@ -19,15 +21,20 @@ import javax.tools.ToolProvider;
 import javax.tools.JavaFileObject;
 import javax.tools.SimpleJavaFileObject;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.rmi.UnexpectedException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Locale;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -36,6 +43,8 @@ import java.nio.charset.StandardCharsets;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年03月09日 13:34
  */
 public class   JavaFileCompiler extends URLClassLoader {
+    private static final String PLUGIN_HOME = System.getProperty("app.home") + "/plugins";
+    private final AtomicBoolean isLoadPlugin = new AtomicBoolean(false);
     private static final JavaFileCompiler COMPILER = new JavaFileCompiler(new URL[0]);
 
     public JavaFileCompiler(URL[] urls) {
@@ -108,5 +117,16 @@ public class   JavaFileCompiler extends URLClassLoader {
             }
         }
         return null;
+    }
+
+    public void loadPlugin() throws MalformedURLException {
+        if (isLoadPlugin.compareAndSet(false, true)) {
+            File[] jars = new File(PLUGIN_HOME).listFiles(pathname -> pathname.getName().endsWith(".jar"));
+            if (null != jars) {
+                for (File jar : jars) {
+                    this.addURL(jar.toURI().toURL());
+                }
+            }
+        }
     }
 }
