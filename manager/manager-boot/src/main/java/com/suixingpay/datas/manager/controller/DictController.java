@@ -3,20 +3,17 @@
  */
 package com.suixingpay.datas.manager.controller;
 
-import java.util.Map;
-
+import com.suixingpay.datas.manager.service.DictService;
+import com.suixingpay.datas.manager.web.message.ResponseMessage;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.suixingpay.datas.manager.service.DictService;
-import com.suixingpay.datas.manager.web.message.ResponseMessage;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import java.util.Map;
 
 /**
  * @author guohongjian[guo_hj@suixingpay.com]

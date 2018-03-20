@@ -45,11 +45,11 @@ public class MrNodesScheduleServiceImpl implements MrNodesScheduleService {
     }
 
     @Override
-    public Page<MrNodesSchedule> page(Page<MrNodesSchedule> page) {
-        Integer total = mrNodesScheduleMapper.pageAll(1);
+    public Page<MrNodesSchedule> page(Page<MrNodesSchedule> page, String ipAddress, String computerName) {
+        Integer total = mrNodesScheduleMapper.pageAll(1, ipAddress, computerName);
         if (total > 0) {
             page.setTotalItems(total);
-            page.setResult(mrNodesScheduleMapper.page(page, 1));
+            page.setResult(mrNodesScheduleMapper.page(page, 1, ipAddress, computerName));
         }
         return page;
     }
