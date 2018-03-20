@@ -38,7 +38,10 @@ public class Nodes implements java.io.Serializable {
     private Integer state;
 
     /** 节点类型. */
-    private NodeStatusType type;
+    private String nodeType;
+
+    /** 节点任务推送状态 . */
+    private NodeStatusType taskPushState;
 
     /** 创建人. */
     private Long creater;
@@ -122,14 +125,20 @@ public class Nodes implements java.io.Serializable {
         this.state = state;
     }
 
-    /** 节点类型 get方法. */
-    public NodeStatusType getType() {
-        return type;
+    public String getNodeType() {
+        return nodeType;
     }
 
-    /** 节点类型 set方法. */
-    public void setType(NodeStatusType type) {
-        this.type = type;
+    public void setNodeType(String nodeType) {
+        this.nodeType = nodeType;
+    }
+
+    public NodeStatusType getTaskPushState() {
+        return taskPushState;
+    }
+
+    public void setTaskPushState(NodeStatusType taskPushState) {
+        this.taskPushState = taskPushState;
     }
 
     /** 创建人 get方法. */

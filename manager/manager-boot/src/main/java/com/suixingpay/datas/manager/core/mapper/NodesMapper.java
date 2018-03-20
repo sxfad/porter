@@ -1,10 +1,11 @@
 package com.suixingpay.datas.manager.core.mapper;
 
-import com.suixingpay.datas.manager.core.entity.Nodes;
-import com.suixingpay.datas.manager.web.page.Page;
+import java.util.List;
+
 import org.apache.ibatis.annotations.Param;
 
-import java.util.List;
+import com.suixingpay.datas.manager.core.entity.Nodes;
+import com.suixingpay.datas.manager.web.page.Page;
 
 /**
  * 节点信息表 Mapper接口
@@ -36,6 +37,22 @@ public interface NodesMapper {
     Integer delete(Long id);
 
     /**
+     * 作废
+     * @param id
+     * @return
+     */
+    Integer cancel(Long id);
+
+    /**
+     * 任务推送状态
+     * @param id
+     * @param taskPushState
+     * @return
+     */
+    Integer taskPushState(@Param("id")Long id, @Param("taskPushState")String taskPushState);
+
+    
+    /**
      * 根據主鍵id查找數據
      * @param id
      * @return
@@ -49,8 +66,7 @@ public interface NodesMapper {
     List<Nodes> page(@Param("page") Page<Nodes> page,
                      @Param("ipAddress") String ipAddress,
                      @Param("state") Integer state,
-                     @Param("machineName") String machineName,
-                     @Param("type") Integer type);
+                     @Param("machineName") String machineName);
 
     /**
      * 分頁All
@@ -62,7 +78,6 @@ public interface NodesMapper {
      */
     Integer pageAll(@Param("ipAddress") String ipAddress,
                     @Param("state") Integer state,
-                    @Param("machineName") String machineName,
-                    @Param("type") Integer type);
+                    @Param("machineName") String machineName);
 
 }

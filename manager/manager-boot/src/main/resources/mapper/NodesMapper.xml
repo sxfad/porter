@@ -10,7 +10,8 @@
         <result column="pid_number" property="pidNumber" />
         <result column="heart_beat_time" property="heartBeatTime" />
         <result column="state" property="state" />
-        <result column="type" property="type" />
+        <result column="node_type" property="nodeType" />
+        <result column="task_push_state" property="taskPushState" />
         <result column="creater" property="creater" />
         <result column="create_time" property="createTime" />
         <result column="iscancel" property="iscancel" />
@@ -19,7 +20,7 @@
 
     <!-- 通用查询结果列 
     <sql id="Base_Column_List">
-        select id, node_id AS nodeId, machine_name AS machineName, ip_address AS ipAddress, pid_number AS pidNumber, heart_beat_time AS heartBeatTime, state, type, creater, create_time AS createTime, iscancel, remark from b_nodes
+        select id, node_id AS nodeId, machine_name AS machineName, ip_address AS ipAddress, pid_number AS pidNumber, heart_beat_time AS heartBeatTime, state, node_type as nodeType, task_push_state as taskPushState, creater, create_time AS createTime, iscancel, remark from b_nodes
     </sql>-->
 
     <!-- 新增 -->
@@ -29,25 +30,15 @@
         machine_name,
         ip_address,
         pid_number,
-        heart_beat_time,
         state,
-        type,
-        creater,
-        create_time,
-        iscancel,
-        remark
+        task_push_state
         ) values (
         #{nodeId},
         #{machineName},
         #{ipAddress},
         #{pidNumber},
-        #{heartBeatTime},
         #{state},
-        #{type},
-        #{creater},
-        #{createTime},
-        #{iscancel},
-        #{remark}
+        #{taskPushState}
         )
     </insert>
 
@@ -61,7 +52,8 @@
         pid_number = #{nodes.pidNumber},
         heart_beat_time = #{nodes.heartBeatTime},
         state = #{nodes.state},
-        type = #{nodes.type},
+        node_type = #{nodes.nodeType},
+        task_push_state = #{nodes.taskPushState},
         creater = #{nodes.creater},
         create_time = #{nodes.createTime},
         iscancel = #{nodes.iscancel},
@@ -71,12 +63,30 @@
 
     <!-- 刪除 -->
     <delete id="delete">
-        delete from b_nodes where id = #{id}
+        delete from b_nodes where id = #{id} 
     </delete>
+
+    <!-- 作废 -->
+    <update id="cancel">
+        update b_nodes 
+        <set>
+            iscancel=1
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <!-- 接收、停止任务推送 -->
+    <update id="taskPushState">
+        update b_nodes 
+        <set>
+            task_push_state=#{taskPushState,jdbcType=VARCHAR}
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
 
     <!-- 根据主鍵查找 -->
     <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.Nodes">
-        select id, node_id AS nodeId, machine_name AS machineName, ip_address AS ipAddress, pid_number AS pidNumber, heart_beat_time AS heartBeatTime, state, type, creater, create_time AS createTime, iscancel, remark from b_nodes
+        select id, node_id AS nodeId, machine_name AS machineName, ip_address AS ipAddress, pid_number AS pidNumber, heart_beat_time AS heartBeatTime, state, node_type as nodeType, task_push_state as taskPushState, creater, create_time AS createTime, iscancel, remark from b_nodes
         where id = #{id}
     </select>
 
@@ -94,15 +104,12 @@
             <if test="machineName != null and machineName != ''">
                 and machine_name LIKE CONCAT('%', #{machineName}, '%')
             </if>
-            <if test="type != null and type != ''">
-                and type = #{type}
-            </if>
         </where>
     </select>
 
     <!-- 分页 -->
     <select id="page" resultType="com.suixingpay.datas.manager.core.entity.Nodes">
-        select id, node_id AS nodeId, machine_name AS machineName, ip_address AS ipAddress, pid_number AS pidNumber, heart_beat_time AS heartBeatTime, state, type
+        select id, node_id AS nodeId, machine_name AS machineName, ip_address AS ipAddress, pid_number AS pidNumber, heart_beat_time AS heartBeatTime, state, node_type as nodeType, task_push_state as taskPushState
         from b_nodes
         <where>
             iscancel = 0
@@ -114,9 +121,6 @@
             </if>
             <if test="machineName != null and machineName != ''">
                 and machine_name LIKE CONCAT('%',#{machineName},'%')
-            </if>
-            <if test="type != null and type != ''">
-                and type = #{type}
             </if>
         </where>
         ORDER BY state ASC, heart_beat_time desc
@@ -148,8 +152,11 @@
             <if test="state != null">
                 state,
             </if>
-            <if test="type != null">
-                type,
+            <if test="nodeType != null">
+                node_type,
+            </if>
+            <if test="taskPushState != null">
+                task_push_state,
             </if>
             <if test="creater != null">
                 creater,
@@ -186,8 +193,11 @@
             <if test="state != null">
                 #{state,jdbcType=INTEGER},
             </if>
-            <if test="type != null">
-                #{type,jdbcType=INTEGER},
+            <if test="nodeType != null">
+                #{nodeType,jdbcType=VARCHAR},
+            </if>
+            <if test="taskPushState != null">
+                #{task_push_state,jdbcType=VARCHAR},
             </if>
             <if test="creater != null">
                 #{creater,jdbcType=BIGINT},
@@ -226,8 +236,11 @@
             <if test="nodes.state != null">
                 state = #{nodes.state,jdbcType=INTEGER},
             </if>
-            <if test="nodes.type != null">
-                type = #{nodes.type,jdbcType=INTEGER},
+            <if test="nodes.nodeType != null">
+                node_type = #{nodes.nodeType,jdbcType=VARCHAR},
+            </if>
+            <if test="nodes.taskPushState != null">
+                task_push_state = #{nodes.taskPushState,jdbcType=VARCHAR},
             </if>
             <if test="nodes.creater != null">
                 creater = #{nodes.creater,jdbcType=BIGINT},

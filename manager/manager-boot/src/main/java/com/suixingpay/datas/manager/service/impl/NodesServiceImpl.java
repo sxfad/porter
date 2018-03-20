@@ -3,6 +3,7 @@
  */
 package com.suixingpay.datas.manager.service.impl;
 
+import com.suixingpay.datas.common.dic.NodeStatusType;
 import com.suixingpay.datas.manager.core.entity.Nodes;
 import com.suixingpay.datas.manager.core.mapper.NodesMapper;
 import com.suixingpay.datas.manager.service.NodesService;
@@ -26,12 +27,26 @@ public class NodesServiceImpl implements NodesService {
 
     @Override
     public Integer insert(Nodes nodes) {
+        nodes.setTaskPushState(NodeStatusType.SUSPEND);
+        nodes.setState(-1);
         return nodesMapper.insert(nodes);
     }
 
     @Override
     public Integer update(Long id, Nodes nodes) {
         return nodesMapper.update(id, nodes);
+    }
+
+    @Override
+    public Integer cancel(Long id) {
+        return nodesMapper.cancel(id);
+    }
+
+    @Override
+    public Nodes taskPushState(Long id, NodeStatusType taskPushState) {
+        nodesMapper.taskPushState(id, taskPushState.getCode());
+        Nodes nodes = nodesMapper.selectById(id);
+        return nodes;
     }
 
     @Override
@@ -45,11 +60,11 @@ public class NodesServiceImpl implements NodesService {
     }
 
     @Override
-    public Page<Nodes> page(Page<Nodes> page, String ipAddress, Integer state, String machineName, Integer type) {
-        Integer total = nodesMapper.pageAll(ipAddress, state, machineName, type);
+    public Page<Nodes> page(Page<Nodes> page, String ipAddress, Integer state, String machineName) {
+        Integer total = nodesMapper.pageAll(ipAddress, state, machineName);
         if (total > 0) {
             page.setTotalItems(total);
-            page.setResult(nodesMapper.page(page, ipAddress, state, machineName, type));
+            page.setResult(nodesMapper.page(page, ipAddress, state, machineName));
         }
         return page;
     }

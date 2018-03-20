@@ -1,5 +1,6 @@
 package com.suixingpay.datas.manager.service;
 
+import com.suixingpay.datas.common.dic.NodeStatusType;
 import com.suixingpay.datas.manager.core.entity.Nodes;
 import com.suixingpay.datas.manager.web.page.Page;
 
@@ -19,8 +20,12 @@ public interface NodesService {
 
     Integer delete(Long id);
 
+    Integer cancel(Long id);
+
+    Nodes taskPushState(Long id,NodeStatusType taskPushState);
+
     Nodes selectById(Long id);
 
-    Page<Nodes> page(Page<Nodes> page, String ipAddress, Integer state, String machineName, Integer type);
+    Page<Nodes> page(Page<Nodes> page, String ipAddress, Integer state, String machineName);
 
 }

@@ -18,7 +18,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- * 节点状态
+ * 节点任务推送状态
  * 
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年02月24日 10:32
