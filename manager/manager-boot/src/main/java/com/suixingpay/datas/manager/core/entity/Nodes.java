@@ -32,7 +32,7 @@ public class Nodes implements java.io.Serializable {
     private String pidNumber;
 
     /** 心跳时间. */
-    private Date heartBeatTime;
+    private String heartBeatTime;
 
     /** 状态. */
     private Integer state;
@@ -103,12 +103,12 @@ public class Nodes implements java.io.Serializable {
     }
 
     /** 心跳时间 get方法. */
-    public Date getHeartBeatTime() {
+    public String getHeartBeatTime() {
         return heartBeatTime;
     }
 
     /** 心跳时间 set方法. */
-    public void setHeartBeatTime(Date heartBeatTime) {
+    public void setHeartBeatTime(String heartBeatTime) {
         this.heartBeatTime = heartBeatTime;
     }
 

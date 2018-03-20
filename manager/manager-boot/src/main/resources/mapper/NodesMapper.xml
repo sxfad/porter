@@ -181,7 +181,7 @@
                 #{pidNumber,jdbcType=VARCHAR},
             </if>
             <if test="heartBeatTime != null">
-                #{heartBeatTime,jdbcType=TIMESTAMP},
+                #{heartBeatTime,jdbcType=VARCHAR},
             </if>
             <if test="state != null">
                 #{state,jdbcType=INTEGER},
@@ -221,7 +221,7 @@
                 pid_number = #{nodes.pidNumber,jdbcType=VARCHAR},
             </if>
             <if test="nodes.heartBeatTime != null">
-                heart_beat_time = #{nodes.heartBeatTime,jdbcType=TIMESTAMP},
+                heart_beat_time = #{nodes.heartBeatTime,jdbcType=VARCHAR},
             </if>
             <if test="nodes.state != null">
                 state = #{nodes.state,jdbcType=INTEGER},

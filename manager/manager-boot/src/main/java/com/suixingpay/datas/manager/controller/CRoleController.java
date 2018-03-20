@@ -1,4 +1,4 @@
-package com.suixingpay.datas.manager.controller;
+/*package com.suixingpay.datas.manager.controller;
 
 import com.suixingpay.datas.manager.core.entity.CRole;
 import com.suixingpay.datas.manager.service.CRoleService;
@@ -18,14 +18,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import static com.suixingpay.datas.manager.web.message.ResponseMessage.ok;
 
-/**
+*//**
  * 角色表 controller控制器
  *
  * @author: FairyHood
  * @date: 2018-03-07 17:26:55
  * @version: V1.0-auto
  * @review: FairyHood/2018-03-07 17:26:55
- */
+ *//*
 @Api(description = "角色表管理")
 @RestController
 @RequestMapping("/crole")
@@ -37,7 +37,7 @@ public class CRoleController {
     @PostMapping
     @ApiOperation(value = "新增", notes = "新增")
     public ResponseMessage add(@RequestBody CRole crole) {
-        /** Integer number = croleService.insert(crole); . */
+        *//** Integer number = croleService.insert(crole); . *//*
         return ok(null);
     }
 
@@ -70,4 +70,4 @@ public class CRoleController {
         return ok(null);
     }
 
-}
+}*/
