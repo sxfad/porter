@@ -37,7 +37,7 @@ distributions {
                 into "config"
             }
 
-            from (buildDir.getPath() + "/plugins") {
+            from ("plugins") {
                 into "plugins"
             }
         }
