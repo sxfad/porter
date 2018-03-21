@@ -4,6 +4,8 @@ import com.suixingpay.datas.manager.core.entity.Alarm;
 import com.suixingpay.datas.manager.core.entity.AlarmUser;
 import com.suixingpay.datas.manager.web.page.Page;
 
+import java.util.List;
+
 /**
  * 告警用户关联表 服务接口类
  *
@@ -25,4 +27,6 @@ public interface AlarmUserService {
     AlarmUser selectById(Long id);
 
     Page<AlarmUser> page(Page<AlarmUser> page);
+
+    List<AlarmUser> selectByAlarmId(Long alarmId);
 }

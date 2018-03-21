@@ -11,6 +11,8 @@ import com.suixingpay.datas.manager.web.page.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * 告警用户关联表 服务实现类
  *
@@ -61,5 +63,10 @@ public class AlarmUserServiceImpl implements AlarmUserService {
             page.setResult(alarmUserMapper.page(page, 1));
         }
         return page;
+    }
+
+    @Override
+    public List<AlarmUser> selectByAlarmId(Long alarmId) {
+        return alarmUserMapper.selectByAlarmId(alarmId);
     }
 }
