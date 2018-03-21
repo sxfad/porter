@@ -1,5 +1,7 @@
 package com.suixingpay.datas.manager.service;
 
+import java.util.List;
+
 import com.suixingpay.datas.manager.core.entity.Alarm;
 import com.suixingpay.datas.manager.core.entity.AlarmPlugin;
 import com.suixingpay.datas.manager.web.page.Page;
@@ -22,6 +24,8 @@ public interface AlarmPluginService {
 
     Integer delete(Long id);
 
+    List<AlarmPlugin> selectByAlarmId(Long alarmId);
+    
     AlarmPlugin selectById(Long id);
 
     Page<AlarmPlugin> page(Page<AlarmPlugin> page);

@@ -43,6 +43,13 @@ public interface AlarmPluginMapper {
     AlarmPlugin selectById(Long id);
 
     /**
+     * 根据告警id查找数据
+     * @param alarmId
+     * @return
+     */
+    List<AlarmPlugin> selectByAlarmId(Long alarmId);
+
+    /**
      * 分頁
      * @return
      */

@@ -35,7 +35,14 @@ public class AlarmServiceImpl implements AlarmService {
 
     @Override
     public Alarm selectFinallyOne() {
-        return alarmMapper.selectFinallyOne();
+        Alarm alarm = alarmMapper.selectFinallyOne();
+        if(alarm!=null&&alarm.getId()!=null) {
+            alarm.setAlarmPlugins(alarmPluginService.selectByAlarmId(alarm.getId()));
+            alarm.setAlarmUsers(alarmUserService.selectByAlarmId(alarm.getId()));
+            return alarm;
+        }else {
+            return null;
+        }
     }
 
     @Override

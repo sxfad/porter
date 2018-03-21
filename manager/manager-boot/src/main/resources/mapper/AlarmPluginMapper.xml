@@ -56,6 +56,12 @@
         where id = #{id}
     </select>
 
+    <!-- 根据告警主鍵查找 -->
+    <select id="selectByAlarmId" resultType="com.suixingpay.datas.manager.core.entity.AlarmPlugin">
+        select id, alarm_id AS alarmId, alarm_type AS alarmType, plugin_code AS pluginCode, plugin_name AS pluginName, plugin_value AS pluginValue from s_alarm_plugin
+        where alarm_id = #{alarmId}
+    </select>
+
     <!-- 分页All -->
     <select id="pageAll" resultType="java.lang.Integer">
         select count(id) from s_alarm_plugin

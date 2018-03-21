@@ -3,6 +3,8 @@
  */
 package com.suixingpay.datas.manager.service.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +35,11 @@ public class AlarmPluginServiceImpl implements AlarmPluginService {
             alarmPlugin.setAlarmType(alarm.getAlarmType().getCode());
             insert(alarmPlugin);
         }
+    }
+
+    @Override
+    public List<AlarmPlugin> selectByAlarmId(Long alarmId) {
+        return alarmPluginMapper.selectByAlarmId(alarmId);
     }
 
     @Override
