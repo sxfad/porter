@@ -49,7 +49,6 @@ public class DataTableController {
     @PostMapping
     @ApiOperation(value = "新增", notes = "新增")
     public ResponseMessage add(@RequestBody DataTable dataTable) {
-
         Integer number = dataTableService.insert(dataTable);
         return ok(number);
     }
@@ -65,7 +64,6 @@ public class DataTableController {
     @DeleteMapping("/{id}")
     @ApiOperation(value = "逻辑删除数据表信息", notes = "数据表主键")
     public ResponseMessage delete(@PathVariable("id") Long id) {
-
         Integer number = dataTableService.delete(id);
         return ok(number);
     }
