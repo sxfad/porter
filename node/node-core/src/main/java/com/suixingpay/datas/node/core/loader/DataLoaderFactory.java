@@ -18,6 +18,7 @@ import com.suixingpay.datas.common.config.SourceConfig;
 import com.suixingpay.datas.common.exception.ClientException;
 import com.suixingpay.datas.common.exception.ConfigParseException;
 import com.suixingpay.datas.common.exception.DataLoaderBuildException;
+import com.suixingpay.datas.common.util.compile.JavaFileCompiler;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 
 import java.util.List;
@@ -30,7 +31,7 @@ import java.util.List;
  */
 public enum DataLoaderFactory {
     INSTANCE();
-    private final List<DataLoader> LOADER_TEMPLATE = SpringFactoriesLoader.loadFactories(DataLoader.class, null);
+    private final List<DataLoader> LOADER_TEMPLATE = SpringFactoriesLoader.loadFactories(DataLoader.class, JavaFileCompiler.getInstance());
 
     public DataLoader getLoader(DataLoaderConfig config) throws ConfigParseException, ClientException, DataLoaderBuildException {
         Client client = AbstractClient.getClient(SourceConfig.getConfig(config.getSource()));

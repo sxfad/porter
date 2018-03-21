@@ -15,6 +15,7 @@ import com.alibaba.otter.canal.protocol.Message;
 import com.suixingpay.datas.common.client.impl.CanalClient;
 import com.suixingpay.datas.common.consumer.ConsumeClient;
 import com.suixingpay.datas.common.dic.ConsumerPlugin;
+import com.suixingpay.datas.common.exception.TaskStopTriggerException;
 import com.suixingpay.datas.node.core.consumer.AbstractDataConsumer;
 import com.suixingpay.datas.node.core.event.s.MessageEvent;
 
@@ -30,7 +31,7 @@ import java.util.stream.Collectors;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年03月06日 11:27
  */
 public class CanalConsumer extends AbstractDataConsumer {
-    public List<MessageEvent> doFetch() {
+    public List<MessageEvent> doFetch() throws TaskStopTriggerException {
         return consumeClient.fetch(new ConsumeClient.FetchCallback<MessageEvent, Object>() {
             @Override
             public <F, O> List<F> acceptAll(O o) {

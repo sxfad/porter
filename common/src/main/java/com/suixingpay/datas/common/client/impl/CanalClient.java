@@ -34,9 +34,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  *
+ * mysql slave 默认最新位点消费
+ * 数据一致性通过上传位点到zookeeper保证
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年02月02日 15:14
  * @version: V1.0
@@ -47,6 +50,12 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
     private final CanalServerWithEmbedded canalServer;
     private ClientIdentity clientId;
     private CountDownLatch canFetch = new CountDownLatch(1);
+
+    /**
+     * canal.server是否抛出异常
+     */
+    private AtomicBoolean hasBroken = new AtomicBoolean(false);
+    private volatile Throwable brokenError;
 
     public CanalClient(CanalConfig config) {
         super(config);
@@ -66,6 +75,8 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
             canalServer.stop(getConfig().getDatabase());
             canalServer.stop();
         }
+        hasBroken = new AtomicBoolean(false);
+        brokenError = null;
         canFetch = new CountDownLatch(1);
     }
 
@@ -78,7 +89,7 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
          */
         canalServer.setCanalInstanceGenerator(new CanalInstanceGenerator() {
             @Override
-            @SneakyThrows
+            @SneakyThrows(TaskStopTriggerException.class)
             public CanalInstance generate(String destination) {
                 Canal canal = new Canal();
                 canal.setCanalParameter(new CanalParameter());
@@ -110,23 +121,28 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
                 //消息存储模型
                 canal.getCanalParameter().setStorageMode(CanalParameter.StorageMode.MEMORY);
                 canal.getCanalParameter().setMemoryStorageBufferSize(32 * 1024);
+                //忽略表解析异常
+                canal.getCanalParameter().setFilterTableError(true);
                 //从上次失败位置开始消费
                 if (!StringUtils.isBlank(position)) {
                     CanalPosition canalPosition = CanalPosition.getPosition(position);
                     canal.getCanalParameter().setMasterLogfileName(canalPosition.logfileName);
                     canal.getCanalParameter().setMasterLogfileOffest(canalPosition.offset);
-
                 }
+
                 CanalInstanceWithManager instance = new CanalInstanceWithManager(canal, clientId.getFilter());
-                instance.setAlarmHandler(new CanalAlarmHandler() {
+                instance.setAlarmHandler(new CanalAlarmHandler()  {
                     private volatile boolean isRun = false;
 
                     @Override
-                    @SneakyThrows
                     public void sendAlarm(String destination, String msg) {
+                        msg = StringUtils.trimToEmpty(msg);
                         //master连接不上
-                        if (StringUtils.trimToEmpty(msg).contains("CanalParseException: java.io.IOException")) {
-                            throw new TaskStopTriggerException(config.getProperties() + ":链接建立失败");
+                        if (msg.contains("CanalParseException: java.io.IOException")
+                                || msg.contains("java.io.IOException: Received error packet: errno")) {
+                            if (hasBroken.compareAndSet(false, true)) {
+                                brokenError = new TaskStopTriggerException("【Canal链接建立失败】【" + config.getProperties() + "】" + msg);
+                            }
                         }
                     }
 
@@ -156,28 +172,38 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
     }
 
     @Override
-    public <F, O>  List<F> fetch(FetchCallback<F, O> callback) {
+    public <F, O>  List<F> fetch(FetchCallback<F, O> callback) throws TaskStopTriggerException {
+        if (hasBroken.get()) {
+            throw null != brokenError ? new TaskStopTriggerException(brokenError) : new TaskStopTriggerException("canal.server因异常中断");
+        }
+
         List<F> msgList = new ArrayList<>();
         if (isStarted()) {
             Message msg = null;
+            msg = canalServer.get(clientId, perPullSize, 5L, TimeUnit.SECONDS);
+
+            /**
             if (isAutoCommitPosition()) {
                 msg = canalServer.get(clientId, perPullSize, 5L, TimeUnit.SECONDS);
             } else {
                 msg = canalServer.getWithoutAck(clientId, perPullSize, 5L, TimeUnit.SECONDS);
             }
+             **/
             if (null != msg && msg.getId() != -1) {
                 try {
                     List<F> f = callback.acceptAll(msg);
                     if (null != f && !f.isEmpty()) {
                         msgList.addAll(f);
                     }
-                } catch (Exception e) {
+                } catch (Throwable e) {
                     e.printStackTrace();
                 }
+
                 //没有要处理的数据时需要直接ack
-                if (msgList.isEmpty()) {
+                /**
+                if (!isAutoCommitPosition() && msgList.isEmpty()) {
                     canalServer.ack(clientId, msg.getId());
-                }
+                }**/
             }
         }
         return msgList;
@@ -192,7 +218,7 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
 
     @Override
     public boolean isAutoCommitPosition() {
-        return false;
+        return true;
     }
 
     @Override
@@ -203,6 +229,7 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
     @Override
     public  void commitPosition(Position position) throws TaskStopTriggerException {
         //如果提交方式为手动提交
+        /**
         if (!isAutoCommitPosition() && isStarted()) {
             try {
                 CanalPosition canalPosition = (CanalPosition) position;
@@ -211,6 +238,7 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
                 throw new TaskStopTriggerException(e);
             }
         }
+         **/
     }
 
     @Override

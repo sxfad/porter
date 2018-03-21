@@ -130,17 +130,17 @@ public abstract class BaseJdbcLoader extends AbstractDataLoader {
         //所有字段旧值
         Object[] allOldValues = ArrayUtils.addAll(keyOldValues, columnOldValues);
 
-        if (row.getOpType() == EventType.DELETE) {
+        if (row.getFinalOpType() == EventType.DELETE) {
             //主键删除
             if (keyNames.length > 0) {
                 sqlList.add(new ImmutablePair<>(template.getDeleteSql(row.getFinalSchema(), row.getFinalTable(), keyNames), keyNewValues));
             }
             //全字段删除
             sqlList.add(new ImmutablePair<>(template.getDeleteSql(row.getFinalSchema(), row.getFinalTable(), allColumnNames), allNewValues));
-        } else if (row.getOpType() == EventType.INSERT) {
+        } else if (row.getFinalOpType() == EventType.INSERT) {
             //插入sql
             sqlList.add(new ImmutablePair<>(template.getInsertSql(row.getFinalSchema(), row.getFinalTable(), allColumnNames), allNewValues));
-        } else if (row.getOpType() == EventType.UPDATE) {
+        } else if (row.getFinalOpType() == EventType.UPDATE) {
             //存在主键，主键值没变，根据主键更新
             if (!row.isKeyChangedOnUpdate() && keyNames.length > 0 && null != columnNames && columnNames.length > 0) {
                 sqlList.add(new ImmutablePair<>(template.getUpdateSql(row.getFinalSchema(), row.getFinalTable(), keyNames, columnNames),
@@ -153,7 +153,7 @@ public abstract class BaseJdbcLoader extends AbstractDataLoader {
             //插入
             sqlList.add(new ImmutablePair<>(template.getInsertSql(row.getFinalSchema(), row.getFinalTable(), allColumnNames),
                     allNewValues));
-        } else if (row.getOpType() == EventType.TRUNCATE) {
+        } else if (row.getFinalOpType() == EventType.TRUNCATE) {
             sqlList.add(new ImmutablePair<>(template.getTruncateSql(row.getFinalSchema(), row.getFinalTable()), new Object[]{}));
         }
         return sqlList;

@@ -76,14 +76,15 @@ public class LoadJob extends AbstractStageJob {
 
                     //提交批次消费同步点
                     if (null != bucket.getPosition()) {
+                        LOGGER.debug("提交消费同步点到集群策略:{}", bucket.getPosition().render());
+                        work.getDataConsumer().commitPosition(bucket.getPosition());
+                        LOGGER.debug("提交消费同步点到消费器客户端:{}", bucket.getPosition().render());
+
                         if (bucket.getPosition().checksum()) {
                             LOGGER.debug("开始提交消费同步点:{}", bucket.getPosition().render());
                             ClusterProviderProxy.INSTANCE.broadcast(new TaskPositionUploadCommand(work.getTaskId(),
                                     work.getDataConsumer().getSwimlaneId(), bucket.getPosition().render()));
                         }
-                        LOGGER.debug("提交消费同步点到集群策略:{}", bucket.getPosition().render());
-                        work.getDataConsumer().commitPosition(bucket.getPosition());
-                        LOGGER.debug("提交消费同步点到消费器客户端:{}", bucket.getPosition().render());
                     }
                     //更新消费统计数据
                     loadResult.getRight().forEach(o -> updateStat(o));
@@ -92,7 +93,8 @@ public class LoadJob extends AbstractStageJob {
                 LOGGER.error("Load ETLRow error", stopException);
                 stopException.printStackTrace();
                 work.stopAndAlarm(stopException.getMessage());
-            } catch (Exception e) {
+            } catch (Throwable e) {
+                e.printStackTrace();
                 NodeLog.upload(NodeLog.LogType.TASK_LOG, work.getTaskId(), work.getDataConsumer().getSwimlaneId(),
                         "Load ETLRow error"  + e.getMessage());
                 LOGGER.error("Load ETLRow error!", e);

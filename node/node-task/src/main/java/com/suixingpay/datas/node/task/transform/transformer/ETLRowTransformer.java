@@ -47,13 +47,13 @@ public class ETLRowTransformer implements Transformer {
         LOGGER.debug("start tranforming bucket:{},size:{}", bucket.getSequence(), bucket.getRows().size());
         for (ETLRow row : bucket.getRows()) {
             LOGGER.debug("try tranform row:{},{}", row.getPosition().render(), JSON.toJSONString(row));
-            TableMapper tableMapper = work.getTableMapper(row.getSchema(), row.getTable());
+            TableMapper tableMapper = work.getTableMapper(row.getFinalSchema(), row.getFinalTable());
             mappingRowData(tableMapper, row);
             TableSchema table = findTable(work.getDataLoader(), row.getFinalSchema(), row.getFinalTable());
             if (null != table) remedyColumns(table, row);
 
             //当是更新时，判断主键是否变更
-            if (row.getOpType() == EventType.UPDATE) {
+            if (row.getFinalOpType() == EventType.UPDATE) {
                 boolean isChanged = !row.getColumns().stream().filter(c -> c.isKey()
                         && !StringUtils.trimToEmpty(c.getFinalOldValue()).equals(StringUtils.trimToEmpty(c.getFinalValue())))
                         .collect(Collectors.toList()).isEmpty();

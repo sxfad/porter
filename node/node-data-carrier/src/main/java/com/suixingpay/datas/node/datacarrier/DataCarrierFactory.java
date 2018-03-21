@@ -8,6 +8,7 @@
  */
 package com.suixingpay.datas.node.datacarrier;
 
+import com.suixingpay.datas.common.util.compile.JavaFileCompiler;
 import com.suixingpay.datas.node.datacarrier.simple.SimpleDataCarrier;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Scope;
@@ -30,7 +31,7 @@ import java.util.List;
 public class DataCarrierFactory {
     private final Class provider;
     public DataCarrierFactory() {
-        List<String> clazz = SpringFactoriesLoader.loadFactoryNames(DataCarrier.class, null);
+        List<String> clazz = SpringFactoriesLoader.loadFactoryNames(DataCarrier.class, JavaFileCompiler.getInstance());
         String providerString = clazz.get(0);
         Class tmpProvider = null;
         if (!StringUtils.isBlank(providerString)) {

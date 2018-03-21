@@ -36,6 +36,10 @@ distributions {
             from (buildDir.getPath() + "/config") {
                 into "config"
             }
+
+            from ("plugins") {
+                into "plugins"
+            }
         }
     }
 }

@@ -46,7 +46,9 @@ public class DataConsumerConfig {
 
     /**
      * 事件处理器，自定义处理
-     * Base64编码,转换为class类的时候需要
+     * 两种形式：
+     * 1.源码内容；
+     * 2.class类相对路径，相对于
      */
-    @Getter @Setter private String eventProcessor;
+    @Getter @Setter private JavaFileConfig eventProcessor;
 }

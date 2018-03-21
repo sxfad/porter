@@ -9,12 +9,9 @@
 
 package com.suixingpay.datas.common.util.compile;
 
+import com.suixingpay.datas.common.config.JavaFileConfig;
 import lombok.Getter;
 import org.apache.commons.lang.StringUtils;
-import org.apache.oro.text.regex.MalformedPatternException;
-import org.apache.oro.text.regex.PatternMatcher;
-import org.apache.oro.text.regex.Perl5Compiler;
-import org.apache.oro.text.regex.Perl5Matcher;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -22,41 +19,25 @@ import org.apache.oro.text.regex.Perl5Matcher;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年03月09日 14:47
  */
-public class JavaSource {
+public class JavaSource implements JavaFile {
     @Getter private final String packageName;
     @Getter private final String className;
+    @Getter private final String simpleClassName;
     @Getter private final String source;
-    public JavaSource(String source) throws MalformedPatternException {
-        this.source = source;
-        this.packageName = getPackage(source);
-        this.className = getClassName(source);
+    public JavaSource(JavaFileConfig config) {
+        this.source = config.getContent();
+        this.className = config.getClassName();
+        this.packageName = getPackage(config.getClassName());
+        this.simpleClassName = getClassName(config.getClassName());
     }
 
-    private static String getPackage(String source) throws MalformedPatternException {
-        return find(source, "package (?s).*?;")
-                .replaceAll("package ", StringUtils.EMPTY)
-                .replaceAll(";", StringUtils.EMPTY)
-                .trim();
+    private static String getPackage(String className) {
+        int index = className.lastIndexOf(".");
+        return index > -1 ? className.substring(0, index) : StringUtils.EMPTY;
     }
 
-    private static String getClassName(String source) throws MalformedPatternException {
-        return find(source, "public class (?s).*?{")
-                .split("extends")[0]
-                .split("implements")[0]
-                .replaceAll("public class ", StringUtils.EMPTY)
-                .replace("{", StringUtils.EMPTY)
-                .trim();
-    }
-
-    private static String find(String text, String regex) throws MalformedPatternException {
-
-        if (StringUtils.isBlank(text)) return StringUtils.EMPTY;
-
-        PatternMatcher textMatcher = new Perl5Matcher();
-        if (textMatcher.contains(text, new Perl5Compiler().compile(regex,
-                Perl5Compiler.CASE_INSENSITIVE_MASK | Perl5Compiler.READ_ONLY_MASK))) {
-            return StringUtils.trimToEmpty(textMatcher.getMatch().group(0));
-        }
-        return StringUtils.EMPTY;
+    private static String getClassName(String className) {
+        int index = className.lastIndexOf(".");
+        return index > -1 ? className.substring(index + 1) : className;
     }
 }
