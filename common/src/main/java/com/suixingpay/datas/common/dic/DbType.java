@@ -29,7 +29,7 @@ import lombok.Getter;
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum DbType {
 
-    MYSQL("MYSQL", "MYSQL","com.mysql.cj.jdbc.Driver"), ORACLE("ORACLE", "ORACLE","oracle.jdbc.driver.OracleDriver");
+    MYSQL("MYSQL", "MYSQL", "com.mysql.cj.jdbc.Driver"), ORACLE("ORACLE", "ORACLE", "oracle.jdbc.driver.OracleDriver");
 
     @Getter
     private final String code;
