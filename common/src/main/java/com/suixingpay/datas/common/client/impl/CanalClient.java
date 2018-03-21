@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  *
@@ -49,6 +50,12 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
     private final CanalServerWithEmbedded canalServer;
     private ClientIdentity clientId;
     private CountDownLatch canFetch = new CountDownLatch(1);
+
+    /**
+     * canal.server是否抛出异常
+     */
+    private AtomicBoolean hasBroken = new AtomicBoolean(false);
+    private volatile Throwable brokenError;
 
     public CanalClient(CanalConfig config) {
         super(config);
@@ -68,6 +75,8 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
             canalServer.stop(getConfig().getDatabase());
             canalServer.stop();
         }
+        hasBroken = new AtomicBoolean(false);
+        brokenError = null;
         canFetch = new CountDownLatch(1);
     }
 
@@ -112,25 +121,28 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
                 //消息存储模型
                 canal.getCanalParameter().setStorageMode(CanalParameter.StorageMode.MEMORY);
                 canal.getCanalParameter().setMemoryStorageBufferSize(32 * 1024);
+                //忽略表解析异常
+                canal.getCanalParameter().setFilterTableError(true);
                 //从上次失败位置开始消费
                 if (!StringUtils.isBlank(position)) {
                     CanalPosition canalPosition = CanalPosition.getPosition(position);
                     canal.getCanalParameter().setMasterLogfileName(canalPosition.logfileName);
                     canal.getCanalParameter().setMasterLogfileOffest(canalPosition.offset);
-
                 }
+
                 CanalInstanceWithManager instance = new CanalInstanceWithManager(canal, clientId.getFilter());
                 instance.setAlarmHandler(new CanalAlarmHandler()  {
                     private volatile boolean isRun = false;
 
                     @Override
-                    @SneakyThrows(TaskStopTriggerException.class)
                     public void sendAlarm(String destination, String msg) {
                         msg = StringUtils.trimToEmpty(msg);
                         //master连接不上
-                        if (msg.contains("CanalParseException: java.io.IOException") ||
-                                msg.contains("java.io.IOException: Received error packet: errno")) {
-                            throw new TaskStopTriggerException(config.getProperties() + ":链接建立失败");
+                        if (msg.contains("CanalParseException: java.io.IOException")
+                                || msg.contains("java.io.IOException: Received error packet: errno")) {
+                            if (hasBroken.compareAndSet(false, true)) {
+                                brokenError = new TaskStopTriggerException("【Canal链接建立失败】【" + config.getProperties() + "】" + msg);
+                            }
                         }
                     }
 
@@ -160,7 +172,11 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
     }
 
     @Override
-    public <F, O>  List<F> fetch(FetchCallback<F, O> callback) {
+    public <F, O>  List<F> fetch(FetchCallback<F, O> callback) throws TaskStopTriggerException {
+        if (hasBroken.get()) {
+            throw null != brokenError ? new TaskStopTriggerException(brokenError) : new TaskStopTriggerException("canal.server因异常中断");
+        }
+
         List<F> msgList = new ArrayList<>();
         if (isStarted()) {
             Message msg = null;

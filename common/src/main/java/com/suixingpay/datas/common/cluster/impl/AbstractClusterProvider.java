@@ -46,6 +46,7 @@ import com.suixingpay.datas.common.exception.ClientMatchException;
 import com.suixingpay.datas.common.exception.ConfigParseException;
 import com.suixingpay.datas.common.task.TaskEventListener;
 import com.suixingpay.datas.common.task.TaskEventProvider;
+import com.suixingpay.datas.common.util.compile.JavaFileCompiler;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 
 import java.io.IOException;
@@ -186,7 +187,7 @@ public abstract class AbstractClusterProvider<C extends Client> implements Clust
         monitor = newMonitor();
         monitor.setClient(client);
         //通过spring框架的SPI loader加载服务
-        List<ClusterListener> listeners = SpringFactoriesLoader.loadFactories(getClusterListenerClass(), null);
+        List<ClusterListener> listeners = SpringFactoriesLoader.loadFactories(getClusterListenerClass(), JavaFileCompiler.getInstance());
         //添加SPI到监听器
         listeners.forEach(listener -> {
             listener.setClient(client);

@@ -9,6 +9,7 @@
 
 package com.suixingpay.datas.node.core.event.s;
 
+import com.suixingpay.datas.common.util.compile.JavaFileCompiler;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 
 import java.util.List;
@@ -25,7 +26,10 @@ public enum  ConverterFactory {
     private final List<EventConverter> CONVERTERS;
 
     ConverterFactory() {
-        CONVERTERS = SpringFactoriesLoader.loadFactories(EventConverter.class, null);
+        /**
+         * 自定义Converter插件由JavaFileCompiler载入，故需要JavaFileCompiler作为ClassLoader
+         */
+        CONVERTERS = SpringFactoriesLoader.loadFactories(EventConverter.class, JavaFileCompiler.getInstance());
     }
 
     public  EventConverter getConverter(String name) {

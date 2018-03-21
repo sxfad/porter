@@ -8,6 +8,7 @@
  */
 package com.suixingpay.datas.node.task.select;
 
+import com.suixingpay.datas.common.exception.TaskStopTriggerException;
 import com.suixingpay.datas.common.statistics.NodeLog;
 import com.suixingpay.datas.node.core.NodeContext;
 import com.suixingpay.datas.node.core.consumer.DataConsumer;
@@ -68,6 +69,9 @@ public class SelectJob extends AbstractStageJob {
             try {
                 events = consumer.fetch();
                 if (null != events && !events.isEmpty()) carrier.push(events);
+            } catch (TaskStopTriggerException stopError) {
+                stopError.printStackTrace();
+                work.stopAndAlarm(stopError.getMessage());
             } catch (Throwable e) {
                 e.printStackTrace();
                 NodeLog.upload(NodeLog.LogType.TASK_LOG, work.getTaskId(), consumer.getSwimlaneId(), "fetch MessageEvent error" + e.getMessage());

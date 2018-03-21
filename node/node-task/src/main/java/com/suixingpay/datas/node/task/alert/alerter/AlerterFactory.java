@@ -10,6 +10,7 @@
 package com.suixingpay.datas.node.task.alert.alerter;
 
 import com.suixingpay.datas.common.cluster.data.DTaskStat;
+import com.suixingpay.datas.common.util.compile.JavaFileCompiler;
 import com.suixingpay.datas.node.core.consumer.DataConsumer;
 import com.suixingpay.datas.node.core.loader.DataLoader;
 import com.suixingpay.datas.node.core.task.TableMapper;
@@ -37,7 +38,7 @@ public class AlerterFactory {
     private Alerter alerter;
 
     public AlerterFactory() {
-        List<Alerter> alerters = SpringFactoriesLoader.loadFactories(Alerter.class, null);
+        List<Alerter> alerters = SpringFactoriesLoader.loadFactories(Alerter.class, JavaFileCompiler.getInstance());
         if (null != alerters && alerters.size() == 1) {
             alerter = alerters.get(0);
         } else {

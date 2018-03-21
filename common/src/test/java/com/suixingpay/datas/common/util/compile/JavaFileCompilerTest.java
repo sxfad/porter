@@ -28,7 +28,6 @@ public class JavaFileCompilerTest {
     @BeforeClass
     public static void init() {
         RESOURCE_DIR = JavaFileCompilerTest.class.getResource("/").getPath().replace("out/test/classes", "src/test/resources");
-
     }
 
     @Test
@@ -74,4 +73,8 @@ public class JavaFileCompilerTest {
         System.out.println(obj.toString());
     }
 
+    @Test
+    public void loadPlugin() throws Exception {
+        JavaFileCompiler.getInstance().loadPlugin(RESOURCE_DIR);
+    }
 }

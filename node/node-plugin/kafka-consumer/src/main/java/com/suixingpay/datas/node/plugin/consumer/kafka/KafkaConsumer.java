@@ -14,6 +14,7 @@ import com.suixingpay.datas.common.client.impl.KafkaClient;
 import com.suixingpay.datas.common.consumer.ConsumeClient;
 import com.suixingpay.datas.common.consumer.Position;
 import com.suixingpay.datas.common.dic.ConsumerPlugin;
+import com.suixingpay.datas.common.exception.TaskStopTriggerException;
 import com.suixingpay.datas.node.core.consumer.AbstractDataConsumer;
 import com.suixingpay.datas.node.core.event.s.MessageEvent;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -28,7 +29,7 @@ import java.util.List;
  */
 public class KafkaConsumer extends AbstractDataConsumer {
 
-    public List<MessageEvent> doFetch() {
+    public List<MessageEvent> doFetch() throws TaskStopTriggerException {
         return consumeClient.fetch(new ConsumeClient.FetchCallback<MessageEvent, Object>() {
             @Override
             public <F, O> F accept(O o) {

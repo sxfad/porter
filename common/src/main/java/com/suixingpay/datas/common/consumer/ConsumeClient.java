@@ -71,7 +71,7 @@ public interface ConsumeClient extends Client {
      * @param <O>  消费客户端数据结构
      * @return 同步中间件统一对象模型列表
      */
-    <F, O> List<F> fetch(FetchCallback<F, O> callback);
+    <F, O> List<F> fetch(FetchCallback<F, O> callback) throws TaskStopTriggerException;
 
     /**
      * 回调函数

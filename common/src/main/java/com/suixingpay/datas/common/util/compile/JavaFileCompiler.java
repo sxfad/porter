@@ -11,8 +11,6 @@ package com.suixingpay.datas.common.util.compile;
 
 
 import com.suixingpay.datas.common.config.JavaFileConfig;
-import lombok.SneakyThrows;
-import org.springframework.util.FileSystemUtils;
 
 import javax.tools.JavaCompiler;
 import javax.tools.StandardJavaFileManager;
@@ -21,14 +19,11 @@ import javax.tools.ToolProvider;
 import javax.tools.JavaFileObject;
 import javax.tools.SimpleJavaFileObject;
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.rmi.UnexpectedException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -120,13 +115,18 @@ public class   JavaFileCompiler extends URLClassLoader {
     }
 
     public void loadPlugin() throws MalformedURLException {
+        loadPlugin(PLUGIN_HOME);
+    }
+
+    public void loadPlugin(String filePath) throws MalformedURLException {
         if (isLoadPlugin.compareAndSet(false, true)) {
-            File[] jars = new File(PLUGIN_HOME).listFiles(pathname -> pathname.getName().endsWith(".jar"));
+            File[] jars = new File(filePath).listFiles(pathname -> pathname.getName().endsWith(".jar"));
             if (null != jars) {
                 for (File jar : jars) {
                     this.addURL(jar.toURI().toURL());
                 }
             }
         }
+
     }
 }

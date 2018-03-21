@@ -8,6 +8,7 @@
  */
 package com.suixingpay.datas.node.task.transform.transformer;
 
+import com.suixingpay.datas.common.util.compile.JavaFileCompiler;
 import com.suixingpay.datas.node.core.event.etl.ETLBucket;
 import com.suixingpay.datas.node.task.worker.TaskWork;
 import org.springframework.context.annotation.Scope;
@@ -27,7 +28,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Component
 @Scope("singleton")
 public class TransformFactory {
-    private final List<Transformer> extractors = SpringFactoriesLoader.loadFactories(Transformer.class, null);
+    private final List<Transformer> extractors = SpringFactoriesLoader.loadFactories(Transformer.class, JavaFileCompiler.getInstance());
     private final AtomicBoolean isSort = new AtomicBoolean(false);
 
     public TransformFactory() {
