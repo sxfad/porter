@@ -94,7 +94,7 @@
 
     <!-- 分页 -->
     <select id="page" resultType="com.suixingpay.datas.manager.core.entity.DataTable">
-        SELECT id, source_id AS sourceId, data_type AS dataType, bank_name AS bankName, table_name AS tableName
+        SELECT id, source_id AS sourceId, data_type AS dataType, bank_name AS bankName, table_name AS tableName, create_time AS createTime
         from b_data_table
         <where>
             iscancel = 0
