@@ -16,5 +16,6 @@ package com.suixingpay.datas.common.node;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月24日 17:48
  */
 public enum  NodeCommandType {
-    CHANGE_STATUS, RELEASE_WORK;
+    CHANGE_STATUS,//停止|接收任务推送
+    RELEASE_WORK;//停止当前任务 NodeStatusType-SUSPEND
 }

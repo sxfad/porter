@@ -3,13 +3,14 @@
  */
 package com.suixingpay.datas.manager.service.impl;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.suixingpay.datas.common.dic.NodeStatusType;
 import com.suixingpay.datas.manager.core.entity.Nodes;
 import com.suixingpay.datas.manager.core.mapper.NodesMapper;
 import com.suixingpay.datas.manager.service.NodesService;
 import com.suixingpay.datas.manager.web.page.Page;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 /**
  * 节点信息表 服务实现类
@@ -43,10 +44,10 @@ public class NodesServiceImpl implements NodesService {
     }
 
     @Override
-    public Nodes taskPushState(Long id, NodeStatusType taskPushState) {
-        nodesMapper.taskPushState(id, taskPushState.getCode());
-        Nodes nodes = nodesMapper.selectById(id);
-        return nodes;
+    public Integer taskPushState(Long id, NodeStatusType taskPushState) {
+        Integer i =nodesMapper.taskPushState(id, taskPushState.getCode());
+        //Nodes nodes = nodesMapper.selectById(id);
+        return i;
     }
 
     @Override

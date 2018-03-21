@@ -16,13 +16,25 @@ import lombok.Setter;
 
 /**
  * 管理后台配置推送
+ * 
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年02月23日 16:42
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月23日 16:42
  */
-public class NodeOrderPushCommand implements ClusterCommand  {
-    @Getter @Setter private NodeCommandConfig config;
+public class NodeOrderPushCommand implements ClusterCommand {
+
+    public NodeOrderPushCommand() {
+
+    }
+
+    public NodeOrderPushCommand(NodeCommandConfig config) {
+        this.config = config;
+    }
+
+    @Getter
+    @Setter
+    private NodeCommandConfig config;
 
     public String render() {
         return JSONObject.toJSONString(config);

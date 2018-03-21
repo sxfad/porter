@@ -21,7 +21,24 @@ import lombok.Setter;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月24日 17:46
  */
 public class NodeCommandConfig {
-    @Setter @Getter private String nodeId;
-    @Setter @Getter private NodeStatusType status = NodeStatusType.SUSPEND;
-    @Setter @Getter private NodeCommandType command;
+
+    public NodeCommandConfig() {
+
+    }
+
+    public NodeCommandConfig(String nodeId, NodeStatusType status, NodeCommandType command) {
+        this.nodeId = nodeId;
+        this.status = status;
+        this.command = command;
+    }
+
+    @Setter
+    @Getter
+    private String nodeId;
+    @Setter
+    @Getter
+    private NodeStatusType status = NodeStatusType.SUSPEND;
+    @Setter
+    @Getter
+    private NodeCommandType command;
 }

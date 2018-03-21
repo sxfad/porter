@@ -72,15 +72,21 @@ public class NodesController {
 
     @PostMapping("/taskpushstate")
     @ApiOperation(value = "任务状态推送", notes = "任务状态推送")
-    public ResponseMessage taskPushState(@RequestParam(value = "id", required = true) Long id,@RequestParam(value = "taskPushState", required = true) NodeStatusType taskPushState) {
-        Nodes nodes = nodesService.taskPushState(id, taskPushState);
+    public ResponseMessage taskPushState(@RequestParam(value = "id", required = true) Long id,@RequestParam(value = "taskPushState", required = true) NodeStatusType taskPushState) throws Exception {
+        Integer i = nodesService.taskPushState(id, taskPushState);
+        if(i==1) {
+            System.out.println("推送任务 运行中|暂停:"+id);
+            //ClusterProviderProxy.INSTANCE.broadcast(new NodeOrderPushCommand(new NodeCommandConfig(id.toString(), taskPushState, NodeCommandType.CHANGE_STATUS)));
+        }
+        Nodes nodes = nodesService.selectById(id);
         return ok(nodes);
     }
 
     @PostMapping("/stoptask")
     @ApiOperation(value = "停止任务", notes = "停止任务")
-    public ResponseMessage stopTask(@RequestParam(value = "id", required = true) Long id) {
+    public ResponseMessage stopTask(@RequestParam(value = "id", required = true) Long id) throws Exception {
         System.out.println("停止任务:"+id);
+        //ClusterProviderProxy.INSTANCE.broadcast(new NodeOrderPushCommand(new NodeCommandConfig(id.toString(), NodeStatusType.SUSPEND, NodeCommandType.RELEASE_WORK)));
         return ok();
     }
 

@@ -22,7 +22,7 @@ public interface NodesService {
 
     Integer cancel(Long id);
 
-    Nodes taskPushState(Long id,NodeStatusType taskPushState);
+    Integer taskPushState(Long id,NodeStatusType taskPushState);
 
     Nodes selectById(Long id);
 
