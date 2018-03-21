@@ -50,7 +50,10 @@
 
 同步节点管理
     列表：/nodes(get)  节点ID(nodeId)  机器名(machineName)  IP(ipAddress)  心跳时间(heartBeatTime)  进程号(pidNumber)  状态(state 1在线 -1离线)  任务推送状态(task_push_state)  操作(停止接收任务推送、接收任务推送、停止当前任务、删除)
-    新增：节点id、机器名、ip、进程号
+    新增：/nodes(post) 节点id、机器名、ip、进程号（nodeId machineName ipAddress pidNumber）
+    删除：/nodes/{id}
+    任务状态推送：/nodes/taskpushstate
+    停止任务：/nodes/stoptask
 
 同步任务
 
