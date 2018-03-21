@@ -27,8 +27,9 @@ public class LogGradeServiceImpl implements LogGradeService {
 
     @Override
     public Integer insert(LogGrade logGrade) {
+
         Integer number;
-        if (null != logGrade.getId() && !"".equals(logGrade.getId())) {
+        if (null != logGrade.getId()) {
             number = logGradeMapper.updateSelective(logGrade.getId(), logGrade);
         } else {
             number = logGradeMapper.insertSelective(logGrade);
@@ -66,7 +67,7 @@ public class LogGradeServiceImpl implements LogGradeService {
 
         LogGrade logGrade = logGradeMapper.select();
 
-        if (null != logGrade && !"".equals(logGrade)) {
+        if (null != logGrade) {
             return logGrade;
         } else {
             //默认为INFO
