@@ -4,7 +4,6 @@ import static com.suixingpay.datas.manager.web.message.ResponseMessage.ok;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -92,7 +91,7 @@ public class AlarmController {
 
     @GetMapping("/info")
     @ApiOperation(value = "查询明细", notes = "查询明细")
-    public ResponseMessage info(@PathVariable("id") Long id) {
+    public ResponseMessage info() {
         Alarm alarm = alarmService.selectFinallyOne();
         return ok(alarm);
     }
