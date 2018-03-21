@@ -57,5 +57,7 @@
 任务监控
 
 节点监控
+    列表：/mrnodesschedule(get) 节点ID(nodeId)、机器名(computerName)、IP(ipAddress)、心跳时间(heartBeatDate)、进程号(processNumber)、任务(jobJson)、操作(实时监控)
 
 运行日志
+    列表：/mrlogmonitor(get) 节点ID(nodeId)、任务(jobName)、IP(ipAddress)、日志时间(logDate)、日志标题(logTitle)、内容(logContent) 操作(删除)
