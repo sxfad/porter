@@ -38,9 +38,9 @@ public class AlerterFactory {
     private Alerter alerter;
 
     public AlerterFactory() {
-        List<Alerter> alerters = SpringFactoriesLoader.loadFactories(Alerter.class, JavaFileCompiler.getInstance());
-        if (null != alerters && alerters.size() == 1) {
-            alerter = alerters.get(0);
+        List<Alerter> alertList = SpringFactoriesLoader.loadFactories(Alerter.class, JavaFileCompiler.getInstance());
+        if (null != alertList && alertList.size() == 1) {
+            alerter = alertList.get(0);
         } else {
             throw new RuntimeException("AlerterFactory仅允许配置单个Alerter实现");
         }

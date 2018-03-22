@@ -1,0 +1,2 @@
+com.suixingpay.datas.node.core.loader.DataLoader=\
+  com.suixingpay.datas.node.plugin.loader.kudu.KuduLoader

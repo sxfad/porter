@@ -19,4 +19,6 @@ include 'node:node-plugin:jdbc-loader'
 findProject(':node:node-plugin:jdbc-loader')?.name = 'jdbc-loader'
 include 'node:node-plugin:canal-consumer'
 findProject(':node:node-plugin:canal-consumer')?.name = 'canal-consumer'
+include 'node:node-plugin:kudu-loader'
+findProject(':node:node-plugin:kudu-loader')?.name = 'kudu-loader'
 

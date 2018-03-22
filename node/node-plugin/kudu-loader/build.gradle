@@ -1,0 +1,6 @@
+jar.baseName = 'datas-plugin-kudu-loader'
+dependencies {
+    compile (
+            project(":node:node-core")
+    )
+}

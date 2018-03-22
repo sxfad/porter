@@ -97,7 +97,13 @@ public class TaskWork {
                 put(StageType.EXTRACT, new ExtractJob(work));
                 put(StageType.TRANSFORM, new TransformJob(work));
                 put(StageType.LOAD, new LoadJob(work));
-                put(StageType.DB_CHECK, new AlertJob(work));
+
+                /**
+                 * 源端数据源支持元数据查询
+                 */
+                if (dataConsumer.supportMetaQuery()) {
+                    put(StageType.DB_CHECK, new AlertJob(work));
+                }
             }
         };
 
