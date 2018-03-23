@@ -53,9 +53,9 @@ public class KuduLoader extends AbstractDataLoader {
             public void accept(List<ETLRow> l) {
                 if (l.isEmpty()) return;
                 //批次操作类型
-                EventType type = l.get(0).getOpType();
-                String tableName = l.get(0).getTable();
-                String schemaName = l.get(0).getSchema();
+                EventType type = l.get(0).getFinalOpType();
+                String tableName = l.get(0).getFinalTable();
+                String schemaName = l.get(0).getFinalSchema();
 
                 String finalTableName = l.get(0).getFinalTable();
                 //所有字段
@@ -108,7 +108,7 @@ public class KuduLoader extends AbstractDataLoader {
                     //更新进度信息
                     for (int affect = 0; affect < l.size(); affect++) {
                         ETLRow row = l.get(affect);
-                        affectRow.add(new SubmitStatObject(schemaName, tableName, row.getOpType(),
+                        affectRow.add(new SubmitStatObject(schemaName, tableName, type,
                                 result[affect], row.getPosition(), row.getOpTime()));
                     }
 
@@ -129,7 +129,7 @@ public class KuduLoader extends AbstractDataLoader {
                 if (c.isKey()) {
                     keys.add(new ImmutableTriple<>(c.getFinalName(), c.getFinalType(), c.getFinalValue()));
                     //更新时需要，判断主键是否发生变化
-                    if (!c.getFinalOldValue().equals(c.getFinalValue()) && row.getOpType() == EventType.UPDATE) {
+                    if (!c.getFinalOldValue().equals(c.getFinalValue()) && row.getFinalOpType() == EventType.UPDATE) {
                         KuduCustomETLRowField.setKeyChanged(row, true);
                     }
                 } else {

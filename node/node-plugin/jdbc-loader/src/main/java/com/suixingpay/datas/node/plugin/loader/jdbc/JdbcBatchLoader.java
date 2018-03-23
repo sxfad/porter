@@ -44,7 +44,8 @@ public class JdbcBatchLoader extends BaseJdbcLoader {
                 int affect = loadSql(buildSql(row));
 
                 //插入影响行数
-                affectRow.add(new SubmitStatObject(row.getSchema(), row.getTable(), row.getOpType(), affect, row.getPosition(), row.getOpTime()));
+                affectRow.add(new SubmitStatObject(row.getFinalSchema(), row.getFinalTable(), row.getFinalOpType(),
+                        affect, row.getPosition(), row.getOpTime()));
             } else if (rows.size() > 1) { //仅支持单条记录生成一个sql的情况
                 List<Pair<String, Object[]>> subList = new ArrayList<>();
 
@@ -62,7 +63,8 @@ public class JdbcBatchLoader extends BaseJdbcLoader {
                 for (int rindex = 0; rindex < rows.size(); rindex++) {
                     int affect = rindex < results.length ? results[rindex] : 0;
                     ETLRow row = rows.get(rindex);
-                    affectRow.add(new SubmitStatObject(row.getSchema(), row.getTable(), row.getOpType(), affect, row.getPosition(), row.getOpTime()));
+                    affectRow.add(new SubmitStatObject(row.getFinalSchema(), row.getFinalTable(), row.getFinalOpType(),
+                            affect, row.getPosition(), row.getOpTime()));
                 }
             }
         }

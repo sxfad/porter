@@ -104,7 +104,7 @@ public class ETLBucket {
                 columns.add(column);
             }
             ETLRow row = new ETLRow(event.getSchema(), event.getTable(), event.getOpType(), columns, event.getOpTs(), event.getRowPosition());
-            rows.add(row);
+            rows.add(row.toUpperCase());
             LOGGER.debug(JSON.toJSONString(row));
         }
         Position position = !events.getRight().isEmpty() ? events.getRight().get(events.getRight().size() - 1).getBucketPosition() : null;

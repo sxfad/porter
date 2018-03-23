@@ -39,13 +39,13 @@ public class IgnoreRowExtractor implements Extractor {
             //包含、不包含表判断
             if (!metadata.getIncludeTables().isEmpty()) {
                 String strSeg = new StringBuffer().append(row.getFinalSchema()).append(".")
-                        .append(row.getFinalTable()).toString().toUpperCase().intern();
+                        .append(row.getFinalTable()).toString().intern();
 
                 if (!metadata.getIncludeTables().contains(strSeg)) removals.add(row);
 
             } else if (metadata.getIncludeTables().isEmpty() && !metadata.getExcludeTables().isEmpty()) { //不包含表
                 String strSeg = new StringBuffer().append(row.getFinalSchema()).append(".")
-                        .append(row.getFinalTable()).toString().toUpperCase().intern();
+                        .append(row.getFinalTable()).toString().intern();
 
                 if (metadata.getExcludeTables().contains(strSeg)) removals.add(row);
             }

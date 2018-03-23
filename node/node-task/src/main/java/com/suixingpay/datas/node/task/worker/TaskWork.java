@@ -240,18 +240,18 @@ public class TaskWork {
         TableMapper mapper = mappers.computeIfAbsent(key, s -> {
             TableMapper tmp = null;
             String mapperKey = taskId + "_" + schema + "_" + table;
-            tmp = worker.getTableMapper().get(mapperKey.toUpperCase());
+            tmp = worker.getTableMapper().get(mapperKey);
             if (null == tmp) {
                 mapperKey = taskId + "__" + table;
-                tmp = worker.getTableMapper().get(mapperKey.toUpperCase());
+                tmp = worker.getTableMapper().get(mapperKey);
             }
             if (null == tmp) {
                 mapperKey = taskId + "_" + schema + "_";
-                tmp = worker.getTableMapper().get(mapperKey.toUpperCase());
+                tmp = worker.getTableMapper().get(mapperKey);
             }
             if (null == tmp) {
                 mapperKey = taskId + "_" + "_";
-                tmp = worker.getTableMapper().get(mapperKey.toUpperCase());
+                tmp = worker.getTableMapper().get(mapperKey);
             }
             return tmp;
         });

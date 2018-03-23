@@ -138,7 +138,7 @@ public class   JavaFileCompiler extends URLClassLoader {
         StringBuilder builder = new StringBuilder();
         try (BufferedReader reader = new BufferedReader(new FileReader(sourceFile))) {
             String line = null;
-            while ((line =  reader.readLine()) != null){
+            while ((line =  reader.readLine()) != null) {
                 builder.append(line);
             }
         }

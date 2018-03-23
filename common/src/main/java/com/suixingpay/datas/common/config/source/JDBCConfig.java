@@ -33,6 +33,7 @@ public class JDBCConfig extends SourceConfig {
     @Setter @Getter private int maxPoolSize = 20;
     @Setter @Getter private int initialPoolSize = 5;
     @Setter @Getter private int connectionErrorRetryAttempts = 1;
+    @Setter @Getter private int validationQueryTimeout = 3000;
     @Setter @Getter private DbType dbType;
 
     public  JDBCConfig() {

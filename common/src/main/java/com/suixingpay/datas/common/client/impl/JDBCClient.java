@@ -80,6 +80,7 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
         dataSource.setConnectionErrorRetryAttempts(config.getConnectionErrorRetryAttempts());
         //连接错误重试时间间隔
         //dataSource.setTimeBetweenConnectErrorMillis(1000);
+        dataSource.setValidationQueryTimeout(config.getValidationQueryTimeout());
         //超出错误连接次数后是否退出尝试连接
         dataSource.setBreakAfterAcquireFailure(true);
         dataSource.setTestWhileIdle(true);
@@ -128,6 +129,12 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
         });
     }
 
+    /**
+     * schema大写
+     * @param schema
+     * @param tableName
+     * @return
+     */
     private TableSchema getTableSchema(String schema, String tableName) {
         Table dbTable = DdlUtils.findTable(jdbcTemplate, schema, schema, tableName, null);
         TableSchema tableSchema = new TableSchema();
@@ -142,7 +149,7 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
             column.setTypeCode(c.getTypeCode());
             tableSchema.addColumn(column);
         });
-        return tableSchema;
+        return tableSchema.toUpperCase();
     }
 
     @Override
