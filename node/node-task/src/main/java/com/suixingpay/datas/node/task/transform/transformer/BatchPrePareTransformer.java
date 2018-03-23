@@ -45,8 +45,8 @@ public class BatchPrePareTransformer implements Transformer {
             ETLRow nextRow = null;
             if (from < size) nextRow = bucket.getRows().get(from);
             //下个操作类型和该类型相同
-            if (null != nextRow && nextRow.getOpType() == row.getOpType() && nextRow.getSchema().equals(row.getSchema())
-                    && nextRow.getTable().equals(row.getTable())) {
+            if (null != nextRow && nextRow.getOpType() == row.getOpType() && nextRow.getFinalSchema().equals(row.getFinalSchema())
+                    && nextRow.getFinalTable().equals(row.getFinalTable())) {
                 continue;
             } else {
                 break;

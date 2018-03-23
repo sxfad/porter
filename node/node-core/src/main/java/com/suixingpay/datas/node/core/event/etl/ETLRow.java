@@ -69,20 +69,16 @@ public class ETLRow {
         this.opTime = opTime;
 
         //数据映射时使用
-        this.finalSchema = schema;
-        this.finalTable = table;
+        this.finalSchema = this.schema;
+        this.finalTable = this.table;
         this.position = position;
     }
-    public String getSchema() {
-        return schema;
-    }
 
-    public String getTable() {
-        return table;
-    }
-
-    public EventType getOpType() {
-        return opType;
+    public ETLRow toUpperCase() {
+        this.finalSchema = finalSchema.toUpperCase();
+        this.finalTable = finalTable.toUpperCase();
+        columns.forEach(c -> c.toUpperCase());
+        return this;
     }
 
     public List<ETLColumn> getColumns() {
@@ -127,5 +123,11 @@ public class ETLRow {
 
     public void setKeyChangedOnUpdate(boolean keyChangedOnUpdate) {
         isKeyChangedOnUpdate = keyChangedOnUpdate;
+    }
+
+
+
+    public EventType getOpType() {
+        return  opType;
     }
 }

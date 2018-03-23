@@ -47,7 +47,7 @@ public class ETLRowTransformer implements Transformer {
         LOGGER.debug("start tranforming bucket:{},size:{}", bucket.getSequence(), bucket.getRows().size());
         for (ETLRow row : bucket.getRows()) {
             LOGGER.debug("try tranform row:{},{}", row.getPosition().render(), JSON.toJSONString(row));
-            TableMapper tableMapper = work.getTableMapper(row.getSchema(), row.getTable());
+            TableMapper tableMapper = work.getTableMapper(row.getFinalSchema(), row.getFinalTable());
             mappingRowData(tableMapper, row);
             TableSchema table = findTable(work.getDataLoader(), row.getFinalSchema(), row.getFinalTable());
             if (null != table) remedyColumns(table, row);

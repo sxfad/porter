@@ -41,7 +41,8 @@ public class JdbcSingleLoader extends BaseJdbcLoader {
             //更新目标仓储
             int affect = loadSql(buildSql(row));
             //插入影响行数
-            affectRow.add(new SubmitStatObject(row.getSchema(), row.getTable(), row.getOpType(), affect, row.getPosition(), row.getOpTime()));
+            affectRow.add(new SubmitStatObject(row.getFinalSchema(), row.getFinalTable(), row.getOpType(),
+                    affect, row.getPosition(), row.getOpTime()));
         }
         return new ImmutablePair(Boolean.TRUE, affectRow);
     }

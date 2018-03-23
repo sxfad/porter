@@ -129,6 +129,12 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
         });
     }
 
+    /**
+     * schema大写
+     * @param schema
+     * @param tableName
+     * @return
+     */
     private TableSchema getTableSchema(String schema, String tableName) {
         Table dbTable = DdlUtils.findTable(jdbcTemplate, schema, schema, tableName, null);
         TableSchema tableSchema = new TableSchema();
@@ -143,7 +149,7 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
             column.setTypeCode(c.getTypeCode());
             tableSchema.addColumn(column);
         });
-        return tableSchema;
+        return tableSchema.toUpperCase();
     }
 
     @Override

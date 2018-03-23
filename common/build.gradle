@@ -23,5 +23,7 @@ dependencies {
         exclude group:'org.apache.zookeeper',module:'zookeeper'
         exclude group:'com.101tec',module:'zkclient'
         exclude group:'com.alibaba',module:'druid'
+        exclude group:'commons-beanutils',module:'commons-beanutils'
+        exclude group:'mysql',module:'mysql-connector-java'
     }
 }
