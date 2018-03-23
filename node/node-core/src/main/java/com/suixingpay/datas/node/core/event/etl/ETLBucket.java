@@ -78,12 +78,15 @@ public class ETLBucket {
             for (Map.Entry<String, Object> entity : loopAfter ? event.getAfter().entrySet() : event.getBefore().entrySet()) {
                 Object newValue = "";
                 Object oldValue = "";
-
                 if (loopAfter) {
                     newValue = entity.getValue();
-                    oldValue = event.getBefore().getOrDefault(entity.getKey(), null);
+                    if (null != event.getBefore()) {
+                        oldValue = event.getBefore().getOrDefault(entity.getKey(), null);
+                    }
                 } else {
-                    newValue = event.getBefore().getOrDefault(entity.getKey(), null);
+                    if (null != event.getBefore()) {
+                        newValue = event.getBefore().getOrDefault(entity.getKey(), null);
+                    }
                     oldValue = entity.getValue();
                 }
                 Object finalValue = newValue;
@@ -97,7 +100,6 @@ public class ETLBucket {
                 oldValueStr = oldValueStr.equals("null") ? null : oldValueStr;
                 String finalValueStr = String.valueOf(finalValue);
                 finalValueStr = finalValueStr.equals("null") ? null : finalValueStr;
-
                 //源数据事件精度损失，转字符串也会有精度损失。后续观察处理
                 ETLColumn column = new ETLColumn(entity.getKey(), newValueStr, oldValueStr, finalValueStr,
                         event.getPrimaryKeys().contains(entity.getKey()));
