@@ -7,11 +7,13 @@
         <result column="job_name" property="jobName" />
         <result column="source_consume_adt" property="sourceConsumeAdt" />
         <result column="source_convert_adt" property="sourceConvertAdt" />
-        <result column="source_data_type" property="sourceDataType" />
-        <result column="source_data_source" property="sourceDataSource" />
+        <result column="source_data_tables_id" property="sourceDataTablesId" />
+        <result column="source_data_tables_name" property="sourceDataTablesName" />
+        <result column="source_data_id" property="sourceDataId" />
+        <result column="source_data_name" property="sourceDataName" />
         <result column="target_load_adt" property="targetLoadAdt" />
-        <result column="target_data_type" property="targetDataType" />
-        <result column="target_data_source" property="targetDataSource" />
+        <result column="target_data_tables_id" property="targetDataTablesId" />
+        <result column="target_data_tables_name" property="targetDataTablesName" />
         <result column="creater" property="creater" />
         <result column="create_time" property="createTime" />
         <result column="state" property="state" />
@@ -21,39 +23,45 @@
 
     <!-- 通用查询结果列 
     <sql id="Base_Column_List">
-        select id, job_name AS jobName, source_consume_adt AS sourceConsumeAdt, source_convert_adt AS sourceConvertAdt, source_data_type AS sourceDataType, source_data_source AS sourceDataSource, target_load_adt AS targetLoadAdt, target_data_type AS targetDataType, target_data_source AS targetDataSource, creater, create_time AS createTime, state, iscancel, remark from job_tasks
+        select id, job_name AS jobName, source_consume_adt AS sourceConsumeAdt, source_convert_adt AS sourceConvertAdt, source_data_tables_id AS sourceDataTablesId, source_data_tables_name AS sourceDataTablesName, source_data_id AS sourceDataId, source_data_name AS sourceDataName, target_load_adt AS targetLoadAdt, target_data_tables_id AS targetDataTablesId, target_data_tables_name AS targetDataTablesName, creater, create_time AS createTime, state, iscancel, remark from job_tasks
     </sql>-->
 
     <!-- 新增 -->
     <insert id="insert">
         insert into job_tasks(
-        job_name,
-        source_consume_adt,
-        source_convert_adt,
-        source_data_type,
-        source_data_source,
-        target_load_adt,
-        target_data_type,
-        target_data_source,
-        creater,
-        create_time,
-        state,
-        iscancel,
-        remark
+            id,
+                job_name,
+                source_consume_adt,
+                source_convert_adt,
+                source_data_tables_id,
+                source_data_tables_name,
+                source_data_id,
+                source_data_name,
+                target_load_adt,
+                target_data_tables_id,
+                target_data_tables_name,
+                creater,
+                create_time,
+                state,
+                iscancel,
+                remark,
         ) values (
-        #{jobName},
-        #{sourceConsumeAdt},
-        #{sourceConvertAdt},
-        #{sourceDataType},
-        #{sourceDataSource},
-        #{targetLoadAdt},
-        #{targetDataType},
-        #{targetDataSource},
-        #{creater},
-        #{createTime},
-        #{state},
-        #{iscancel},
-        #{remark}
+            #{id},
+                #{jobName},
+                #{sourceConsumeAdt},
+                #{sourceConvertAdt},
+                #{sourceDataTablesId},
+                #{sourceDataTablesName},
+                #{sourceDataId},
+                #{sourceDataName},
+                #{targetLoadAdt},
+                #{targetDataTablesId},
+                #{targetDataTablesName},
+                #{creater},
+                #{createTime},
+                #{state},
+                #{iscancel},
+                #{remark},
         )
     </insert>
 
@@ -61,20 +69,23 @@
     <update id="update">
         update job_tasks
         set
-        job_name = #{jobTasks.jobName},
-        source_consume_adt = #{jobTasks.sourceConsumeAdt},
-        source_convert_adt = #{jobTasks.sourceConvertAdt},
-        source_data_type = #{jobTasks.sourceDataType},
-        source_data_source = #{jobTasks.sourceDataSource},
-        target_load_adt = #{jobTasks.targetLoadAdt},
-        target_data_type = #{jobTasks.targetDataType},
-        target_data_source = #{jobTasks.targetDataSource},
-        creater = #{jobTasks.creater},
-        create_time = #{jobTasks.createTime},
-        state = #{jobTasks.state},
-        iscancel = #{jobTasks.iscancel},
-        remark = #{jobTasks.remark}
-        where id = #{id}
+            id = #{jobTasks.id},
+                job_name = #{jobTasks.jobName},
+                source_consume_adt = #{jobTasks.sourceConsumeAdt},
+                source_convert_adt = #{jobTasks.sourceConvertAdt},
+                source_data_tables_id = #{jobTasks.sourceDataTablesId},
+                source_data_tables_name = #{jobTasks.sourceDataTablesName},
+                source_data_id = #{jobTasks.sourceDataId},
+                source_data_name = #{jobTasks.sourceDataName},
+                target_load_adt = #{jobTasks.targetLoadAdt},
+                target_data_tables_id = #{jobTasks.targetDataTablesId},
+                target_data_tables_name = #{jobTasks.targetDataTablesName},
+                creater = #{jobTasks.creater},
+                create_time = #{jobTasks.createTime},
+                state = #{jobTasks.state},
+                iscancel = #{jobTasks.iscancel},
+                remark = #{jobTasks.remark},
+                where id = #{id}
     </update>
 
     <!-- 刪除 -->
@@ -84,7 +95,7 @@
 
     <!-- 根据主鍵查找 -->
     <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.JobTasks">
-        select id, job_name AS jobName, source_consume_adt AS sourceConsumeAdt, source_convert_adt AS sourceConvertAdt, source_data_type AS sourceDataType, source_data_source AS sourceDataSource, target_load_adt AS targetLoadAdt, target_data_type AS targetDataType, target_data_source AS targetDataSource, creater, create_time AS createTime, state, iscancel, remark from job_tasks
+        select id, job_name AS jobName, source_consume_adt AS sourceConsumeAdt, source_convert_adt AS sourceConvertAdt, source_data_tables_id AS sourceDataTablesId, source_data_tables_name AS sourceDataTablesName, source_data_id AS sourceDataId, source_data_name AS sourceDataName, target_load_adt AS targetLoadAdt, target_data_tables_id AS targetDataTablesId, target_data_tables_name AS targetDataTablesName, creater, create_time AS createTime, state, iscancel, remark from job_tasks
         where id = #{id}
     </select>
 
@@ -96,7 +107,7 @@
 
     <!-- 分页 -->
     <select id="page" resultType="com.suixingpay.datas.manager.core.entity.JobTasks">
-        select id, job_name AS jobName, source_consume_adt AS sourceConsumeAdt, source_convert_adt AS sourceConvertAdt, source_data_type AS sourceDataType, source_data_source AS sourceDataSource, target_load_adt AS targetLoadAdt, target_data_type AS targetDataType, target_data_source AS targetDataSource, creater, create_time AS createTime, state, iscancel, remark from job_tasks
+        select id, job_name AS jobName, source_consume_adt AS sourceConsumeAdt, source_convert_adt AS sourceConvertAdt, source_data_tables_id AS sourceDataTablesId, source_data_tables_name AS sourceDataTablesName, source_data_id AS sourceDataId, source_data_name AS sourceDataName, target_load_adt AS targetLoadAdt, target_data_tables_id AS targetDataTablesId, target_data_tables_name AS targetDataTablesName, creater, create_time AS createTime, state, iscancel, remark from job_tasks
         where 1=1 limit #{page.offset},#{page.pageSize}
     </select>
 
@@ -104,133 +115,160 @@
     <insert id="insertSelective">
         insert into job_tasks
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="jobName != null">
-                job_name,
-            </if>
-            <if test="sourceConsumeAdt != null">
-                source_consume_adt,
-            </if>
-            <if test="sourceConvertAdt != null">
-                source_convert_adt,
-            </if>
-            <if test="sourceDataType != null">
-                source_data_type,
-            </if>
-            <if test="sourceDataSource != null">
-                source_data_source,
-            </if>
-            <if test="targetLoadAdt != null">
-                target_load_adt,
-            </if>
-            <if test="targetDataType != null">
-                target_data_type,
-            </if>
-            <if test="targetDataSource != null">
-                target_data_source,
-            </if>
-            <if test="creater != null">
-                creater,
-            </if>
-            <if test="createTime != null">
-                create_time,
-            </if>
-            <if test="state != null">
-                state,
-            </if>
-            <if test="iscancel != null">
-                iscancel,
-            </if>
-            <if test="remark != null">
-                remark,
-            </if>
-        </trim>
+                <if test="id != null">
+            id,
+        </if>
+                    <if test="jobName != null">
+            job_name,
+        </if>
+                    <if test="sourceConsumeAdt != null">
+            source_consume_adt,
+        </if>
+                    <if test="sourceConvertAdt != null">
+            source_convert_adt,
+        </if>
+                    <if test="sourceDataTablesId != null">
+            source_data_tables_id,
+        </if>
+                    <if test="sourceDataTablesName != null">
+            source_data_tables_name,
+        </if>
+                    <if test="sourceDataId != null">
+            source_data_id,
+        </if>
+                    <if test="sourceDataName != null">
+            source_data_name,
+        </if>
+                    <if test="targetLoadAdt != null">
+            target_load_adt,
+        </if>
+                    <if test="targetDataTablesId != null">
+            target_data_tables_id,
+        </if>
+                    <if test="targetDataTablesName != null">
+            target_data_tables_name,
+        </if>
+                    <if test="creater != null">
+            creater,
+        </if>
+                    <if test="createTime != null">
+            create_time,
+        </if>
+                    <if test="state != null">
+            state,
+        </if>
+                    <if test="iscancel != null">
+            iscancel,
+        </if>
+                    <if test="remark != null">
+            remark,
+        </if>
+                </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="jobName != null">
-                #{jobName,jdbcType=VARCHAR},
-            </if>
-            <if test="sourceConsumeAdt != null">
-                #{sourceConsumeAdt,jdbcType=INTEGER},
-            </if>
-            <if test="sourceConvertAdt != null">
-                #{sourceConvertAdt,jdbcType=INTEGER},
-            </if>
-            <if test="sourceDataType != null">
-                #{sourceDataType,jdbcType=INTEGER},
-            </if>
-            <if test="sourceDataSource != null">
-                #{sourceDataSource,jdbcType=BIGINT},
-            </if>
-            <if test="targetLoadAdt != null">
-                #{targetLoadAdt,jdbcType=INTEGER},
-            </if>
-            <if test="targetDataType != null">
-                #{targetDataType,jdbcType=INTEGER},
-            </if>
-            <if test="targetDataSource != null">
-                #{targetDataSource,jdbcType=BIGINT},
-            </if>
-            <if test="creater != null">
-                #{creater,jdbcType=BIGINT},
-            </if>
-            <if test="createTime != null">
-                #{createTime,jdbcType=TIMESTAMP},
-            </if>
-            <if test="state != null">
-                #{state,jdbcType=INTEGER},
-            </if>
-            <if test="iscancel != null">
-                #{iscancel,jdbcType=INTEGER},
-            </if>
-            <if test="remark != null">
-                #{remark,jdbcType=VARCHAR},
-            </if>
-        </trim>
+                <if test="id != null">
+            #{id,jdbcType=BIGINT},
+        </if>
+                    <if test="jobName != null">
+            #{jobName,jdbcType=VARCHAR},
+        </if>
+                    <if test="sourceConsumeAdt != null">
+            #{sourceConsumeAdt,jdbcType=VARCHAR},
+        </if>
+                    <if test="sourceConvertAdt != null">
+            #{sourceConvertAdt,jdbcType=VARCHAR},
+        </if>
+                    <if test="sourceDataTablesId != null">
+            #{sourceDataTablesId,jdbcType=BIGINT},
+        </if>
+                    <if test="sourceDataTablesName != null">
+            #{sourceDataTablesName,jdbcType=VARCHAR},
+        </if>
+                    <if test="sourceDataId != null">
+            #{sourceDataId,jdbcType=BIGINT},
+        </if>
+                    <if test="sourceDataName != null">
+            #{sourceDataName,jdbcType=VARCHAR},
+        </if>
+                    <if test="targetLoadAdt != null">
+            #{targetLoadAdt,jdbcType=VARCHAR},
+        </if>
+                    <if test="targetDataTablesId != null">
+            #{targetDataTablesId,jdbcType=BIGINT},
+        </if>
+                    <if test="targetDataTablesName != null">
+            #{targetDataTablesName,jdbcType=VARCHAR},
+        </if>
+                    <if test="creater != null">
+            #{creater,jdbcType=BIGINT},
+        </if>
+                    <if test="createTime != null">
+            #{createTime,jdbcType=TIMESTAMP},
+        </if>
+                    <if test="state != null">
+            #{state,jdbcType=INTEGER},
+        </if>
+                    <if test="iscancel != null">
+            #{iscancel,jdbcType=INTEGER},
+        </if>
+                    <if test="remark != null">
+            #{remark,jdbcType=VARCHAR},
+        </if>
+                </trim>
     </insert>
 
     <!-- 验证修改 -->
     <update id="updateSelective">
         update job_tasks
         <set>
-            <if test="jobTasks.jobName != null">
-                job_name = #{jobTasks.jobName,jdbcType=VARCHAR},
-            </if>
-            <if test="jobTasks.sourceConsumeAdt != null">
-                source_consume_adt = #{jobTasks.sourceConsumeAdt,jdbcType=INTEGER},
-            </if>
-            <if test="jobTasks.sourceConvertAdt != null">
-                source_convert_adt = #{jobTasks.sourceConvertAdt,jdbcType=INTEGER},
-            </if>
-            <if test="jobTasks.sourceDataType != null">
-                source_data_type = #{jobTasks.sourceDataType,jdbcType=INTEGER},
-            </if>
-            <if test="jobTasks.sourceDataSource != null">
-                source_data_source = #{jobTasks.sourceDataSource,jdbcType=BIGINT},
-            </if>
-            <if test="jobTasks.targetLoadAdt != null">
-                target_load_adt = #{jobTasks.targetLoadAdt,jdbcType=INTEGER},
-            </if>
-            <if test="jobTasks.targetDataType != null">
-                target_data_type = #{jobTasks.targetDataType,jdbcType=INTEGER},
-            </if>
-            <if test="jobTasks.targetDataSource != null">
-                target_data_source = #{jobTasks.targetDataSource,jdbcType=BIGINT},
-            </if>
-            <if test="jobTasks.creater != null">
-                creater = #{jobTasks.creater,jdbcType=BIGINT},
-            </if>
-            <if test="jobTasks.createTime != null">
-                create_time = #{jobTasks.createTime,jdbcType=TIMESTAMP},
-            </if>
-            <if test="jobTasks.state != null">
-                state = #{jobTasks.state,jdbcType=INTEGER},
-            </if>
-            <if test="jobTasks.iscancel != null">
-                iscancel = #{jobTasks.iscancel,jdbcType=INTEGER},
-            </if>
-            <if test="jobTasks.remark != null">
-                remark = #{jobTasks.remark,jdbcType=VARCHAR},
-            </if>
-        </set>
-        where id = #{id,jdbcType=BIGINT}
+                <if test="jobTasks.id != null">
+            id = #{jobTasks.id,jdbcType=BIGINT},
+        </if>
+                    <if test="jobTasks.jobName != null">
+            job_name = #{jobTasks.jobName,jdbcType=VARCHAR},
+        </if>
+                    <if test="jobTasks.sourceConsumeAdt != null">
+            source_consume_adt = #{jobTasks.sourceConsumeAdt,jdbcType=VARCHAR},
+        </if>
+                    <if test="jobTasks.sourceConvertAdt != null">
+            source_convert_adt = #{jobTasks.sourceConvertAdt,jdbcType=VARCHAR},
+        </if>
+                    <if test="jobTasks.sourceDataTablesId != null">
+            source_data_tables_id = #{jobTasks.sourceDataTablesId,jdbcType=BIGINT},
+        </if>
+                    <if test="jobTasks.sourceDataTablesName != null">
+            source_data_tables_name = #{jobTasks.sourceDataTablesName,jdbcType=VARCHAR},
+        </if>
+                    <if test="jobTasks.sourceDataId != null">
+            source_data_id = #{jobTasks.sourceDataId,jdbcType=BIGINT},
+        </if>
+                    <if test="jobTasks.sourceDataName != null">
+            source_data_name = #{jobTasks.sourceDataName,jdbcType=VARCHAR},
+        </if>
+                    <if test="jobTasks.targetLoadAdt != null">
+            target_load_adt = #{jobTasks.targetLoadAdt,jdbcType=VARCHAR},
+        </if>
+                    <if test="jobTasks.targetDataTablesId != null">
+            target_data_tables_id = #{jobTasks.targetDataTablesId,jdbcType=BIGINT},
+        </if>
+                    <if test="jobTasks.targetDataTablesName != null">
+            target_data_tables_name = #{jobTasks.targetDataTablesName,jdbcType=VARCHAR},
+        </if>
+                    <if test="jobTasks.creater != null">
+            creater = #{jobTasks.creater,jdbcType=BIGINT},
+        </if>
+                    <if test="jobTasks.createTime != null">
+            create_time = #{jobTasks.createTime,jdbcType=TIMESTAMP},
+        </if>
+                    <if test="jobTasks.state != null">
+            state = #{jobTasks.state,jdbcType=INTEGER},
+        </if>
+                    <if test="jobTasks.iscancel != null">
+            iscancel = #{jobTasks.iscancel,jdbcType=INTEGER},
+        </if>
+                    <if test="jobTasks.remark != null">
+            remark = #{jobTasks.remark,jdbcType=VARCHAR},
+        </if>
+                </set>
+        where id = #{id}
     </update>
 </mapper>

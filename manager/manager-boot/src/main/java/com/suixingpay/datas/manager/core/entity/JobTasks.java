@@ -21,25 +21,31 @@ public class JobTasks implements java.io.Serializable {
     private String jobName;
 
     /** 来源数据-消费插件. */
-    private Integer sourceConsumeAdt;
+    private String sourceConsumeAdt;
 
-    /** 来源数据-消息转换插件. */
-    private Integer sourceConvertAdt;
+    /** 来源数据-消费转换插件. */
+    private String sourceConvertAdt;
 
-    /** 来源数据-数据源类型. */
-    private Integer sourceDataType;
+    /** 来源数据-元数据表分组id. */
+    private Long sourceDataTablesId;
 
-    /** 来源数据-数据源. */
-    private Long sourceDataSource;
+    /** 来源数据-元数据表分组名称. */
+    private String sourceDataTablesName;
+
+    /** 来源数据-同步数据源id. */
+    private Long sourceDataId;
+
+    /** 来源数据-同步数据源名称. */
+    private String sourceDataName;
 
     /** 目标数据-载入插件. */
-    private Integer targetLoadAdt;
+    private String targetLoadAdt;
 
-    /** 目标数据-载入源类型. */
-    private Integer targetDataType;
+    /** 目标数据-载入源id(kafka\cancl). */
+    private Long targetDataTablesId;
 
-    /** 目标数据-数据源. */
-    private Long targetDataSource;
+    /** 目标数据-载入源名称. */
+    private String targetDataTablesName;
 
     /** 创建人. */
     private Long creater;
@@ -77,73 +83,93 @@ public class JobTasks implements java.io.Serializable {
     }
 
     /** 来源数据-消费插件 get方法. */
-    public Integer getSourceConsumeAdt() {
-        return sourceConsumeAdt;
+    public String getSourceConsumeAdt() {
+        return sourceConsumeAdt == null ? null : sourceConsumeAdt.trim();
     }
 
     /** 来源数据-消费插件 set方法. */
-    public void setSourceConsumeAdt(Integer sourceConsumeAdt) {
-        this.sourceConsumeAdt = sourceConsumeAdt;
+    public void setSourceConsumeAdt(String sourceConsumeAdt) {
+        this.sourceConsumeAdt = sourceConsumeAdt == null ? null : sourceConsumeAdt.trim();
     }
 
-    /** 来源数据-消息转换插件 get方法. */
-    public Integer getSourceConvertAdt() {
-        return sourceConvertAdt;
+    /** 来源数据-消费转换插件 get方法. */
+    public String getSourceConvertAdt() {
+        return sourceConvertAdt == null ? null : sourceConvertAdt.trim();
     }
 
-    /** 来源数据-消息转换插件 set方法. */
-    public void setSourceConvertAdt(Integer sourceConvertAdt) {
-        this.sourceConvertAdt = sourceConvertAdt;
+    /** 来源数据-消费转换插件 set方法. */
+    public void setSourceConvertAdt(String sourceConvertAdt) {
+        this.sourceConvertAdt = sourceConvertAdt == null ? null : sourceConvertAdt.trim();
     }
 
-    /** 来源数据-数据源类型 get方法. */
-    public Integer getSourceDataType() {
-        return sourceDataType;
+    /** 来源数据-元数据表分组id get方法. */
+    public Long getSourceDataTablesId() {
+        return sourceDataTablesId;
     }
 
-    /** 来源数据-数据源类型 set方法. */
-    public void setSourceDataType(Integer sourceDataType) {
-        this.sourceDataType = sourceDataType;
+    /** 来源数据-元数据表分组id set方法. */
+    public void setSourceDataTablesId(Long sourceDataTablesId) {
+        this.sourceDataTablesId = sourceDataTablesId;
     }
 
-    /** 来源数据-数据源 get方法. */
-    public Long getSourceDataSource() {
-        return sourceDataSource;
+    /** 来源数据-元数据表分组名称 get方法. */
+    public String getSourceDataTablesName() {
+        return sourceDataTablesName == null ? null : sourceDataTablesName.trim();
     }
 
-    /** 来源数据-数据源 set方法. */
-    public void setSourceDataSource(Long sourceDataSource) {
-        this.sourceDataSource = sourceDataSource;
+    /** 来源数据-元数据表分组名称 set方法. */
+    public void setSourceDataTablesName(String sourceDataTablesName) {
+        this.sourceDataTablesName = sourceDataTablesName == null ? null : sourceDataTablesName.trim();
+    }
+
+    /** 来源数据-同步数据源id get方法. */
+    public Long getSourceDataId() {
+        return sourceDataId;
+    }
+
+    /** 来源数据-同步数据源id set方法. */
+    public void setSourceDataId(Long sourceDataId) {
+        this.sourceDataId = sourceDataId;
+    }
+
+    /** 来源数据-同步数据源名称 get方法. */
+    public String getSourceDataName() {
+        return sourceDataName == null ? null : sourceDataName.trim();
+    }
+
+    /** 来源数据-同步数据源名称 set方法. */
+    public void setSourceDataName(String sourceDataName) {
+        this.sourceDataName = sourceDataName == null ? null : sourceDataName.trim();
     }
 
     /** 目标数据-载入插件 get方法. */
-    public Integer getTargetLoadAdt() {
-        return targetLoadAdt;
+    public String getTargetLoadAdt() {
+        return targetLoadAdt == null ? null : targetLoadAdt.trim();
     }
 
     /** 目标数据-载入插件 set方法. */
-    public void setTargetLoadAdt(Integer targetLoadAdt) {
-        this.targetLoadAdt = targetLoadAdt;
+    public void setTargetLoadAdt(String targetLoadAdt) {
+        this.targetLoadAdt = targetLoadAdt == null ? null : targetLoadAdt.trim();
     }
 
-    /** 目标数据-载入源类型 get方法. */
-    public Integer getTargetDataType() {
-        return targetDataType;
+    /** 目标数据-载入数据组id(kafka\cancl) get方法. */
+    public Long getTargetDataTablesId() {
+        return targetDataTablesId;
     }
 
-    /** 目标数据-载入源类型 set方法. */
-    public void setTargetDataType(Integer targetDataType) {
-        this.targetDataType = targetDataType;
+    /** 目标数据-载入数据组id(kafka\cancl) set方法. */
+    public void setTargetDataTablesId(Long targetDataTablesId) {
+        this.targetDataTablesId = targetDataTablesId;
     }
 
-    /** 目标数据-数据源 get方法. */
-    public Long getTargetDataSource() {
-        return targetDataSource;
+    /** 目标数据-载入数据组名称 get方法. */
+    public String getTargetDataTablesName() {
+        return targetDataTablesName == null ? null : targetDataTablesName.trim();
     }
 
-    /** 目标数据-数据源 set方法. */
-    public void setTargetDataSource(Long targetDataSource) {
-        this.targetDataSource = targetDataSource;
+    /** 目标数据-载入数据组名称 set方法. */
+    public void setTargetDataTablesName(String targetDataTablesName) {
+        this.targetDataTablesName = targetDataTablesName == null ? null : targetDataTablesName.trim();
     }
 
     /** 创建人 get方法. */
