@@ -8,7 +8,6 @@
  */
 package com.suixingpay.datas.node.task.extract;
 
-import com.suixingpay.datas.common.exception.TaskStopTriggerException;
 import com.suixingpay.datas.common.statistics.NodeLog;
 import com.suixingpay.datas.node.core.NodeContext;
 import com.suixingpay.datas.node.core.event.etl.ETLBucket;
@@ -74,21 +73,21 @@ public class ExtractJob extends AbstractStageJob {
         do {
             try {
                 events = work.waitEvent(StageType.SELECT);
-                if (null != events && !events.getRight().isEmpty()) {
+                if (null != events) {
                     final Pair<String, List<MessageEvent>> inThreadEvents = events;
                     LOGGER.debug("extract MessageEvent batch {}.", inThreadEvents.getLeft());
                     //在单线程执行，保证将来DataLoader load顺序
                     orderedBucket.push(inThreadEvents.getLeft());
                     //暂无Extractor失败处理方案
                     executorService.submit(() -> {
-                        //将MessageEvent转换为ETLBucket
-                        ETLBucket bucket = ETLBucket.from(inThreadEvents);
                         try {
+                            //将MessageEvent转换为ETLBucket
+                            ETLBucket bucket = ETLBucket.from(inThreadEvents);
                             extractorFactory.extract(bucket, metadata);
                             carrier.push(bucket);
                             LOGGER.debug("push bucket {} into carrier after extract.", inThreadEvents.getLeft());
                         } catch (Exception e) {
-                            bucket.tagException(new TaskStopTriggerException(e));
+                            work.stopAndAlarm(e.getMessage());
                             LOGGER.error("批次[{}]执行ExtractJob失败!", inThreadEvents.getLeft(), e);
                         }
                     });

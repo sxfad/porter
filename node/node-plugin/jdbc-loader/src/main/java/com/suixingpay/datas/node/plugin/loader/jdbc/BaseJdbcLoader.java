@@ -41,11 +41,18 @@ public abstract class BaseJdbcLoader extends AbstractDataLoader {
      * @return
      */
     protected int loadSql(List<Pair<String, Object[]>> sqlList) throws TaskStopTriggerException {
-        JDBCClient client = getLoadClient();
         int affect = 0;
-        for (Pair<String, Object[]> sqlOnce : sqlList) {
-            affect = client.update(sqlOnce.getLeft(), sqlOnce.getRight());
-            if (affect > 0) break;
+        int times = 0;
+        try {
+            JDBCClient client = getLoadClient();
+            for (Pair<String, Object[]> sqlOnce : sqlList) {
+                times++;
+                affect = client.update(sqlOnce.getLeft(), sqlOnce.getRight());
+                if (affect > 0) break;
+            }
+        } catch (TaskStopTriggerException e) {
+            //单条消息多种策略执行时，如果执行次数多于一次，不抛出异常
+            if (times <= 1) throw e;
         }
         return affect;
     }
