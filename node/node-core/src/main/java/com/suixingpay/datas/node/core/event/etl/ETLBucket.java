@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -74,19 +75,18 @@ public class ETLBucket {
         for (MessageEvent event : events.getRight()) {
             LOGGER.debug(JSON.toJSONString(event));
             List<ETLColumn> columns = new ArrayList<>();
+            if(null == event.getBefore()) event.setBefore(new HashMap<>());
+            if(null == event.getAfter()) event.setAfter(new HashMap<>());
+
             Boolean loopAfter = !event.getAfter().isEmpty();
             for (Map.Entry<String, Object> entity : loopAfter ? event.getAfter().entrySet() : event.getBefore().entrySet()) {
                 Object newValue = "";
                 Object oldValue = "";
                 if (loopAfter) {
                     newValue = entity.getValue();
-                    if (null != event.getBefore()) {
-                        oldValue = event.getBefore().getOrDefault(entity.getKey(), null);
-                    }
+                    oldValue = event.getBefore().getOrDefault(entity.getKey(), null);
                 } else {
-                    if (null != event.getBefore()) {
-                        newValue = event.getBefore().getOrDefault(entity.getKey(), null);
-                    }
+                    newValue = event.getBefore().getOrDefault(entity.getKey(), null);
                     oldValue = entity.getValue();
                 }
                 Object finalValue = newValue;
