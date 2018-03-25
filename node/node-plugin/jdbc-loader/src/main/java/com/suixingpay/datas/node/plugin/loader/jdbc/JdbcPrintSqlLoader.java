@@ -45,7 +45,7 @@ public class JdbcPrintSqlLoader extends BaseJdbcLoader {
             sqlList.forEach(p -> {
                 LOGGER.info(p.getLeft());
             });
-            affectRow.add(new SubmitStatObject(row.getFinalSchema(), row.getFinalTable(), row.getOpType(),
+            affectRow.add(new SubmitStatObject(row.getFinalSchema(), row.getFinalTable(), row.getFinalOpType(),
                     1, row.getPosition(), row.getOpTime()));
         }
         return new ImmutablePair(Boolean.TRUE, affectRow);
