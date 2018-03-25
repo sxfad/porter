@@ -75,8 +75,8 @@ public class ETLBucket {
         for (MessageEvent event : events.getRight()) {
             LOGGER.debug(JSON.toJSONString(event));
             List<ETLColumn> columns = new ArrayList<>();
-            if(null == event.getBefore()) event.setBefore(new HashMap<>());
-            if(null == event.getAfter()) event.setAfter(new HashMap<>());
+            if (null == event.getBefore()) event.setBefore(new HashMap<>());
+            if (null == event.getAfter()) event.setAfter(new HashMap<>());
 
             Boolean loopAfter = !event.getAfter().isEmpty();
             for (Map.Entry<String, Object> entity : loopAfter ? event.getAfter().entrySet() : event.getBefore().entrySet()) {
