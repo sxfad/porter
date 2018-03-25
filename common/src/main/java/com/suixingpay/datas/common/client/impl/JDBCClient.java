@@ -138,8 +138,9 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
     private TableSchema getTableSchema(String schema, String tableName) {
         Table dbTable = DdlUtils.findTable(jdbcTemplate, schema, schema, tableName, null);
         TableSchema tableSchema = new TableSchema();
-        tableSchema.setSchemaName(dbTable.getSchema());
-        tableSchema.setTableName(dbTable.getName());
+        //mysql特殊场景下(例如大小写敏感)，schema字段为空
+        tableSchema.setSchemaName(StringUtils.isBlank(dbTable.getSchema()) ? schema : dbTable.getSchema());
+        tableSchema.setTableName(StringUtils.isBlank(dbTable.getName()) ? tableName : dbTable.getName());
         Arrays.stream(dbTable.getColumns()).forEach(c -> {
             TableColumn column = new TableColumn();
             column.setDefaultValue(c.getDefaultValue());
