@@ -41,7 +41,8 @@
     数据保存接口：/alarm(post)
     用户人员接口：/cuser(get) 分页数据
     需前端处理实体字段：alarmType、alarmPlugins{alarmType、pluginCode、pluginName、pluginValue}、alarmUsers{userId}
-    日志级别：LogLevelEnum
+    
+日志级别：LogLevelEnum
         查询当前日志级别：
             接口：/loggrade(get)
             注释：根据id排序，取最大id数据
