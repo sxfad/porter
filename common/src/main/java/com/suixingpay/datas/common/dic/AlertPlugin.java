@@ -30,7 +30,9 @@ import lombok.Getter;
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum AlertPlugin {
 
-    EMAIL("EMAIL", "邮件");
+    EMAIL("EMAIL", "邮件"),
+
+    MOBILE("MOBILE", "手机号");
 
     @Getter
     private final String code;
@@ -43,6 +45,7 @@ public enum AlertPlugin {
 
         {
             put(EMAIL.code, EMAIL.name);
+            put(MOBILE.code, MOBILE.name);
         }
     };
 
