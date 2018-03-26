@@ -46,6 +46,11 @@ public class JdbcBatchLoader extends BaseJdbcLoader {
                 //插入影响行数
                 affectRow.add(new SubmitStatObject(row.getFinalSchema(), row.getFinalTable(), row.getOpType(),
                         affect, row.getPosition(), row.getOpTime()));
+
+                //打印当前消息所在点位，方便问题查找
+                if (affect < 1) {
+                    LOGGER.error("position:{}", row.getPosition().render());
+                }
             } else if (rows.size() > 1) { //仅支持单条记录生成一个sql的情况
                 List<Pair<String, Object[]>> subList = new ArrayList<>();
 
@@ -65,6 +70,11 @@ public class JdbcBatchLoader extends BaseJdbcLoader {
                     ETLRow row = rows.get(rindex);
                     affectRow.add(new SubmitStatObject(row.getFinalSchema(), row.getFinalTable(), row.getOpType(),
                             affect, row.getPosition(), row.getOpTime()));
+
+                    //打印当前消息所在点位，方便问题查找
+                    if (affect < 1) {
+                        LOGGER.error("position:{}", row.getPosition().render());
+                    }
                 }
             }
         }

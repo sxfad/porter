@@ -11,6 +11,7 @@ package com.suixingpay.datas.common.client.impl;
 
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.suixingpay.datas.common.client.AbstractClient;
 import com.suixingpay.datas.common.client.LoadClient;
 import com.suixingpay.datas.common.client.MetaQueryClient;
@@ -149,6 +150,7 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
             column.setTypeCode(c.getTypeCode());
             tableSchema.addColumn(column);
         });
+        LOGGER.debug("schema:{},table:{},detail:{}", schema, tableName, JSONObject.toJSONString(dbTable));
         return tableSchema.toUpperCase();
     }
 
