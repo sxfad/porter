@@ -52,17 +52,17 @@
 同步节点管理
     列表：/nodes(get)  节点ID(nodeId)  机器名(machineName)  IP(ipAddress)  心跳时间(heartBeatTime)  进程号(pidNumber)  状态(state 1在线 -1离线)  任务推送状态(task_push_state)  操作(停止接收任务推送、接收任务推送、停止当前任务、删除)
     新增：/nodes(post) 节点id、机器名、ip、进程号（nodeId machineName ipAddress pidNumber）
-    删除：/nodes/{id}
-    任务状态推送：/nodes/taskpushstate
-    停止任务：/nodes/stoptask
+    删除：/nodes/{id}(delete)
+    任务状态推送：/nodes/taskpushstate(post)
+    停止任务：/nodes/stoptask(post)
 
 同步任务
     列表：
-
+        
     新增：
         第一步:任务基本信息：{任务名,(告警通知人list)} 
-        第二步:来源数据信息-数据来源端 {消费插件ConsumerPlugin、消费转换插件ConsumeConverterPlugin、元数据表分组(DataTable选择)、|||同步数据来源（数据源配置类型kafka、CANAL）|||}
-        第三步:目标数据信息-数据目标端{载入插件、数据表分组}
+        第二步:来源数据信息-数据来源端 {消费插件ConsumerPlugin、消费转换插件ConsumeConverterPlugin、元数据表组(DataTable选择)、|||同步数据来源（数据源配置类型kafka、CANAL）|||}
+        第三步:目标数据信息-数据目标端{载入插件、数据表组}
         第四步:数据映射关系 -来源（字段）=>目标（字段） 目标表=》目标数据
         保存数据：
     开始任务(推送)：

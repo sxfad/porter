@@ -77,9 +77,10 @@ public class NodesController {
         if (i == 1) {
             System.out.println("推送任务 运行中|暂停:" + id);
             //ClusterProviderProxy.INSTANCE.broadcast(new NodeOrderPushCommand(new NodeCommandConfig(id.toString(), taskPushState, NodeCommandType.CHANGE_STATUS)));
+            Nodes nodes = nodesService.selectById(id);
+            return ok(nodes);
         }
-        Nodes nodes = nodesService.selectById(id);
-        return ok(nodes);
+        return ok(false);
     }
 
     @PostMapping("/stoptask")
