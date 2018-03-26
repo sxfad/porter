@@ -46,12 +46,19 @@ public interface JobTasksMapper {
      * 分頁
      * @return
      */
-    List<JobTasks> page(@Param("page") Page<JobTasks> page, @Param("state") Integer state);
+    List<JobTasks> page(@Param("page") Page<JobTasks> page,
+                        @Param("state") Integer state,
+                        @Param("jobName") String jobName,
+                        @Param("beginTime") String beginTime,
+                        @Param("endTime") String endTime);
 
     /**
      * 分頁All
      * @return
      */
-    Integer pageAll(@Param("state") Integer state);
+    Integer pageAll(@Param("state") Integer state,
+                    @Param("jobName") String jobName,
+                    @Param("beginTime") String beginTime,
+                    @Param("endTime") String endTime);
 
 }

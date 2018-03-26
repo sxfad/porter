@@ -21,6 +21,6 @@ public interface JobTasksService {
 
     JobTasks selectById(Long id);
 
-    Page<JobTasks> page(Page<JobTasks> page);
+    Page<JobTasks> page(Page<JobTasks> page, String jobName, String beginTime, String endTime);
 
 }
