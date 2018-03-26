@@ -1,6 +1,3 @@
-/**
- *
- */
 package com.suixingpay.datas.manager.service.impl;
 
 import com.suixingpay.datas.manager.core.entity.JobTasksField;
@@ -12,17 +9,17 @@ import org.springframework.stereotype.Service;
 
 /**
  * 任务数据字段对照关系表 服务实现类
- *
  * @author: FairyHood
- * @date: 2018-03-07 13:40:30
+ * @date: 2018-03-26 14:27:55
  * @version: V1.0-auto
- * @review: FairyHood/2018-03-07 13:40:30
+ * @review: FairyHood/2018-03-26 14:27:55
  */
 @Service
 public class JobTasksFieldServiceImpl implements JobTasksFieldService {
 
     @Autowired
     private JobTasksFieldMapper jobTasksFieldMapper;
+
 
     @Override
     public Integer insert(JobTasksField jobTasksField) {
@@ -53,5 +50,4 @@ public class JobTasksFieldServiceImpl implements JobTasksFieldService {
         }
         return page;
     }
-
 }

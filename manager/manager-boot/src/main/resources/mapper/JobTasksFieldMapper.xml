@@ -1,38 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.suixingpay.datas.manager.core.mapper.JobTasksFieldMapper">
-    <!-- 通用查询映射结果 
+    <!-- 通用查询映射结果
     <resultMap id="BaseResultMap" type="com.suixingpay.datas.manager.core.entity.JobTasksField">
         <result column="id" property="id" />
         <result column="job_task_id" property="jobTaskId" />
-        <result column="job_table_id" property="jobTableId" />
-        <result column="source_table_id" property="sourceTableId" />
-        <result column="target_table_id" property="targetTableId" />
-        <result column="source_field" property="sourceField" />
-        <result column="target_field" property="targetField" />
+        <result column="job_tasks_table_id" property="jobTasksTableId" />
+        <result column="source_table_name" property="sourceTableName" />
+        <result column="source_table_field" property="sourceTableField" />
+        <result column="target_table_name" property="targetTableName" />
+        <result column="target_table_field" property="targetTableField" />
+        <result column="sort_order" property="sortOrder" />
     </resultMap>-->
 
-    <!-- 通用查询结果列 
+    <!-- 通用查询结果列
     <sql id="Base_Column_List">
-        select id, job_task_id AS jobTaskId, job_table_id AS jobTableId, source_table_id AS sourceTableId, target_table_id AS targetTableId, source_field AS sourceField, target_field AS targetField from job_tasks_field
+        select id, job_task_id AS jobTaskId, job_tasks_table_id AS jobTasksTableId, source_table_name AS sourceTableName, source_table_field AS sourceTableField, target_table_name AS targetTableName, target_table_field AS targetTableField, sort_order AS sortOrder from job_tasks_field
     </sql>-->
 
     <!-- 新增 -->
     <insert id="insert">
         insert into job_tasks_field(
         job_task_id,
-        job_table_id,
-        source_table_id,
-        target_table_id,
-        source_field,
-        target_field
+        job_tasks_table_id,
+        source_table_name,
+        source_table_field,
+        target_table_name,
+        target_table_field,
+        sort_order
         ) values (
         #{jobTaskId},
-        #{jobTableId},
-        #{sourceTableId},
-        #{targetTableId},
-        #{sourceField},
-        #{targetField}
+        #{jobTasksTableId},
+        #{sourceTableName},
+        #{sourceTableField},
+        #{targetTableName},
+        #{targetTableField},
+        #{sortOrder}
         )
     </insert>
 
@@ -41,11 +44,12 @@
         update job_tasks_field
         set
         job_task_id = #{jobTasksField.jobTaskId},
-        job_table_id = #{jobTasksField.jobTableId},
-        source_table_id = #{jobTasksField.sourceTableId},
-        target_table_id = #{jobTasksField.targetTableId},
-        source_field = #{jobTasksField.sourceField},
-        target_field = #{jobTasksField.targetField}
+        job_tasks_table_id = #{jobTasksField.jobTasksTableId},
+        source_table_name = #{jobTasksField.sourceTableName},
+        source_table_field = #{jobTasksField.sourceTableField},
+        target_table_name = #{jobTasksField.targetTableName},
+        target_table_field = #{jobTasksField.targetTableField},
+        sort_order = #{jobTasksField.sortOrder}
         where id = #{id}
     </update>
 
@@ -56,7 +60,7 @@
 
     <!-- 根据主鍵查找 -->
     <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.JobTasksField">
-        select id, job_task_id AS jobTaskId, job_table_id AS jobTableId, source_table_id AS sourceTableId, target_table_id AS targetTableId, source_field AS sourceField, target_field AS targetField from job_tasks_field
+        select id, job_task_id AS jobTaskId, job_tasks_table_id AS jobTasksTableId, source_table_name AS sourceTableName, source_table_field AS sourceTableField, target_table_name AS targetTableName, target_table_field AS targetTableField, sort_order AS sortOrder from job_tasks_field
         where id = #{id}
     </select>
 
@@ -68,7 +72,7 @@
 
     <!-- 分页 -->
     <select id="page" resultType="com.suixingpay.datas.manager.core.entity.JobTasksField">
-        select id, job_task_id AS jobTaskId, job_table_id AS jobTableId, source_table_id AS sourceTableId, target_table_id AS targetTableId, source_field AS sourceField, target_field AS targetField from job_tasks_field
+        select id, job_task_id AS jobTaskId, job_tasks_table_id AS jobTasksTableId, source_table_name AS sourceTableName, source_table_field AS sourceTableField, target_table_name AS targetTableName, target_table_field AS targetTableField, sort_order AS sortOrder from job_tasks_field
         where 1=1 limit #{page.offset},#{page.pageSize}
     </select>
 
@@ -79,40 +83,46 @@
             <if test="jobTaskId != null">
                 job_task_id,
             </if>
-            <if test="jobTableId != null">
-                job_table_id,
+            <if test="jobTasksTableId != null">
+                job_tasks_table_id,
             </if>
-            <if test="sourceTableId != null">
-                source_table_id,
+            <if test="sourceTableName != null">
+                source_table_name,
             </if>
-            <if test="targetTableId != null">
-                target_table_id,
+            <if test="sourceTableField != null">
+                source_table_field,
             </if>
-            <if test="sourceField != null">
-                source_field,
+            <if test="targetTableName != null">
+                target_table_name,
             </if>
-            <if test="targetField != null">
-                target_field,
+            <if test="targetTableField != null">
+                target_table_field,
+            </if>
+            <if test="sortOrder != null">
+                sort_order,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="jobTaskId != null">
                 #{jobTaskId,jdbcType=BIGINT},
             </if>
-            <if test="jobTableId != null">
-                #{jobTableId,jdbcType=BIGINT},
+            <if test="jobTasksTableId != null">
+                #{jobTasksTableId,jdbcType=BIGINT},
             </if>
-            <if test="sourceTableId != null">
-                #{sourceTableId,jdbcType=BIGINT},
+            <if test="sourceTableName != null">
+                #{sourceTableName,jdbcType=VARCHAR},
             </if>
-            <if test="targetTableId != null">
-                #{targetTableId,jdbcType=BIGINT},
+            <if test="sourceTableField != null">
+                #{sourceTableField,jdbcType=VARCHAR},
             </if>
-            <if test="sourceField != null">
-                #{sourceField,jdbcType=VARCHAR},
+            <if test="targetTableName != null">
+                #{targetTableName,jdbcType=VARCHAR},
             </if>
-            <if test="targetField != null">
-                #{targetField,jdbcType=VARCHAR},
+            <if test="targetTableField != null">
+                #{targetTableField,jdbcType=VARCHAR},
+            </if>
+            <if test="sortOrder != null">
+                #{sortOrder,jdbcType=INTEGER},
             </if>
         </trim>
     </insert>
@@ -124,23 +134,26 @@
             <if test="jobTasksField.jobTaskId != null">
                 job_task_id = #{jobTasksField.jobTaskId,jdbcType=BIGINT},
             </if>
-            <if test="jobTasksField.jobTableId != null">
-                job_table_id = #{jobTasksField.jobTableId,jdbcType=BIGINT},
+            <if test="jobTasksField.jobTasksTableId != null">
+                job_tasks_table_id = #{jobTasksField.jobTasksTableId,jdbcType=BIGINT},
             </if>
-            <if test="jobTasksField.sourceTableId != null">
-                source_table_id = #{jobTasksField.sourceTableId,jdbcType=BIGINT},
+            <if test="jobTasksField.sourceTableName != null">
+                source_table_name = #{jobTasksField.sourceTableName,jdbcType=VARCHAR},
             </if>
-            <if test="jobTasksField.targetTableId != null">
-                target_table_id = #{jobTasksField.targetTableId,jdbcType=BIGINT},
+            <if test="jobTasksField.sourceTableField != null">
+                source_table_field = #{jobTasksField.sourceTableField,jdbcType=VARCHAR},
             </if>
-            <if test="jobTasksField.sourceField != null">
-                source_field = #{jobTasksField.sourceField,jdbcType=VARCHAR},
+            <if test="jobTasksField.targetTableName != null">
+                target_table_name = #{jobTasksField.targetTableName,jdbcType=VARCHAR},
             </if>
-            <if test="jobTasksField.targetField != null">
-                target_field = #{jobTasksField.targetField,jdbcType=VARCHAR},
+            <if test="jobTasksField.targetTableField != null">
+                target_table_field = #{jobTasksField.targetTableField,jdbcType=VARCHAR},
+            </if>
+            <if test="jobTasksField.sortOrder != null">
+                sort_order = #{jobTasksField.sortOrder,jdbcType=INTEGER},
             </if>
         </set>
-        where id = #{id,jdbcType=BIGINT}
+        where id = #{id}
     </update>
 
 </mapper>

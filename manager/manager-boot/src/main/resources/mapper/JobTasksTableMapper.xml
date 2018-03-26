@@ -1,34 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.suixingpay.datas.manager.core.mapper.JobTasksTableMapper">
-    <!-- 通用查询映射结果 
+    <!-- 通用查询映射结果
     <resultMap id="BaseResultMap" type="com.suixingpay.datas.manager.core.entity.JobTasksTable">
         <result column="id" property="id" />
         <result column="job_task_id" property="jobTaskId" />
-        <result column="source_table_id" property="sourceTableId" />
         <result column="source_table_name" property="sourceTableName" />
-        <result column="target_table_id" property="targetTableId" />
         <result column="target_table_name" property="targetTableName" />
     </resultMap>-->
 
-    <!-- 通用查询结果列 
+    <!-- 通用查询结果列
     <sql id="Base_Column_List">
-        select id, job_task_id AS jobTaskId, source_table_id AS sourceTableId, source_table_name AS sourceTableName, target_table_id AS targetTableId, target_table_name AS targetTableName from job_tasks_table
+        select id, job_task_id AS jobTaskId, source_table_name AS sourceTableName, target_table_name AS targetTableName from job_tasks_table
     </sql>-->
 
     <!-- 新增 -->
     <insert id="insert">
         insert into job_tasks_table(
         job_task_id,
-        source_table_id,
         source_table_name,
-        target_table_id,
         target_table_name
         ) values (
         #{jobTaskId},
-        #{sourceTableId},
         #{sourceTableName},
-        #{targetTableId},
         #{targetTableName}
         )
     </insert>
@@ -38,9 +32,7 @@
         update job_tasks_table
         set
         job_task_id = #{jobTasksTable.jobTaskId},
-        source_table_id = #{jobTasksTable.sourceTableId},
         source_table_name = #{jobTasksTable.sourceTableName},
-        target_table_id = #{jobTasksTable.targetTableId},
         target_table_name = #{jobTasksTable.targetTableName}
         where id = #{id}
     </update>
@@ -52,7 +44,7 @@
 
     <!-- 根据主鍵查找 -->
     <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.JobTasksTable">
-        select id, job_task_id AS jobTaskId, source_table_id AS sourceTableId, source_table_name AS sourceTableName, target_table_id AS targetTableId, target_table_name AS targetTableName from job_tasks_table
+        select id, job_task_id AS jobTaskId, source_table_name AS sourceTableName, target_table_name AS targetTableName from job_tasks_table
         where id = #{id}
     </select>
 
@@ -64,7 +56,7 @@
 
     <!-- 分页 -->
     <select id="page" resultType="com.suixingpay.datas.manager.core.entity.JobTasksTable">
-        select id, job_task_id AS jobTaskId, source_table_id AS sourceTableId, source_table_name AS sourceTableName, target_table_id AS targetTableId, target_table_name AS targetTableName from job_tasks_table
+        select id, job_task_id AS jobTaskId, source_table_name AS sourceTableName, target_table_name AS targetTableName from job_tasks_table
         where 1=1 limit #{page.offset},#{page.pageSize}
     </select>
 
@@ -75,14 +67,8 @@
             <if test="jobTaskId != null">
                 job_task_id,
             </if>
-            <if test="sourceTableId != null">
-                source_table_id,
-            </if>
             <if test="sourceTableName != null">
                 source_table_name,
-            </if>
-            <if test="targetTableId != null">
-                target_table_id,
             </if>
             <if test="targetTableName != null">
                 target_table_name,
@@ -92,14 +78,8 @@
             <if test="jobTaskId != null">
                 #{jobTaskId,jdbcType=BIGINT},
             </if>
-            <if test="sourceTableId != null">
-                #{sourceTableId,jdbcType=BIGINT},
-            </if>
             <if test="sourceTableName != null">
                 #{sourceTableName,jdbcType=VARCHAR},
-            </if>
-            <if test="targetTableId != null">
-                #{targetTableId,jdbcType=BIGINT},
             </if>
             <if test="targetTableName != null">
                 #{targetTableName,jdbcType=VARCHAR},
@@ -114,19 +94,14 @@
             <if test="jobTasksTable.jobTaskId != null">
                 job_task_id = #{jobTasksTable.jobTaskId,jdbcType=BIGINT},
             </if>
-            <if test="jobTasksTable.sourceTableId != null">
-                source_table_id = #{jobTasksTable.sourceTableId,jdbcType=BIGINT},
-            </if>
             <if test="jobTasksTable.sourceTableName != null">
                 source_table_name = #{jobTasksTable.sourceTableName,jdbcType=VARCHAR},
-            </if>
-            <if test="jobTasksTable.targetTableId != null">
-                target_table_id = #{jobTasksTable.targetTableId,jdbcType=BIGINT},
             </if>
             <if test="jobTasksTable.targetTableName != null">
                 target_table_name = #{jobTasksTable.targetTableName,jdbcType=VARCHAR},
             </if>
         </set>
-        where id = #{id,jdbcType=BIGINT}
+        where id = #{id}
     </update>
+
 </mapper>

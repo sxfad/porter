@@ -23,9 +23,9 @@ import static com.suixingpay.datas.manager.web.message.ResponseMessage.ok;
  * 任务数据字段对照关系表 controller控制器
  *
  * @author: FairyHood
- * @date: 2018-03-07 17:26:55
+ * @date: 2018-03-26 14:27:55
  * @version: V1.0-auto
- * @review: FairyHood/2018-03-07 17:26:55
+ * @review: FairyHood/2018-03-26 14:27:55
  */
 @Api(description = "任务数据字段对照关系表管理")
 @RestController
@@ -43,7 +43,7 @@ public class JobTasksFieldController {
     }
 
     @PutMapping("/{id}")
-    @ApiOperation(value = "修改", notes = "修改")
+    @ApiOperation(value = "修改任务数据字段对照关系表", notes = "修改任务数据字段对照关系表")
     public ResponseMessage update(@PathVariable("id") Long id, @RequestBody JobTasksField jobTasksField) {
         Integer number = jobTasksFieldService.update(id, jobTasksField);
         return ok(number);
@@ -63,12 +63,12 @@ public class JobTasksFieldController {
         return ok(jobTasksField);
     }
 
-    @ApiOperation(value = "查询列表", notes = "查询列表")
     @GetMapping
-    public ResponseMessage list(@RequestParam(value = "pageNo", required = false) Integer pageNo,
-                                @RequestParam(value = "pageSize", required = false) Integer pageSize) {
+    @ApiOperation(value = "查询列表", notes = "查询列表")
+    public ResponseMessage list(
+            @RequestParam(value = "pageNo", required = true) Integer pageNo,
+            @RequestParam(value = "pageSize", required = true) Integer pageSize) {
         Page<JobTasksField> page = jobTasksFieldService.page(new Page<JobTasksField>(pageNo, pageSize));
         return ok(page);
     }
-
 }
