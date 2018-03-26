@@ -44,6 +44,9 @@ public class DataTable implements java.io.Serializable {
     /** 备注. */
     private String remark;
 
+    /** 数据源名称. */
+    private String sourceName;
+
     /** 主键 get方法. */
     public Long getId() {
         return id;
@@ -144,4 +147,13 @@ public class DataTable implements java.io.Serializable {
         this.remark = remark == null ? null : remark.trim();
     }
 
+    /** 数据源名称 get方法. */
+    public String getSourceName() {
+        return sourceName;
+    }
+
+    /** 数据源名称 set方法. */
+    public void setSourceName(String sourceName) {
+        this.sourceName = sourceName;
+    }
 }

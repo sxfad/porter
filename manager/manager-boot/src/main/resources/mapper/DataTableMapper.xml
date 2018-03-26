@@ -94,20 +94,23 @@
 
     <!-- 分页 -->
     <select id="page" resultType="com.suixingpay.datas.manager.core.entity.DataTable">
-        SELECT id, source_id AS sourceId, data_type AS dataType, bank_name AS bankName, table_name AS tableName, create_time AS createTime
-        from b_data_table
+        SELECT
+        b.id, b.source_id AS sourceId, b.data_type AS dataType, b.bank_name AS bankName,
+        b.table_name AS tableName, b.create_time AS createTime, d.name AS sourceName
+        from b_data_table b left join b_data_source d
+        on b.source_id = d.id
         <where>
-            iscancel = 0
+            b.iscancel = 0
             <if test="bankName != null and bankName != ''">
-                and bank_name LIKE CONCAT('%',#{bankName},'%')
+                and b.bank_name LIKE CONCAT('%',#{bankName},'%')
             </if>
             <if test="beginTime != null and beginTime != ''">
-                and create_time &gt; #{beginTime}
+                and b.create_time &gt; #{beginTime}
             </if>
             <if test="endTime != null and endTime != ''">
-                and create_time &lt; #{endTime}
+                and b.create_time &lt; #{endTime}
             </if>
-            order by create_time desc
+            order by b.create_time desc
             limit #{page.offset},#{page.pageSize}
         </where>
     </select>
