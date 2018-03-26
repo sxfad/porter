@@ -10,19 +10,20 @@
 package com.suixingpay.datas.common.cluster.command;
 
 import com.alibaba.fastjson.JSONObject;
-import com.suixingpay.datas.common.config.TaskConfig;
+import com.suixingpay.datas.common.config.AlertConfig;
+
 import lombok.Getter;
 import lombok.Setter;
 
 /**
- * 管理后台配置推送
+ * 推送告警信息配置（全局配置）
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年02月23日 16:42
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月23日 16:42
  */
 public class AlertConfigPushCommand extends ConfigPushCommand  {
-    @Getter @Setter private TaskConfig config;
+    @Getter @Setter private AlertConfig config;
 
     public AlertConfigPushCommand() {
         setType(ConfigPushType.ALERT);

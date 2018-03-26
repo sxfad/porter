@@ -13,7 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
- *
+ * 任务因失败停止，后台接收到节点变更信息 （管理后台只需要接受失败通知）
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年03月02日 09:52
  * @version: V1.0
@@ -21,6 +21,6 @@ import lombok.Getter;
  */
 @AllArgsConstructor
 public class TaskStoppedByErrorCommand implements ClusterCommand {
-    @Getter private String taskId;
-    @Getter private String swimlaneId;
+    @Getter private String taskId;//任务id
+    @Getter private String swimlaneId; //泳道id
 }

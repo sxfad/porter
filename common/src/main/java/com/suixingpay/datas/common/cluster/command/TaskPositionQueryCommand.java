@@ -13,7 +13,7 @@ import com.suixingpay.datas.common.cluster.data.DCallback;
 import lombok.Getter;
 
 /**
- * 任务状态查询
+ * 任务消费进度查询（和管理后台无关  服务器上报zk）
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年01月12日 18:46
  * @version: V1.0

@@ -14,6 +14,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
+ * 统计信息到zk （服务器=》zk）
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年02月23日 16:42
  * @version: V1.0

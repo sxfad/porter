@@ -15,7 +15,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * 管理后台配置推送
+ * 后台推送节点命令 （节点任务状态推送（运行中 or 暂停 ）|节点停止任务推送）
  * 
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年02月23日 16:42

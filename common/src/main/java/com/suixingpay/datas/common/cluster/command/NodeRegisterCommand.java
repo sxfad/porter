@@ -11,7 +11,7 @@ package com.suixingpay.datas.common.cluster.command;
 import lombok.Getter;
 
 /**
- * 节点注册
+ * 节点注册（服务器上报zk）
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月19日 18:42
  * @version: V1.0

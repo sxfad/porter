@@ -12,6 +12,7 @@ package com.suixingpay.datas.common.cluster.command;
 import lombok.Getter;
 
 /**
+ * 服务器上报zk 任务消费进度 
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年03月04日 17:56
  * @version: V1.0

@@ -15,7 +15,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * @author: zhangkewei[zhang_kw@suixingpay.com]
+ * （1、节点任务状态推送（运行中 or 暂停 ）WORKING("WORKING", "工作中") 2、节点停止任务推送 SUSPEND("SUSPEND", "已暂停")）
+ * @author: zhangkewei[zhang_kw@suixingpay.com] 
  * @date: 2018年02月24日 17:46
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月24日 17:46

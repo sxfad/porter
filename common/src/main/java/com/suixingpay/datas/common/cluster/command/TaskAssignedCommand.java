@@ -11,7 +11,7 @@ package com.suixingpay.datas.common.cluster.command;
 import lombok.Getter;
 
 /**
- * 任务已分配
+ * 任务已分配通知 （和后台无关，服务器=》zk）
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月19日 18:42
  * @version: V1.0

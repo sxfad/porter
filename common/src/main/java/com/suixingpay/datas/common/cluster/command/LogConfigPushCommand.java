@@ -15,7 +15,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * 管理后台配置推送
+ * 推送日志配置 （日志等级推送）
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年02月23日 16:42
  * @version: V1.0
