@@ -57,9 +57,14 @@ public class ETLColumn {
         this.isKey = isKey;
         this.required = required;
         this.finalType = type;
-        this.finalName = name;
+        this.finalName = this.name;
         this.finalValue = finalValue;
         this.finalOldValue = oldValue;
+    }
+
+    public ETLColumn toUpperCase() {
+        this.finalName = this.finalName.toUpperCase();
+        return this;
     }
 
     public boolean isKey() {

@@ -12,6 +12,7 @@ package com.suixingpay.datas.common.db.meta;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,5 +39,20 @@ public class TableSchema {
 
     public void addColumn(TableColumn column) {
         columns.put(column.getName(), column);
+    }
+
+
+    public TableSchema toUpperCase() {
+        this.schemaName = schemaName.toUpperCase();
+        this.tableName = tableName.toUpperCase();
+        Arrays.stream(columns.keySet().toArray()).forEach(k -> {
+            TableColumn column = columns.get(k);
+            column.setName(column.getName().toUpperCase());
+            //删除旧key
+            columns.remove(k);
+            //添加新key
+            columns.put(k.toString().toUpperCase(), column);
+        });
+        return this;
     }
 }

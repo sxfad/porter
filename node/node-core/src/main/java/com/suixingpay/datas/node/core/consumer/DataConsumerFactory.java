@@ -45,14 +45,16 @@ public enum DataConsumerFactory {
 
 
         //获取源数据查询配置
-        Client tempMetaQueryClient = AbstractClient.getClient(SourceConfig.getConfig(config.getMetaSource()));
-
         MetaQueryClient metaQueryClient = null;
-        if (null != tempMetaQueryClient && tempMetaQueryClient instanceof MetaQueryClient) {
-            metaQueryClient = (MetaQueryClient) tempMetaQueryClient;
-        }
-        if (null == metaQueryClient) throw new ClientException("MetaQueryClient初始化失败:" + config.getMetaSource());
+        if (null != config.getMetaSource() && !config.getMetaSource().isEmpty()) {
+            Client client = AbstractClient.getClient(SourceConfig.getConfig(config.getMetaSource()));
+            if (client instanceof MetaQueryClient) {
+                metaQueryClient = (MetaQueryClient) client;
+            } else {
+                throw new ClientException("MetaQueryClient初始化失败:" + config.getMetaSource());
+            }
 
+        }
 
         //消费数据获取来源
         Client tempConsumeclient = AbstractClient.getClient(SourceConfig.getConfig(config.getSource()));

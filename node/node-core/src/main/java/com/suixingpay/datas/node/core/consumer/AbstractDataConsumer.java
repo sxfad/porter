@@ -40,11 +40,13 @@ public abstract class AbstractDataConsumer implements DataConsumer {
     @Getter private final List<String> includes = new ArrayList<>();
     @Getter private final List<String> excludes = new ArrayList<>();
 
+    protected abstract String getPluginName();
+    protected abstract List<MessageEvent> doFetch() throws TaskStopTriggerException;
+
     @Override
     public void setExcludes(String exclude) {
         if (!StringUtils.isBlank(exclude)) {
             CollectionUtils.addAll(excludes, exclude.trim().toUpperCase().split(","));
-            excludes.forEach(k -> k.trim());
         }
     }
 
@@ -52,28 +54,14 @@ public abstract class AbstractDataConsumer implements DataConsumer {
     public void setIncludes(String include) {
         if (!StringUtils.isBlank(include)) {
             CollectionUtils.addAll(includes, include.trim().toUpperCase().split(","));
-            includes.forEach(k -> k.trim());
         }
     }
 
-    @Override
-    public void setMetaQueryClient(MetaQueryClient c) {
-        metaQueryClient = c;
-    }
 
-    @Override
-    public void setClient(ConsumeClient c) {
-        this.consumeClient = c;
-    }
-
-    @Override
-    public void setConverter(EventConverter converter) {
-        this.converter = converter;
-    }
 
     @Override
     public int getDataCount(String schema, String table, String updateColum, Date startDate, Date endDate) {
-        return metaQueryClient.getDataCount(schema, table, updateColum, startDate, endDate);
+        return null != metaQueryClient ? metaQueryClient.getDataCount(schema, table, updateColum, startDate, endDate) : -1;
     }
 
     @Override
@@ -81,12 +69,17 @@ public abstract class AbstractDataConsumer implements DataConsumer {
         return getPluginName().equals(consumerName);
     }
 
-    protected abstract String getPluginName();
+
+    @Override
+    public void startup() throws Exception {
+        consumeClient.start();
+        if (null != metaQueryClient) metaQueryClient.start();
+    }
 
     @Override
     public void shutdown() throws Exception {
         if (!consumeClient.isPublic()) consumeClient.shutdown();
-        if (!metaQueryClient.isPublic()) metaQueryClient.shutdown();
+        if (null != metaQueryClient && !metaQueryClient.isPublic()) metaQueryClient.shutdown();
     }
 
     @Override
@@ -94,18 +87,15 @@ public abstract class AbstractDataConsumer implements DataConsumer {
         consumeClient.initializePosition(taskId, swimlaneId, position);
     }
 
-    @Override
-    public void startup() throws Exception {
-        consumeClient.start();
-        metaQueryClient.start();
-    }
 
     public List<MessageEvent> fetch() throws TaskStopTriggerException {
         return doFetch();
     }
 
-    protected abstract List<MessageEvent> doFetch() throws TaskStopTriggerException;
-
+    @Override
+    public boolean supportMetaQuery() {
+        return null != metaQueryClient;
+    }
 
     @Override
     public String getSwimlaneId() {
@@ -130,5 +120,20 @@ public abstract class AbstractDataConsumer implements DataConsumer {
     @Override
     public void setEventProcessor(EventProcessor eventProcessor) {
         this.eventProcessor = eventProcessor;
+    }
+
+    @Override
+    public void setMetaQueryClient(MetaQueryClient c) {
+        metaQueryClient = c;
+    }
+
+    @Override
+    public void setClient(ConsumeClient c) {
+        this.consumeClient = c;
+    }
+
+    @Override
+    public void setConverter(EventConverter converter) {
+        this.converter = converter;
     }
 }

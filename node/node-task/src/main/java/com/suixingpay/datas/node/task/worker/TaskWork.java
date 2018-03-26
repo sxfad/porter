@@ -97,7 +97,13 @@ public class TaskWork {
                 put(StageType.EXTRACT, new ExtractJob(work));
                 put(StageType.TRANSFORM, new TransformJob(work));
                 put(StageType.LOAD, new LoadJob(work));
-                put(StageType.DB_CHECK, new AlertJob(work));
+
+                /**
+                 * 源端数据源支持元数据查询
+                 */
+                if (dataConsumer.supportMetaQuery()) {
+                    put(StageType.DB_CHECK, new AlertJob(work));
+                }
             }
         };
 
@@ -234,18 +240,18 @@ public class TaskWork {
         TableMapper mapper = mappers.computeIfAbsent(key, s -> {
             TableMapper tmp = null;
             String mapperKey = taskId + "_" + schema + "_" + table;
-            tmp = worker.getTableMapper().get(mapperKey.toUpperCase());
+            tmp = worker.getTableMapper().get(mapperKey);
             if (null == tmp) {
                 mapperKey = taskId + "__" + table;
-                tmp = worker.getTableMapper().get(mapperKey.toUpperCase());
+                tmp = worker.getTableMapper().get(mapperKey);
             }
             if (null == tmp) {
                 mapperKey = taskId + "_" + schema + "_";
-                tmp = worker.getTableMapper().get(mapperKey.toUpperCase());
+                tmp = worker.getTableMapper().get(mapperKey);
             }
             if (null == tmp) {
                 mapperKey = taskId + "_" + "_";
-                tmp = worker.getTableMapper().get(mapperKey.toUpperCase());
+                tmp = worker.getTableMapper().get(mapperKey);
             }
             return tmp;
         });

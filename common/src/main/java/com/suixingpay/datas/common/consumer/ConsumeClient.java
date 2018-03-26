@@ -9,7 +9,6 @@
 
 package com.suixingpay.datas.common.consumer;
 
-import com.google.protobuf.InvalidProtocolBufferException;
 import com.suixingpay.datas.common.client.Client;
 import com.suixingpay.datas.common.exception.ClientException;
 import com.suixingpay.datas.common.exception.ConfigParseException;
@@ -82,7 +81,7 @@ public interface ConsumeClient extends Client {
         default <F, O> F  accept(O o) {
             return null;
         }
-        default <F, O> List<F>  acceptAll(O o) throws InvalidProtocolBufferException {
+        default <F, O> List<F>  acceptAll(O o) throws Exception {
             return null;
         }
     }

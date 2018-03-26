@@ -9,6 +9,7 @@
 
 package com.suixingpay.datas.node.plugin.loader.jdbc;
 
+import com.alibaba.fastjson.JSONObject;
 import com.suixingpay.datas.common.dic.LoaderPlugin;
 import com.suixingpay.datas.common.exception.TaskStopTriggerException;
 import com.suixingpay.datas.node.core.event.etl.ETLBucket;
@@ -26,11 +27,11 @@ import java.util.List;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月04日 11:38
  */
-public class JdbcSingleLoader extends BaseJdbcLoader {
+public class JdbcPrintSqlLoader extends BaseJdbcLoader {
 
     @Override
     protected String getPluginName() {
-        return LoaderPlugin.JDBC_SINGLE.getCode();
+        return LoaderPlugin.JDBC_SQL_PRINT.getCode();
     }
 
     @Override
@@ -38,15 +39,14 @@ public class JdbcSingleLoader extends BaseJdbcLoader {
         LOGGER.info("start loading bucket:{},size:{}", bucket.getSequence(), bucket.getRows().size());
         List<SubmitStatObject> affectRow = new ArrayList<>();
         for (ETLRow row : bucket.getRows()) {
+            LOGGER.info(JSONObject.toJSONString(row));
             //更新目标仓储
-            int affect = loadSql(buildSql(row));
-            //插入影响行数
+            List<Pair<String, Object[]>> sqlList = buildSql(row);
+            sqlList.forEach(p -> {
+                LOGGER.info(p.getLeft());
+            });
             affectRow.add(new SubmitStatObject(row.getFinalSchema(), row.getFinalTable(), row.getFinalOpType(),
-                    affect, row.getPosition(), row.getOpTime()));
-
-            if (affect < 1) {
-                LOGGER.error("position:{}", row.getPosition().render());
-            }
+                    1, row.getPosition(), row.getOpTime()));
         }
         return new ImmutablePair(Boolean.TRUE, affectRow);
     }

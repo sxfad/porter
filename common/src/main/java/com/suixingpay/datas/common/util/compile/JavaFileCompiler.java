@@ -18,8 +18,7 @@ import javax.tools.StandardLocation;
 import javax.tools.ToolProvider;
 import javax.tools.JavaFileObject;
 import javax.tools.SimpleJavaFileObject;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
@@ -65,6 +64,10 @@ public class   JavaFileCompiler extends URLClassLoader {
             javaFile = new JavaClass(source);
         } else if (source.getContent().endsWith(".jar")) {
             javaFile = new JavaJarClass(source);
+        }  else if (source.getContent().endsWith(".java")) {
+            //读取源码文件,转换为JavaSource对象
+            source.setContent(readSource(source.getContent()));
+            javaFile = new JavaSource(source);
         } else { //source
             javaFile = new JavaSource(source);
         }
@@ -128,5 +131,17 @@ public class   JavaFileCompiler extends URLClassLoader {
             }
         }
 
+    }
+
+
+    private String readSource(String sourceFile) throws IOException {
+        StringBuilder builder = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new FileReader(sourceFile))) {
+            String line = null;
+            while ((line =  reader.readLine()) != null) {
+                builder.append(line);
+            }
+        }
+        return builder.toString();
     }
 }

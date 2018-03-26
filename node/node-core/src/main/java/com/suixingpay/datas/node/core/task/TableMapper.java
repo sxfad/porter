@@ -11,6 +11,7 @@ package com.suixingpay.datas.node.core.task;
 
 import com.suixingpay.datas.common.config.TableMapperConfig;
 
+import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -60,7 +61,7 @@ public class TableMapper {
         if (null != table && table.length == 2) {
             sb.append(table[0]);
         }
-        return sb.toString().toUpperCase();
+        return sb.toString();
     }
 
     public String[] getUpdateDate() {
@@ -79,4 +80,34 @@ public class TableMapper {
         mapper.setUpdateDate(config.getUpdateDate());
         return mapper;
     }
+
+    public TableMapper toUpperCase() {
+        if (null != updateDate) {
+            for (int i = 0; i < updateDate.length; i++) {
+                updateDate[i] = updateDate[i].toUpperCase();
+            }
+        }
+
+        if (null != table) {
+            for (int i = 0; i < table.length; i++) {
+                table[i] = table[i].toUpperCase();
+            }
+        }
+
+        if (null != schema) {
+            for (int i = 0; i < schema.length; i++) {
+                schema[i] = schema[i].toUpperCase();
+            }
+        }
+
+        if (null != column) {
+            Arrays.stream(column.keySet().toArray(new String[0])).forEach(k -> {
+                String v = column.get(k);
+                column.remove(k);
+                column.put(k.toUpperCase(), v.toUpperCase());
+            });
+        }
+        return this;
+    }
+
 }

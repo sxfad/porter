@@ -115,4 +115,12 @@ public interface DataConsumer {
     EventProcessor getEventProcessor();
 
     void setEventProcessor(EventProcessor eventProcessor);
+
+    /**
+     * 是否支持源数据源元数据查询:记录条数、schema
+     * @return
+     */
+    default boolean supportMetaQuery() {
+        return false;
+    }
 }

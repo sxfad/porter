@@ -76,6 +76,7 @@ public class TransformJob extends AbstractStageJob {
                                 transformFactory.transform(inThreadBucket, work);
                             }
                         } catch (Exception e) {
+                            e.printStackTrace();
                             inThreadBucket.tagException(new TaskStopTriggerException(e));
                             LOGGER.error("批次[{}]执行TransformJob失败!", inThreadBucket.getSequence(), e);
                         }
@@ -102,7 +103,10 @@ public class TransformJob extends AbstractStageJob {
                 LOGGER.debug("waiting sequence Future:{}", sequence);
                 //等待超过5分钟，释放任务
                 if (waitTime > 1000 * 60 * 5) {
-                    work.stopAndAlarm("等待批次" + sequence + "SET完成超时(5m)，任务退出。");
+                    String msg  = "等待批次" + sequence + "SET完成超时(5m)，任务退出。";
+                    LOGGER.error(msg);
+                    work.stopAndAlarm(msg);
+                    break;
                 }
                 try {
                     waitTime += 500;

@@ -74,16 +74,12 @@ public class ETLRow {
         this.finalTable = table;
         this.position = position;
     }
-    public String getSchema() {
-        return schema;
-    }
 
-    public String getTable() {
-        return table;
-    }
-
-    public EventType getOpType() {
-        return opType;
+    public ETLRow toUpperCase() {
+        this.finalSchema = finalSchema.toUpperCase();
+        this.finalTable = finalTable.toUpperCase();
+        columns.forEach(c -> c.toUpperCase());
+        return this;
     }
 
     public List<ETLColumn> getColumns() {

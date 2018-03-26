@@ -108,11 +108,33 @@ public class KUDUClient extends AbstractClient<KuduConfig> implements LoadClient
     }
 
     public int[] delete(String table, List<List<Triple<String, Integer, String>>> rows) throws KuduException {
-        return operation(table, rows, OperationType.DELTE);
+        return operation(table, rows, OperationType.DELETE);
     }
 
     public int[] update(String table, List<List<Triple<String, Integer, String>>> rows) throws KuduException {
         return operation(table, rows, OperationType.UPDATE);
+    }
+
+    public int[] truncate(String finalTableName) throws KuduException {
+        KuduSession session = client.newSession();
+        try {
+            Schema schema = client.openTable(finalTableName).getSchema();
+            //删除表
+            client.deleteTable(finalTableName);
+            //重新建表
+            client.createTable(finalTableName, schema, new CreateTableOptions().setRangePartitionColumns(new ArrayList<String>() {
+                {
+                    schema.getColumns().forEach(c -> {
+                        if (c.isKey()) {
+                            add(c.getName());
+                        }
+                    });
+                }
+            }));
+        } finally {
+            if (null != session) session.close();
+        }
+        return new int[]{1};
     }
 
     public int[] operation(String table, List<List<Triple<String, Integer, String>>> rows, OperationType type) throws KuduException {
@@ -123,7 +145,7 @@ public class KUDUClient extends AbstractClient<KuduConfig> implements LoadClient
             for (List<Triple<String, Integer, String>> r : rows) {
                 Operation operation = null;
                 switch (type) {
-                    case DELTE:
+                    case DELETE:
                         operation = kuduTable.newDelete();
                         break;
                     case INSERT:
@@ -133,8 +155,6 @@ public class KUDUClient extends AbstractClient<KuduConfig> implements LoadClient
                         operation = kuduTable.newUpdate();
                         break;
                 }
-
-                operation = kuduTable.newDelete();
                 PartialRow row = operation.getRow();
                 buildRow(r, row);
                 session.apply(operation);
@@ -186,29 +206,7 @@ public class KUDUClient extends AbstractClient<KuduConfig> implements LoadClient
         });
     }
 
-    public int[] truncate(String finalTableName) throws KuduException {
-        KuduSession session = client.newSession();
-        try {
-            Schema schema = client.openTable(finalTableName).getSchema();
-            //删除表
-            client.deleteTable(finalTableName);
-            //重新建表
-            client.createTable(finalTableName, schema, new CreateTableOptions().setRangePartitionColumns(new ArrayList<String>() {
-                {
-                    schema.getColumns().forEach(c -> {
-                        if (c.isKey()) {
-                            add(c.getName());
-                        }
-                    });
-                }
-            }));
-        } finally {
-            if (null != session) session.close();
-        }
-        return new int[]{1};
-    }
-
     private enum OperationType {
-        DELTE, UPDATE, INSERT;
+        DELETE, UPDATE, INSERT;
     }
 }

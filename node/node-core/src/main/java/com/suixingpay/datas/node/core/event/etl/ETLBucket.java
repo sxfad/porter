@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -74,11 +75,13 @@ public class ETLBucket {
         for (MessageEvent event : events.getRight()) {
             LOGGER.debug(JSON.toJSONString(event));
             List<ETLColumn> columns = new ArrayList<>();
+            if (null == event.getBefore()) event.setBefore(new HashMap<>());
+            if (null == event.getAfter()) event.setAfter(new HashMap<>());
+
             Boolean loopAfter = !event.getAfter().isEmpty();
             for (Map.Entry<String, Object> entity : loopAfter ? event.getAfter().entrySet() : event.getBefore().entrySet()) {
                 Object newValue = "";
                 Object oldValue = "";
-
                 if (loopAfter) {
                     newValue = entity.getValue();
                     oldValue = event.getBefore().getOrDefault(entity.getKey(), null);
@@ -97,14 +100,13 @@ public class ETLBucket {
                 oldValueStr = oldValueStr.equals("null") ? null : oldValueStr;
                 String finalValueStr = String.valueOf(finalValue);
                 finalValueStr = finalValueStr.equals("null") ? null : finalValueStr;
-
                 //源数据事件精度损失，转字符串也会有精度损失。后续观察处理
                 ETLColumn column = new ETLColumn(entity.getKey(), newValueStr, oldValueStr, finalValueStr,
                         event.getPrimaryKeys().contains(entity.getKey()));
                 columns.add(column);
             }
             ETLRow row = new ETLRow(event.getSchema(), event.getTable(), event.getOpType(), columns, event.getOpTs(), event.getRowPosition());
-            rows.add(row);
+            rows.add(row.toUpperCase());
             LOGGER.debug(JSON.toJSONString(row));
         }
         Position position = !events.getRight().isEmpty() ? events.getRight().get(events.getRight().size() - 1).getBucketPosition() : null;
