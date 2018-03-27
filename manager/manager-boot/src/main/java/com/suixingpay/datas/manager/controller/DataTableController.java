@@ -155,6 +155,22 @@ public class DataTableController {
         return ok(page);
     }
 
+    /**
+     * 目标数据表组分页方法
+     *
+     * @author FuZizheng
+     * @date 2018/3/27 上午10:29
+     * @param: [pageNo, pageSize]
+     * @return: com.suixingpay.datas.manager.web.message.ResponseMessage
+     */
+    @GetMapping("/targets")
+    @ApiOperation(value = "目标数据表组分页方法", notes = "目标数据表组分页方法")
+    public ResponseMessage targetList(@RequestParam(value = "pageNo", required = true) Integer pageNo,
+                                      @RequestParam(value = "pageSize", required = true) Integer pageSize) {
+        Page<DataTable> page = dataTableService.dataTableList(new Page<DataTable>(pageNo, pageSize));
+        return ok(page);
+    }
+
     /*
      * @PostMapping
      * 

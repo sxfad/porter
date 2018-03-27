@@ -63,7 +63,7 @@ public interface DataTableMapper {
                     @Param("endTime") String endTime);
 
     /**
-     * 元数据表组分页All
+     * 目标/元数据表组分页All
      *
      * @param state
      * @return
@@ -71,7 +71,7 @@ public interface DataTableMapper {
     Integer dataTableAll(@Param("state") Integer state);
 
     /**
-     * 元数据表组分页方法
+     * 目标/元数据表组分页方法
      *
      * @param page
      * @param state

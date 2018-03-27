@@ -115,13 +115,13 @@
         </where>
     </select>
 
-    <!-- 元数据表组分页All -->
+    <!-- 目标/元数据表组分页All -->
     <select id="dataTableAll" resultType="java.lang.Integer">
         select count(id) from b_data_table
         WHERE iscancel = 0
     </select>
 
-    <!-- 元数据表组分页 -->
+    <!-- 目标/元数据表组分页 -->
     <select id="dataTablePage" resultType="com.suixingpay.datas.manager.core.entity.DataTable">
         SELECT
         b.id, b.source_id AS sourceId, b.data_type AS dataType, b.bank_name AS bankName,
