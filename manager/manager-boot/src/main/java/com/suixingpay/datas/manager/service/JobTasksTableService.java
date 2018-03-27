@@ -1,5 +1,6 @@
 package com.suixingpay.datas.manager.service;
 
+import com.suixingpay.datas.manager.core.entity.JobTasks;
 import com.suixingpay.datas.manager.core.entity.JobTasksTable;
 import com.suixingpay.datas.manager.web.page.Page;
 
@@ -23,4 +24,5 @@ public interface JobTasksTableService {
 
     Page<JobTasksTable> page(Page<JobTasksTable> page);
 
+    void insertList(JobTasks jobTasks);
 }

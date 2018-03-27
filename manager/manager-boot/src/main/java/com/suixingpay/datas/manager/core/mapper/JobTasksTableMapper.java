@@ -60,4 +60,10 @@ public interface JobTasksTableMapper {
      */
     public Integer pageAll(@Param("state") Integer state);
 
+    /**
+     * 批量新增 JobTasksTable
+     *
+     * @param tables
+     */
+    void insertList(List<JobTasksTable> tables);
 }

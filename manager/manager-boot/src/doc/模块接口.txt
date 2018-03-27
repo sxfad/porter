@@ -61,10 +61,21 @@
     列表：
         /jobtasks(get) 主键(id) 任务名称(jobName) 来源数据-消费插件(sourceConsumeAdt) 来源数据-消费转换插件(sourceConvertAdt) 目标数据-载入插件(targetLoadAdt) 创建时间(createTIme) 状态(state)
     新增：
-        第一步:任务基本信息：{任务名,(告警通知人list)} 
+        第一步:任务基本信息：{任务名,(告警通知人list)}
+            在JobTasks类中，新添userId list。
         第二步:来源数据信息-数据来源端 {消费插件ConsumerPlugin、消费转换插件ConsumeConverterPlugin、元数据表组(DataTable选择)、|||同步数据来源（数据源配置类型kafka、CANAL）|||}
+            元数据表组：
+                路径：/datatable/datas(get)
+                注释：查全部数据表信息
+            同步数据来源：
+                路径：/datasource/findByType(get)
+                注释：查 KAFKA 和 CANAL 数据源类型下的数据源信息
         第三步:目标数据信息-数据目标端{载入插件LoaderPlugin、目标数据表组}
+            目标数据表组:
+                路径：/datatable/datas(get)
+                注释：查全部数据表信息
         第四步:数据映射关系 -来源（表名 - 字段）=>目标（表名 - 字段） =》目标数据
+
         保存数据：
     开始任务(推送)：
     暂停任务(推送)：

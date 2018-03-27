@@ -60,4 +60,10 @@ public interface JobTasksFieldMapper {
      */
     public Integer pageAll(@Param("state") Integer state);
 
+    /**
+     * 批量新增
+     *
+     * @param fields
+     */
+    void insertList(List<JobTasksField> fields);
 }

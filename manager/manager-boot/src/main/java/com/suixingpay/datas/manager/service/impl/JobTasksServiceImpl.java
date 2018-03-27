@@ -5,6 +5,8 @@ package com.suixingpay.datas.manager.service.impl;
 
 import java.util.List;
 
+import com.suixingpay.datas.manager.service.JobTasksFieldService;
+import com.suixingpay.datas.manager.service.JobTasksTableService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +23,7 @@ import com.suixingpay.datas.manager.service.DataTableService;
 import com.suixingpay.datas.manager.service.DbSelectService;
 import com.suixingpay.datas.manager.service.JobTasksService;
 import com.suixingpay.datas.manager.web.page.Page;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 同步任务表 服务实现类
@@ -42,9 +45,17 @@ public class JobTasksServiceImpl implements JobTasksService {
     @Autowired
     private DataTableService dataTableService;
 
+    @Autowired
+    private JobTasksTableService jobTasksTableService;
+
     @Override
+    @Transactional
     public Integer insert(JobTasks jobTasks) {
-        return jobTasksMapper.insert(jobTasks);
+        //新增 JobTasks
+        Integer number = jobTasksMapper.insert(jobTasks);
+        //新增 JobTasksTable
+        jobTasksTableService.insertList(jobTasks);
+        return number;
     }
 
     @Override

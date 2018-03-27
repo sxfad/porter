@@ -11,6 +11,8 @@ import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -71,30 +73,47 @@ public class JobTasksController {
 
     /**
      * 数据表组表名数组
+     *
      * @param tablesId
      * @return
      */
-    @GetMapping(value="tablenames")
+    @GetMapping(value = "tablenames")
     @ApiOperation(value = "数据表组表名数组", notes = "数据表组表名数组")
-    public ResponseMessage tableNames(@RequestParam(value = "tablesId", required = true)@ApiParam(value="数据表组id") Long tablesId) {
+    public ResponseMessage tableNames(@RequestParam(value = "tablesId", required = true) @ApiParam(value = "数据表组id") Long tablesId) {
         Object o = jobTasksService.tableNames(tablesId);
         return ok(o);
     }
 
     /**
      * 查询表字段
+     *
      * @param sourceId
      * @param tablesId
      * @param tableAllName
      * @return
      */
-    @GetMapping(value="fields")
+    @GetMapping(value = "fields")
     @ApiOperation(value = "查询表字段", notes = "查询表字段")
-    public ResponseMessage fields(@RequestParam(value = "sourceId", required = true)@ApiParam(value="数据源id") Long sourceId,
-                                  @RequestParam(value = "tablesId", required = true)@ApiParam(value="数据表组id") Long tablesId,
-                                  @RequestParam(value = "tableAllName", required = true)@ApiParam(value="数据表全名") String tableAllName) {
+    public ResponseMessage fields(@RequestParam(value = "sourceId", required = true) @ApiParam(value = "数据源id") Long sourceId,
+                                  @RequestParam(value = "tablesId", required = true) @ApiParam(value = "数据表组id") Long tablesId,
+                                  @RequestParam(value = "tableAllName", required = true) @ApiParam(value = "数据表全名") String tableAllName) {
         List<String> fields = jobTasksService.fields(sourceId, tablesId, tableAllName);
         return ok(fields);
+    }
+
+    /**
+     * 新增
+     *
+     * @author FuZizheng
+     * @date 2018/3/27 下午3:17
+     * @param: [jobTasks]
+     * @return: com.suixingpay.datas.manager.web.message.ResponseMessage
+     */
+    @PostMapping
+    @ApiOperation(value = "新增", notes = "新增")
+    public ResponseMessage add(@RequestBody JobTasks jobTasks) {
+        Integer number = jobTasksService.insert(jobTasks);
+        return ok(number);
     }
 /*    @PostMapping
     @ApiOperation(value = "新增", notes = "新增")

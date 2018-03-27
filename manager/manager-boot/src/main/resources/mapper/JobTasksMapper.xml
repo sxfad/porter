@@ -27,7 +27,7 @@
     </sql>-->
 
     <!-- 新增 -->
-    <insert id="insert">
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         insert into job_tasks(
             job_name,
             source_consume_adt,
@@ -38,12 +38,7 @@
             source_data_name,
             target_load_adt,
             target_data_tables_id,
-            target_data_tables_name,
-            creater,
-            create_time,
-            state,
-            iscancel,
-            remark
+            target_data_tables_name
         ) values (
             #{jobName},
             #{sourceConsumeAdt},
@@ -54,12 +49,7 @@
             #{sourceDataName},
             #{targetLoadAdt},
             #{targetDataTablesId},
-            #{targetDataTablesName},
-            #{creater},
-            #{createTime},
-            #{state},
-            #{iscancel},
-            #{remark}
+            #{targetDataTablesName}
         )
     </insert>
 

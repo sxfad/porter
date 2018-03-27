@@ -39,6 +39,30 @@
         )
     </insert>
 
+    <!-- 批量新增 -->
+    <insert id="insertList">
+        insert into job_tasks_field(
+        job_task_id,
+        job_tasks_table_id,
+        source_table_name,
+        source_table_field,
+        target_table_name,
+        target_table_field,
+        sort_order
+        ) values
+        <foreach collection="list" item="fields" index="index" separator=",">
+        (
+            #{fields.jobTaskId},
+            #{fields.jobTasksTableId},
+            #{fields.sourceTableName},
+            #{fields.sourceTableField},
+            #{fields.targetTableName},
+            #{fields.targetTableField},
+            #{fields.sortOrder}
+        )
+        </foreach>
+    </insert>
+
     <!-- 修改 -->
     <update id="update">
         update job_tasks_field
