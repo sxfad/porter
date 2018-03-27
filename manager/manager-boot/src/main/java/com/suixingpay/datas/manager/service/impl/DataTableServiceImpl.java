@@ -135,4 +135,14 @@ public class DataTableServiceImpl implements DataTableService {
         }
         return page;
     }
+
+    @Override
+    public Page<DataTable> dataTableList(Page<DataTable> page) {
+        Integer total = dataTableMapper.dataTableAll(1);
+        if (total > 0) {
+            page.setTotalItems(total);
+            page.setResult(dataTableMapper.dataTablePage(page, 1));
+        }
+        return page;
+    }
 }

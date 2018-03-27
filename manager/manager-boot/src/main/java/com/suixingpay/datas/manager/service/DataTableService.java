@@ -26,4 +26,6 @@ public interface DataTableService {
     List<String> prefixList(Long sourceId);
 
     Page<Object> tableList(Page<Object> page, Long sourceId, String prefix, String tableName);
+
+    Page<DataTable> dataTableList(Page<DataTable> dataTablePage);
 }
