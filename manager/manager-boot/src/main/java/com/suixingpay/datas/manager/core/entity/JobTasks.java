@@ -1,6 +1,8 @@
 package com.suixingpay.datas.manager.core.entity;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 同步任务表 实体Entity
@@ -61,6 +63,9 @@ public class JobTasks implements java.io.Serializable {
 
     /** 备注. */
     private String remark;
+
+    /** 告警人id列表. */
+    private List<Long> userId = new ArrayList<>();
 
     /** 主键 get方法. */
     public Long getId() {
@@ -222,4 +227,13 @@ public class JobTasks implements java.io.Serializable {
         this.remark = remark == null ? null : remark.trim();
     }
 
+    /** 告警人id列表 get方法 */
+    public List<Long> getUserId() {
+        return userId;
+    }
+
+    /** 告警人id列表 set方法 */
+    public void setUserId(List<Long> userId) {
+        this.userId = userId;
+    }
 }

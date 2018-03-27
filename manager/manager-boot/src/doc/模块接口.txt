@@ -59,7 +59,7 @@
 
 同步任务
     列表：
-        
+        /jobtasks(get) 主键(id) 任务名称(jobName) 来源数据-消费插件(sourceConsumeAdt) 来源数据-消费转换插件(sourceConvertAdt) 目标数据-载入插件(targetLoadAdt) 创建时间(createTIme) 状态(state)
     新增：
         第一步:任务基本信息：{任务名,(告警通知人list)} 
         第二步:来源数据信息-数据来源端 {消费插件ConsumerPlugin、消费转换插件ConsumeConverterPlugin、元数据表组(DataTable选择)、|||同步数据来源（数据源配置类型kafka、CANAL）|||}
