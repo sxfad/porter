@@ -62,6 +62,23 @@ public interface DataTableMapper {
                     @Param("beginTime") String beginTime,
                     @Param("endTime") String endTime);
 
+    /**
+     * 元数据表组分页All
+     *
+     * @param state
+     * @return
+     */
+    Integer dataTableAll(@Param("state") Integer state);
+
+    /**
+     * 元数据表组分页方法
+     *
+     * @param page
+     * @param state
+     * @return
+     */
+    List<DataTable> dataTablePage(@Param("page") Page<DataTable> page, @Param("state") Integer state);
+
 
 //    *
 //     * 新增

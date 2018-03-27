@@ -13,6 +13,8 @@ import com.suixingpay.datas.manager.service.DataSourcePluginService;
 import com.suixingpay.datas.manager.service.DataSourceService;
 import com.suixingpay.datas.manager.web.page.Page;
 
+import java.util.List;
+
 /**
  * 数据源信息表 服务实现类
  *
@@ -77,4 +79,15 @@ public class DataSourceServiceImpl implements DataSourceService {
         }
         return page;
     }
+
+    @Override
+    public Page<DataSource> findByTypePage(Page<DataSource> page) {
+        Integer total = dataSourceMapper.findByTypePageAll(1);
+        if (total > 0) {
+            page.setTotalItems(total);
+            page.setResult(dataSourceMapper.findByTypePage(page, 1));
+        }
+        return page;
+    }
+
 }
