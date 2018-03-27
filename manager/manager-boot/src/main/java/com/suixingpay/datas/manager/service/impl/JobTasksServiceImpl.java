@@ -3,12 +3,24 @@
  */
 package com.suixingpay.datas.manager.service.impl;
 
-import com.suixingpay.datas.manager.core.entity.JobTasks;
-import com.suixingpay.datas.manager.core.mapper.JobTasksMapper;
-import com.suixingpay.datas.manager.service.JobTasksService;
-import com.suixingpay.datas.manager.web.page.Page;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.suixingpay.datas.manager.core.dto.JDBCVo;
+import com.suixingpay.datas.manager.core.entity.DataSource;
+import com.suixingpay.datas.manager.core.entity.DataSourcePlugin;
+import com.suixingpay.datas.manager.core.entity.DataTable;
+import com.suixingpay.datas.manager.core.entity.JobTasks;
+import com.suixingpay.datas.manager.core.enums.QuerySQL;
+import com.suixingpay.datas.manager.core.mapper.JobTasksMapper;
+import com.suixingpay.datas.manager.core.util.ApplicationContextUtil;
+import com.suixingpay.datas.manager.service.DataSourceService;
+import com.suixingpay.datas.manager.service.DataTableService;
+import com.suixingpay.datas.manager.service.DbSelectService;
+import com.suixingpay.datas.manager.service.JobTasksService;
+import com.suixingpay.datas.manager.web.page.Page;
 
 /**
  * 同步任务表 服务实现类
@@ -23,6 +35,12 @@ public class JobTasksServiceImpl implements JobTasksService {
 
     @Autowired
     private JobTasksMapper jobTasksMapper;
+
+    @Autowired
+    private DataSourceService dataSourceService;
+
+    @Autowired
+    private DataTableService dataTableService;
 
     @Override
     public Integer insert(JobTasks jobTasks) {
@@ -52,6 +70,48 @@ public class JobTasksServiceImpl implements JobTasksService {
             page.setResult(jobTasksMapper.page(page, 1, jobName, beginTime, endTime));
         }
         return page;
+    }
+
+    @Override
+    public Object tableNames(Long tablesId) {
+        DataTable dataTable = dataTableService.selectById(tablesId);
+        if(dataTable!=null&&dataTable.getTableName()!=null) {
+            return dataTable.getTableName().split(",");
+        }
+        return null;
+    }
+
+    @Override
+    public List<String> fields(Long sourceId, Long tablesId, String tableAllName) {
+        DataSource dataSource = dataSourceService.selectById(sourceId);
+        List<DataSourcePlugin> list = dataSource.getPlugins();
+        String url = null;
+        String username = null;
+        String password = null;
+        QuerySQL query = null;
+        for (DataSourcePlugin dataSourcePlugin : list) {
+            if (dataSourcePlugin.getFieldCode().toLowerCase().equals("dbtype")) {
+                if (dataSourcePlugin.getFieldValue().toLowerCase().equals("mysql")) {
+                    query = QuerySQL.MYSQL;
+                }
+                if (dataSourcePlugin.getFieldValue().toLowerCase().equals("oracle")) {
+                    query = QuerySQL.ORACLE;
+                }
+            }
+            if (dataSourcePlugin.getFieldCode().toLowerCase().equals("url")) {
+                url = dataSourcePlugin.getFieldValue();
+            }
+            if (dataSourcePlugin.getFieldCode().toLowerCase().equals("username")) {
+                username = dataSourcePlugin.getFieldValue();
+            }
+            if (dataSourcePlugin.getFieldCode().toLowerCase().equals("password")) {
+                password = dataSourcePlugin.getFieldValue();
+            }
+        }
+        String sql = query.getTableFieldsSql();
+        DbSelectService dbSelectService = ApplicationContextUtil.getBean("db" + query.getDbType() + "SelectService");
+        List<String> fields = dbSelectService.fieldList(new JDBCVo(query.getDriverName(), url, username, password), sql, tableAllName);
+        return fields;
     }
 
 }

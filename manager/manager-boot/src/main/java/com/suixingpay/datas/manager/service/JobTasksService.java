@@ -1,5 +1,7 @@
 package com.suixingpay.datas.manager.service;
 
+import java.util.List;
+
 import com.suixingpay.datas.manager.core.entity.JobTasks;
 import com.suixingpay.datas.manager.web.page.Page;
 
@@ -22,5 +24,9 @@ public interface JobTasksService {
     JobTasks selectById(Long id);
 
     Page<JobTasks> page(Page<JobTasks> page, String jobName, String beginTime, String endTime);
+
+    Object tableNames(Long tablesId);
+
+    List<String> fields(Long sourceId,Long tablesId,String tableAllName);
 
 }

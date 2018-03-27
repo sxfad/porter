@@ -1,4 +1,4 @@
-package com.suixingpay.datas.manager.controller;
+/*package com.suixingpay.datas.manager.controller;
 
 import com.suixingpay.datas.manager.core.entity.JobTasksTable;
 import com.suixingpay.datas.manager.service.JobTasksTableService;
@@ -19,14 +19,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import static com.suixingpay.datas.manager.web.message.ResponseMessage.ok;
 
-/**
+*//**
  * 任务数据表对照关系表 controller控制器
  *
  * @author: FairyHood
  * @date: 2018-03-07 17:26:55
  * @version: V1.0-auto
  * @review: FairyHood/2018-03-07 17:26:55
- */
+ *//*
 @Api(description = "任务数据表对照关系表管理")
 @RestController
 @RequestMapping("/jobtaskstable")
@@ -71,4 +71,4 @@ public class JobTasksTableController {
         return ok(page);
     }
 
-}
+}*/

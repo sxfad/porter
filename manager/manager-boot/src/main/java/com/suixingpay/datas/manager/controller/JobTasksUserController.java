@@ -1,4 +1,4 @@
-package com.suixingpay.datas.manager.controller;
+/*package com.suixingpay.datas.manager.controller;
 
 import com.suixingpay.datas.manager.core.entity.JobTasksUser;
 import com.suixingpay.datas.manager.service.JobTasksUserService;
@@ -19,14 +19,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import static com.suixingpay.datas.manager.web.message.ResponseMessage.ok;
 
-/**
+*//**
  * job_tasks_user controller控制器
  *
  * @author: FairyHood
  * @date: 2018-03-07 17:26:55
  * @version: V1.0-auto
  * @review: FairyHood/2018-03-07 17:26:55
- */
+ *//*
 @Api(description = "job_tasks_user管理")
 @RestController
 @RequestMapping("/jobtasksuser")
@@ -71,4 +71,4 @@ public class JobTasksUserController {
         return ok(page);
     }
 
-}
+}*/
