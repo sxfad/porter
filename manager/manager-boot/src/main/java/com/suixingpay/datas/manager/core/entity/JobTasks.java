@@ -67,6 +67,9 @@ public class JobTasks implements java.io.Serializable {
     /** 告警人id列表. */
     private List<Long> userId = new ArrayList<>();
 
+    /** 表对照关系.*/
+    private List<JobTasksTable> tables = new ArrayList<>();
+
     /** 主键 get方法. */
     public Long getId() {
         return id;
@@ -235,5 +238,13 @@ public class JobTasks implements java.io.Serializable {
     /** 告警人id列表 set方法 */
     public void setUserId(List<Long> userId) {
         this.userId = userId;
+    }
+
+    public List<JobTasksTable> getTables() {
+        return tables;
+    }
+
+    public void setTables(List<JobTasksTable> tables) {
+        this.tables = tables;
     }
 }
