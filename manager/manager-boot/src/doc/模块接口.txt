@@ -75,7 +75,6 @@
                 路径：/datatable/datas(get)
                 注释：查全部数据表信息
         第四步:数据映射关系 -来源（表名 - 字段）=>目标（表名 - 字段） =》目标数据
-            
 
         保存数据：
             路径：/jobtasks(post)
@@ -88,6 +87,7 @@
                   "sourceDataName": "同步数据来源",
                   "sourceDataTablesId": 1,
                   "sourceDataTablesName": "元数据表组",
+                  "jobState":"NEW",
                   "tables": [
                     {
                       "fields": [
@@ -138,8 +138,14 @@
                   ]
                 }
     开始任务(推送)：
+        路径：/jobtasks/{id}(post)
+        参数：id、TaskStatusType : WORKING
     暂停任务(推送)：
+        路径：/jobtasks/{id}(post)
+        参数：id、TaskStatusType : STOPPED
     删除任务：
+        路径：/jobtasks/{id}(delete)
+        参数：id
     查看任务：
 
 任务监控

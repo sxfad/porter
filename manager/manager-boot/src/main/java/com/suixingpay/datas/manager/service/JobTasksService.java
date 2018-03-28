@@ -2,6 +2,7 @@ package com.suixingpay.datas.manager.service;
 
 import java.util.List;
 
+import com.suixingpay.datas.common.dic.TaskStatusType;
 import com.suixingpay.datas.manager.core.entity.JobTasks;
 import com.suixingpay.datas.manager.web.page.Page;
 
@@ -29,4 +30,5 @@ public interface JobTasksService {
 
     List<String> fields(Long sourceId,Long tablesId,String tableAllName);
 
+    Integer updateState(Long id, TaskStatusType taskStatusType);
 }

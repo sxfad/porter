@@ -1,5 +1,6 @@
 package com.suixingpay.datas.manager.controller;
 
+import com.suixingpay.datas.common.dic.TaskStatusType;
 import com.suixingpay.datas.manager.core.entity.JobTasks;
 import com.suixingpay.datas.manager.service.JobTasksService;
 import com.suixingpay.datas.manager.web.message.ResponseMessage;
@@ -9,9 +10,11 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -109,10 +112,40 @@ public class JobTasksController {
      * @param: [jobTasks]
      * @return: com.suixingpay.datas.manager.web.message.ResponseMessage
      */
-    @PostMapping
+    @PostMapping()
     @ApiOperation(value = "新增", notes = "新增")
     public ResponseMessage add(@RequestBody JobTasks jobTasks) {
         Integer number = jobTasksService.insert(jobTasks);
+        return ok(number);
+    }
+
+    /**
+     * 修改任务状态
+     *
+     * @author FuZizheng
+     * @date 2018/3/28 上午11:27
+     * @param: []
+     * @return: com.suixingpay.datas.manager.web.message.ResponseMessage
+     */
+    @PutMapping("/{id}")
+    @ApiOperation(value = "修改任务状态", notes = "TaskStatusType 枚举类: NEW、STOPPED、WORKING")
+    public ResponseMessage updateState(@PathVariable("id") Long id, @RequestParam("taskStatusType") TaskStatusType taskStatusType) {
+        Integer number = jobTasksService.updateState(id, taskStatusType);
+        return ok(number);
+    }
+
+    /**
+     * 逻辑删除任务
+     *
+     * @author FuZizheng
+     * @date 2018/3/28 上午11:50
+     * @param: [id]
+     * @return: com.suixingpay.datas.manager.web.message.ResponseMessage
+     */
+    @DeleteMapping("/{id}")
+    @ApiOperation(value = "逻辑删除任务", notes = "参数：id")
+    public ResponseMessage delete(@PathVariable("id") Long id) {
+        Integer number = jobTasksService.delete(id);
         return ok(number);
     }
 /*    @PostMapping

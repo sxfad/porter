@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * 同步任务表 Mapper接口
- * 
+ *
  * @author: FairyHood
  * @date: 2018-03-07 13:40:30
  * @version: V1.0-auto
@@ -18,18 +18,21 @@ public interface JobTasksMapper {
 
     /**
      * 新增
+     *
      * @param jobTasks
      */
     Integer insert(JobTasks jobTasks);
 
     /**
      * 修改
+     *
      * @param jobTasks
      */
     Integer update(@Param("id") Long id, @Param("jobTasks") JobTasks jobTasks);
 
     /**
-     * 刪除
+     * 逻辑刪除
+     *
      * @param id
      * @return
      */
@@ -37,6 +40,7 @@ public interface JobTasksMapper {
 
     /**
      * 根據主鍵id查找數據
+     *
      * @param id
      * @return
      */
@@ -44,6 +48,7 @@ public interface JobTasksMapper {
 
     /**
      * 分頁
+     *
      * @return
      */
     List<JobTasks> page(@Param("page") Page<JobTasks> page,
@@ -54,6 +59,7 @@ public interface JobTasksMapper {
 
     /**
      * 分頁All
+     *
      * @return
      */
     Integer pageAll(@Param("state") Integer state,
@@ -61,4 +67,13 @@ public interface JobTasksMapper {
                     @Param("beginTime") String beginTime,
                     @Param("endTime") String endTime);
 
+    /**
+     * 修改任务状态
+     *
+     *
+     * @param id
+     * @param code
+     * @return
+     */
+    Integer updateState(@Param("id") Long id, @Param("code") String code);
 }

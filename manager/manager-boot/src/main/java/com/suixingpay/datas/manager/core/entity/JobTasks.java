@@ -1,5 +1,7 @@
 package com.suixingpay.datas.manager.core.entity;
 
+import com.suixingpay.datas.common.dic.TaskStatusType;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -21,6 +23,9 @@ public class JobTasks implements java.io.Serializable {
 
     /** 任务名称. */
     private String jobName;
+
+    /** 任务状态. */
+    private TaskStatusType jobState;
 
     /** 来源数据-消费插件. */
     private String sourceConsumeAdt;
@@ -88,6 +93,16 @@ public class JobTasks implements java.io.Serializable {
     /** 任务名称 set方法. */
     public void setJobName(String jobName) {
         this.jobName = jobName == null ? null : jobName.trim();
+    }
+
+    /** 任务状态 get方法. */
+    public TaskStatusType getJobState() {
+        return jobState;
+    }
+
+    /** 任务状态 set方法. */
+    public void setJobState(TaskStatusType jobState) {
+        this.jobState = jobState;
     }
 
     /** 来源数据-消费插件 get方法. */

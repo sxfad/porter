@@ -5,7 +5,7 @@ package com.suixingpay.datas.manager.service.impl;
 
 import java.util.List;
 
-import com.suixingpay.datas.manager.service.JobTasksFieldService;
+import com.suixingpay.datas.common.dic.TaskStatusType;
 import com.suixingpay.datas.manager.service.JobTasksTableService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -123,6 +123,11 @@ public class JobTasksServiceImpl implements JobTasksService {
         DbSelectService dbSelectService = ApplicationContextUtil.getBean("db" + query.getDbType() + "SelectService");
         List<String> fields = dbSelectService.fieldList(new JDBCVo(query.getDriverName(), url, username, password), sql, tableAllName);
         return fields;
+    }
+
+    @Override
+    public Integer updateState(Long id, TaskStatusType taskStatusType) {
+        return jobTasksMapper.updateState(id, taskStatusType.getCode());
     }
 
 }
