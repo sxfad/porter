@@ -69,5 +69,4 @@ public class ZKClusterConfigListener extends ZookeeperClusterListener implements
             client.changeData(configPath, false, false, command.render());
         }
     }
-
 }

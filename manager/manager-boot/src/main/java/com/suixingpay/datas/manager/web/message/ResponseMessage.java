@@ -1,5 +1,8 @@
 package com.suixingpay.datas.manager.web.message;
 
+import com.alibaba.fastjson.JSON;
+import com.suixingpay.datas.manager.core.util.DateFormatUtils;
+
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -9,14 +12,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import com.alibaba.fastjson.JSON;
-import com.suixingpay.datas.manager.core.util.DateFormatUtils;
-
 /**
  * 反馈
  *
  * @author guohongjian[guo_hj@suixingpay.com]
- *
  */
 public class ResponseMessage implements Serializable {
 

@@ -7,13 +7,12 @@ import com.suixingpay.datas.manager.core.entity.Dictionary;
 import com.suixingpay.datas.manager.core.mapper.DictionaryMapper;
 import com.suixingpay.datas.manager.service.DictionaryService;
 import com.suixingpay.datas.manager.web.page.Page;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 /**
  * 数据字典表 服务实现类

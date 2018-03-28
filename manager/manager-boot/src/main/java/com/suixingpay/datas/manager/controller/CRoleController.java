@@ -25,6 +25,7 @@ import static com.suixingpay.datas.manager.web.message.ResponseMessage.ok;
  * @date: 2018-03-07 17:26:55
  * @version: V1.0-auto
  * @review: FairyHood/2018-03-07 17:26:55
+ * Integer number = croleService.insert(crole); .
  *//*
 @Api(description = "角色表管理")
 @RestController

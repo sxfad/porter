@@ -2,7 +2,6 @@ package com.suixingpay.datas.manager.service;
 
 import com.suixingpay.datas.manager.core.entity.JobTasks;
 import com.suixingpay.datas.manager.core.entity.JobTasksField;
-import com.suixingpay.datas.manager.core.entity.JobTasksTable;
 import com.suixingpay.datas.manager.web.page.Page;
 
 import java.util.List;
@@ -21,4 +20,5 @@ public interface JobTasksFieldService {
 
     void insertList(JobTasks jobTasks);
 
+    List<JobTasksField> selectInfo(Long id, Long jobTasksTableId);
 }

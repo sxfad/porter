@@ -1,9 +1,9 @@
 package com.suixingpay.datas.manager.service;
 
-import java.util.Map;
-
 import com.suixingpay.datas.manager.core.entity.Dictionary;
 import com.suixingpay.datas.manager.web.page.Page;
+
+import java.util.Map;
 
 /**
  * 数据字典表 服务接口类

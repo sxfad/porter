@@ -66,4 +66,13 @@ public interface JobTasksFieldMapper {
      * @param fields
      */
     void insertList(List<JobTasksField> fields);
+
+    /**
+     * 根据jobTasksId和jobTasksTableId查询详情
+     *
+     * @param jobTaskId
+     * @param jobTasksTableId
+     * @return
+     */
+    List<JobTasksField> selectInfo(@Param("jobTaskId") Long jobTaskId, @Param("jobTasksTableId") Long jobTasksTableId);
 }

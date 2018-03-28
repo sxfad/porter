@@ -2,7 +2,7 @@ package com.suixingpay.datas.manager.core.entity;
 
 /**
  * 告警配置策略字典表 实体Entity
- * 
+ *
  * @author: FairyHood
  * @date: 2018-03-08 10:46:01
  * @version: V1.0-auto
@@ -12,49 +12,75 @@ public class DicAlarmPlugin implements java.io.Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    /** 主键. */
+    /**
+     * 主键.
+     */
     private Long id;
 
-    /** 告警策略. */
+    /**
+     * 告警策略.
+     */
     private String alertType;
 
-    /** 字段实际名. */
+    /**
+     * 字段实际名.
+     */
     private String fieldCode;
 
-    /** 字段展示名. */
+    /**
+     * 字段展示名.
+     */
     private String fieldName;
 
-    /** 字段页面顺序. */
+    /**
+     * 字段页面顺序.
+     */
     private Integer fieldOrder;
 
-    /** 字段类型.*/
+    /**
+     * 字段类型.
+     */
     private String fieldType;
 
-    /** 字段类型字典KEY.*/
+    /**
+     * 字段类型字典KEY.
+     */
     private String fieldTypeKey;
 
-    /** 状态. */
+    /**
+     * 状态.
+     */
     private Integer state;
 
-    /** 备注. */
+    /**
+     * 备注.
+     */
     private String remark;
 
-    /** 主键 get方法. */
+    /**
+     * 主键 get方法.
+     */
     public Long getId() {
         return id;
     }
 
-    /** 主键 set方法. */
+    /**
+     * 主键 set方法.
+     */
     public void setId(Long id) {
         this.id = id;
     }
 
-    /** 告警策略 get方法. */
+    /**
+     * 告警策略 get方法.
+     */
     public String getAlertType() {
         return alertType == null ? null : alertType.trim();
     }
 
-    /** 告警策略 set方法. */
+    /**
+     * 告警策略 set方法.
+     */
     public void setAlertType(String alertType) {
         this.alertType = alertType == null ? null : alertType.trim();
     }
@@ -99,22 +125,30 @@ public class DicAlarmPlugin implements java.io.Serializable {
         this.fieldTypeKey = fieldTypeKey;
     }
 
-    /** 状态 get方法. */
+    /**
+     * 状态 get方法.
+     */
     public Integer getState() {
         return state;
     }
 
-    /** 状态 set方法. */
+    /**
+     * 状态 set方法.
+     */
     public void setState(Integer state) {
         this.state = state;
     }
 
-    /** 备注 get方法. */
+    /**
+     * 备注 get方法.
+     */
     public String getRemark() {
         return remark == null ? null : remark.trim();
     }
 
-    /** 备注 set方法. */
+    /**
+     * 备注 set方法.
+     */
     public void setRemark(String remark) {
         this.remark = remark == null ? null : remark.trim();
     }

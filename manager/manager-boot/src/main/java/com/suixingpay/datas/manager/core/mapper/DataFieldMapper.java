@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * 数据字段对应表 Mapper接口
- * 
+ *
  * @author: FairyHood
  * @date: 2018-03-07 13:40:30
  * @version: V1.0-auto
@@ -18,18 +18,21 @@ public interface DataFieldMapper {
 
     /**
      * 新增
+     *
      * @param dataField
      */
     Integer insert(DataField dataField);
 
     /**
      * 修改
+     *
      * @param dataField
      */
     Integer update(@Param("id") Long id, @Param("dataField") DataField dataField);
 
     /**
      * 刪除
+     *
      * @param id
      * @return
      */
@@ -37,6 +40,7 @@ public interface DataFieldMapper {
 
     /**
      * 根據主鍵id查找數據
+     *
      * @param id
      * @return
      */
@@ -44,12 +48,14 @@ public interface DataFieldMapper {
 
     /**
      * 分頁
+     *
      * @return
      */
     List<DataField> page(@Param("page") Page<DataField> page, @Param("state") Integer state);
 
     /**
      * 分頁All
+     *
      * @return
      */
     Integer pageAll(@Param("state") Integer state);

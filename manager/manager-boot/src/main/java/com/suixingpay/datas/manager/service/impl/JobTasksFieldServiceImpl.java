@@ -10,6 +10,8 @@ import com.suixingpay.datas.manager.web.page.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * 任务数据字段对照关系表 服务实现类
  *
@@ -65,5 +67,10 @@ public class JobTasksFieldServiceImpl implements JobTasksFieldService {
             }
             jobTasksFieldMapper.insertList(jobTasksTable.getFields());
         }
+    }
+
+    @Override
+    public List<JobTasksField> selectInfo(Long jobTaskId, Long jobTasksTableId) {
+        return jobTasksFieldMapper.selectInfo(jobTaskId, jobTasksTableId);
     }
 }

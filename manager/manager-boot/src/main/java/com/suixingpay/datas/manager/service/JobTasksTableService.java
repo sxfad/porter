@@ -4,6 +4,8 @@ import com.suixingpay.datas.manager.core.entity.JobTasks;
 import com.suixingpay.datas.manager.core.entity.JobTasksTable;
 import com.suixingpay.datas.manager.web.page.Page;
 
+import java.util.List;
+
 /**
  * 任务数据表对照关系表 服务接口类
  *
@@ -20,7 +22,7 @@ public interface JobTasksTableService {
 
     Integer delete(Long id);
 
-    JobTasksTable selectById(Long id);
+    List<JobTasksTable> selectById(Long id);
 
     Page<JobTasksTable> page(Page<JobTasksTable> page);
 

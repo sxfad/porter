@@ -3,11 +3,11 @@
  */
 package com.suixingpay.datas.manager.service;
 
-import java.util.List;
-import java.util.Map;
-
 import com.suixingpay.datas.manager.core.dto.JDBCVo;
 import com.suixingpay.datas.manager.web.page.Page;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author guohongjian[guo_hj@suixingpay.com]
@@ -20,5 +20,5 @@ public interface DbSelectService {
 
     List<Object> page(JDBCVo jvo, Page<Object> page, String sql, String prefix, String tableName);
 
-    List<String> fieldList(JDBCVo jvo, String sql,String tableAllName);
+    List<String> fieldList(JDBCVo jvo, String sql, String tableAllName);
 }

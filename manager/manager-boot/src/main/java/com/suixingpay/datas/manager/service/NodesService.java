@@ -33,4 +33,6 @@ public interface NodesService {
     Integer updateState(String nodeId, String machineName, String ipAddress, String pidNumber, String heartBeatTime, Integer state);
 
     Integer updateHeartBeatTime(String nodeId, String machineName, String ipAddress, String pidNumber, String heartBeatTime);
+
+    boolean testNodeId(String nodeId);
 }

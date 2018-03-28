@@ -1,15 +1,13 @@
 package com.suixingpay.datas.manager.core.util;
 
-import java.text.ParseException;
-import java.util.Date;
-
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
 
+import java.text.ParseException;
+import java.util.Date;
+
 /**
- * 
  * @author guohongjian[guo_hj@suixingpay.com]
- *
  */
 public abstract class DateFormatUtils {
 
@@ -52,11 +50,9 @@ public abstract class DateFormatUtils {
     /**
      * 格式化日期, 仅用于pattern不固定的情况. 否则直接使用本类中封装好的FastDateFormat.
      * FastDateFormat.getInstance()已经做了缓存，不会每次创建对象，但直接使用对象仍然能减少在缓存中的查找.
-     * 
-     * @param pattern
-     *            正则表达式
-     * @param date
-     *            日期
+     *
+     * @param pattern 正则表达式
+     * @param date    日期
      * @return
      */
     public static String formatDate(String pattern, Date date) {
@@ -66,11 +62,9 @@ public abstract class DateFormatUtils {
     /**
      * 格式化日期, 仅用于不固定pattern不固定的情况. 否否则直接使用本类中封装好的FastDateFormat.
      * FastDateFormat.getInstance()已经做了缓存，不会每次创建对象，但直接使用对象仍然能减少在缓存中的查找.
-     * 
-     * @param pattern
-     *            正则表达式
-     * @param date
-     *            日期
+     *
+     * @param pattern 正则表达式
+     * @param date    日期
      * @return
      */
     public static String formatDate(String pattern, long date) {
@@ -79,11 +73,9 @@ public abstract class DateFormatUtils {
 
     /**
      * 按HH:mm:ss.SSS格式，格式化时间间隔. endDate必须大于startDate，间隔可大于1天
-     * 
-     * @param startDate
-     *            开始日期
-     * @param endDate
-     *            结束日期
+     *
+     * @param startDate 开始日期
+     * @param endDate   结束日期
      * @return
      */
     public static String formatDuration(Date startDate, Date endDate) {
@@ -92,7 +84,7 @@ public abstract class DateFormatUtils {
 
     /**
      * 按HH:mm:ss.SSS格式，格式化时间间隔 单位为毫秒，必须大于0，可大于1天
-     * 
+     *
      * @param durationMillis
      * @return
      */
@@ -102,11 +94,9 @@ public abstract class DateFormatUtils {
 
     /**
      * 按HH:mm:ss格式，格式化时间间隔 endDate必须大于startDate，间隔可大于1天
-     * 
-     * @param startDate
-     *            开始日期
-     * @param endDate
-     *            结束日期
+     *
+     * @param startDate 开始日期
+     * @param endDate   结束日期
      * @return String
      */
     public static String formatDurationOnSecond(Date startDate, Date endDate) {
@@ -115,7 +105,7 @@ public abstract class DateFormatUtils {
 
     /**
      * 按HH:mm:ss格式，格式化时间间隔 单位为毫秒，必须大于0，可大于1天
-     * 
+     *
      * @param durationMillis
      * @return
      */

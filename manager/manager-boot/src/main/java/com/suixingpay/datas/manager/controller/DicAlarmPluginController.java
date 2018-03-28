@@ -1,21 +1,19 @@
 package com.suixingpay.datas.manager.controller;
 
-import static com.suixingpay.datas.manager.web.message.ResponseMessage.ok;
-
-import java.util.List;
-
+import com.suixingpay.datas.manager.core.entity.DicAlarmPlugin;
+import com.suixingpay.datas.manager.service.DicAlarmPluginService;
+import com.suixingpay.datas.manager.web.message.ResponseMessage;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.suixingpay.datas.manager.core.entity.DicAlarmPlugin;
-import com.suixingpay.datas.manager.service.DicAlarmPluginService;
-import com.suixingpay.datas.manager.web.message.ResponseMessage;
+import java.util.List;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import static com.suixingpay.datas.manager.web.message.ResponseMessage.ok;
 
 /**
  * 告警配置策略字典表 controller控制器

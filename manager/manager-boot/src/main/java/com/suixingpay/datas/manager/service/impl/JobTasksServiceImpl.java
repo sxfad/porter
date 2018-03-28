@@ -3,18 +3,13 @@
  */
 package com.suixingpay.datas.manager.service.impl;
 
-import java.util.List;
-
 import com.suixingpay.datas.common.dic.TaskStatusType;
-import com.suixingpay.datas.manager.service.JobTasksTableService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.suixingpay.datas.manager.core.dto.JDBCVo;
 import com.suixingpay.datas.manager.core.entity.DataSource;
 import com.suixingpay.datas.manager.core.entity.DataSourcePlugin;
 import com.suixingpay.datas.manager.core.entity.DataTable;
 import com.suixingpay.datas.manager.core.entity.JobTasks;
+import com.suixingpay.datas.manager.core.entity.JobTasksTable;
 import com.suixingpay.datas.manager.core.enums.QuerySQL;
 import com.suixingpay.datas.manager.core.mapper.JobTasksMapper;
 import com.suixingpay.datas.manager.core.util.ApplicationContextUtil;
@@ -22,8 +17,13 @@ import com.suixingpay.datas.manager.service.DataSourceService;
 import com.suixingpay.datas.manager.service.DataTableService;
 import com.suixingpay.datas.manager.service.DbSelectService;
 import com.suixingpay.datas.manager.service.JobTasksService;
+import com.suixingpay.datas.manager.service.JobTasksTableService;
 import com.suixingpay.datas.manager.web.page.Page;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * 同步任务表 服务实现类
@@ -70,7 +70,13 @@ public class JobTasksServiceImpl implements JobTasksService {
 
     @Override
     public JobTasks selectById(Long id) {
-        return jobTasksMapper.selectById(id);
+
+        JobTasks jobTasks = jobTasksMapper.selectById(id);
+        //根据 JobTasksId 查询 JobTasksTable 详情
+        List<JobTasksTable> tables = jobTasksTableService.selectById(id);
+        jobTasks.setTables(tables);
+
+        return jobTasks;
     }
 
     @Override
@@ -86,7 +92,7 @@ public class JobTasksServiceImpl implements JobTasksService {
     @Override
     public Object tableNames(Long tablesId) {
         DataTable dataTable = dataTableService.selectById(tablesId);
-        if(dataTable!=null&&dataTable.getTableName()!=null) {
+        if (dataTable != null && dataTable.getTableName() != null) {
             return dataTable.getTableName().split(",");
         }
         return null;

@@ -3,8 +3,6 @@ package com.suixingpay.datas.manager.service;
 import com.suixingpay.datas.manager.core.entity.DataSource;
 import com.suixingpay.datas.manager.web.page.Page;
 
-import java.util.List;
-
 /**
  * 数据源信息表 服务接口类
  *

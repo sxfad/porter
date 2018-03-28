@@ -58,10 +58,12 @@
         delete from job_tasks_table where id = #{id}
     </delete>
 
-    <!-- 根据主鍵查找 -->
     <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.JobTasksTable">
-        select id, job_task_id AS jobTaskId, source_table_name AS sourceTableName, target_table_name AS targetTableName from job_tasks_table
-        where id = #{id}
+        select
+        id, job_task_id AS jobTaskId, source_table_name AS sourceTableName, target_table_name AS targetTableName
+        from job_tasks_table
+        WHERE
+        job_task_id = #{jobTaskId}
     </select>
 
     <!-- 分页All -->

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.suixingpay.datas.manager.core.datasource;
 
@@ -11,14 +11,12 @@ import java.sql.Statement;
 
 /**
  * @author guohongjian[guo_hj@suixingpay.com]
- *
  */
 public class DataSourceUtil {
 
     /**
-     * 
      * 创建数据源
-     * 
+     *
      * @param driverName
      * @param url
      * @param username
@@ -37,9 +35,8 @@ public class DataSourceUtil {
     }
 
     /**
-     * 
      * 创建数据源
-     * 
+     *
      * @param driverName
      * @param url
      * @param username
@@ -54,9 +51,8 @@ public class DataSourceUtil {
     }
 
     /**
-     * 
      * 关闭数据源
-     * 
+     *
      * @param conn
      * @param stmt
      * @param rs

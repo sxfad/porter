@@ -56,6 +56,7 @@
     删除：/nodes/{id}(delete)
     任务状态推送：/nodes/taskpushstate(post)
     停止任务：/nodes/stoptask(post)
+    验证nodeId是否重复: /nodes/testNodeId/{nodeId}(get)
 
 同步任务
     列表：
@@ -147,6 +148,8 @@
         路径：/jobtasks/{id}(delete)
         参数：id
     查看任务：
+        路径：/jobtasks/{id}(get)
+        参数：id
 
 任务监控
 

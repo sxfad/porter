@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * 登陆用户表 Mapper接口
- * 
+ *
  * @author: FairyHood
  * @date: 2018-03-07 13:40:30
  * @version: V1.0-auto
@@ -18,18 +18,21 @@ public interface CUserMapper {
 
     /**
      * 新增
+     *
      * @param cuser
      */
     Integer insert(CUser cuser);
 
     /**
      * 修改
+     *
      * @param cuser
      */
     Integer update(@Param("id") Long id, @Param("cuser") CUser cuser);
 
     /**
      * 刪除
+     *
      * @param id
      * @return
      */
@@ -37,6 +40,7 @@ public interface CUserMapper {
 
     /**
      * 根據主鍵id查找數據
+     *
      * @param id
      * @return
      */
@@ -44,26 +48,30 @@ public interface CUserMapper {
 
     /**
      * 根据登陆账户 密码查询
+     *
      * @param LoginName
      * @param passwd
      * @return
      */
-    CUser selectByNameAndpasswd(@Param("loginname")String LoginName, @Param("loginpw")String loginpw);
+    CUser selectByNameAndpasswd(@Param("loginname") String LoginName, @Param("loginpw") String loginpw);
 
     /**
      * 分頁
+     *
      * @return
      */
     List<CUser> page(@Param("page") Page<CUser> page, @Param("state") Integer state);
 
     /**
      * 分頁All
+     *
      * @return
      */
     Integer pageAll(@Param("state") Integer state);
-    
+
     /**
      * 全部
+     *
      * @return
      */
     List<CUser> list();

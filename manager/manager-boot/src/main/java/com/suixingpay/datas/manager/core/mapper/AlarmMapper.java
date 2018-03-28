@@ -20,18 +20,21 @@ public interface AlarmMapper {
 
     /**
      * 新增
+     *
      * @param alarm
      */
     Integer insert(Alarm alarm);
 
     /**
      * 修改
+     *
      * @param alarm
      */
     Integer update(@Param("id") Long id, @Param("alarm") Alarm alarm);
 
     /**
      * 刪除
+     *
      * @param id
      * @return
      */
@@ -39,6 +42,7 @@ public interface AlarmMapper {
 
     /**
      * 根據主鍵id查找數據
+     *
      * @param id
      * @return
      */
@@ -46,18 +50,21 @@ public interface AlarmMapper {
 
     /**
      * 分頁
+     *
      * @return
      */
     List<Alarm> page(@Param("page") Page<Alarm> page, @Param("state") Integer state);
 
     /**
      * 分頁All
+     *
      * @return
      */
     Integer pageAll(@Param("state") Integer state);
 
     /**
      * 验证新增
+     *
      * @param alarm
      * @return
      */
@@ -65,6 +72,7 @@ public interface AlarmMapper {
 
     /**
      * 验证修改
+     *
      * @param id
      * @param alarm
      * @return

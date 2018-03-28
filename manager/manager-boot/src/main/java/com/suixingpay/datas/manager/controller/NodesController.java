@@ -1,7 +1,12 @@
 package com.suixingpay.datas.manager.controller;
 
-import static com.suixingpay.datas.manager.web.message.ResponseMessage.ok;
-
+import com.suixingpay.datas.common.dic.NodeStatusType;
+import com.suixingpay.datas.manager.core.entity.Nodes;
+import com.suixingpay.datas.manager.service.NodesService;
+import com.suixingpay.datas.manager.web.message.ResponseMessage;
+import com.suixingpay.datas.manager.web.page.Page;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,14 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.suixingpay.datas.common.dic.NodeStatusType;
-import com.suixingpay.datas.manager.core.entity.Nodes;
-import com.suixingpay.datas.manager.service.NodesService;
-import com.suixingpay.datas.manager.web.message.ResponseMessage;
-import com.suixingpay.datas.manager.web.page.Page;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import static com.suixingpay.datas.manager.web.message.ResponseMessage.ok;
 
 /**
  * 节点信息表 controller控制器
@@ -54,6 +52,21 @@ public class NodesController {
                                 @RequestParam(value = "machineName", required = false) String machineName) {
         Page<Nodes> page = nodesService.page(new Page<Nodes>(pageNo, pageSize), ipAddress, state, machineName);
         return ok(page);
+    }
+
+    /**
+     * 验证nodeId是否重复
+     *
+     * @author FuZizheng
+     * @date 2018/3/28 下午2:29
+     * @param: [nodeId]
+     * @return: com.suixingpay.datas.manager.web.message.ResponseMessage
+     */
+    @GetMapping("/testNodeId/{nodeId}")
+    @ApiOperation(value = "验证nodeId是否重复", notes = "节点Id")
+    public ResponseMessage testNodeId(@PathVariable("nodeId") String nodeId) {
+        boolean flag = nodesService.testNodeId(nodeId);
+        return ok(flag);
     }
 
     @PostMapping

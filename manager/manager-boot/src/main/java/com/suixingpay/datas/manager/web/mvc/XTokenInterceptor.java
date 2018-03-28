@@ -1,11 +1,11 @@
 /**
- * 
+ *
  */
 package com.suixingpay.datas.manager.web.mvc;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.alibaba.fastjson.JSON;
+import com.suixingpay.datas.manager.web.tl.WebToeknContext;
+import com.suixingpay.datas.manager.web.token.TokenUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -14,13 +14,11 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import com.alibaba.fastjson.JSON;
-import com.suixingpay.datas.manager.web.tl.WebToeknContext;
-import com.suixingpay.datas.manager.web.token.TokenUtil;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author guohongjian[guo_hj@suixingpay.com]
- *
  */
 @Component
 public class XTokenInterceptor extends HandlerInterceptorAdapter {

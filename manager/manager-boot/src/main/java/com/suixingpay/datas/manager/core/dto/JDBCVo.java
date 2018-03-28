@@ -1,11 +1,10 @@
 /**
- * 
+ *
  */
 package com.suixingpay.datas.manager.core.dto;
 
 /**
  * @author guohongjian[guo_hj@suixingpay.com]
- *
  */
 public class JDBCVo {
 

@@ -2,7 +2,7 @@ package com.suixingpay.datas.manager.core.mapper;
 
 /**
  * 角色表 Mapper接口
- * 
+ *
  * @author: FairyHood
  * @date: 2018-03-07 13:40:30
  * @version: V1.0-auto
