@@ -1,23 +1,21 @@
 package com.suixingpay.datas.manager.web.handler;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.suixingpay.datas.manager.exception.BaseException;
+import com.suixingpay.datas.manager.exception.ExceptionCode;
+import com.suixingpay.datas.manager.web.message.ResponseMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.suixingpay.datas.manager.exception.BaseException;
-import com.suixingpay.datas.manager.exception.ExceptionCode;
-import com.suixingpay.datas.manager.web.message.ResponseMessage;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * web层异常拦截
- * 
- * @author guohongjian[guo_hj@suixingpay.com]
  *
+ * @author guohongjian[guo_hj@suixingpay.com]
  */
 @ControllerAdvice
 public class GlobalExceptionHandler {

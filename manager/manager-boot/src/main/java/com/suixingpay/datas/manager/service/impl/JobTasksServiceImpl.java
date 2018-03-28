@@ -92,7 +92,7 @@ public class JobTasksServiceImpl implements JobTasksService {
     @Override
     public Object tableNames(Long tablesId) {
         DataTable dataTable = dataTableService.selectById(tablesId);
-        if(dataTable!=null&&dataTable.getTableName()!=null) {
+        if (dataTable != null && dataTable.getTableName() != null) {
             return dataTable.getTableName().split(",");
         }
         return null;

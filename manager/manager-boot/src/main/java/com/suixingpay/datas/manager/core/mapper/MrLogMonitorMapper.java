@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * 日志监控信息表 Mapper接口
- * 
+ *
  * @author: FairyHood
  * @date: 2018-03-07 13:40:30
  * @version: V1.0-auto
@@ -18,18 +18,21 @@ public interface MrLogMonitorMapper {
 
     /**
      * 新增
+     *
      * @param mrLogMonitor
      */
     Integer insert(MrLogMonitor mrLogMonitor);
 
     /**
      * 修改
+     *
      * @param mrLogMonitor
      */
     Integer update(@Param("id") Long id, @Param("mrLogMonitor") MrLogMonitor mrLogMonitor);
 
     /**
      * 刪除
+     *
      * @param id
      * @return
      */
@@ -37,6 +40,7 @@ public interface MrLogMonitorMapper {
 
     /**
      * 根據主鍵id查找數據
+     *
      * @param id
      * @return
      */
@@ -44,6 +48,7 @@ public interface MrLogMonitorMapper {
 
     /**
      * 分頁
+     *
      * @return
      */
     List<MrLogMonitor> page(@Param("page") Page<MrLogMonitor> page,
@@ -54,6 +59,7 @@ public interface MrLogMonitorMapper {
 
     /**
      * 分頁All
+     *
      * @return
      */
     Integer pageAll(@Param("ipAddress") String ipAddress,

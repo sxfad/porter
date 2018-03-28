@@ -19,7 +19,7 @@ import org.apache.commons.lang3.StringUtils;
 
 /**
  * 后台配置推送
- * 
+ *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月15日 10:09
  * @version: V1.0

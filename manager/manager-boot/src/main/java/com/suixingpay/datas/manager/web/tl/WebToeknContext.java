@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.suixingpay.datas.manager.web.tl;
 
@@ -8,7 +8,6 @@ import com.suixingpay.datas.manager.web.token.TokenUtil;
 
 /**
  * @author guohongjian[guo_hj@suixingpay.com]
- *
  */
 public class WebToeknContext {
 

@@ -69,6 +69,7 @@ public interface JobTasksFieldMapper {
 
     /**
      * 根据jobTasksId和jobTasksTableId查询详情
+     *
      * @param jobTaskId
      * @param jobTasksTableId
      * @return

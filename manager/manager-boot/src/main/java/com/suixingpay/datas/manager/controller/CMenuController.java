@@ -25,6 +25,7 @@ import static com.suixingpay.datas.manager.web.message.ResponseMessage.ok;
  * @date: 2018-03-07 17:26:55
  * @version: V1.0-auto
  * @review: FairyHood/2018-03-07 17:26:55
+ * Integer number = cmenuService.insert(cmenu); .
  *//*
 @Api(description = "菜单目录表管理")
 @RestController

@@ -4,10 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 
- * @author guohongjian[guo_hj@suixingpay.com]
- *
  * @param <T>
+ * @author guohongjian[guo_hj@suixingpay.com]
  */
 public class Page<T> {
 

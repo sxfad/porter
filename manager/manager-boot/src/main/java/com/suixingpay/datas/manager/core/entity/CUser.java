@@ -2,7 +2,7 @@ package com.suixingpay.datas.manager.core.entity;
 
 /**
  * 登陆用户表 实体Entity
- * 
+ *
  * @author: FairyHood
  * @date: 2018-03-07 13:40:30
  * @version: V1.0-auto
@@ -12,106 +12,154 @@ public class CUser implements java.io.Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    /** 主键. */
+    /**
+     * 主键.
+     */
     private Long id;
 
-    /** 登陆账户. */
+    /**
+     * 登陆账户.
+     */
     private String loginname;
 
-    /** 登陆密码. */
+    /**
+     * 登陆密码.
+     */
     private String loginpw;
 
-    /** 昵称. */
+    /**
+     * 昵称.
+     */
     private String nickname;
 
-    /** 邮箱. */
+    /**
+     * 邮箱.
+     */
     private String email;
 
-    /** 手机号. */
+    /**
+     * 手机号.
+     */
     private String mobile;
 
-    /** 状态 1正常，0禁止登陆，-1删除. */
+    /**
+     * 状态 1正常，0禁止登陆，-1删除.
+     */
     private Integer state;
 
-    /** 备注. */
+    /**
+     * 备注.
+     */
     private String remark;
 
-    /** 主键 get方法. */
+    /**
+     * 主键 get方法.
+     */
     public Long getId() {
         return id;
     }
 
-    /** 主键 set方法. */
+    /**
+     * 主键 set方法.
+     */
     public void setId(Long id) {
         this.id = id;
     }
 
-    /** 登陆账户 get方法. */
+    /**
+     * 登陆账户 get方法.
+     */
     public String getLoginname() {
         return loginname == null ? null : loginname.trim();
     }
 
-    /** 登陆账户 set方法. */
+    /**
+     * 登陆账户 set方法.
+     */
     public void setLoginname(String loginname) {
         this.loginname = loginname == null ? null : loginname.trim();
     }
 
-    /** 登陆密码 get方法. */
+    /**
+     * 登陆密码 get方法.
+     */
     public String getLoginpw() {
         return loginpw == null ? null : loginpw.trim();
     }
 
-    /** 登陆密码 set方法. */
+    /**
+     * 登陆密码 set方法.
+     */
     public void setLoginpw(String loginpw) {
         this.loginpw = loginpw == null ? null : loginpw.trim();
     }
 
-    /** 昵称 get方法. */
+    /**
+     * 昵称 get方法.
+     */
     public String getNickname() {
         return nickname == null ? null : nickname.trim();
     }
 
-    /** 昵称 set方法. */
+    /**
+     * 昵称 set方法.
+     */
     public void setNickname(String nickname) {
         this.nickname = nickname == null ? null : nickname.trim();
     }
 
-    /** 邮箱 get方法. */
+    /**
+     * 邮箱 get方法.
+     */
     public String getEmail() {
         return email == null ? null : email.trim();
     }
 
-    /** 邮箱 set方法. */
+    /**
+     * 邮箱 set方法.
+     */
     public void setEmail(String email) {
         this.email = email == null ? null : email.trim();
     }
 
-    /** 手机号 get方法. */
+    /**
+     * 手机号 get方法.
+     */
     public String getMobile() {
         return mobile == null ? null : mobile.trim();
     }
 
-    /** 手机号 set方法. */
+    /**
+     * 手机号 set方法.
+     */
     public void setMobile(String mobile) {
         this.mobile = mobile == null ? null : mobile.trim();
     }
 
-    /** 状态 1正常，0禁止登陆，-1删除 get方法. */
+    /**
+     * 状态 1正常，0禁止登陆，-1删除 get方法.
+     */
     public Integer getState() {
         return state;
     }
 
-    /** 状态 1正常，0禁止登陆，-1删除 set方法. */
+    /**
+     * 状态 1正常，0禁止登陆，-1删除 set方法.
+     */
     public void setState(Integer state) {
         this.state = state;
     }
 
-    /** 备注 get方法. */
+    /**
+     * 备注 get方法.
+     */
     public String getRemark() {
         return remark == null ? null : remark.trim();
     }
 
-    /** 备注 set方法. */
+    /**
+     * 备注 set方法.
+     */
     public void setRemark(String remark) {
         this.remark = remark == null ? null : remark.trim();
     }

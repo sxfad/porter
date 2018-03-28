@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * 节点任务实时监控表 Mapper接口
- * 
+ *
  * @author: FairyHood
  * @date: 2018-03-07 13:40:30
  * @version: V1.0-auto
@@ -18,18 +18,21 @@ public interface MrNodesMonitorMapper {
 
     /**
      * 新增
+     *
      * @param mrNodesMonitor
      */
     Integer insert(MrNodesMonitor mrNodesMonitor);
 
     /**
      * 修改
+     *
      * @param mrNodesMonitor
      */
     Integer update(@Param("id") Long id, @Param("mrNodesMonitor") MrNodesMonitor mrNodesMonitor);
 
     /**
      * 刪除
+     *
      * @param id
      * @return
      */
@@ -37,6 +40,7 @@ public interface MrNodesMonitorMapper {
 
     /**
      * 根據主鍵id查找數據
+     *
      * @param id
      * @return
      */
@@ -44,12 +48,14 @@ public interface MrNodesMonitorMapper {
 
     /**
      * 分頁
+     *
      * @return
      */
     List<MrNodesMonitor> page(@Param("page") Page<MrNodesMonitor> page, @Param("state") Integer state);
 
     /**
      * 分頁All
+     *
      * @return
      */
     Integer pageAll(@Param("state") Integer state);

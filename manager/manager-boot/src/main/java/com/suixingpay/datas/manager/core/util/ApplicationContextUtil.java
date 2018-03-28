@@ -6,8 +6,8 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
 
 /**
- * 
  * springboot类beans获取
+ *
  * @author: guohongjian[guo_hj@suixingpay.com]
  * @date: 2017年8月10日 下午3:50:49
  * @version: V1.0
@@ -22,13 +22,13 @@ public class ApplicationContextUtil implements ApplicationContextAware {
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         ApplicationContextUtil.applicationContext = applicationContext;
     }
-    
-	@SuppressWarnings("unchecked")
+
+    @SuppressWarnings("unchecked")
     public static <T> T getBean(String name) {
         checkApplicationContext();
         return (T) applicationContext.getBean(name);
     }
-    
+
     public static <T> T getBean(Class<T> clazz) {
         checkApplicationContext();
         return (T) applicationContext.getBean(clazz);

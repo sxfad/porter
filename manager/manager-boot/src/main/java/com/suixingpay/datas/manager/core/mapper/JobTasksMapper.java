@@ -70,7 +70,6 @@ public interface JobTasksMapper {
     /**
      * 修改任务状态
      *
-     *
      * @param id
      * @param code
      * @return

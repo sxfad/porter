@@ -2,7 +2,6 @@ package com.suixingpay.datas.manager.service;
 
 import com.suixingpay.datas.manager.core.entity.JobTasks;
 import com.suixingpay.datas.manager.core.entity.JobTasksField;
-import com.suixingpay.datas.manager.core.entity.JobTasksTable;
 import com.suixingpay.datas.manager.web.page.Page;
 
 import java.util.List;
