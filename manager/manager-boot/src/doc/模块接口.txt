@@ -147,7 +147,9 @@
         路径：/jobtasks/{id}(delete)
         参数：id
     查看任务：
-
+        路径：/jobtasks/{id}(get)
+        参数：id
+        
 任务监控
 
 节点监控

@@ -21,4 +21,5 @@ public interface JobTasksFieldService {
 
     void insertList(JobTasks jobTasks);
 
+    List<JobTasksField> selectInfo(Long id, Long jobTasksTableId);
 }
