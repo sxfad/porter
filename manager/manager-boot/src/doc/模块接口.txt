@@ -75,8 +75,68 @@
                 路径：/datatable/datas(get)
                 注释：查全部数据表信息
         第四步:数据映射关系 -来源（表名 - 字段）=>目标（表名 - 字段） =》目标数据
+            
 
         保存数据：
+            路径：/jobtasks(post)
+            实体格式:
+                {
+                  "jobName": "任务名称",
+                  "sourceConsumeAdt": "消费插件",
+                  "sourceConvertAdt": "消费转换插件",
+                  "sourceDataId": 1,
+                  "sourceDataName": "同步数据来源",
+                  "sourceDataTablesId": 1,
+                  "sourceDataTablesName": "元数据表组",
+                  "tables": [
+                    {
+                      "fields": [
+                        {
+                          "sortOrder": 1,
+                          "sourceTableField": "源表名称1的字段1",
+                          "sourceTableName": "源表名称1",
+                          "targetTableField": "目标表名称1的字段1",
+                          "targetTableName": "目标表名称1"
+                        },
+                        {
+                          "sortOrder": 2,
+                          "sourceTableField": "源表名称1的字段2",
+                          "sourceTableName": "源表名称1",
+                          "targetTableField": "目标表名称1的字段2",
+                          "targetTableName": "目标表名称1"
+                        }
+                      ],
+                      "sourceTableName": "源表名称1",
+                      "targetTableName": "目标表名称1"
+                    },
+                    {
+                      "fields": [
+                        {
+                          "sortOrder": 1,
+                          "sourceTableField": "源表名称2的字段1",
+                          "sourceTableName": "源表名称2",
+                          "targetTableField": "目标表名称2的字段1",
+                          "targetTableName": "目标表名称2"
+                        },
+                        {
+                          "sortOrder": 2,
+                          "sourceTableField": "源表名称2的字段2",
+                          "sourceTableName": "源表名称2",
+                          "targetTableField": "目标表名称2的字段2",
+                          "targetTableName": "目标表名称2"
+                        }
+                      ],
+                      "sourceTableName": "源表名称2",
+                      "targetTableName": "目标表名称2"
+                    }
+                  ],
+                  "targetDataTablesId": 1,
+                  "targetDataTablesName": "载入数据表",
+                  "targetLoadAdt": "载入插件",
+                  "userId": [
+                    0
+                  ]
+                }
     开始任务(推送)：
     暂停任务(推送)：
     删除任务：
