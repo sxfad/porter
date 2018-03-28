@@ -27,9 +27,18 @@ public class NodesServiceImpl implements NodesService {
 
     @Override
     public Integer insert(Nodes nodes) {
-        nodes.setTaskPushState(NodeStatusType.SUSPEND);
-        nodes.setState(-1);
-        return nodesMapper.insert(nodes);
+        //验证nodeId是否重复
+        Integer total = nodesMapper.testNodeId(nodes.getNodeId());
+        Integer number = 0;
+        if (total > 0) {
+            number = -1;
+            return number;
+        } else {
+            nodes.setTaskPushState(NodeStatusType.SUSPEND);
+            nodes.setState(-1);
+            number = nodesMapper.insert(nodes);
+            return number;
+        }
     }
 
     @Override
