@@ -84,6 +84,7 @@
         where id = #{id,jdbcType=BIGINT}
     </update>
 
+    <!-- 新增 -->
     <insert id="insertState">
         insert into b_nodes(
         node_id,
@@ -91,6 +92,8 @@
         ip_address,
         pid_number,
         state,
+        node_type,
+        task_push_state,
         heart_beat_time
         ) values (
         #{nodeId},
@@ -98,6 +101,8 @@
         #{ipAddress},
         #{pidNumber},
         #{state},
+        2,
+        #{taskPushState},
         #{heartBeatTime}
         )
     </insert>
@@ -110,6 +115,7 @@
           machine_name = #{machineName},
           ip_address = #{ipAddress},
           pid_number = #{pidNumber},
+          task_push_state = #{taskPushState},
           heart_beat_time = #{heartBeatTime}
         where node_id = #{nodeId}
     </update>
@@ -119,6 +125,7 @@
         update b_nodes
         set
           state = 1 ,
+          task_push_state = #{taskPushState},
           machine_name = #{machineName},
           ip_address = #{ipAddress},
           pid_number = #{pidNumber},

@@ -70,20 +70,23 @@ public class NodesServiceImpl implements NodesService {
 
     @Override
     public Integer insertState(String nodeId, String machineName, String ipAddress, String pidNumber,
-            String heartBeatTime, Integer state) {
-        return nodesMapper.insertState(nodeId,machineName,ipAddress,pidNumber,heartBeatTime,state);
+            NodeStatusType taskPushState, String heartBeatTime, Integer state) {
+        return nodesMapper.insertState(nodeId, machineName, ipAddress, pidNumber,
+                taskPushState == null ? NodeStatusType.SUSPEND.getCode() : taskPushState.getCode(), heartBeatTime, state);
     }
 
     @Override
     public Integer updateState(String nodeId, String machineName, String ipAddress, String pidNumber,
-            String heartBeatTime, Integer state) {
-        return nodesMapper.updateState(nodeId, machineName, ipAddress, pidNumber, heartBeatTime, state);
+            NodeStatusType taskPushState, String heartBeatTime, Integer state) {
+        return nodesMapper.updateState(nodeId, machineName, ipAddress, pidNumber,
+                taskPushState == null ? NodeStatusType.SUSPEND.getCode() : taskPushState.getCode(), heartBeatTime, state);
     }
 
     @Override
     public Integer updateHeartBeatTime(String nodeId, String machineName, String ipAddress, String pidNumber,
-            String heartBeatTime) {
-        return nodesMapper.updateHeartBeatTime(nodeId, machineName, ipAddress, pidNumber, heartBeatTime);
+            NodeStatusType taskPushState, String heartBeatTime) {
+        return nodesMapper.updateHeartBeatTime(nodeId, machineName, ipAddress, pidNumber,
+                taskPushState == null ? NodeStatusType.SUSPEND.getCode() : taskPushState.getCode(), heartBeatTime);
     }
 
     @Override
