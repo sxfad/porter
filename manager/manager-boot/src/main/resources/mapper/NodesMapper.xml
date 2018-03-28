@@ -68,7 +68,7 @@
 
     <!-- 作废 -->
     <update id="cancel">
-        update b_nodes 
+        update b_nodes
         <set>
             iscancel=1
         </set>
@@ -77,7 +77,7 @@
 
     <!-- 接收、停止任务推送 -->
     <update id="taskPushState">
-        update b_nodes 
+        update b_nodes
         <set>
             task_push_state=#{taskPushState,jdbcType=VARCHAR}
         </set>
@@ -85,17 +85,45 @@
     </update>
 
     <insert id="insertState">
-        
+        insert into b_nodes(
+        node_id,
+        machine_name,
+        ip_address,
+        pid_number,
+        state,
+        heart_beat_time
+        ) values (
+        #{nodeId},
+        #{machineName},
+        #{ipAddress},
+        #{pidNumber},
+        #{state},
+        #{heartBeatTime}
+        )
     </insert>
 
     <!-- 修改节点状态 -->
     <update id="updateState">
-        update b_nodes set state = #{state} where node_id = #{nodeId}
+        update b_nodes
+        set
+          state = #{state},
+          machine_name = #{machineName},
+          ip_address = #{ipAddress},
+          pid_number = #{pidNumber},
+          heart_beat_time = #{heartBeatTime}
+        where node_id = #{nodeId}
     </update>
 
     <!-- 修改最后时间 -->
     <update id="updateHeartBeatTime">
-        update b_nodes set state = 1 , heart_beat_time = #{heartBeatTime} where node_id = #{nodeId}
+        update b_nodes
+        set
+          state = 1 ,
+          machine_name = #{machineName},
+          ip_address = #{ipAddress},
+          pid_number = #{pidNumber},
+          heart_beat_time = #{heartBeatTime}
+        where node_id = #{nodeId}
     </update>
 
     <!-- 根据主鍵查找 -->
@@ -129,7 +157,8 @@
 
     <!-- 分页 -->
     <select id="page" resultType="com.suixingpay.datas.manager.core.entity.Nodes">
-        select id, node_id AS nodeId, machine_name AS machineName, ip_address AS ipAddress, pid_number AS pidNumber, heart_beat_time AS heartBeatTime, state, node_type as nodeType, task_push_state as taskPushState
+        select id, node_id AS nodeId, machine_name AS machineName, ip_address AS ipAddress, pid_number AS pidNumber,
+        heart_beat_time AS heartBeatTime, state, node_type as nodeType, task_push_state as taskPushState
         from b_nodes
         <where>
             iscancel = 0

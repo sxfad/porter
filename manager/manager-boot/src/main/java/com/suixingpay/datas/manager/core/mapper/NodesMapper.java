@@ -18,18 +18,21 @@ public interface NodesMapper {
 
     /**
      * 新增
+     *
      * @param nodes
      */
     Integer insert(Nodes nodes);
 
     /**
      * 修改
+     *
      * @param nodes
      */
     Integer update(@Param("id") Long id, @Param("nodes") Nodes nodes);
 
     /**
      * 刪除
+     *
      * @param id
      * @return
      */
@@ -37,6 +40,7 @@ public interface NodesMapper {
 
     /**
      * 作废
+     *
      * @param id
      * @return
      */
@@ -44,6 +48,7 @@ public interface NodesMapper {
 
     /**
      * 任务推送状态
+     *
      * @param id
      * @param taskPushState
      * @return
@@ -52,6 +57,7 @@ public interface NodesMapper {
 
     /**
      * 根據主鍵id查找數據
+     *
      * @param id
      * @return
      */
@@ -59,24 +65,26 @@ public interface NodesMapper {
 
     /**
      * 分頁
+     *
      * @return
      */
     List<Nodes> page(@Param("page") Page<Nodes> page, @Param("ipAddress") String ipAddress,
-            @Param("state") Integer state, @Param("machineName") String machineName);
+                     @Param("state") Integer state, @Param("machineName") String machineName);
 
     /**
      * 分頁All
-     * @return
+     *
      * @param ipAddress
      * @param state
      * @param machineName
      * @return
      */
     Integer pageAll(@Param("ipAddress") String ipAddress, @Param("state") Integer state,
-            @Param("machineName") String machineName);
+                    @Param("machineName") String machineName);
 
     /**
      * 新增
+     *
      * @param nodeId
      * @param machineName
      * @param ipAddress
@@ -86,31 +94,33 @@ public interface NodesMapper {
      * @return
      */
     Integer insertState(@Param("nodeId") String nodeId, @Param("machineName") String machineName,
-            @Param("ipAddress") String ipAddress, @Param("pidNumber") String pidNumber,
-            @Param("heartBeatTime") String heartBeatTime, @Param("state") Integer state);
+                        @Param("ipAddress") String ipAddress, @Param("pidNumber") String pidNumber,
+                        @Param("heartBeatTime") String heartBeatTime, @Param("state") Integer state);
 
     /**
      * 节点状态
+     *
      * @param id
      * @param nodeId
      * @param state
      * @return
      */
     Integer updateState(@Param("nodeId") String nodeId, @Param("machineName") String machineName,
-            @Param("ipAddress") String ipAddress, @Param("pidNumber") String pidNumber,
-            @Param("heartBeatTime") String heartBeatTime, @Param("state") Integer state);
+                        @Param("ipAddress") String ipAddress, @Param("pidNumber") String pidNumber,
+                        @Param("heartBeatTime") String heartBeatTime, @Param("state") Integer state);
 
 
     /**
      * 修改心跳时间并且变更节点状态
+     *
      * @param id
      * @param nodeId
      * @param heartBeatTime
      * @return
      */
     Integer updateHeartBeatTime(@Param("nodeId") String nodeId, @Param("machineName") String machineName,
-            @Param("ipAddress") String ipAddress, @Param("pidNumber") String pidNumber,
-            @Param("heartBeatTime") String heartBeatTime);
+                                @Param("ipAddress") String ipAddress, @Param("pidNumber") String pidNumber,
+                                @Param("heartBeatTime") String heartBeatTime);
 
     /**
      * 验证nodeId是否重复
