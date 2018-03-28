@@ -64,11 +64,17 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
 
     @Override
     protected void doShutdown() {
-        if (null != canalServer) {
-            canalServer.stop(getConfig().getDatabase());
-            canalServer.stop();
+        try {
+            if (null != canalServer) {
+                canalServer.stop(getConfig().getDatabase());
+                canalServer.stop();
+            }
+        } catch (Throwable e) {
+            //https://github.com/alibaba/canal/issues/413
+            //导致任务停止终止，无法销毁相关资源
+        } finally {
+            canFetch = new CountDownLatch(1);
         }
-        canFetch = new CountDownLatch(1);
     }
 
     @Override
