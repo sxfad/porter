@@ -69,4 +69,14 @@ public class NodesServiceImpl implements NodesService {
         }
         return page;
     }
+
+    @Override
+    public Integer updateState(String nodeId, Integer state) {
+        return nodesMapper.updateState(nodeId,state);
+    }
+
+    @Override
+    public Integer updateHeartBeatTime(String nodeId, String heartBeatTime) {
+        return nodesMapper.updateHeartBeatTime(nodeId,heartBeatTime);
+    }
 }

@@ -32,7 +32,7 @@ public class DataConsumerConfig {
     @Getter @Setter private String excludes;
 
     /*
-     *期望处理的表
+     *期望处理的表 来源表
      *schema.table,schema.table
      */
     @Getter @Setter private String includes;

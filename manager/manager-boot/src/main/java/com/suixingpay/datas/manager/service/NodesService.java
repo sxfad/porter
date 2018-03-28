@@ -28,4 +28,7 @@ public interface NodesService {
 
     Page<Nodes> page(Page<Nodes> page, String ipAddress, Integer state, String machineName);
 
+    Integer updateState(String nodeId,Integer state);
+
+    Integer updateHeartBeatTime(String nodeId,String heartBeatTime);
 }

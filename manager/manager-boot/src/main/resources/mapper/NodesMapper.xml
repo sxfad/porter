@@ -84,6 +84,16 @@
         where id = #{id,jdbcType=BIGINT}
     </update>
 
+    <!-- 修改节点状态 -->
+    <update id="updateState">
+        update b_nodes set state = #{state} where node_id = #{nodeId}
+    </update>
+
+    <!-- 修改最后时间 -->
+    <update id="updateHeartBeatTime">
+        update b_nodes set state = 1 , heart_beat_time = #{heartBeatTime} where node_id = #{nodeId}
+    </update>
+
     <!-- 根据主鍵查找 -->
     <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.Nodes">
         select id, node_id AS nodeId, machine_name AS machineName, ip_address AS ipAddress, pid_number AS pidNumber, heart_beat_time AS heartBeatTime, state, node_type as nodeType, task_push_state as taskPushState, creater, create_time AS createTime, iscancel, remark from b_nodes

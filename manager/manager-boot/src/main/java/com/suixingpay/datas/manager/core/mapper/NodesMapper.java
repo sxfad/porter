@@ -80,4 +80,19 @@ public interface NodesMapper {
                     @Param("state") Integer state,
                     @Param("machineName") String machineName);
 
+    /**
+     * 节点状态
+     * @param id
+     * @param state
+     * @return
+     */
+    Integer updateState(@Param("nodeId")String nodeId,@Param("state") Integer state);
+
+    /**
+     * 修改心跳时间并且变更节点状态
+     * @param id
+     * @param heartBeatTime
+     * @return
+     */
+    Integer updateHeartBeatTime(@Param("nodeId")String nodeId,@Param("heartBeatTime") String heartBeatTime);
 }

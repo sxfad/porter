@@ -21,6 +21,7 @@ import java.util.Map;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月03日 16:44
  */
 public class DataLoaderConfig {
+    //目标插件
     @Getter @Setter private String loaderName;
     @Getter @Setter private Map<String, String> source;
 }
