@@ -31,4 +31,6 @@ public interface NodesService {
     Integer updateState(String nodeId,Integer state);
 
     Integer updateHeartBeatTime(String nodeId,String heartBeatTime);
+
+    boolean testNodeId(String nodeId);
 }

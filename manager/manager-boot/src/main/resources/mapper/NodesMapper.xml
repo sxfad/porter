@@ -100,6 +100,12 @@
         where id = #{id}
     </select>
 
+    <!-- 验证nodeId是否重复 -->
+    <select id="testNodeId" resultType="java.lang.Integer">
+        SELECT count(id) FROM b_nodes
+        WHERE node_id = #{nodeId}
+    </select>
+
     <!-- 分页All -->
     <select id="pageAll" resultType="java.lang.Integer">
         select count(id) from b_nodes

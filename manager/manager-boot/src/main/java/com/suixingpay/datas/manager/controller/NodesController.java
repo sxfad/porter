@@ -56,6 +56,21 @@ public class NodesController {
         return ok(page);
     }
 
+    /**
+     * 验证nodeId是否重复
+     *
+     * @author FuZizheng
+     * @date 2018/3/28 下午2:29
+     * @param: [nodeId]
+     * @return: com.suixingpay.datas.manager.web.message.ResponseMessage
+     */
+    @GetMapping("/testNodeId/{nodeId}")
+    @ApiOperation(value = "验证nodeId是否重复", notes = "节点Id")
+    public ResponseMessage testNodeId(@PathVariable("nodeId") String nodeId) {
+        boolean flag = nodesService.testNodeId(nodeId);
+        return ok(flag);
+    }
+
     @PostMapping
     @ApiOperation(value = "新增", notes = "新增")
     public ResponseMessage add(@RequestBody Nodes nodes) {
