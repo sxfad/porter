@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.zookeeper.data.Stat;
 
+import com.alibaba.fastjson.JSON;
 import com.suixingpay.datas.common.cluster.ClusterListenerFilter;
 import com.suixingpay.datas.common.cluster.command.NodeOrderPushCommand;
 import com.suixingpay.datas.common.cluster.command.broadcast.NodeOrderPush;
@@ -61,18 +62,20 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements N
 
             if (zkEvent.isOnline()) { // 节点上线
                 // 服务启动，在线通知
-                int i = nodesService.updateState(node.getNodeId(), 1);
+                int i = nodesService.updateState(node.getNodeId(),node.getHostName(),node.getAddress(),node.getProcessId(), heartBeatTime, 1);
                 LOGGER.info("节点[{}]上线", node.getNodeId());
                 if (i == 0) {
+                    nodesService.insertState(node.getNodeId(),node.getHostName(),node.getAddress(),node.getProcessId(), heartBeatTime, 1);
                     LOGGER.warn("节点[{}]尚未完善管理后台节点信息，请及时配置！", node.getNodeId());
                 }
             }
             if (zkEvent.isOffline()) { // 节点下线
                 // do something 服务停止，离线通知
-                int i = nodesService.updateState(node.getNodeId(), -1);
+                int i = nodesService.updateState(node.getNodeId(),node.getHostName(),node.getAddress(),node.getProcessId(), heartBeatTime, -1);
                 LOGGER.info("节点[{}]下线", node.getNodeId());
                 if (i == 0) {
                     LOGGER.warn("节点[{}]尚未完善管理后台节点信息，请及时配置！", node.getNodeId());
+                    nodesService.insertState(node.getNodeId(),node.getHostName(),node.getAddress(),node.getProcessId(), heartBeatTime, -1);
                 }
             }
         }
@@ -80,11 +83,13 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements N
         // 节点状态更新
         if (NODE_STAT_PATTERN.matcher(zkEvent.getPath()).matches()) {
             DNode node = getDNode(zkEvent.getPath());
+            System.err.println("DNode...."+node.getNodeId()+"..."+JSON.toJSONString(node));
             // do something 心跳时间记录 并且表示节点在线
-            int i = nodesService.updateHeartBeatTime(node.getNodeId(), heartBeatTime);
+            int i = nodesService.updateHeartBeatTime(node.getNodeId(), node.getHostName(),node.getAddress(),node.getProcessId(),heartBeatTime);
             LOGGER.info("节点[{}]状态上报", node.getNodeId());
             if (i == 0) {
                 LOGGER.warn("节点[{}]尚未完善管理后台节点信息，请及时配置！", node.getNodeId());
+                nodesService.insertState(node.getNodeId(),node.getHostName(),node.getAddress(),node.getProcessId(), heartBeatTime, 1);
             }
         }
     }

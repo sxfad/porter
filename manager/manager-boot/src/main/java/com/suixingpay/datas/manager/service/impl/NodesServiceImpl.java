@@ -45,8 +45,8 @@ public class NodesServiceImpl implements NodesService {
 
     @Override
     public Integer taskPushState(Long id, NodeStatusType taskPushState) {
-        Integer i =nodesMapper.taskPushState(id, taskPushState.getCode());
-        //Nodes nodes = nodesMapper.selectById(id);
+        Integer i = nodesMapper.taskPushState(id, taskPushState.getCode());
+        // Nodes nodes = nodesMapper.selectById(id);
         return i;
     }
 
@@ -71,12 +71,20 @@ public class NodesServiceImpl implements NodesService {
     }
 
     @Override
-    public Integer updateState(String nodeId, Integer state) {
-        return nodesMapper.updateState(nodeId,state);
+    public Integer insertState(String nodeId, String machineName, String ipAddress, String pidNumber,
+            String heartBeatTime, Integer state) {
+        return nodesMapper.insertState(nodeId,machineName,ipAddress,pidNumber,heartBeatTime,state);
     }
 
     @Override
-    public Integer updateHeartBeatTime(String nodeId, String heartBeatTime) {
-        return nodesMapper.updateHeartBeatTime(nodeId,heartBeatTime);
+    public Integer updateState(String nodeId, String machineName, String ipAddress, String pidNumber,
+            String heartBeatTime, Integer state) {
+        return nodesMapper.updateState(nodeId, machineName, ipAddress, pidNumber, heartBeatTime, state);
+    }
+
+    @Override
+    public Integer updateHeartBeatTime(String nodeId, String machineName, String ipAddress, String pidNumber,
+            String heartBeatTime) {
+        return nodesMapper.updateHeartBeatTime(nodeId, machineName, ipAddress, pidNumber, heartBeatTime);
     }
 }

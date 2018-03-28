@@ -22,13 +22,15 @@ public interface NodesService {
 
     Integer cancel(Long id);
 
-    Integer taskPushState(Long id,NodeStatusType taskPushState);
+    Integer taskPushState(Long id, NodeStatusType taskPushState);
 
     Nodes selectById(Long id);
 
     Page<Nodes> page(Page<Nodes> page, String ipAddress, Integer state, String machineName);
 
-    Integer updateState(String nodeId,Integer state);
+    Integer insertState(String nodeId, String machineName, String ipAddress, String pidNumber, String heartBeatTime, Integer state);
 
-    Integer updateHeartBeatTime(String nodeId,String heartBeatTime);
+    Integer updateState(String nodeId, String machineName, String ipAddress, String pidNumber, String heartBeatTime, Integer state);
+
+    Integer updateHeartBeatTime(String nodeId, String machineName, String ipAddress, String pidNumber, String heartBeatTime);
 }

@@ -8,6 +8,7 @@
  */
 package com.suixingpay.datas.manager.cluster.zookeeper;
 
+import com.alibaba.fastjson.JSON;
 import com.suixingpay.datas.common.cluster.ClusterListenerFilter;
 import com.suixingpay.datas.common.cluster.command.ConfigPushCommand;
 import com.suixingpay.datas.common.cluster.command.broadcast.ConfigPush;
@@ -37,7 +38,7 @@ public class ZKClusterConfigListener extends ZookeeperClusterListener implements
 
     @Override
     public void onEvent(ClusterEvent event) {
-
+        System.err.println("ZKClusterConfigListener....."+JSON.toJSONString(event));
     }
 
     @Override
