@@ -119,6 +119,16 @@ public class JobTasks implements java.io.Serializable {
     private List<JobTasksTable> tables = new ArrayList<>();
 
     /**
+     * 源表表名 多个用,隔开
+     */
+    private String sourceTablesName;
+
+    /**
+     * 目标表表名 多个用,隔开
+     */
+    private String targetTablesName;
+
+    /**
      * 主键 get方法.
      */
     public Long getId() {
@@ -356,12 +366,16 @@ public class JobTasks implements java.io.Serializable {
         this.remark = remark == null ? null : remark.trim();
     }
 
-    /** 告警人id列表 get方法. */
+    /**
+     * 告警人id列表 get方法.
+     */
     public List<Long> getUserIds() {
         return userIds;
     }
 
-    /** 告警人id列表 set方法. */
+    /**
+     * 告警人id列表 set方法.
+     */
     public void setUserIds(List<Long> userIds) {
         this.userIds = userIds;
     }
@@ -385,6 +399,51 @@ public class JobTasks implements java.io.Serializable {
     }
 
     public void setTables(List<JobTasksTable> tables) {
+
+        StringBuffer linkSource = new StringBuffer();
+        StringBuffer linkTarget = new StringBuffer();
+        //连接 源表表名 用,隔开  连接 目标表表名 用,隔开
+        for (int i = 0; i < tables.size(); i++) {
+            if (i == 0) {
+                linkSource.append(tables.get(i).getSourceTableName());
+                linkTarget.append(tables.get(i).getTargetTableName());
+            } else {
+                linkTarget.append("," + tables.get(i).getTargetTableName());
+                linkSource.append("," + tables.get(i).getSourceTableName());
+
+            }
+        }
+
+        this.sourceTablesName = linkSource.toString();
+        this.targetTablesName = linkTarget.toString();
         this.tables = tables;
+    }
+
+    /**
+     * 拼接后源表表名 get方法.
+     */
+    public String getSourceTablesName() {
+        return sourceTablesName;
+    }
+
+    /**
+     * 连接源表表名，set方法.
+     */
+    public void setSourceTablesName(String sourceTablesName) {
+        this.sourceTablesName = sourceTablesName;
+    }
+
+    /**
+     * 拼接后目标表表名 get方法.
+     */
+    public String getTargetTablesName() {
+        return targetTablesName;
+    }
+
+    /**
+     * 连接目标表表名，set方法.
+     */
+    public void setTargetTablesName(String targetTablesName) {
+        this.targetTablesName = targetTablesName;
     }
 }
