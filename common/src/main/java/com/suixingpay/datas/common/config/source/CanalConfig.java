@@ -58,4 +58,10 @@ public class CanalConfig extends SourceConfig {
     protected String[] childStuffColumns() {
         return new String[0];
     }
+
+
+    @Override
+    public String getSwimlaneId() {
+        return database;
+    }
 }

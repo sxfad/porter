@@ -17,7 +17,11 @@ import com.suixingpay.datas.common.cluster.event.ClusterEvent;
 import com.suixingpay.datas.common.cluster.impl.zookeeper.ZookeeperClusterEvent;
 import com.suixingpay.datas.common.cluster.impl.zookeeper.ZookeeperClusterListener;
 import com.suixingpay.datas.common.cluster.impl.zookeeper.ZookeeperClusterListenerFilter;
+import com.suixingpay.datas.common.config.DataConsumerConfig;
+import com.suixingpay.datas.common.config.SourceConfig;
+import com.suixingpay.datas.common.config.TaskConfig;
 
+import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -69,13 +73,21 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
 
     @Override
     public void push(TaskPushCommand command) throws Exception {
-        //泳道id从现有api无法获得，随后修改
-        String swimlaneId = "";
-        String taskPath = ZK_PATH + "/" + command.getConfig().getTaskId();
-        String pushPath = taskPath + "/dist/" + swimlaneId;
-        String errorPath = taskPath + "/error/" + swimlaneId;
+        TaskConfig config = command.getConfig();
+        DataConsumerConfig consumerConfig = config.getConsumer();
+        //创建任务根节点
+        String taskPath = ZK_PATH + "/" + config.getTaskId();
         client.createWhenNotExists(taskPath, false, false, null);
-        client.changeData(pushPath, false, false, JSONObject.toJSONString(command.getConfig()));
-        client.delete(errorPath);
+        //拆分同步数据来源泳道
+        List<SourceConfig> sourceConfigs = SourceConfig.getConfig(consumerConfig.getSource()).swamlanes();
+        //遍历泳道
+        for (SourceConfig sc : sourceConfigs) {
+            String pushPath = taskPath + "/dist/" + sc.getSwimlaneId();
+            String errorPath = taskPath + "/error/" + sc.getSwimlaneId();
+            //为每个泳道填充参数
+            config.getConsumer().setSource(sc.getProperties());
+            client.changeData(pushPath, false, false, JSONObject.toJSONString(config));
+            client.delete(errorPath);
+        }
     }
 }

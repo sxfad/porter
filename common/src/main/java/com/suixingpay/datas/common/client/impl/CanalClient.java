@@ -24,7 +24,6 @@ import com.suixingpay.datas.common.client.AbstractClient;
 import com.suixingpay.datas.common.consumer.ConsumeClient;
 import com.suixingpay.datas.common.config.source.CanalConfig;
 import com.suixingpay.datas.common.consumer.Position;
-import com.suixingpay.datas.common.exception.ClientException;
 import com.suixingpay.datas.common.exception.TaskStopTriggerException;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -210,20 +209,13 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
     }
 
     @Override
-    public <T> List<T> splitSwimlanes() throws ClientException {
-        List<T> clients = new ArrayList<>();
-        clients.add((T) this);
-        return clients;
-    }
-
-    @Override
     public boolean isAutoCommitPosition() {
         return true;
     }
 
     @Override
     public String getSwimlaneId() {
-        return getConfig().getDatabase();
+        return getConfig().getSwimlaneId();
     }
 
     @Override

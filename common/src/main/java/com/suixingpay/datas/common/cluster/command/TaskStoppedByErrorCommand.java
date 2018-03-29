@@ -21,6 +21,8 @@ import lombok.Getter;
  */
 @AllArgsConstructor
 public class TaskStoppedByErrorCommand implements ClusterCommand {
-    @Getter private String taskId;//任务id
-    @Getter private String swimlaneId; //泳道id
+    //任务id
+    @Getter private String taskId;
+    //泳道id
+    @Getter private String swimlaneId;
 }

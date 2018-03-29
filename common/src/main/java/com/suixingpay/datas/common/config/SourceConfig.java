@@ -25,7 +25,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -34,7 +36,7 @@ import java.util.Map;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月23日 11:53
  */
-public abstract class SourceConfig {
+public abstract class SourceConfig implements SwamlaneSupport {
     @JSONField(serialize = false, deserialize = false)
     protected static final Logger LOGGER = LoggerFactory.getLogger(SourceConfig.class);
     @JSONField(serialize = false, deserialize = false)
@@ -104,5 +106,10 @@ public abstract class SourceConfig {
     }
     protected void setProperties(Map<String, String> properties) {
         this.properties = properties;
+    }
+
+    @Override
+    public <T extends SourceConfig> List<T> swamlanes() throws ConfigParseException {
+        return Arrays.asList((T) this);
     }
 }

@@ -12,11 +12,12 @@ package com.suixingpay.datas.common.config.source;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.suixingpay.datas.common.config.SourceConfig;
 import com.suixingpay.datas.common.dic.SourceType;
+import com.suixingpay.datas.common.exception.ConfigParseException;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -28,6 +29,9 @@ import java.util.stream.Collectors;
 public class KafkaConfig  extends SourceConfig {
     @JSONField(serialize = false, deserialize = false)
     private static final String TOPIC_SPLIT_CHARACTER = ",";
+    @JSONField(serialize = false, deserialize = false)
+    private static final String TOPICS_KEY = "topics";
+
     @Setter @Getter private String servers;
     @Setter @Getter private String group;
     @Setter @Getter private List<String> topics;
@@ -42,12 +46,33 @@ public class KafkaConfig  extends SourceConfig {
 
     @Override
     protected void childStuff() {
-        String topicStr = getProperties().getOrDefault("topics", "");
+        String topicStr = getProperties().getOrDefault(TOPICS_KEY, "");
         topics = Arrays.stream(topicStr.split(TOPIC_SPLIT_CHARACTER)).collect(Collectors.toList());
     }
 
     @Override
     protected String[] childStuffColumns() {
         return new String[] {"topics"};
+    }
+
+    @Override
+    public List<KafkaConfig> swamlanes() throws ConfigParseException {
+        List<KafkaConfig> configs = new ArrayList<>(topics.size());
+        if (null == topics || topics.size() < 2) {
+            configs.add(this);
+        } else {
+            for (String topic : topics) {
+                Map<String, String> properties = new HashMap<>();
+                properties.putAll(getProperties());
+                properties.put(TOPICS_KEY, topic);
+                configs.add(SourceConfig.getConfig(properties));
+            }
+        }
+        return configs;
+    }
+
+    @Override
+    public String getSwimlaneId() {
+        return StringUtils.join(topics, "_");
     }
 }

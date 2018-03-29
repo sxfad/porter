@@ -56,16 +56,6 @@ public enum DataConsumerFactory {
 
         }
 
-        //消费数据获取来源
-        Client tempConsumeclient = AbstractClient.getClient(SourceConfig.getConfig(config.getSource()));
-
-        ConsumeClient consumeClient = null;
-        if (null != tempConsumeclient && tempConsumeclient instanceof ConsumeClient) {
-            consumeClient = (ConsumeClient) tempConsumeclient;
-        }
-        if (null == consumeClient) throw new ClientException("ConsumeClient初始化失败:" + config.getSource());
-
-
         //自定义消费数据处理器
         EventProcessor processor = null;
         if (null != config.getEventProcessor()) {
@@ -76,11 +66,16 @@ public enum DataConsumerFactory {
             }
         }
 
-        List<ConsumeClient> consumeClients = consumeClient.splitSwimlanes();
-        //释放浪费创建的对象
-        for (ConsumeClient c : consumeClients) {
+        //消费数据获取来源
+        List<SourceConfig> configs = SourceConfig.getConfig(config.getSource()).swamlanes();
+        for (SourceConfig sourceConfig : configs) {
+            Client tempClient = AbstractClient.getClient(sourceConfig);
+            if (null == tempClient || !(tempClient instanceof ConsumeClient)) throw new ClientException("ConsumeClient初始化失败:" + config.getSource());
+            ConsumeClient consumeClient = (ConsumeClient) tempClient;
+
+            //创建consumer对象
             DataConsumer consumer = newConsumer(config.getConsumerName());
-            consumer.setClient(c);
+            consumer.setClient(consumeClient);
             consumer.setConverter(converter);
             consumer.setMetaQueryClient(metaQueryClient);
             consumer.setExcludes(config.getExcludes());

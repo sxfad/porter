@@ -12,12 +12,10 @@ package com.suixingpay.datas.common.client.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.suixingpay.datas.common.client.AbstractClient;
 import com.suixingpay.datas.common.consumer.ConsumeClient;
-import com.suixingpay.datas.common.config.SourceConfig;
 import com.suixingpay.datas.common.config.source.KafkaConfig;
 import com.suixingpay.datas.common.consumer.Position;
-import com.suixingpay.datas.common.exception.ClientException;
-import com.suixingpay.datas.common.exception.ConfigParseException;
 import com.suixingpay.datas.common.exception.TaskStopTriggerException;
+import com.suixingpay.datas.common.util.MachineUtils;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.consumer.OffsetAndMetadata;
@@ -60,7 +58,7 @@ public class KafkaClient extends AbstractClient<KafkaConfig> implements ConsumeC
         perPullSize = config.getOncePollSize();
         final Properties props = new Properties();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, config.getServers());
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, config.getGroup());
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, StringUtils.isBlank(config.getGroup()) ? getDefaultGroup() : config.getGroup());
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         //单次消费数量
@@ -76,6 +74,14 @@ public class KafkaClient extends AbstractClient<KafkaConfig> implements ConsumeC
             connector.subscribe(config.getTopics());
             canFetch.countDown();
         }
+    }
+
+    /**
+     * 当没有配置group时，做默认配置
+     * @return
+     */
+    private String getDefaultGroup() {
+        return MachineUtils.IP_ADDRESS + "_" + MachineUtils.HOST_NAME;
     }
 
     @Override
@@ -127,26 +133,6 @@ public class KafkaClient extends AbstractClient<KafkaConfig> implements ConsumeC
         return msgs;
     }
 
-    private boolean canSplit() {
-        return getConfig().getTopics().size() > 1;
-    }
-
-    @Override
-    public <T> List<T> splitSwimlanes() throws ClientException, ConfigParseException {
-        List<T> clients = new ArrayList<>();
-        if (canSplit()) {
-            for (String topic : getConfig().getTopics()) {
-                KafkaConfig tmpConfig = SourceConfig.getConfig(getConfig().getProperties());
-                tmpConfig.setTopics(Arrays.asList(topic));
-                T tmpClient = (T) AbstractClient.getClient(tmpConfig);
-                clients.add(tmpClient);
-            }
-        } else {
-            clients.add((T) this);
-        }
-        return clients;
-    }
-
     @Override
     public boolean isAutoCommitPosition() {
         return getConfig().isAutoCommit();
@@ -154,7 +140,7 @@ public class KafkaClient extends AbstractClient<KafkaConfig> implements ConsumeC
 
     @Override
     public String getSwimlaneId() {
-        return !getConfig().getTopics().isEmpty() ? getConfig().getTopics().get(0) : StringUtils.EMPTY;
+        return getConfig().getSwimlaneId();
     }
 
     @Override

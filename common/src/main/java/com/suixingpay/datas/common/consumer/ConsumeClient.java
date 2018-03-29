@@ -54,16 +54,6 @@ public interface ConsumeClient extends Client {
     String getSwimlaneId();
 
     /**
-     * 根据消费源客户端配置，拆分消费泳道
-     * @param <T>
-     * @return
-     * @throws ClientException
-     */
-    default <T> List<T> splitSwimlanes() throws ClientException, ConfigParseException {
-        return Arrays.asList((T) this);
-    }
-
-    /**
      * 提取数据
      * @param callback
      * @param <F>  同步中间件统一对象模型
