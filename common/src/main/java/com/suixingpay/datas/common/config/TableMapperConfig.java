@@ -26,7 +26,7 @@ public class TableMapperConfig {
         
     }
 
-    public TableMapperConfig(String[] schema,String[] table,Map<String, String> column) {
+    public TableMapperConfig(String[] schema, String[] table, Map<String, String> column) {
         this.auto = false;
         this.schema = schema;
         this.table = table;

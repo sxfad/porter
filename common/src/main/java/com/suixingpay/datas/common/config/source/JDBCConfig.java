@@ -24,7 +24,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 public class JDBCConfig extends SourceConfig {
     //驱动类型
-    @Setter @Getter private String driverClassName;//
+    @Setter @Getter private String driverClassName;
     @Setter @Getter private String url;
     @Setter @Getter private String userName;
     @Setter @Getter private String password;

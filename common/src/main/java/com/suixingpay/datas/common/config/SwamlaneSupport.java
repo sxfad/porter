@@ -24,6 +24,6 @@ import java.util.List;
 public interface SwamlaneSupport {
     <T extends SourceConfig> List<T> swamlanes() throws ConfigParseException;
     default String getSwimlaneId() {
-       throw new UnsupportedOperationException("不支持的方法调用");
+        throw new UnsupportedOperationException("不支持的方法调用");
     }
 }

@@ -30,7 +30,7 @@ public class AlertConfig {
         
     }
     
-    public AlertConfig(AlertPlugin strategy,AlertReceiver[] receiver,Map<String, String> client) {
+    public AlertConfig(AlertPlugin strategy, AlertReceiver[] receiver, Map<String, String> client) {
         this.strategy = strategy;
         this.receiver = receiver;
         this.client = client;
