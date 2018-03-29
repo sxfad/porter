@@ -119,6 +119,28 @@ public class DbMysqlSelectService implements DbSelectService {
         return list;
     }
 
+    @Override
+    public List<String> fieldList(JDBCVo jvo, String sql, String tableAllName) {
+        sql = sql.replace("%s", tableAllName);
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet results = null;
+        List<String> lists = new ArrayList<>();
+        try {
+            connection = DataSourceUtil.getConnection(jvo.getDriverName(), jvo.getUrl(), jvo.getUsername(), jvo.getPassword());
+            preparedStatement = connection.prepareStatement(sql);
+            results = preparedStatement.executeQuery();
+            while (results.next()) {
+                String prefixName = results.getString("fieldName");
+                lists.add(prefixName);
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        } finally {
+            DataSourceUtil.closed(connection, preparedStatement, results);
+        }
+        return lists;
+    }
 }
 
 

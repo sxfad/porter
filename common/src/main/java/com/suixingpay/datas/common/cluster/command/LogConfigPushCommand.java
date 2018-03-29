@@ -16,17 +16,26 @@ import lombok.Setter;
 
 /**
  * 推送日志配置 （日志等级推送）
+ * 
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年02月23日 16:42
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月23日 16:42
  */
-public class LogConfigPushCommand extends ConfigPushCommand  {
-    @Getter @Setter private LogConfig config;
+public class LogConfigPushCommand extends ConfigPushCommand {
 
     public LogConfigPushCommand() {
         setType(ConfigPushType.LOG);
     }
+
+    public LogConfigPushCommand(LogConfig config) {
+        this.config = config;
+        setType(ConfigPushType.LOG);
+    }
+
+    @Getter
+    @Setter
+    private LogConfig config;
 
     @Override
     public String render() {

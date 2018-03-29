@@ -27,8 +27,10 @@ import java.util.LinkedHashMap;
 @AllArgsConstructor
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum SourceType {
+
     ZOOKEEPER("ZOOKEEPER", "zookeeper", -1), KAFKA("KAFKA", "kafka", 1), JDBC("JDBC", "jdbc", 1), EMAIL("EMAIL", "email", -1),
     NAME_SOURCE("NAME_SOURCE", "nameSource", -1), KUDU("KUDU", "kudu", -1), CANAL("CANAL", "canal", -1);
+
     @Getter
     private final String code;
     @Getter

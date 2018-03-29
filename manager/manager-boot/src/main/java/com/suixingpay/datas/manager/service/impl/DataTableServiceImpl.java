@@ -3,11 +3,6 @@
  */
 package com.suixingpay.datas.manager.service.impl;
 
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.suixingpay.datas.manager.core.dto.JDBCVo;
 import com.suixingpay.datas.manager.core.entity.DataSource;
 import com.suixingpay.datas.manager.core.entity.DataSourcePlugin;
@@ -19,6 +14,10 @@ import com.suixingpay.datas.manager.service.DataSourceService;
 import com.suixingpay.datas.manager.service.DataTableService;
 import com.suixingpay.datas.manager.service.DbSelectService;
 import com.suixingpay.datas.manager.web.page.Page;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * 数据表信息表 服务实现类
@@ -132,6 +131,16 @@ public class DataTableServiceImpl implements DataTableService {
             page.setTotalItems(total);
             List<Object> lists = dbSelectService.page(new JDBCVo(query.getDriverName(), url, username, password), page, sql, prefix, tableName);
             page.setResult(lists);
+        }
+        return page;
+    }
+
+    @Override
+    public Page<DataTable> dataTableList(Page<DataTable> page) {
+        Integer total = dataTableMapper.dataTableAll(1);
+        if (total > 0) {
+            page.setTotalItems(total);
+            page.setResult(dataTableMapper.dataTablePage(page, 1));
         }
         return page;
     }

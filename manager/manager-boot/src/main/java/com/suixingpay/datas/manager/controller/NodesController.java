@@ -12,7 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.suixingpay.datas.common.cluster.ClusterProviderProxy;
+import com.suixingpay.datas.common.cluster.command.NodeOrderPushCommand;
+import com.suixingpay.datas.common.config.NodeCommandConfig;
 import com.suixingpay.datas.common.dic.NodeStatusType;
+import com.suixingpay.datas.common.node.NodeCommandType;
 import com.suixingpay.datas.manager.core.entity.Nodes;
 import com.suixingpay.datas.manager.service.NodesService;
 import com.suixingpay.datas.manager.web.message.ResponseMessage;
@@ -56,6 +60,21 @@ public class NodesController {
         return ok(page);
     }
 
+    /**
+     * 验证nodeId是否重复
+     *
+     * @author FuZizheng
+     * @date 2018/3/28 下午2:29
+     * @param: [nodeId]
+     * @return: com.suixingpay.datas.manager.web.message.ResponseMessage
+     */
+    @GetMapping("/testNodeId/{nodeId}")
+    @ApiOperation(value = "验证nodeId是否重复", notes = "节点Id")
+    public ResponseMessage testNodeId(@PathVariable("nodeId") String nodeId) {
+        boolean flag = nodesService.testNodeId(nodeId);
+        return ok(flag);
+    }
+
     @PostMapping
     @ApiOperation(value = "新增", notes = "新增")
     public ResponseMessage add(@RequestBody Nodes nodes) {
@@ -75,8 +94,8 @@ public class NodesController {
     public ResponseMessage taskPushState(@RequestParam(value = "id", required = true) Long id, @RequestParam(value = "taskPushState", required = true) NodeStatusType taskPushState) throws Exception {
         Integer i = nodesService.taskPushState(id, taskPushState);
         if (i == 1) {
-            System.out.println("推送任务 运行中|暂停:" + id);
-            //ClusterProviderProxy.INSTANCE.broadcast(new NodeOrderPushCommand(new NodeCommandConfig(id.toString(), taskPushState, NodeCommandType.CHANGE_STATUS)));
+            //System.out.println("推送任务 运行中|暂停:" + id);
+            ClusterProviderProxy.INSTANCE.broadcast(new NodeOrderPushCommand(new NodeCommandConfig(id.toString(), taskPushState, NodeCommandType.CHANGE_STATUS)));
             Nodes nodes = nodesService.selectById(id);
             return ok(nodes);
         }
@@ -86,38 +105,8 @@ public class NodesController {
     @PostMapping("/stoptask")
     @ApiOperation(value = "停止任务", notes = "停止任务")
     public ResponseMessage stopTask(@RequestParam(value = "id", required = true) Long id) throws Exception {
-        System.out.println("停止任务:" + id);
-        //ClusterProviderProxy.INSTANCE.broadcast(new NodeOrderPushCommand(new NodeCommandConfig(id.toString(), NodeStatusType.SUSPEND, NodeCommandType.RELEASE_WORK)));
+        //System.out.println("停止任务:" + id);
+        ClusterProviderProxy.INSTANCE.broadcast(new NodeOrderPushCommand(new NodeCommandConfig(id.toString(), NodeStatusType.SUSPEND, NodeCommandType.RELEASE_WORK)));
         return ok();
     }
-
-    /*@PutMapping("/{id}")
-    @ApiOperation(value = "修改", notes = "修改")
-    public ResponseMessage update(@PathVariable("id") Long id, @RequestBody Nodes nodes) {
-        Integer number = nodesService.update(id, nodes);
-        return ok(number);
-    }
-
-    @DeleteMapping("/{id}")
-    @ApiOperation(value = "删除", notes = "删除")
-    public ResponseMessage delete(@PathVariable("id") Long id) {
-        nodesService.delete(id);
-        return ok();
-    }
-
-    @GetMapping("/{id}")
-    @ApiOperation(value = "查询明细", notes = "查询明细")
-    public ResponseMessage info(@PathVariable("id") Long id) {
-        Nodes nodes = nodesService.selectById(id);
-        return ok(nodes);
-    }
-
-    @ApiOperation(value = "查询列表", notes = "查询列表")
-    @GetMapping
-    public ResponseMessage list(@RequestParam(value = "pageNo", required = false) Integer pageNo,
-            @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-        Page<Nodes> page = nodesService.page(new Page<Nodes>(pageNo, pageSize));
-        return ok(page);
-    }*/
-
 }

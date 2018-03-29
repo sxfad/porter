@@ -115,6 +115,24 @@
         </where>
     </select>
 
+    <!-- 目标/元数据表组分页All -->
+    <select id="dataTableAll" resultType="java.lang.Integer">
+        select count(id) from b_data_table
+        WHERE iscancel = 0
+    </select>
+
+    <!-- 目标/元数据表组分页 -->
+    <select id="dataTablePage" resultType="com.suixingpay.datas.manager.core.entity.DataTable">
+        SELECT
+        b.id, b.source_id AS sourceId, b.data_type AS dataType, b.bank_name AS bankName,
+        b.table_name AS tableName, b.create_time AS createTime, d.name AS sourceName
+        from b_data_table b left join b_data_source d
+        on b.source_id = d.id
+        where b.iscancel = 0
+        order by b.create_time desc
+        limit #{page.offset},#{page.pageSize}
+    </select>
+
     <!-- 验证新增 -->
     <insert id="insertSelective">
         insert into b_data_table

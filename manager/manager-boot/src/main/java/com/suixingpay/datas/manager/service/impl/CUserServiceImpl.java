@@ -7,11 +7,10 @@ import com.suixingpay.datas.manager.core.entity.CUser;
 import com.suixingpay.datas.manager.core.mapper.CUserMapper;
 import com.suixingpay.datas.manager.service.CUserService;
 import com.suixingpay.datas.manager.web.page.Page;
-
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * 登陆用户表 服务实现类
@@ -66,4 +65,15 @@ public class CUserServiceImpl implements CUserService {
     public List<CUser> list() {
         return cuserMapper.list();
     }
+
+    @Override
+    public List<CUser> selectByJobTasksId(Long JobTasksId) {
+        return cuserMapper.selectByJobTasksId(JobTasksId);
+    }
+
+    @Override
+    public List<CUser> selectByAlarmId(Long alarmId) {
+        return cuserMapper.selectByAlarmId(alarmId);
+    }
+
 }

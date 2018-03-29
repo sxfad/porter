@@ -1,9 +1,8 @@
 package com.suixingpay.datas.manager.web.config;
 
+import javassist.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javassist.NotFoundException;
 
 /**
  * 基类
@@ -14,7 +13,7 @@ public class CommonController {
 
     /**
      * 判断对象是否为空,如果为空将抛出 {@link NotFoundException}
-     * 
+     *
      * @param obj
      * @param msg
      * @throws NotFoundException

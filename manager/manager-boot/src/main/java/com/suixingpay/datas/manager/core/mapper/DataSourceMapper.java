@@ -49,6 +49,7 @@ public interface DataSourceMapper {
     /**
      * 分頁
      * 条件查询:数据源名称 时间区间
+     *
      * @return
      */
     List<DataSource> page(@Param("page") Page<DataSource> page,
@@ -83,4 +84,28 @@ public interface DataSourceMapper {
      */
     Integer updateSelective(@Param("id") Long id, @Param("dataSource") DataSource dataSource);
 
+    /**
+     * 消费数据来源分页All
+     *
+     * @param state
+     * @return
+     */
+    Integer findByTypePageAll(@Param("state") Integer state);
+
+    /**
+     * 消费数据来源分页
+     *
+     * @param page
+     * @param state
+     * @return
+     */
+    List<DataSource> findByTypePage(@Param("page") Page<DataSource> page, @Param("state") Integer state);
 }
+
+
+
+
+
+
+
+

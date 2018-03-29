@@ -1,11 +1,10 @@
 /**
- * 
+ *
  */
 package com.suixingpay.datas.manager.web.token;
 
 /**
  * @author guohongjian[guo_hj@suixingpay.com]
- *
  */
 public class Token {
 

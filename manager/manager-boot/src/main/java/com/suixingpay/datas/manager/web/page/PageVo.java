@@ -1,11 +1,10 @@
 /**
- * 
+ *
  */
 package com.suixingpay.datas.manager.web.page;
 
 /**
  * @author guohongjian[guo_hj@suixingpay.com]
- *
  */
 public class PageVo {
 

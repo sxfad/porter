@@ -1,11 +1,17 @@
 package com.suixingpay.datas.manager.service.impl;
 
+import com.suixingpay.datas.manager.core.entity.JobTasks;
+import com.suixingpay.datas.manager.core.entity.JobTasksField;
 import com.suixingpay.datas.manager.core.entity.JobTasksTable;
 import com.suixingpay.datas.manager.core.mapper.JobTasksTableMapper;
+import com.suixingpay.datas.manager.service.JobTasksFieldService;
 import com.suixingpay.datas.manager.service.JobTasksTableService;
 import com.suixingpay.datas.manager.web.page.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 /**
  * 任务数据表对照关系表 服务实现类
@@ -20,6 +26,9 @@ public class JobTasksTableServiceImpl implements JobTasksTableService {
 
     @Autowired
     private JobTasksTableMapper jobTasksTableMapper;
+
+    @Autowired
+    private JobTasksFieldService jobTasksFieldService;
 
 
     @Override
@@ -38,8 +47,18 @@ public class JobTasksTableServiceImpl implements JobTasksTableService {
     }
 
     @Override
-    public JobTasksTable selectById(Long id) {
-        return jobTasksTableMapper.selectById(id);
+    public List<JobTasksTable> selectById(Long id) {
+
+        List<JobTasksField> fields;
+        List<JobTasksTable> tables = jobTasksTableMapper.selectById(id);
+
+        for (JobTasksTable jobTasksTable : tables) {
+            //根据 jobTasksId 和 jobTasksTableId 查询详情
+            fields = jobTasksFieldService.selectInfo(id, jobTasksTable.getId());
+            jobTasksTable.setFields(fields);
+        }
+
+        return tables;
     }
 
     @Override
@@ -50,5 +69,17 @@ public class JobTasksTableServiceImpl implements JobTasksTableService {
             page.setResult(jobTasksTableMapper.page(page, 1));
         }
         return page;
+    }
+
+    @Override
+    @Transactional
+    public void insertList(JobTasks jobTasks) {
+        //获取 JobTasks 自增id
+        for (JobTasksTable jobTasksTable : jobTasks.getTables()) {
+            jobTasksTable.setJobTaskId(jobTasks.getId());
+        }
+        jobTasksTableMapper.insertList(jobTasks.getTables());
+        //新增 JobTasksField
+        jobTasksFieldService.insertList(jobTasks);
     }
 }

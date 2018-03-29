@@ -27,9 +27,10 @@
     </sql>-->
 
     <!-- 新增 -->
-    <insert id="insert">
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         insert into job_tasks(
             job_name,
+            job_state,
             source_consume_adt,
             source_convert_adt,
             source_data_tables_id,
@@ -38,14 +39,10 @@
             source_data_name,
             target_load_adt,
             target_data_tables_id,
-            target_data_tables_name,
-            creater,
-            create_time,
-            state,
-            iscancel,
-            remark
+            target_data_tables_name
         ) values (
             #{jobName},
+            #{jobState},
             #{sourceConsumeAdt},
             #{sourceConvertAdt},
             #{sourceDataTablesId},
@@ -54,20 +51,25 @@
             #{sourceDataName},
             #{targetLoadAdt},
             #{targetDataTablesId},
-            #{targetDataTablesName},
-            #{creater},
-            #{createTime},
-            #{state},
-            #{iscancel},
-            #{remark}
+            #{targetDataTablesName}
         )
     </insert>
+
+    <!-- 修改任务状态 -->
+    <update id="updateState">
+        update job_tasks
+        SET
+        job_state = #{code}
+        where
+        id = #{id}
+    </update>
 
     <!-- 修改 -->
     <update id="update">
         update job_tasks
         set
             job_name = #{jobTasks.jobName},
+            job_state = #{jobTasks.jobState},
             source_consume_adt = #{jobTasks.sourceConsumeAdt},
             source_convert_adt = #{jobTasks.sourceConvertAdt},
             source_data_tables_id = #{jobTasks.sourceDataTablesId},
@@ -87,17 +89,19 @@
 
     <!-- 刪除 -->
     <delete id="delete">
-        delete from job_tasks where id = #{id}
+        update job_tasks
+        SET iscancel = 1
+        where id = #{id}
     </delete>
 
     <!-- 根据主鍵查找 -->
     <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.JobTasks">
         select
-            id, job_name AS jobName, source_consume_adt AS sourceConsumeAdt, source_convert_adt AS sourceConvertAdt,
+            id, job_name AS jobName, job_state AS jobState, source_consume_adt AS sourceConsumeAdt, source_convert_adt AS sourceConvertAdt,
             source_data_tables_id AS sourceDataTablesId, source_data_tables_name AS sourceDataTablesName,
             source_data_id AS sourceDataId, source_data_name AS sourceDataName, target_load_adt AS targetLoadAdt,
             target_data_tables_id AS targetDataTablesId, target_data_tables_name AS targetDataTablesName, creater,
-            create_time AS createTime, state, iscancel
+            create_time AS createTime, iscancel
         from job_tasks
         where id = #{id}
     </select>
@@ -122,8 +126,8 @@
     <!-- 分页 -->
     <select id="page" resultType="com.suixingpay.datas.manager.core.entity.JobTasks">
         select
-        id, job_name AS jobName, source_consume_adt AS sourceConsumeAdt, source_convert_adt AS sourceConvertAdt,
-        target_load_adt AS targetLoadAdt, create_time AS createTime, state
+        id, job_name AS jobName, job_state AS jobState, source_consume_adt AS sourceConsumeAdt, source_convert_adt AS sourceConvertAdt,
+        target_load_adt AS targetLoadAdt, create_time AS createTime
         from job_tasks
         <where>
             1 = 1
@@ -293,4 +297,5 @@
         </set>
         where id = #{id}
     </update>
+
 </mapper>

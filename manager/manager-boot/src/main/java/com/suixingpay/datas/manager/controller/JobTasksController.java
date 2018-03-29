@@ -1,17 +1,27 @@
 package com.suixingpay.datas.manager.controller;
 
+import com.suixingpay.datas.common.cluster.ClusterProviderProxy;
+import com.suixingpay.datas.common.cluster.command.TaskPushCommand;
+import com.suixingpay.datas.common.dic.TaskStatusType;
 import com.suixingpay.datas.manager.core.entity.JobTasks;
 import com.suixingpay.datas.manager.service.JobTasksService;
 import com.suixingpay.datas.manager.web.message.ResponseMessage;
 import com.suixingpay.datas.manager.web.page.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 import static com.suixingpay.datas.manager.web.message.ResponseMessage.ok;
 
@@ -65,40 +75,82 @@ public class JobTasksController {
         return ok(page);
     }
 
-/*    @PostMapping
+    /**
+     * 数据表组表名数组
+     *
+     * @param tablesId
+     * @return
+     */
+    @GetMapping(value = "tablenames")
+    @ApiOperation(value = "数据表组表名数组", notes = "数据表组表名数组")
+    public ResponseMessage tableNames(@RequestParam(value = "tablesId", required = true) @ApiParam(value = "数据表组id") Long tablesId) {
+        Object o = jobTasksService.tableNames(tablesId);
+        return ok(o);
+    }
+
+    /**
+     * 查询表字段
+     *
+     * @param sourceId
+     * @param tablesId
+     * @param tableAllName
+     * @return
+     */
+    @GetMapping(value = "fields")
+    @ApiOperation(value = "查询表字段", notes = "查询表字段")
+    public ResponseMessage fields(@RequestParam(value = "sourceId", required = true) @ApiParam(value = "数据源id") Long sourceId,
+                                  @RequestParam(value = "tablesId", required = true) @ApiParam(value = "数据表组id") Long tablesId,
+                                  @RequestParam(value = "tableAllName", required = true) @ApiParam(value = "数据表全名") String tableAllName) {
+        List<String> fields = jobTasksService.fields(sourceId, tablesId, tableAllName);
+        return ok(fields);
+    }
+
+    /**
+     * 新增
+     *
+     * @author FuZizheng
+     * @date 2018/3/27 下午3:17
+     * @param: [jobTasks]
+     * @return: com.suixingpay.datas.manager.web.message.ResponseMessage
+     */
+    @PostMapping()
     @ApiOperation(value = "新增", notes = "新增")
     public ResponseMessage add(@RequestBody JobTasks jobTasks) {
         Integer number = jobTasksService.insert(jobTasks);
         return ok(number);
     }
 
+    /**
+     * 修改任务状态
+     *
+     * @author FuZizheng
+     * @date 2018/3/28 上午11:27
+     * @param: []
+     * @return: com.suixingpay.datas.manager.web.message.ResponseMessage
+     * @throws Exception 
+     */
     @PutMapping("/{id}")
-    @ApiOperation(value = "修改", notes = "修改")
-    public ResponseMessage update(@PathVariable("id") Long id, @RequestBody JobTasks jobTasks) {
-        Integer number = jobTasksService.update(id, jobTasks);
+    @ApiOperation(value = "修改任务状态", notes = "TaskStatusType 枚举类: NEW、STOPPED、WORKING")
+    public ResponseMessage updateState(@PathVariable("id") Long id, @RequestParam("taskStatusType") TaskStatusType taskStatusType) throws Exception {
+        Integer number = jobTasksService.updateState(id, taskStatusType);
+        if(taskStatusType==TaskStatusType.WORKING||taskStatusType==TaskStatusType.STOPPED) {
+            ClusterProviderProxy.INSTANCE.broadcast(new TaskPushCommand(jobTasksService.fitJobTask(id, taskStatusType)));
+        }
         return ok(number);
     }
 
+    /**
+     * 逻辑删除任务
+     *
+     * @author FuZizheng
+     * @date 2018/3/28 上午11:50
+     * @param: [id]
+     * @return: com.suixingpay.datas.manager.web.message.ResponseMessage
+     */
     @DeleteMapping("/{id}")
-    @ApiOperation(value = "删除", notes = "删除")
+    @ApiOperation(value = "逻辑删除任务", notes = "参数：id")
     public ResponseMessage delete(@PathVariable("id") Long id) {
-        jobTasksService.delete(id);
-        return ok();
+        Integer number = jobTasksService.delete(id);
+        return ok(number);
     }
-
-    @GetMapping("/{id}")
-    @ApiOperation(value = "查询明细", notes = "查询明细")
-    public ResponseMessage info(@PathVariable("id") Long id) {
-        JobTasks jobTasks = jobTasksService.selectById(id);
-        return ok(jobTasks);
-    }
-
-    @ApiOperation(value = "查询列表", notes = "查询列表")
-    @GetMapping
-    public ResponseMessage list(@RequestParam(value = "pageNo", required = false) Integer pageNo,
-                                @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-        Page<JobTasks> page = jobTasksService.page(new Page<JobTasks>(pageNo, pageSize));
-        return ok(page);
-    }*/
-
 }

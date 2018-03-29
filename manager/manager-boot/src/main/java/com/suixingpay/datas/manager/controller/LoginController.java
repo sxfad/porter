@@ -3,9 +3,15 @@
  */
 package com.suixingpay.datas.manager.controller;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import com.suixingpay.datas.manager.core.dto.LoginUserToken;
+import com.suixingpay.datas.manager.core.entity.CUser;
+import com.suixingpay.datas.manager.exception.ExceptionCode;
+import com.suixingpay.datas.manager.service.CUserService;
+import com.suixingpay.datas.manager.web.message.ResponseMessage;
+import com.suixingpay.datas.manager.web.tl.WebToeknContext;
+import com.suixingpay.datas.manager.web.token.TokenUtil;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,16 +20,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.suixingpay.datas.manager.core.dto.LoginUserToken;
-import com.suixingpay.datas.manager.core.entity.CUser;
-import com.suixingpay.datas.manager.exception.ExceptionCode;
-import com.suixingpay.datas.manager.service.CUserService;
-import com.suixingpay.datas.manager.web.message.ResponseMessage;
-import com.suixingpay.datas.manager.web.tl.WebToeknContext;
-import com.suixingpay.datas.manager.web.token.TokenUtil;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author guohongjian[guo_hj@suixingpay.com]

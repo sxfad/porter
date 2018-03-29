@@ -3,14 +3,13 @@
  */
 package com.suixingpay.datas.manager.service.impl;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.suixingpay.datas.common.dic.NodeStatusType;
 import com.suixingpay.datas.manager.core.entity.Nodes;
 import com.suixingpay.datas.manager.core.mapper.NodesMapper;
 import com.suixingpay.datas.manager.service.NodesService;
 import com.suixingpay.datas.manager.web.page.Page;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * 节点信息表 服务实现类
@@ -28,9 +27,18 @@ public class NodesServiceImpl implements NodesService {
 
     @Override
     public Integer insert(Nodes nodes) {
-        nodes.setTaskPushState(NodeStatusType.SUSPEND);
-        nodes.setState(-1);
-        return nodesMapper.insert(nodes);
+        //验证nodeId是否重复
+        Integer total = nodesMapper.testNodeId(nodes.getNodeId());
+        Integer number = 0;
+        if (total > 0) {
+            number = -1;
+            return number;
+        } else {
+            nodes.setTaskPushState(NodeStatusType.SUSPEND);
+            nodes.setState(-1);
+            number = nodesMapper.insert(nodes);
+            return number;
+        }
     }
 
     @Override
@@ -45,8 +53,7 @@ public class NodesServiceImpl implements NodesService {
 
     @Override
     public Integer taskPushState(Long id, NodeStatusType taskPushState) {
-        Integer i =nodesMapper.taskPushState(id, taskPushState.getCode());
-        //Nodes nodes = nodesMapper.selectById(id);
+        Integer i = nodesMapper.taskPushState(id, taskPushState.getCode());
         return i;
     }
 
@@ -68,5 +75,36 @@ public class NodesServiceImpl implements NodesService {
             page.setResult(nodesMapper.page(page, ipAddress, state, machineName));
         }
         return page;
+    }
+
+    @Override
+    public Integer insertState(String nodeId, String machineName, String ipAddress, String pidNumber,
+            NodeStatusType taskPushState, String heartBeatTime, Integer state) {
+        return nodesMapper.insertState(nodeId, machineName, ipAddress, pidNumber,
+                taskPushState == null ? NodeStatusType.SUSPEND.getCode() : taskPushState.getCode(), heartBeatTime, state);
+    }
+
+    @Override
+    public Integer updateState(String nodeId, String machineName, String ipAddress, String pidNumber,
+            NodeStatusType taskPushState, String heartBeatTime, Integer state) {
+        return nodesMapper.updateState(nodeId, machineName, ipAddress, pidNumber,
+                taskPushState == null ? NodeStatusType.SUSPEND.getCode() : taskPushState.getCode(), heartBeatTime, state);
+    }
+
+    @Override
+    public Integer updateHeartBeatTime(String nodeId, String machineName, String ipAddress, String pidNumber,
+            NodeStatusType taskPushState, String heartBeatTime) {
+        return nodesMapper.updateHeartBeatTime(nodeId, machineName, ipAddress, pidNumber,
+                taskPushState == null ? NodeStatusType.SUSPEND.getCode() : taskPushState.getCode(), heartBeatTime);
+    }
+
+    @Override
+    public boolean testNodeId(String nodeId) {
+        boolean flag = true;
+        Integer total = nodesMapper.testNodeId(nodeId);
+        if (total > 0) {
+            flag = false;
+        }
+        return flag;
     }
 }

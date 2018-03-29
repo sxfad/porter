@@ -1,7 +1,12 @@
 /**
- * 
+ *
  */
 package com.suixingpay.datas.manager.web.token;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -10,16 +15,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-
 /**
  * token 工具类
- * 
- * @author guohongjian[guo_hj@suixingpay.com]
  *
+ * @author guohongjian[guo_hj@suixingpay.com]
  */
 public class TokenUtil {
 
@@ -28,7 +27,7 @@ public class TokenUtil {
 
     /**
      * 生成token
-     * 
+     *
      * @param object
      * @return
      * @throws Exception
@@ -47,7 +46,7 @@ public class TokenUtil {
 
     /**
      * 解析token
-     * 
+     *
      * @param jwsToken
      * @param classT
      * @return
@@ -85,7 +84,7 @@ public class TokenUtil {
 
     /**
      * 实体转map
-     * 
+     *
      * @param obj
      * @return
      * @throws Exception
@@ -110,7 +109,7 @@ public class TokenUtil {
 
     /**
      * map转实体
-     * 
+     *
      * @param map
      * @param beanClass
      * @return
@@ -130,7 +129,7 @@ public class TokenUtil {
 
     /**
      * 实体字段赋值
-     * 
+     *
      * @param obj
      * @param declaredFields
      * @param map

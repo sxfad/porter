@@ -1,9 +1,9 @@
 package com.suixingpay.datas.manager.service;
 
-import java.util.List;
-
 import com.suixingpay.datas.manager.core.entity.DataTable;
 import com.suixingpay.datas.manager.web.page.Page;
+
+import java.util.List;
 
 /**
  * 数据表信息表 服务接口类
@@ -26,4 +26,6 @@ public interface DataTableService {
     List<String> prefixList(Long sourceId);
 
     Page<Object> tableList(Page<Object> page, Long sourceId, String prefix, String tableName);
+
+    Page<DataTable> dataTableList(Page<DataTable> dataTablePage);
 }

@@ -1,14 +1,20 @@
+
 package com.suixingpay.datas.manager.service.impl;
 
+import com.suixingpay.datas.manager.core.entity.JobTasks;
 import com.suixingpay.datas.manager.core.entity.JobTasksField;
+import com.suixingpay.datas.manager.core.entity.JobTasksTable;
 import com.suixingpay.datas.manager.core.mapper.JobTasksFieldMapper;
 import com.suixingpay.datas.manager.service.JobTasksFieldService;
 import com.suixingpay.datas.manager.web.page.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * 任务数据字段对照关系表 服务实现类
+ *
  * @author: FairyHood
  * @date: 2018-03-26 14:27:55
  * @version: V1.0-auto
@@ -49,5 +55,22 @@ public class JobTasksFieldServiceImpl implements JobTasksFieldService {
             page.setResult(jobTasksFieldMapper.page(page, 1));
         }
         return page;
+    }
+
+    @Override
+    public void insertList(JobTasks jobTasks) {
+
+        for (JobTasksTable jobTasksTable : jobTasks.getTables()) {
+            for (JobTasksField jobTasksField : jobTasksTable.getFields()) {
+                jobTasksField.setJobTaskId(jobTasks.getId());
+                jobTasksField.setJobTasksTableId(jobTasksTable.getId());
+            }
+            jobTasksFieldMapper.insertList(jobTasksTable.getFields());
+        }
+    }
+
+    @Override
+    public List<JobTasksField> selectInfo(Long jobTaskId, Long jobTasksTableId) {
+        return jobTasksFieldMapper.selectInfo(jobTaskId, jobTasksTableId);
     }
 }

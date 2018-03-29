@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.suixingpay.datas.manager.core.dto;
 
@@ -7,7 +7,6 @@ import com.suixingpay.datas.manager.web.token.Token;
 
 /**
  * @author guohongjian[guo_hj@suixingpay.com]
- *
  */
 public class LoginUserToken extends Token {
 

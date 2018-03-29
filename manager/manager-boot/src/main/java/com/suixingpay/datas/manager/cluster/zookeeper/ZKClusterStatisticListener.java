@@ -8,6 +8,7 @@
  */
 package com.suixingpay.datas.manager.cluster.zookeeper;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.suixingpay.datas.common.cluster.ClusterListenerFilter;
 import com.suixingpay.datas.common.cluster.event.ClusterEvent;
@@ -47,14 +48,14 @@ public class ZKClusterStatisticListener extends ZookeeperClusterListener {
             // 日志
             if (LOG_PATTERN.matcher(zkPath).matches()) {
                 NodeLog log = JSONObject.parseObject(zkEvent.getData(), NodeLog.class);
-
+                System.err.println("NodeLog....."+JSON.toJSON(log));
                 // do something
             }
 
             // 性能指标数据
             if (TASK_PATTERN.matcher(zkPath).matches()) {
                 TaskPerformance performance = JSONObject.parseObject(zkEvent.getData(), TaskPerformance.class);
-
+                System.out.println("TaskPerformance....."+JSON.toJSON(performance));
                 // do something
             }
             // 删除已获取的事件

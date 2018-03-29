@@ -68,7 +68,7 @@
 
     <!-- 作废 -->
     <update id="cancel">
-        update b_nodes 
+        update b_nodes
         <set>
             iscancel=1
         </set>
@@ -77,17 +77,72 @@
 
     <!-- 接收、停止任务推送 -->
     <update id="taskPushState">
-        update b_nodes 
+        update b_nodes
         <set>
             task_push_state=#{taskPushState,jdbcType=VARCHAR}
         </set>
         where id = #{id,jdbcType=BIGINT}
     </update>
 
+    <!-- 新增 -->
+    <insert id="insertState">
+        insert into b_nodes(
+        node_id,
+        machine_name,
+        ip_address,
+        pid_number,
+        state,
+        node_type,
+        task_push_state,
+        heart_beat_time
+        ) values (
+        #{nodeId},
+        #{machineName},
+        #{ipAddress},
+        #{pidNumber},
+        #{state},
+        2,
+        #{taskPushState},
+        #{heartBeatTime}
+        )
+    </insert>
+
+    <!-- 修改节点状态 -->
+    <update id="updateState">
+        update b_nodes
+        set
+          state = #{state},
+          machine_name = #{machineName},
+          ip_address = #{ipAddress},
+          pid_number = #{pidNumber},
+          task_push_state = #{taskPushState},
+          heart_beat_time = #{heartBeatTime}
+        where node_id = #{nodeId}
+    </update>
+
+    <!-- 修改最后时间 -->
+    <update id="updateHeartBeatTime">
+        update b_nodes
+        set
+          state = 1 ,
+          task_push_state = #{taskPushState},
+          machine_name = #{machineName},
+          ip_address = #{ipAddress},
+          pid_number = #{pidNumber},
+          heart_beat_time = #{heartBeatTime}
+        where node_id = #{nodeId}
+    </update>
+
     <!-- 根据主鍵查找 -->
     <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.Nodes">
         select id, node_id AS nodeId, machine_name AS machineName, ip_address AS ipAddress, pid_number AS pidNumber, heart_beat_time AS heartBeatTime, state, node_type as nodeType, task_push_state as taskPushState, creater, create_time AS createTime, iscancel, remark from b_nodes
         where id = #{id}
+    </select>
+
+    <!-- 验证nodeId是否重复 -->
+    <select id="testNodeId" resultType="java.lang.Integer">
+        SELECT count(id) FROM b_nodes
+        WHERE node_id = #{nodeId}
     </select>
 
     <!-- 分页All -->
@@ -109,7 +164,8 @@
 
     <!-- 分页 -->
     <select id="page" resultType="com.suixingpay.datas.manager.core.entity.Nodes">
-        select id, node_id AS nodeId, machine_name AS machineName, ip_address AS ipAddress, pid_number AS pidNumber, heart_beat_time AS heartBeatTime, state, node_type as nodeType, task_push_state as taskPushState
+        select id, node_id AS nodeId, machine_name AS machineName, ip_address AS ipAddress, pid_number AS pidNumber,
+        heart_beat_time AS heartBeatTime, state, node_type as nodeType, task_push_state as taskPushState
         from b_nodes
         <where>
             iscancel = 0

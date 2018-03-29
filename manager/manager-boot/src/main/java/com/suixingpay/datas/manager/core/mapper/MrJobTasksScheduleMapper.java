@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * 任务泳道进度表 Mapper接口
- * 
+ *
  * @author: FairyHood
  * @date: 2018-03-07 13:40:30
  * @version: V1.0-auto
@@ -18,18 +18,21 @@ public interface MrJobTasksScheduleMapper {
 
     /**
      * 新增
+     *
      * @param mrJobTasksSchedule
      */
     Integer insert(MrJobTasksSchedule mrJobTasksSchedule);
 
     /**
      * 修改
+     *
      * @param mrJobTasksSchedule
      */
     Integer update(@Param("id") Long id, @Param("mrJobTasksSchedule") MrJobTasksSchedule mrJobTasksSchedule);
 
     /**
      * 刪除
+     *
      * @param id
      * @return
      */
@@ -37,6 +40,7 @@ public interface MrJobTasksScheduleMapper {
 
     /**
      * 根據主鍵id查找數據
+     *
      * @param id
      * @return
      */
@@ -44,12 +48,14 @@ public interface MrJobTasksScheduleMapper {
 
     /**
      * 分頁
+     *
      * @return
      */
     List<MrJobTasksSchedule> page(@Param("page") Page<MrJobTasksSchedule> page, @Param("state") Integer state);
 
     /**
      * 分頁All
+     *
      * @return
      */
     Integer pageAll(@Param("state") Integer state);

@@ -8,6 +8,7 @@
  */
 package com.suixingpay.datas.manager.cluster.zookeeper;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.suixingpay.datas.common.cluster.ClusterListenerFilter;
 import com.suixingpay.datas.common.cluster.command.TaskPushCommand;
@@ -26,13 +27,14 @@ import java.util.regex.Pattern;
 
 /**
  * 任务信息监听
- * 
+ *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月15日 10:09
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月15日 10:09
  */
 public class ZKClusterTaskListener extends ZookeeperClusterListener implements TaskPush {
+
     private static final String ZK_PATH = BASE_CATALOG + "/task";
     private static final Pattern TASK_STAT_PATTERN = Pattern.compile(ZK_PATH + "/.*/stat/.*");
 
@@ -51,7 +53,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
         if (TASK_STAT_PATTERN.matcher(zkPath).matches() && zkEvent.isDataChanged()) {
             DTaskStat stat = DTaskStat.fromString(zkEvent.getData(), DTaskStat.class);
             // do something
-
+            System.err.println("DTaskStat.... "+JSON.toJSON(stat));
         }
     }
 

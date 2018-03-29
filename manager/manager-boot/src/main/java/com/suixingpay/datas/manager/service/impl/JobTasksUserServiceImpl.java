@@ -3,6 +3,7 @@
  */
 package com.suixingpay.datas.manager.service.impl;
 
+import com.suixingpay.datas.manager.core.entity.JobTasks;
 import com.suixingpay.datas.manager.core.entity.JobTasksUser;
 import com.suixingpay.datas.manager.core.mapper.JobTasksUserMapper;
 import com.suixingpay.datas.manager.service.JobTasksUserService;
@@ -52,6 +53,11 @@ public class JobTasksUserServiceImpl implements JobTasksUserService {
             page.setResult(jobTasksUserMapper.page(page, 1));
         }
         return page;
+    }
+
+    @Override
+    public void insertList(JobTasks jobTasks) {
+        jobTasksUserMapper.insertList(jobTasks.getId(), jobTasks.getUserIds());
     }
 
 }

@@ -21,9 +21,35 @@ import java.util.Map;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月04日 19:07
  */
 public class TableMapperConfig {
-    @Getter @Setter private boolean auto = true;
-    @Getter @Setter private String[] schema;
-    @Getter @Setter private String[] table;
-    @Getter @Setter private String[] updateDate;
-    @Getter @Setter private Map<String, String> column;
+    
+    public TableMapperConfig() {
+        
+    }
+
+    public TableMapperConfig(String[] schema,String[] table,Map<String, String> column) {
+        this.auto = false;
+        this.schema = schema;
+        this.table = table;
+        this.column = column;
+    }
+    
+    @Getter
+    @Setter
+    private boolean auto = true;
+
+    @Getter
+    @Setter
+    private String[] schema;
+
+    @Getter
+    @Setter
+    private String[] table;
+
+    @Getter
+    @Setter
+    private String[] updateDate;
+
+    @Getter
+    @Setter
+    private Map<String, String> column;
 }

@@ -8,6 +8,8 @@
  */
 package com.suixingpay.datas.manager;
 
+import com.suixingpay.datas.common.cluster.ClusterProviderProxy;
+import com.suixingpay.datas.manager.config.ManagerConfig;
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,11 +21,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import com.suixingpay.datas.common.cluster.ClusterProviderProxy;
-import com.suixingpay.datas.manager.config.ManagerConfig;
-
 /**
- *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月15日 14:09
  * @version: V1.0
@@ -32,7 +30,7 @@ import com.suixingpay.datas.manager.config.ManagerConfig;
 @EnableScheduling
 @EnableTransactionManagement
 @ServletComponentScan
-@SpringBootApplication(scanBasePackages = { "com.suixingpay" })
+@SpringBootApplication(scanBasePackages = {"com.suixingpay"})
 @MapperScan("com.suixingpay.datas.manager.core.mapper")
 public class ManagerBootApplication {
 

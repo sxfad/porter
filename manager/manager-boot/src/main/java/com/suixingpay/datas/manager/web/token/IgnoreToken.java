@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.suixingpay.datas.manager.web.token;
 
@@ -11,7 +11,6 @@ import java.lang.annotation.Target;
 
 /**
  * @author guohongjian[guo_hj@suixingpay.com]
- *
  */
 @Documented
 @Target(ElementType.METHOD)

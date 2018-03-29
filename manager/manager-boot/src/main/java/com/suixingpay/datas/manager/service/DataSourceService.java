@@ -23,4 +23,5 @@ public interface DataSourceService {
 
     Page<DataSource> page(Page<DataSource> page, String name, String beginTime, String endTime);
 
+    Page<DataSource> findByTypePage(Page<DataSource> page);
 }

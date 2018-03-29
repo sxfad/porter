@@ -17,17 +17,26 @@ import lombok.Setter;
 
 /**
  * 推送告警信息配置（全局配置）
+ * 
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年02月23日 16:42
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月23日 16:42
  */
-public class AlertConfigPushCommand extends ConfigPushCommand  {
-    @Getter @Setter private AlertConfig config;
+public class AlertConfigPushCommand extends ConfigPushCommand {
 
     public AlertConfigPushCommand() {
         setType(ConfigPushType.ALERT);
     }
+
+    public AlertConfigPushCommand(AlertConfig config) {
+        this.config = config;
+        setType(ConfigPushType.ALERT);
+    }
+
+    @Getter
+    @Setter
+    private AlertConfig config;
 
     @Override
     public String render() {

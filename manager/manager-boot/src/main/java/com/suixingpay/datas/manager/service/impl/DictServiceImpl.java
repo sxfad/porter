@@ -3,13 +3,6 @@
  */
 package com.suixingpay.datas.manager.service.impl;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import com.suixingpay.datas.manager.core.enums.LogLevelEnum;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.suixingpay.datas.common.dic.AlertPlugin;
 import com.suixingpay.datas.common.dic.ClusterPlugin;
 import com.suixingpay.datas.common.dic.ConsumeConverterPlugin;
@@ -20,8 +13,14 @@ import com.suixingpay.datas.common.dic.NodeStatusType;
 import com.suixingpay.datas.common.dic.SourceType;
 import com.suixingpay.datas.common.dic.TaskStatusType;
 import com.suixingpay.datas.manager.core.enums.InputTypeEnum;
+import com.suixingpay.datas.manager.core.enums.LogLevelEnum;
 import com.suixingpay.datas.manager.service.DictService;
 import com.suixingpay.datas.manager.service.DictionaryService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author guohongjian[guo_hj@suixingpay.com]

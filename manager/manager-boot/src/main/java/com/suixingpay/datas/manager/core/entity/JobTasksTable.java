@@ -1,5 +1,8 @@
 package com.suixingpay.datas.manager.core.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 任务数据表对照关系表 实体Entity
  *
@@ -31,6 +34,11 @@ public class JobTasksTable implements java.io.Serializable {
      * 目标数据-数据表名-记录全名.
      */
     private String targetTableName;
+
+    /**
+     * 表字段对应关系
+     */
+    private List<JobTasksField> fields = new ArrayList<>();
 
     /**
      * 主键 get方法.
@@ -86,5 +94,13 @@ public class JobTasksTable implements java.io.Serializable {
      */
     public void setTargetTableName(String targetTableName) {
         this.targetTableName = targetTableName == null ? null : targetTableName.trim();
+    }
+
+    public List<JobTasksField> getFields() {
+        return fields;
+    }
+
+    public void setFields(List<JobTasksField> fields) {
+        this.fields = fields;
     }
 }

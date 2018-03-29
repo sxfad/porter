@@ -41,10 +41,10 @@ public interface JobTasksTableMapper {
     /**
      * 根據主鍵id查找數據
      *
-     * @param id
+     * @param jobTaskId
      * @return
      */
-    public JobTasksTable selectById(Long id);
+    List<JobTasksTable> selectById(Long jobTaskId);
 
     /**
      * 分頁
@@ -59,5 +59,13 @@ public interface JobTasksTableMapper {
      * @return
      */
     public Integer pageAll(@Param("state") Integer state);
+
+    /**
+     * 批量新增 JobTasksTable
+     *
+     * @param tables
+     */
+    void insertList(List<JobTasksTable> tables);
+
 
 }

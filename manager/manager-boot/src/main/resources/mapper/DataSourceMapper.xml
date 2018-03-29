@@ -113,6 +113,21 @@
         limit #{page.offset},#{page.pageSize}
     </select>
 
+    <!-- 消费数据来源分页All -->
+    <select id="findByTypePageAll" resultType="java.lang.Integer">
+        SELECT count(id) from b_data_source
+        WHERE iscancel = 0 and data_type = 'KAFKA' or data_type = 'CANAL'
+    </select>
+
+    <!-- 消费数据来源分页 -->
+    <select id="findByTypePage" resultType="com.suixingpay.datas.manager.core.entity.DataSource">
+        SELECT id, name, data_type AS dataType, create_time AS createTime
+        FROM b_data_source
+        WHERE iscancel = 0 and data_type = 'KAFKA' or data_type = 'CANAL'
+        order by create_time desc
+        limit #{page.offset},#{page.pageSize}
+    </select>
+
     <!-- 验证新增 -->
     <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id">
         insert into b_data_source

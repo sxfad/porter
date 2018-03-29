@@ -3,6 +3,12 @@
  */
 package com.suixingpay.datas.manager.service.impl;
 
+import com.suixingpay.datas.manager.core.datasource.DataSourceUtil;
+import com.suixingpay.datas.manager.core.dto.JDBCVo;
+import com.suixingpay.datas.manager.service.DbSelectService;
+import com.suixingpay.datas.manager.web.page.Page;
+import org.springframework.stereotype.Service;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,13 +16,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import org.springframework.stereotype.Service;
-
-import com.suixingpay.datas.manager.core.datasource.DataSourceUtil;
-import com.suixingpay.datas.manager.core.dto.JDBCVo;
-import com.suixingpay.datas.manager.service.DbSelectService;
-import com.suixingpay.datas.manager.web.page.Page;
 
 /**
  * @author guohongjian[guo_hj@suixingpay.com]
@@ -107,6 +106,29 @@ public class DbOracleSelectService implements DbSelectService {
                 String tableAllName = results.getString("tableAllName");
                 String[] str = {prefixName, tableName, tableAllName};
                 list.add(str);
+            }
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        } finally {
+            DataSourceUtil.closed(connection, preparedStatement, results);
+        }
+        return list;
+    }
+
+    @Override
+    public List<String> fieldList(JDBCVo jvo, String sql, String tableAllName) {
+        sql = sql.replace("%s", tableAllName);
+        List<String> list = new ArrayList<>();
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet results = null;
+        try {
+            connection = DataSourceUtil.getConnection(jvo.getDriverName(), jvo.getUrl(), jvo.getUsername(), jvo.getPassword());
+            preparedStatement = connection.prepareStatement(sql);
+            results = preparedStatement.executeQuery();
+            while (results.next()) {
+                String prefixName = results.getString("fieldName");
+                list.add(prefixName);
             }
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
