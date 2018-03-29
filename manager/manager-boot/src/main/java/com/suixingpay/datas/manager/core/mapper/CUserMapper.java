@@ -76,4 +76,10 @@ public interface CUserMapper {
      */
     List<CUser> list();
 
+    /**
+     * 根据 jobTasksId 查询告警人信息
+     * @param jobTasksId
+     * @return
+     */
+    List<CUser> selectByJobTasksId(Long jobTasksId);
 }

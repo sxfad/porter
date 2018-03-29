@@ -28,4 +28,6 @@ public interface CUserService {
     Page<CUser> page(Page<CUser> page);
 
     List<CUser> list();
+
+    List<CUser> selectByJobTasksId(Long JobTasksId);
 }

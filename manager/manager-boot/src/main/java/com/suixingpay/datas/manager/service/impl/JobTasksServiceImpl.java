@@ -5,6 +5,7 @@ package com.suixingpay.datas.manager.service.impl;
 
 import com.suixingpay.datas.common.dic.TaskStatusType;
 import com.suixingpay.datas.manager.core.dto.JDBCVo;
+import com.suixingpay.datas.manager.core.entity.CUser;
 import com.suixingpay.datas.manager.core.entity.DataSource;
 import com.suixingpay.datas.manager.core.entity.DataSourcePlugin;
 import com.suixingpay.datas.manager.core.entity.DataTable;
@@ -13,6 +14,7 @@ import com.suixingpay.datas.manager.core.entity.JobTasksTable;
 import com.suixingpay.datas.manager.core.enums.QuerySQL;
 import com.suixingpay.datas.manager.core.mapper.JobTasksMapper;
 import com.suixingpay.datas.manager.core.util.ApplicationContextUtil;
+import com.suixingpay.datas.manager.service.CUserService;
 import com.suixingpay.datas.manager.service.DataSourceService;
 import com.suixingpay.datas.manager.service.DataTableService;
 import com.suixingpay.datas.manager.service.DbSelectService;
@@ -52,6 +54,9 @@ public class JobTasksServiceImpl implements JobTasksService {
     @Autowired
     private JobTasksUserService jobTasksUserService;
 
+    @Autowired
+    private CUserService cUserService;
+
     @Override
     @Transactional
     public Integer insert(JobTasks jobTasks) {
@@ -81,6 +86,9 @@ public class JobTasksServiceImpl implements JobTasksService {
         //根据 JobTasksId 查询 JobTasksTable 详情
         List<JobTasksTable> tables = jobTasksTableService.selectById(id);
         jobTasks.setTables(tables);
+        //根据 JobTasksId 查询 CUser 详情
+        List<CUser> cusers = cUserService.selectByJobTasksId(id);
+        jobTasks.setUsers(cusers);
 
         return jobTasks;
     }
