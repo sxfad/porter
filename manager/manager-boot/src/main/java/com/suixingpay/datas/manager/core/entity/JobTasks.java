@@ -54,7 +54,7 @@ public class JobTasks implements java.io.Serializable {
     private String sourceDataTablesName;
 
     /**
-     * 来源数据-同步数据源id.
+     * 来源数据-同步数据源id.(kafka\cancl)
      */
     private Long sourceDataId;
 
@@ -69,7 +69,7 @@ public class JobTasks implements java.io.Serializable {
     private String targetLoadAdt;
 
     /**
-     * 目标数据-载入源id(kafka\cancl).
+     * 目标数据-载入源id.
      */
     private Long targetDataTablesId;
 
@@ -254,14 +254,14 @@ public class JobTasks implements java.io.Serializable {
     }
 
     /**
-     * 目标数据-载入数据组id(kafka\cancl) get方法.
+     * 目标数据-载入数据组id get方法.
      */
     public Long getTargetDataTablesId() {
         return targetDataTablesId;
     }
 
     /**
-     * 目标数据-载入数据组id(kafka\cancl) set方法.
+     * 目标数据-载入数据组id set方法.
      */
     public void setTargetDataTablesId(Long targetDataTablesId) {
         this.targetDataTablesId = targetDataTablesId;

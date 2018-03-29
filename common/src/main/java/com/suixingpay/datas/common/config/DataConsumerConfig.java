@@ -21,34 +21,66 @@ import java.util.Map;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月03日 16:43
  */
 public class DataConsumerConfig {
-    @Getter @Setter private String consumerName;
-    @Getter @Setter private String converter;
 
-    /*
-     *过滤掉不期望处理的表
-     * 与includes同时配置时，该设置不生效
-     *schema.table,schema.table
-     */
-    @Getter @Setter private String excludes;
+    public DataConsumerConfig() {
 
-    /*
-     *期望处理的表 来源表
-     *schema.table,schema.table
-     */
-    @Getter @Setter private String includes;
-
-    //消费数据的数据源
-    @Getter @Setter private Map<String, String> source;
-
-    //元数据查询的数据源
-    //公用配置
-    @Getter @Setter private Map<String, String> metaSource;
+    }
 
     /**
-     * 事件处理器，自定义处理
-     * 两种形式：
-     * 1.源码内容；
-     * 2.class类相对路径，相对于
+     * 后台所用构造函数
+     * @param consumerName 消费插件
+     * @param converter 消费转换插件
+     * @param includes 期望处理的表 来源表 schema.table,schema.table
+     * @param source 消费数据的数据源
+     * @param metaSource 元数据查询的数据源
      */
-    @Getter @Setter private JavaFileConfig eventProcessor;
+    public DataConsumerConfig(String consumerName, String converter, String includes, Map<String, String> source, Map<String, String> metaSource) {
+        this.consumerName = consumerName;
+        this.converter = converter;
+        this.includes = includes;
+        this.source = source;
+        this.metaSource = metaSource;
+    }
+
+    // 消费插件
+    @Getter
+    @Setter
+    private String consumerName;
+
+    // 消费转换插件
+    @Getter
+    @Setter
+    private String converter;
+
+    /*
+     * 过滤掉不期望处理的表 与includes同时配置时，该设置不生效 schema.table,schema.table
+     */
+    @Getter
+    @Setter
+    private String excludes;
+
+    /*
+     * 期望处理的表 来源表 schema.table,schema.table
+     */
+    @Getter
+    @Setter
+    private String includes;
+
+    // 消费数据的数据源
+    @Getter
+    @Setter
+    private Map<String, String> source;
+
+    // 元数据查询的数据源
+    // 公用配置
+    @Getter
+    @Setter
+    private Map<String, String> metaSource;
+
+    /**
+     * 事件处理器，自定义处理 两种形式： 1.源码内容； 2.class类相对路径，相对于
+     */
+    @Getter
+    @Setter
+    private JavaFileConfig eventProcessor;
 }
