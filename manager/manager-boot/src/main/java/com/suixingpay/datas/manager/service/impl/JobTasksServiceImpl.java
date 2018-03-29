@@ -29,11 +29,13 @@ import com.suixingpay.datas.manager.core.entity.JobTasksTable;
 import com.suixingpay.datas.manager.core.enums.QuerySQL;
 import com.suixingpay.datas.manager.core.mapper.JobTasksMapper;
 import com.suixingpay.datas.manager.core.util.ApplicationContextUtil;
+import com.suixingpay.datas.manager.service.CUserService;
 import com.suixingpay.datas.manager.service.DataSourceService;
 import com.suixingpay.datas.manager.service.DataTableService;
 import com.suixingpay.datas.manager.service.DbSelectService;
 import com.suixingpay.datas.manager.service.JobTasksService;
 import com.suixingpay.datas.manager.service.JobTasksTableService;
+import com.suixingpay.datas.manager.service.JobTasksUserService;
 import com.suixingpay.datas.manager.web.page.Page;
 
 /**
@@ -59,12 +61,20 @@ public class JobTasksServiceImpl implements JobTasksService {
     @Autowired
     private JobTasksTableService jobTasksTableService;
 
+    @Autowired
+    private JobTasksUserService jobTasksUserService;
+
+    @Autowired
+    private CUserService cUserService;
+
     @Override
     @Transactional
     public Integer insert(JobTasks jobTasks) {
         // 新增 JobTasks
         Integer number = jobTasksMapper.insert(jobTasks);
-        // 新增 JobTasksTable
+        //新增 JobTasksUser
+        jobTasksUserService.insertList(jobTasks);
+        //新增 JobTasksTable
         jobTasksTableService.insertList(jobTasks);
         return number;
     }
@@ -86,6 +96,9 @@ public class JobTasksServiceImpl implements JobTasksService {
         // 根据 JobTasksId 查询 JobTasksTable 详情
         List<JobTasksTable> tables = jobTasksTableService.selectById(id);
         jobTasks.setTables(tables);
+        //根据 JobTasksId 查询 CUser 详情
+        List<CUser> cusers = cUserService.selectByJobTasksId(id);
+        jobTasks.setUsers(cusers);
 
         return jobTasks;
     }

@@ -24,6 +24,20 @@
         )
     </insert>
 
+    <!-- 批量新增告警人信息 -->
+    <insert id="insertList">
+        insert into job_tasks_user (
+        job_task_id,
+        user_id
+        ) values
+        <foreach collection="userIds" index="index" item="userIds" separator=",">
+            (
+            #{jobTaskId},
+            #{userIds}
+            )
+        </foreach>
+    </insert>
+
     <!-- 修改 -->
     <update id="update">
         update job_tasks_user

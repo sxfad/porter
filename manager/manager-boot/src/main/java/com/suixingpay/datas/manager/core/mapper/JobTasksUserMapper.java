@@ -60,4 +60,10 @@ public interface JobTasksUserMapper {
      */
     Integer pageAll(@Param("state") Integer state);
 
+    /**
+     * 批量新增告警人信息
+     * @param jobTaskId
+     * @param userIds
+     */
+    void insertList(@Param("jobTaskId") Long jobTaskId, @Param("userIds") List<Long> userIds);
 }

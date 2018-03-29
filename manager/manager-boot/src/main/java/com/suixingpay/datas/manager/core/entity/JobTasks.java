@@ -106,7 +106,12 @@ public class JobTasks implements java.io.Serializable {
     /**
      * 告警人id列表.
      */
-    private List<Long> userId = new ArrayList<>();
+    private List<Long> userIds = new ArrayList<>();
+
+    /**
+     * 告警人信息列表
+     */
+    private List<CUser> users = new ArrayList<>();
 
     /**
      * 表对照关系.
@@ -351,18 +356,28 @@ public class JobTasks implements java.io.Serializable {
         this.remark = remark == null ? null : remark.trim();
     }
 
-    /**
-     * 告警人id列表 get方法
-     */
-    public List<Long> getUserId() {
-        return userId;
+    /** 告警人id列表 get方法. */
+    public List<Long> getUserIds() {
+        return userIds;
+    }
+
+    /** 告警人id列表 set方法. */
+    public void setUserIds(List<Long> userIds) {
+        this.userIds = userIds;
     }
 
     /**
-     * 告警人id列表 set方法
+     * 告警人信息列表 get方法.
      */
-    public void setUserId(List<Long> userId) {
-        this.userId = userId;
+    public List<CUser> getUsers() {
+        return users;
+    }
+
+    /**
+     * 告警人信息列表 set方法.
+     */
+    public void setUsers(List<CUser> users) {
+        this.users = users;
     }
 
     public List<JobTasksTable> getTables() {

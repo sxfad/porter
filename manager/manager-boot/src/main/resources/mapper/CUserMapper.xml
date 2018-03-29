@@ -64,6 +64,14 @@
         where id = #{id}
     </select>
 
+    <!-- 根据 jobTasksId 查询告警人信息 -->
+    <select id="selectByJobTasksId" resultType="com.suixingpay.datas.manager.core.entity.CUser">
+        SELECT id, loginname, loginpw, nickname, email, mobile, state, remark
+        from c_user
+        WHERE id
+        in (SELECT user_id FROM job_tasks_user WHERE job_task_id = #{jobTasksId})
+    </select>
+
     <!-- 根据主鍵查找 -->
     <select id="selectByNameAndpasswd" resultType="com.suixingpay.datas.manager.core.entity.CUser">
         select id, loginname, loginpw, nickname, email, mobile, state, remark from c_user
@@ -166,5 +174,6 @@
         select id, loginname, loginpw, nickname, email, mobile, state, remark from c_user
         where state=1
     </select>
+
 </mapper>
 
