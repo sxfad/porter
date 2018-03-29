@@ -32,34 +32,6 @@ public class CUserController {
     @Autowired
     protected CUserService cuserService;
 
-    /*@PostMapping
-    @ApiOperation(value = "新增", notes = "新增")
-    public ResponseMessage add(@RequestBody CUser cuser) {
-        Integer number = cuserService.insert(cuser);
-        return ok(number);
-    }
-
-    @PutMapping("/{id}")
-    @ApiOperation(value = "修改", notes = "修改")
-    public ResponseMessage update(@PathVariable("id") Long id, @RequestBody CUser cuser) {
-        Integer number = cuserService.update(id, cuser);
-        return ok(number);
-    }
-
-    @DeleteMapping("/{id}")
-    @ApiOperation(value = "删除", notes = "删除")
-    public ResponseMessage delete(@PathVariable("id") Long id) {
-        cuserService.delete(id);
-        return ok();
-    }
-
-    @GetMapping("/{id}")
-    @ApiOperation(value = "查询明细", notes = "查询明细")
-    public ResponseMessage info(@PathVariable("id") Long id) {
-        CUser cUser = cuserService.selectById(id);
-        return ok(cUser);
-    }*/
-
     @ApiOperation(value = "分页列表", notes = "分页列表")
     @GetMapping
     public ResponseMessage page(@RequestParam(value = "pageNo", required = false) Integer pageNo,

@@ -69,40 +69,4 @@ public class LogGradeController {
         return ok(logGrade);
     }
 
-    /*@PostMapping
-    @ApiOperation(value = "新增", notes = "新增")
-    public ResponseMessage add(@RequestBody LogGrade logGrade) {
-        Integer number = logGradeService.insert(logGrade);
-        return ok(number);
-    }
-
-    @PutMapping("/{id}")
-    @ApiOperation(value = "修改", notes = "修改")
-    public ResponseMessage update(@PathVariable("id") Long id, @RequestBody LogGrade logGrade) {
-        Integer number = logGradeService.update(id, logGrade);
-        return ok(number);
-    }
-
-    @DeleteMapping("/{id}")
-    @ApiOperation(value = "删除", notes = "删除")
-    public ResponseMessage delete(@PathVariable("id") Long id) {
-        logGradeService.delete(id);
-        return ok();
-    }
-
-    @GetMapping("/{id}")
-    @ApiOperation(value = "查询明细", notes = "查询明细")
-    public ResponseMessage info(@PathVariable("id") Long id) {
-        LogGrade logGrade = logGradeService.selectById(id);
-        return ok(logGrade);
-    }
-
-    @ApiOperation(value = "查询列表", notes = "查询列表")
-    @GetMapping
-    public ResponseMessage list(@RequestParam(value = "pageNo", required = false) Integer pageNo,
-            @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-        Page<LogGrade> page = logGradeService.page(new Page<LogGrade>(pageNo, pageSize));
-        return ok(page);
-    }*/
-
 }

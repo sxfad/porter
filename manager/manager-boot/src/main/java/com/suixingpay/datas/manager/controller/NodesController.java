@@ -109,34 +109,4 @@ public class NodesController {
         ClusterProviderProxy.INSTANCE.broadcast(new NodeOrderPushCommand(new NodeCommandConfig(id.toString(), NodeStatusType.SUSPEND, NodeCommandType.RELEASE_WORK)));
         return ok();
     }
-
-    /*@PutMapping("/{id}")
-    @ApiOperation(value = "修改", notes = "修改")
-    public ResponseMessage update(@PathVariable("id") Long id, @RequestBody Nodes nodes) {
-        Integer number = nodesService.update(id, nodes);
-        return ok(number);
-    }
-
-    @DeleteMapping("/{id}")
-    @ApiOperation(value = "删除", notes = "删除")
-    public ResponseMessage delete(@PathVariable("id") Long id) {
-        nodesService.delete(id);
-        return ok();
-    }
-
-    @GetMapping("/{id}")
-    @ApiOperation(value = "查询明细", notes = "查询明细")
-    public ResponseMessage info(@PathVariable("id") Long id) {
-        Nodes nodes = nodesService.selectById(id);
-        return ok(nodes);
-    }
-
-    @ApiOperation(value = "查询列表", notes = "查询列表")
-    @GetMapping
-    public ResponseMessage list(@RequestParam(value = "pageNo", required = false) Integer pageNo,
-            @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-        Page<Nodes> page = nodesService.page(new Page<Nodes>(pageNo, pageSize));
-        return ok(page);
-    }*/
-
 }
