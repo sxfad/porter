@@ -220,8 +220,9 @@ public class TaskWork {
                     }));
                     //上传统计
                     //TaskPerformance
-                    if (!NodeContext.INSTANCE.isUploadStatistic()) return;
-                    ClusterProviderProxy.INSTANCE.broadcast(new StatisticUploadCommand(new TaskPerformance(newStat)));
+                    if (NodeContext.INSTANCE.isUploadStatistic()) {
+                        ClusterProviderProxy.INSTANCE.broadcast(new StatisticUploadCommand(new TaskPerformance(newStat)));
+                    }
                 }
             } catch (Exception e) {
                 NodeLog.LogType type = NodeLog.LogType.TASK_LOG;

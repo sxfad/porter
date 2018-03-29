@@ -130,31 +130,32 @@ public class LoadJob extends AbstractStageJob {
         DTaskStat stat = work.getDTaskStat(object.getSchema(), object.getTable());
         synchronized (stat) {
             int affect = object.getAffect();
+            boolean hit = affect > 0 || affect == -2;
             EventType eventType = object.getType();
             switch (eventType.getIndex()) {
                 case EventType.DELETE_INDEX:
-                    if (affect > 0 || affect == -2) {
+                    if (hit) {
                         stat.incrementDeleteRow();
                     } else {
                         stat.incrementErrorDeleteRow();
                     }
                     break;
                 case EventType.UPDATE_INDEX:
-                    if (affect > 0 || affect == -2) {
+                    if (hit) {
                         stat.incrementUpdateRow();
                     } else {
                         stat.incrementErrorUpdateRow();
                     }
                     break;
                 case EventType.INSERT_INDEX:
-                    if (affect > 0 || affect == -2) {
+                    if (hit) {
                         stat.incrementInsertRow();
                     } else {
                         stat.incrementErrorInsertRow();
                     }
                     break;
                 case EventType.TRUNCATE_INDEX:
-                    if (affect > 0 || affect == -2) {
+                    if (hit) {
                         stat.incrementDeleteRow();
                     } else {
                         stat.incrementErrorDeleteRow();
@@ -167,6 +168,11 @@ public class LoadJob extends AbstractStageJob {
             stat.setLastLoadedSystemTime(new Date());
             if (null != object.getPosition()) {
                 stat.setProgress(object.getPosition().render());
+            }
+
+            //打印当前消息所在点位，方便问题查找
+            if (!hit) {
+                LOGGER.error("position:{}", object.getPosition().render());
             }
         }
     }
