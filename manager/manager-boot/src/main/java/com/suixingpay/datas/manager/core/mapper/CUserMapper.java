@@ -82,4 +82,11 @@ public interface CUserMapper {
      * @return
      */
     List<CUser> selectByJobTasksId(Long jobTasksId);
+
+    /**
+     * 根据alarmid查询通知人信息
+     * @param alarmId
+     * @return
+     */
+    List<CUser> selectByAlarmId(Long alarmId);
 }

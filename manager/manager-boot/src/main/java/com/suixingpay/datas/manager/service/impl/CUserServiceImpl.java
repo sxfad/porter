@@ -70,4 +70,10 @@ public class CUserServiceImpl implements CUserService {
     public List<CUser> selectByJobTasksId(Long JobTasksId) {
         return cuserMapper.selectByJobTasksId(JobTasksId);
     }
+
+    @Override
+    public List<CUser> selectByAlarmId(Long alarmId) {
+        return cuserMapper.selectByAlarmId(alarmId);
+    }
+
 }

@@ -1,16 +1,7 @@
 package com.suixingpay.datas.manager.controller;
 
-import com.suixingpay.datas.common.cluster.ClusterProviderProxy;
-import com.suixingpay.datas.common.cluster.command.LogConfigPushCommand;
-import com.suixingpay.datas.common.cluster.command.NodeOrderPushCommand;
-import com.suixingpay.datas.common.config.LogConfig;
-import com.suixingpay.datas.common.config.NodeCommandConfig;
-import com.suixingpay.datas.common.node.NodeCommandType;
-import com.suixingpay.datas.manager.core.entity.LogGrade;
-import com.suixingpay.datas.manager.service.LogGradeService;
-import com.suixingpay.datas.manager.web.message.ResponseMessage;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import static com.suixingpay.datas.manager.web.message.ResponseMessage.ok;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -18,7 +9,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static com.suixingpay.datas.manager.web.message.ResponseMessage.ok;
+import com.suixingpay.datas.common.cluster.ClusterProviderProxy;
+import com.suixingpay.datas.common.cluster.command.LogConfigPushCommand;
+import com.suixingpay.datas.common.config.LogConfig;
+import com.suixingpay.datas.manager.core.entity.LogGrade;
+import com.suixingpay.datas.manager.service.LogGradeService;
+import com.suixingpay.datas.manager.web.message.ResponseMessage;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 /**
  * 日志级别表 controller控制器

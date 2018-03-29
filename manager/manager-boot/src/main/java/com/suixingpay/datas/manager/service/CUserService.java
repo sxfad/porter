@@ -30,4 +30,6 @@ public interface CUserService {
     List<CUser> list();
 
     List<CUser> selectByJobTasksId(Long JobTasksId);
+
+    List<CUser> selectByAlarmId(Long alarmId);
 }

@@ -8,6 +8,7 @@ import com.suixingpay.datas.manager.core.mapper.AlarmMapper;
 import com.suixingpay.datas.manager.service.AlarmPluginService;
 import com.suixingpay.datas.manager.service.AlarmService;
 import com.suixingpay.datas.manager.service.AlarmUserService;
+import com.suixingpay.datas.manager.service.CUserService;
 import com.suixingpay.datas.manager.web.page.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,9 @@ public class AlarmServiceImpl implements AlarmService {
 
     @Autowired
     private AlarmUserService alarmUserService;
+
+    @Autowired
+    private CUserService cuserService;
 
     @Override
     public Alarm selectFinallyOne() {
@@ -66,7 +70,10 @@ public class AlarmServiceImpl implements AlarmService {
 
     @Override
     public Alarm selectById(Long id) {
-        return alarmMapper.selectById(id);
+        Alarm alarm = alarmMapper.selectById(id);
+        alarm.setAlarmPlugins(alarmPluginService.selectByAlarmId(id));
+        alarm.setCusers(cuserService.selectByAlarmId(id));
+        return alarm;
     }
 
     @Override

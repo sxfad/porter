@@ -72,6 +72,9 @@ public class Alarm implements java.io.Serializable {
      */
     private List<AlarmUser> alarmUsers = new ArrayList<>();
 
+    /** 用户列表. */
+    private List<CUser> cusers = new ArrayList<>();
+
     /**
      * 主键 get方法.
      */
@@ -213,4 +216,13 @@ public class Alarm implements java.io.Serializable {
     public void setAlarmUsers(List<AlarmUser> alarmUsers) {
         this.alarmUsers = alarmUsers;
     }
+
+    public List<CUser> getCusers() {
+        return cusers;
+    }
+
+    public void setCusers(List<CUser> cusers) {
+        this.cusers = cusers;
+    }
+
 }

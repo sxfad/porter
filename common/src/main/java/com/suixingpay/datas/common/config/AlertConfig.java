@@ -24,11 +24,34 @@ import java.util.Map;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月23日 10:29
  */
 public class AlertConfig {
-    //second
-    @Getter @Setter private Integer frequencyOfSeconds = 60;
+    
+    
+    public AlertConfig() {
+        
+    }
+    
+    public AlertConfig(AlertPlugin strategy,AlertReceiver[] receiver,Map<String, String> client) {
+        this.strategy = strategy;
+        this.receiver = receiver;
+        this.client = client;
+    }
+
+    // second
+    @Getter
+    @Setter
+    private Integer frequencyOfSeconds = 60;
+
     @JSONField(deserialize = false, serialize = false)
-    @Getter @Setter private AlertPlugin strategy;
-    @Getter @Setter private AlertReceiver[] receiver = new AlertReceiver[0];
-    //告警客户端
-    @Getter @Setter private Map<String, String> client;
+    @Getter
+    @Setter
+    private AlertPlugin strategy;
+
+    @Getter
+    @Setter
+    private AlertReceiver[] receiver = new AlertReceiver[0];
+
+    // 告警客户端
+    @Getter
+    @Setter
+    private Map<String, String> client;
 }
