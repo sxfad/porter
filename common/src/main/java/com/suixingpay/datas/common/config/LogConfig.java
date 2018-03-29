@@ -19,6 +19,16 @@ import lombok.Setter;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月24日 13:20
  */
 public class LogConfig {
-    //日志打印级别
-    @Setter @Getter private String level;
+
+    public LogConfig() {
+    }
+
+    public LogConfig(String level) {
+        this.level = level;
+    }
+
+    // 日志打印级别
+    @Setter
+    @Getter
+    private String level;
 }

@@ -1,5 +1,11 @@
 package com.suixingpay.datas.manager.controller;
 
+import com.suixingpay.datas.common.cluster.ClusterProviderProxy;
+import com.suixingpay.datas.common.cluster.command.LogConfigPushCommand;
+import com.suixingpay.datas.common.cluster.command.NodeOrderPushCommand;
+import com.suixingpay.datas.common.config.LogConfig;
+import com.suixingpay.datas.common.config.NodeCommandConfig;
+import com.suixingpay.datas.common.node.NodeCommandType;
 import com.suixingpay.datas.manager.core.entity.LogGrade;
 import com.suixingpay.datas.manager.service.LogGradeService;
 import com.suixingpay.datas.manager.web.message.ResponseMessage;
@@ -37,11 +43,15 @@ public class LogGradeController {
      * @date 2018/3/16 上午11:03
      * @param: [logGrade]
      * @return: com.suixingpay.datas.manager.web.message.ResponseMessage
+     * @throws Exception 
      */
     @PostMapping
     @ApiOperation(value = "新增", notes = "新增")
-    public ResponseMessage add(@RequestBody LogGrade logGrade) {
+    public ResponseMessage add(@RequestBody LogGrade logGrade) throws Exception {
         Integer number = logGradeService.insert(logGrade);
+        if(number==1) {
+            ClusterProviderProxy.INSTANCE.broadcast(new LogConfigPushCommand(new LogConfig(logGrade.getLogLevel().getCode())));
+        }
         return ok(number);
     }
 
