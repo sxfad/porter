@@ -204,7 +204,7 @@ public class JobTasksServiceImpl implements JobTasksService {
     private AlertReceiver[] receiver(List<CUser> cusers) {
         AlertReceiver[] alertReceivers = new AlertReceiver[cusers.size()];
         for (int i = 0; i < cusers.size(); i++) {
-            alertReceivers[i] = null;
+            alertReceivers[i] = new AlertReceiver(cusers.get(0).getNickname(), cusers.get(0).getEmail(), cusers.get(0).getMobile());
         }
         return alertReceivers;
     }

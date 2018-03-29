@@ -20,7 +20,24 @@ import lombok.Setter;
  */
 
 public class AlertReceiver {
-    @Setter @Getter private String realName;
-    @Setter @Getter private String email;
-    @Setter @Getter private String phone;
+
+    public AlertReceiver() {
+
+    }
+
+    public AlertReceiver(String realName, String email, String phone) {
+        this.realName = realName;
+        this.email = email;
+        this.phone = phone;
+    }
+
+    @Setter
+    @Getter
+    private String realName;
+    @Setter
+    @Getter
+    private String email;
+    @Setter
+    @Getter
+    private String phone;
 }
