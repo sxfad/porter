@@ -18,6 +18,7 @@ import com.suixingpay.datas.manager.service.DataTableService;
 import com.suixingpay.datas.manager.service.DbSelectService;
 import com.suixingpay.datas.manager.service.JobTasksService;
 import com.suixingpay.datas.manager.service.JobTasksTableService;
+import com.suixingpay.datas.manager.service.JobTasksUserService;
 import com.suixingpay.datas.manager.web.page.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,11 +49,16 @@ public class JobTasksServiceImpl implements JobTasksService {
     @Autowired
     private JobTasksTableService jobTasksTableService;
 
+    @Autowired
+    private JobTasksUserService jobTasksUserService;
+
     @Override
     @Transactional
     public Integer insert(JobTasks jobTasks) {
         //新增 JobTasks
         Integer number = jobTasksMapper.insert(jobTasks);
+        //新增 JobTasksUser
+        jobTasksUserService.insertList(jobTasks);
         //新增 JobTasksTable
         jobTasksTableService.insertList(jobTasks);
         return number;
