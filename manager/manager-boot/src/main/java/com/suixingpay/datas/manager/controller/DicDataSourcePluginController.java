@@ -45,41 +45,4 @@ public class DicDataSourcePluginController {
         List<DicDataSourcePlugin> dicDataSourcePluginList = dicDataSourcePluginService.findByType(sourceType);
         return ok(dicDataSourcePluginList);
     }
-
-    /*@PostMapping
-    @ApiOperation(value = "新增", notes = "新增")
-    public ResponseMessage add(@RequestBody DicDataSourcePlugin dicDataSourcePlugin) {
-        Integer number = dicDataSourcePluginService.insert(dicDataSourcePlugin);
-        return ok(number);
-    }
-
-    @PutMapping("/{id}")
-    @ApiOperation(value = "修改", notes = "修改")
-    public ResponseMessage update(@PathVariable("id") Long id, @RequestBody DicDataSourcePlugin dicDataSourcePlugin) {
-        Integer number = dicDataSourcePluginService.update(id, dicDataSourcePlugin);
-        return ok(number);
-    }
-
-    @DeleteMapping("/{id}")
-    @ApiOperation(value = "删除", notes = "删除")
-    public ResponseMessage delete(@PathVariable("id") Long id) {
-        dicDataSourcePluginService.delete(id);
-        return ok();
-    }
-
-    @GetMapping("/{id}")
-    @ApiOperation(value = "查询明细", notes = "查询明细")
-    public ResponseMessage info(@PathVariable("id") Long id) {
-        DicDataSourcePlugin dicDataSourcePlugin = dicDataSourcePluginService.selectById(id);
-        return ok(dicDataSourcePlugin);
-    }
-
-    @ApiOperation(value = "查询列表", notes = "查询列表")
-    @GetMapping
-    public ResponseMessage list(@RequestParam(value = "pageNo", required = false) Integer pageNo,
-                                @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-        Page<DicDataSourcePlugin> page = dicDataSourcePluginService.page(new Page<DicDataSourcePlugin>(pageNo, pageSize));
-        return ok(page);
-    }*/
-
 }

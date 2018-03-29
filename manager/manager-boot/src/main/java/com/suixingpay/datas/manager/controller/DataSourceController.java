@@ -131,40 +131,4 @@ public class DataSourceController {
         return ok(page);
     }
 
-    /*@PostMapping
-    @ApiOperation(value = "新增", notes = "新增")
-    public ResponseMessage add(@RequestBody DataSource dataSource) {
-        Integer number = dataSourceService.insert(dataSource);
-        return ok(number);
-    }
-
-    @PutMapping("/{id}")
-    @ApiOperation(value = "修改", notes = "修改")
-    public ResponseMessage update(@PathVariable("id") Long id, @RequestBody DataSource dataSource) {
-        Integer number = dataSourceService.update(id, dataSource);
-        return ok(number);
-    }
-
-    @DeleteMapping("/{id}")
-    @ApiOperation(value = "删除", notes = "删除")
-    public ResponseMessage delete(@PathVariable("id") Long id) {
-        dataSourceService.delete(id);
-        return ok();
-    }
-
-    @GetMapping("/{id}")
-    @ApiOperation(value = "查询明细", notes = "查询明细")
-    public ResponseMessage info(@PathVariable("id") Long id) {
-        DataSource dataSource = dataSourceService.selectById(id);
-        return ok(dataSource);
-    }
-
-    @ApiOperation(value = "查询列表", notes = "查询列表")
-    @GetMapping
-    public ResponseMessage list(@RequestParam(value = "pageNo", required = false) Integer pageNo,
-            @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-        Page<DataSource> page = dataSourceService.page(new Page<DataSource>(pageNo, pageSize));
-        return ok(page);
-    }*/
-
 }

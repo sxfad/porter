@@ -134,8 +134,8 @@
                   "targetDataTablesId": 1,
                   "targetDataTablesName": "载入数据表",
                   "targetLoadAdt": "载入插件",
-                  "userId": [
-                    0
+                  "userIds": [
+                    0,1,2,4
                   ]
                 }
     开始任务(推送)：

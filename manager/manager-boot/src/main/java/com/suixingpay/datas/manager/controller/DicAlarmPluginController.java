@@ -31,42 +31,6 @@ public class DicAlarmPluginController {
     @Autowired
     protected DicAlarmPluginService dicAlarmPluginService;
 
-    /*@PostMapping
-    @ApiOperation(value = "新增", notes = "新增")
-    public ResponseMessage add(@RequestBody DicAlarmPlugin dicAlarmPlugin) {
-        Integer number = dicAlarmPluginService.insert(dicAlarmPlugin);
-        return ok(number);
-    }
-
-    @PutMapping("/{id}")
-    @ApiOperation(value = "修改", notes = "修改")
-    public ResponseMessage update(@PathVariable("id") Long id, @RequestBody DicAlarmPlugin dicAlarmPlugin) {
-        Integer number = dicAlarmPluginService.update(id, dicAlarmPlugin);
-        return ok(number);
-    }
-
-    @DeleteMapping("/{id}")
-    @ApiOperation(value = "删除", notes = "删除")
-    public ResponseMessage delete(@PathVariable("id") Long id) {
-        dicAlarmPluginService.delete(id);
-        return ok();
-    }
-
-    @GetMapping("/{id}")
-    @ApiOperation(value = "查询明细", notes = "查询明细")
-    public ResponseMessage info(@PathVariable("id") Long id) {
-        DicAlarmPlugin dicAlarmPlugin = dicAlarmPluginService.selectById(id);
-        return ok(dicAlarmPlugin);
-    }
-
-    @ApiOperation(value = "查询列表", notes = "查询列表")
-    @GetMapping
-    public ResponseMessage list(@RequestParam(value = "pageNo", required = false) Integer pageNo,
-            @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-        Page<DicAlarmPlugin> page = dicAlarmPluginService.page(new Page<DicAlarmPlugin>(pageNo, pageSize));
-        return ok(page);
-    }*/
-
     @GetMapping("/{alerttype}")
     @ApiOperation(value = "查询明细", notes = "查询明细")
     public ResponseMessage findByAlertType(@PathVariable("alerttype") String alertType) {
