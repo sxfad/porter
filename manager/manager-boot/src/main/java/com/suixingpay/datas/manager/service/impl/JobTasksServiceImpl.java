@@ -184,7 +184,7 @@ public class JobTasksServiceImpl implements JobTasksService {
         DataSource tarDataSource = dataSourceService.selectById(tarDataTable.getSourceId());
 
         // 告警人id列表
-        List<CUser> cusers = null;
+        List<CUser> cusers = jobTasks.getUsers();
         // 表对照关系
         List<JobTasksTable> tables = jobTasks.getTables();
 

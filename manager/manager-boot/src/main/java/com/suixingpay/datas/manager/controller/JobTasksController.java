@@ -1,5 +1,7 @@
 package com.suixingpay.datas.manager.controller;
 
+import com.suixingpay.datas.common.cluster.ClusterProviderProxy;
+import com.suixingpay.datas.common.cluster.command.TaskPushCommand;
 import com.suixingpay.datas.common.dic.TaskStatusType;
 import com.suixingpay.datas.manager.core.entity.JobTasks;
 import com.suixingpay.datas.manager.service.JobTasksService;
@@ -125,11 +127,15 @@ public class JobTasksController {
      * @date 2018/3/28 上午11:27
      * @param: []
      * @return: com.suixingpay.datas.manager.web.message.ResponseMessage
+     * @throws Exception 
      */
     @PutMapping("/{id}")
     @ApiOperation(value = "修改任务状态", notes = "TaskStatusType 枚举类: NEW、STOPPED、WORKING")
-    public ResponseMessage updateState(@PathVariable("id") Long id, @RequestParam("taskStatusType") TaskStatusType taskStatusType) {
+    public ResponseMessage updateState(@PathVariable("id") Long id, @RequestParam("taskStatusType") TaskStatusType taskStatusType) throws Exception {
         Integer number = jobTasksService.updateState(id, taskStatusType);
+        if(taskStatusType==TaskStatusType.WORKING||taskStatusType==TaskStatusType.STOPPED) {
+            ClusterProviderProxy.INSTANCE.broadcast(new TaskPushCommand(jobTasksService.fitJobTask(id, taskStatusType)));
+        }
         return ok(number);
     }
 
@@ -147,40 +153,4 @@ public class JobTasksController {
         Integer number = jobTasksService.delete(id);
         return ok(number);
     }
-/*    @PostMapping
-    @ApiOperation(value = "新增", notes = "新增")
-    public ResponseMessage add(@RequestBody JobTasks jobTasks) {
-        Integer number = jobTasksService.insert(jobTasks);
-        return ok(number);
-    }
-
-    @PutMapping("/{id}")
-    @ApiOperation(value = "修改", notes = "修改")
-    public ResponseMessage update(@PathVariable("id") Long id, @RequestBody JobTasks jobTasks) {
-        Integer number = jobTasksService.update(id, jobTasks);
-        return ok(number);
-    }
-
-    @DeleteMapping("/{id}")
-    @ApiOperation(value = "删除", notes = "删除")
-    public ResponseMessage delete(@PathVariable("id") Long id) {
-        jobTasksService.delete(id);
-        return ok();
-    }
-
-    @GetMapping("/{id}")
-    @ApiOperation(value = "查询明细", notes = "查询明细")
-    public ResponseMessage info(@PathVariable("id") Long id) {
-        JobTasks jobTasks = jobTasksService.selectById(id);
-        return ok(jobTasks);
-    }
-
-    @ApiOperation(value = "查询列表", notes = "查询列表")
-    @GetMapping
-    public ResponseMessage list(@RequestParam(value = "pageNo", required = false) Integer pageNo,
-                                @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-        Page<JobTasks> page = jobTasksService.page(new Page<JobTasks>(pageNo, pageSize));
-        return ok(page);
-    }*/
-
 }

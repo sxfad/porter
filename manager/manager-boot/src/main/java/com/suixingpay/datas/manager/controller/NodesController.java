@@ -1,12 +1,7 @@
 package com.suixingpay.datas.manager.controller;
 
-import com.suixingpay.datas.common.dic.NodeStatusType;
-import com.suixingpay.datas.manager.core.entity.Nodes;
-import com.suixingpay.datas.manager.service.NodesService;
-import com.suixingpay.datas.manager.web.message.ResponseMessage;
-import com.suixingpay.datas.manager.web.page.Page;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import static com.suixingpay.datas.manager.web.message.ResponseMessage.ok;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +12,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import static com.suixingpay.datas.manager.web.message.ResponseMessage.ok;
+import com.suixingpay.datas.common.cluster.ClusterProviderProxy;
+import com.suixingpay.datas.common.cluster.command.NodeOrderPushCommand;
+import com.suixingpay.datas.common.config.NodeCommandConfig;
+import com.suixingpay.datas.common.dic.NodeStatusType;
+import com.suixingpay.datas.common.node.NodeCommandType;
+import com.suixingpay.datas.manager.core.entity.Nodes;
+import com.suixingpay.datas.manager.service.NodesService;
+import com.suixingpay.datas.manager.web.message.ResponseMessage;
+import com.suixingpay.datas.manager.web.page.Page;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 /**
  * 节点信息表 controller控制器
@@ -88,8 +94,8 @@ public class NodesController {
     public ResponseMessage taskPushState(@RequestParam(value = "id", required = true) Long id, @RequestParam(value = "taskPushState", required = true) NodeStatusType taskPushState) throws Exception {
         Integer i = nodesService.taskPushState(id, taskPushState);
         if (i == 1) {
-            System.out.println("推送任务 运行中|暂停:" + id);
-            //ClusterProviderProxy.INSTANCE.broadcast(new NodeOrderPushCommand(new NodeCommandConfig(id.toString(), taskPushState, NodeCommandType.CHANGE_STATUS)));
+            //System.out.println("推送任务 运行中|暂停:" + id);
+            ClusterProviderProxy.INSTANCE.broadcast(new NodeOrderPushCommand(new NodeCommandConfig(id.toString(), taskPushState, NodeCommandType.CHANGE_STATUS)));
             Nodes nodes = nodesService.selectById(id);
             return ok(nodes);
         }
@@ -99,8 +105,8 @@ public class NodesController {
     @PostMapping("/stoptask")
     @ApiOperation(value = "停止任务", notes = "停止任务")
     public ResponseMessage stopTask(@RequestParam(value = "id", required = true) Long id) throws Exception {
-        System.out.println("停止任务:" + id);
-        //ClusterProviderProxy.INSTANCE.broadcast(new NodeOrderPushCommand(new NodeCommandConfig(id.toString(), NodeStatusType.SUSPEND, NodeCommandType.RELEASE_WORK)));
+        //System.out.println("停止任务:" + id);
+        ClusterProviderProxy.INSTANCE.broadcast(new NodeOrderPushCommand(new NodeCommandConfig(id.toString(), NodeStatusType.SUSPEND, NodeCommandType.RELEASE_WORK)));
         return ok();
     }
 
