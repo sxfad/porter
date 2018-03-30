@@ -79,12 +79,14 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
         DataConsumerConfig consumerConfig = config.getConsumer();
         //创建任务根节点
         String taskPath = ZK_PATH + "/" + config.getTaskId();
+        String distPath = ZK_PATH + "/dist";
         client.createWhenNotExists(taskPath, false, false, null);
+        client.createWhenNotExists(distPath, false, false, null);
         //拆分同步数据来源泳道
         List<SourceConfig> sourceConfigs = SourceConfig.getConfig(consumerConfig.getSource()).swamlanes();
         //遍历泳道
         for (SourceConfig sc : sourceConfigs) {
-            String pushPath = taskPath + "/dist/" + sc.getSwimlaneId();
+            String pushPath = distPath + "/" + sc.getSwimlaneId();
             String errorPath = taskPath + "/error/" + sc.getSwimlaneId();
             //为每个泳道填充参数
             config.getConsumer().setSource(sc.getProperties());
