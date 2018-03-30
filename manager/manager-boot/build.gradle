@@ -2,7 +2,7 @@ apply plugin: 'application'
 archivesBaseName = 'datas-manager'
 mainClassName = "com.suixingpay.datas.manager.ManagerBootApplication"
 
-applicationDefaultJvmArgs = ["-Dapp.home=DEFINE_APP_HOME/", "-Xms256MB", "-Xmx256MB"]
+applicationDefaultJvmArgs = ["-Dapp.home=DEFINE_APP_HOME/", "-Xms256M", "-Xmx256M"]
 
 sourceSets {
     main {
