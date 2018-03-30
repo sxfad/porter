@@ -125,9 +125,11 @@ public class ETLRowTransformer implements Transformer {
         try {
             table  = loader.findTable(finalSchema, finalTable);
         } catch (Throwable e) {
+            String error = "查询不到目标仓库表结构" + finalSchema + ". " + finalTable;
             //e.printStackTrace();
-            LOGGER.error("查询目标仓库表结构{}.{}出错!", finalSchema, finalTable, e);
-            if (TaskStopTriggerException.isMatch(e)) throw new TaskStopTriggerException(e);
+            LOGGER.error(error, e);
+            //if (TaskStopTriggerException.isMatch(e))
+            throw new TaskStopTriggerException(error + ";error:" + e.getMessage());
         }
         return table;
     }

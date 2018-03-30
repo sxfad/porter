@@ -43,10 +43,6 @@ public class JdbcSingleLoader extends BaseJdbcLoader {
             //插入影响行数
             affectRow.add(new SubmitStatObject(row.getFinalSchema(), row.getFinalTable(), row.getFinalOpType(),
                     affect, row.getPosition(), row.getOpTime()));
-
-            if (affect < 1) {
-                LOGGER.error("position:{}", row.getPosition().render());
-            }
         }
         return new ImmutablePair(Boolean.TRUE, affectRow);
     }
