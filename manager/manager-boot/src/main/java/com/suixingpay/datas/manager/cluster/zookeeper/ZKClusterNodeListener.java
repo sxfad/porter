@@ -124,8 +124,8 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements N
     @Override
     public void push(NodeOrderPushCommand command) throws Exception {
         String nodePath = ZK_PATH + "/" + command.getConfig().getNodeId();
-        String baseOrderPath = "/" + nodePath + "/order";
-        String orderPath = "/" + baseOrderPath + UUID.randomUUID().toString();
+        String baseOrderPath = nodePath + "/order";
+        String orderPath = baseOrderPath + "/" + UUID.randomUUID().toString();
 
         client.createWhenNotExists(nodePath, false, true, null);
         client.createWhenNotExists(baseOrderPath, false, true, null);
