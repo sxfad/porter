@@ -139,7 +139,7 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener  implements 
                 boolean access = false;
                 //仅仅监控应用自身
                 //event.getEventType() == EventType.ONLINE &&
-                if (access && event.getPath().equals(getPath() + "/" + NodeContext.INSTANCE.getNodeId())) {
+                if (event.getPath().contains(getPath() + "/" + NodeContext.INSTANCE.getNodeId())) {
                     access = true;
                 }
                 return access;
