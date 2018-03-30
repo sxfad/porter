@@ -40,8 +40,8 @@ public enum ConsumeConverterPlugin {
         private static final long serialVersionUID = 1L;
 
         {
-            put(CANAL_ROW.code, CANAL_ROW.name);
-            put(OGG_JSON.code, OGG_JSON.name);
+            put("CANAL_ROW", CANAL_ROW.name);
+            put("OGG_JSON"+"", OGG_JSON.name);
         }
     };
 

@@ -42,10 +42,10 @@ public enum LoaderPlugin {
         private static final long serialVersionUID = 1L;
 
         {
-            put(JDBC_BATCH.code, JDBC_BATCH.name);
-            put(JDBC_SINGLE.code, JDBC_SINGLE.name);
-            put(KUDU_SINGLE.code, KUDU_SINGLE.name);
-            put(JDBC_SQL_PRINT.code, JDBC_SQL_PRINT.name);
+            put("JDBC_BATCH", JDBC_BATCH.name);
+            put("JDBC_SINGLE", JDBC_SINGLE.name);
+            put("KUDU_SINGLE", KUDU_SINGLE.name);
+            put("JDBC_SQL_PRINT", JDBC_SQL_PRINT.name);
         }
     };
 }

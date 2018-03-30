@@ -41,8 +41,8 @@ public enum ConsumerPlugin {
         private static final long serialVersionUID = 1L;
 
         {
-            put(CANAL.code, CANAL.name);
-            put(KAFKA.code, KAFKA.name);
+            put("CANAL", CANAL.name);
+            put("KAFKA", KAFKA.name);
         }
     };
 }
