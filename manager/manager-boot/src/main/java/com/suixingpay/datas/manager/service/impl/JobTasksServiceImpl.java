@@ -189,7 +189,7 @@ public class JobTasksServiceImpl implements JobTasksService {
         List<JobTasksTable> tables = jobTasks.getTables();
 
         // 来源数据构造函数
-        DataConsumerConfig dataConsumerConfig = new DataConsumerConfig(sourceConsumeAdt, sourceConvertAdt, "",
+        DataConsumerConfig dataConsumerConfig = new DataConsumerConfig(sourceConsumeAdt, sourceConvertAdt, jobTasks.getSourceTablesName(),
                 dataSourceMap(souDataSource), dataSourceMap(syncDataSource));
         // 目标数据构造函数
         DataLoaderConfig loader = new DataLoaderConfig(targetLoadAdt, dataSourceMap(tarDataSource));
