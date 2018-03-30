@@ -43,7 +43,7 @@ public class JdbcPrintSqlLoader extends BaseJdbcLoader {
             //更新目标仓储
             List<Pair<String, Object[]>> sqlList = buildSql(row);
             sqlList.forEach(p -> {
-                LOGGER.info(p.getLeft());
+                LOGGER.info("sql:{}, params:{}", p.getLeft(), p.getRight());
             });
             affectRow.add(new SubmitStatObject(row.getFinalSchema(), row.getFinalTable(), row.getFinalOpType(),
                     1, row.getPosition(), row.getOpTime()));
