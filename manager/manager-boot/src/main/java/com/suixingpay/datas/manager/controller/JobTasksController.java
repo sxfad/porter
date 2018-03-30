@@ -99,7 +99,7 @@ public class JobTasksController {
     @GetMapping(value = "fields")
     @ApiOperation(value = "查询表字段", notes = "查询表字段")
     public ResponseMessage fields(@RequestParam(value = "sourceId", required = true) @ApiParam(value = "数据源id") Long sourceId,
-                                  @RequestParam(value = "tablesId", required = true) @ApiParam(value = "数据表组id") Long tablesId,
+                                  @RequestParam(value = "tablesId", required = false) @ApiParam(value = "数据表组id") Long tablesId,
                                   @RequestParam(value = "tableAllName", required = true) @ApiParam(value = "数据表全名") String tableAllName) {
         List<String> fields = jobTasksService.fields(sourceId, tablesId, tableAllName);
         return ok(fields);

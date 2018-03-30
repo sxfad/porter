@@ -17,6 +17,9 @@ import com.suixingpay.datas.common.config.DataConsumerConfig;
 import com.suixingpay.datas.common.config.DataLoaderConfig;
 import com.suixingpay.datas.common.config.TableMapperConfig;
 import com.suixingpay.datas.common.config.TaskConfig;
+import com.suixingpay.datas.common.dic.ConsumeConverterPlugin;
+import com.suixingpay.datas.common.dic.ConsumerPlugin;
+import com.suixingpay.datas.common.dic.LoaderPlugin;
 import com.suixingpay.datas.common.dic.TaskStatusType;
 import com.suixingpay.datas.manager.core.dto.JDBCVo;
 import com.suixingpay.datas.manager.core.entity.CUser;
@@ -165,9 +168,9 @@ public class JobTasksServiceImpl implements JobTasksService {
     public TaskConfig fitJobTask(Long id, TaskStatusType status) {
         JobTasks jobTasks = this.selectById(id);
         // 来源数据-消费插件.
-        String sourceConsumeAdt = jobTasks.getSourceConsumeAdt();
+        ConsumerPlugin sourceConsumeAdt = jobTasks.getSourceConsumeAdt();
         // 来源数据-消费转换插件.
-        String sourceConvertAdt = jobTasks.getSourceConvertAdt();
+        ConsumeConverterPlugin sourceConvertAdt = jobTasks.getSourceConvertAdt();
         // 来源数据-元数据表分组id.
         Long sourceDataTablesId = jobTasks.getSourceDataTablesId();
         DataTable souDataTable = dataTableService.selectById(sourceDataTablesId);
@@ -177,7 +180,7 @@ public class JobTasksServiceImpl implements JobTasksService {
         DataSource syncDataSource = dataSourceService.selectById(sourceDataId);
 
         // 目标数据-载入插件.
-        String targetLoadAdt = jobTasks.getTargetLoadAdt();
+        LoaderPlugin targetLoadAdt = jobTasks.getTargetLoadAdt();
         // 目标数据-载入源id.
         Long targetDataTablesId = jobTasks.getTargetDataTablesId();
         DataTable tarDataTable = dataTableService.selectById(targetDataTablesId);
@@ -189,10 +192,10 @@ public class JobTasksServiceImpl implements JobTasksService {
         List<JobTasksTable> tables = jobTasks.getTables();
 
         // 来源数据构造函数
-        DataConsumerConfig dataConsumerConfig = new DataConsumerConfig(sourceConsumeAdt, sourceConvertAdt, "",
+        DataConsumerConfig dataConsumerConfig = new DataConsumerConfig(sourceConsumeAdt.getCode(), sourceConvertAdt.getCode(), jobTasks.getSourceTablesName(),
                 dataSourceMap(souDataSource), dataSourceMap(syncDataSource));
         // 目标数据构造函数
-        DataLoaderConfig loader = new DataLoaderConfig(targetLoadAdt, dataSourceMap(tarDataSource));
+        DataLoaderConfig loader = new DataLoaderConfig(targetLoadAdt.getCode(), dataSourceMap(tarDataSource));
         // 表对应关系映射
         List<TableMapperConfig> tableMapper = tableMapperList(tables);
         // 告警用户信息

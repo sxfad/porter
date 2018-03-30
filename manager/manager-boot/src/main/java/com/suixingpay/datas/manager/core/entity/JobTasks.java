@@ -1,5 +1,8 @@
 package com.suixingpay.datas.manager.core.entity;
 
+import com.suixingpay.datas.common.dic.ConsumeConverterPlugin;
+import com.suixingpay.datas.common.dic.ConsumerPlugin;
+import com.suixingpay.datas.common.dic.LoaderPlugin;
 import com.suixingpay.datas.common.dic.TaskStatusType;
 
 import java.util.ArrayList;
@@ -36,12 +39,12 @@ public class JobTasks implements java.io.Serializable {
     /**
      * 来源数据-消费插件.
      */
-    private String sourceConsumeAdt;
+    private ConsumerPlugin sourceConsumeAdt;
 
     /**
      * 来源数据-消费转换插件.
      */
-    private String sourceConvertAdt;
+    private ConsumeConverterPlugin sourceConvertAdt;
 
     /**
      * 来源数据-元数据表分组id.
@@ -66,7 +69,7 @@ public class JobTasks implements java.io.Serializable {
     /**
      * 目标数据-载入插件.
      */
-    private String targetLoadAdt;
+    private LoaderPlugin targetLoadAdt;
 
     /**
      * 目标数据-载入源id.
@@ -173,29 +176,29 @@ public class JobTasks implements java.io.Serializable {
     /**
      * 来源数据-消费插件 get方法.
      */
-    public String getSourceConsumeAdt() {
-        return sourceConsumeAdt == null ? null : sourceConsumeAdt.trim();
+    public ConsumerPlugin getSourceConsumeAdt() {
+        return sourceConsumeAdt;
     }
 
     /**
      * 来源数据-消费插件 set方法.
      */
-    public void setSourceConsumeAdt(String sourceConsumeAdt) {
-        this.sourceConsumeAdt = sourceConsumeAdt == null ? null : sourceConsumeAdt.trim();
+    public void setSourceConsumeAdt(ConsumerPlugin sourceConsumeAdt) {
+        this.sourceConsumeAdt = sourceConsumeAdt;
     }
 
     /**
      * 来源数据-消费转换插件 get方法.
      */
-    public String getSourceConvertAdt() {
-        return sourceConvertAdt == null ? null : sourceConvertAdt.trim();
+    public ConsumeConverterPlugin getSourceConvertAdt() {
+        return sourceConvertAdt;
     }
 
     /**
      * 来源数据-消费转换插件 set方法.
      */
-    public void setSourceConvertAdt(String sourceConvertAdt) {
-        this.sourceConvertAdt = sourceConvertAdt == null ? null : sourceConvertAdt.trim();
+    public void setSourceConvertAdt(ConsumeConverterPlugin sourceConvertAdt) {
+        this.sourceConvertAdt = sourceConvertAdt;
     }
 
     /**
@@ -257,15 +260,15 @@ public class JobTasks implements java.io.Serializable {
     /**
      * 目标数据-载入插件 get方法.
      */
-    public String getTargetLoadAdt() {
-        return targetLoadAdt == null ? null : targetLoadAdt.trim();
+    public LoaderPlugin getTargetLoadAdt() {
+        return targetLoadAdt;
     }
 
     /**
      * 目标数据-载入插件 set方法.
      */
-    public void setTargetLoadAdt(String targetLoadAdt) {
-        this.targetLoadAdt = targetLoadAdt == null ? null : targetLoadAdt.trim();
+    public void setTargetLoadAdt(LoaderPlugin targetLoadAdt) {
+        this.targetLoadAdt = targetLoadAdt;
     }
 
     /**

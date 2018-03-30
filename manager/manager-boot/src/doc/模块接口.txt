@@ -73,7 +73,7 @@
                 注释：查 KAFKA 和 CANAL 数据源类型下的数据源信息
         第三步:目标数据信息-数据目标端{载入插件LoaderPlugin、目标数据表组}
             目标数据表组:
-                路径：/datatable/datas(get)
+                路径：/datatable/targets(get)
                 注释：查全部数据表信息
         第四步:数据映射关系 -来源（表名 - 字段）=>目标（表名 - 字段） =》目标数据
 
