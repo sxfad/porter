@@ -79,7 +79,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
         DataConsumerConfig consumerConfig = config.getConsumer();
         //创建任务根节点
         String taskPath = ZK_PATH + "/" + config.getTaskId();
-        String distPath = ZK_PATH + "/dist";
+        String distPath = taskPath + "/dist";
         client.createWhenNotExists(taskPath, false, false, null);
         client.createWhenNotExists(distPath, false, false, null);
         //拆分同步数据来源泳道

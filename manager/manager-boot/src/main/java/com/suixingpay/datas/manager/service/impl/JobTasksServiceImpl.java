@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.suixingpay.datas.common.alert.AlertReceiver;
 import com.suixingpay.datas.common.config.DataConsumerConfig;
 import com.suixingpay.datas.common.config.DataLoaderConfig;
+import com.suixingpay.datas.common.config.SourceConfig;
 import com.suixingpay.datas.common.config.TableMapperConfig;
 import com.suixingpay.datas.common.config.TaskConfig;
 import com.suixingpay.datas.common.dic.ConsumeConverterPlugin;
@@ -193,7 +194,7 @@ public class JobTasksServiceImpl implements JobTasksService {
 
         // 来源数据构造函数
         DataConsumerConfig dataConsumerConfig = new DataConsumerConfig(sourceConsumeAdt.getCode(), sourceConvertAdt.getCode(), jobTasks.getSourceTablesName(),
-                dataSourceMap(souDataSource), dataSourceMap(syncDataSource));
+                dataSourceMap(syncDataSource),dataSourceMap(souDataSource));
         // 目标数据构造函数
         DataLoaderConfig loader = new DataLoaderConfig(targetLoadAdt.getCode(), dataSourceMap(tarDataSource));
         // 表对应关系映射
@@ -216,8 +217,8 @@ public class JobTasksServiceImpl implements JobTasksService {
         List<TableMapperConfig> tableList = new ArrayList<>();
         TableMapperConfig tableMapperConfig = null;
         for (JobTasksTable jobTasksTable : tables) {
-            String[] schema = jobTasksTable.getSourceTableName().split(".");
-            String[] table = jobTasksTable.getTargetTableName().split(".");
+            String[] schema = {jobTasksTable.getSourceTableName().split("[.]")[0],jobTasksTable.getTargetTableName().split("[.]")[0]};
+            String[] table = {jobTasksTable.getSourceTableName().split("[.]")[1],jobTasksTable.getTargetTableName().split("[.]")[1]};
             Map<String, String> column = fieldsMap(jobTasksTable.getFields());
             tableMapperConfig = new TableMapperConfig(schema, table, column);
             tableList.add(tableMapperConfig);
@@ -239,6 +240,7 @@ public class JobTasksServiceImpl implements JobTasksService {
         for (DataSourcePlugin dataSourcePlugin : plugins) {
             sourceMap.put(dataSourcePlugin.getFieldCode(), dataSourcePlugin.getFieldValue());
         }
+        sourceMap.put(SourceConfig.SOURCE_TYPE_KEY, souDataSource.getDataType().getCode());
         return sourceMap;
     }
 }

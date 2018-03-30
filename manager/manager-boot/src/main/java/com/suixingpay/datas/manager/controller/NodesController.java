@@ -93,13 +93,13 @@ public class NodesController {
     @ApiOperation(value = "任务状态推送", notes = "任务状态推送")
     public ResponseMessage taskPushState(@RequestParam(value = "id", required = true) Long id, @RequestParam(value = "taskPushState", required = true) NodeStatusType taskPushState) throws Exception {
         Integer i = nodesService.taskPushState(id, taskPushState);
-        if (i == 1) {
+        //if (i == 1) {
             //System.out.println("推送任务 运行中|暂停:" + id);
             ClusterProviderProxy.INSTANCE.broadcast(new NodeOrderPushCommand(new NodeCommandConfig(id.toString(), taskPushState, NodeCommandType.CHANGE_STATUS)));
             Nodes nodes = nodesService.selectById(id);
             return ok(nodes);
-        }
-        return ok(false);
+        //}
+        //return ok(false);
     }
 
     @PostMapping("/stoptask")

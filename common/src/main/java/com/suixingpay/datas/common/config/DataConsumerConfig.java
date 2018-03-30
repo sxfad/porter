@@ -31,8 +31,8 @@ public class DataConsumerConfig {
      * @param consumerName 消费插件
      * @param converter 消费转换插件
      * @param includes 期望处理的表 来源表 schema.table,schema.table
-     * @param source 消费数据的数据源
-     * @param metaSource 元数据查询的数据源
+     * @param source 消费元数据的数据源
+     * @param metaSource 同步数据数据源
      */
     public DataConsumerConfig(String consumerName, String converter, String includes, Map<String, String> source, Map<String, String> metaSource) {
         this.consumerName = consumerName;
@@ -71,7 +71,7 @@ public class DataConsumerConfig {
     @Setter
     private Map<String, String> source;
 
-    // 元数据查询的数据源
+    // 同步数据查询的数据源 cancel kafka
     // 公用配置
     @Getter
     @Setter
