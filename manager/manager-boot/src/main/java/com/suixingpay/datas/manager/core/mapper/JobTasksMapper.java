@@ -28,7 +28,7 @@ public interface JobTasksMapper {
      *
      * @param jobTasks
      */
-    Integer update(@Param("id") Long id, @Param("jobTasks") JobTasks jobTasks);
+    Integer update(@Param("jobTasks") JobTasks jobTasks);
 
     /**
      * 逻辑刪除

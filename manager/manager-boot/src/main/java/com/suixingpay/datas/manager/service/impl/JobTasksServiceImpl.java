@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.suixingpay.datas.manager.service.JobTasksFieldService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -69,6 +70,9 @@ public class JobTasksServiceImpl implements JobTasksService {
     private JobTasksUserService jobTasksUserService;
 
     @Autowired
+    private JobTasksFieldService jobTasksFieldService;
+
+    @Autowired
     private CUserService cUserService;
 
     @Override
@@ -84,8 +88,19 @@ public class JobTasksServiceImpl implements JobTasksService {
     }
 
     @Override
-    public Integer update(Long id, JobTasks jobTasks) {
-        return jobTasksMapper.update(id, jobTasks);
+    @Transactional
+    public Integer update(JobTasks jobTasks) {
+        //删除关联表字段
+        jobTasksUserService.delete(jobTasks.getId());
+        jobTasksTableService.delete(jobTasks.getId());
+        jobTasksFieldService.delete(jobTasks.getId());
+        //修改主表
+        Integer number = jobTasksMapper.update(jobTasks);
+        //新增 JobTasksUser
+        jobTasksUserService.insertList(jobTasks);
+        //新增 JobTasksTable
+        jobTasksTableService.insertList(jobTasks);
+        return number;
     }
 
     @Override
@@ -200,7 +215,7 @@ public class JobTasksServiceImpl implements JobTasksService {
 
         // 来源数据构造函数
         DataConsumerConfig dataConsumerConfig = new DataConsumerConfig(sourceConsumeAdt.getCode(), sourceConvertAdt.getCode(), jobTasks.getSourceTablesName(),
-                dataSourceMap(syncDataSource),dataSourceMap(souDataSource));
+                dataSourceMap(syncDataSource), dataSourceMap(souDataSource));
         // 目标数据构造函数
         DataLoaderConfig loader = new DataLoaderConfig(targetLoadAdt.getCode(), dataSourceMap(tarDataSource));
         // 表对应关系映射
@@ -223,8 +238,8 @@ public class JobTasksServiceImpl implements JobTasksService {
         List<TableMapperConfig> tableList = new ArrayList<>();
         TableMapperConfig tableMapperConfig = null;
         for (JobTasksTable jobTasksTable : tables) {
-            String[] schema = {jobTasksTable.getSourceTableName().split("[.]")[0],jobTasksTable.getTargetTableName().split("[.]")[0]};
-            String[] table = {jobTasksTable.getSourceTableName().split("[.]")[1],jobTasksTable.getTargetTableName().split("[.]")[1]};
+            String[] schema = {jobTasksTable.getSourceTableName().split("[.]")[0], jobTasksTable.getTargetTableName().split("[.]")[0]};
+            String[] table = {jobTasksTable.getSourceTableName().split("[.]")[1], jobTasksTable.getTargetTableName().split("[.]")[1]};
             Map<String, String> column = fieldsMap(jobTasksTable.getFields());
             tableMapperConfig = new TableMapperConfig(schema, table, column);
             tableList.add(tableMapperConfig);

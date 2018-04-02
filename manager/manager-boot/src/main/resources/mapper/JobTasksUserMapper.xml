@@ -49,7 +49,7 @@
 
     <!-- 刪除 -->
     <delete id="delete">
-        delete from job_tasks_user where id = #{id}
+        delete from job_tasks_user where job_task_id = #{jobTaskId}
     </delete>
 
     <!-- 根据主鍵查找 -->

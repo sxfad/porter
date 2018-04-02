@@ -36,7 +36,7 @@ public interface JobTasksFieldMapper {
      * @param id
      * @return
      */
-    public Integer delete(Long id);
+    public Integer delete(Long jobTaskId);
 
     /**
      * 根據主鍵id查找數據

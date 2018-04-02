@@ -135,9 +135,70 @@
                   "targetDataTablesName": "载入数据表",
                   "targetLoadAdt": "载入插件",
                   "userIds": [
-                    0,1,2,4
+                    1,2,4
                   ]
                 }
+    编辑：
+        路径：/jobtasts(put)
+        实体格式：
+            {
+              "id":"1",
+              "sourceConsumeAdt": "消费插件",
+              "sourceConvertAdt": "消费转换插件",
+              "sourceDataId": 1,
+              "sourceDataName": "同步数据来源",
+              "sourceDataTablesId": 1,
+              "sourceDataTablesName": "元数据表组",
+              "jobState":"NEW",
+              "tables": [
+                {
+                  "fields": [
+                    {
+                      "sortOrder": 1,
+                      "sourceTableField": "源表名称1的字段1",
+                      "sourceTableName": "源表名称1",
+                      "targetTableField": "目标表名称1的字段1",
+                      "targetTableName": "目标表名称1"
+                    },
+                    {
+                      "sortOrder": 2,
+                      "sourceTableField": "源表名称1的字段2",
+                      "sourceTableName": "源表名称1",
+                      "targetTableField": "目标表名称1的字段2",
+                      "targetTableName": "目标表名称1"
+                    }
+                  ],
+                  "sourceTableName": "源表名称1",
+                  "targetTableName": "目标表名称1"
+                },
+                {
+                  "fields": [
+                    {
+                      "sortOrder": 1,
+                      "sourceTableField": "源表名称2的字段1",
+                      "sourceTableName": "源表名称2",
+                      "targetTableField": "目标表名称2的字段1",
+                      "targetTableName": "目标表名称2"
+                    },
+                    {
+                      "sortOrder": 2,
+                      "sourceTableField": "源表名称2的字段2",
+                      "sourceTableName": "源表名称2",
+                      "targetTableField": "目标表名称2的字段2",
+                      "targetTableName": "目标表名称2"
+                    }
+                  ],
+                  "sourceTableName": "源表名称2",
+                  "targetTableName": "目标表名称2"
+                }
+              ],
+              "targetDataTablesId": 1,
+              "targetDataTablesName": "载入数据表",
+              "targetLoadAdt": "载入插件",
+              "userIds": [
+                1,2,4
+              ]
+            }
     开始任务(推送)：
         路径：/jobtasks/{id}(post)
         参数：id、TaskStatusType : WORKING

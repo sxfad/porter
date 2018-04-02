@@ -38,8 +38,8 @@ public class JobTasksFieldServiceImpl implements JobTasksFieldService {
     }
 
     @Override
-    public Integer delete(Long id) {
-        return jobTasksFieldMapper.delete(id);
+    public Integer delete(Long jobTaskId) {
+        return jobTasksFieldMapper.delete(jobTaskId);
     }
 
     @Override

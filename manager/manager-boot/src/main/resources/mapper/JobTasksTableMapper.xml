@@ -55,7 +55,7 @@
 
     <!-- 刪除 -->
     <delete id="delete">
-        delete from job_tasks_table where id = #{id}
+        delete from job_tasks_table where job_task_id = #{jobTaskId}
     </delete>
 
     <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.JobTasksTable">

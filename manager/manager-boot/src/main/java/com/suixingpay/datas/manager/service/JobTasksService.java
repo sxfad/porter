@@ -19,7 +19,7 @@ public interface JobTasksService {
 
     Integer insert(JobTasks jobTasks);
 
-    Integer update(Long id, JobTasks jobTasks);
+    Integer update(JobTasks jobTasks);
 
     Integer delete(Long id);
 
@@ -34,6 +34,4 @@ public interface JobTasksService {
     Integer updateState(Long id, TaskStatusType taskStatusType);
 
     TaskConfig fitJobTask(Long id,TaskStatusType status);
-    
-    
 }

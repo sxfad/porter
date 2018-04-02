@@ -33,10 +33,10 @@ public interface JobTasksUserMapper {
     /**
      * 刪除
      *
-     * @param id
+     * @param jobTaskId
      * @return
      */
-    Integer delete(Long id);
+    Integer delete(Long jobTaskId);
 
     /**
      * 根據主鍵id查找數據

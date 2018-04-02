@@ -79,7 +79,7 @@
 
     <!-- 刪除 -->
     <delete id="delete">
-        delete from job_tasks_field where id = #{id}
+        delete from job_tasks_field where job_task_id = #{jobTaskId}
     </delete>
 
     <!-- 根据jobTasksId和jobTasksTableId查询详情 -->

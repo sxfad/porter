@@ -42,8 +42,8 @@ public class JobTasksTableServiceImpl implements JobTasksTableService {
     }
 
     @Override
-    public Integer delete(Long id) {
-        return jobTasksTableMapper.delete(id);
+    public Integer delete(Long jobTaskId) {
+        return jobTasksTableMapper.delete(jobTaskId);
     }
 
     @Override

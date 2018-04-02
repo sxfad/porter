@@ -113,7 +113,7 @@ public class JobTasksController {
      * @param: [jobTasks]
      * @return: com.suixingpay.datas.manager.web.message.ResponseMessage
      */
-    @PostMapping()
+    @PostMapping
     @ApiOperation(value = "新增", notes = "新增")
     public ResponseMessage add(@RequestBody JobTasks jobTasks) {
         Integer number = jobTasksService.insert(jobTasks);
@@ -121,19 +121,34 @@ public class JobTasksController {
     }
 
     /**
+     * 修改
+     *
+     * @author FuZizheng
+     * @date 2018/4/2 下午4:29
+     * @param: [jobTasks]
+     * @return: com.suixingpay.datas.manager.web.message.ResponseMessage
+     */
+    @PutMapping
+    @ApiOperation(value = "修改", notes = "修改")
+    public ResponseMessage update(@RequestBody JobTasks jobTasks) {
+        Integer number = jobTasksService.update(jobTasks);
+        return ok(number);
+    }
+
+    /**
      * 修改任务状态
      *
+     * @throws Exception
      * @author FuZizheng
      * @date 2018/3/28 上午11:27
      * @param: []
      * @return: com.suixingpay.datas.manager.web.message.ResponseMessage
-     * @throws Exception 
      */
     @PutMapping("/{id}")
     @ApiOperation(value = "修改任务状态", notes = "TaskStatusType 枚举类: NEW、STOPPED、WORKING")
     public ResponseMessage updateState(@PathVariable("id") Long id, @RequestParam("taskStatusType") TaskStatusType taskStatusType) throws Exception {
         Integer number = jobTasksService.updateState(id, taskStatusType);
-        if(taskStatusType==TaskStatusType.WORKING||taskStatusType==TaskStatusType.STOPPED) {
+        if (taskStatusType == TaskStatusType.WORKING || taskStatusType == TaskStatusType.STOPPED) {
             ClusterProviderProxy.INSTANCE.broadcast(new TaskPushCommand(jobTasksService.fitJobTask(id, taskStatusType)));
         }
         return ok(number);

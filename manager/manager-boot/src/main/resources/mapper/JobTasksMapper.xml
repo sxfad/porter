@@ -68,7 +68,6 @@
     <update id="update">
         update job_tasks
         set
-            job_name = #{jobTasks.jobName},
             job_state = #{jobTasks.jobState},
             source_consume_adt = #{jobTasks.sourceConsumeAdt},
             source_convert_adt = #{jobTasks.sourceConvertAdt},
@@ -78,13 +77,8 @@
             source_data_name = #{jobTasks.sourceDataName},
             target_load_adt = #{jobTasks.targetLoadAdt},
             target_data_tables_id = #{jobTasks.targetDataTablesId},
-            target_data_tables_name = #{jobTasks.targetDataTablesName},
-            creater = #{jobTasks.creater},
-            create_time = #{jobTasks.createTime},
-            state = #{jobTasks.state},
-            iscancel = #{jobTasks.iscancel},
-            remark = #{jobTasks.remark},
-        where id = #{id}
+            target_data_tables_name = #{jobTasks.targetDataTablesName}
+        where id = #{jobTasks.id}
     </update>
 
     <!-- 刪除 -->
@@ -295,7 +289,7 @@
                 remark = #{jobTasks.remark,jdbcType=VARCHAR},
             </if>
         </set>
-        where id = #{id}
+        where id = #{jobTasks.id,jdbcType=BIGINT}
     </update>
 
 </mapper>

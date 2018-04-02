@@ -36,8 +36,8 @@ public class JobTasksUserServiceImpl implements JobTasksUserService {
     }
 
     @Override
-    public Integer delete(Long id) {
-        return jobTasksUserMapper.delete(id);
+    public Integer delete(Long jobTaskId) {
+        return jobTasksUserMapper.delete(jobTaskId);
     }
 
     @Override
