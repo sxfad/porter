@@ -48,14 +48,14 @@ public class ZKClusterStatisticListener extends ZookeeperClusterListener {
             // 日志
             if (LOG_PATTERN.matcher(zkPath).matches()) {
                 NodeLog log = JSONObject.parseObject(zkEvent.getData(), NodeLog.class);
-                System.err.println("NodeLog....."+JSON.toJSON(log));
+                System.err.println("3-NodeLog....."+JSON.toJSON(log));
                 // do something
             }
 
             // 性能指标数据
             if (TASK_PATTERN.matcher(zkPath).matches()) {
                 TaskPerformance performance = JSONObject.parseObject(zkEvent.getData(), TaskPerformance.class);
-                System.out.println("TaskPerformance....."+JSON.toJSON(performance));
+                System.out.println("3-TaskPerformance....."+JSON.toJSON(performance));
                 // do something
             }
             // 删除已获取的事件

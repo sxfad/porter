@@ -27,12 +27,18 @@ import java.util.Map;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月20日 13:45
  */
 public class DNode extends DObject {
+    //节点id
     @Getter @Setter private String nodeId;
+    //心跳时间
     @JSONField(format = DEFAULT_DATE_FORMAT)
     @Getter @Setter private Date heartbeat;
+    //任务所在主机IP
     @Getter @Setter private String address = MachineUtils.IP_ADDRESS;
+    //任务所在主机名
     @Getter @Setter private String hostName = MachineUtils.HOST_NAME;
+    //进程ID
     @Getter @Setter private String processId = MachineUtils.CURRENT_JVM_PID + "";
+    
     @Getter @Setter private NodeStatusType status;
     @Getter @Setter private Map<String, List<String>> tasks;
     public DNode() {
