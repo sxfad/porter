@@ -1,70 +1,97 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.suixingpay.datas.manager.core.mapper.MrJobTasksScheduleMapper">
-    <!-- 通用查询映射结果 
+    <!-- 通用查询映射结果
     <resultMap id="BaseResultMap" type="com.suixingpay.datas.manager.core.entity.MrJobTasksSchedule">
         <result column="id" property="id" />
-        <result column="consume_lane" property="consumeLane" />
-        <result column="assign_node" property="assignNode" />
-        <result column="data_table" property="dataTable" />
+        <result column="job_id" property="jobId" />
+        <result column="swimlane_id" property="swimlaneId" />
+        <result column="node_id" property="nodeId" />
+        <result column="node_id_ip" property="nodeIdIp" />
+        <result column="schema_table" property="schemaTable" />
         <result column="register_time" property="registerTime" />
         <result column="heart_beat_date" property="heartBeatDate" />
-        <result column="dispose_schedule" property="disposeSchedule" />
         <result column="alarm_number" property="alarmNumber" />
-        <result column="insert_number" property="insertNumber" />
-        <result column="update_number" property="updateNumber" />
-        <result column="del_number" property="delNumber" />
+        <result column="last_checked_time" property="lastCheckedTime" />
+        <result column="insert_success" property="insertSuccess" />
+        <result column="insert_failure" property="insertFailure" />
+        <result column="update_success" property="updateSuccess" />
+        <result column="update_failure" property="updateFailure" />
+        <result column="delete_success" property="deleteSuccess" />
+        <result column="delete_failure" property="deleteFailure" />
+        <result column="dispose_schedule" property="disposeSchedule" />
+        <result column="last_loaded_data_time" property="lastLoadedDataTime" />
+        <result column="last_loaded_system_time" property="lastLoadedSystemTime" />
         <result column="create_user_id" property="createUserId" />
         <result column="update_user_id" property="updateUserId" />
         <result column="create_time" property="createTime" />
-        <result column="update_time" property="upDATETIME" />
+        <result column="update_time" property="updateTime" />
         <result column="state" property="state" />
         <result column="iscancel" property="iscancel" />
+        <result column="partition_day" property="partitionDay" />
         <result column="remark" property="remark" />
     </resultMap>-->
 
-    <!-- 通用查询结果列 
+    <!-- 通用查询结果列
     <sql id="Base_Column_List">
-        select id, consume_lane AS consumeLane, assign_node AS assignNode, data_table AS dataTable, register_time AS registerTime, heart_beat_date AS heartBeatDate, dispose_schedule AS disposeSchedule, alarm_number AS alarmNumber, insert_number AS insertNumber, update_number AS updateNumber, del_number AS delNumber, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS upDATETIME, state, iscancel, remark from mr_job_tasks_schedule
+        select id, job_id AS jobId, swimlane_id AS swimlaneId, node_id AS nodeId, node_id_ip AS nodeIdIp, schema_table AS schemaTable, register_time AS registerTime, heart_beat_date AS heartBeatDate, alarm_number AS alarmNumber, last_checked_time AS lastCheckedTime, insert_success AS insertSuccess, insert_failure AS insertFailure, update_success AS updateSuccess, update_failure AS updateFailure, delete_success AS deleteSuccess, delete_failure AS deleteFailure, dispose_schedule AS disposeSchedule, last_loaded_data_time AS lastLoadedDataTime, last_loaded_system_time AS lastLoadedSystemTime, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, partition_day AS partitionDay, remark from mr_job_tasks_schedule
     </sql>-->
 
     <!-- 新增 -->
     <insert id="insert">
         insert into mr_job_tasks_schedule(
-        consume_lane,
-        assign_node,
-        data_table,
+        job_id,
+        swimlane_id,
+        node_id,
+        node_id_ip,
+        schema_table,
         register_time,
         heart_beat_date,
-        dispose_schedule,
         alarm_number,
-        insert_number,
-        update_number,
-        del_number,
+        last_checked_time,
+        insert_success,
+        insert_failure,
+        update_success,
+        update_failure,
+        delete_success,
+        delete_failure,
+        dispose_schedule,
+        last_loaded_data_time,
+        last_loaded_system_time,
         create_user_id,
         update_user_id,
         create_time,
         update_time,
         state,
         iscancel,
+        partition_day,
         remark
         ) values (
-        #{consumeLane},
-        #{assignNode},
-        #{dataTable},
+        #{jobId},
+        #{swimlaneId},
+        #{nodeId},
+        #{nodeIdIp},
+        #{schemaTable},
         #{registerTime},
         #{heartBeatDate},
-        #{disposeSchedule},
         #{alarmNumber},
-        #{insertNumber},
-        #{updateNumber},
-        #{delNumber},
+        #{lastCheckedTime},
+        #{insertSuccess},
+        #{insertFailure},
+        #{updateSuccess},
+        #{updateFailure},
+        #{deleteSuccess},
+        #{deleteFailure},
+        #{disposeSchedule},
+        #{lastLoadedDataTime},
+        #{lastLoadedSystemTime},
         #{createUserId},
         #{updateUserId},
         #{createTime},
-        #{upDATETIME},
+        #{updateTime},
         #{state},
         #{iscancel},
+        #{partitionDay},
         #{remark}
         )
     </insert>
@@ -73,22 +100,31 @@
     <update id="update">
         update mr_job_tasks_schedule
         set
-        consume_lane = #{mrJobTasksSchedule.consumeLane},
-        assign_node = #{mrJobTasksSchedule.assignNode},
-        data_table = #{mrJobTasksSchedule.dataTable},
+        job_id = #{mrJobTasksSchedule.jobId},
+        swimlane_id = #{mrJobTasksSchedule.swimlaneId},
+        node_id = #{mrJobTasksSchedule.nodeId},
+        node_id_ip = #{mrJobTasksSchedule.nodeIdIp},
+        schema_table = #{mrJobTasksSchedule.schemaTable},
         register_time = #{mrJobTasksSchedule.registerTime},
         heart_beat_date = #{mrJobTasksSchedule.heartBeatDate},
-        dispose_schedule = #{mrJobTasksSchedule.disposeSchedule},
         alarm_number = #{mrJobTasksSchedule.alarmNumber},
-        insert_number = #{mrJobTasksSchedule.insertNumber},
-        update_number = #{mrJobTasksSchedule.updateNumber},
-        del_number = #{mrJobTasksSchedule.delNumber},
+        last_checked_time = #{mrJobTasksSchedule.lastCheckedTime},
+        insert_success = #{mrJobTasksSchedule.insertSuccess},
+        insert_failure = #{mrJobTasksSchedule.insertFailure},
+        update_success = #{mrJobTasksSchedule.updateSuccess},
+        update_failure = #{mrJobTasksSchedule.updateFailure},
+        delete_success = #{mrJobTasksSchedule.deleteSuccess},
+        delete_failure = #{mrJobTasksSchedule.deleteFailure},
+        dispose_schedule = #{mrJobTasksSchedule.disposeSchedule},
+        last_loaded_data_time = #{mrJobTasksSchedule.lastLoadedDataTime},
+        last_loaded_system_time = #{mrJobTasksSchedule.lastLoadedSystemTime},
         create_user_id = #{mrJobTasksSchedule.createUserId},
         update_user_id = #{mrJobTasksSchedule.updateUserId},
         create_time = #{mrJobTasksSchedule.createTime},
-        update_time = #{mrJobTasksSchedule.upDATETIME},
+        update_time = #{mrJobTasksSchedule.updateTime},
         state = #{mrJobTasksSchedule.state},
         iscancel = #{mrJobTasksSchedule.iscancel},
+        partition_day = #{mrJobTasksSchedule.partitionDay},
         remark = #{mrJobTasksSchedule.remark}
         where id = #{id}
     </update>
@@ -100,7 +136,7 @@
 
     <!-- 根据主鍵查找 -->
     <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.MrJobTasksSchedule">
-        select id, consume_lane AS consumeLane, assign_node AS assignNode, data_table AS dataTable, register_time AS registerTime, heart_beat_date AS heartBeatDate, dispose_schedule AS disposeSchedule, alarm_number AS alarmNumber, insert_number AS insertNumber, update_number AS updateNumber, del_number AS delNumber, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS upDATETIME, state, iscancel, remark from mr_job_tasks_schedule
+        select id, job_id AS jobId, swimlane_id AS swimlaneId, node_id AS nodeId, node_id_ip AS nodeIdIp, schema_table AS schemaTable, register_time AS registerTime, heart_beat_date AS heartBeatDate, alarm_number AS alarmNumber, last_checked_time AS lastCheckedTime, insert_success AS insertSuccess, insert_failure AS insertFailure, update_success AS updateSuccess, update_failure AS updateFailure, delete_success AS deleteSuccess, delete_failure AS deleteFailure, dispose_schedule AS disposeSchedule, last_loaded_data_time AS lastLoadedDataTime, last_loaded_system_time AS lastLoadedSystemTime, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, partition_day AS partitionDay, remark from mr_job_tasks_schedule
         where id = #{id}
     </select>
 
@@ -112,7 +148,7 @@
 
     <!-- 分页 -->
     <select id="page" resultType="com.suixingpay.datas.manager.core.entity.MrJobTasksSchedule">
-        select id, consume_lane AS consumeLane, assign_node AS assignNode, data_table AS dataTable, register_time AS registerTime, heart_beat_date AS heartBeatDate, dispose_schedule AS disposeSchedule, alarm_number AS alarmNumber, insert_number AS insertNumber, update_number AS updateNumber, del_number AS delNumber, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS upDATETIME, state, iscancel, remark from mr_job_tasks_schedule
+        select id, job_id AS jobId, swimlane_id AS swimlaneId, node_id AS nodeId, node_id_ip AS nodeIdIp, schema_table AS schemaTable, register_time AS registerTime, heart_beat_date AS heartBeatDate, alarm_number AS alarmNumber, last_checked_time AS lastCheckedTime, insert_success AS insertSuccess, insert_failure AS insertFailure, update_success AS updateSuccess, update_failure AS updateFailure, delete_success AS deleteSuccess, delete_failure AS deleteFailure, dispose_schedule AS disposeSchedule, last_loaded_data_time AS lastLoadedDataTime, last_loaded_system_time AS lastLoadedSystemTime, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, partition_day AS partitionDay, remark from mr_job_tasks_schedule
         where 1=1 limit #{page.offset},#{page.pageSize}
     </select>
 
@@ -120,14 +156,20 @@
     <insert id="insertSelective">
         insert into mr_job_tasks_schedule
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="consumeLane != null">
-                consume_lane,
+            <if test="jobId != null">
+                job_id,
             </if>
-            <if test="assignNode != null">
-                assign_node,
+            <if test="swimlaneId != null">
+                swimlane_id,
             </if>
-            <if test="dataTable != null">
-                data_table,
+            <if test="nodeId != null">
+                node_id,
+            </if>
+            <if test="nodeIdIp != null">
+                node_id_ip,
+            </if>
+            <if test="schemaTable != null">
+                schema_table,
             </if>
             <if test="registerTime != null">
                 register_time,
@@ -135,20 +177,38 @@
             <if test="heartBeatDate != null">
                 heart_beat_date,
             </if>
-            <if test="disposeSchedule != null">
-                dispose_schedule,
-            </if>
             <if test="alarmNumber != null">
                 alarm_number,
             </if>
-            <if test="insertNumber != null">
-                insert_number,
+            <if test="lastCheckedTime != null">
+                last_checked_time,
             </if>
-            <if test="updateNumber != null">
-                update_number,
+            <if test="insertSuccess != null">
+                insert_success,
             </if>
-            <if test="delNumber != null">
-                del_number,
+            <if test="insertFailure != null">
+                insert_failure,
+            </if>
+            <if test="updateSuccess != null">
+                update_success,
+            </if>
+            <if test="updateFailure != null">
+                update_failure,
+            </if>
+            <if test="deleteSuccess != null">
+                delete_success,
+            </if>
+            <if test="deleteFailure != null">
+                delete_failure,
+            </if>
+            <if test="disposeSchedule != null">
+                dispose_schedule,
+            </if>
+            <if test="lastLoadedDataTime != null">
+                last_loaded_data_time,
+            </if>
+            <if test="lastLoadedSystemTime != null">
+                last_loaded_system_time,
             </if>
             <if test="createUserId != null">
                 create_user_id,
@@ -159,7 +219,7 @@
             <if test="createTime != null">
                 create_time,
             </if>
-            <if test="upDATETIME != null">
+            <if test="updateTime != null">
                 update_time,
             </if>
             <if test="state != null">
@@ -168,19 +228,28 @@
             <if test="iscancel != null">
                 iscancel,
             </if>
+            <if test="partitionDay != null">
+                partition_day,
+            </if>
             <if test="remark != null">
                 remark,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="consumeLane != null">
-                #{consumeLane,jdbcType=VARCHAR},
+            <if test="jobId != null">
+                #{jobId,jdbcType=VARCHAR},
             </if>
-            <if test="assignNode != null">
-                #{assignNode,jdbcType=VARCHAR},
+            <if test="swimlaneId != null">
+                #{swimlaneId,jdbcType=VARCHAR},
             </if>
-            <if test="dataTable != null">
-                #{dataTable,jdbcType=VARCHAR},
+            <if test="nodeId != null">
+                #{nodeId,jdbcType=VARCHAR},
+            </if>
+            <if test="nodeIdIp != null">
+                #{nodeIdIp,jdbcType=VARCHAR},
+            </if>
+            <if test="schemaTable != null">
+                #{schemaTable,jdbcType=VARCHAR},
             </if>
             <if test="registerTime != null">
                 #{registerTime,jdbcType=TIMESTAMP},
@@ -188,20 +257,38 @@
             <if test="heartBeatDate != null">
                 #{heartBeatDate,jdbcType=TIMESTAMP},
             </if>
+            <if test="alarmNumber != null">
+                #{alarmNumber,jdbcType=BIGINT},
+            </if>
+            <if test="lastCheckedTime != null">
+                #{lastCheckedTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="insertSuccess != null">
+                #{insertSuccess,jdbcType=BIGINT},
+            </if>
+            <if test="insertFailure != null">
+                #{insertFailure,jdbcType=BIGINT},
+            </if>
+            <if test="updateSuccess != null">
+                #{updateSuccess,jdbcType=BIGINT},
+            </if>
+            <if test="updateFailure != null">
+                #{updateFailure,jdbcType=BIGINT},
+            </if>
+            <if test="deleteSuccess != null">
+                #{deleteSuccess,jdbcType=BIGINT},
+            </if>
+            <if test="deleteFailure != null">
+                #{deleteFailure,jdbcType=BIGINT},
+            </if>
             <if test="disposeSchedule != null">
                 #{disposeSchedule,jdbcType=VARCHAR},
             </if>
-            <if test="alarmNumber != null">
-                #{alarmNumber,jdbcType=VARCHAR},
+            <if test="lastLoadedDataTime != null">
+                #{lastLoadedDataTime,jdbcType=TIMESTAMP},
             </if>
-            <if test="insertNumber != null">
-                #{insertNumber,jdbcType=VARCHAR},
-            </if>
-            <if test="updateNumber != null">
-                #{updateNumber,jdbcType=VARCHAR},
-            </if>
-            <if test="delNumber != null">
-                #{delNumber,jdbcType=VARCHAR},
+            <if test="lastLoadedSystemTime != null">
+                #{lastLoadedSystemTime,jdbcType=TIMESTAMP},
             </if>
             <if test="createUserId != null">
                 #{createUserId,jdbcType=BIGINT},
@@ -212,14 +299,17 @@
             <if test="createTime != null">
                 #{createTime,jdbcType=TIMESTAMP},
             </if>
-            <if test="upDATETIME != null">
-                #{upDATETIME,jdbcType=TIMESTAMP},
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
             </if>
             <if test="state != null">
                 #{state,jdbcType=INTEGER},
             </if>
             <if test="iscancel != null">
                 #{iscancel,jdbcType=INTEGER},
+            </if>
+            <if test="partitionDay != null">
+                #{partitionDay,jdbcType=DATE},
             </if>
             <if test="remark != null">
                 #{remark,jdbcType=VARCHAR},
@@ -231,14 +321,20 @@
     <update id="updateSelective">
         update mr_job_tasks_schedule
         <set>
-            <if test="mrJobTasksSchedule.consumeLane != null">
-                consume_lane = #{mrJobTasksSchedule.consumeLane,jdbcType=VARCHAR},
+            <if test="mrJobTasksSchedule.jobId != null">
+                job_id = #{mrJobTasksSchedule.jobId,jdbcType=VARCHAR},
             </if>
-            <if test="mrJobTasksSchedule.assignNode != null">
-                assign_node = #{mrJobTasksSchedule.assignNode,jdbcType=VARCHAR},
+            <if test="mrJobTasksSchedule.swimlaneId != null">
+                swimlane_id = #{mrJobTasksSchedule.swimlaneId,jdbcType=VARCHAR},
             </if>
-            <if test="mrJobTasksSchedule.dataTable != null">
-                data_table = #{mrJobTasksSchedule.dataTable,jdbcType=VARCHAR},
+            <if test="mrJobTasksSchedule.nodeId != null">
+                node_id = #{mrJobTasksSchedule.nodeId,jdbcType=VARCHAR},
+            </if>
+            <if test="mrJobTasksSchedule.nodeIdIp != null">
+                node_id_ip = #{mrJobTasksSchedule.nodeIdIp,jdbcType=VARCHAR},
+            </if>
+            <if test="mrJobTasksSchedule.schemaTable != null">
+                schema_table = #{mrJobTasksSchedule.schemaTable,jdbcType=VARCHAR},
             </if>
             <if test="mrJobTasksSchedule.registerTime != null">
                 register_time = #{mrJobTasksSchedule.registerTime,jdbcType=TIMESTAMP},
@@ -246,20 +342,38 @@
             <if test="mrJobTasksSchedule.heartBeatDate != null">
                 heart_beat_date = #{mrJobTasksSchedule.heartBeatDate,jdbcType=TIMESTAMP},
             </if>
+            <if test="mrJobTasksSchedule.alarmNumber != null">
+                alarm_number = #{mrJobTasksSchedule.alarmNumber,jdbcType=BIGINT},
+            </if>
+            <if test="mrJobTasksSchedule.lastCheckedTime != null">
+                last_checked_time = #{mrJobTasksSchedule.lastCheckedTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="mrJobTasksSchedule.insertSuccess != null">
+                insert_success = #{mrJobTasksSchedule.insertSuccess,jdbcType=BIGINT},
+            </if>
+            <if test="mrJobTasksSchedule.insertFailure != null">
+                insert_failure = #{mrJobTasksSchedule.insertFailure,jdbcType=BIGINT},
+            </if>
+            <if test="mrJobTasksSchedule.updateSuccess != null">
+                update_success = #{mrJobTasksSchedule.updateSuccess,jdbcType=BIGINT},
+            </if>
+            <if test="mrJobTasksSchedule.updateFailure != null">
+                update_failure = #{mrJobTasksSchedule.updateFailure,jdbcType=BIGINT},
+            </if>
+            <if test="mrJobTasksSchedule.deleteSuccess != null">
+                delete_success = #{mrJobTasksSchedule.deleteSuccess,jdbcType=BIGINT},
+            </if>
+            <if test="mrJobTasksSchedule.deleteFailure != null">
+                delete_failure = #{mrJobTasksSchedule.deleteFailure,jdbcType=BIGINT},
+            </if>
             <if test="mrJobTasksSchedule.disposeSchedule != null">
                 dispose_schedule = #{mrJobTasksSchedule.disposeSchedule,jdbcType=VARCHAR},
             </if>
-            <if test="mrJobTasksSchedule.alarmNumber != null">
-                alarm_number = #{mrJobTasksSchedule.alarmNumber,jdbcType=VARCHAR},
+            <if test="mrJobTasksSchedule.lastLoadedDataTime != null">
+                last_loaded_data_time = #{mrJobTasksSchedule.lastLoadedDataTime,jdbcType=TIMESTAMP},
             </if>
-            <if test="mrJobTasksSchedule.insertNumber != null">
-                insert_number = #{mrJobTasksSchedule.insertNumber,jdbcType=VARCHAR},
-            </if>
-            <if test="mrJobTasksSchedule.updateNumber != null">
-                update_number = #{mrJobTasksSchedule.updateNumber,jdbcType=VARCHAR},
-            </if>
-            <if test="mrJobTasksSchedule.delNumber != null">
-                del_number = #{mrJobTasksSchedule.delNumber,jdbcType=VARCHAR},
+            <if test="mrJobTasksSchedule.lastLoadedSystemTime != null">
+                last_loaded_system_time = #{mrJobTasksSchedule.lastLoadedSystemTime,jdbcType=TIMESTAMP},
             </if>
             <if test="mrJobTasksSchedule.createUserId != null">
                 create_user_id = #{mrJobTasksSchedule.createUserId,jdbcType=BIGINT},
@@ -270,8 +384,8 @@
             <if test="mrJobTasksSchedule.createTime != null">
                 create_time = #{mrJobTasksSchedule.createTime,jdbcType=TIMESTAMP},
             </if>
-            <if test="mrJobTasksSchedule.upDATETIME != null">
-                update_time = #{mrJobTasksSchedule.upDATETIME,jdbcType=TIMESTAMP},
+            <if test="mrJobTasksSchedule.updateTime != null">
+                update_time = #{mrJobTasksSchedule.updateTime,jdbcType=TIMESTAMP},
             </if>
             <if test="mrJobTasksSchedule.state != null">
                 state = #{mrJobTasksSchedule.state,jdbcType=INTEGER},
@@ -279,11 +393,14 @@
             <if test="mrJobTasksSchedule.iscancel != null">
                 iscancel = #{mrJobTasksSchedule.iscancel,jdbcType=INTEGER},
             </if>
+            <if test="mrJobTasksSchedule.partitionDay != null">
+                partition_day = #{mrJobTasksSchedule.partitionDay,jdbcType=DATE},
+            </if>
             <if test="mrJobTasksSchedule.remark != null">
                 remark = #{mrJobTasksSchedule.remark,jdbcType=VARCHAR},
             </if>
         </set>
-        where id = #{id,jdbcType=BIGINT}
+        where id = #{id}
     </update>
 
 </mapper>

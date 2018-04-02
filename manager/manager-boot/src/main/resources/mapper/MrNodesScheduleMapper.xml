@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.suixingpay.datas.manager.core.mapper.MrNodesScheduleMapper">
-    <!-- 通用查询映射结果 
+    <!-- 通用查询映射结果
     <resultMap id="BaseResultMap" type="com.suixingpay.datas.manager.core.entity.MrNodesSchedule">
         <result column="id" property="id" />
         <result column="node_id" property="nodeId" />
@@ -9,19 +9,21 @@
         <result column="ip_address" property="ipAddress" />
         <result column="heart_beat_date" property="heartBeatDate" />
         <result column="process_number" property="processNumber" />
-        <result column="job_json" property="jobJson" />
+        <result column="job_id_json" property="jobIdJson" />
+        <result column="job_name_json" property="jobNameJson" />
         <result column="create_user_id" property="createUserId" />
         <result column="update_user_id" property="updateUserId" />
         <result column="create_time" property="createTime" />
         <result column="update_time" property="updateTime" />
         <result column="state" property="state" />
         <result column="iscancel" property="iscancel" />
+        <result column="partition_day" property="partitionDay" />
         <result column="remark" property="remark" />
     </resultMap>-->
 
-    <!-- 通用查询结果列 
+    <!-- 通用查询结果列
     <sql id="Base_Column_List">
-        select id, node_id AS nodeId, computer_name AS computerName, ip_address AS ipAddress, heart_beat_date AS heartBeatDate, process_number AS processNumber, job_json AS jobJson, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, remark from mr_nodes_schedule
+        select id, node_id AS nodeId, computer_name AS computerName, ip_address AS ipAddress, heart_beat_date AS heartBeatDate, process_number AS processNumber, job_id_json AS jobIdJson, job_name_json AS jobNameJson, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, partition_day AS partitionDay, remark from mr_nodes_schedule
     </sql>-->
 
     <!-- 新增 -->
@@ -32,13 +34,15 @@
         ip_address,
         heart_beat_date,
         process_number,
-        job_json,
+        job_id_json,
+        job_name_json,
         create_user_id,
         update_user_id,
         create_time,
         update_time,
         state,
         iscancel,
+        partition_day,
         remark
         ) values (
         #{nodeId},
@@ -46,13 +50,15 @@
         #{ipAddress},
         #{heartBeatDate},
         #{processNumber},
-        #{jobJson},
+        #{jobIdJson},
+        #{jobNameJson},
         #{createUserId},
         #{updateUserId},
         #{createTime},
         #{updateTime},
         #{state},
         #{iscancel},
+        #{partitionDay},
         #{remark}
         )
     </insert>
@@ -66,13 +72,15 @@
         ip_address = #{mrNodesSchedule.ipAddress},
         heart_beat_date = #{mrNodesSchedule.heartBeatDate},
         process_number = #{mrNodesSchedule.processNumber},
-        job_json = #{mrNodesSchedule.jobJson},
+        job_id_json = #{mrNodesSchedule.jobIdJson},
+        job_name_json = #{mrNodesSchedule.jobNameJson},
         create_user_id = #{mrNodesSchedule.createUserId},
         update_user_id = #{mrNodesSchedule.updateUserId},
         create_time = #{mrNodesSchedule.createTime},
         update_time = #{mrNodesSchedule.updateTime},
         state = #{mrNodesSchedule.state},
         iscancel = #{mrNodesSchedule.iscancel},
+        partition_day = #{mrNodesSchedule.partitionDay},
         remark = #{mrNodesSchedule.remark}
         where id = #{id}
     </update>
@@ -84,48 +92,26 @@
 
     <!-- 根据主鍵查找 -->
     <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.MrNodesSchedule">
-        select id, node_id AS nodeId, computer_name AS computerName, ip_address AS ipAddress, heart_beat_date AS heartBeatDate, process_number AS processNumber, job_json AS jobJson, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, remark from mr_nodes_schedule
+        select id, node_id AS nodeId, computer_name AS computerName, ip_address AS ipAddress, heart_beat_date AS heartBeatDate, process_number AS processNumber, job_id_json AS jobIdJson, job_name_json AS jobNameJson, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, partition_day AS partitionDay, remark from mr_nodes_schedule
         where id = #{id}
     </select>
 
     <!-- 分页All -->
     <select id="pageAll" resultType="java.lang.Integer">
         select count(id) from mr_nodes_schedule
-        <where>
-            iscancel = 0
-            <if test="ipAddress != null and ipAddress != ''">
-                and ip_address LIKE CONCAT('%', #{ipAddress}, '%')
-            </if>
-            <if test="computerName != null and computerName != ''">
-                and computer_name LIKE CONCAT('%', #{computerName}, '%')
-            </if>
-        </where>
+        where 1=1
     </select>
 
     <!-- 分页 -->
     <select id="page" resultType="com.suixingpay.datas.manager.core.entity.MrNodesSchedule">
-        select
-        id, node_id AS nodeId, computer_name AS computerName, ip_address AS ipAddress, heart_beat_date AS heartBeatDate,
-        process_number AS processNumber, job_json AS jobJson from mr_nodes_schedule
-        <where>
-            iscancel = 0
-            <if test="ipAddress != null and ipAddress != ''">
-                and ip_address LIKE CONCAT('%', #{ipAddress}, '%')
-            </if>
-            <if test="computerName != null and computerName != ''">
-                and computer_name LIKE CONCAT('%', #{computerName}, '%')
-            </if>
-        </where>
-        limit #{page.offset},#{page.pageSize}
+        select id, node_id AS nodeId, computer_name AS computerName, ip_address AS ipAddress, heart_beat_date AS heartBeatDate, process_number AS processNumber, job_id_json AS jobIdJson, job_name_json AS jobNameJson, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, partition_day AS partitionDay, remark from mr_nodes_schedule
+        where 1=1 limit #{page.offset},#{page.pageSize}
     </select>
 
     <!-- 验证新增 -->
     <insert id="insertSelective">
         insert into mr_nodes_schedule
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="id != null">
-                id,
-            </if>
             <if test="nodeId != null">
                 node_id,
             </if>
@@ -141,8 +127,11 @@
             <if test="processNumber != null">
                 process_number,
             </if>
-            <if test="jobJson != null">
-                job_json,
+            <if test="jobIdJson != null">
+                job_id_json,
+            </if>
+            <if test="jobNameJson != null">
+                job_name_json,
             </if>
             <if test="createUserId != null">
                 create_user_id,
@@ -162,14 +151,14 @@
             <if test="iscancel != null">
                 iscancel,
             </if>
+            <if test="partitionDay != null">
+                partition_day,
+            </if>
             <if test="remark != null">
                 remark,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="id != null">
-                #{id,jdbcType=BIGINT},
-            </if>
             <if test="nodeId != null">
                 #{nodeId,jdbcType=VARCHAR},
             </if>
@@ -185,8 +174,11 @@
             <if test="processNumber != null">
                 #{processNumber,jdbcType=VARCHAR},
             </if>
-            <if test="jobJson != null">
-                #{jobJson,jdbcType=VARCHAR},
+            <if test="jobIdJson != null">
+                #{jobIdJson,jdbcType=VARCHAR},
+            </if>
+            <if test="jobNameJson != null">
+                #{jobNameJson,jdbcType=VARCHAR},
             </if>
             <if test="createUserId != null">
                 #{createUserId,jdbcType=BIGINT},
@@ -205,6 +197,9 @@
             </if>
             <if test="iscancel != null">
                 #{iscancel,jdbcType=INTEGER},
+            </if>
+            <if test="partitionDay != null">
+                #{partitionDay,jdbcType=DATE},
             </if>
             <if test="remark != null">
                 #{remark,jdbcType=VARCHAR},
@@ -231,8 +226,11 @@
             <if test="mrNodesSchedule.processNumber != null">
                 process_number = #{mrNodesSchedule.processNumber,jdbcType=VARCHAR},
             </if>
-            <if test="mrNodesSchedule.jobJson != null">
-                job_json = #{mrNodesSchedule.jobJson,jdbcType=VARCHAR},
+            <if test="mrNodesSchedule.jobIdJson != null">
+                job_id_json = #{mrNodesSchedule.jobIdJson,jdbcType=VARCHAR},
+            </if>
+            <if test="mrNodesSchedule.jobNameJson != null">
+                job_name_json = #{mrNodesSchedule.jobNameJson,jdbcType=VARCHAR},
             </if>
             <if test="mrNodesSchedule.createUserId != null">
                 create_user_id = #{mrNodesSchedule.createUserId,jdbcType=BIGINT},
@@ -252,11 +250,14 @@
             <if test="mrNodesSchedule.iscancel != null">
                 iscancel = #{mrNodesSchedule.iscancel,jdbcType=INTEGER},
             </if>
+            <if test="mrNodesSchedule.partitionDay != null">
+                partition_day = #{mrNodesSchedule.partitionDay,jdbcType=DATE},
+            </if>
             <if test="mrNodesSchedule.remark != null">
                 remark = #{mrNodesSchedule.remark,jdbcType=VARCHAR},
             </if>
         </set>
-        where id = #{id,jdbcType=BIGINT}
+        where id = #{id}
     </update>
 
 </mapper>

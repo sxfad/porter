@@ -47,7 +47,12 @@ public class MrNodesSchedule implements java.io.Serializable {
     /**
      * 任务json信息.
      */
-    private String jobJson;
+    private String jobIdJson;
+
+    /**
+     * 任务json-name信息.
+     */
+    private String jobNameJson;
 
     /**
      * 创建人.
@@ -78,6 +83,11 @@ public class MrNodesSchedule implements java.io.Serializable {
      * 是否作废.
      */
     private Integer iscancel;
+
+    /**
+     * 预留时间分区字段.
+     */
+    private Date partitionDay;
 
     /**
      * 备注.
@@ -171,15 +181,29 @@ public class MrNodesSchedule implements java.io.Serializable {
     /**
      * 任务json信息 get方法.
      */
-    public String getJobJson() {
-        return jobJson == null ? null : jobJson.trim();
+    public String getJobIdJson() {
+        return jobIdJson == null ? null : jobIdJson.trim();
     }
 
     /**
      * 任务json信息 set方法.
      */
-    public void setJobJson(String jobJson) {
-        this.jobJson = jobJson == null ? null : jobJson.trim();
+    public void setJobIdJson(String jobIdJson) {
+        this.jobIdJson = jobIdJson == null ? null : jobIdJson.trim();
+    }
+
+    /**
+     * 任务json-name信息 get方法.
+     */
+    public String getJobNameJson() {
+        return jobNameJson == null ? null : jobNameJson.trim();
+    }
+
+    /**
+     * 任务json-name信息 set方法.
+     */
+    public void setJobNameJson(String jobNameJson) {
+        this.jobNameJson = jobNameJson == null ? null : jobNameJson.trim();
     }
 
     /**
@@ -264,6 +288,20 @@ public class MrNodesSchedule implements java.io.Serializable {
      */
     public void setIscancel(Integer iscancel) {
         this.iscancel = iscancel;
+    }
+
+    /**
+     * 预留时间分区字段 get方法.
+     */
+    public Date getPartitionDay() {
+        return partitionDay;
+    }
+
+    /**
+     * 预留时间分区字段 set方法.
+     */
+    public void setPartitionDay(Date partitionDay) {
+        this.partitionDay = partitionDay;
     }
 
     /**

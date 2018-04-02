@@ -20,19 +20,29 @@ public class MrJobTasksSchedule implements java.io.Serializable {
     private Long id;
 
     /**
-     * 任务泳道.
+     * 任务id.
      */
-    private String consumeLane;
+    private String jobId;
 
     /**
-     * 分配节点.
+     * 任务泳道.
      */
-    private String assignNode;
+    private String swimlaneId;
+
+    /**
+     * 节点id.
+     */
+    private String nodeId;
+
+    /**
+     * 节点id[ip].
+     */
+    private String nodeIdIp;
 
     /**
      * 数据表.
      */
-    private String dataTable;
+    private String schemaTable;
 
     /**
      * 注册时间.
@@ -45,29 +55,59 @@ public class MrJobTasksSchedule implements java.io.Serializable {
     private Date heartBeatDate;
 
     /**
+     * 告警次数.
+     */
+    private Long alarmNumber;
+
+    /**
+     * 最近告警检查时间.
+     */
+    private Date lastCheckedTime;
+
+    /**
+     * 插入次数success.
+     */
+    private Long insertSuccess;
+
+    /**
+     * 插入次数failure.
+     */
+    private Long insertFailure;
+
+    /**
+     * 更新次数success.
+     */
+    private Long updateSuccess;
+
+    /**
+     * 更新次数failure.
+     */
+    private Long updateFailure;
+
+    /**
+     * 删除次数success.
+     */
+    private Long deleteSuccess;
+
+    /**
+     * 删除次数failure.
+     */
+    private Long deleteFailure;
+
+    /**
      * 处理进度.
      */
     private String disposeSchedule;
 
     /**
-     * 告警次数.
+     * 最近导入数据时间.
      */
-    private String alarmNumber;
+    private Date lastLoadedDataTime;
 
     /**
-     * 插入次数.
+     * 最近导入系统时间.
      */
-    private String insertNumber;
-
-    /**
-     * 更新次数.
-     */
-    private String updateNumber;
-
-    /**
-     * 删除次数(成功/失败).
-     */
-    private String delNumber;
+    private Date lastLoadedSystemTime;
 
     /**
      * 创建人.
@@ -100,6 +140,11 @@ public class MrJobTasksSchedule implements java.io.Serializable {
     private Integer iscancel;
 
     /**
+     * 预留时间分区字段.
+     */
+    private Date partitionDay;
+
+    /**
      * 备注.
      */
     private String remark;
@@ -119,45 +164,73 @@ public class MrJobTasksSchedule implements java.io.Serializable {
     }
 
     /**
+     * 任务id get方法.
+     */
+    public String getJobId() {
+        return jobId == null ? null : jobId.trim();
+    }
+
+    /**
+     * 任务id set方法.
+     */
+    public void setJobId(String jobId) {
+        this.jobId = jobId == null ? null : jobId.trim();
+    }
+
+    /**
      * 任务泳道 get方法.
      */
-    public String getConsumeLane() {
-        return consumeLane == null ? null : consumeLane.trim();
+    public String getSwimlaneId() {
+        return swimlaneId == null ? null : swimlaneId.trim();
     }
 
     /**
      * 任务泳道 set方法.
      */
-    public void setConsumeLane(String consumeLane) {
-        this.consumeLane = consumeLane == null ? null : consumeLane.trim();
+    public void setSwimlaneId(String swimlaneId) {
+        this.swimlaneId = swimlaneId == null ? null : swimlaneId.trim();
     }
 
     /**
-     * 分配节点 get方法.
+     * 节点id get方法.
      */
-    public String getAssignNode() {
-        return assignNode == null ? null : assignNode.trim();
+    public String getNodeId() {
+        return nodeId == null ? null : nodeId.trim();
     }
 
     /**
-     * 分配节点 set方法.
+     * 节点id set方法.
      */
-    public void setAssignNode(String assignNode) {
-        this.assignNode = assignNode == null ? null : assignNode.trim();
+    public void setNodeId(String nodeId) {
+        this.nodeId = nodeId == null ? null : nodeId.trim();
+    }
+
+    /**
+     * 节点id[ip] get方法.
+     */
+    public String getNodeIdIp() {
+        return nodeIdIp == null ? null : nodeIdIp.trim();
+    }
+
+    /**
+     * 节点id[ip] set方法.
+     */
+    public void setNodeIdIp(String nodeIdIp) {
+        this.nodeIdIp = nodeIdIp == null ? null : nodeIdIp.trim();
     }
 
     /**
      * 数据表 get方法.
      */
-    public String getDataTable() {
-        return dataTable == null ? null : dataTable.trim();
+    public String getSchemaTable() {
+        return schemaTable == null ? null : schemaTable.trim();
     }
 
     /**
      * 数据表 set方法.
      */
-    public void setDataTable(String dataTable) {
-        this.dataTable = dataTable == null ? null : dataTable.trim();
+    public void setSchemaTable(String schemaTable) {
+        this.schemaTable = schemaTable == null ? null : schemaTable.trim();
     }
 
     /**
@@ -189,6 +262,118 @@ public class MrJobTasksSchedule implements java.io.Serializable {
     }
 
     /**
+     * 告警次数 get方法.
+     */
+    public Long getAlarmNumber() {
+        return alarmNumber;
+    }
+
+    /**
+     * 告警次数 set方法.
+     */
+    public void setAlarmNumber(Long alarmNumber) {
+        this.alarmNumber = alarmNumber;
+    }
+
+    /**
+     * 最近告警检查时间 get方法.
+     */
+    public Date getLastCheckedTime() {
+        return lastCheckedTime;
+    }
+
+    /**
+     * 最近告警检查时间 set方法.
+     */
+    public void setLastCheckedTime(Date lastCheckedTime) {
+        this.lastCheckedTime = lastCheckedTime;
+    }
+
+    /**
+     * 插入次数success get方法.
+     */
+    public Long getInsertSuccess() {
+        return insertSuccess;
+    }
+
+    /**
+     * 插入次数success set方法.
+     */
+    public void setInsertSuccess(Long insertSuccess) {
+        this.insertSuccess = insertSuccess;
+    }
+
+    /**
+     * 插入次数failure get方法.
+     */
+    public Long getInsertFailure() {
+        return insertFailure;
+    }
+
+    /**
+     * 插入次数failure set方法.
+     */
+    public void setInsertFailure(Long insertFailure) {
+        this.insertFailure = insertFailure;
+    }
+
+    /**
+     * 更新次数success get方法.
+     */
+    public Long getUpdateSuccess() {
+        return updateSuccess;
+    }
+
+    /**
+     * 更新次数success set方法.
+     */
+    public void setUpdateSuccess(Long updateSuccess) {
+        this.updateSuccess = updateSuccess;
+    }
+
+    /**
+     * 更新次数failure get方法.
+     */
+    public Long getUpdateFailure() {
+        return updateFailure;
+    }
+
+    /**
+     * 更新次数failure set方法.
+     */
+    public void setUpdateFailure(Long updateFailure) {
+        this.updateFailure = updateFailure;
+    }
+
+    /**
+     * 删除次数success get方法.
+     */
+    public Long getDeleteSuccess() {
+        return deleteSuccess;
+    }
+
+    /**
+     * 删除次数success set方法.
+     */
+    public void setDeleteSuccess(Long deleteSuccess) {
+        this.deleteSuccess = deleteSuccess;
+    }
+
+    /**
+     * 删除次数failure get方法.
+     */
+    public Long getDeleteFailure() {
+        return deleteFailure;
+    }
+
+    /**
+     * 删除次数failure set方法.
+     */
+    public void setDeleteFailure(Long deleteFailure) {
+        this.deleteFailure = deleteFailure;
+    }
+
+    /**
      * 处理进度 get方法.
      */
     public String getDisposeSchedule() {
@@ -203,59 +388,31 @@ public class MrJobTasksSchedule implements java.io.Serializable {
     }
 
     /**
-     * 告警次数 get方法.
+     * 最近导入数据时间 get方法.
      */
-    public String getAlarmNumber() {
-        return alarmNumber == null ? null : alarmNumber.trim();
+    public Date getLastLoadedDataTime() {
+        return lastLoadedDataTime;
     }
 
     /**
-     * 告警次数 set方法.
+     * 最近导入数据时间 set方法.
      */
-    public void setAlarmNumber(String alarmNumber) {
-        this.alarmNumber = alarmNumber == null ? null : alarmNumber.trim();
+    public void setLastLoadedDataTime(Date lastLoadedDataTime) {
+        this.lastLoadedDataTime = lastLoadedDataTime;
     }
 
     /**
-     * 插入次数 get方法.
+     * 最近导入系统时间 get方法.
      */
-    public String getInsertNumber() {
-        return insertNumber == null ? null : insertNumber.trim();
+    public Date getLastLoadedSystemTime() {
+        return lastLoadedSystemTime;
     }
 
     /**
-     * 插入次数 set方法.
+     * 最近导入系统时间 set方法.
      */
-    public void setInsertNumber(String insertNumber) {
-        this.insertNumber = insertNumber == null ? null : insertNumber.trim();
-    }
-
-    /**
-     * 更新次数 get方法.
-     */
-    public String getUpdateNumber() {
-        return updateNumber == null ? null : updateNumber.trim();
-    }
-
-    /**
-     * 更新次数 set方法.
-     */
-    public void setUpdateNumber(String updateNumber) {
-        this.updateNumber = updateNumber == null ? null : updateNumber.trim();
-    }
-
-    /**
-     * 删除次数(成功/失败) get方法.
-     */
-    public String getDelNumber() {
-        return delNumber == null ? null : delNumber.trim();
-    }
-
-    /**
-     * 删除次数(成功/失败) set方法.
-     */
-    public void setDelNumber(String delNumber) {
-        this.delNumber = delNumber == null ? null : delNumber.trim();
+    public void setLastLoadedSystemTime(Date lastLoadedSystemTime) {
+        this.lastLoadedSystemTime = lastLoadedSystemTime;
     }
 
     /**
@@ -340,6 +497,20 @@ public class MrJobTasksSchedule implements java.io.Serializable {
      */
     public void setIscancel(Integer iscancel) {
         this.iscancel = iscancel;
+    }
+
+    /**
+     * 预留时间分区字段 get方法.
+     */
+    public Date getPartitionDay() {
+        return partitionDay;
+    }
+
+    /**
+     * 预留时间分区字段 set方法.
+     */
+    public void setPartitionDay(Date partitionDay) {
+        this.partitionDay = partitionDay;
     }
 
     /**

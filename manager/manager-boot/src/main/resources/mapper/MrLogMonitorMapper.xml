@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.suixingpay.datas.manager.core.mapper.MrLogMonitorMapper">
-    <!-- 通用查询映射结果 
+    <!-- 通用查询映射结果
     <resultMap id="BaseResultMap" type="com.suixingpay.datas.manager.core.entity.MrLogMonitor">
         <result column="id" property="id" />
         <result column="node_id" property="nodeId" />
@@ -17,12 +17,13 @@
         <result column="update_time" property="updateTime" />
         <result column="state" property="state" />
         <result column="iscancel" property="iscancel" />
+        <result column="partition_day" property="partitionDay" />
         <result column="remark" property="remark" />
     </resultMap>-->
 
-    <!-- 通用查询结果列 
+    <!-- 通用查询结果列
     <sql id="Base_Column_List">
-        select id, node_id AS nodeId, job_id AS jobId, job_name AS jobName, ip_adress AS ipAdress, log_date AS logDate, log_title AS logTitle, log_content AS logContent, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, remark from mr_log_monitor
+        select id, node_id AS nodeId, job_id AS jobId, job_name AS jobName, ip_adress AS ipAdress, log_date AS logDate, log_title AS logTitle, log_content AS logContent, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, partition_day AS partitionDay, remark from mr_log_monitor
     </sql>-->
 
     <!-- 新增 -->
@@ -41,6 +42,7 @@
         update_time,
         state,
         iscancel,
+        partition_day,
         remark
         ) values (
         #{nodeId},
@@ -56,6 +58,7 @@
         #{updateTime},
         #{state},
         #{iscancel},
+        #{partitionDay},
         #{remark}
         )
     </insert>
@@ -77,6 +80,7 @@
         update_time = #{mrLogMonitor.updateTime},
         state = #{mrLogMonitor.state},
         iscancel = #{mrLogMonitor.iscancel},
+        partition_day = #{mrLogMonitor.partitionDay},
         remark = #{mrLogMonitor.remark}
         where id = #{id}
     </update>
@@ -88,61 +92,26 @@
 
     <!-- 根据主鍵查找 -->
     <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.MrLogMonitor">
-        select id, node_id AS nodeId, job_id AS jobId, job_name AS jobName, ip_adress AS ipAdress, log_date AS logDate, log_title AS logTitle, log_content AS logContent, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, remark from mr_log_monitor
+        select id, node_id AS nodeId, job_id AS jobId, job_name AS jobName, ip_adress AS ipAdress, log_date AS logDate, log_title AS logTitle, log_content AS logContent, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, partition_day AS partitionDay, remark from mr_log_monitor
         where id = #{id}
     </select>
 
     <!-- 分页All -->
     <select id="pageAll" resultType="java.lang.Integer">
         select count(id) from mr_log_monitor
-        <where>
-            iscancel = 0
-            <if test="state != null and state != ''">
-                and state = #{state}
-            </if>
-            <if test="ipAddress != null and ipAddress != ''">
-                and ip_adress LIKE CONCAT('%', #{ipAddress}, '%')
-            </if>
-            <if test="beginTime != null and beginTime != ''">
-                and log_date &gt; #{beginTime}
-            </if>
-            <if test="endTime != null and endTime != ''">
-                and log_date &lt; #{endTime}
-            </if>
-        </where>
+        where 1=1
     </select>
 
     <!-- 分页 -->
     <select id="page" resultType="com.suixingpay.datas.manager.core.entity.MrLogMonitor">
-        select
-        id, node_id AS nodeId, job_id AS jobId, job_name AS jobName, ip_adress AS ipAdress, log_date AS logDate, log_title AS logTitle, log_content AS logContent
-        from mr_log_monitor
-        <where>
-            iscancel = 0
-            <if test="state != null and state != ''">
-                and state = #{state}
-            </if>
-            <if test="ipAddress != null and ipAddress != ''">
-                and ip_adress LIKE CONCAT('%', #{ipAddress}, '%')
-            </if>
-            <if test="beginTime != null and beginTime != ''">
-                and log_date &gt; #{beginTime}
-            </if>
-            <if test="endTime != null and endTime != ''">
-                and log_date &lt; #{endTime}
-            </if>
-        </where>
-        order by log_date desc
-        limit #{page.offset},#{page.pageSize}
+        select id, node_id AS nodeId, job_id AS jobId, job_name AS jobName, ip_adress AS ipAdress, log_date AS logDate, log_title AS logTitle, log_content AS logContent, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, partition_day AS partitionDay, remark from mr_log_monitor
+        where 1=1 limit #{page.offset},#{page.pageSize}
     </select>
 
     <!-- 验证新增 -->
     <insert id="insertSelective">
         insert into mr_log_monitor
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="id != null">
-                id,
-            </if>
             <if test="nodeId != null">
                 node_id,
             </if>
@@ -182,14 +151,14 @@
             <if test="iscancel != null">
                 iscancel,
             </if>
+            <if test="partitionDay != null">
+                partition_day,
+            </if>
             <if test="remark != null">
                 remark,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="id != null">
-                #{id,jdbcType=BIGINT},
-            </if>
             <if test="nodeId != null">
                 #{nodeId,jdbcType=VARCHAR},
             </if>
@@ -229,6 +198,9 @@
             <if test="iscancel != null">
                 #{iscancel,jdbcType=INTEGER},
             </if>
+            <if test="partitionDay != null">
+                #{partitionDay,jdbcType=DATE},
+            </if>
             <if test="remark != null">
                 #{remark,jdbcType=VARCHAR},
             </if>
@@ -239,9 +211,6 @@
     <update id="updateSelective">
         update mr_log_monitor
         <set>
-            <if test="mrLogMonitor.id != null">
-                id = #{mrLogMonitor.id,jdbcType=BIGINT},
-            </if>
             <if test="mrLogMonitor.nodeId != null">
                 node_id = #{mrLogMonitor.nodeId,jdbcType=VARCHAR},
             </if>
@@ -281,10 +250,14 @@
             <if test="mrLogMonitor.iscancel != null">
                 iscancel = #{mrLogMonitor.iscancel,jdbcType=INTEGER},
             </if>
+            <if test="mrLogMonitor.partitionDay != null">
+                partition_day = #{mrLogMonitor.partitionDay,jdbcType=DATE},
+            </if>
             <if test="mrLogMonitor.remark != null">
                 remark = #{mrLogMonitor.remark,jdbcType=VARCHAR},
             </if>
         </set>
-        where id = #{id,jdbcType=BIGINT}
+        where id = #{id}
     </update>
+
 </mapper>
