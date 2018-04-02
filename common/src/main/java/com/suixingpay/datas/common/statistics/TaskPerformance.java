@@ -24,19 +24,31 @@ import java.util.Date;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月09日 16:16
  */
 public class TaskPerformance extends StatisticData {
+    @JSONField(serialize = false, deserialize = false)
     private static final String NAME = "task";
+    //任务ID
     @Setter @Getter private String taskId;
+    //任务ID
     @Setter @Getter private String swimlaneId;
+    //表schema
     @Setter @Getter private String schema;
+    //表名
     @Setter @Getter private String table;
+    //插入行数
     @Setter @Getter private Long insertRow = 0L;
+    //更新行数
     @Setter @Getter private Long updateRow = 0L;
+    //删除行数
     @Setter @Getter private Long deleteRow = 0L;
+    //更新错误行数
     @Setter @Getter private Long errorUpdateRow = 0L;
+    //插入失败行数
     @Setter @Getter private Long errorInsertRow = 0L;
+    //删除失败行数
     @Setter @Getter private Long errorDeleteRow = 0L;
     //告警次数
     @Setter @Getter private  Long alertedTimes = 0L;
+    //统计上报时间
     @JSONField(format = "yyyyMMddHHmm")
     @Setter @Getter private Date time;
 

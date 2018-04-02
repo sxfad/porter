@@ -30,14 +30,25 @@ import java.util.List;
  */
 public class NodeLog extends StatisticData {
     private static final String NAME = "log";
+    /**
+     *日志类型
+     *taskStopAlarm 任务停止告警日志，该日志类型不仅会在后台看到，同时会通过邮件、短信推送给监控人。
+     *taskLog  常规任务日志，仅发送给后台系统
+     */
     @Setter @Getter private LogType type;
+    //错误正文
     @Setter @Getter private String error;
+    //任务所在主机IP
     @Getter @Setter private String address = MachineUtils.IP_ADDRESS;
+    //任务所在主机
     @Getter @Setter private String hostName = MachineUtils.HOST_NAME;
+    //进程ID
     @Getter @Setter private String processId = MachineUtils.getPID() + "";
+    //任务ID
     @Setter @Getter private String taskId;
+    //泳道ID
     @Setter @Getter private String swimlaneId;
-
+    //异常上报时间
     @JSONField(format = "yyyyMMddHHmmss")
     @Setter @Getter private Date time;
 

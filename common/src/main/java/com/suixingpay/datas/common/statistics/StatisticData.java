@@ -25,6 +25,7 @@ import java.util.UUID;
  */
 
 public abstract class StatisticData {
+    //节点ID
     @Setter @Getter private String nodeId;
 
     @JSONField(serialize = false, deserialize = false)
