@@ -19,5 +19,7 @@ public enum  NodeCommandType {
     //停止|接收任务推送
     CHANGE_STATUS,
     //停止当前任务 NodeStatusType-SUSPEND
-    RELEASE_WORK;
+    RELEASE_WORK,
+    //节点最大工作容量
+    WORK_LIMIT;
 }

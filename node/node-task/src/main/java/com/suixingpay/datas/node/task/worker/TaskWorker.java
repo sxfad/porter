@@ -9,10 +9,7 @@
 package com.suixingpay.datas.node.task.worker;
 
 import com.suixingpay.datas.common.config.TaskConfig;
-import com.suixingpay.datas.common.exception.ClientException;
-import com.suixingpay.datas.common.exception.ConfigParseException;
-import com.suixingpay.datas.common.exception.DataConsumerBuildException;
-import com.suixingpay.datas.common.exception.DataLoaderBuildException;
+import com.suixingpay.datas.common.exception.*;
 import com.suixingpay.datas.common.statistics.NodeLog;
 import com.suixingpay.datas.common.util.DefaultNamedThreadFactory;
 import com.suixingpay.datas.node.core.task.TableMapper;
@@ -116,10 +113,13 @@ public class TaskWorker {
                 job = new TaskWork(c, task.getLoader(), task.getTaskId(), task.getReceivers(), this);
                 job.start();
                 JOBS.put(c.getSwimlaneId(), job);
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 if (null != job) job.stop();
-                LOGGER.error("Consumer JOB[{}] failed to start!", c.getSwimlaneId(), e);
-                NodeLog.upload(NodeLog.LogType.TASK_LOG, task.getTaskId(), c.getSwimlaneId(), e.getMessage());
+                //任务抢占异常不属于报错范畴
+                if (!(e instanceof TaskLockException)) {
+                    LOGGER.error("Consumer JOB[{}] failed to start!", c.getSwimlaneId(), e);
+                    NodeLog.upload(NodeLog.LogType.TASK_LOG, task.getTaskId(), c.getSwimlaneId(), e.getMessage());
+                }
             }
         });
     }

@@ -14,7 +14,9 @@ import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.UUID;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * 统计信息
@@ -25,6 +27,8 @@ import java.util.UUID;
  */
 
 public abstract class StatisticData {
+    @JSONField(serialize = false, deserialize = false)
+    private final DateFormat ID_DATE_FORMAT = new SimpleDateFormat("yyyyMMddHHmmssSSS");
     //节点ID
     @Setter @Getter private String nodeId;
 
@@ -33,7 +37,7 @@ public abstract class StatisticData {
 
     @JSONField(serialize = false, deserialize = false)
     public String getId() {
-        return UUID.randomUUID().toString();
+        return new StringBuilder(nodeId).append("-").append(ID_DATE_FORMAT.format(new Date())).toString();
     }
 
     public String toString() {

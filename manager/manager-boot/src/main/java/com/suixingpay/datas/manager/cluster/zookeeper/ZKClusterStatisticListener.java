@@ -88,7 +88,7 @@ public class ZKClusterStatisticListener extends ZookeeperClusterListener {
 
             @Override
             protected boolean doFilter(ZookeeperClusterEvent event) {
-                return false;
+                return true;
             }
         };
     }

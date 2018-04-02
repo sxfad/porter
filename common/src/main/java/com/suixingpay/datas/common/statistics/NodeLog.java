@@ -76,7 +76,7 @@ public class NodeLog extends StatisticData {
             if (type == LogType.TASK_ALARM) {
                 AlertProviderFactory.INSTANCE.notice(type.title, log.toPrintln(), receivers);
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             e.printStackTrace();
         }
     }

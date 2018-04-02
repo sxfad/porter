@@ -9,6 +9,7 @@
 package com.suixingpay.datas.common.cluster.data;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.suixingpay.datas.common.dic.NodeHealthLevel;
 import com.suixingpay.datas.common.dic.NodeStatusType;
 import com.suixingpay.datas.common.util.MachineUtils;
 import lombok.Getter;
@@ -27,20 +28,26 @@ import java.util.Map;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月20日 13:45
  */
 public class DNode extends DObject {
-    //节点id
+    //节点ID
     @Getter @Setter private String nodeId;
     //心跳时间
     @JSONField(format = DEFAULT_DATE_FORMAT)
     @Getter @Setter private Date heartbeat;
-    //任务所在主机IP
+    //ip
     @Getter @Setter private String address = MachineUtils.IP_ADDRESS;
-    //任务所在主机名
+    //主机名
     @Getter @Setter private String hostName = MachineUtils.HOST_NAME;
     //进程ID
     @Getter @Setter private String processId = MachineUtils.CURRENT_JVM_PID + "";
-    
+    //节点工作状态
     @Getter @Setter private NodeStatusType status;
+    //节点当天任务
     @Getter @Setter private Map<String, List<String>> tasks;
+    //节点健康级别
+    @Getter @Setter private NodeHealthLevel healthLevel = NodeHealthLevel.GREEN;
+    //节点健康级别描述
+    @Getter @Setter private String healthLevelDesc;
+
     public DNode() {
         heartbeat = new Date();
         tasks = new LinkedHashMap<>();
