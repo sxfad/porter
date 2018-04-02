@@ -25,6 +25,7 @@ import com.suixingpay.datas.common.cluster.impl.zookeeper.ZookeeperClusterListen
 import com.suixingpay.datas.common.cluster.data.DNode;
 import com.suixingpay.datas.common.config.NodeCommandConfig;
 import com.suixingpay.datas.common.config.TaskConfig;
+import com.suixingpay.datas.common.dic.NodeHealthLevel;
 import com.suixingpay.datas.common.node.NodeCommandType;
 import com.suixingpay.datas.common.dic.NodeStatusType;
 import com.suixingpay.datas.common.task.TaskEventListener;
@@ -120,6 +121,12 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener  implements 
                     });
                 }
             }
+
+            //调整节点可执行工作数量
+            if (commandConfig.getCommand() == NodeCommandType.WORK_LIMIT
+                    && null != commandConfig.getWorkLimit() && commandConfig.getWorkLimit() > -1) {
+                NodeContext.INSTANCE.updateWorkLimit(commandConfig.getWorkLimit());
+            }
             //删除指令
             client.delete(zkEvent.getPath());
         }
@@ -162,7 +169,9 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener  implements 
             client.create(lockPath, false, new DNode(NodeContext.INSTANCE.getNodeId()).toString());
             client.createWhenNotExists(statPath, false, false, new DNode(NodeContext.INSTANCE.getNodeId()).toString());
 
-            //心跳定时任务
+            /**
+             * 定时一分钟上传一次心跳
+             */
             heartbeatWorker.scheduleAtFixedRate(new Runnable() {
                 @Override
                 public void run() {
@@ -171,8 +180,15 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener  implements 
                         Pair<String, Stat> dataPair = client.getData(statPath);
                         if (null != dataPair && null != dataPair.getRight()) {
                             DNode nodeData = DNode.fromString(dataPair.getLeft(), DNode.class);
+                            //设置心跳时间
                             nodeData.setHeartbeat(new Date());
+                            //设置节点工作状态
                             nodeData.setStatus(NodeContext.INSTANCE.getNodeStatus());
+                            //设置节点健康状态
+                            Pair<NodeHealthLevel, String> level = NodeContext.INSTANCE.getHealthLevel();
+                            nodeData.setHealthLevel(level.getLeft());
+                            nodeData.setHealthLevelDesc(level.getRight());
+                            //通知数据到zookeeper
                             client.setData(statPath, nodeData.toString(), dataPair.getRight().getVersion());
                         }
                     } catch (KeeperException e) {
@@ -183,7 +199,7 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener  implements 
                         lock.unlock();
                     }
                 }
-            }, 10000, 10000, TimeUnit.MILLISECONDS);
+            }, 10, 60, TimeUnit.SECONDS);
         } else {
             throw  new Exception(lockPath + ",节点已注册");
         }

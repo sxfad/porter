@@ -9,9 +9,12 @@
 
 package com.suixingpay.datas.common.node;
 
+import com.suixingpay.datas.common.dic.NodeHealthLevel;
 import com.suixingpay.datas.common.dic.NodeStatusType;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -20,7 +23,20 @@ import lombok.Setter;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月24日 17:29
  */
 public class Node {
+    //节点ID
     @Getter @Setter private String nodeId;
+    //节点状态
     @Getter @Setter private NodeStatusType status = NodeStatusType.SUSPEND;
+    //是否上传统计信息
     @Getter @Setter private boolean uploadStatistic = true;
+    //节点健康级别
+    @Getter @Setter private NodeHealthLevel healthLevel = NodeHealthLevel.GREEN;
+    //节点健康级别描述
+    @Getter @Setter private String healthLevelDesc;
+    //工作总阀值
+    @Getter @Setter private int workLimit = 20;
+    //工作指标用量
+    @Getter @Setter private AtomicInteger workUsed = new AtomicInteger(0);
+
+
 }

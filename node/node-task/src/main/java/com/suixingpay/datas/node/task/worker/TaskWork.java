@@ -21,7 +21,10 @@ import com.suixingpay.datas.common.cluster.command.TaskStopCommand;
 import com.suixingpay.datas.common.cluster.data.DCallback;
 import com.suixingpay.datas.common.cluster.data.DObject;
 import com.suixingpay.datas.common.cluster.data.DTaskStat;
+import com.suixingpay.datas.common.dic.NodeHealthLevel;
 import com.suixingpay.datas.common.exception.TaskStopTriggerException;
+import com.suixingpay.datas.common.exception.WorkResourceAcquireException;
+import com.suixingpay.datas.common.node.Node;
 import com.suixingpay.datas.common.statistics.NodeLog;
 import com.suixingpay.datas.common.statistics.TaskPerformance;
 import com.suixingpay.datas.node.core.NodeContext;
@@ -149,6 +152,8 @@ public class TaskWork {
                 e.printStackTrace();
                 NodeLog.upload(NodeLog.LogType.TASK_LOG, taskId, dataConsumer.getSwimlaneId(), "任务关闭失败:" + e.getMessage());
                 LOGGER.error("终止执行任务[{}-{}]异常", taskId, dataConsumer.getSwimlaneId(), e);
+            } finally {
+                NodeContext.INSTANCE.releaseWork();
             }
         }
     }
@@ -156,6 +161,11 @@ public class TaskWork {
     protected void start() throws Exception {
         if (STAT.compareAndSet(false, true)) {
             LOGGER.info("开始执行任务[{}-{}]", taskId, dataConsumer.getSwimlaneId());
+            //申请work资源
+            if (!NodeContext.INSTANCE.acquireWork()) {
+                throw new WorkResourceAcquireException("未申请到可供任务执行的资源");
+            }
+
 
             //会抛出分布式锁任务抢占异常
             ClusterProviderProxy.INSTANCE.broadcast(new TaskRegisterCommand(taskId, dataConsumer.getSwimlaneId()));
@@ -284,13 +294,17 @@ public class TaskWork {
             public void run() {
                 try {
                     ClusterProviderProxy.INSTANCE.broadcast(new TaskStoppedByErrorCommand(taskId, dataConsumer.getSwimlaneId()));
-                } catch (Exception e) {
+                } catch (Throwable e) {
                     e.printStackTrace();
                     NodeLog.upload(NodeLog.LogType.TASK_LOG, taskId, dataConsumer.getSwimlaneId(), "在集群策略存储引擎标识任务因错误失败出错:" + e.getMessage(),
                             getReceivers());
                 }
+                //上传日志
                 NodeLog.upload(NodeLog.LogType.TASK_ALARM, taskId, dataConsumer.getSwimlaneId(), notice, getReceivers());
+                //停止任务
                 NodeContext.INSTANCE.getBean(TaskController.class).stopTask(taskId, dataConsumer.getSwimlaneId());
+                //调整节点健康级别
+                NodeContext.INSTANCE.syncHealthLevel(NodeHealthLevel.RED, notice);
             }
         }.start();
     }

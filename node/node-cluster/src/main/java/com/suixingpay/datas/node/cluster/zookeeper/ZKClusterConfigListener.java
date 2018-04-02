@@ -69,6 +69,7 @@ public class ZKClusterConfigListener extends ZookeeperClusterListener {
                     e.printStackTrace();
                 }
             }
+            //统计分析
             if (zkEvent.getPath().equals(STATISTIC_CONFIG_PATH)) {
                 StatisticConfig config = JSONObject.parseObject(event.getData(), StatisticConfig.class);
                 NodeContext.INSTANCE.syncUploadStatistic(config.isUpload());
