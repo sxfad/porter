@@ -70,9 +70,12 @@
 
     <!-- 根据主鍵查找 -->
     <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.DataTable">
-        select id, source_id AS sourceId, data_type AS dataType, bank_name AS bankName, table_name AS tableName, creater AS creater, create_time AS createTime
-        from b_data_table
-        where id = #{id}
+        SELECT
+        b.id, b.source_id AS sourceId, b.data_type AS dataType, b.bank_name AS bankName,
+        b.table_name AS tableName, b.create_time AS createTime, d.name AS sourceName
+        from b_data_table b left join b_data_source d
+        on b.source_id = d.id
+        where b.id = #{id}
     </select>
 
     <!-- 分页All -->
