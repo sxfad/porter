@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.suixingpay.datas.manager.core.mapper.MrJobTasksMonitorMapper">
-    <!-- 通用查询映射结果 
+    <!-- 通用查询映射结果
     <resultMap id="BaseResultMap" type="com.suixingpay.datas.manager.core.entity.MrJobTasksMonitor">
         <result column="id" property="id" />
-        <result column="consume_lane" property="consumeLane" />
+        <result column="job_id" property="jobId" />
+        <result column="node_id" property="nodeId" />
+        <result column="node_id_ip" property="nodeIdIp" />
+        <result column="swimlane_id" property="swimlaneId" />
         <result column="monitor_date" property="monitorDate" />
         <result column="monitor_ymd" property="monitorYmd" />
         <result column="monitor_hour" property="monitorHour" />
@@ -16,17 +19,21 @@
         <result column="update_failure" property="updateFailure" />
         <result column="delete_succes" property="deleteSucces" />
         <result column="delete_failure" property="deleteFailure" />
+        <result column="partition_day" property="partitionDay" />
     </resultMap>-->
 
-    <!-- 通用查询结果列 
+    <!-- 通用查询结果列
     <sql id="Base_Column_List">
-        select id, consume_lane AS consumeLane, monitor_date AS monitorDate, monitor_ymd AS monitorYmd, monitor_hour AS monitorHour, monitor_minute AS monitorMinute, monitor_second AS monitorSecond, insert_succes AS insertSucces, insert_failure AS insertFailure, update_succes AS updateSucces, update_failure AS updateFailure, delete_succes AS deleteSucces, delete_failure AS deleteFailure from mr_job_tasks_monitor
+        select id, job_id AS jobId, node_id AS nodeId, node_id_ip AS nodeIdIp, swimlane_id AS swimlaneId, monitor_date AS monitorDate, monitor_ymd AS monitorYmd, monitor_hour AS monitorHour, monitor_minute AS monitorMinute, monitor_second AS monitorSecond, insert_succes AS insertSucces, insert_failure AS insertFailure, update_succes AS updateSucces, update_failure AS updateFailure, delete_succes AS deleteSucces, delete_failure AS deleteFailure, partition_day AS partitionDay from mr_job_tasks_monitor
     </sql>-->
 
     <!-- 新增 -->
     <insert id="insert">
         insert into mr_job_tasks_monitor(
-        consume_lane,
+        job_id,
+        node_id,
+        node_id_ip,
+        swimlane_id,
         monitor_date,
         monitor_ymd,
         monitor_hour,
@@ -37,9 +44,13 @@
         update_succes,
         update_failure,
         delete_succes,
-        delete_failure
+        delete_failure,
+        partition_day
         ) values (
-        #{consumeLane},
+        #{jobId},
+        #{nodeId},
+        #{nodeIdIp},
+        #{swimlaneId},
         #{monitorDate},
         #{monitorYmd},
         #{monitorHour},
@@ -50,7 +61,8 @@
         #{updateSucces},
         #{updateFailure},
         #{deleteSucces},
-        #{deleteFailure}
+        #{deleteFailure},
+        #{partitionDay}
         )
     </insert>
 
@@ -58,7 +70,10 @@
     <update id="update">
         update mr_job_tasks_monitor
         set
-        consume_lane = #{mrJobTasksMonitor.consumeLane},
+        job_id = #{mrJobTasksMonitor.jobId},
+        node_id = #{mrJobTasksMonitor.nodeId},
+        node_id_ip = #{mrJobTasksMonitor.nodeIdIp},
+        swimlane_id = #{mrJobTasksMonitor.swimlaneId},
         monitor_date = #{mrJobTasksMonitor.monitorDate},
         monitor_ymd = #{mrJobTasksMonitor.monitorYmd},
         monitor_hour = #{mrJobTasksMonitor.monitorHour},
@@ -69,7 +84,8 @@
         update_succes = #{mrJobTasksMonitor.updateSucces},
         update_failure = #{mrJobTasksMonitor.updateFailure},
         delete_succes = #{mrJobTasksMonitor.deleteSucces},
-        delete_failure = #{mrJobTasksMonitor.deleteFailure}
+        delete_failure = #{mrJobTasksMonitor.deleteFailure},
+        partition_day = #{mrJobTasksMonitor.partitionDay}
         where id = #{id}
     </update>
 
@@ -80,7 +96,7 @@
 
     <!-- 根据主鍵查找 -->
     <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.MrJobTasksMonitor">
-        select id, consume_lane AS consumeLane, monitor_date AS monitorDate, monitor_ymd AS monitorYmd, monitor_hour AS monitorHour, monitor_minute AS monitorMinute, monitor_second AS monitorSecond, insert_succes AS insertSucces, insert_failure AS insertFailure, update_succes AS updateSucces, update_failure AS updateFailure, delete_succes AS deleteSucces, delete_failure AS deleteFailure from mr_job_tasks_monitor
+        select id, job_id AS jobId, node_id AS nodeId, node_id_ip AS nodeIdIp, swimlane_id AS swimlaneId, monitor_date AS monitorDate, monitor_ymd AS monitorYmd, monitor_hour AS monitorHour, monitor_minute AS monitorMinute, monitor_second AS monitorSecond, insert_succes AS insertSucces, insert_failure AS insertFailure, update_succes AS updateSucces, update_failure AS updateFailure, delete_succes AS deleteSucces, delete_failure AS deleteFailure, partition_day AS partitionDay from mr_job_tasks_monitor
         where id = #{id}
     </select>
 
@@ -92,7 +108,7 @@
 
     <!-- 分页 -->
     <select id="page" resultType="com.suixingpay.datas.manager.core.entity.MrJobTasksMonitor">
-        select id, consume_lane AS consumeLane, monitor_date AS monitorDate, monitor_ymd AS monitorYmd, monitor_hour AS monitorHour, monitor_minute AS monitorMinute, monitor_second AS monitorSecond, insert_succes AS insertSucces, insert_failure AS insertFailure, update_succes AS updateSucces, update_failure AS updateFailure, delete_succes AS deleteSucces, delete_failure AS deleteFailure from mr_job_tasks_monitor
+        select id, job_id AS jobId, node_id AS nodeId, node_id_ip AS nodeIdIp, swimlane_id AS swimlaneId, monitor_date AS monitorDate, monitor_ymd AS monitorYmd, monitor_hour AS monitorHour, monitor_minute AS monitorMinute, monitor_second AS monitorSecond, insert_succes AS insertSucces, insert_failure AS insertFailure, update_succes AS updateSucces, update_failure AS updateFailure, delete_succes AS deleteSucces, delete_failure AS deleteFailure, partition_day AS partitionDay from mr_job_tasks_monitor
         where 1=1 limit #{page.offset},#{page.pageSize}
     </select>
 
@@ -100,8 +116,17 @@
     <insert id="insertSelective">
         insert into mr_job_tasks_monitor
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="consumeLane != null">
-                consume_lane,
+            <if test="jobId != null">
+                job_id,
+            </if>
+            <if test="nodeId != null">
+                node_id,
+            </if>
+            <if test="nodeIdIp != null">
+                node_id_ip,
+            </if>
+            <if test="swimlaneId != null">
+                swimlane_id,
             </if>
             <if test="monitorDate != null">
                 monitor_date,
@@ -136,16 +161,28 @@
             <if test="deleteFailure != null">
                 delete_failure,
             </if>
+            <if test="partitionDay != null">
+                partition_day,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="consumeLane != null">
-                #{consumeLane,jdbcType=VARCHAR},
+            <if test="jobId != null">
+                #{jobId,jdbcType=BIGINT},
+            </if>
+            <if test="nodeId != null">
+                #{nodeId,jdbcType=VARCHAR},
+            </if>
+            <if test="nodeIdIp != null">
+                #{nodeIdIp,jdbcType=VARCHAR},
+            </if>
+            <if test="swimlaneId != null">
+                #{swimlaneId,jdbcType=VARCHAR},
             </if>
             <if test="monitorDate != null">
                 #{monitorDate,jdbcType=TIMESTAMP},
             </if>
             <if test="monitorYmd != null">
-                #{monitorYmd,jdbcType=CHAR},
+                #{monitorYmd,jdbcType=DATE},
             </if>
             <if test="monitorHour != null">
                 #{monitorHour,jdbcType=INTEGER},
@@ -174,6 +211,9 @@
             <if test="deleteFailure != null">
                 #{deleteFailure,jdbcType=BIGINT},
             </if>
+            <if test="partitionDay != null">
+                #{partitionDay,jdbcType=DATE},
+            </if>
         </trim>
     </insert>
 
@@ -181,14 +221,23 @@
     <update id="updateSelective">
         update mr_job_tasks_monitor
         <set>
-            <if test="mrJobTasksMonitor.consumeLane != null">
-                consume_lane = #{mrJobTasksMonitor.consumeLane,jdbcType=VARCHAR},
+            <if test="mrJobTasksMonitor.jobId != null">
+                job_id = #{mrJobTasksMonitor.jobId,jdbcType=BIGINT},
+            </if>
+            <if test="mrJobTasksMonitor.nodeId != null">
+                node_id = #{mrJobTasksMonitor.nodeId,jdbcType=VARCHAR},
+            </if>
+            <if test="mrJobTasksMonitor.nodeIdIp != null">
+                node_id_ip = #{mrJobTasksMonitor.nodeIdIp,jdbcType=VARCHAR},
+            </if>
+            <if test="mrJobTasksMonitor.swimlaneId != null">
+                swimlane_id = #{mrJobTasksMonitor.swimlaneId,jdbcType=VARCHAR},
             </if>
             <if test="mrJobTasksMonitor.monitorDate != null">
                 monitor_date = #{mrJobTasksMonitor.monitorDate,jdbcType=TIMESTAMP},
             </if>
             <if test="mrJobTasksMonitor.monitorYmd != null">
-                monitor_ymd = #{mrJobTasksMonitor.monitorYmd,jdbcType=CHAR},
+                monitor_ymd = #{mrJobTasksMonitor.monitorYmd,jdbcType=DATE},
             </if>
             <if test="mrJobTasksMonitor.monitorHour != null">
                 monitor_hour = #{mrJobTasksMonitor.monitorHour,jdbcType=INTEGER},
@@ -217,7 +266,11 @@
             <if test="mrJobTasksMonitor.deleteFailure != null">
                 delete_failure = #{mrJobTasksMonitor.deleteFailure,jdbcType=BIGINT},
             </if>
+            <if test="mrJobTasksMonitor.partitionDay != null">
+                partition_day = #{mrJobTasksMonitor.partitionDay,jdbcType=DATE},
+            </if>
         </set>
-        where id = #{id,jdbcType=BIGINT}
+        where id = #{id}
     </update>
+
 </mapper>

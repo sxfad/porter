@@ -20,9 +20,24 @@ public class MrJobTasksMonitor implements java.io.Serializable {
     private Long id;
 
     /**
-     * 消费器泳道.
+     * 任务id.
      */
-    private String consumeLane;
+    private Long jobId;
+
+    /**
+     * 节点id.
+     */
+    private String nodeId;
+
+    /**
+     * 节点id[ip].
+     */
+    private String nodeIdIp;
+
+    /**
+     * 任务泳道.
+     */
+    private String swimlaneId;
 
     /**
      * 实时监控时间.
@@ -30,12 +45,12 @@ public class MrJobTasksMonitor implements java.io.Serializable {
     private Date monitorDate;
 
     /**
-     * 实时监控年月日yyyy-mm-dd.
+     * 实时监控年月日.
      */
-    private String monitorYmd;
+    private Date monitorYmd;
 
     /**
-     * 实时监控小时.
+     * 实时监控小时(24h).
      */
     private Integer monitorHour;
 
@@ -80,6 +95,11 @@ public class MrJobTasksMonitor implements java.io.Serializable {
     private Long deleteFailure;
 
     /**
+     * 预留时间分区字段.
+     */
+    private Date partitionDay;
+
+    /**
      * 主键 get方法.
      */
     public Long getId() {
@@ -94,17 +114,59 @@ public class MrJobTasksMonitor implements java.io.Serializable {
     }
 
     /**
-     * 消费器泳道 get方法.
+     * 任务id get方法.
      */
-    public String getConsumeLane() {
-        return consumeLane == null ? null : consumeLane.trim();
+    public Long getJobId() {
+        return jobId;
     }
 
     /**
-     * 消费器泳道 set方法.
+     * 任务id set方法.
      */
-    public void setConsumeLane(String consumeLane) {
-        this.consumeLane = consumeLane == null ? null : consumeLane.trim();
+    public void setJobId(Long jobId) {
+        this.jobId = jobId;
+    }
+
+    /**
+     * 节点id get方法.
+     */
+    public String getNodeId() {
+        return nodeId == null ? null : nodeId.trim();
+    }
+
+    /**
+     * 节点id set方法.
+     */
+    public void setNodeId(String nodeId) {
+        this.nodeId = nodeId == null ? null : nodeId.trim();
+    }
+
+    /**
+     * 节点id[ip] get方法.
+     */
+    public String getNodeIdIp() {
+        return nodeIdIp == null ? null : nodeIdIp.trim();
+    }
+
+    /**
+     * 节点id[ip] set方法.
+     */
+    public void setNodeIdIp(String nodeIdIp) {
+        this.nodeIdIp = nodeIdIp == null ? null : nodeIdIp.trim();
+    }
+
+    /**
+     * 任务泳道 get方法.
+     */
+    public String getSwimlaneId() {
+        return swimlaneId == null ? null : swimlaneId.trim();
+    }
+
+    /**
+     * 任务泳道 set方法.
+     */
+    public void setSwimlaneId(String swimlaneId) {
+        this.swimlaneId = swimlaneId == null ? null : swimlaneId.trim();
     }
 
     /**
@@ -122,28 +184,28 @@ public class MrJobTasksMonitor implements java.io.Serializable {
     }
 
     /**
-     * 实时监控年月日yyyy-mm-dd get方法.
+     * 实时监控年月日 get方法.
      */
-    public String getMonitorYmd() {
-        return monitorYmd == null ? null : monitorYmd.trim();
+    public Date getMonitorYmd() {
+        return monitorYmd;
     }
 
     /**
-     * 实时监控年月日yyyy-mm-dd set方法.
+     * 实时监控年月日 set方法.
      */
-    public void setMonitorYmd(String monitorYmd) {
-        this.monitorYmd = monitorYmd == null ? null : monitorYmd.trim();
+    public void setMonitorYmd(Date monitorYmd) {
+        this.monitorYmd = monitorYmd;
     }
 
     /**
-     * 实时监控小时 get方法.
+     * 实时监控小时(24h) get方法.
      */
     public Integer getMonitorHour() {
         return monitorHour;
     }
 
     /**
-     * 实时监控小时 set方法.
+     * 实时监控小时(24h) set方法.
      */
     public void setMonitorHour(Integer monitorHour) {
         this.monitorHour = monitorHour;
@@ -259,6 +321,20 @@ public class MrJobTasksMonitor implements java.io.Serializable {
      */
     public void setDeleteFailure(Long deleteFailure) {
         this.deleteFailure = deleteFailure;
+    }
+
+    /**
+     * 预留时间分区字段 get方法.
+     */
+    public Date getPartitionDay() {
+        return partitionDay;
+    }
+
+    /**
+     * 预留时间分区字段 set方法.
+     */
+    public void setPartitionDay(Date partitionDay) {
+        this.partitionDay = partitionDay;
     }
 
 }

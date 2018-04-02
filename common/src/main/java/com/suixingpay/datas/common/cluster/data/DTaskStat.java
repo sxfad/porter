@@ -26,24 +26,36 @@ import java.util.concurrent.atomic.AtomicLong;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月20日 13:45
  */
 public class DTaskStat extends DObject {
+    //任务ID
     private String taskId;
+    //节点id
     private String nodeId;
+    //泳道ID
     @Getter @Setter private String swimlaneId;
+    //表schema
     private String schema;
+    //表名
     private String table;
 
     /*
      * final用于保证不可变状态，同时保证多线程内存可见性
      * 累计结果
      */
+    //插入行数
     private final AtomicLong insertRow = new AtomicLong(0);
+    //更新行数
     private final AtomicLong updateRow = new AtomicLong(0);
+    //删除行数
     private final AtomicLong deleteRow = new AtomicLong(0);
+    //更新错误行数
     private final AtomicLong errorUpdateRow = new AtomicLong(0);
+    //插入失败行数
     private final AtomicLong errorInsertRow = new AtomicLong(0);
+    //删除失败行数
     private final AtomicLong errorDeleteRow = new AtomicLong(0);
     //告警次数
     private final AtomicLong alertedTimes = new AtomicLong(0);
+    
     @JSONField(serialize = false, deserialize = false)
     private final AtomicBoolean updateStat = new AtomicBoolean(false);
 

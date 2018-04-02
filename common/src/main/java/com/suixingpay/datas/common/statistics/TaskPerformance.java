@@ -28,7 +28,7 @@ public class TaskPerformance extends StatisticData {
     private static final String NAME = "task";
     //任务ID
     @Setter @Getter private String taskId;
-    //任务ID
+    //泳道ID
     @Setter @Getter private String swimlaneId;
     //表schema
     @Setter @Getter private String schema;

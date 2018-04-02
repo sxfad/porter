@@ -85,6 +85,11 @@ public class MrLogMonitor implements java.io.Serializable {
     private Integer iscancel;
 
     /**
+     * 预留分区字段.
+     */
+    private Date partitionDay;
+
+    /**
      * 备注.
      */
     private String remark;
@@ -283,6 +288,20 @@ public class MrLogMonitor implements java.io.Serializable {
      */
     public void setIscancel(Integer iscancel) {
         this.iscancel = iscancel;
+    }
+
+    /**
+     * 预留分区字段 get方法.
+     */
+    public Date getPartitionDay() {
+        return partitionDay;
+    }
+
+    /**
+     * 预留分区字段 set方法.
+     */
+    public void setPartitionDay(Date partitionDay) {
+        this.partitionDay = partitionDay;
     }
 
     /**

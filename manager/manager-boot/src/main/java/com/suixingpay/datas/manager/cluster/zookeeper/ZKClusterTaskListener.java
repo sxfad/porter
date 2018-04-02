@@ -53,7 +53,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
         if (TASK_STAT_PATTERN.matcher(zkPath).matches() && zkEvent.isDataChanged()) {
             DTaskStat stat = DTaskStat.fromString(zkEvent.getData(), DTaskStat.class);
             // do something
-            System.err.println("DTaskStat.... "+JSON.toJSON(stat));
+            System.err.println("4-DTaskStat.... "+JSON.toJSON(stat));
         }
     }
 

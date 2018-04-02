@@ -37,7 +37,7 @@ public class MrNodesMonitor implements java.io.Serializable {
     /**
      * 实时监控年月日.
      */
-    private String monitorYmd;
+    private Date monitorYmd;
 
     /**
      * 实时监控小时.
@@ -63,6 +63,11 @@ public class MrNodesMonitor implements java.io.Serializable {
      * 告警次数.
      */
     private Long monitorAlarm;
+
+    /**
+     * 预留时间分区字段.
+     */
+    private Date partitionDay;
 
     /**
      * 主键 get方法.
@@ -123,15 +128,15 @@ public class MrNodesMonitor implements java.io.Serializable {
     /**
      * 实时监控年月日 get方法.
      */
-    public String getMonitorYmd() {
-        return monitorYmd == null ? null : monitorYmd.trim();
+    public Date getMonitorYmd() {
+        return monitorYmd;
     }
 
     /**
      * 实时监控年月日 set方法.
      */
-    public void setMonitorYmd(String monitorYmd) {
-        this.monitorYmd = monitorYmd == null ? null : monitorYmd.trim();
+    public void setMonitorYmd(Date monitorYmd) {
+        this.monitorYmd = monitorYmd;
     }
 
     /**
@@ -202,6 +207,20 @@ public class MrNodesMonitor implements java.io.Serializable {
      */
     public void setMonitorAlarm(Long monitorAlarm) {
         this.monitorAlarm = monitorAlarm;
+    }
+
+    /**
+     * 预留时间分区字段 get方法.
+     */
+    public Date getPartitionDay() {
+        return partitionDay;
+    }
+
+    /**
+     * 预留时间分区字段 set方法.
+     */
+    public void setPartitionDay(Date partitionDay) {
+        this.partitionDay = partitionDay;
     }
 
 }

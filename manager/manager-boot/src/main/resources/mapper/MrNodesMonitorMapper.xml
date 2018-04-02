@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.suixingpay.datas.manager.core.mapper.MrNodesMonitorMapper">
-    <!-- 通用查询映射结果 
+    <!-- 通用查询映射结果
     <resultMap id="BaseResultMap" type="com.suixingpay.datas.manager.core.entity.MrNodesMonitor">
         <result column="id" property="id" />
         <result column="schedule_id" property="scheduleId" />
@@ -13,11 +13,12 @@
         <result column="monitor_second" property="monitorSecond" />
         <result column="monitor_tps" property="monitorTps" />
         <result column="monitor_alarm" property="monitorAlarm" />
+        <result column="partition_day" property="partitionDay" />
     </resultMap>-->
 
-    <!-- 通用查询结果列 
+    <!-- 通用查询结果列
     <sql id="Base_Column_List">
-        select id, schedule_id AS scheduleId, node_id AS nodeId, monitor_date AS monitorDate, monitor_ymd AS monitorYmd, monitor_hour AS monitorHour, monitor_minute AS monitorMinute, monitor_second AS monitorSecond, monitor_tps AS monitorTps, monitor_alarm AS monitorAlarm from mr_nodes_monitor
+        select id, schedule_id AS scheduleId, node_id AS nodeId, monitor_date AS monitorDate, monitor_ymd AS monitorYmd, monitor_hour AS monitorHour, monitor_minute AS monitorMinute, monitor_second AS monitorSecond, monitor_tps AS monitorTps, monitor_alarm AS monitorAlarm, partition_day AS partitionDay from mr_nodes_monitor
     </sql>-->
 
     <!-- 新增 -->
@@ -31,7 +32,8 @@
         monitor_minute,
         monitor_second,
         monitor_tps,
-        monitor_alarm
+        monitor_alarm,
+        partition_day
         ) values (
         #{scheduleId},
         #{nodeId},
@@ -41,7 +43,8 @@
         #{monitorMinute},
         #{monitorSecond},
         #{monitorTps},
-        #{monitorAlarm}
+        #{monitorAlarm},
+        #{partitionDay}
         )
     </insert>
 
@@ -57,7 +60,8 @@
         monitor_minute = #{mrNodesMonitor.monitorMinute},
         monitor_second = #{mrNodesMonitor.monitorSecond},
         monitor_tps = #{mrNodesMonitor.monitorTps},
-        monitor_alarm = #{mrNodesMonitor.monitorAlarm}
+        monitor_alarm = #{mrNodesMonitor.monitorAlarm},
+        partition_day = #{mrNodesMonitor.partitionDay}
         where id = #{id}
     </update>
 
@@ -68,7 +72,7 @@
 
     <!-- 根据主鍵查找 -->
     <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.MrNodesMonitor">
-        select id, schedule_id AS scheduleId, node_id AS nodeId, monitor_date AS monitorDate, monitor_ymd AS monitorYmd, monitor_hour AS monitorHour, monitor_minute AS monitorMinute, monitor_second AS monitorSecond, monitor_tps AS monitorTps, monitor_alarm AS monitorAlarm from mr_nodes_monitor
+        select id, schedule_id AS scheduleId, node_id AS nodeId, monitor_date AS monitorDate, monitor_ymd AS monitorYmd, monitor_hour AS monitorHour, monitor_minute AS monitorMinute, monitor_second AS monitorSecond, monitor_tps AS monitorTps, monitor_alarm AS monitorAlarm, partition_day AS partitionDay from mr_nodes_monitor
         where id = #{id}
     </select>
 
@@ -80,7 +84,7 @@
 
     <!-- 分页 -->
     <select id="page" resultType="com.suixingpay.datas.manager.core.entity.MrNodesMonitor">
-        select id, schedule_id AS scheduleId, node_id AS nodeId, monitor_date AS monitorDate, monitor_ymd AS monitorYmd, monitor_hour AS monitorHour, monitor_minute AS monitorMinute, monitor_second AS monitorSecond, monitor_tps AS monitorTps, monitor_alarm AS monitorAlarm from mr_nodes_monitor
+        select id, schedule_id AS scheduleId, node_id AS nodeId, monitor_date AS monitorDate, monitor_ymd AS monitorYmd, monitor_hour AS monitorHour, monitor_minute AS monitorMinute, monitor_second AS monitorSecond, monitor_tps AS monitorTps, monitor_alarm AS monitorAlarm, partition_day AS partitionDay from mr_nodes_monitor
         where 1=1 limit #{page.offset},#{page.pageSize}
     </select>
 
@@ -115,6 +119,9 @@
             <if test="monitorAlarm != null">
                 monitor_alarm,
             </if>
+            <if test="partitionDay != null">
+                partition_day,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="scheduleId != null">
@@ -127,7 +134,7 @@
                 #{monitorDate,jdbcType=TIMESTAMP},
             </if>
             <if test="monitorYmd != null">
-                #{monitorYmd,jdbcType=CHAR},
+                #{monitorYmd,jdbcType=DATE},
             </if>
             <if test="monitorHour != null">
                 #{monitorHour,jdbcType=INTEGER},
@@ -144,17 +151,16 @@
             <if test="monitorAlarm != null">
                 #{monitorAlarm,jdbcType=INTEGER},
             </if>
+            <if test="partitionDay != null">
+                #{partitionDay,jdbcType=DATE},
+            </if>
         </trim>
     </insert>
 
     <!-- 验证修改 -->
     <update id="updateSelective">
         update mr_nodes_monitor
-        update mr_nodes_monitor
         <set>
-            <if test="mrNodesMonitor.id != null">
-                id = #{mrNodesMonitor.id,jdbcType=BIGINT},
-            </if>
             <if test="mrNodesMonitor.scheduleId != null">
                 schedule_id = #{mrNodesMonitor.scheduleId,jdbcType=BIGINT},
             </if>
@@ -165,7 +171,7 @@
                 monitor_date = #{mrNodesMonitor.monitorDate,jdbcType=TIMESTAMP},
             </if>
             <if test="mrNodesMonitor.monitorYmd != null">
-                monitor_ymd = #{mrNodesMonitor.monitorYmd,jdbcType=CHAR},
+                monitor_ymd = #{mrNodesMonitor.monitorYmd,jdbcType=DATE},
             </if>
             <if test="mrNodesMonitor.monitorHour != null">
                 monitor_hour = #{mrNodesMonitor.monitorHour,jdbcType=INTEGER},
@@ -182,8 +188,11 @@
             <if test="mrNodesMonitor.monitorAlarm != null">
                 monitor_alarm = #{mrNodesMonitor.monitorAlarm,jdbcType=INTEGER},
             </if>
+            <if test="mrNodesMonitor.partitionDay != null">
+                partition_day = #{mrNodesMonitor.partitionDay,jdbcType=DATE},
+            </if>
         </set>
-        where id = #{id,jdbcType=BIGINT}
+        where id = #{id}
     </update>
 
 </mapper>

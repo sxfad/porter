@@ -103,6 +103,12 @@ public class JobTasksServiceImpl implements JobTasksService {
         //根据 JobTasksId 查询 CUser 详情
         List<CUser> cusers = cUserService.selectByJobTasksId(id);
         jobTasks.setUsers(cusers);
+        //获取 CUser 主键集合
+        List<Long> userIds = new ArrayList<>();
+        for (CUser cUser : cusers) {
+            userIds.add(cUser.getId());
+        }
+        jobTasks.setUserIds(userIds);
 
         return jobTasks;
     }
