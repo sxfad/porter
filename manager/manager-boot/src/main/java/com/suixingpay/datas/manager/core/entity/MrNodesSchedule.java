@@ -2,6 +2,8 @@ package com.suixingpay.datas.manager.core.entity;
 
 import java.util.Date;
 
+import com.suixingpay.datas.common.cluster.data.DNode;
+
 /**
  * 节点任务监控表 实体Entity
  *
@@ -13,6 +15,14 @@ import java.util.Date;
 public class MrNodesSchedule implements java.io.Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    public MrNodesSchedule() {
+        
+    }
+
+    public MrNodesSchedule(DNode node) {
+        
+    }
 
     /**
      * 主键.

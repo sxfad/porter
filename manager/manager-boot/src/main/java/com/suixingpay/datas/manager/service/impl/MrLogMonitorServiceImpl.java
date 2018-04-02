@@ -3,6 +3,7 @@
  */
 package com.suixingpay.datas.manager.service.impl;
 
+import com.suixingpay.datas.common.statistics.NodeLog;
 import com.suixingpay.datas.manager.core.entity.MrLogMonitor;
 import com.suixingpay.datas.manager.core.mapper.MrLogMonitorMapper;
 import com.suixingpay.datas.manager.service.MrLogMonitorService;
@@ -54,4 +55,9 @@ public class MrLogMonitorServiceImpl implements MrLogMonitorService {
         return page;
     }
 
+    @Override
+    public void dealNodeLog(NodeLog log) {
+        // TODO Auto-generated method stub
+        
+    }
 }

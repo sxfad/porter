@@ -1,5 +1,6 @@
 package com.suixingpay.datas.manager.service;
 
+import com.suixingpay.datas.common.statistics.NodeLog;
 import com.suixingpay.datas.manager.core.entity.MrLogMonitor;
 import com.suixingpay.datas.manager.web.page.Page;
 
@@ -23,4 +24,6 @@ public interface MrLogMonitorService {
 
     Page<MrLogMonitor> page(Page<MrLogMonitor> page, String ipAddress, Integer state, String beginTime, String endTime);
 
+    /** 解析任务日志.*/
+    void dealNodeLog(NodeLog log);
 }

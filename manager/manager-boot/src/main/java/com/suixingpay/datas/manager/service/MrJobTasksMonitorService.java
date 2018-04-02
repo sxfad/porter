@@ -1,5 +1,6 @@
 package com.suixingpay.datas.manager.service;
 
+import com.suixingpay.datas.common.statistics.TaskPerformance;
 import com.suixingpay.datas.manager.core.entity.MrJobTasksMonitor;
 import com.suixingpay.datas.manager.web.page.Page;
 
@@ -23,4 +24,6 @@ public interface MrJobTasksMonitorService {
 
     Page<MrJobTasksMonitor> page(Page<MrJobTasksMonitor> page);
 
+    /**解析任务每秒统计信息.*/
+    void dealTaskPerformance(TaskPerformance performance);
 }

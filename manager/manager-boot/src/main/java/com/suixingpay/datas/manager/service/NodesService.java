@@ -1,5 +1,6 @@
 package com.suixingpay.datas.manager.service;
 
+import com.suixingpay.datas.common.cluster.data.DNode;
 import com.suixingpay.datas.common.dic.NodeStatusType;
 import com.suixingpay.datas.manager.core.entity.Nodes;
 import com.suixingpay.datas.manager.web.page.Page;
@@ -28,11 +29,20 @@ public interface NodesService {
 
     Page<Nodes> page(Page<Nodes> page, String ipAddress, Integer state, String machineName);
 
-    Integer insertState(String nodeId, String machineName, String ipAddress, String pidNumber, NodeStatusType taskPushState, String heartBeatTime, Integer state);
+    Integer insertState(DNode node, String heartBeatTime, Integer state);
 
-    Integer updateState(String nodeId, String machineName, String ipAddress, String pidNumber, NodeStatusType taskPushState, String heartBeatTime, Integer state);
+    Integer updateState(DNode node, String heartBeatTime, Integer state);
 
-    Integer updateHeartBeatTime(String nodeId, String machineName, String ipAddress, String pidNumber, NodeStatusType taskPushState, String heartBeatTime);
+    Integer updateHeartBeatTime(DNode node, String heartBeatTime);
+
+    Integer insertState(String nodeId, String machineName, String ipAddress, String pidNumber,
+            NodeStatusType taskPushState, String heartBeatTime, Integer state);
+
+    Integer updateState(String nodeId, String machineName, String ipAddress, String pidNumber,
+            NodeStatusType taskPushState, String heartBeatTime, Integer state);
+
+    Integer updateHeartBeatTime(String nodeId, String machineName, String ipAddress, String pidNumber,
+            NodeStatusType taskPushState, String heartBeatTime);
 
     boolean testNodeId(String nodeId);
 }

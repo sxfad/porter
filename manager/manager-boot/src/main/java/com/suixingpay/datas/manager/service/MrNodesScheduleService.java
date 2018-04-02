@@ -1,5 +1,6 @@
 package com.suixingpay.datas.manager.service;
 
+import com.suixingpay.datas.common.cluster.data.DNode;
 import com.suixingpay.datas.manager.core.entity.MrNodesSchedule;
 import com.suixingpay.datas.manager.web.page.Page;
 
@@ -23,4 +24,6 @@ public interface MrNodesScheduleService {
 
     Page<MrNodesSchedule> page(Page<MrNodesSchedule> page, String ipAddress, String computerName);
 
+    /**节点监听.*/
+    void dealDNode(DNode node);
 }

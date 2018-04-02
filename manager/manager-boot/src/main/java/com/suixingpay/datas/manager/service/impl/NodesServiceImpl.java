@@ -3,6 +3,7 @@
  */
 package com.suixingpay.datas.manager.service.impl;
 
+import com.suixingpay.datas.common.cluster.data.DNode;
 import com.suixingpay.datas.common.dic.NodeStatusType;
 import com.suixingpay.datas.manager.core.entity.Nodes;
 import com.suixingpay.datas.manager.core.mapper.NodesMapper;
@@ -27,7 +28,7 @@ public class NodesServiceImpl implements NodesService {
 
     @Override
     public Integer insert(Nodes nodes) {
-        //验证nodeId是否重复
+        // 验证nodeId是否重复
         Integer total = nodesMapper.testNodeId(nodes.getNodeId());
         Integer number = 0;
         if (total > 0) {
@@ -78,17 +79,37 @@ public class NodesServiceImpl implements NodesService {
     }
 
     @Override
+    public Integer insertState(DNode node, String heartBeatTime, Integer state) {
+        return this.insertState(node.getNodeId(), node.getHostName(), node.getAddress(), node.getProcessId(),
+                node.getStatus(), heartBeatTime, state);
+    }
+
+    @Override
+    public Integer updateState(DNode node, String heartBeatTime, Integer state) {
+        return this.updateState(node.getNodeId(), node.getHostName(), node.getAddress(), node.getProcessId(),
+                node.getStatus(), heartBeatTime, state);
+    }
+
+    @Override
+    public Integer updateHeartBeatTime(DNode node, String heartBeatTime) {
+        return updateHeartBeatTime(node.getNodeId(), node.getHostName(), node.getAddress(),
+                node.getProcessId(), node.getStatus(), heartBeatTime);
+    }
+
+    @Override
     public Integer insertState(String nodeId, String machineName, String ipAddress, String pidNumber,
             NodeStatusType taskPushState, String heartBeatTime, Integer state) {
         return nodesMapper.insertState(nodeId, machineName, ipAddress, pidNumber,
-                taskPushState == null ? NodeStatusType.SUSPEND.getCode() : taskPushState.getCode(), heartBeatTime, state);
+                taskPushState == null ? NodeStatusType.SUSPEND.getCode() : taskPushState.getCode(), heartBeatTime,
+                state);
     }
 
     @Override
     public Integer updateState(String nodeId, String machineName, String ipAddress, String pidNumber,
             NodeStatusType taskPushState, String heartBeatTime, Integer state) {
         return nodesMapper.updateState(nodeId, machineName, ipAddress, pidNumber,
-                taskPushState == null ? NodeStatusType.SUSPEND.getCode() : taskPushState.getCode(), heartBeatTime, state);
+                taskPushState == null ? NodeStatusType.SUSPEND.getCode() : taskPushState.getCode(), heartBeatTime,
+                state);
     }
 
     @Override

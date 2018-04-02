@@ -3,6 +3,7 @@
  */
 package com.suixingpay.datas.manager.service.impl;
 
+import com.suixingpay.datas.common.cluster.data.DNode;
 import com.suixingpay.datas.manager.core.entity.MrNodesSchedule;
 import com.suixingpay.datas.manager.core.mapper.MrNodesScheduleMapper;
 import com.suixingpay.datas.manager.service.MrNodesScheduleService;
@@ -52,5 +53,10 @@ public class MrNodesScheduleServiceImpl implements MrNodesScheduleService {
             page.setResult(mrNodesScheduleMapper.page(page, 1, ipAddress, computerName));
         }
         return page;
+    }
+
+    @Override
+    public void dealDNode(DNode node) {
+        
     }
 }

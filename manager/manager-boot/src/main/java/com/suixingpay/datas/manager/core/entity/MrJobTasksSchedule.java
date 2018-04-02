@@ -2,6 +2,8 @@ package com.suixingpay.datas.manager.core.entity;
 
 import java.util.Date;
 
+import com.suixingpay.datas.common.cluster.data.DTaskStat;
+
 /**
  * 任务泳道进度表 实体Entity
  *
@@ -13,6 +15,14 @@ import java.util.Date;
 public class MrJobTasksSchedule implements java.io.Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    public MrJobTasksSchedule() {
+        
+    }
+
+    public MrJobTasksSchedule(DTaskStat stat) {
+        
+    }
 
     /**
      * 主键.

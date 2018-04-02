@@ -3,6 +3,7 @@
  */
 package com.suixingpay.datas.manager.service.impl;
 
+import com.suixingpay.datas.common.cluster.data.DTaskStat;
 import com.suixingpay.datas.manager.core.entity.MrJobTasksSchedule;
 import com.suixingpay.datas.manager.core.mapper.MrJobTasksScheduleMapper;
 import com.suixingpay.datas.manager.service.MrJobTasksScheduleService;
@@ -54,4 +55,8 @@ public class MrJobTasksScheduleServiceImpl implements MrJobTasksScheduleService 
         return page;
     }
 
+    @Override
+    public void dealDTaskStat(DTaskStat stat) {
+        
+    }
 }

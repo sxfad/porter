@@ -8,6 +8,9 @@
  */
 package com.suixingpay.datas.manager.cluster.zookeeper;
 
+import java.util.List;
+import java.util.regex.Pattern;
+
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.suixingpay.datas.common.cluster.ClusterListenerFilter;
@@ -21,9 +24,9 @@ import com.suixingpay.datas.common.cluster.impl.zookeeper.ZookeeperClusterListen
 import com.suixingpay.datas.common.config.DataConsumerConfig;
 import com.suixingpay.datas.common.config.SourceConfig;
 import com.suixingpay.datas.common.config.TaskConfig;
-
-import java.util.List;
-import java.util.regex.Pattern;
+import com.suixingpay.datas.manager.core.util.ApplicationContextUtil;
+import com.suixingpay.datas.manager.service.MrJobTasksScheduleService;
+import com.suixingpay.datas.manager.service.impl.MrJobTasksScheduleServiceImpl;
 
 /**
  * 任务信息监听
@@ -53,6 +56,8 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
         if (TASK_STAT_PATTERN.matcher(zkPath).matches() && zkEvent.isDataChanged()) {
             DTaskStat stat = DTaskStat.fromString(zkEvent.getData(), DTaskStat.class);
             // do something
+            MrJobTasksScheduleService mrJobTasksScheduleService = ApplicationContextUtil.getBean(MrJobTasksScheduleServiceImpl.class);
+            mrJobTasksScheduleService.dealDTaskStat(stat);
             System.err.println("4-DTaskStat.... "+JSON.toJSON(stat));
         }
     }

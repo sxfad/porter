@@ -1,5 +1,6 @@
 package com.suixingpay.datas.manager.service;
 
+import com.suixingpay.datas.common.statistics.TaskPerformance;
 import com.suixingpay.datas.manager.core.entity.MrNodesMonitor;
 import com.suixingpay.datas.manager.web.page.Page;
 
@@ -23,4 +24,5 @@ public interface MrNodesMonitorService {
 
     Page<MrNodesMonitor> page(Page<MrNodesMonitor> page);
 
+    void dealTaskPerformance(TaskPerformance performance);
 }

@@ -26,7 +26,9 @@ import com.suixingpay.datas.common.cluster.impl.zookeeper.ZookeeperClusterListen
 import com.suixingpay.datas.common.cluster.impl.zookeeper.ZookeeperClusterListenerFilter;
 import com.suixingpay.datas.manager.core.util.ApplicationContextUtil;
 import com.suixingpay.datas.manager.core.util.DateFormatUtils;
+import com.suixingpay.datas.manager.service.MrNodesScheduleService;
 import com.suixingpay.datas.manager.service.NodesService;
+import com.suixingpay.datas.manager.service.impl.MrNodesScheduleServiceImpl;
 import com.suixingpay.datas.manager.service.impl.NodesServiceImpl;
 
 /**
@@ -60,27 +62,22 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements N
         if (NODE_LOCK_PATTERN.matcher(zkEvent.getPath()).matches()) {
             String nodeInfoPath = zkEvent.getPath().replace("/lock", "/stat");
             DNode node = getDNode(nodeInfoPath);
-
             if (zkEvent.isOnline()) { // 节点上线
-                // 服务启动，在线通知
-                int i = nodesService.updateState(node.getNodeId(), node.getHostName(), node.getAddress(),
-                        node.getProcessId(), node.getStatus(), heartBeatTime, 1);
                 LOGGER.info("节点[{}]上线", node.getNodeId());
+                // 服务启动，在线通知
+                int i = nodesService.updateState(node, heartBeatTime, 1);
                 if (i == 0) {
-                    nodesService.insertState(node.getNodeId(), node.getHostName(), node.getAddress(),
-                            node.getProcessId(), node.getStatus(), heartBeatTime, 1);
+                    nodesService.insertState(node, heartBeatTime, 1);
                     LOGGER.warn("节点[{}]尚未完善管理后台节点信息，请及时配置！", node.getNodeId());
                 }
             }
-            if (zkEvent.isOffline()) { // 节点下线
+            if (zkEvent.isOffline()) {// 节点下线
                 // do something 服务停止，离线通知
-                int i = nodesService.updateState(node.getNodeId(), node.getHostName(), node.getAddress(),
-                        node.getProcessId(), node.getStatus(), heartBeatTime, -1);
+                int i = nodesService.updateState(node, heartBeatTime, -1);
                 LOGGER.info("节点[{}]下线", node.getNodeId());
                 if (i == 0) {
                     LOGGER.warn("节点[{}]尚未完善管理后台节点信息，请及时配置！", node.getNodeId());
-                    nodesService.insertState(node.getNodeId(), node.getHostName(), node.getAddress(),
-                            node.getProcessId(), node.getStatus(), heartBeatTime, -1);
+                    nodesService.insertState(node, heartBeatTime, -1);
                 }
             }
         }
@@ -88,16 +85,16 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements N
         // 节点状态更新
         if (NODE_STAT_PATTERN.matcher(zkEvent.getPath()).matches()) {
             DNode node = getDNode(zkEvent.getPath());
+            LOGGER.info("节点[{}]状态上报", node.getNodeId());
             System.err.println("2-DNode...." + node.getNodeId() + "..." + JSON.toJSONString(node));
             // do something 心跳时间记录 并且表示节点在线
-            int i = nodesService.updateHeartBeatTime(node.getNodeId(), node.getHostName(), node.getAddress(),
-                    node.getProcessId(), node.getStatus(), heartBeatTime);
-            LOGGER.info("节点[{}]状态上报", node.getNodeId());
+            int i = nodesService.updateHeartBeatTime(node, heartBeatTime);            
             if (i == 0) {
                 LOGGER.warn("节点[{}]尚未完善管理后台节点信息，请及时配置！", node.getNodeId());
-                nodesService.insertState(node.getNodeId(), node.getHostName(), node.getAddress(), node.getProcessId(),
-                        node.getStatus(), heartBeatTime, 1);
+                nodesService.insertState(node, heartBeatTime, 1);
             }
+            MrNodesScheduleService mrNodesScheduleService = ApplicationContextUtil.getBean(MrNodesScheduleServiceImpl.class);
+            mrNodesScheduleService.dealDNode(node);
         }
     }
 

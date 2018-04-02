@@ -1,5 +1,6 @@
 package com.suixingpay.datas.manager.service;
 
+import com.suixingpay.datas.common.cluster.data.DTaskStat;
 import com.suixingpay.datas.manager.core.entity.MrJobTasksSchedule;
 import com.suixingpay.datas.manager.web.page.Page;
 
@@ -23,4 +24,6 @@ public interface MrJobTasksScheduleService {
 
     Page<MrJobTasksSchedule> page(Page<MrJobTasksSchedule> page);
 
+    /**解析处理 任务进度状态汇总.*/
+    void dealDTaskStat(DTaskStat stat);
 }

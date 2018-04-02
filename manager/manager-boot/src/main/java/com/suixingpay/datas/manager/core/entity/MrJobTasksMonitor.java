@@ -2,6 +2,8 @@ package com.suixingpay.datas.manager.core.entity;
 
 import java.util.Date;
 
+import com.suixingpay.datas.common.statistics.TaskPerformance;
+
 /**
  * 任务泳道实时监控表 实体Entity
  *
@@ -13,6 +15,14 @@ import java.util.Date;
 public class MrJobTasksMonitor implements java.io.Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    public MrJobTasksMonitor() {
+
+    }
+
+    public MrJobTasksMonitor(TaskPerformance performance) {
+
+    }
 
     /**
      * 主键.

@@ -3,6 +3,7 @@
  */
 package com.suixingpay.datas.manager.service.impl;
 
+import com.suixingpay.datas.common.statistics.TaskPerformance;
 import com.suixingpay.datas.manager.core.entity.MrNodesMonitor;
 import com.suixingpay.datas.manager.core.mapper.MrNodesMonitorMapper;
 import com.suixingpay.datas.manager.service.MrNodesMonitorService;
@@ -54,4 +55,8 @@ public class MrNodesMonitorServiceImpl implements MrNodesMonitorService {
         return page;
     }
 
+    @Override
+    public void dealTaskPerformance(TaskPerformance performance) {
+        
+    }
 }
