@@ -19,6 +19,8 @@
         <result column="iscancel" property="iscancel" />
         <result column="partition_day" property="partitionDay" />
         <result column="remark" property="remark" />
+        <result column="health_level" property="healthLevel" />
+        <result column="health_level_desc" property="healthLevelDesc" />
     </resultMap>-->
 
     <!-- 通用查询结果列
@@ -43,7 +45,9 @@
         state,
         iscancel,
         partition_day,
-        remark
+        remark,
+        health_level,
+        health_level_desc
         ) values (
         #{nodeId},
         #{computerName},
@@ -59,7 +63,9 @@
         #{state},
         #{iscancel},
         #{partitionDay},
-        #{remark}
+        #{remark},
+        #{healthLevel},
+        #{healthLevelDesc}
         )
     </insert>
 
@@ -81,7 +87,9 @@
         state = #{mrNodesSchedule.state},
         iscancel = #{mrNodesSchedule.iscancel},
         partition_day = #{mrNodesSchedule.partitionDay},
-        remark = #{mrNodesSchedule.remark}
+        remark = #{mrNodesSchedule.remark},
+        health_level = #{mrNodesSchedule.healthLevel},
+        health_level_desc = #{mrNodesSchedule.healthLevelDesc}
         where id = #{id}
     </update>
 
@@ -92,7 +100,12 @@
 
     <!-- 根据主鍵查找 -->
     <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.MrNodesSchedule">
-        select id, node_id AS nodeId, computer_name AS computerName, ip_address AS ipAddress, heart_beat_date AS heartBeatDate, process_number AS processNumber, job_id_json AS jobIdJson, job_name_json AS jobNameJson, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, partition_day AS partitionDay, remark from mr_nodes_schedule
+        select
+        id, node_id AS nodeId, computer_name AS computerName, ip_address AS ipAddress, heart_beat_date AS heartBeatDate,
+        process_number AS processNumber, job_id_json AS jobIdJson, job_name_json AS jobNameJson, create_user_id AS createUserId,
+        update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, partition_day AS partitionDay, remark,
+        health_level AS healthLevel, health_level_desc AS healthLevelDesc
+        from mr_nodes_schedule
         where id = #{id}
     </select>
 
@@ -104,7 +117,12 @@
 
     <!-- 分页 -->
     <select id="page" resultType="com.suixingpay.datas.manager.core.entity.MrNodesSchedule">
-        select id, node_id AS nodeId, computer_name AS computerName, ip_address AS ipAddress, heart_beat_date AS heartBeatDate, process_number AS processNumber, job_id_json AS jobIdJson, job_name_json AS jobNameJson, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, partition_day AS partitionDay, remark from mr_nodes_schedule
+        select
+        id, node_id AS nodeId, computer_name AS computerName, ip_address AS ipAddress, heart_beat_date AS heartBeatDate,
+        process_number AS processNumber, job_id_json AS jobIdJson, job_name_json AS jobNameJson, create_user_id AS createUserId,
+        update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, partition_day AS partitionDay, remark,
+        health_level AS healthLevel, health_level_desc AS healthLevelDesc
+        from mr_nodes_schedule
         where 1=1 limit #{page.offset},#{page.pageSize}
     </select>
 
@@ -157,6 +175,12 @@
             <if test="remark != null">
                 remark,
             </if>
+            <if test="healthLevel != null">
+                health_level,
+            </if>
+            <if test="healthLevelDesc != null">
+                health_level_desc,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="nodeId != null">
@@ -203,6 +227,12 @@
             </if>
             <if test="remark != null">
                 #{remark,jdbcType=VARCHAR},
+            </if>
+            <if test="healthLevel != null">
+                #{healthLevel,jdbcType=VARCHAR},
+            </if>
+            <if test="healthLevelDesc != null">
+                #{healthLevelDesc,jdbcType=VARCHAR},
             </if>
         </trim>
     </insert>
@@ -255,6 +285,12 @@
             </if>
             <if test="mrNodesSchedule.remark != null">
                 remark = #{mrNodesSchedule.remark,jdbcType=VARCHAR},
+            </if>
+            <if test="mrNodesSchedule.healthLevel != null">
+                health_level = #{mrNodesSchedule.healthLevel,jdbcType=VARCHAR},
+            </if>
+            <if test="mrNodesSchedule.healthLevelDesc != null">
+                health_level_desc = #{mrNodesSchedule.healthLevelDesc,jdbcType=VARCHAR},
             </if>
         </set>
         where id = #{id}
