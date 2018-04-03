@@ -108,58 +108,56 @@ public abstract class BaseJdbcLoader extends AbstractDataLoader {
 
         //获取自定义字段
         Map<String, Pair<Object, Object>> sqlKeys = CustomETLRowField.getSqlKeys(row);
-        Map<String, Pair<Object, Object>> sqlColumns  = CustomETLRowField.getSqlColumns(row);
+
+        Map<String, Object> oldColumns = CustomETLRowField.getOldColumns(row);
+        Map<String, Object> newColumns = CustomETLRowField.getNewColumns(row);
 
         JDBCClient client = getLoadClient();
         SqlTemplate template = client.getSqlTemplate();
 
-
-
         //主键名
         String[] keyNames = sqlKeys.keySet().toArray(new String[]{});
-        //非主键名
-        String[] columnNames = sqlColumns.keySet().toArray(new String[]{});
-        //所有字段名
-        String[] allColumnNames = ArrayUtils.addAll(keyNames, columnNames);
-
         //主键新值
         Object[] keyNewValues = sqlKeys.values().stream().map(p -> p.getRight()).toArray();
         //主键旧值
         Object[] keyOldValues = sqlKeys.values().stream().map(p -> p.getLeft()).toArray();
-
-        //非主键新值
-        Object[] columnNewValues = sqlColumns.values().stream().map(p -> p.getRight()).toArray();
-        //非主键旧值
-        Object[] columnOldValues = sqlColumns.values().stream().map(p -> p.getLeft()).toArray();
-
-        //所有字段新值
-        Object[] allNewValues = ArrayUtils.addAll(keyNewValues, columnNewValues);
-        //所有字段旧值
-        Object[] allOldValues = ArrayUtils.addAll(keyOldValues, columnOldValues);
 
         if (row.getOpType() == EventType.DELETE) {
             //主键删除
             if (keyNames.length > 0) {
                 sqlList.add(new ImmutablePair<>(template.getDeleteSql(row.getFinalSchema(), row.getFinalTable(), keyNames), keyNewValues));
             }
+
             //全字段删除
+            //1.数组条件
+            String[] allColumnNames = ArrayUtils.addAll(keyNames, newColumns.keySet().toArray(new String[0]));
+            //所有字段新值
+            Object[] allNewValues = ArrayUtils.addAll(keyNewValues, newColumns.values().toArray());
+            //拼接sql
             sqlList.add(new ImmutablePair<>(template.getDeleteSql(row.getFinalSchema(), row.getFinalTable(), allColumnNames), allNewValues));
         } else if (row.getOpType() == EventType.INSERT) {
+            //1.数组条件
+            String[] allColumnNames = ArrayUtils.addAll(keyNames, newColumns.keySet().toArray(new String[0]));
+            //所有字段新值
+            Object[] allNewValues = ArrayUtils.addAll(keyNewValues, newColumns.values().toArray());
             //插入sql
             sqlList.add(new ImmutablePair<>(template.getInsertSql(row.getFinalSchema(), row.getFinalTable(), allColumnNames), allNewValues));
         } else if (row.getOpType() == EventType.UPDATE) {
+            String[] columnNames = newColumns.keySet().toArray(new String[0]);
+            Object[] columnValues = newColumns.values().toArray();
             //存在主键，主键值没变，根据主键更新
             if (!row.isKeyChangedOnUpdate() && keyNames.length > 0 && null != columnNames && columnNames.length > 0) {
                 sqlList.add(new ImmutablePair<>(template.getUpdateSql(row.getFinalSchema(), row.getFinalTable(), keyNames, columnNames),
-                        ArrayUtils.addAll(columnNewValues, keyOldValues)));
+                        ArrayUtils.addAll(columnValues, keyOldValues)));
             }
             //全字段更新
-            sqlList.add(new ImmutablePair<>(template.getUpdateSql(row.getFinalSchema(), row.getFinalTable(), allColumnNames),
-                    ArrayUtils.addAll(allNewValues, allOldValues)));
+            sqlList.add(new ImmutablePair<>(template.getUpdateSql(row.getFinalSchema(), row.getFinalTable(),
+                    ArrayUtils.addAll(keyNames, oldColumns.keySet().toArray(new String[0])), ArrayUtils.addAll(keyNames, columnNames)),
+                    ArrayUtils.addAll(keyNewValues, columnValues, keyOldValues, oldColumns.values().toArray())));
 
             //插入
-            sqlList.add(new ImmutablePair<>(template.getInsertSql(row.getFinalSchema(), row.getFinalTable(), allColumnNames),
-                    allNewValues));
+            sqlList.add(new ImmutablePair<>(template.getInsertSql(row.getFinalSchema(), row.getFinalTable(),
+                    ArrayUtils.addAll(keyNames, columnNames)), ArrayUtils.addAll(keyNewValues, columnValues)));
         } else if (row.getOpType() == EventType.TRUNCATE) {
             sqlList.add(new ImmutablePair<>(template.getTruncateSql(row.getFinalSchema(), row.getFinalTable()), new Object[]{}));
         }
@@ -172,6 +170,8 @@ public abstract class BaseJdbcLoader extends AbstractDataLoader {
     @Override
     public void mouldRow(ETLRow row) throws TaskDataException {
         if (null != row.getColumns()) {
+            Map<String, Object> oldColumns = CustomETLRowField.getOldColumns(row);
+            Map<String, Object> newColumns = CustomETLRowField.getNewColumns(row);
             for (ETLColumn c : row.getColumns()) {
                 try {
                     Object newValue = SqlUtils.stringToSqlValue(c.getFinalValue(), c.getFinalType(), c.isRequired(), true);
@@ -179,8 +179,12 @@ public abstract class BaseJdbcLoader extends AbstractDataLoader {
                     if (c.isKey()) {
                         CustomETLRowField.getSqlKeys(row).put(c.getFinalName(), new ImmutablePair<>(oldValue, newValue));
                     } else {
-                        CustomETLRowField.getSqlColumns(row).put(c.getFinalName(), new ImmutablePair<>(oldValue, newValue));
+                        if (!c.isFinalAfterMissing()) newColumns.put(c.getFinalName(), newValue);
+                        if (!c.isFinalBeforeMissing()) oldColumns.put(c.getFinalName(), oldValue);
                     }
+
+
+
                 } catch (Exception e) {
                     StringBuilder log = new StringBuilder();
                     log.append("记录:").append(JSONObject.toJSONString(row))
@@ -198,16 +202,22 @@ public abstract class BaseJdbcLoader extends AbstractDataLoader {
     protected static class CustomETLRowField {
 
         private  static String SQL_KEYS_FIELD = "sqlKeys";
-        private  static String SQL_COLUMNS_FIELD = "sqlColumns";
+        private  static String SQL_OLD_COLUMNS_FIELD = "sqlOldColumns";
+        private  static String SQL_NEW_COLUMNS_FIELD = "sqlNewColumns";
 
         protected static Map<String, Pair<Object, Object>> getSqlKeys(ETLRow row) {
             return (Map<String, Pair<Object, Object>>) row.getExtendsField().computeIfAbsent(SQL_KEYS_FIELD,
                 k -> new LinkedHashMap<String, Pair<Object, Object>>());
         }
 
-        protected static Map<String, Pair<Object, Object>> getSqlColumns(ETLRow row) {
-            return (Map<String, Pair<Object, Object>>) row.getExtendsField().computeIfAbsent(SQL_COLUMNS_FIELD,
-                k -> new LinkedHashMap<String, Pair<Object, Object>>());
+        protected static Map<String, Object> getOldColumns(ETLRow row) {
+            return (Map<String, Object>) row.getExtendsField().computeIfAbsent(SQL_OLD_COLUMNS_FIELD,
+                k -> new LinkedHashMap<String, Object>());
+        }
+
+        protected static Map<String, Object> getNewColumns(ETLRow row) {
+            return (Map<String, Object>) row.getExtendsField().computeIfAbsent(SQL_NEW_COLUMNS_FIELD,
+                k -> new LinkedHashMap<String, Object>());
         }
     }
 }

@@ -77,21 +77,49 @@ public class ETLBucket {
             List<ETLColumn> columns = new ArrayList<>();
             if (null == event.getBefore()) event.setBefore(new HashMap<>());
             if (null == event.getAfter()) event.setAfter(new HashMap<>());
+            if (null == event.getPrimaryKeys()) event.setPrimaryKeys(new ArrayList<>());
 
             Boolean loopAfter = !event.getAfter().isEmpty();
             for (Map.Entry<String, Object> entity : loopAfter ? event.getAfter().entrySet() : event.getBefore().entrySet()) {
                 Object newValue = "";
                 Object oldValue = "";
+                //默认字段都是未丢失的
+                boolean beforeMissing = false;
+                boolean afterMissing = false;
                 if (loopAfter) {
                     newValue = entity.getValue();
-                    oldValue = event.getBefore().getOrDefault(entity.getKey(), null);
+                    /**
+                     *
+                     * 2018-04-03 oracle版本差异导致更新时无变化字段不在before中展示
+                     * oracle 版本:11.2.0.4
+                     * 处理方法，主键未变化时填充，其他字段没变化时标识字段没变化
+                     */
+                    //如果存在
+                    if (event.getBefore().containsKey(entity.getKey())) {
+                        oldValue = event.getBefore().get(entity.getKey());
+                    } else {
+                        beforeMissing = true;
+                        //如果是主键，标识前后值一致
+                        if (event.getPrimaryKeys().contains(entity.getKey())) {
+                            beforeMissing = false;
+                            oldValue = newValue;
+                        }
+                    }
                 } else {
-                    newValue = event.getBefore().getOrDefault(entity.getKey(), null);
+                    if (event.getAfter().containsKey(entity.getKey())) {
+                        newValue = event.getAfter().get(entity.getKey());
+                    } else {
+                        afterMissing = true;
+                    }
                     oldValue = entity.getValue();
                 }
+
                 Object finalValue = newValue;
+
+                //如果是删除类型时
                 if (event.getOpType() == EventType.DELETE) {
                     finalValue = oldValue;
+                    afterMissing = false;
                 }
 
                 String newValueStr = String.valueOf(newValue);
@@ -100,8 +128,9 @@ public class ETLBucket {
                 oldValueStr = oldValueStr.equals("null") ? null : oldValueStr;
                 String finalValueStr = String.valueOf(finalValue);
                 finalValueStr = finalValueStr.equals("null") ? null : finalValueStr;
+
                 //源数据事件精度损失，转字符串也会有精度损失。后续观察处理
-                ETLColumn column = new ETLColumn(entity.getKey(), newValueStr, oldValueStr, finalValueStr,
+                ETLColumn column = new ETLColumn(beforeMissing, afterMissing, entity.getKey(), newValueStr, oldValueStr, finalValueStr,
                         event.getPrimaryKeys().contains(entity.getKey()));
                 columns.add(column);
             }
