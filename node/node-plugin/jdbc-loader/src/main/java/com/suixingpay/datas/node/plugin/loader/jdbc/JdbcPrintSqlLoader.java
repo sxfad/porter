@@ -15,6 +15,7 @@ import com.suixingpay.datas.common.exception.TaskStopTriggerException;
 import com.suixingpay.datas.node.core.event.etl.ETLBucket;
 import com.suixingpay.datas.node.core.event.etl.ETLRow;
 import com.suixingpay.datas.node.core.loader.SubmitStatObject;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -43,7 +44,7 @@ public class JdbcPrintSqlLoader extends BaseJdbcLoader {
             //更新目标仓储
             List<Pair<String, Object[]>> sqlList = buildSql(row);
             sqlList.forEach(p -> {
-                LOGGER.info("sql:{}, params:{}", p.getLeft(), p.getRight());
+                LOGGER.info("sql:{}-{}", p.getLeft(), StringUtils.join(p.getRight(), ","));
             });
             affectRow.add(new SubmitStatObject(row.getFinalSchema(), row.getFinalTable(), row.getFinalOpType(),
                     1, row.getPosition(), row.getOpTime()));
