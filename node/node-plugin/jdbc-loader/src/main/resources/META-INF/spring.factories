@@ -1,3 +1,4 @@
 com.suixingpay.datas.node.core.loader.DataLoader=\
   com.suixingpay.datas.node.plugin.loader.jdbc.JdbcBatchLoader,\
-  com.suixingpay.datas.node.plugin.loader.jdbc.JdbcSingleLoader
+  com.suixingpay.datas.node.plugin.loader.jdbc.JdbcSingleLoader,\
+  com.suixingpay.datas.node.plugin.loader.jdbc.JdbcPrintSqlLoader
