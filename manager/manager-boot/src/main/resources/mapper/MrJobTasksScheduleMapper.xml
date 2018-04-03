@@ -134,6 +134,13 @@
         where job_id = #{jobId} and swimlane_id = #{swimlaneId}
     </select>
 
+    <!-- 根据任务id获取泳道 -->
+    <select id="selectSwimlaneByJobId" resultType="com.suixingpay.datas.manager.core.entity.MrJobTasksSchedule">
+        SELECT DISTINCT swimlane_id AS swimlaneId
+        FROM mr_job_tasks_schedule
+        WHERE job_id = #{jobId}
+    </select>
+
     <!-- 分页All -->
     <select id="pageAll" resultType="java.lang.Integer">
         select count(id) from mr_job_tasks_schedule

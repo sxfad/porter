@@ -77,4 +77,10 @@ public interface MrJobTasksScheduleMapper {
      */
     MrJobTasksSchedule selectByJobIdAndSwimlaneId(@Param("jobId") String jobId, @Param("swimlaneId") String swimlaneId);
 
+    /**
+     * 根据jobId获取任务泳道
+     * @param jobId
+     * @return
+     */
+    List<MrJobTasksSchedule> selectSwimlaneByJobId(String jobId);
 }
