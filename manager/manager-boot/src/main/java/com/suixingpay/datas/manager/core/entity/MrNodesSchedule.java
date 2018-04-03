@@ -75,6 +75,16 @@ public class MrNodesSchedule implements java.io.Serializable {
     private Long updateUserId;
 
     /**
+     * 健康等级
+     */
+    private String healthLevel;
+
+    /**
+     * 健康描述
+     */
+    private String healthLevelDesc;
+
+    /**
      * 创建时间.
      */
     private Date createTime;
@@ -328,4 +338,19 @@ public class MrNodesSchedule implements java.io.Serializable {
         this.remark = remark == null ? null : remark.trim();
     }
 
+    public String getHealthLevel() {
+        return healthLevel;
+    }
+
+    public void setHealthLevel(String healthLevel) {
+        this.healthLevel = healthLevel;
+    }
+
+    public String getHealthLevelDesc() {
+        return healthLevelDesc;
+    }
+
+    public void setHealthLevelDesc(String healthLevelDesc) {
+        this.healthLevelDesc = healthLevelDesc;
+    }
 }
