@@ -23,10 +23,9 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Array;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -108,6 +107,8 @@ public abstract class BaseJdbcLoader extends AbstractDataLoader {
 
         //获取自定义字段
         Map<String, Pair<Object, Object>> sqlKeys = CustomETLRowField.getSqlKeys(row);
+        //数组组建类型
+        Class strArrayComponent = new String[0].getClass().getComponentType();
 
         Map<String, Object> oldColumns = CustomETLRowField.getOldColumns(row);
         Map<String, Object> newColumns = CustomETLRowField.getNewColumns(row);
@@ -130,16 +131,16 @@ public abstract class BaseJdbcLoader extends AbstractDataLoader {
 
             //全字段删除
             //1.数组条件
-            String[] allColumnNames = ArrayUtils.addAll(keyNames, newColumns.keySet().toArray(new String[0]));
+            String[] allColumnNames = addArray(strArrayComponent, keyNames, newColumns.keySet().toArray(new String[0]));
             //所有字段新值
-            Object[] allNewValues = ArrayUtils.addAll(keyNewValues, newColumns.values().toArray());
+            Object[] allNewValues = addArray(keyNewValues, newColumns.values().toArray());
             //拼接sql
             sqlList.add(new ImmutablePair<>(template.getDeleteSql(row.getFinalSchema(), row.getFinalTable(), allColumnNames), allNewValues));
         } else if (row.getOpType() == EventType.INSERT) {
             //1.数组条件
-            String[] allColumnNames = ArrayUtils.addAll(keyNames, newColumns.keySet().toArray(new String[0]));
+            String[] allColumnNames = addArray(strArrayComponent, keyNames, newColumns.keySet().toArray(new String[0]));
             //所有字段新值
-            Object[] allNewValues = ArrayUtils.addAll(keyNewValues, newColumns.values().toArray());
+            Object[] allNewValues = addArray(keyNewValues, newColumns.values().toArray());
             //插入sql
             sqlList.add(new ImmutablePair<>(template.getInsertSql(row.getFinalSchema(), row.getFinalTable(), allColumnNames), allNewValues));
         } else if (row.getOpType() == EventType.UPDATE) {
@@ -148,25 +149,37 @@ public abstract class BaseJdbcLoader extends AbstractDataLoader {
             //存在主键，主键值没变，根据主键更新
             if (!row.isKeyChangedOnUpdate() && keyNames.length > 0 && null != columnNames && columnNames.length > 0) {
                 sqlList.add(new ImmutablePair<>(template.getUpdateSql(row.getFinalSchema(), row.getFinalTable(), keyNames, columnNames),
-                        ArrayUtils.addAll(columnValues, keyOldValues)));
+                        addArray(columnValues, keyOldValues)));
             }
             //全字段更新
+            Object[] oldColumnValues = oldColumns.values().toArray();
+            String[] oldColumnNames = oldColumns.keySet().toArray(new String[0]);
             sqlList.add(new ImmutablePair<>(template.getUpdateSql(row.getFinalSchema(), row.getFinalTable(),
-                    ArrayUtils.addAll(keyNames, oldColumns.keySet().toArray(new String[0])), ArrayUtils.addAll(keyNames, columnNames)),
-                    ArrayUtils.addAll(keyNewValues, columnValues, keyOldValues, oldColumns.values().toArray())));
+                    addArray(strArrayComponent, keyNames, oldColumnNames), addArray(strArrayComponent, keyNames, columnNames)),
+                    addArray(keyNewValues, columnValues, keyOldValues, oldColumnValues)));
 
             //插入
             sqlList.add(new ImmutablePair<>(template.getInsertSql(row.getFinalSchema(), row.getFinalTable(),
-                    ArrayUtils.addAll(keyNames, columnNames)), ArrayUtils.addAll(keyNewValues, columnValues)));
+                    addArray(strArrayComponent, keyNames, columnNames)), addArray(keyNewValues, columnValues)));
         } else if (row.getOpType() == EventType.TRUNCATE) {
             sqlList.add(new ImmutablePair<>(template.getTruncateSql(row.getFinalSchema(), row.getFinalTable()), new Object[]{}));
         }
         return sqlList;
     }
 
+    private <T> T[] addArray(T[]... array) {
+        return addArray(Object.class, array);
+    }
 
-
-
+    private <T> T[] addArray(Class componentType, T[]... array) {
+        List<T> newArray = new ArrayList<>();
+        Arrays.stream(array).forEach(a -> {
+            if (null != a && a.length > 0) {
+                newArray.addAll(Arrays.stream(a).collect(Collectors.toList()));
+            }
+        });
+        return newArray.toArray((T[]) Array.newInstance(componentType, 0));
+    }
     @Override
     public void mouldRow(ETLRow row) throws TaskDataException {
         if (null != row.getColumns()) {
