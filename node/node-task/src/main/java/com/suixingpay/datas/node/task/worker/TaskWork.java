@@ -24,7 +24,6 @@ import com.suixingpay.datas.common.cluster.data.DTaskStat;
 import com.suixingpay.datas.common.dic.NodeHealthLevel;
 import com.suixingpay.datas.common.exception.TaskStopTriggerException;
 import com.suixingpay.datas.common.exception.WorkResourceAcquireException;
-import com.suixingpay.datas.common.node.Node;
 import com.suixingpay.datas.common.statistics.NodeLog;
 import com.suixingpay.datas.common.statistics.TaskPerformance;
 import com.suixingpay.datas.node.core.NodeContext;

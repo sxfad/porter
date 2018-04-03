@@ -23,7 +23,10 @@ public class ETLColumn {
     private final String newValue;
     //原始更新前值
     private final String oldValue;
-
+    //before字段值没提供
+    private final boolean beforeMissing;
+    //after字段值没提供
+    private final boolean afterMissing;
 
     /**
      * 用户自定义转换插件
@@ -38,6 +41,11 @@ public class ETLColumn {
     //最终目标端字段值
     private String finalOldValue;
 
+    //before字段值没提供
+    private boolean finalBeforeMissing;
+    //after字段值没提供
+    private boolean finalAfterMissing;
+
     //是否主键
     private  boolean isKey = false;
     //是否必填
@@ -45,21 +53,47 @@ public class ETLColumn {
     //目标端类型 java.sql.Types
     private int finalType;
 
-
+    /**
+     * 默认字段是发生变化的
+     * @param name
+     * @param newValue
+     * @param oldValue
+     * @param finalValue
+     * @param isKey
+     */
     public ETLColumn(String name, String newValue, String oldValue, String finalValue, boolean isKey) {
-        this(name, newValue, oldValue, finalValue, isKey, isKey, Types.VARCHAR);
+        this(false, false, name, newValue, oldValue, finalValue, isKey, isKey, Types.VARCHAR);
     }
 
-    public ETLColumn(String name, String newValue, String oldValue, String finalValue, boolean isKey, boolean required, int type) {
+    /**
+     * 接受外部定义字段是否发生变化
+     * @param beforeMissing
+     * @param afterMissing
+     * @param name
+     * @param newValue
+     * @param oldValue
+     * @param finalValue
+     * @param isKey
+     */
+    public ETLColumn(boolean beforeMissing, boolean afterMissing, String name, String newValue, String oldValue, String finalValue, boolean isKey) {
+        this(beforeMissing, afterMissing, name, newValue, oldValue, finalValue, isKey, isKey, Types.VARCHAR);
+    }
+
+    public ETLColumn(boolean beforeMissing, boolean afterMissing, String name, String newValue, String oldValue, String finalValue, boolean isKey,
+                     boolean required, int type) {
         this.name = name;
         this.newValue = newValue;
         this.oldValue = oldValue;
+        this.beforeMissing = beforeMissing;
+        this.afterMissing = afterMissing;
         this.isKey = isKey;
         this.required = required;
         this.finalType = type;
         this.finalName = this.name;
         this.finalValue = finalValue;
-        this.finalOldValue = oldValue;
+        this.finalOldValue = this.oldValue;
+        this.finalBeforeMissing = this.beforeMissing;
+        this.finalAfterMissing = this.afterMissing;
     }
 
     public ETLColumn toUpperCase() {
@@ -114,5 +148,21 @@ public class ETLColumn {
 
     public void setFinalOldValue(String finalOldValue) {
         this.finalOldValue = finalOldValue;
+    }
+
+    public boolean isFinalBeforeMissing() {
+        return finalBeforeMissing;
+    }
+
+    public void setFinalBeforeMissing(boolean finalBeforeMissing) {
+        this.finalBeforeMissing = finalBeforeMissing;
+    }
+
+    public boolean isFinalAfterMissing() {
+        return finalAfterMissing;
+    }
+
+    public void setFinalAfterMissing(boolean finalAfterMissing) {
+        this.finalAfterMissing = finalAfterMissing;
     }
 }

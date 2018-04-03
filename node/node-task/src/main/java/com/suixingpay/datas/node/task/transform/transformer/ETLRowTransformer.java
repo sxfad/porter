@@ -110,7 +110,7 @@ public class ETLRowTransformer implements Transformer {
         //table.getColumns().stream().filter(p -> !inColumnNames.contains(p.getName()) && p.isRequired() && null == p.getDefaultValue())
         table.getColumns().stream().filter(p -> !inColumnNames.contains(p.getName()) && p.isRequired())
                 .forEach(p -> {
-                    ETLColumn column = new ETLColumn(p.getName(), p.getDefaultValue(), p.getDefaultValue(), p.getDefaultValue(),
+                    ETLColumn column = new ETLColumn(false, false, p.getName(), p.getDefaultValue(), p.getDefaultValue(), p.getDefaultValue(),
                             p.isPrimaryKey(), p.isRequired(), p.getTypeCode());
                     row.getAdditionalRequired().add(column);
                 });
