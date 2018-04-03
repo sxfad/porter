@@ -1,11 +1,7 @@
 package com.suixingpay.datas.manager.controller;
 
-import com.suixingpay.datas.manager.core.entity.DataSource;
-import com.suixingpay.datas.manager.service.DataSourceService;
-import com.suixingpay.datas.manager.web.message.ResponseMessage;
-import com.suixingpay.datas.manager.web.page.Page;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import static com.suixingpay.datas.manager.web.message.ResponseMessage.ok;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +13,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import static com.suixingpay.datas.manager.web.message.ResponseMessage.ok;
+import com.suixingpay.datas.manager.core.entity.DataSource;
+import com.suixingpay.datas.manager.service.DataSourceService;
+import com.suixingpay.datas.manager.web.message.ResponseMessage;
+import com.suixingpay.datas.manager.web.page.Page;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 /**
  * 数据源信息表 controller控制器
@@ -29,7 +31,7 @@ import static com.suixingpay.datas.manager.web.message.ResponseMessage.ok;
  */
 @Api(description = "数据源信息表管理")
 @RestController
-@RequestMapping("/datasource")
+@RequestMapping("/manager/datasource")
 public class DataSourceController {
 
     @Autowired
@@ -55,7 +57,8 @@ public class DataSourceController {
      *
      * @author FuZizheng
      * @date 2018/3/13 下午3:00
-     * @param: [id, dataSource]
+     * @param: [id,
+     *             dataSource]
      * @return: com.suixingpay.datas.manager.web.message.ResponseMessage
      */
     @PutMapping("/{id}")
@@ -64,7 +67,6 @@ public class DataSourceController {
         Integer number = dataSourceService.update(id, dataSource);
         return ok(number);
     }
-
 
     /**
      * 逻辑删除数据源信息
@@ -92,7 +94,7 @@ public class DataSourceController {
     @GetMapping("/findByType")
     @ApiOperation(value = "消费数据来源", notes = "消费数据来源")
     public ResponseMessage findByType(@RequestParam(value = "pageNo", required = true) Integer pageNo,
-                                      @RequestParam(value = "pageSize", required = true) Integer pageSize) {
+            @RequestParam(value = "pageSize", required = true) Integer pageSize) {
         Page<DataSource> page = dataSourceService.findByTypePage(new Page<DataSource>(pageNo, pageSize));
         return ok(page);
     }
@@ -117,17 +119,19 @@ public class DataSourceController {
      *
      * @author FuZizheng
      * @date 2018/3/13 下午1:51
-     * @param: [pageNo, pageSize]
+     * @param: [pageNo,
+     *             pageSize]
      * @return: com.suixingpay.datas.manager.web.message.ResponseMessage
      */
     @GetMapping
     @ApiOperation(value = "查询列表", notes = "查询列表")
     public ResponseMessage page(@RequestParam(value = "pageNo", required = true) Integer pageNo,
-                                @RequestParam(value = "pageSize", required = true) Integer pageSize,
-                                @RequestParam(value = "name", required = false) String name,
-                                @RequestParam(value = "beginTime", required = false) String beginTime,
-                                @RequestParam(value = "endTime", required = false) String endTime) {
-        Page<DataSource> page = dataSourceService.page(new Page<DataSource>(pageNo, pageSize), name, beginTime, endTime);
+            @RequestParam(value = "pageSize", required = true) Integer pageSize,
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "beginTime", required = false) String beginTime,
+            @RequestParam(value = "endTime", required = false) String endTime) {
+        Page<DataSource> page = dataSourceService.page(new Page<DataSource>(pageNo, pageSize), name, beginTime,
+                endTime);
         return ok(page);
     }
 

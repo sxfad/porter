@@ -29,7 +29,7 @@ import static com.suixingpay.datas.manager.web.message.ResponseMessage.ok;
  */
 @Api(description = "任务泳道进度表管理")
 @RestController
-@RequestMapping("/mrjobtasksschedule")
+@RequestMapping("/manager/mrjobtasksschedule")
 public class MrJobTasksScheduleController {
 
     @Autowired
@@ -65,8 +65,7 @@ public class MrJobTasksScheduleController {
 
     @ApiOperation(value = "查询列表", notes = "查询列表")
     @GetMapping
-    public ResponseMessage list(
-            @RequestParam(value = "pageNo", required = false) Integer pageNo,
+    public ResponseMessage list(@RequestParam(value = "pageNo", required = false) Integer pageNo,
             @RequestParam(value = "pageSize", required = false) Integer pageSize) {
         Page<MrJobTasksSchedule> page = mrJobTasksScheduleService.page(new Page<MrJobTasksSchedule>(pageNo, pageSize));
         return ok(page);

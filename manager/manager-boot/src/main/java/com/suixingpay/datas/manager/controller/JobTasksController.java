@@ -35,7 +35,7 @@ import static com.suixingpay.datas.manager.web.message.ResponseMessage.ok;
  */
 @Api(description = "同步任务表管理")
 @RestController
-@RequestMapping("/jobtasks")
+@RequestMapping("/manager/jobtasks")
 public class JobTasksController {
 
     @Autowired
@@ -61,16 +61,17 @@ public class JobTasksController {
      *
      * @author FuZizheng
      * @date 2018/3/26 上午11:41
-     * @param: [pageNo, pageSize, jobName, beginTime, endTime]
+     * @param: [pageNo,
+     *             pageSize, jobName, beginTime, endTime]
      * @return: com.suixingpay.datas.manager.web.message.ResponseMessage
      */
     @GetMapping
     @ApiOperation(value = "查询分页", notes = "查询分页")
     public ResponseMessage list(@RequestParam(value = "pageNo", required = true) Integer pageNo,
-                                @RequestParam(value = "pageSize", required = true) Integer pageSize,
-                                @RequestParam(value = "jobName", required = false) String jobName,
-                                @RequestParam(value = "beginTime", required = false) String beginTime,
-                                @RequestParam(value = "endTime", required = false) String endTime) {
+            @RequestParam(value = "pageSize", required = true) Integer pageSize,
+            @RequestParam(value = "jobName", required = false) String jobName,
+            @RequestParam(value = "beginTime", required = false) String beginTime,
+            @RequestParam(value = "endTime", required = false) String endTime) {
         Page<JobTasks> page = jobTasksService.page(new Page<>(pageNo, pageSize), jobName, beginTime, endTime);
         return ok(page);
     }
@@ -83,7 +84,8 @@ public class JobTasksController {
      */
     @GetMapping(value = "tablenames")
     @ApiOperation(value = "数据表组表名数组", notes = "数据表组表名数组")
-    public ResponseMessage tableNames(@RequestParam(value = "tablesId", required = true) @ApiParam(value = "数据表组id") Long tablesId) {
+    public ResponseMessage tableNames(
+            @RequestParam(value = "tablesId", required = true) @ApiParam(value = "数据表组id") Long tablesId) {
         Object o = jobTasksService.tableNames(tablesId);
         return ok(o);
     }
@@ -98,9 +100,10 @@ public class JobTasksController {
      */
     @GetMapping(value = "fields")
     @ApiOperation(value = "查询表字段", notes = "查询表字段")
-    public ResponseMessage fields(@RequestParam(value = "sourceId", required = true) @ApiParam(value = "数据源id") Long sourceId,
-                                  @RequestParam(value = "tablesId", required = false) @ApiParam(value = "数据表组id") Long tablesId,
-                                  @RequestParam(value = "tableAllName", required = true) @ApiParam(value = "数据表全名") String tableAllName) {
+    public ResponseMessage fields(
+            @RequestParam(value = "sourceId", required = true) @ApiParam(value = "数据源id") Long sourceId,
+            @RequestParam(value = "tablesId", required = false) @ApiParam(value = "数据表组id") Long tablesId,
+            @RequestParam(value = "tableAllName", required = true) @ApiParam(value = "数据表全名") String tableAllName) {
         List<String> fields = jobTasksService.fields(sourceId, tablesId, tableAllName);
         return ok(fields);
     }
@@ -146,10 +149,12 @@ public class JobTasksController {
      */
     @PutMapping("/{id}")
     @ApiOperation(value = "修改任务状态", notes = "TaskStatusType 枚举类: NEW、STOPPED、WORKING")
-    public ResponseMessage updateState(@PathVariable("id") Long id, @RequestParam("taskStatusType") TaskStatusType taskStatusType) throws Exception {
+    public ResponseMessage updateState(@PathVariable("id") Long id,
+            @RequestParam("taskStatusType") TaskStatusType taskStatusType) throws Exception {
         Integer number = jobTasksService.updateState(id, taskStatusType);
         if (taskStatusType == TaskStatusType.WORKING || taskStatusType == TaskStatusType.STOPPED) {
-            ClusterProviderProxy.INSTANCE.broadcast(new TaskPushCommand(jobTasksService.fitJobTask(id, taskStatusType)));
+            ClusterProviderProxy.INSTANCE
+                    .broadcast(new TaskPushCommand(jobTasksService.fitJobTask(id, taskStatusType)));
         }
         return ok(number);
     }

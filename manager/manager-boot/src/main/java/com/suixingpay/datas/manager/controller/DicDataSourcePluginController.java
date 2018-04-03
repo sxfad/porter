@@ -1,19 +1,21 @@
 package com.suixingpay.datas.manager.controller;
 
-import com.suixingpay.datas.manager.core.entity.DicDataSourcePlugin;
-import com.suixingpay.datas.manager.service.DicDataSourcePluginService;
-import com.suixingpay.datas.manager.web.message.ResponseMessage;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import static com.suixingpay.datas.manager.web.message.ResponseMessage.ok;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import com.suixingpay.datas.manager.core.entity.DicDataSourcePlugin;
+import com.suixingpay.datas.manager.service.DicDataSourcePluginService;
+import com.suixingpay.datas.manager.web.message.ResponseMessage;
 
-import static com.suixingpay.datas.manager.web.message.ResponseMessage.ok;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 /**
  * 数据源信息字典表 controller控制器
@@ -25,7 +27,7 @@ import static com.suixingpay.datas.manager.web.message.ResponseMessage.ok;
  */
 @Api(description = "数据源信息字典表管理")
 @RestController
-@RequestMapping("/dicdatasourceplugin")
+@RequestMapping("/manager/dicdatasourceplugin")
 public class DicDataSourcePluginController {
 
     @Autowired

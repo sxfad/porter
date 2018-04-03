@@ -1,11 +1,7 @@
 package com.suixingpay.datas.manager.controller;
 
-import com.suixingpay.datas.manager.core.entity.DataField;
-import com.suixingpay.datas.manager.service.DataFieldService;
-import com.suixingpay.datas.manager.web.message.ResponseMessage;
-import com.suixingpay.datas.manager.web.page.Page;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import static com.suixingpay.datas.manager.web.message.ResponseMessage.ok;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +13,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import static com.suixingpay.datas.manager.web.message.ResponseMessage.ok;
+import com.suixingpay.datas.manager.core.entity.DataField;
+import com.suixingpay.datas.manager.service.DataFieldService;
+import com.suixingpay.datas.manager.web.message.ResponseMessage;
+import com.suixingpay.datas.manager.web.page.Page;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 /**
  * 数据字段对应表 controller控制器
@@ -29,7 +31,7 @@ import static com.suixingpay.datas.manager.web.message.ResponseMessage.ok;
  */
 @Api(description = "数据字段对应表管理")
 @RestController
-@RequestMapping("/datafield")
+@RequestMapping("/manager/datafield")
 public class DataFieldController {
 
     @Autowired
@@ -66,7 +68,7 @@ public class DataFieldController {
     @ApiOperation(value = "查询列表", notes = "查询列表")
     @GetMapping
     public ResponseMessage list(@RequestParam(value = "pageNo", required = false) Integer pageNo,
-                                @RequestParam(value = "pageSize", required = false) Integer pageSize) {
+            @RequestParam(value = "pageSize", required = false) Integer pageSize) {
         Page<DataField> page = dataFieldService.page(new Page<DataField>(pageNo, pageSize));
         return ok(page);
     }

@@ -1,20 +1,22 @@
 package com.suixingpay.datas.manager.controller;
 
-import com.suixingpay.datas.manager.core.entity.CUser;
-import com.suixingpay.datas.manager.service.CUserService;
-import com.suixingpay.datas.manager.web.message.ResponseMessage;
-import com.suixingpay.datas.manager.web.page.Page;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import static com.suixingpay.datas.manager.web.message.ResponseMessage.ok;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import com.suixingpay.datas.manager.core.entity.CUser;
+import com.suixingpay.datas.manager.service.CUserService;
+import com.suixingpay.datas.manager.web.message.ResponseMessage;
+import com.suixingpay.datas.manager.web.page.Page;
 
-import static com.suixingpay.datas.manager.web.message.ResponseMessage.ok;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 /**
  * 登陆用户表 controller控制器
@@ -26,7 +28,7 @@ import static com.suixingpay.datas.manager.web.message.ResponseMessage.ok;
  */
 @Api(description = "登陆用户表管理")
 @RestController
-@RequestMapping("/cuser")
+@RequestMapping("/manager/cuser")
 public class CUserController {
 
     @Autowired
@@ -35,7 +37,7 @@ public class CUserController {
     @ApiOperation(value = "分页列表", notes = "分页列表")
     @GetMapping
     public ResponseMessage page(@RequestParam(value = "pageNo", required = false) Integer pageNo,
-                                @RequestParam(value = "pageSize", required = false) Integer pageSize) {
+            @RequestParam(value = "pageSize", required = false) Integer pageSize) {
         Page<CUser> page = cuserService.page(new Page<CUser>(pageNo, pageSize));
         return ok(page);
     }

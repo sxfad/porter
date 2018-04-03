@@ -36,7 +36,7 @@ import io.swagger.annotations.ApiOperation;
  */
 @Api(description = "告警配置表管理")
 @RestController
-@RequestMapping("/alarm")
+@RequestMapping("/manager/alarm")
 public class AlarmController {
 
     @Autowired
@@ -46,11 +46,12 @@ public class AlarmController {
     @ApiOperation(value = "新增", notes = "新增")
     public ResponseMessage add(@RequestBody Alarm alarm) throws Exception {
         Integer number = alarmService.insert(alarm);
-        if(number==1) {
+        if (number == 1) {
             Alarm alarms = alarmService.selectById(alarm.getId());
             AlertReceiver[] receiver = receiver(alarms.getCusers());
             Map<String, String> client = fieldsMap(alarms.getAlarmPlugins());
-            ClusterProviderProxy.INSTANCE.broadcast(new AlertConfigPushCommand(new AlertConfig(alarms.getAlarmType(), receiver, client)));
+            ClusterProviderProxy.INSTANCE
+                    .broadcast(new AlertConfigPushCommand(new AlertConfig(alarms.getAlarmType(), receiver, client)));
         }
         return ok(number);
     }
@@ -61,11 +62,12 @@ public class AlarmController {
         Alarm alarm = alarmService.selectFinallyOne();
         return ok(alarm);
     }
-    
+
     private AlertReceiver[] receiver(List<CUser> cusers) {
         AlertReceiver[] alertReceivers = new AlertReceiver[cusers.size()];
         for (int i = 0; i < cusers.size(); i++) {
-            alertReceivers[i] = new AlertReceiver(cusers.get(0).getNickname(), cusers.get(0).getEmail(), cusers.get(0).getMobile());
+            alertReceivers[i] = new AlertReceiver(cusers.get(0).getNickname(), cusers.get(0).getEmail(),
+                    cusers.get(0).getMobile());
         }
         return alertReceivers;
     }

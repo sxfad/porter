@@ -25,7 +25,7 @@ import static com.suixingpay.datas.manager.web.message.ResponseMessage.ok;
  */
 @Api(description = "告警配置策略字典表管理")
 @RestController
-@RequestMapping("/dicalarmplugin")
+@RequestMapping("/manager/dicalarmplugin")
 public class DicAlarmPluginController {
 
     @Autowired

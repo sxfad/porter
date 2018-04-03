@@ -29,7 +29,7 @@ import static com.suixingpay.datas.manager.web.message.ResponseMessage.ok;
  */
 @Api(description = "节点任务实时监控表管理")
 @RestController
-@RequestMapping("/mrnodesmonitor")
+@RequestMapping("/manager/mrnodesmonitor")
 public class MrNodesMonitorController {
 
     @Autowired
@@ -66,7 +66,7 @@ public class MrNodesMonitorController {
     @ApiOperation(value = "查询列表", notes = "查询列表")
     @GetMapping
     public ResponseMessage list(@RequestParam(value = "pageNo", required = false) Integer pageNo,
-                                @RequestParam(value = "pageSize", required = false) Integer pageSize) {
+            @RequestParam(value = "pageSize", required = false) Integer pageSize) {
         Page<MrNodesMonitor> page = mrNodesMonitorService.page(new Page<MrNodesMonitor>(pageNo, pageSize));
         return ok(page);
     }

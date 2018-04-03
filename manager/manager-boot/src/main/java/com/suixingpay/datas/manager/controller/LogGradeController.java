@@ -29,7 +29,7 @@ import io.swagger.annotations.ApiOperation;
  */
 @Api(description = "日志级别表管理")
 @RestController
-@RequestMapping("/loggrade")
+@RequestMapping("/manager/loggrade")
 public class LogGradeController {
 
     @Autowired
@@ -42,14 +42,15 @@ public class LogGradeController {
      * @date 2018/3/16 上午11:03
      * @param: [logGrade]
      * @return: com.suixingpay.datas.manager.web.message.ResponseMessage
-     * @throws Exception 
+     * @throws Exception
      */
     @PostMapping
     @ApiOperation(value = "新增", notes = "新增")
     public ResponseMessage add(@RequestBody LogGrade logGrade) throws Exception {
         Integer number = logGradeService.insert(logGrade);
-        if(number==1) {
-            ClusterProviderProxy.INSTANCE.broadcast(new LogConfigPushCommand(new LogConfig(logGrade.getLogLevel().getCode())));
+        if (number == 1) {
+            ClusterProviderProxy.INSTANCE
+                    .broadcast(new LogConfigPushCommand(new LogConfig(logGrade.getLogLevel().getCode())));
         }
         return ok(number);
     }

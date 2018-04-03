@@ -24,7 +24,7 @@ import static com.suixingpay.datas.manager.web.message.ResponseMessage.ok;
  */
 @Api(description = "日志监控信息表管理")
 @RestController
-@RequestMapping("/mrlogmonitor")
+@RequestMapping("/manager/mrlogmonitor")
 public class MrLogMonitorController {
 
     @Autowired
@@ -41,48 +41,49 @@ public class MrLogMonitorController {
     @GetMapping
     @ApiOperation(value = "查询列表", notes = "查询列表")
     public ResponseMessage list(@RequestParam(value = "pageNo", required = false) Integer pageNo,
-                                @RequestParam(value = "pageSize", required = false) Integer pageSize,
-                                @RequestParam(value = "ipAddress", required = false) String ipAddress,
-                                @RequestParam(value = "state", required = false) Integer state,
-                                @RequestParam(value = "beginTime", required = false) String beginTime,
-                                @RequestParam(value = "endTime", required = false) String endTime) {
-        Page<MrLogMonitor> page = mrLogMonitorService.page(new Page<MrLogMonitor>(pageNo, pageSize), ipAddress, state, beginTime, endTime);
+            @RequestParam(value = "pageSize", required = false) Integer pageSize,
+            @RequestParam(value = "ipAddress", required = false) String ipAddress,
+            @RequestParam(value = "state", required = false) Integer state,
+            @RequestParam(value = "beginTime", required = false) String beginTime,
+            @RequestParam(value = "endTime", required = false) String endTime) {
+        Page<MrLogMonitor> page = mrLogMonitorService.page(new Page<MrLogMonitor>(pageNo, pageSize), ipAddress, state,
+                beginTime, endTime);
         return ok(page);
     }
-    /*@PostMapping
-    @ApiOperation(value = "新增", notes = "新增")
-    public ResponseMessage add(@RequestBody MrLogMonitor mrLogMonitor) {
-        Integer number = mrLogMonitorService.insert(mrLogMonitor);
-        return ok(number);
-    }
-
-    @PutMapping("/{id}")
-    @ApiOperation(value = "修改", notes = "修改")
-    public ResponseMessage update(@PathVariable("id") Long id, @RequestBody MrLogMonitor mrLogMonitor) {
-        Integer number = mrLogMonitorService.update(id, mrLogMonitor);
-        return ok(number);
-    }
-
-    @DeleteMapping("/{id}")
-    @ApiOperation(value = "删除", notes = "删除")
-    public ResponseMessage delete(@PathVariable("id") Long id) {
-        mrLogMonitorService.delete(id);
-        return ok();
-    }
-
-    @GetMapping("/{id}")
-    @ApiOperation(value = "查询明细", notes = "查询明细")
-    public ResponseMessage info(@PathVariable("id") Long id) {
-        MrLogMonitor mrLogMonitor = mrLogMonitorService.selectById(id);
-        return ok(mrLogMonitor);
-    }
-
-    @ApiOperation(value = "查询列表", notes = "查询列表")
-    @GetMapping
-    public ResponseMessage list(@RequestParam(value = "pageNo", required = false) Integer pageNo,
-            @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-        Page<MrLogMonitor> page = mrLogMonitorService.page(new Page<MrLogMonitor>(pageNo, pageSize));
-        return ok(page);
-    }*/
+    /*
+     * @PostMapping
+     * 
+     * @ApiOperation(value = "新增", notes = "新增") public ResponseMessage
+     * add(@RequestBody MrLogMonitor mrLogMonitor) { Integer number =
+     * mrLogMonitorService.insert(mrLogMonitor); return ok(number); }
+     * 
+     * @PutMapping("/{id}")
+     * 
+     * @ApiOperation(value = "修改", notes = "修改") public ResponseMessage
+     * update(@PathVariable("id") Long id, @RequestBody MrLogMonitor mrLogMonitor) {
+     * Integer number = mrLogMonitorService.update(id, mrLogMonitor); return
+     * ok(number); }
+     * 
+     * @DeleteMapping("/{id}")
+     * 
+     * @ApiOperation(value = "删除", notes = "删除") public ResponseMessage
+     * delete(@PathVariable("id") Long id) { mrLogMonitorService.delete(id); return
+     * ok(); }
+     * 
+     * @GetMapping("/{id}")
+     * 
+     * @ApiOperation(value = "查询明细", notes = "查询明细") public ResponseMessage
+     * info(@PathVariable("id") Long id) { MrLogMonitor mrLogMonitor =
+     * mrLogMonitorService.selectById(id); return ok(mrLogMonitor); }
+     * 
+     * @ApiOperation(value = "查询列表", notes = "查询列表")
+     * 
+     * @GetMapping public ResponseMessage list(@RequestParam(value = "pageNo",
+     * required = false) Integer pageNo,
+     * 
+     * @RequestParam(value = "pageSize", required = false) Integer pageSize) {
+     * Page<MrLogMonitor> page = mrLogMonitorService.page(new
+     * Page<MrLogMonitor>(pageNo, pageSize)); return ok(page); }
+     */
 
 }

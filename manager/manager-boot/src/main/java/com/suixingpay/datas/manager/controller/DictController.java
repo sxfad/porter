@@ -20,7 +20,7 @@ import java.util.Map;
  */
 @Api(description = "字典数据")
 @RestController
-@RequestMapping("/dict")
+@RequestMapping("/manager/dict")
 public class DictController {
 
     @Autowired
