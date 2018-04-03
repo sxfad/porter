@@ -38,14 +38,8 @@
         process_number,
         job_id_json,
         job_name_json,
-        create_user_id,
-        update_user_id,
-        create_time,
         update_time,
-        state,
-        iscancel,
         partition_day,
-        remark,
         health_level,
         health_level_desc
         ) values (
@@ -56,14 +50,8 @@
         #{processNumber},
         #{jobIdJson},
         #{jobNameJson},
-        #{createUserId},
-        #{updateUserId},
-        #{createTime},
         #{updateTime},
-        #{state},
-        #{iscancel},
         #{partitionDay},
-        #{remark},
         #{healthLevel},
         #{healthLevelDesc}
         )
@@ -296,4 +284,8 @@
         where id = #{id}
     </update>
 
+    <!-- 根据节点id查询-->
+    <select id="selectByNodeId" resultType="com.suixingpay.datas.manager.core.entity.MrNodesSchedule">
+        select id, node_id AS nodeId from mr_nodes_schedule where node_id = #{nodeId}
+    </select>
 </mapper>

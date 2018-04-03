@@ -3,13 +3,16 @@
  */
 package com.suixingpay.datas.manager.service.impl;
 
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.suixingpay.datas.common.cluster.data.DNode;
 import com.suixingpay.datas.manager.core.entity.MrNodesSchedule;
 import com.suixingpay.datas.manager.core.mapper.MrNodesScheduleMapper;
 import com.suixingpay.datas.manager.service.MrNodesScheduleService;
 import com.suixingpay.datas.manager.web.page.Page;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 /**
  * 节点任务监控表 服务实现类
@@ -21,6 +24,8 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class MrNodesScheduleServiceImpl implements MrNodesScheduleService {
+
+    private ConcurrentHashMap<String, Object> map = new ConcurrentHashMap<>(128);
 
     @Autowired
     private MrNodesScheduleMapper mrNodesScheduleMapper;
@@ -57,6 +62,35 @@ public class MrNodesScheduleServiceImpl implements MrNodesScheduleService {
 
     @Override
     public void dealDNode(DNode node) {
-        
+        MrNodesSchedule mrNodesSchedule = new MrNodesSchedule(node);
+        String nodeId = mrNodesSchedule.getNodeId();
+        String key = nodeId;
+        Object lock = map.get(key);
+        if (null == lock) {
+            Object tmp = new Object();
+            Object old = map.putIfAbsent(key, tmp);
+            if (null != old) {
+                lock = old;
+            } else {
+                lock = tmp;
+            }
+        }
+        try {
+            synchronized (lock) {
+                dealDNodeSync(nodeId, mrNodesSchedule);
+            }
+        } finally {
+            map.remove(key);
+        }
+    }
+
+    private void dealDNodeSync(String nodeId, MrNodesSchedule mrNodesSchedule) {
+        MrNodesSchedule old = mrNodesScheduleMapper.selectByNodeId(nodeId);
+        if (old == null || old.getId() == null) {
+            mrNodesScheduleMapper.insert(mrNodesSchedule);
+        }else {
+            mrNodesSchedule.setId(old.getId());
+            mrNodesScheduleMapper.updateSelective(old.getId(), mrNodesSchedule);
+        }
     }
 }

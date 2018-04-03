@@ -58,14 +58,9 @@
         dispose_schedule,
         last_loaded_data_time,
         last_loaded_system_time,
-        create_user_id,
         update_user_id,
-        create_time,
         update_time,
-        state,
-        iscancel,
-        partition_day,
-        remark
+        partition_day
         ) values (
         #{jobId},
         #{swimlaneId},
@@ -85,14 +80,8 @@
         #{disposeSchedule},
         #{lastLoadedDataTime},
         #{lastLoadedSystemTime},
-        #{createUserId},
-        #{updateUserId},
-        #{createTime},
         #{updateTime},
-        #{state},
-        #{iscancel},
-        #{partitionDay},
-        #{remark}
+        #{partitionDay}
         )
     </insert>
 
@@ -138,6 +127,12 @@
     <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.MrJobTasksSchedule">
         select id, job_id AS jobId, swimlane_id AS swimlaneId, node_id AS nodeId, node_id_ip AS nodeIdIp, schema_table AS schemaTable, register_time AS registerTime, heart_beat_date AS heartBeatDate, alarm_number AS alarmNumber, last_checked_time AS lastCheckedTime, insert_success AS insertSuccess, insert_failure AS insertFailure, update_success AS updateSuccess, update_failure AS updateFailure, delete_success AS deleteSuccess, delete_failure AS deleteFailure, dispose_schedule AS disposeSchedule, last_loaded_data_time AS lastLoadedDataTime, last_loaded_system_time AS lastLoadedSystemTime, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, partition_day AS partitionDay, remark from mr_job_tasks_schedule
         where id = #{id}
+    </select>
+
+    <!-- 根据任务id和泳道查询 -->
+    <select id="selectByJobIdAndSwimlaneId" resultType="com.suixingpay.datas.manager.core.entity.MrJobTasksSchedule">
+        select id, job_id AS jobId, swimlane_id AS swimlaneId from mr_job_tasks_schedule
+        where job_id = #{jobId} and swimlane_id = #{swimlaneId}
     </select>
 
     <!-- 分页All -->

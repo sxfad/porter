@@ -31,6 +31,13 @@ public interface MrNodesScheduleMapper {
     Integer update(@Param("id") Long id, @Param("mrNodesSchedule") MrNodesSchedule mrNodesSchedule);
 
     /**
+     * 修改 判断字段是否为空
+     *
+     * @param mrNodesSchedule
+     */
+    Integer updateSelective(@Param("id") Long id, @Param("mrNodesSchedule") MrNodesSchedule mrNodesSchedule);
+
+    /**
      * 刪除
      *
      * @param id
@@ -62,5 +69,13 @@ public interface MrNodesScheduleMapper {
      * @return
      */
     Integer pageAll(@Param("state") Integer state, @Param("ipAddress") String ipAddress, @Param("computerName") String computerName);
+
+    /**
+     * 根据节点id查询
+     *
+     * @param id
+     * @return
+     */
+    MrNodesSchedule selectByNodeId(@Param("nodeId") String nodeId);
 
 }

@@ -21,7 +21,46 @@ public class MrJobTasksSchedule implements java.io.Serializable {
     }
 
     public MrJobTasksSchedule(DTaskStat stat) {
-        
+        //任务id
+        this.jobId = stat.getTaskId();
+        //任务泳道
+        this.swimlaneId = stat.getSwimlaneId();
+        //节点id.
+        this.nodeId = stat.getNodeId();
+        //节点id[ip]
+        this.nodeIdIp = stat.getNodeId()+"ip";
+        //数据表
+        this.schemaTable = stat.getSchema()+stat.getTable();
+        //注册时间
+        this.registerTime = stat.getRegisteredTime();
+        //最后心跳时间
+        this.heartBeatDate = stat.getHeartbeatTime();
+        //告警次数
+        this.alarmNumber = stat.getAlertedTimes().longValue();
+        //最近告警检查时间
+        this.lastCheckedTime = stat.getLastCheckedTime();
+        //插入次数success.
+        this.insertSuccess = stat.getInsertRow().longValue();
+        //插入次数failure.
+        this.insertFailure = stat.getErrorInsertRow().longValue();
+        //更新次数success.
+        this.updateSuccess = stat.getUpdateRow().longValue();
+        //更新次数failure.
+        this.updateFailure = stat.getErrorUpdateRow().longValue();
+        //删除次数success.
+        this.deleteSuccess = stat.getDeleteRow().longValue();
+        //删除次数failure.
+        this.deleteFailure = stat.getErrorDeleteRow().longValue();
+        //处理进度
+        this.disposeSchedule = stat.getProgress();
+        //最近导入数据时间.
+        this.lastLoadedDataTime = stat.getLastLoadedDataTime();
+        //最近导入系统时间.
+        this.lastLoadedSystemTime = stat.getLastLoadedSystemTime();
+        //分区预留字段=注册时间
+        this.partitionDay = stat.getRegisteredTime();
+        //修改时间
+        this.updateTime = new Date();
     }
 
     /**

@@ -31,6 +31,14 @@ public interface MrJobTasksScheduleMapper {
     Integer update(@Param("id") Long id, @Param("mrJobTasksSchedule") MrJobTasksSchedule mrJobTasksSchedule);
 
     /**
+     * 修改 判断为空字段
+     * @param id
+     * @param mrJobTasksSchedule
+     * @return
+     */
+    Integer updateSelective(@Param("id") Long id, @Param("mrJobTasksSchedule") MrJobTasksSchedule mrJobTasksSchedule);
+
+    /**
      * 刪除
      *
      * @param id
@@ -59,5 +67,14 @@ public interface MrJobTasksScheduleMapper {
      * @return
      */
     Integer pageAll(@Param("state") Integer state);
+
+    /**
+     * 根据任务id和泳道查询
+     * 
+     * @param jobId
+     * @param swimlaneId
+     * @return
+     */
+    MrJobTasksSchedule selectByJobIdAndSwimlaneId(@Param("jobId") String jobId, @Param("swimlaneId") String swimlaneId);
 
 }

@@ -2,7 +2,9 @@ package com.suixingpay.datas.manager.core.entity;
 
 import java.util.Date;
 
+import com.alibaba.fastjson.JSON;
 import com.suixingpay.datas.common.cluster.data.DNode;
+import com.suixingpay.datas.common.dic.NodeHealthLevel;
 
 /**
  * 节点任务监控表 实体Entity
@@ -21,7 +23,28 @@ public class MrNodesSchedule implements java.io.Serializable {
     }
 
     public MrNodesSchedule(DNode node) {
-        
+        //节点id
+        this.nodeId = node.getNodeId();
+        //机器名.
+        this.computerName = node.getHostName();
+        //ipAddress
+        this.ipAddress = node.getAddress();
+        //心跳时间.
+        this.heartBeatDate = node.getHeartbeat();
+        //进程号.
+        this.processNumber = node.getProcessId();
+        //任务json信息.
+        this.jobIdJson = JSON.toJSONString(node.getTasks());
+        //任务json-name信息.
+        this.jobNameJson = JSON.toJSONString(node.getTasks())+"name";
+        //预留时间分区字段
+        //this.partitionDay = null;
+        //健康等级
+        this.healthLevel = node.getHealthLevel();
+        //健康等级描述
+        this.healthLevelDesc = node.getHealthLevelDesc();
+        //修改时间
+        this.updateTime = new Date();
     }
 
     /**
@@ -77,7 +100,7 @@ public class MrNodesSchedule implements java.io.Serializable {
     /**
      * 健康等级
      */
-    private String healthLevel;
+    private NodeHealthLevel healthLevel;
 
     /**
      * 健康描述
@@ -338,11 +361,11 @@ public class MrNodesSchedule implements java.io.Serializable {
         this.remark = remark == null ? null : remark.trim();
     }
 
-    public String getHealthLevel() {
+    public NodeHealthLevel getHealthLevel() {
         return healthLevel;
     }
 
-    public void setHealthLevel(String healthLevel) {
+    public void setHealthLevel(NodeHealthLevel healthLevel) {
         this.healthLevel = healthLevel;
     }
 

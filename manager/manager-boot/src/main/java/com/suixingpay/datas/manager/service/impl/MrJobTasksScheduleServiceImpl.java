@@ -3,13 +3,16 @@
  */
 package com.suixingpay.datas.manager.service.impl;
 
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.suixingpay.datas.common.cluster.data.DTaskStat;
 import com.suixingpay.datas.manager.core.entity.MrJobTasksSchedule;
 import com.suixingpay.datas.manager.core.mapper.MrJobTasksScheduleMapper;
 import com.suixingpay.datas.manager.service.MrJobTasksScheduleService;
 import com.suixingpay.datas.manager.web.page.Page;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 /**
  * 任务泳道进度表 服务实现类
@@ -21,6 +24,8 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class MrJobTasksScheduleServiceImpl implements MrJobTasksScheduleService {
+
+    private ConcurrentHashMap<String, Object> map = new ConcurrentHashMap<>(128);
 
     @Autowired
     private MrJobTasksScheduleMapper mrJobTasksScheduleMapper;
@@ -57,6 +62,36 @@ public class MrJobTasksScheduleServiceImpl implements MrJobTasksScheduleService 
 
     @Override
     public void dealDTaskStat(DTaskStat stat) {
-        
+        MrJobTasksSchedule mrJobTasksSchedule = new MrJobTasksSchedule(stat);
+        String jobId = mrJobTasksSchedule.getJobId();
+        String swimlaneId = mrJobTasksSchedule.getSwimlaneId();
+        String key = jobId + swimlaneId;
+        Object lock = map.get(key);
+        if (null == lock) {
+            Object tmp = new Object();
+            Object old = map.putIfAbsent(key, tmp);
+            if (null != old) {
+                lock = old;
+            } else {
+                lock = tmp;
+            }
+        }
+        try {
+            synchronized (lock) {
+                dealDTaskStatSync(jobId, swimlaneId, mrJobTasksSchedule);
+            }
+        } finally {
+            map.remove(key);
+        }
+    }
+
+    private void dealDTaskStatSync(String jobId, String swimlaneId, MrJobTasksSchedule mrJobTasksSchedule) {
+        MrJobTasksSchedule old = mrJobTasksScheduleMapper.selectByJobIdAndSwimlaneId(jobId, swimlaneId);
+        if (old == null || old.getId() == null) {
+            mrJobTasksScheduleMapper.insert(mrJobTasksSchedule);
+        }else {
+            mrJobTasksSchedule.setId(old.getId());
+            mrJobTasksScheduleMapper.updateSelective(old.getId(), mrJobTasksSchedule);
+        }
     }
 }
