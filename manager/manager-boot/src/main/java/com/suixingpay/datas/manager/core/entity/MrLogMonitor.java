@@ -15,13 +15,18 @@ import com.suixingpay.datas.common.statistics.NodeLog;
 public class MrLogMonitor implements java.io.Serializable {
 
     public MrLogMonitor() {
-        
+
     }
 
     public MrLogMonitor(NodeLog log) {
         this.nodeId = log.getNodeId();
         this.jobId = log.getTaskId();
-        this.jobName = log.getTaskId()+"name";
+        this.jobName = log.getTaskId() + "name";
+        this.ipAdress = log.getAddress();
+        this.logDate = log.getTime();
+        this.logTitle = log.getType().getTitle();
+        this.logContent = log.getError();
+        this.partitionDay = log.getTime();
     }
 
     private static final long serialVersionUID = 1L;
