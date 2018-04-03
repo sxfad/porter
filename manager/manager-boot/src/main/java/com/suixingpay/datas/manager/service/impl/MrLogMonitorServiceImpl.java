@@ -58,5 +58,6 @@ public class MrLogMonitorServiceImpl implements MrLogMonitorService {
     @Override
     public void dealNodeLog(NodeLog log) {
         MrLogMonitor mrLogMonitor = new MrLogMonitor(log);
+        mrLogMonitorMapper.insert(mrLogMonitor);
     }
 }
