@@ -57,7 +57,6 @@ public class MrLogMonitorServiceImpl implements MrLogMonitorService {
 
     @Override
     public void dealNodeLog(NodeLog log) {
-        // TODO Auto-generated method stub
-        
+        MrLogMonitor mrLogMonitor = new MrLogMonitor(log);
     }
 }

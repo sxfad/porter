@@ -2,6 +2,8 @@ package com.suixingpay.datas.manager.core.entity;
 
 import java.util.Date;
 
+import com.suixingpay.datas.common.statistics.NodeLog;
+
 /**
  * 日志监控信息表 实体Entity
  *
@@ -11,6 +13,16 @@ import java.util.Date;
  * @review: FairyHood/2018-03-07 13:40:30
  */
 public class MrLogMonitor implements java.io.Serializable {
+
+    public MrLogMonitor() {
+        
+    }
+
+    public MrLogMonitor(NodeLog log) {
+        this.nodeId = log.getNodeId();
+        this.jobId = log.getTaskId();
+        this.jobName = log.getTaskId()+"name";
+    }
 
     private static final long serialVersionUID = 1L;
 
@@ -27,7 +39,7 @@ public class MrLogMonitor implements java.io.Serializable {
     /**
      * 任务id.
      */
-    private Long jobId;
+    private String jobId;
 
     /**
      * 任务标题.
@@ -125,14 +137,14 @@ public class MrLogMonitor implements java.io.Serializable {
     /**
      * 任务id get方法.
      */
-    public Long getJobId() {
+    public String getJobId() {
         return jobId;
     }
 
     /**
      * 任务id set方法.
      */
-    public void setJobId(Long jobId) {
+    public void setJobId(String jobId) {
         this.jobId = jobId;
     }
 

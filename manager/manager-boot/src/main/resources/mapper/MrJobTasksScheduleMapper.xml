@@ -58,7 +58,6 @@
         dispose_schedule,
         last_loaded_data_time,
         last_loaded_system_time,
-        update_user_id,
         update_time,
         partition_day
         ) values (

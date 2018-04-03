@@ -163,7 +163,7 @@
                 #{nodeId,jdbcType=VARCHAR},
             </if>
             <if test="jobId != null">
-                #{jobId,jdbcType=BIGINT},
+                #{jobId,jdbcType=VARCHAR},
             </if>
             <if test="jobName != null">
                 #{jobName,jdbcType=VARCHAR},
