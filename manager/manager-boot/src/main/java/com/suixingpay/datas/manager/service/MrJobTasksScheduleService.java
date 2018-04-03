@@ -4,6 +4,8 @@ import com.suixingpay.datas.common.cluster.data.DTaskStat;
 import com.suixingpay.datas.manager.core.entity.MrJobTasksSchedule;
 import com.suixingpay.datas.manager.web.page.Page;
 
+import java.util.List;
+
 /**
  * 任务泳道进度表 服务接口类
  *
@@ -26,4 +28,6 @@ public interface MrJobTasksScheduleService {
 
     /**解析处理 任务进度状态汇总.*/
     void dealDTaskStat(DTaskStat stat);
+
+    List<MrJobTasksSchedule> selectSwimlaneByJobId(String jobId);
 }

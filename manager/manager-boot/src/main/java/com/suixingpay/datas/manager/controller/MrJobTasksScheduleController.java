@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 import static com.suixingpay.datas.manager.web.message.ResponseMessage.ok;
 
 /**
@@ -34,6 +36,21 @@ public class MrJobTasksScheduleController {
 
     @Autowired
     protected MrJobTasksScheduleService mrJobTasksScheduleService;
+
+    /**
+     * 根据jobId获取任务泳道id
+     *
+     * @author FuZizheng
+     * @date 2018/4/3 下午4:06
+     * @param: [jobId]
+     * @return: com.suixingpay.datas.manager.web.message.ResponseMessage
+     */
+    @GetMapping("/getswimlane/{jobId}")
+    @ApiOperation(value = "根据jobId获取任务泳道id", notes = "根据jobId获取任务泳道id")
+    public ResponseMessage selectSwimlane(@PathVariable("jobId") String jobId) {
+        List<MrJobTasksSchedule> list = mrJobTasksScheduleService.selectSwimlaneByJobId(jobId);
+        return ok(list);
+    }
 
     @PostMapping
     @ApiOperation(value = "新增", notes = "新增")

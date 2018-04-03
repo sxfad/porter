@@ -3,6 +3,7 @@
  */
 package com.suixingpay.datas.manager.service.impl;
 
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,6 +84,11 @@ public class MrJobTasksScheduleServiceImpl implements MrJobTasksScheduleService 
         } finally {
             map.remove(key);
         }
+    }
+
+    @Override
+    public List<MrJobTasksSchedule> selectSwimlaneByJobId(String jobId) {
+        return mrJobTasksScheduleMapper.selectSwimlaneByJobId(jobId);
     }
 
     private void dealDTaskStatSync(String jobId, String swimlaneId, MrJobTasksSchedule mrJobTasksSchedule) {
