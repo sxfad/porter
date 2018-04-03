@@ -100,18 +100,35 @@
     <!-- 分页All -->
     <select id="pageAll" resultType="java.lang.Integer">
         select count(id) from mr_nodes_schedule
-        where 1=1
+        <where>
+            iscancel = 0
+            <if test="ipAddress != null and ipAddress !=''">
+                and ip_address LIKE CONCAT('%',#{ipAddress},'%')
+            </if>
+            <if test="computerName != null and computerName != ''">
+                and computer_name LIKE CONCAT('%',#{computerName},'%')
+            </if>
+        </where>
     </select>
 
     <!-- 分页 -->
     <select id="page" resultType="com.suixingpay.datas.manager.core.entity.MrNodesSchedule">
         select
         id, node_id AS nodeId, computer_name AS computerName, ip_address AS ipAddress, heart_beat_date AS heartBeatDate,
-        process_number AS processNumber, job_id_json AS jobIdJson, job_name_json AS jobNameJson, create_user_id AS createUserId,
-        update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, partition_day AS partitionDay, remark,
+        process_number AS processNumber, job_id_json AS jobIdJson, partition_day AS partitionDay,
         health_level AS healthLevel, health_level_desc AS healthLevelDesc
         from mr_nodes_schedule
-        where 1=1 limit #{page.offset},#{page.pageSize}
+        <where>
+            iscancel = 0
+            <if test="ipAddress != null and ipAddress !=''">
+                and ip_address LIKE CONCAT('%',#{ipAddress},'%')
+            </if>
+            <if test="computerName != null and computerName != ''">
+                and computer_name LIKE CONCAT('%',#{computerName},'%')
+            </if>
+        </where>
+        ORDER by heart_beat_date DESC
+        limit #{page.offset},#{page.pageSize}
     </select>
 
     <!-- 验证新增 -->
