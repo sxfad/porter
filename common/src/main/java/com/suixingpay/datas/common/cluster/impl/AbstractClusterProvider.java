@@ -13,33 +13,9 @@ import com.suixingpay.datas.common.client.ClusterClient;
 import com.suixingpay.datas.common.cluster.ClusterListener;
 import com.suixingpay.datas.common.cluster.ClusterMonitor;
 import com.suixingpay.datas.common.cluster.ClusterProvider;
+import com.suixingpay.datas.common.cluster.command.*;
+import com.suixingpay.datas.common.cluster.command.broadcast.*;
 import com.suixingpay.datas.common.dic.ClusterPlugin;
-import com.suixingpay.datas.common.cluster.command.NodeOrderPushCommand;
-import com.suixingpay.datas.common.cluster.command.TaskPositionQueryCommand;
-import com.suixingpay.datas.common.cluster.command.TaskPositionUploadCommand;
-import com.suixingpay.datas.common.cluster.command.TaskStoppedByErrorCommand;
-import com.suixingpay.datas.common.cluster.command.ClusterCommand;
-import com.suixingpay.datas.common.cluster.command.TaskStatCommand;
-import com.suixingpay.datas.common.cluster.command.TaskStopCommand;
-import com.suixingpay.datas.common.cluster.command.StatisticUploadCommand;
-import com.suixingpay.datas.common.cluster.command.TaskPushCommand;
-import com.suixingpay.datas.common.cluster.command.TaskStatQueryCommand;
-import com.suixingpay.datas.common.cluster.command.NodeRegisterCommand;
-import com.suixingpay.datas.common.cluster.command.ShutdownCommand;
-import com.suixingpay.datas.common.cluster.command.TaskAssignedCommand;
-import com.suixingpay.datas.common.cluster.command.TaskRegisterCommand;
-import com.suixingpay.datas.common.cluster.command.broadcast.NodeOrderPush;
-import com.suixingpay.datas.common.cluster.command.broadcast.TaskPush;
-import com.suixingpay.datas.common.cluster.command.broadcast.StatisticUpload;
-import com.suixingpay.datas.common.cluster.command.broadcast.TaskStatQuery;
-import com.suixingpay.datas.common.cluster.command.broadcast.TaskStatUpload;
-import com.suixingpay.datas.common.cluster.command.broadcast.TaskStop;
-import com.suixingpay.datas.common.cluster.command.broadcast.NodeRegister;
-import com.suixingpay.datas.common.cluster.command.broadcast.Shutdown;
-import com.suixingpay.datas.common.cluster.command.broadcast.TaskAssigned;
-import com.suixingpay.datas.common.cluster.command.broadcast.TaskRegister;
-import com.suixingpay.datas.common.cluster.command.broadcast.TaskPosition;
-import com.suixingpay.datas.common.cluster.command.broadcast.TaskStoppedByError;
 import com.suixingpay.datas.common.config.ClusterConfig;
 import com.suixingpay.datas.common.exception.ClientException;
 import com.suixingpay.datas.common.exception.ClientMatchException;
@@ -150,6 +126,9 @@ public abstract class AbstractClusterProvider<C extends Client> implements Clust
                 ((TaskPosition) listener).upload((TaskPositionUploadCommand) command);
             }
 
+            if (listener instanceof ConfigPush && command instanceof ConfigPushCommand) {
+                ((ConfigPush) listener).push((ConfigPushCommand) command);
+            }
         }
     }
 

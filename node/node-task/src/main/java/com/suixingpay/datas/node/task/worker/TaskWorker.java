@@ -119,6 +119,8 @@ public class TaskWorker {
                 if (!(e instanceof TaskLockException)) {
                     LOGGER.error("Consumer JOB[{}] failed to start!", c.getSwimlaneId(), e);
                     NodeLog.upload(NodeLog.LogType.TASK_LOG, task.getTaskId(), c.getSwimlaneId(), e.getMessage());
+                } else {
+                    e.printStackTrace();
                 }
             }
         });

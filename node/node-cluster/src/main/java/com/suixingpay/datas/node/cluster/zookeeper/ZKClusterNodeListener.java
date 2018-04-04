@@ -82,7 +82,7 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener  implements 
             //释放当前节点正在执行的任务
             if (commandConfig.getCommand() == NodeCommandType.RELEASE_WORK) {
                 //查询出来当前节点正在执行的任务
-                DNode nodeData = getDNode(listenPath() + "/" + NodeContext.INSTANCE.getNodeId());
+                DNode nodeData = getDNode(listenPath() + "/" + NodeContext.INSTANCE.getNodeId() + "/stat");
                 if (null != nodeData) {
                     //遍历节点任务
                     nodeData.getTasks().forEach((taskId, swimlaneId) -> {
