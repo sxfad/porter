@@ -19,6 +19,7 @@
         <result column="update_failure" property="updateFailure" />
         <result column="delete_succes" property="deleteSucces" />
         <result column="delete_failure" property="deleteFailure" />
+        <result column="alarm_number" property="alarmNumber" />
         <result column="partition_day" property="partitionDay" />
     </resultMap>-->
 
@@ -45,6 +46,7 @@
         update_failure,
         delete_succes,
         delete_failure,
+        alarm_number,
         partition_day
         ) values (
         #{jobId},
@@ -62,6 +64,7 @@
         #{updateFailure},
         #{deleteSucces},
         #{deleteFailure},
+        #{alarmNumber},
         #{partitionDay}
         )
     </insert>
@@ -85,6 +88,7 @@
         update_failure = #{mrJobTasksMonitor.updateFailure},
         delete_succes = #{mrJobTasksMonitor.deleteSucces},
         delete_failure = #{mrJobTasksMonitor.deleteFailure},
+        alarm_number = #{mrJobTasksMonitor.alarmNumber},
         partition_day = #{mrJobTasksMonitor.partitionDay}
         where id = #{id}
     </update>
@@ -96,7 +100,7 @@
 
     <!-- 根据主鍵查找 -->
     <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.MrJobTasksMonitor">
-        select id, job_id AS jobId, node_id AS nodeId, node_id_ip AS nodeIdIp, swimlane_id AS swimlaneId, monitor_date AS monitorDate, monitor_ymd AS monitorYmd, monitor_hour AS monitorHour, monitor_minute AS monitorMinute, monitor_second AS monitorSecond, insert_succes AS insertSucces, insert_failure AS insertFailure, update_succes AS updateSucces, update_failure AS updateFailure, delete_succes AS deleteSucces, delete_failure AS deleteFailure, partition_day AS partitionDay from mr_job_tasks_monitor
+        select id, job_id AS jobId, node_id AS nodeId, node_id_ip AS nodeIdIp, swimlane_id AS swimlaneId, monitor_date AS monitorDate, monitor_ymd AS monitorYmd, monitor_hour AS monitorHour, monitor_minute AS monitorMinute, monitor_second AS monitorSecond, insert_succes AS insertSucces, insert_failure AS insertFailure, update_succes AS updateSucces, update_failure AS updateFailure, delete_succes AS deleteSucces, delete_failure AS deleteFailure, alarm_number as alarmNumber, partition_day AS partitionDay from mr_job_tasks_monitor
         where id = #{id}
     </select>
 
@@ -108,7 +112,7 @@
 
     <!-- 分页 -->
     <select id="page" resultType="com.suixingpay.datas.manager.core.entity.MrJobTasksMonitor">
-        select id, job_id AS jobId, node_id AS nodeId, node_id_ip AS nodeIdIp, swimlane_id AS swimlaneId, monitor_date AS monitorDate, monitor_ymd AS monitorYmd, monitor_hour AS monitorHour, monitor_minute AS monitorMinute, monitor_second AS monitorSecond, insert_succes AS insertSucces, insert_failure AS insertFailure, update_succes AS updateSucces, update_failure AS updateFailure, delete_succes AS deleteSucces, delete_failure AS deleteFailure, partition_day AS partitionDay from mr_job_tasks_monitor
+        select id, job_id AS jobId, node_id AS nodeId, node_id_ip AS nodeIdIp, swimlane_id AS swimlaneId, monitor_date AS monitorDate, monitor_ymd AS monitorYmd, monitor_hour AS monitorHour, monitor_minute AS monitorMinute, monitor_second AS monitorSecond, insert_succes AS insertSucces, insert_failure AS insertFailure, update_succes AS updateSucces, update_failure AS updateFailure, delete_succes AS deleteSucces, delete_failure AS deleteFailure, alarm_number as alarmNumber, partition_day AS partitionDay from mr_job_tasks_monitor
         where 1=1 limit #{page.offset},#{page.pageSize}
     </select>
 
@@ -161,13 +165,16 @@
             <if test="deleteFailure != null">
                 delete_failure,
             </if>
+            <if test="alarmNumber != null">
+                alarm_number,
+            </if>
             <if test="partitionDay != null">
                 partition_day,
             </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="jobId != null">
-                #{jobId,jdbcType=BIGINT},
+                #{jobId,jdbcType=VARCHAR},
             </if>
             <if test="nodeId != null">
                 #{nodeId,jdbcType=VARCHAR},
@@ -211,6 +218,9 @@
             <if test="deleteFailure != null">
                 #{deleteFailure,jdbcType=BIGINT},
             </if>
+            <if test="alarmNumber != null">
+                #{alarm_number,jdbcType=BIGINT},
+            </if>
             <if test="partitionDay != null">
                 #{partitionDay,jdbcType=DATE},
             </if>
@@ -222,7 +232,7 @@
         update mr_job_tasks_monitor
         <set>
             <if test="mrJobTasksMonitor.jobId != null">
-                job_id = #{mrJobTasksMonitor.jobId,jdbcType=BIGINT},
+                job_id = #{mrJobTasksMonitor.jobId,jdbcType=VARCHAR},
             </if>
             <if test="mrJobTasksMonitor.nodeId != null">
                 node_id = #{mrJobTasksMonitor.nodeId,jdbcType=VARCHAR},
@@ -265,6 +275,9 @@
             </if>
             <if test="mrJobTasksMonitor.deleteFailure != null">
                 delete_failure = #{mrJobTasksMonitor.deleteFailure,jdbcType=BIGINT},
+            </if>
+            <if test="mrJobTasksMonitor.alarmNumber != null">
+                alarm_number = #{mrJobTasksMonitor.alarmNumber,jdbcType=BIGINT},
             </if>
             <if test="mrJobTasksMonitor.partitionDay != null">
                 partition_day = #{mrJobTasksMonitor.partitionDay,jdbcType=DATE},

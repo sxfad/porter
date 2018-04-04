@@ -1,5 +1,6 @@
 package com.suixingpay.datas.manager.core.entity;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import com.suixingpay.datas.common.statistics.TaskPerformance;
@@ -21,7 +22,43 @@ public class MrJobTasksMonitor implements java.io.Serializable {
     }
 
     public MrJobTasksMonitor(TaskPerformance performance) {
-
+        // 任务id
+        this.jobId = performance.getTaskId();
+        // 节点id
+        this.nodeId = performance.getNodeId();
+        // 节点id-ip地址
+        this.nodeIdIp = performance.getNodeId() + "IP";
+        // 泳道ID
+        this.swimlaneId = performance.getSwimlaneId();
+        // 实际监控日期
+        this.monitorDate = performance.getTime();
+        // 实际监控年月日
+        this.monitorYmd = performance.getTime();
+        // Calendar计算
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(performance.getTime());
+        // 实时监控小时(24h)
+        this.monitorHour = cal.get(Calendar.HOUR_OF_DAY);
+        // 实时监控分.
+        this.monitorMinute = cal.get(Calendar.MINUTE);
+        // 实时监控秒.
+        this.monitorSecond = cal.get(Calendar.SECOND);
+        /** 插入成功. */
+        this.insertSucces = performance.getInsertRow();
+        /** 插入失败. */
+        this.insertFailure = performance.getErrorInsertRow();
+        /** 更新成功. */
+        this.updateSucces = performance.getUpdateRow();
+        /** 更新失败. */
+        this.updateFailure = performance.getErrorUpdateRow();
+        /** 删除成功. */
+        this.deleteSucces = performance.getDeleteRow();
+        /** 删除失败. */
+        this.deleteFailure = performance.getErrorDeleteRow();
+        //告警次数
+        this.alarmNumber = performance.getAlertedTimes();
+        //分区预留字段
+        this.partitionDay = performance.getTime();
     }
 
     /**
@@ -32,7 +69,7 @@ public class MrJobTasksMonitor implements java.io.Serializable {
     /**
      * 任务id.
      */
-    private Long jobId;
+    private String jobId;
 
     /**
      * 节点id.
@@ -105,6 +142,11 @@ public class MrJobTasksMonitor implements java.io.Serializable {
     private Long deleteFailure;
 
     /**
+     * 告警次数
+     */
+    private Long alarmNumber;
+
+    /**
      * 预留时间分区字段.
      */
     private Date partitionDay;
@@ -126,14 +168,14 @@ public class MrJobTasksMonitor implements java.io.Serializable {
     /**
      * 任务id get方法.
      */
-    public Long getJobId() {
+    public String getJobId() {
         return jobId;
     }
 
     /**
      * 任务id set方法.
      */
-    public void setJobId(Long jobId) {
+    public void setJobId(String jobId) {
         this.jobId = jobId;
     }
 
@@ -347,4 +389,11 @@ public class MrJobTasksMonitor implements java.io.Serializable {
         this.partitionDay = partitionDay;
     }
 
+    public Long getAlarmNumber() {
+        return alarmNumber;
+    }
+
+    public void setAlarmNumber(Long alarmNumber) {
+        this.alarmNumber = alarmNumber;
+    }
 }
