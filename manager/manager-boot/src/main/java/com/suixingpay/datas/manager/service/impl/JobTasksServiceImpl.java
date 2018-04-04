@@ -129,11 +129,15 @@ public class JobTasksServiceImpl implements JobTasksService {
     }
 
     @Override
-    public Page<JobTasks> page(Page<JobTasks> page, String jobName, String beginTime, String endTime) {
-        Integer total = jobTasksMapper.pageAll(1, jobName, beginTime, endTime);
+    public Page<JobTasks> page(Page<JobTasks> page, String jobName, String beginTime, String endTime, TaskStatusType jobState) {
+        String code = "";
+        if (null != jobState) {
+            code = jobState.getCode();
+        }
+        Integer total = jobTasksMapper.pageAll(1, jobName, beginTime, endTime, code);
         if (total > 0) {
             page.setTotalItems(total);
-            page.setResult(jobTasksMapper.page(page, 1, jobName, beginTime, endTime));
+            page.setResult(jobTasksMapper.page(page, 1, jobName, beginTime, endTime, code));
         }
         return page;
     }

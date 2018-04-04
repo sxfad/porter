@@ -83,4 +83,15 @@ public interface MrJobTasksScheduleMapper {
      * @return
      */
     List<MrJobTasksSchedule> selectSwimlaneByJobId(String jobId);
+
+    /**
+     * 条件查询获取列表
+     * @param jobId
+     * @param heartBeatBeginDate
+     * @param heartBeatEndDate
+     * @return
+     */
+    List<MrJobTasksSchedule> list(@Param("jobId") String jobId,
+                                  @Param("heartBeatBeginDate") String heartBeatBeginDate,
+                                  @Param("heartBeatEndDate") String heartBeatEndDate);
 }
