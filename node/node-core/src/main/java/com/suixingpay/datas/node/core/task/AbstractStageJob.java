@@ -76,9 +76,10 @@ public abstract class AbstractStageJob implements StageJob {
                     stopSignal.acquire();
                     LOGGER.debug("源队列为空，发送线程中断信号");
                 }
-                loopService.interrupt();
                 doStop();
-            } catch (Exception e) {
+            } catch (Throwable e) {
+            } finally {
+                loopService.interrupt();
             }
         }
     }
