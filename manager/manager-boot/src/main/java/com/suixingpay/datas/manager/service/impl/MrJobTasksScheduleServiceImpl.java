@@ -91,6 +91,11 @@ public class MrJobTasksScheduleServiceImpl implements MrJobTasksScheduleService 
         return mrJobTasksScheduleMapper.selectSwimlaneByJobId(jobId);
     }
 
+    @Override
+    public List<MrJobTasksSchedule> list(String jobId, String heartBeatBeginDate, String heartBeatEndDate) {
+        return mrJobTasksScheduleMapper.list(jobId, heartBeatBeginDate, heartBeatEndDate);
+    }
+
     private void dealDTaskStatSync(String jobId, String swimlaneId, MrJobTasksSchedule mrJobTasksSchedule) {
         MrJobTasksSchedule old = mrJobTasksScheduleMapper.selectByJobIdAndSwimlaneId(jobId, swimlaneId);
         if (old == null || old.getId() == null) {
