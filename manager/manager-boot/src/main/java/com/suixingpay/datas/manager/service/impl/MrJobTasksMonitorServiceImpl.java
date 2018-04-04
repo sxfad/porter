@@ -57,6 +57,7 @@ public class MrJobTasksMonitorServiceImpl implements MrJobTasksMonitorService {
 
     @Override
     public void dealTaskPerformance(TaskPerformance performance) {
-        
+        MrJobTasksMonitor mrJobTasksMonitor = new MrJobTasksMonitor(performance);
+        mrJobTasksMonitorMapper.insert(mrJobTasksMonitor);
     }
 }
