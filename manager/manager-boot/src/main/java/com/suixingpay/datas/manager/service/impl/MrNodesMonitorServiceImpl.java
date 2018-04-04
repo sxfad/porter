@@ -3,13 +3,17 @@
  */
 package com.suixingpay.datas.manager.service.impl;
 
+import java.util.concurrent.ConcurrentHashMap;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.suixingpay.datas.common.statistics.TaskPerformance;
 import com.suixingpay.datas.manager.core.entity.MrNodesMonitor;
 import com.suixingpay.datas.manager.core.mapper.MrNodesMonitorMapper;
+import com.suixingpay.datas.manager.core.util.DateFormatUtils;
 import com.suixingpay.datas.manager.service.MrNodesMonitorService;
 import com.suixingpay.datas.manager.web.page.Page;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 /**
  * 节点任务实时监控表 服务实现类
@@ -21,6 +25,8 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class MrNodesMonitorServiceImpl implements MrNodesMonitorService {
+
+    private ConcurrentHashMap<String, Object> map = new ConcurrentHashMap<>(128);
 
     @Autowired
     private MrNodesMonitorMapper mrNodesMonitorMapper;
@@ -57,6 +63,38 @@ public class MrNodesMonitorServiceImpl implements MrNodesMonitorService {
 
     @Override
     public void dealTaskPerformance(TaskPerformance performance) {
-        
+        MrNodesMonitor mrNodesMonitor = new MrNodesMonitor(performance);
+        String nodeId = mrNodesMonitor.getNodeId();
+        String dataTimes = DateFormatUtils.formatDate("yyyy-MM-dd HH:mm:ss", mrNodesMonitor.getMonitorDate());
+        String key = nodeId+dataTimes;
+        Object lock = map.get(key);
+        if (null == lock) {
+            Object tmp = new Object();
+            Object old = map.putIfAbsent(key, tmp);
+            if (null != old) {
+                lock = old;
+            } else {
+                lock = tmp;
+            }
+        }
+        try {
+            synchronized (lock) {
+                dealTaskPerformanceSync(nodeId, dataTimes, mrNodesMonitor);
+            }
+        } finally {
+            map.remove(key);
+        }
+    }
+
+    private void dealTaskPerformanceSync(String nodeId, String dataTimes, MrNodesMonitor mrNodesMonitor) {
+        MrNodesMonitor old = mrNodesMonitorMapper.selectByNodeIdAndTime(nodeId, dataTimes);
+        if (old == null || old.getId() == null) {
+            mrNodesMonitorMapper.insert(mrNodesMonitor);
+        }else {
+            mrNodesMonitor.setId(old.getId());
+            mrNodesMonitor.setMonitorTps(mrNodesMonitor.getMonitorTps()+old.getMonitorTps());
+            mrNodesMonitor.setMonitorAlarm(mrNodesMonitor.getMonitorAlarm()+old.getMonitorAlarm());
+            mrNodesMonitorMapper.update(old.getId(), mrNodesMonitor);
+        }
     }
 }

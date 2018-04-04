@@ -46,6 +46,9 @@ public interface MrNodesMonitorMapper {
      */
     MrNodesMonitor selectById(Long id);
 
+    
+    MrNodesMonitor selectByNodeIdAndTime(@Param("nodeId") String nodeId, @Param("dataTimes") String dataTimes);
+
     /**
      * 分頁
      *

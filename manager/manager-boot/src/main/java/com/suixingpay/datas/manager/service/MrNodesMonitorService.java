@@ -24,5 +24,6 @@ public interface MrNodesMonitorService {
 
     Page<MrNodesMonitor> page(Page<MrNodesMonitor> page);
 
+    /** 节点区间数据统计. */
     void dealTaskPerformance(TaskPerformance performance);
 }
