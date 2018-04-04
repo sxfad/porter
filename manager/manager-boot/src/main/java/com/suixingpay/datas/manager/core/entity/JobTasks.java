@@ -41,15 +41,26 @@ public class JobTasks implements java.io.Serializable {
      */
     private ConsumerPlugin sourceConsumeAdt;
 
+    /** 来源数据-消费插件.页面展示 */
+    private String sourceConsumeAdtName;
+
     /**
      * 来源数据-消费转换插件.
      */
     private ConsumeConverterPlugin sourceConvertAdt;
 
+    /** 来源数据-消费转换插件.页面展示 */
+    private String sourceConvertAdtName;
+
     /**
      * 来源数据-元数据表分组id.
      */
     private Long sourceDataTablesId;
+
+    /**
+     * 来源数据-元数据表数据源id.
+     */
+    private Long sourceDataSourceId;
 
     /**
      * 来源数据-元数据表分组名称.
@@ -66,6 +77,9 @@ public class JobTasks implements java.io.Serializable {
      */
     private String sourceDataName;
 
+    /** 目标数据-载入插件. 页面显示 */
+    private String targetLoadAdtName;
+
     /**
      * 目标数据-载入插件.
      */
@@ -75,6 +89,11 @@ public class JobTasks implements java.io.Serializable {
      * 目标数据-载入源id.
      */
     private Long targetDataTablesId;
+
+    /**
+     * 目标数据-数据源id.
+     */
+    private Long targetDataSourceId;
 
     /**
      * 目标数据-载入源名称.
@@ -184,6 +203,7 @@ public class JobTasks implements java.io.Serializable {
      * 来源数据-消费插件 set方法.
      */
     public void setSourceConsumeAdt(ConsumerPlugin sourceConsumeAdt) {
+        this.sourceConsumeAdtName = sourceConsumeAdt.toString();
         this.sourceConsumeAdt = sourceConsumeAdt;
     }
 
@@ -198,6 +218,7 @@ public class JobTasks implements java.io.Serializable {
      * 来源数据-消费转换插件 set方法.
      */
     public void setSourceConvertAdt(ConsumeConverterPlugin sourceConvertAdt) {
+        this.sourceConvertAdtName = sourceConvertAdt.toString();
         this.sourceConvertAdt = sourceConvertAdt;
     }
 
@@ -268,6 +289,7 @@ public class JobTasks implements java.io.Serializable {
      * 目标数据-载入插件 set方法.
      */
     public void setTargetLoadAdt(LoaderPlugin targetLoadAdt) {
+        this.targetLoadAdtName = targetLoadAdt.toString();
         this.targetLoadAdt = targetLoadAdt;
     }
 
@@ -448,5 +470,57 @@ public class JobTasks implements java.io.Serializable {
      */
     public void setTargetTablesName(String targetTablesName) {
         this.targetTablesName = targetTablesName;
+    }
+
+    /**
+     * 来源数据-元数据表数据源id. get方法
+     */
+    public Long getSourceDataSourceId() {
+        return sourceDataSourceId;
+    }
+
+    /**
+     * 来源数据-元数据表数据源id. set方法
+     */
+    public void setSourceDataSourceId(Long sourceDataSourceId) {
+        this.sourceDataSourceId = sourceDataSourceId;
+    }
+
+    /**
+     * 目标数据-数据源id. get方法
+     */
+    public Long getTargetDataSourceId() {
+        return targetDataSourceId;
+    }
+
+    /**
+     * 目标数据-数据源id. set方法
+     */
+    public void setTargetDataSourceId(Long targetDataSourceId) {
+        this.targetDataSourceId = targetDataSourceId;
+    }
+
+    public String getSourceConsumeAdtName() {
+        return sourceConsumeAdtName;
+    }
+
+    public void setSourceConsumeAdtName(String sourceConsumeAdtName) {
+        this.sourceConsumeAdtName = sourceConsumeAdtName;
+    }
+
+    public String getSourceConvertAdtName() {
+        return sourceConvertAdtName;
+    }
+
+    public void setSourceConvertAdtName(String sourceConvertAdtName) {
+        this.sourceConvertAdtName = sourceConvertAdtName;
+    }
+
+    public String getTargetLoadAdtName() {
+        return targetLoadAdtName;
+    }
+
+    public void setTargetLoadAdtName(String targetLoadAdtName) {
+        this.targetLoadAdtName = targetLoadAdtName;
     }
 }
