@@ -4,7 +4,6 @@
     <!-- 通用查询映射结果
     <resultMap id="BaseResultMap" type="com.suixingpay.datas.manager.core.entity.MrNodesMonitor">
         <result column="id" property="id" />
-        <result column="schedule_id" property="scheduleId" />
         <result column="node_id" property="nodeId" />
         <result column="monitor_date" property="monitorDate" />
         <result column="monitor_ymd" property="monitorYmd" />
@@ -18,13 +17,12 @@
 
     <!-- 通用查询结果列
     <sql id="Base_Column_List">
-        select id, schedule_id AS scheduleId, node_id AS nodeId, monitor_date AS monitorDate, monitor_ymd AS monitorYmd, monitor_hour AS monitorHour, monitor_minute AS monitorMinute, monitor_second AS monitorSecond, monitor_tps AS monitorTps, monitor_alarm AS monitorAlarm, partition_day AS partitionDay from mr_nodes_monitor
+        select id, node_id AS nodeId, monitor_date AS monitorDate, monitor_ymd AS monitorYmd, monitor_hour AS monitorHour, monitor_minute AS monitorMinute, monitor_second AS monitorSecond, monitor_tps AS monitorTps, monitor_alarm AS monitorAlarm, partition_day AS partitionDay from mr_nodes_monitor
     </sql>-->
 
     <!-- 新增 -->
     <insert id="insert">
         insert into mr_nodes_monitor(
-        schedule_id,
         node_id,
         monitor_date,
         monitor_ymd,
@@ -35,7 +33,6 @@
         monitor_alarm,
         partition_day
         ) values (
-        #{scheduleId},
         #{nodeId},
         #{monitorDate},
         #{monitorYmd},
@@ -52,16 +49,8 @@
     <update id="update">
         update mr_nodes_monitor
         set
-        schedule_id = #{mrNodesMonitor.scheduleId},
-        node_id = #{mrNodesMonitor.nodeId},
-        monitor_date = #{mrNodesMonitor.monitorDate},
-        monitor_ymd = #{mrNodesMonitor.monitorYmd},
-        monitor_hour = #{mrNodesMonitor.monitorHour},
-        monitor_minute = #{mrNodesMonitor.monitorMinute},
-        monitor_second = #{mrNodesMonitor.monitorSecond},
         monitor_tps = #{mrNodesMonitor.monitorTps},
-        monitor_alarm = #{mrNodesMonitor.monitorAlarm},
-        partition_day = #{mrNodesMonitor.partitionDay}
+        monitor_alarm = #{mrNodesMonitor.monitorAlarm}
         where id = #{id}
     </update>
 
@@ -72,8 +61,14 @@
 
     <!-- 根据主鍵查找 -->
     <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.MrNodesMonitor">
-        select id, schedule_id AS scheduleId, node_id AS nodeId, monitor_date AS monitorDate, monitor_ymd AS monitorYmd, monitor_hour AS monitorHour, monitor_minute AS monitorMinute, monitor_second AS monitorSecond, monitor_tps AS monitorTps, monitor_alarm AS monitorAlarm, partition_day AS partitionDay from mr_nodes_monitor
+        select id, node_id AS nodeId, monitor_date AS monitorDate, monitor_ymd AS monitorYmd, monitor_hour AS monitorHour, monitor_minute AS monitorMinute, monitor_second AS monitorSecond, monitor_tps AS monitorTps, monitor_alarm AS monitorAlarm, partition_day AS partitionDay from mr_nodes_monitor
         where id = #{id}
+    </select>
+
+    <!-- 根据节点id和时间yyyyMMddHHmm查找数据 -->
+    <select id="selectByNodeIdAndTime" resultType="com.suixingpay.datas.manager.core.entity.MrNodesMonitor">
+        select id, monitor_tps AS monitorTps, monitor_alarm AS monitorAlarm from mr_nodes_monitor
+        where node_id = #{nodeId} and date_format(monitor_date,'%y-%m-%d %h:%i:%s') = #{dataTimes}
     </select>
 
     <!-- 分页All -->
@@ -84,17 +79,14 @@
 
     <!-- 分页 -->
     <select id="page" resultType="com.suixingpay.datas.manager.core.entity.MrNodesMonitor">
-        select id, schedule_id AS scheduleId, node_id AS nodeId, monitor_date AS monitorDate, monitor_ymd AS monitorYmd, monitor_hour AS monitorHour, monitor_minute AS monitorMinute, monitor_second AS monitorSecond, monitor_tps AS monitorTps, monitor_alarm AS monitorAlarm, partition_day AS partitionDay from mr_nodes_monitor
+        select id, node_id AS nodeId, monitor_date AS monitorDate, monitor_ymd AS monitorYmd, monitor_hour AS monitorHour, monitor_minute AS monitorMinute, monitor_second AS monitorSecond, monitor_tps AS monitorTps, monitor_alarm AS monitorAlarm, partition_day AS partitionDay from mr_nodes_monitor
         where 1=1 limit #{page.offset},#{page.pageSize}
     </select>
 
     <!-- 验证新增 -->
     <insert id="insertSelective">
         insert into mr_nodes_monitor
-        <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="scheduleId != null">
-                schedule_id,
-            </if>
+        <trim prefix="(" suffix=")" suffixOverrides=",">            
             <if test="nodeId != null">
                 node_id,
             </if>
@@ -123,10 +115,7 @@
                 partition_day,
             </if>
         </trim>
-        <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="scheduleId != null">
-                #{scheduleId,jdbcType=BIGINT},
-            </if>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">            
             <if test="nodeId != null">
                 #{nodeId,jdbcType=VARCHAR},
             </if>
@@ -161,9 +150,6 @@
     <update id="updateSelective">
         update mr_nodes_monitor
         <set>
-            <if test="mrNodesMonitor.scheduleId != null">
-                schedule_id = #{mrNodesMonitor.scheduleId,jdbcType=BIGINT},
-            </if>
             <if test="mrNodesMonitor.nodeId != null">
                 node_id = #{mrNodesMonitor.nodeId,jdbcType=VARCHAR},
             </if>

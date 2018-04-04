@@ -1,5 +1,6 @@
 package com.suixingpay.datas.manager.core.entity;
 
+import java.util.Calendar;
 import java.util.Date;
 
 import com.suixingpay.datas.common.statistics.TaskPerformance;
@@ -20,17 +21,35 @@ public class MrNodesMonitor implements java.io.Serializable {
     }
 
     public MrNodesMonitor(TaskPerformance performance) {
+        // 节点id
+        this.nodeId = performance.getNodeId();
+        // 实际监控日期
+        this.monitorDate = performance.getTime();
+        // 实际监控年月日
+        this.monitorYmd = performance.getTime();
+        // Calendar计算
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(performance.getTime());
+        // 实时监控小时(24h)
+        this.monitorHour = cal.get(Calendar.HOUR_OF_DAY);
+        // 实时监控分.
+        this.monitorMinute = cal.get(Calendar.MINUTE);
+        // 实时监控秒.
+        this.monitorSecond = cal.get(Calendar.SECOND);
+        //每分钟总数
+        Long minutetotal = performance.getInsertRow() + performance.getErrorInsertRow() + performance.getUpdateRow()
+                + performance.getErrorUpdateRow() + performance.getDeleteRow() + performance.getErrorDeleteRow();
+        this.monitorTps = minutetotal;
+        //告警次数
+        this.monitorAlarm = performance.getAlertedTimes();
+        //预留分区字段
+        this.partitionDay = performance.getTime();
     }
 
     /**
      * 主键.
      */
     private Long id;
-
-    /**
-     * 监控节点id.
-     */
-    private Long scheduleId;
 
     /**
      * 节点id.
@@ -60,7 +79,7 @@ public class MrNodesMonitor implements java.io.Serializable {
     /**
      * 实时监控秒.
      */
-    private Long monitorSecond;
+    private Integer monitorSecond;
 
     /**
      * 并发数.
@@ -89,20 +108,6 @@ public class MrNodesMonitor implements java.io.Serializable {
      */
     public void setId(Long id) {
         this.id = id;
-    }
-
-    /**
-     * 监控节点id get方法.
-     */
-    public Long getScheduleId() {
-        return scheduleId;
-    }
-
-    /**
-     * 监控节点id set方法.
-     */
-    public void setScheduleId(Long scheduleId) {
-        this.scheduleId = scheduleId;
     }
 
     /**
@@ -178,14 +183,14 @@ public class MrNodesMonitor implements java.io.Serializable {
     /**
      * 实时监控秒 get方法.
      */
-    public Long getMonitorSecond() {
+    public Integer getMonitorSecond() {
         return monitorSecond;
     }
 
     /**
      * 实时监控秒 set方法.
      */
-    public void setMonitorSecond(Long monitorSecond) {
+    public void setMonitorSecond(Integer monitorSecond) {
         this.monitorSecond = monitorSecond;
     }
 
