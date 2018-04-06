@@ -123,7 +123,13 @@ public class TaskWork {
                 LOGGER.info("终止执行任务[{}-{}]", taskId, dataConsumer.getSwimlaneId());
                 //终止阶段性工作,需要
                 for (Map.Entry<StageType, StageJob> jobs : JOBS.entrySet()) {
-                    jobs.getValue().stop();
+                    //确保每个阶段工作都被执行
+                    try {
+                        LOGGER.info("终止执行工作[{}-{}-{}]", taskId, dataConsumer.getSwimlaneId(), jobs.getValue().getClass().getSimpleName());
+                        jobs.getValue().stop();
+                    } catch (Throwable e) {
+                        e.printStackTrace();
+                    }
                 }
                 try {
                     //上传消费进度

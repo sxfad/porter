@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  *
@@ -50,6 +51,11 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
     private final CanalServerWithEmbedded canalServer;
     private ClientIdentity clientId;
     private CountDownLatch canFetch = new CountDownLatch(1);
+    /**
+     * canal.server是否抛出异常
+     */
+    private AtomicBoolean hasBroken = new AtomicBoolean(false);
+    private volatile Throwable brokenError;
 
     public CanalClient(CanalConfig config) {
         super(config);
@@ -69,12 +75,17 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
         try {
             if (null != canalServer) {
                 canalServer.stop(getConfig().getDatabase());
-                canalServer.stop();
             }
         } catch (Throwable e) {
             //https://github.com/alibaba/canal/issues/413
             //导致任务停止终止，无法销毁相关资源
         } finally {
+            if (null != canalServer) {
+                try {
+                    canalServer.stop();
+                } catch (Throwable e) {
+                }
+            }
             canFetch = new CountDownLatch(1);
         }
     }
@@ -135,8 +146,11 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
                     @SneakyThrows
                     public void sendAlarm(String destination, String msg) {
                         //master连接不上
-                        if (StringUtils.trimToEmpty(msg).contains("CanalParseException: java.io.IOException")) {
-                            throw new TaskStopTriggerException(config.getProperties() + ":链接建立失败");
+                        if (msg.contains("CanalParseException: java.io.IOException")
+                                || msg.contains("java.io.IOException: Received error packet: errno")) {
+                            if (hasBroken.compareAndSet(false, true)) {
+                                brokenError = new TaskStopTriggerException("【Canal链接建立失败】【" + config.getProperties() + "】" + msg);
+                            }
                         }
                     }
 
@@ -166,7 +180,11 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
     }
 
     @Override
-    public <F, O>  List<F> fetch(FetchCallback<F, O> callback) {
+    public <F, O>  List<F> fetch(FetchCallback<F, O> callback) throws TaskStopTriggerException {
+        if (hasBroken.get()) {
+            throw null != brokenError ? new TaskStopTriggerException(brokenError) : new TaskStopTriggerException("canal.server因异常中断");
+        }
+
         List<F> msgList = new ArrayList<>();
         if (isStarted()) {
             Message msg = null;
@@ -200,7 +218,7 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
     }
 
     @Override
-    public <T> List<T> splitSwimlanes() throws ClientException {
+    public <T> List<T> splitSwimlanes() {
         List<T> clients = new ArrayList<>();
         clients.add((T) this);
         return clients;
