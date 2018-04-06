@@ -24,7 +24,6 @@ import com.suixingpay.datas.common.client.AbstractClient;
 import com.suixingpay.datas.common.consumer.ConsumeClient;
 import com.suixingpay.datas.common.config.source.CanalConfig;
 import com.suixingpay.datas.common.consumer.Position;
-import com.suixingpay.datas.common.exception.ClientException;
 import com.suixingpay.datas.common.exception.TaskStopTriggerException;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -47,10 +46,10 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeClient {
     private int perPullSize;
+    private long pollTimeOut;
     private final CanalServerWithEmbedded canalServer;
     private ClientIdentity clientId;
     private CountDownLatch canFetch = new CountDownLatch(1);
-
     /**
      * canal.server是否抛出异常
      */
@@ -63,9 +62,10 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
     }
 
     @Override
-    protected void doStart() throws TaskStopTriggerException {
+    protected void doStart() {
         CanalConfig config = getConfig();
         perPullSize = config.getOncePollSize();
+        pollTimeOut = config.getPollTimeOut();
         clientId = new ClientIdentity(config.getDatabase(), config.getSlaveId().shortValue());
     }
 
@@ -74,12 +74,17 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
         try {
             if (null != canalServer) {
                 canalServer.stop(getConfig().getDatabase());
-                canalServer.stop();
             }
         } catch (Throwable e) {
             //https://github.com/alibaba/canal/issues/413
             //导致任务停止终止，无法销毁相关资源
         } finally {
+            if (null != canalServer) {
+                try {
+                    canalServer.stop();
+                } catch (Throwable e) {
+                }
+            }
             canFetch = new CountDownLatch(1);
         }
         hasBroken = new AtomicBoolean(false);
@@ -187,7 +192,7 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
         List<F> msgList = new ArrayList<>();
         if (isStarted()) {
             Message msg = null;
-            msg = canalServer.get(clientId, perPullSize, 5L, TimeUnit.SECONDS);
+            msg = canalServer.get(clientId, perPullSize, pollTimeOut, TimeUnit.MILLISECONDS);
 
             /**
             if (isAutoCommitPosition()) {
@@ -217,7 +222,7 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
     }
 
     @Override
-    public <T> List<T> splitSwimlanes() throws ClientException {
+    public <T> List<T> splitSwimlanes() {
         List<T> clients = new ArrayList<>();
         clients.add((T) this);
         return clients;

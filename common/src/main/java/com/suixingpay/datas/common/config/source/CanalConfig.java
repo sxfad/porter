@@ -37,6 +37,7 @@ public class CanalConfig extends SourceConfig {
     @Setter @Getter private String password;
     @Setter @Getter private String filter = "";
     @Setter @Getter private int oncePollSize = 1000;
+    @Setter @Getter private int pollTimeOut  = 5000;
 
     public CanalConfig() {
         sourceType = SourceType.CANAL;

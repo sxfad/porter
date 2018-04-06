@@ -48,16 +48,16 @@ public class KafkaClient extends AbstractClient<KafkaConfig> implements ConsumeC
 
     private Consumer<String, String> consumer;
     private CountDownLatch canFetch = new CountDownLatch(1);
-    private long perPullSize;
+    private long pollTimeOut;
 
     public KafkaClient(KafkaConfig config) {
         super(config);
     }
 
     @Override
-    protected void doStart() throws TaskStopTriggerException {
+    protected void doStart() {
         KafkaConfig config = getConfig();
-        perPullSize = config.getOncePollSize();
+        pollTimeOut = config.getPollTimeOut();
         final Properties props = new Properties();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, config.getServers());
         props.put(ConsumerConfig.GROUP_ID_CONFIG, config.getGroup());
@@ -68,7 +68,7 @@ public class KafkaClient extends AbstractClient<KafkaConfig> implements ConsumeC
         //从最开始的位置读取
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, config.getFirstConsumeFrom());
         //设置offset默认每秒提交一次,不同于mysql binlog需要手动维护消费进度
-        props.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, config.getOncePollSize());
+        props.put(ConsumerConfig.AUTO_COMMIT_INTERVAL_MS_CONFIG, config.getOnceCommitInterval());
         props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, isAutoCommitPosition());
         Consumer<String, String> connector = new KafkaConsumer<>(props);
         this.consumer = connector;
@@ -107,7 +107,7 @@ public class KafkaClient extends AbstractClient<KafkaConfig> implements ConsumeC
         if (isStarted()) {
             ConsumerRecords<String, String> results = null;
             synchronized (consumer) {
-                results = consumer.poll(perPullSize);
+                results = consumer.poll(pollTimeOut);
             }
             if (null != results && !results.isEmpty()) {
                 Iterator<ConsumerRecord<String, String>> it = results.iterator();
