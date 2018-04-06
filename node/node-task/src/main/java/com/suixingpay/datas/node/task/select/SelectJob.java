@@ -51,7 +51,7 @@ public class SelectJob extends AbstractStageJob {
     protected void doStop() {
         try {
             consumer.shutdown();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             e.printStackTrace();
         }
     }
@@ -62,7 +62,7 @@ public class SelectJob extends AbstractStageJob {
     }
 
     @Override
-    protected void loopLogic() {
+    protected void loopLogic() throws InterruptedException {
         //只要队列有消息，持续读取
         List<MessageEvent> events = null;
         do {
@@ -72,6 +72,8 @@ public class SelectJob extends AbstractStageJob {
             } catch (TaskStopTriggerException stopError) {
                 stopError.printStackTrace();
                 work.stopAndAlarm(stopError.getMessage());
+            } catch (InterruptedException interrupt) {
+                throw interrupt;
             } catch (Throwable e) {
                 e.printStackTrace();
                 NodeLog.upload(NodeLog.LogType.TASK_LOG, work.getTaskId(), consumer.getSwimlaneId(), "fetch MessageEvent error" + e.getMessage());

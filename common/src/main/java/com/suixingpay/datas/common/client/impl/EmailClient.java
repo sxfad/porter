@@ -99,7 +99,7 @@ public class EmailClient  extends AbstractClient<EmailConfig> implements AlertCl
             globalReceiver.stream().filter(r -> !StringUtils.isBlank(r.getEmail())).forEach(r -> emails.add(r.getEmail()));
         }
 
-        if (!receivers.isEmpty()) {
+        if (!emails.isEmpty()) {
             message.setTo(emails.toArray(new String[0]));
             sender.send(message);
         }

@@ -84,7 +84,7 @@ public abstract class AbstractStageJob implements StageJob {
         }
     }
 
-    protected abstract void loopLogic();
+    protected abstract void loopLogic() throws InterruptedException;
 
     private  class LoopService implements Runnable {
         @Override

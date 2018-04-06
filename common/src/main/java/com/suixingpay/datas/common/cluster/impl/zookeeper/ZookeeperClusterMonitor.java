@@ -55,10 +55,7 @@ public class ZookeeperClusterMonitor extends AbstractClusterMonitor implements W
             }
             for (ClusterListener listener : listeners.values()) {
                 ZookeeperClusterListener zkListener = (ZookeeperClusterListener) listener;
-                Stat listenerStat = client.exists(zkListener.listenPath(), false);
-                if (null == listenerStat) {
-                    client.create(zkListener.listenPath(), false, "{}");
-                }
+                client.createWhenNotExists(zkListener.listenPath(), false, false, "{}");
                 //watch children changed
                 triggerTreeEvent(zkListener.listenPath());
             }

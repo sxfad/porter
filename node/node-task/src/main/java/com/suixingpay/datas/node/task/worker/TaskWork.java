@@ -81,6 +81,10 @@ public class TaskWork {
 
     private final List<AlertReceiver> receivers;
 
+    /**
+     * 触发任务停止标识，生命周期内，仅有一次
+     */
+    private final AtomicBoolean stopTrigger = new AtomicBoolean(false);
 
     public TaskWork(DataConsumer dataConsumer, DataLoader dataLoader, String taskId, List<AlertReceiver> receivers,
                     TaskWorker worker) throws Exception {
@@ -129,7 +133,7 @@ public class TaskWork {
                 for (Map.Entry<StageType, StageJob> jobs : JOBS.entrySet()) {
                     //确保每个阶段工作都被执行
                     try {
-                        LOGGER.info("终止执行工作[{}-{}-{}]", taskId, dataConsumer.getSwimlaneId(), jobs.getValue().getClass());
+                        LOGGER.info("终止执行工作[{}-{}-{}]", taskId, dataConsumer.getSwimlaneId(), jobs.getValue().getClass().getSimpleName());
                         jobs.getValue().stop();
                     } catch (Throwable e) {
                         e.printStackTrace();
@@ -288,24 +292,26 @@ public class TaskWork {
     }
 
     public void stopAndAlarm(String notice) {
-        new Thread("suixingpay-TaskStopByErrorTrigger-stopTask-" + taskId + "-" + dataConsumer.getSwimlaneId()) {
-            @Override
-            public void run() {
-                try {
-                    ClusterProviderProxy.INSTANCE.broadcast(new TaskStoppedByErrorCommand(taskId, dataConsumer.getSwimlaneId()));
-                } catch (Throwable e) {
-                    e.printStackTrace();
-                    NodeLog.upload(NodeLog.LogType.TASK_LOG, taskId, dataConsumer.getSwimlaneId(), "在集群策略存储引擎标识任务因错误失败出错:" + e.getMessage(),
-                            getReceivers());
+        if (stopTrigger.compareAndSet(false, true)) {
+            new Thread("suixingpay-TaskStopByErrorTrigger-stopTask-" + taskId + "-" + dataConsumer.getSwimlaneId()) {
+                @Override
+                public void run() {
+                    try {
+                        ClusterProviderProxy.INSTANCE.broadcast(new TaskStoppedByErrorCommand(taskId, dataConsumer.getSwimlaneId()));
+                    } catch (Throwable e) {
+                        e.printStackTrace();
+                        NodeLog.upload(NodeLog.LogType.TASK_LOG, taskId, dataConsumer.getSwimlaneId(), "在集群策略存储引擎标识任务因错误失败出错:" + e.getMessage(),
+                                getReceivers());
+                    }
+                    //上传日志
+                    NodeLog.upload(NodeLog.LogType.TASK_ALARM, taskId, dataConsumer.getSwimlaneId(), notice, getReceivers());
+                    //停止任务
+                    NodeContext.INSTANCE.getBean(TaskController.class).stopTask(taskId, dataConsumer.getSwimlaneId());
+                    //调整节点健康级别
+                    NodeContext.INSTANCE.syncHealthLevel(NodeHealthLevel.RED, notice);
                 }
-                //上传日志
-                NodeLog.upload(NodeLog.LogType.TASK_ALARM, taskId, dataConsumer.getSwimlaneId(), notice, getReceivers());
-                //停止任务
-                NodeContext.INSTANCE.getBean(TaskController.class).stopTask(taskId, dataConsumer.getSwimlaneId());
-                //调整节点健康级别
-                NodeContext.INSTANCE.syncHealthLevel(NodeHealthLevel.RED, notice);
-            }
-        }.start();
+            }.start();
+        }
     }
 
     public DataConsumer getDataConsumer() {
