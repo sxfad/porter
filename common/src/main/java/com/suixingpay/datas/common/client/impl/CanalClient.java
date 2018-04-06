@@ -71,6 +71,8 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
 
     @Override
     protected void doShutdown() {
+        //重置不能提取数据,避免因fetch调用导致任务停止中断
+        canFetch = new CountDownLatch(1);
         try {
             if (null != canalServer) {
                 canalServer.stop(getConfig().getDatabase());
@@ -85,11 +87,10 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
                 } catch (Throwable e) {
                 }
             }
-            canFetch = new CountDownLatch(1);
         }
+        //重置错误状态
         hasBroken = new AtomicBoolean(false);
         brokenError = null;
-        canFetch = new CountDownLatch(1);
     }
 
     @Override
