@@ -87,6 +87,7 @@
                   "sourceDataId": 1,
                   "sourceDataName": "同步数据来源",
                   "sourceDataTablesId": 1,
+                  "sourceDataSourceId": 1,
                   "sourceDataTablesName": "元数据表组",
                   "jobState":"NEW",
                   "tables": [
@@ -132,6 +133,7 @@
                     }
                   ],
                   "targetDataTablesId": 1,
+                  "targetDataSourceId": 1,
                   "targetDataTablesName": "载入数据表",
                   "targetLoadAdt": "载入插件",
                   "userIds": [
@@ -215,7 +217,10 @@
 任务监控
 
 节点监控
-    列表：/mrnodesschedule(get) 节点ID(nodeId)、机器名(computerName)、IP(ipAddress)、心跳时间(heartBeatDate)、进程号(processNumber)、任务(jobJson)、操作(实时监控)
+    列表：
+        路径：/mrnodesschedule(get) 节点ID(nodeId)、机器名(computerName)、IP(ipAddress)、心跳时间(heartBeatDate)、进程号(processNumber)、任务(jobJson)、
+                               节点健康级别(healthLevel)、节点健康级别描述(healthLevelDesc)、操作(实时监控)
+        注释：动态查询，根据任务id（运行中的任务）和最后心跳时间（七天之内）查询。
 
 运行日志
     列表：/mrlogmonitor(get) 节点ID(nodeId)、任务(jobName)、IP(ipAddress)、日志时间(logDate)、日志标题(logTitle)、内容(logContent) 操作(删除)

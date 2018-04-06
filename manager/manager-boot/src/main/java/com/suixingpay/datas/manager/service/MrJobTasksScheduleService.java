@@ -30,4 +30,6 @@ public interface MrJobTasksScheduleService {
     void dealDTaskStat(DTaskStat stat);
 
     List<MrJobTasksSchedule> selectSwimlaneByJobId(String jobId);
+
+    List<MrJobTasksSchedule> list(String jobId, String heartBeatBeginDate, String heartBeatEndDate);
 }

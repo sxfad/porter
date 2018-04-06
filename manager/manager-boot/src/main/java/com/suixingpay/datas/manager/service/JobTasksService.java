@@ -25,7 +25,7 @@ public interface JobTasksService {
 
     JobTasks selectById(Long id);
 
-    Page<JobTasks> page(Page<JobTasks> page, String jobName, String beginTime, String endTime);
+    Page<JobTasks> page(Page<JobTasks> page, String jobName, String beginTime, String endTime, TaskStatusType jobState);
 
     Object tableNames(Long tablesId);
 
@@ -33,5 +33,5 @@ public interface JobTasksService {
 
     Integer updateState(Long id, TaskStatusType taskStatusType);
 
-    TaskConfig fitJobTask(Long id,TaskStatusType status);
+    TaskConfig fitJobTask(Long id, TaskStatusType status);
 }

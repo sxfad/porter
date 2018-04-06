@@ -52,7 +52,25 @@ public class MrJobTasksScheduleController {
         return ok(list);
     }
 
-    @PostMapping
+    /**
+     * 条件查询获取列表
+     *
+     * @author FuZizheng
+     * @date 2018/4/4 下午2:49
+     * @param: [jobId, heartBeatBeginDate, heartBeatEndDate]
+     * @return: com.suixingpay.datas.manager.web.message.ResponseMessage
+     */
+    @GetMapping
+    @ApiOperation(value = "查询列表", notes = "查询列表")
+    public ResponseMessage list(@RequestParam(value = "jobId", required = true) String jobId,
+                                @RequestParam(value = "heartBeatBeginDate", required = false) String heartBeatBeginDate,
+                                @RequestParam(value = "heartBeatEndDate", required = false) String heartBeatEndDate) {
+        List<MrJobTasksSchedule> list = mrJobTasksScheduleService.list(jobId, heartBeatBeginDate, heartBeatEndDate);
+        return ok(list);
+    }
+
+
+/*    @PostMapping
     @ApiOperation(value = "新增", notes = "新增")
     public ResponseMessage add(@RequestBody MrJobTasksSchedule mrJobTasksSchedule) {
         Integer number = mrJobTasksScheduleService.insert(mrJobTasksSchedule);
@@ -86,6 +104,6 @@ public class MrJobTasksScheduleController {
             @RequestParam(value = "pageSize", required = false) Integer pageSize) {
         Page<MrJobTasksSchedule> page = mrJobTasksScheduleService.page(new Page<MrJobTasksSchedule>(pageNo, pageSize));
         return ok(page);
-    }
+    }*/
 
 }

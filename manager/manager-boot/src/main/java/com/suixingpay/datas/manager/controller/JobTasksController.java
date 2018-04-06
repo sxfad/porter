@@ -62,17 +62,18 @@ public class JobTasksController {
      * @author FuZizheng
      * @date 2018/3/26 上午11:41
      * @param: [pageNo,
-     *             pageSize, jobName, beginTime, endTime]
+     * pageSize, jobName, beginTime, endTime, jobState]
      * @return: com.suixingpay.datas.manager.web.message.ResponseMessage
      */
     @GetMapping
     @ApiOperation(value = "查询分页", notes = "查询分页")
     public ResponseMessage list(@RequestParam(value = "pageNo", required = true) Integer pageNo,
-            @RequestParam(value = "pageSize", required = true) Integer pageSize,
-            @RequestParam(value = "jobName", required = false) String jobName,
-            @RequestParam(value = "beginTime", required = false) String beginTime,
-            @RequestParam(value = "endTime", required = false) String endTime) {
-        Page<JobTasks> page = jobTasksService.page(new Page<>(pageNo, pageSize), jobName, beginTime, endTime);
+                                @RequestParam(value = "pageSize", required = true) Integer pageSize,
+                                @RequestParam(value = "jobName", required = false) String jobName,
+                                @RequestParam(value = "beginTime", required = false) String beginTime,
+                                @RequestParam(value = "endTime", required = false) String endTime,
+                                @RequestParam(value = "jobState", required = false) TaskStatusType jobState) {
+        Page<JobTasks> page = jobTasksService.page(new Page<>(pageNo, pageSize), jobName, beginTime, endTime, jobState);
         return ok(page);
     }
 
@@ -150,7 +151,7 @@ public class JobTasksController {
     @PutMapping("/{id}")
     @ApiOperation(value = "修改任务状态", notes = "TaskStatusType 枚举类: NEW、STOPPED、WORKING")
     public ResponseMessage updateState(@PathVariable("id") Long id,
-            @RequestParam("taskStatusType") TaskStatusType taskStatusType) throws Exception {
+                                       @RequestParam("taskStatusType") TaskStatusType taskStatusType) throws Exception {
         Integer number = jobTasksService.updateState(id, taskStatusType);
         if (taskStatusType == TaskStatusType.WORKING || taskStatusType == TaskStatusType.STOPPED) {
             ClusterProviderProxy.INSTANCE

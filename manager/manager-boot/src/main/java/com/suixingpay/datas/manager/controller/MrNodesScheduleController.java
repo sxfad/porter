@@ -41,9 +41,9 @@ public class MrNodesScheduleController {
     @GetMapping
     @ApiOperation(value = "查询分页", notes = "查询分页")
     public ResponseMessage list(@RequestParam(value = "pageNo", required = true) Integer pageNo,
-            @RequestParam(value = "pageSize", required = true) Integer pageSize,
-            @RequestParam(value = "ipAddress", required = false) String ipAddress,
-            @RequestParam(value = "computerName", required = false) String computerName) {
+                                @RequestParam(value = "pageSize", required = true) Integer pageSize,
+                                @RequestParam(value = "ipAddress", required = false) String ipAddress,
+                                @RequestParam(value = "computerName", required = false) String computerName) {
         Page<MrNodesSchedule> page = mrNodesScheduleService.page(new Page<MrNodesSchedule>(pageNo, pageSize), ipAddress,
                 computerName);
         return ok(page);

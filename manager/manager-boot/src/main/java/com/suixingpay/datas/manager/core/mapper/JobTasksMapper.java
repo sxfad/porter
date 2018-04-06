@@ -1,5 +1,6 @@
 package com.suixingpay.datas.manager.core.mapper;
 
+import com.suixingpay.datas.common.dic.TaskStatusType;
 import com.suixingpay.datas.manager.core.entity.JobTasks;
 import com.suixingpay.datas.manager.web.page.Page;
 import org.apache.ibatis.annotations.Param;
@@ -55,7 +56,8 @@ public interface JobTasksMapper {
                         @Param("state") Integer state,
                         @Param("jobName") String jobName,
                         @Param("beginTime") String beginTime,
-                        @Param("endTime") String endTime);
+                        @Param("endTime") String endTime,
+                        @Param("code") String code);
 
     /**
      * 分頁All
@@ -65,7 +67,8 @@ public interface JobTasksMapper {
     Integer pageAll(@Param("state") Integer state,
                     @Param("jobName") String jobName,
                     @Param("beginTime") String beginTime,
-                    @Param("endTime") String endTime);
+                    @Param("endTime") String endTime,
+                    @Param("code") String code);
 
     /**
      * 修改任务状态
