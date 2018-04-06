@@ -33,6 +33,7 @@ public class KafkaConfig  extends SourceConfig {
     @Setter @Getter private List<String> topics;
     @Setter @Getter private int pollTimeOut  = 30000;
     @Setter @Getter private int oncePollSize = 1000;
+    @Setter @Getter private int onceCommitInterval = 1000;
     @Setter @Getter private String firstConsumeFrom = "earliest";
     @Setter @Getter private boolean autoCommit = Boolean.FALSE;
 

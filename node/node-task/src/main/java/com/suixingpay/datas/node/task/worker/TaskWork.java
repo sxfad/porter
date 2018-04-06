@@ -79,6 +79,10 @@ public class TaskWork {
 
     private final List<AlertReceiver> receivers;
 
+    /**
+     * 触发任务停止标识，生命周期内，仅有一次
+     */
+    private final AtomicBoolean stopTrigger = new AtomicBoolean(false);
 
     public TaskWork(DataConsumer dataConsumer, DataLoader dataLoader, String taskId, List<AlertReceiver> receivers,
                     TaskWorker worker) throws Exception {
@@ -265,20 +269,22 @@ public class TaskWork {
     }
 
     public void stopAndAlarm(String notice) {
-        new Thread("suixingpay-TaskStopByErrorTrigger-stopTask-" + taskId + "-" + dataConsumer.getSwimlaneId()) {
-            @Override
-            public void run() {
-                try {
-                    ClusterProviderProxy.INSTANCE.broadcast(new TaskStoppedByErrorCommand(taskId, dataConsumer.getSwimlaneId()));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    NodeLog.upload(NodeLog.LogType.TASK_LOG, taskId, dataConsumer.getSwimlaneId(), "在集群策略存储引擎标识任务因错误失败出错:" + e.getMessage(),
-                            getReceivers());
+        if (stopTrigger.compareAndSet(false, true)) {
+            new Thread("suixingpay-TaskStopByErrorTrigger-stopTask-" + taskId + "-" + dataConsumer.getSwimlaneId()) {
+                @Override
+                public void run() {
+                    try {
+                        ClusterProviderProxy.INSTANCE.broadcast(new TaskStoppedByErrorCommand(taskId, dataConsumer.getSwimlaneId()));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        NodeLog.upload(NodeLog.LogType.TASK_LOG, taskId, dataConsumer.getSwimlaneId(), "在集群策略存储引擎标识任务因错误失败出错:" + e.getMessage(),
+                                getReceivers());
+                    }
+                    NodeLog.upload(NodeLog.LogType.TASK_ALARM, taskId, dataConsumer.getSwimlaneId(), notice, getReceivers());
+                    NodeContext.INSTANCE.getBean(TaskController.class).stopTask(taskId, dataConsumer.getSwimlaneId());
                 }
-                NodeLog.upload(NodeLog.LogType.TASK_ALARM, taskId, dataConsumer.getSwimlaneId(), notice, getReceivers());
-                NodeContext.INSTANCE.getBean(TaskController.class).stopTask(taskId, dataConsumer.getSwimlaneId());
-            }
-        }.start();
+            }.start();
+        }
     }
 
     public DataConsumer getDataConsumer() {

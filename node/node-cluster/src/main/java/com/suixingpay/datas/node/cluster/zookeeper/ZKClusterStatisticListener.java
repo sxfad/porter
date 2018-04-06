@@ -59,10 +59,8 @@ public class ZKClusterStatisticListener extends ZookeeperClusterListener impleme
         StatisticData data = command.getStatisticData();
         data.setNodeId(NodeContext.INSTANCE.getNodeId());
         String statisticPath = listenPath() + "/" + data.getCategory();
-        Stat stat = client.exists(statisticPath, false);
-        if (null == stat) {
-            client.create(statisticPath, false, null);
-        }
+        client.createWhenNotExists(statisticPath, false, false, "{}");
+
         String dataNode = statisticPath + "/" + data.getId();
         client.create(dataNode, true, data.toString());
     }

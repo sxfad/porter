@@ -46,6 +46,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeClient {
     private int perPullSize;
+    private long pollTimeOut;
     private final CanalServerWithEmbedded canalServer;
     private ClientIdentity clientId;
     private CountDownLatch canFetch = new CountDownLatch(1);
@@ -56,9 +57,10 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
     }
 
     @Override
-    protected void doStart() throws TaskStopTriggerException {
+    protected void doStart() {
         CanalConfig config = getConfig();
         perPullSize = config.getOncePollSize();
+        pollTimeOut = config.getPollTimeOut();
         clientId = new ClientIdentity(config.getDatabase(), config.getSlaveId().shortValue());
     }
 
@@ -168,7 +170,7 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
         List<F> msgList = new ArrayList<>();
         if (isStarted()) {
             Message msg = null;
-            msg = canalServer.get(clientId, perPullSize, 5L, TimeUnit.SECONDS);
+            msg = canalServer.get(clientId, perPullSize, pollTimeOut, TimeUnit.MILLISECONDS);
 
             /**
             if (isAutoCommitPosition()) {
