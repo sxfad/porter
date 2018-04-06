@@ -11,6 +11,7 @@ package com.suixingpay.datas.node.task;
 import com.alibaba.fastjson.JSONObject;
 import com.suixingpay.datas.common.cluster.ClusterProviderProxy;
 import com.suixingpay.datas.common.config.TaskConfig;
+import com.suixingpay.datas.common.dic.NodeStatusType;
 import com.suixingpay.datas.common.exception.ClientException;
 import com.suixingpay.datas.common.statistics.NodeLog;
 import com.suixingpay.datas.common.task.TaskEventListener;
@@ -175,6 +176,8 @@ public class TaskController implements TaskEventListener {
 
 
     private void shutdownHook(boolean exit) {
+        //先将节点设置为暂停,避免停止任务后再度消费
+        NodeContext.INSTANCE.syncNodeStatus(NodeStatusType.SUSPEND);
         if (this.stop()) {
             //退出群聊需在业务代码执行之后才能执行
             LOGGER.info("退出群聊.......");
