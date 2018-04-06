@@ -29,15 +29,15 @@ processResources.dependsOn moveOutFromJar
 distributions {
     main {
         contents {
-            from (rootProject.getRootDir().path+'/other_dependencies/canal.parse-1.0.25.jar') {
-                into "lib"
-            }
             from ("script") {
                 into "bin"
                 fileMode = 0755
             }
             from (buildDir.getPath() + "/config") {
                 into "config"
+            }
+            from ("bugs") {
+                into "bugs"
             }
         }
     }
