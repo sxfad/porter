@@ -24,7 +24,6 @@ import com.suixingpay.datas.common.client.AbstractClient;
 import com.suixingpay.datas.common.consumer.ConsumeClient;
 import com.suixingpay.datas.common.config.source.CanalConfig;
 import com.suixingpay.datas.common.consumer.Position;
-import com.suixingpay.datas.common.exception.ClientException;
 import com.suixingpay.datas.common.exception.TaskStopTriggerException;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -72,6 +71,8 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
 
     @Override
     protected void doShutdown() {
+        //重置不能提取数据,避免因fetch调用导致任务停止中断
+        canFetch = new CountDownLatch(1);
         try {
             if (null != canalServer) {
                 canalServer.stop(getConfig().getDatabase());
@@ -86,8 +87,10 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
                 } catch (Throwable e) {
                 }
             }
-            canFetch = new CountDownLatch(1);
         }
+        //重置错误状态
+        hasBroken = new AtomicBoolean(false);
+        brokenError = null;
     }
 
     @Override

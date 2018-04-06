@@ -34,7 +34,7 @@ public class EmailClientTest {
         AlertConfig config = new AlertConfig();
         config.setStrategy(AlertPlugin.EMAIL);
         config.setFrequencyOfSeconds(10);
-        config.setClient(new HashMap<String,String>(){
+        config.setClient(new HashMap<String, String>() {
             {
                 put("host", "smtphm.qiye.163.com");
                 put("username", "zhang_kw@suixingpay.com");

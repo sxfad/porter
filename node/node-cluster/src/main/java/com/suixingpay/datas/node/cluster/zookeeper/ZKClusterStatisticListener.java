@@ -17,7 +17,6 @@ import com.suixingpay.datas.common.cluster.impl.zookeeper.ZookeeperClusterListen
 import com.suixingpay.datas.common.cluster.impl.zookeeper.ZookeeperClusterListenerFilter;
 import com.suixingpay.datas.common.statistics.StatisticData;
 import com.suixingpay.datas.node.core.NodeContext;
-import org.apache.zookeeper.data.Stat;
 
 /**
  * 统计信息上传
