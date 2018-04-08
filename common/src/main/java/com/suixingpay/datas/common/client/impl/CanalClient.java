@@ -196,7 +196,7 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
         if (isStarted()) {
             Message msg = null;
             try {
-                msg = canalServer.get(clientId, perPullSize, pollTimeOut, TimeUnit.MILLISECONDS);
+                msg = canalServer.get(clientId, perPullSize, pollTimeOut < 0 ? null : pollTimeOut, TimeUnit.MILLISECONDS);
             } catch (CanalServerException e) {
                 boolean causeByThread = Arrays.stream(e.getThrowables())
                         .filter(error -> error instanceof InterruptedException).count() > 0;
