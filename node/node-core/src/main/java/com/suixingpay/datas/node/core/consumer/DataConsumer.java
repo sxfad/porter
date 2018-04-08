@@ -85,7 +85,7 @@ public interface DataConsumer {
      * 从消费源获取数据
      * @return
      */
-    List<MessageEvent> fetch() throws TaskStopTriggerException;
+    List<MessageEvent> fetch() throws TaskStopTriggerException, InterruptedException;
 
     /**
      * 告警模块用于查询某个时间段数据变化数量

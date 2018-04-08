@@ -98,11 +98,11 @@ public abstract class AbstractDataConsumer implements DataConsumer {
         metaQueryClient.start();
     }
 
-    public List<MessageEvent> fetch() throws TaskStopTriggerException {
+    public List<MessageEvent> fetch() throws TaskStopTriggerException, InterruptedException {
         return doFetch();
     }
 
-    protected abstract List<MessageEvent> doFetch() throws TaskStopTriggerException;
+    protected abstract List<MessageEvent> doFetch() throws TaskStopTriggerException, InterruptedException;
 
 
     @Override

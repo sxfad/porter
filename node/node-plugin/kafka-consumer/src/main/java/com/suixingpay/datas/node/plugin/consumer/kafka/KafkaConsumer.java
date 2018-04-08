@@ -29,7 +29,7 @@ import java.util.List;
  */
 public class KafkaConsumer extends AbstractDataConsumer {
 
-    public List<MessageEvent> doFetch() throws TaskStopTriggerException {
+    public List<MessageEvent> doFetch() throws TaskStopTriggerException, InterruptedException {
         return consumeClient.fetch(new ConsumeClient.FetchCallback<MessageEvent, Object>() {
             @Override
             public <F, O> F accept(O o) {
