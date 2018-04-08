@@ -185,7 +185,7 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
         canalServer.subscribe(clientId);
         canFetch.countDown();
     }
-
+    
     @Override
     public <F, O>  List<F> fetch(FetchCallback<F, O> callback) throws TaskStopTriggerException, InterruptedException {
         if (hasBroken.get()) {
