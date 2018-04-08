@@ -15,10 +15,7 @@ import com.suixingpay.datas.common.util.MachineUtils;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 集群节点
@@ -42,7 +39,7 @@ public class DNode extends DObject {
     //节点工作状态
     @Getter @Setter private NodeStatusType status;
     //节点当天任务
-    @Getter @Setter private Map<String, List<String>> tasks;
+    @Getter @Setter private Map<String, TreeSet<String>> tasks;
     //节点健康级别
     @Getter @Setter private NodeHealthLevel healthLevel = NodeHealthLevel.GREEN;
     //节点健康级别描述

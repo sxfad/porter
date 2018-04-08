@@ -38,9 +38,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.data.Stat;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -199,7 +197,7 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener  implements 
                         lock.unlock();
                     }
                 }
-            }, 10, 60, TimeUnit.SECONDS);
+            }, 10, 30, TimeUnit.SECONDS);
         } else {
             throw  new Exception(lockPath + ",节点已注册");
         }
@@ -217,7 +215,7 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener  implements 
         String path = listenPath() + "/" + NodeContext.INSTANCE.getNodeId() + "/stat";
         lock.lock();
         DNode nodeData = getDNode(path);
-        List<String> resources = nodeData.getTasks().getOrDefault(command.getTaskId(), new ArrayList<>());
+        TreeSet<String> resources = nodeData.getTasks().getOrDefault(command.getTaskId(), new TreeSet<>());
         resources.add(command.getSwimlaneId());
         nodeData.getTasks().put(command.getTaskId(), resources);
         Stat nowStat = client.exists(path, true);
@@ -231,7 +229,7 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener  implements 
         lock.lock();
         DNode nodeData = getDNode(path);
         if (null != nodeData.getTasks() && !nodeData.getTasks().isEmpty()) {
-            List<String> swimlaneIdList = nodeData.getTasks().getOrDefault(command.getTaskId(), new ArrayList<>());
+            TreeSet<String> swimlaneIdList = nodeData.getTasks().getOrDefault(command.getTaskId(), new TreeSet<>());
             if (swimlaneIdList.contains(command.getSwimlaneId())) swimlaneIdList.remove(command.getSwimlaneId());
             if (swimlaneIdList.isEmpty()) nodeData.getTasks().remove(command.getTaskId());
         }

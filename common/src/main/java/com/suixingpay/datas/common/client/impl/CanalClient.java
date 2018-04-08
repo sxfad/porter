@@ -20,6 +20,7 @@ import com.alibaba.otter.canal.instance.manager.model.CanalStatus;
 import com.alibaba.otter.canal.protocol.ClientIdentity;
 import com.alibaba.otter.canal.protocol.Message;
 import com.alibaba.otter.canal.server.embedded.CanalServerWithEmbedded;
+import com.alibaba.otter.canal.server.exception.CanalServerException;
 import com.suixingpay.datas.common.client.AbstractClient;
 import com.suixingpay.datas.common.consumer.ConsumeClient;
 import com.suixingpay.datas.common.config.source.CanalConfig;
@@ -30,6 +31,7 @@ import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -185,7 +187,7 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
     }
 
     @Override
-    public <F, O>  List<F> fetch(FetchCallback<F, O> callback) throws TaskStopTriggerException {
+    public <F, O>  List<F> fetch(FetchCallback<F, O> callback) throws TaskStopTriggerException, InterruptedException {
         if (hasBroken.get()) {
             throw null != brokenError ? new TaskStopTriggerException(brokenError) : new TaskStopTriggerException("canal.server因异常中断");
         }
@@ -193,8 +195,18 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
         List<F> msgList = new ArrayList<>();
         if (isStarted()) {
             Message msg = null;
-            msg = canalServer.get(clientId, perPullSize, pollTimeOut, TimeUnit.MILLISECONDS);
-
+            try {
+                msg = canalServer.get(clientId, perPullSize, pollTimeOut, TimeUnit.MILLISECONDS);
+            } catch (CanalServerException e) {
+                //任务停止造成的线程中断异常
+                boolean causeByThread = Arrays.stream(e.getThrowables())
+                        .filter(error -> error instanceof InterruptedException).count() > 0;
+                if (causeByThread) {
+                    throw new InterruptedException(e.getMessage());
+                } else {
+                    throw e;
+                }
+            }
             /**
             if (isAutoCommitPosition()) {
                 msg = canalServer.get(clientId, perPullSize, 5L, TimeUnit.SECONDS);

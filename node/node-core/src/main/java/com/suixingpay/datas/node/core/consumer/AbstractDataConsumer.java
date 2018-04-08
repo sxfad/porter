@@ -41,7 +41,7 @@ public abstract class AbstractDataConsumer implements DataConsumer {
     @Getter private final List<String> excludes = new ArrayList<>();
 
     protected abstract String getPluginName();
-    protected abstract List<MessageEvent> doFetch() throws TaskStopTriggerException;
+    protected abstract List<MessageEvent> doFetch() throws TaskStopTriggerException, InterruptedException;
 
     @Override
     public void setExcludes(String exclude) {
@@ -88,7 +88,7 @@ public abstract class AbstractDataConsumer implements DataConsumer {
     }
 
 
-    public List<MessageEvent> fetch() throws TaskStopTriggerException {
+    public List<MessageEvent> fetch() throws TaskStopTriggerException, InterruptedException {
         return doFetch();
     }
 
