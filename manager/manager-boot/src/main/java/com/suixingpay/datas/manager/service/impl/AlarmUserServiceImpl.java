@@ -29,6 +29,7 @@ public class AlarmUserServiceImpl implements AlarmUserService {
 
     @Override
     public void insert(Alarm alarm) {
+        alarmUserMapper.deleteByAlarmId(alarm.getId());
         for (AlarmUser alarmUser : alarm.getAlarmUsers()) {
             alarmUser.setAlarmId(alarm.getId());
             insert(alarmUser);

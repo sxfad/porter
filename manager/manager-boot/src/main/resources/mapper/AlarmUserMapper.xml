@@ -38,6 +38,11 @@
         delete from s_alarm_user where id = #{id}
     </delete>
 
+    <!-- 刪除 -->
+    <delete id="deleteByAlarmId">
+        delete from s_alarm_user where alarm_id = #{alarmId}
+    </delete>
+
     <!-- 根据主鍵查找 -->
     <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.AlarmUser">
         select id, alarm_id AS alarmId, user_id AS userId from s_alarm_user

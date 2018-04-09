@@ -39,6 +39,14 @@ public interface AlarmUserMapper {
     Integer delete(Long id);
 
     /**
+     * 刪除
+     *
+     * @param id
+     * @return
+     */
+    Integer deleteByAlarmId(Long alarmId);
+
+    /**
      * 根據主鍵id查找數據
      *
      * @param id
