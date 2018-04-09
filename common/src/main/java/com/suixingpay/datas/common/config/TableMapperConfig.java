@@ -52,4 +52,6 @@ public class TableMapperConfig {
     @Getter
     @Setter
     private Map<String, String> column;
+    //忽略目标端大小写
+    @Getter @Setter private boolean ignoreTargetCase = true;
 }

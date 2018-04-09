@@ -47,9 +47,12 @@ public class ETLRowTransformer implements Transformer {
         LOGGER.debug("start tranforming bucket:{},size:{}", bucket.getSequence(), bucket.getRows().size());
         for (ETLRow row : bucket.getRows()) {
             LOGGER.debug("try tranform row:{},{}", row.getPosition().render(), JSON.toJSONString(row));
+            //表映射
             TableMapper tableMapper = work.getTableMapper(row.getFinalSchema(), row.getFinalTable());
             mappingRowData(tableMapper, row);
+            //目标端表结构元数据
             TableSchema table = findTable(work.getDataLoader(), row.getFinalSchema(), row.getFinalTable());
+            if (tableMapper.isIgnoreTargetCase()) table.toUpperCase();
             if (null != table) remedyColumns(table, row);
 
             //当是更新时，判断主键是否变更

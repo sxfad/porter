@@ -9,13 +9,8 @@
 
 package com.suixingpay.datas.common.config;
 
-import com.suixingpay.datas.common.config.source.CanalConfig;
+import com.suixingpay.datas.common.config.source.*;
 import com.alibaba.fastjson.annotation.JSONField;
-import com.suixingpay.datas.common.config.source.JDBCConfig;
-import com.suixingpay.datas.common.config.source.KafkaConfig;
-import com.suixingpay.datas.common.config.source.ZookeeperConfig;
-import com.suixingpay.datas.common.config.source.EmailConfig;
-import com.suixingpay.datas.common.config.source.NameSourceConfig;
 import com.suixingpay.datas.common.dic.SourceType;
 import com.suixingpay.datas.common.exception.ConfigParseException;
 import com.suixingpay.datas.common.util.BeanUtils;
@@ -85,6 +80,9 @@ public abstract class SourceConfig implements SwamlaneSupport {
                         break;
                     case CANAL:
                         config = (T) new CanalConfig();
+                        break;
+                    case KUDU:
+                        config = (T) new KuduConfig();
                         break;
                 }
             } else if (properties.containsKey(NAME_SOURCE_KEY)) {

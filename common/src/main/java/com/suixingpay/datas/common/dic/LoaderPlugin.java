@@ -29,7 +29,7 @@ import lombok.Getter;
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum LoaderPlugin {
 
-    JDBC_BATCH("JdbcBatch", "JDBC批量"), JDBC_SINGLE("JdbcSingle", "JDBC单行"), KUDU_SINGLE("KUDU_SINGLE", "kudu单行"),
+    JDBC_BATCH("JdbcBatch", "JDBC批量"), JDBC_SINGLE("JdbcSingle", "JDBC单行"), KUDU_NATIVE("KuduNative", "kudu单行"),
     JDBC_SQL_PRINT("JdbcSqlPrint", "SQL打印测试");
 
     @Getter
@@ -44,7 +44,7 @@ public enum LoaderPlugin {
         {
             put("JDBC_BATCH", JDBC_BATCH.name);
             put("JDBC_SINGLE", JDBC_SINGLE.name);
-            put("KUDU_SINGLE", KUDU_SINGLE.name);
+            put(KUDU_NATIVE.code, KUDU_NATIVE.name);
             put("JDBC_SQL_PRINT", JDBC_SQL_PRINT.name);
         }
     };
