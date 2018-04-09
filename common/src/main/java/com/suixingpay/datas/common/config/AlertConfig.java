@@ -9,13 +9,13 @@
 
 package com.suixingpay.datas.common.config;
 
-import com.alibaba.fastjson.annotation.JSONField;
+import java.util.Map;
+
 import com.suixingpay.datas.common.alert.AlertReceiver;
 import com.suixingpay.datas.common.dic.AlertPlugin;
+
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.Map;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -41,7 +41,6 @@ public class AlertConfig {
     @Setter
     private Integer frequencyOfSeconds = 60;
 
-    @JSONField(deserialize = false, serialize = false)
     @Getter
     @Setter
     private AlertPlugin strategy;
