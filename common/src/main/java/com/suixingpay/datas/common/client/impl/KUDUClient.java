@@ -17,17 +17,11 @@ import com.suixingpay.datas.common.db.meta.TableColumn;
 import com.suixingpay.datas.common.db.meta.TableSchema;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Triple;
 import org.apache.kudu.Common;
 import org.apache.kudu.Schema;
-import org.apache.kudu.client.CreateTableOptions;
-import org.apache.kudu.client.Operation;
-import org.apache.kudu.client.OperationResponse;
-import org.apache.kudu.client.PartialRow;
-import org.apache.kudu.client.KuduClient;
-import org.apache.kudu.client.KuduException;
-import org.apache.kudu.client.KuduSession;
-import org.apache.kudu.client.KuduTable;
+import org.apache.kudu.client.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -70,13 +64,14 @@ public class KUDUClient extends AbstractClient<KuduConfig> implements LoadClient
     @Override
     public TableSchema getTable(String schema, String tableName) throws Exception {
         List<String> keyList = Arrays.asList(schema, tableName);
+        String newTableName = getTableName(schema, tableName);
         //如果表存在
-        if (client.tableExists(tableName)) {
-            tables.computeIfAbsent(keyList, new Function<List<String>, TableSchema>() {
+        if (client.tableExists(newTableName)) {
+            return tables.computeIfAbsent(keyList, new Function<List<String>, TableSchema>() {
                 //从代码块中抛出异常
                 @SneakyThrows(Exception.class)
                 public TableSchema apply(List<String> strings) {
-                    KuduTable kuduTable = client.openTable(tableName);
+                    KuduTable kuduTable = client.openTable(newTableName);
                     Schema kuduTableSchema = kuduTable.getSchema();
 
                     TableSchema tableSchema = new TableSchema();
@@ -103,22 +98,22 @@ public class KUDUClient extends AbstractClient<KuduConfig> implements LoadClient
         throw new  UnsupportedOperationException("kudu暂不支持条件查询");
     }
 
-    public int[] insert(String table, List<List<Triple<String, Integer, String>>> rows) throws KuduException {
-        return operation(table, rows, OperationType.INSERT);
+    public int[] insert(String  schemaName, String table, List<List<Triple<String, Integer, String>>> rows) throws KuduException {
+        return operation(schemaName, table, rows, OperationType.INSERT);
     }
 
-    public int[] delete(String table, List<List<Triple<String, Integer, String>>> rows) throws KuduException {
-        return operation(table, rows, OperationType.DELETE);
+    public int[] delete(String  schemaName, String table, List<List<Triple<String, Integer, String>>> rows) throws KuduException {
+        return operation(schemaName, table, rows, OperationType.DELETE);
     }
 
-    public int[] update(String table, List<List<Triple<String, Integer, String>>> rows) throws KuduException {
-        return operation(table, rows, OperationType.UPDATE);
+    public int[] update(String  schemaName, String table, List<List<Triple<String, Integer, String>>> rows) throws KuduException {
+        return operation(schemaName, table, rows, OperationType.UPDATE);
     }
 
-    public int[] truncate(String finalTableName) throws KuduException {
+    public int[] truncate(String  schemaName, String finalTableName) throws KuduException {
         KuduSession session = client.newSession();
         try {
-            Schema schema = client.openTable(finalTableName).getSchema();
+            Schema schema = client.openTable(getTableName(schemaName, finalTableName)).getSchema();
             //删除表
             client.deleteTable(finalTableName);
             //重新建表
@@ -137,12 +132,15 @@ public class KUDUClient extends AbstractClient<KuduConfig> implements LoadClient
         return new int[]{1};
     }
 
-    public int[] operation(String table, List<List<Triple<String, Integer, String>>> rows, OperationType type) throws KuduException {
+    public int[] operation(String schema, String table, List<List<Triple<String, Integer, String>>> rows, OperationType type) throws KuduException {
         int[] result = new int[rows.size()];
         KuduSession session = client.newSession();
+        //同步刷新
+        session.setFlushMode(SessionConfiguration.FlushMode.AUTO_FLUSH_SYNC);
         try {
-            KuduTable kuduTable = client.openTable(table);
-            for (List<Triple<String, Integer, String>> r : rows) {
+            KuduTable kuduTable = client.openTable(getTableName(schema, table));
+            for (int i = 0; i < rows.size(); i++) {
+                List<Triple<String, Integer, String>> r = rows.get(i);
                 Operation operation = null;
                 switch (type) {
                     case DELETE:
@@ -157,13 +155,10 @@ public class KUDUClient extends AbstractClient<KuduConfig> implements LoadClient
                 }
                 PartialRow row = operation.getRow();
                 buildRow(r, row);
-                session.apply(operation);
-            }
-            List<OperationResponse> responses = session.flush();
-            for (int i = 0; i < responses.size(); i++) {
-                OperationResponse response = responses.get(i);
+                OperationResponse response = session.apply(operation);
                 result[i] =  response.hasRowError() ? 0 : 1;
             }
+            session.flush();
         } finally {
             if (null != session) session.close();
         }
@@ -208,5 +203,15 @@ public class KUDUClient extends AbstractClient<KuduConfig> implements LoadClient
 
     private enum OperationType {
         DELETE, UPDATE, INSERT;
+    }
+    private String getTableName(String schema, String table) {
+        StringBuilder nameBuilder = new StringBuilder();
+        schema = StringUtils.trimToEmpty(schema);
+        if (!StringUtils.isBlank(schema)) {
+            nameBuilder.append(schema);
+            nameBuilder.append(".");
+        }
+        nameBuilder.append(table);
+        return nameBuilder.toString();
     }
 }

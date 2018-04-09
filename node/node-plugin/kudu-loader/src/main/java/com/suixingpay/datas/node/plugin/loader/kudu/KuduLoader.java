@@ -40,7 +40,7 @@ public class KuduLoader extends AbstractDataLoader {
 
     @Override
     protected String getPluginName() {
-        return LoaderPlugin.KUDU_SINGLE.getCode();
+        return LoaderPlugin.KUDU_NATIVE.getCode();
     }
 
     @Override
@@ -57,7 +57,6 @@ public class KuduLoader extends AbstractDataLoader {
                 String tableName = l.get(0).getFinalTable();
                 String schemaName = l.get(0).getFinalSchema();
 
-                String finalTableName = l.get(0).getFinalTable();
                 //所有字段
                 List<List<Triple<String, Integer, String>>> rows = new ArrayList<>();
                 //主键字段
@@ -73,7 +72,7 @@ public class KuduLoader extends AbstractDataLoader {
                 try {
                     switch (type) {
                         case INSERT:
-                            result = client.insert(finalTableName, rows);
+                            result = client.insert(schemaName, tableName, rows);
                             break;
                         case UPDATE:
                             result = new int[l.size()];
@@ -81,25 +80,25 @@ public class KuduLoader extends AbstractDataLoader {
                                 ETLRow r = l.get(i);
                                 //如果主键存在变更
                                 if (KuduCustomETLRowField.isKeyChanged(r)) {
-                                    client.delete(finalTableName, Arrays.asList(KuduCustomETLRowField.getKeys(r)));
+                                    client.delete(schemaName, tableName, Arrays.asList(KuduCustomETLRowField.getOldKeys(r)));
                                     //主键+非主键
                                     List<Triple<String, Integer, String>> row = new ArrayList<>();
                                     row.addAll(KuduCustomETLRowField.getKeys(r));
                                     row.addAll(KuduCustomETLRowField.getColumns(r));
-                                    result = client.insert(finalTableName, Arrays.asList(row));
+                                    result = client.insert(schemaName, tableName, Arrays.asList(row));
                                 } else {
                                     List<Triple<String, Integer, String>> row = new ArrayList<>();
                                     row.addAll(KuduCustomETLRowField.getKeys(r));
                                     row.addAll(KuduCustomETLRowField.getColumns(r));
-                                    result = client.update(finalTableName, Arrays.asList(row));
+                                    result = client.update(schemaName, tableName, Arrays.asList(row));
                                 }
                             }
                             break;
                         case DELETE:
-                            result = client.delete(finalTableName, keyRows);
+                            result = client.delete(schemaName, tableName, keyRows);
                             break;
                         case TRUNCATE:
-                            result = client.truncate(finalTableName);
+                            result = client.truncate(schemaName, tableName);
                             break;
                         default:
 
@@ -123,6 +122,7 @@ public class KuduLoader extends AbstractDataLoader {
     @Override
     public void mouldRow(ETLRow row) throws TaskDataException {
         if (null != row.getColumns()) {
+            List<Triple<String, Integer, String>> oldKeys = KuduCustomETLRowField.getOldKeys(row);
             List<Triple<String, Integer, String>> keys = KuduCustomETLRowField.getKeys(row);
             List<Triple<String, Integer, String>> columns = KuduCustomETLRowField.getColumns(row);
             for (ETLColumn c : row.getColumns()) {
@@ -131,6 +131,7 @@ public class KuduLoader extends AbstractDataLoader {
                     //更新时需要，判断主键是否发生变化
                     if (!c.getFinalOldValue().equals(c.getFinalValue()) && row.getFinalOpType() == EventType.UPDATE) {
                         KuduCustomETLRowField.setKeyChanged(row, true);
+                        oldKeys.add(new ImmutableTriple<>(c.getFinalName(), c.getFinalType(), c.getFinalOldValue()));
                     }
                 } else {
                     columns.add(new ImmutableTriple<>(c.getFinalName(), c.getFinalType(), c.getFinalValue()));
@@ -145,11 +146,16 @@ public class KuduLoader extends AbstractDataLoader {
     protected static class KuduCustomETLRowField {
 
         private  static String KEY_FIELD = "kuduKey";
+        private  static String OLD_KEY_FIELD = "oldKuduKey";
         private  static String COLUMN_FIELD = "kuduColumn";
         private  static String IS_KEY_CHANGED_FIELD = "kuduKeyChanged";
 
         protected static List<Triple<String, Integer, String>> getKeys(ETLRow row) {
             return (List<Triple<String, Integer, String>>) row.getExtendsField().computeIfAbsent(KEY_FIELD, k -> new ArrayList<>());
+        }
+
+        protected static List<Triple<String, Integer, String>> getOldKeys(ETLRow row) {
+            return (List<Triple<String, Integer, String>>) row.getExtendsField().computeIfAbsent(OLD_KEY_FIELD, k -> new ArrayList<>());
         }
 
         protected static List<Triple<String, Integer, String>> getColumns(ETLRow row) {

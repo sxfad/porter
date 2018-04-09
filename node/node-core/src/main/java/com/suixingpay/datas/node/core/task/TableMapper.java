@@ -10,6 +10,8 @@
 package com.suixingpay.datas.node.core.task;
 
 import com.suixingpay.datas.common.config.TableMapperConfig;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -22,11 +24,16 @@ import java.util.Map;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月28日 16:03
  */
 public class TableMapper {
+    //[源端(统一大写),目标端schema(区分大小写)]
     private String[] schema;
+    //[源端表(统一大写),目标端表(区分大小写)]
     private String[] table;
+    //[源端自动更新字段(统一大写),目标端自动更新字段(区分大小写)]
     private String[] updateDate;
+    //[源端字段(统一大写),目标端字段(区分大小写)]
     private Map<String, String> column;
-
+    //忽略目标端大小写
+    private boolean ignoreTargetCase = true;
     public String[] getSchema() {
         return schema;
     }
@@ -78,36 +85,37 @@ public class TableMapper {
         mapper.setSchema(config.getSchema());
         mapper.setTable(config.getTable());
         mapper.setUpdateDate(config.getUpdateDate());
+        mapper.ignoreTargetCase = config.isIgnoreTargetCase();
         return mapper;
     }
 
     public TableMapper toUpperCase() {
-        if (null != updateDate) {
-            for (int i = 0; i < updateDate.length; i++) {
-                updateDate[i] = updateDate[i].toUpperCase();
-            }
+        if (null != updateDate && updateDate.length == 2) {
+            updateDate[0] = updateDate[0].toUpperCase();
+            if (ignoreTargetCase) updateDate[1] = updateDate[1].toUpperCase();
         }
 
-        if (null != table) {
-            for (int i = 0; i < table.length; i++) {
-                table[i] = table[i].toUpperCase();
-            }
+        if (null != table && table.length == 2) {
+            table[0] = table[0].toUpperCase();
+            if (ignoreTargetCase) table[1] = table[1].toUpperCase();
         }
 
-        if (null != schema) {
-            for (int i = 0; i < schema.length; i++) {
-                schema[i] = schema[i].toUpperCase();
-            }
+        if (null != schema && schema.length == 2) {
+            schema[0] = schema[0].toUpperCase();
+            if (ignoreTargetCase) schema[1] = schema[1].toUpperCase();
         }
 
         if (null != column) {
             Arrays.stream(column.keySet().toArray(new String[0])).forEach(k -> {
-                String v = column.get(k);
+                String v = ignoreTargetCase ? column.get(k). toLowerCase() : column.get(k);
                 column.remove(k);
-                column.put(k.toUpperCase(), v.toUpperCase());
+                column.put(k.toUpperCase(), v);
             });
         }
         return this;
     }
 
+    public boolean isIgnoreTargetCase() {
+        return ignoreTargetCase;
+    }
 }

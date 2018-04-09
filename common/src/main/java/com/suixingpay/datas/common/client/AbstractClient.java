@@ -9,18 +9,9 @@
 
 package com.suixingpay.datas.common.client;
 
-import com.suixingpay.datas.common.client.impl.CanalClient;
-import com.suixingpay.datas.common.config.source.CanalConfig;
-import com.suixingpay.datas.common.client.impl.EmailClient;
-import com.suixingpay.datas.common.client.impl.JDBCClient;
-import com.suixingpay.datas.common.client.impl.KafkaClient;
-import com.suixingpay.datas.common.client.impl.ZookeeperClient;
-import com.suixingpay.datas.common.config.source.EmailConfig;
+import com.suixingpay.datas.common.client.impl.*;
+import com.suixingpay.datas.common.config.source.*;
 import com.suixingpay.datas.common.config.SourceConfig;
-import com.suixingpay.datas.common.config.source.JDBCConfig;
-import com.suixingpay.datas.common.config.source.KafkaConfig;
-import com.suixingpay.datas.common.config.source.NameSourceConfig;
-import com.suixingpay.datas.common.config.source.ZookeeperConfig;
 import com.suixingpay.datas.common.exception.ClientException;
 import com.suixingpay.datas.common.exception.ClientMatchException;
 import lombok.Getter;
@@ -108,6 +99,9 @@ public abstract class AbstractClient<T extends SourceConfig> implements Client {
         }
         if (config instanceof CanalConfig) {
             return new CanalClient((CanalConfig) config);
+        }
+        if (config instanceof KuduConfig) {
+            return new KUDUClient((KuduConfig) config);
         }
         throw  new ClientMatchException();
     }

@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 /**
@@ -28,7 +29,7 @@ public class TableSchema {
     @Setter @Getter private String schemaName;
     @Setter @Getter private String tableName;
     private Map<String, TableColumn> columns = new HashMap<>();
-
+    private AtomicBoolean isUpperCased = new AtomicBoolean(false);
     public TableColumn findColumn(String columnsName) {
         return columns.getOrDefault(columnsName, null);
     }
@@ -43,16 +44,18 @@ public class TableSchema {
 
 
     public TableSchema toUpperCase() {
-        this.schemaName = schemaName.toUpperCase();
-        this.tableName = tableName.toUpperCase();
-        Arrays.stream(columns.keySet().toArray()).forEach(k -> {
-            TableColumn column = columns.get(k);
-            column.setName(column.getName().toUpperCase());
-            //删除旧key
-            columns.remove(k);
-            //添加新key
-            columns.put(k.toString().toUpperCase(), column);
-        });
+        if (!isUpperCased.get() && isUpperCased.compareAndSet(false, true)) {
+            this.schemaName = schemaName.toUpperCase();
+            this.tableName = tableName.toUpperCase();
+            Arrays.stream(columns.keySet().toArray()).forEach(k -> {
+                TableColumn column = columns.get(k);
+                column.setName(column.getName().toUpperCase());
+                //删除旧key
+                columns.remove(k);
+                //添加新key
+                columns.put(k.toString().toUpperCase(), column);
+            });
+        }
         return this;
     }
 }

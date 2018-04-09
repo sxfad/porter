@@ -31,7 +31,7 @@ public class KuduConfig extends SourceConfig {
     private static final String SERVER_SPLIT_CHARACTER = ",";
     //ip:port
     @Setter @Getter private List<String> servers = new ArrayList<>();
-    @Setter @Getter private int workerCount  = 30000;
+    @Setter @Getter private int workerCount  = 10;
 
     public KuduConfig() {
         sourceType = SourceType.KUDU;

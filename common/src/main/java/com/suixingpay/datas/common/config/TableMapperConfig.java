@@ -22,6 +22,8 @@ import java.util.Map;
  */
 public class TableMapperConfig {
     @Getter @Setter private boolean auto = true;
+    //忽略目标端大小写
+    @Getter @Setter private boolean ignoreTargetCase = true;
     @Getter @Setter private String[] schema;
     @Getter @Setter private String[] table;
     @Getter @Setter private String[] updateDate;
