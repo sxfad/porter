@@ -43,6 +43,16 @@ public class CUser implements java.io.Serializable {
     private String mobile;
 
     /**
+     * 部门名称.
+     */
+    private String departMent;
+
+    /**
+     * 角色id.
+     */
+    private String roleCode;
+
+    /**
      * 状态 1正常，0禁止登陆，-1删除.
      */
     private Integer state;
@@ -134,6 +144,34 @@ public class CUser implements java.io.Serializable {
      */
     public void setMobile(String mobile) {
         this.mobile = mobile == null ? null : mobile.trim();
+    }
+
+    /**
+     * 部门名称 get方法.
+     */
+    public String getDepartMent() {
+        return departMent == null ? null : departMent.trim();
+    }
+
+    /**
+     * 部门名称 set方法.
+     */
+    public void setDepartMent(String departMent) {
+        this.departMent = departMent == null ? null : departMent.trim();
+    }
+
+    /**
+     * 角色id get方法.
+     */
+    public String getRoleCode() {
+        return roleCode == null ? null : roleCode.trim();
+    }
+
+    /**
+     * 角色id set方法.
+     */
+    public void setRoleCode(String roleCode) {
+        this.roleCode = roleCode == null ? null : roleCode.trim();
     }
 
     /**
