@@ -73,7 +73,7 @@ public interface MrNodesScheduleMapper {
     /**
      * 根据节点id查询
      *
-     * @param id
+     * @param nodeId
      * @return
      */
     MrNodesSchedule selectByNodeId(@Param("nodeId") String nodeId);

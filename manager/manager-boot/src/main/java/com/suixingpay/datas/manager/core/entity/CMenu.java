@@ -1,5 +1,8 @@
 package com.suixingpay.datas.manager.core.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * 菜单目录表 实体Entity
  *
@@ -37,6 +40,9 @@ public class CMenu implements java.io.Serializable {
      */
     private String menuUrl;
 
+    /** 图片 */
+    private String menuImage;
+
     /**
      * 目录等级.
      */
@@ -66,6 +72,14 @@ public class CMenu implements java.io.Serializable {
      * 备注.
      */
     private String remark;
+
+    /**
+     * 是否叶子.
+     */
+    private Integer isleaf;
+
+
+    private List<CMenu> menus = new ArrayList<>();
 
     /**
      * 主键 get方法.
@@ -221,4 +235,35 @@ public class CMenu implements java.io.Serializable {
         this.remark = remark == null ? null : remark.trim();
     }
 
+    /**
+     * 是否叶子 get方法
+     */
+    public Integer getIsleaf() {
+        return isleaf;
+    }
+
+    /**
+     * 是否叶子 set方法
+     */
+    public void setIsleaf(Integer isleaf) {
+        this.isleaf = isleaf;
+    }
+
+    public List<CMenu> getMenus() {
+        return menus;
+    }
+
+    public void setMenus(List<CMenu> menus) {
+        this.menus = menus;
+    }
+
+    /** 图片 get方法 */
+    public String getMenuImage() {
+        return menuImage == null ? null : menuImage.trim();
+    }
+
+    /** 图片 set方法 */
+    public void setMenuImage(String menuImage) {
+        this.menuImage = menuImage == null ? null : menuImage.trim();
+    }
 }

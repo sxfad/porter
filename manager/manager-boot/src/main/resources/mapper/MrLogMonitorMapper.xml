@@ -85,13 +85,44 @@
     <!-- 分页All -->
     <select id="pageAll" resultType="java.lang.Integer">
         select count(id) from mr_log_monitor
-        where 1=1
+        <where>
+            iscancel = 0
+            <if test="ipAddress != null and ipAddress != ''">
+                and ip_adress LIKE CONCAT('%',#{ipAddress},'%')
+            </if>
+            <if test="state != null and state != ''">
+                and state = #{state}
+            </if>
+            <if test="beginTime != null and beginTime != ''">
+                and log_date &gt; #{beginTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                and log_date &lt; #{endTime}
+            </if>
+        </where>
     </select>
 
     <!-- 分页 -->
     <select id="page" resultType="com.suixingpay.datas.manager.core.entity.MrLogMonitor">
-        select id, node_id AS nodeId, job_id AS jobId, job_name AS jobName, ip_adress AS ipAdress, log_date AS logDate, log_title AS logTitle, log_content AS logContent, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, partition_day AS partitionDay, remark from mr_log_monitor
-        where 1=1 limit #{page.offset},#{page.pageSize}
+        select id, node_id AS nodeId, job_id AS jobId, job_name AS jobName, ip_adress AS ipAdress, log_date AS logDate, log_title AS logTitle, log_content AS logContent
+        from mr_log_monitor
+        <where>
+            iscancel = 0
+            <if test="ipAddress != null and ipAddress != ''">
+                and ip_adress LIKE CONCAT('%',#{ipAddress},'%')
+            </if>
+            <if test="state != null and state != ''">
+                and state = #{state}
+            </if>
+            <if test="beginTime != null and beginTime != ''">
+                and log_date &gt; #{beginTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                and log_date &lt; #{endTime}
+            </if>
+        </where>
+        order by log_date desc
+        limit #{page.offset},#{page.pageSize}
     </select>
 
     <!-- 验证新增 -->

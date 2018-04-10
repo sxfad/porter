@@ -216,14 +216,19 @@
 
 任务监控
     列表：
-        路径：/manager/jobtasks
+        路径：/manager/mrjobtasksschedule
+        字段：id、jobId(选择的任务id)、swimlaneId(任务泳道)、nodeIdIp(分配节点)、schemaTable(数据表)、registerTime(注册时间)、heartBeatDate(最后心跳时间)、disposeSchedule(处理进度)、alarmNumber(告警次数)、
+             insertSuccess(插入成功)、insertFailure(插入失败)、updateSuccess(更新成功)、updateFailure(更新失败)、deleteSuccess(删除成功)、deleteFailure(删除失败)
         注释：根据任务id 最后心跳时间查询列表（当前时间往前推7天）
-
 
 节点监控
     列表：
-        路径：/mrnodesschedule(get) 
-        注释：动态查询，根据任务id（运行中的任务）和最后心跳时间（七天之内）查询。
+        路径：/manager/mrnodesschedule(get)
+        字段：id、nodeId(节点id)、computerName(机器名)、ipAddress(IP)、heartBeatDate(心跳时间)、processNumber(进程号)、jobIdJson(任务)、healthLevel(节点健康级别)
+        条件查询：IP、computerName
 
 运行日志
-    列表：/mrlogmonitor(get)
+    列表：
+        路径：/manager/mrlogmonitor(get)
+        字段：id、nodeId(节点id)、jobId(任务di)、jobName(任务标题)、ipAdress(IP)、logDate(日志记录时间)、logTitle(标题)、logContent(内容)、
+        条件查询：IP、状态、logDate
