@@ -64,6 +64,14 @@ public interface NodesMapper {
     Nodes selectById(Long id);
 
     /**
+     * 根據主鍵id查找數據
+     *
+     * @param id
+     * @return
+     */
+    Nodes selectByNodeId(String nodeId);
+
+    /**
      * 分頁
      *
      * @return
@@ -130,4 +138,10 @@ public interface NodesMapper {
      * @return
      */
     Integer testNodeId(@Param("nodeId") String nodeId);
+
+    /**
+     * 查询所有节点
+     * @return
+     */
+    List<Nodes> selectList();
 }

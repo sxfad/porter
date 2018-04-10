@@ -3,6 +3,7 @@ package com.suixingpay.datas.manager.core.entity;
 import java.util.Date;
 
 import com.suixingpay.datas.common.statistics.NodeLog;
+import com.suixingpay.datas.manager.core.util.ResourceUtils;
 
 /**
  * 日志监控信息表 实体Entity
@@ -21,7 +22,7 @@ public class MrLogMonitor implements java.io.Serializable {
     public MrLogMonitor(NodeLog log) {
         this.nodeId = log.getNodeId();
         this.jobId = log.getTaskId();
-        this.jobName = log.getTaskId() + "name";
+        this.jobName = ResourceUtils.obtainJobName(log.getTaskId());
         this.ipAdress = log.getAddress();
         this.logDate = log.getTime();
         this.logTitle = log.getType()==null?"(空)":log.getType().getTitle();

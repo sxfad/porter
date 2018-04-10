@@ -1,5 +1,7 @@
 package com.suixingpay.datas.manager.service;
 
+import java.util.List;
+
 import com.suixingpay.datas.common.cluster.data.DNode;
 import com.suixingpay.datas.common.dic.NodeStatusType;
 import com.suixingpay.datas.manager.core.entity.Nodes;
@@ -27,6 +29,8 @@ public interface NodesService {
 
     Nodes selectById(Long id);
 
+    Nodes selectByNodeId(String nodeId);
+
     Page<Nodes> page(Page<Nodes> page, String ipAddress, Integer state, String machineName);
 
     Integer insertState(DNode node, String heartBeatTime, Integer state);
@@ -45,4 +49,6 @@ public interface NodesService {
             NodeStatusType taskPushState, String heartBeatTime);
 
     boolean testNodeId(String nodeId);
+
+    List<Nodes> selectList();
 }

@@ -23,6 +23,12 @@
         select id, node_id AS nodeId, machine_name AS machineName, ip_address AS ipAddress, pid_number AS pidNumber, heart_beat_time AS heartBeatTime, state, node_type as nodeType, task_push_state as taskPushState, creater, create_time AS createTime, iscancel, remark from b_nodes
     </sql>-->
 
+    <!-- 查询 -->
+    <select id="selectList" resultType="com.suixingpay.datas.manager.core.entity.Nodes">
+        select id, node_id AS nodeId, machine_name AS machineName, ip_address AS ipAddress, pid_number AS pidNumber, heart_beat_time AS heartBeatTime, state, node_type as nodeType, task_push_state as taskPushState, creater, create_time AS createTime, iscancel, remark from b_nodes
+        where iscancel = 0
+    </select>
+
     <!-- 新增 -->
     <insert id="insert">
         insert into b_nodes(
@@ -137,6 +143,11 @@
     <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.Nodes">
         select id, node_id AS nodeId, machine_name AS machineName, ip_address AS ipAddress, pid_number AS pidNumber, heart_beat_time AS heartBeatTime, state, node_type as nodeType, task_push_state as taskPushState, creater, create_time AS createTime, iscancel, remark from b_nodes
         where id = #{id}
+    </select>
+
+    <select id="selectByNodeId" resultType="com.suixingpay.datas.manager.core.entity.Nodes">
+        select id, node_id AS nodeId, machine_name AS machineName, ip_address AS ipAddress, pid_number AS pidNumber, heart_beat_time AS heartBeatTime, state, node_type as nodeType, task_push_state as taskPushState, creater, create_time AS createTime, iscancel, remark from b_nodes
+        where node_id = #{nodeId}
     </select>
 
     <!-- 验证nodeId是否重复 -->

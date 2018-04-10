@@ -1,10 +1,14 @@
 package com.suixingpay.datas.manager.core.entity;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeSet;
 
 import com.alibaba.fastjson.JSON;
 import com.suixingpay.datas.common.cluster.data.DNode;
 import com.suixingpay.datas.common.dic.NodeHealthLevel;
+import com.suixingpay.datas.manager.core.util.ResourceUtils;
 
 /**
  * 节点任务监控表 实体Entity
@@ -36,7 +40,7 @@ public class MrNodesSchedule implements java.io.Serializable {
         //任务json信息.
         this.jobIdJson = JSON.toJSONString(node.getTasks());
         //任务json-name信息.
-        this.jobNameJson = JSON.toJSONString(node.getTasks())+"name";
+        this.jobNameJson = jobNameJson(node.getTasks());
         //预留时间分区字段
         //this.partitionDay = null;
         //健康等级
@@ -45,6 +49,14 @@ public class MrNodesSchedule implements java.io.Serializable {
         this.healthLevelDesc = node.getHealthLevelDesc();
         //修改时间
         this.updateTime = new Date();
+    }
+
+    private String jobNameJson(Map<String, TreeSet<String>> tasks) {
+        Map<String, TreeSet<String>> taskmap = new HashMap<String, TreeSet<String>>();
+        for(Map.Entry<String, TreeSet<String>> entry : tasks.entrySet()) {
+            taskmap.put(ResourceUtils.JOBNAME_MAP.get(entry.getKey()), entry.getValue());
+        }
+        return JSON.toJSONString(taskmap);
     }
 
     /**

@@ -34,4 +34,6 @@ public interface JobTasksService {
     Integer updateState(Long id, TaskStatusType taskStatusType);
 
     TaskConfig fitJobTask(Long id, TaskStatusType status);
+
+    List<JobTasks> selectList();
 }

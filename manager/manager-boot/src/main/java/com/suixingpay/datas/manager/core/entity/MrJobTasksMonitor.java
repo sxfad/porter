@@ -4,6 +4,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import com.suixingpay.datas.common.statistics.TaskPerformance;
+import com.suixingpay.datas.manager.core.util.ResourceUtils;
 
 /**
  * 任务泳道实时监控表 实体Entity
@@ -27,7 +28,7 @@ public class MrJobTasksMonitor implements java.io.Serializable {
         // 节点id
         this.nodeId = performance.getNodeId();
         // 节点id-ip地址
-        this.nodeIdIp = performance.getNodeId() + "IP";
+        this.nodeIdIp = ResourceUtils.obtainNodeIp(performance.getNodeId());
         // 泳道ID
         this.swimlaneId = performance.getSwimlaneId();
         // 实际监控日期

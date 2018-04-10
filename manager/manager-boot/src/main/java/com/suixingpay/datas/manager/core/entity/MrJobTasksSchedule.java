@@ -3,6 +3,7 @@ package com.suixingpay.datas.manager.core.entity;
 import java.util.Date;
 
 import com.suixingpay.datas.common.cluster.data.DTaskStat;
+import com.suixingpay.datas.manager.core.util.ResourceUtils;
 
 /**
  * 任务泳道进度表 实体Entity
@@ -28,7 +29,7 @@ public class MrJobTasksSchedule implements java.io.Serializable {
         //节点id.
         this.nodeId = stat.getNodeId();
         //节点id[ip]
-        this.nodeIdIp = stat.getNodeId()+"ip";
+        this.nodeIdIp = ResourceUtils.obtainNodeIp(stat.getNodeId());
         //数据表
         this.schemaTable = stat.getSchema()+stat.getTable();
         //注册时间

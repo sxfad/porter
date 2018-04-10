@@ -1,11 +1,11 @@
 package com.suixingpay.datas.manager.core.mapper;
 
-import com.suixingpay.datas.common.dic.TaskStatusType;
-import com.suixingpay.datas.manager.core.entity.JobTasks;
-import com.suixingpay.datas.manager.web.page.Page;
+import java.util.List;
+
 import org.apache.ibatis.annotations.Param;
 
-import java.util.List;
+import com.suixingpay.datas.manager.core.entity.JobTasks;
+import com.suixingpay.datas.manager.web.page.Page;
 
 /**
  * 同步任务表 Mapper接口
@@ -78,4 +78,6 @@ public interface JobTasksMapper {
      * @return
      */
     Integer updateState(@Param("id") Long id, @Param("code") String code);
+
+    List<JobTasks> selectList();
 }

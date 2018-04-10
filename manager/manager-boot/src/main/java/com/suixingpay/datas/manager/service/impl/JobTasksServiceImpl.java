@@ -268,4 +268,9 @@ public class JobTasksServiceImpl implements JobTasksService {
         sourceMap.put(SourceConfig.SOURCE_TYPE_KEY, souDataSource.getDataType().getCode());
         return sourceMap;
     }
+
+    @Override
+    public List<JobTasks> selectList() {
+        return jobTasksMapper.selectList();
+    }
 }

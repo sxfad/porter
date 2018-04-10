@@ -9,6 +9,9 @@ import com.suixingpay.datas.manager.core.entity.Nodes;
 import com.suixingpay.datas.manager.core.mapper.NodesMapper;
 import com.suixingpay.datas.manager.service.NodesService;
 import com.suixingpay.datas.manager.web.page.Page;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -66,6 +69,11 @@ public class NodesServiceImpl implements NodesService {
     @Override
     public Nodes selectById(Long id) {
         return nodesMapper.selectById(id);
+    }
+
+    @Override
+    public Nodes selectByNodeId(String nodeId) {
+        return nodesMapper.selectByNodeId(nodeId);
     }
 
     @Override
@@ -127,5 +135,10 @@ public class NodesServiceImpl implements NodesService {
             flag = false;
         }
         return flag;
+    }
+
+    @Override
+    public List<Nodes> selectList() {
+        return nodesMapper.selectList();
     }
 }
