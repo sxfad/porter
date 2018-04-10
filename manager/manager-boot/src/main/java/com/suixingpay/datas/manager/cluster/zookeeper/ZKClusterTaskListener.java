@@ -58,7 +58,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
             // do something
             MrJobTasksScheduleService mrJobTasksScheduleService = ApplicationContextUtil.getBean(MrJobTasksScheduleServiceImpl.class);
             mrJobTasksScheduleService.dealDTaskStat(stat);
-            System.err.println("4-DTaskStat.... "+JSON.toJSON(stat));
+            LOGGER.debug("4-DTaskStat.... "+JSON.toJSON(stat));
         }
     }
 
