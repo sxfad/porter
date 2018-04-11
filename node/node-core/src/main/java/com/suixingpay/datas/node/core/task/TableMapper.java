@@ -10,8 +10,6 @@
 package com.suixingpay.datas.node.core.task;
 
 import com.suixingpay.datas.common.config.TableMapperConfig;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -107,7 +105,7 @@ public class TableMapper {
 
         if (null != column) {
             Arrays.stream(column.keySet().toArray(new String[0])).forEach(k -> {
-                String v = ignoreTargetCase ? column.get(k). toLowerCase() : column.get(k);
+                String v = ignoreTargetCase ? column.get(k).toLowerCase() : column.get(k);
                 column.remove(k);
                 column.put(k.toUpperCase(), v);
             });
