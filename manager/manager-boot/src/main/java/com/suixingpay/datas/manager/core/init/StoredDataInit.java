@@ -21,6 +21,7 @@ public class StoredDataInit implements CommandLineRunner {
     public void run(String... args) throws Exception {
         logger.info("ResourceInit run...");
         ResourceUtils.getInstance().init();
+        MenuUtils.getInstance().init();
     }
 
 }
