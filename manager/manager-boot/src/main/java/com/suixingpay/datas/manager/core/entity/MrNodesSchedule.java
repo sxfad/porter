@@ -8,7 +8,7 @@ import java.util.TreeSet;
 import com.alibaba.fastjson.JSON;
 import com.suixingpay.datas.common.cluster.data.DNode;
 import com.suixingpay.datas.common.dic.NodeHealthLevel;
-import com.suixingpay.datas.manager.core.util.ResourceUtils;
+import com.suixingpay.datas.manager.core.init.ResourceUtils;
 
 /**
  * 节点任务监控表 实体Entity

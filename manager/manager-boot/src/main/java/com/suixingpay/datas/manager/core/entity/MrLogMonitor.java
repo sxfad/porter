@@ -3,7 +3,7 @@ package com.suixingpay.datas.manager.core.entity;
 import java.util.Date;
 
 import com.suixingpay.datas.common.statistics.NodeLog;
-import com.suixingpay.datas.manager.core.util.ResourceUtils;
+import com.suixingpay.datas.manager.core.init.ResourceUtils;
 
 /**
  * 日志监控信息表 实体Entity

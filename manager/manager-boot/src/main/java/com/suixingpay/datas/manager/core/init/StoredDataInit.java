@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.suixingpay.datas.manager.core.util;
+package com.suixingpay.datas.manager.core.init;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
  *
  */
 @Component
-public class ResourceInit implements CommandLineRunner {
+public class StoredDataInit implements CommandLineRunner {
 
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 

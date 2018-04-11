@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.suixingpay.datas.manager.core.util;
+package com.suixingpay.datas.manager.core.init;
 
 import java.util.HashMap;
 import java.util.List;
@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import com.suixingpay.datas.manager.core.entity.JobTasks;
 import com.suixingpay.datas.manager.core.entity.Nodes;
+import com.suixingpay.datas.manager.core.util.ApplicationContextUtil;
 import com.suixingpay.datas.manager.service.JobTasksService;
 import com.suixingpay.datas.manager.service.NodesService;
 import com.suixingpay.datas.manager.service.impl.NodesServiceImpl;

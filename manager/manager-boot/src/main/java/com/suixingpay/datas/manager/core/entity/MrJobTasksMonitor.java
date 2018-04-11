@@ -4,7 +4,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import com.suixingpay.datas.common.statistics.TaskPerformance;
-import com.suixingpay.datas.manager.core.util.ResourceUtils;
+import com.suixingpay.datas.manager.core.init.ResourceUtils;
 
 /**
  * 任务泳道实时监控表 实体Entity
