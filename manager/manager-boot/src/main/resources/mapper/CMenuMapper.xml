@@ -4,10 +4,37 @@
     <!-- 通用查询映射结果 
     <resultMap id="BaseResultMap" type="com.suixingpay.datas.manager.core.entity.CMenu">
         <result column="id" property="id" />
+        <result column="code" property="code" />
+        <result column="fathercode" property="fathercode" />
+        <result column="name" property="name" />
+        <result column="menu_url" property="menuUrl" />
+        <result column="menu_image" property="menuImage" />
+        <result column="level" property="level" />
+        <result column="sort" property="sort" />
+        <result column="iscancel" property="iscancel" />
+        <result column="type" property="type" />
+        <result column="state" property="state" />
+        <result column="remark" property="remark" />
+        <result column="isleaf" property="isleaf" />
     </resultMap>-->
 
-    <!-- 通用查询结果列 
+    <!-- 通用查询结果列
     <sql id="Base_Column_List">
-        select id from c_menu
+        select id, code, fathercode, name, menu_url AS menuUrl, level, sort, iscancel, type, state, remark from c_menu
     </sql>-->
+
+    <!-- 根据fatherCode查询 -->
+    <select id="findByFatherCodef" resultType="com.suixingpay.datas.manager.core.entity.CMenu">
+        select id, code, fathercode, name, menu_url AS menuUrl,
+        menu_image AS menuImage, level, sort, iscancel, type, isleaf
+        from c_menu
+        WHERE fathercode = #{fatherCode}
+        order by sort asc
+    </select>
+
+    <select id="findAll" resultType="com.suixingpay.datas.manager.core.entity.CMenu">
+        select id, code, fathercode, name, menu_url AS menuUrl,
+        menu_image AS menuImage, level, sort, iscancel, type, isleaf
+        from c_menu
+    </select>
 </mapper>

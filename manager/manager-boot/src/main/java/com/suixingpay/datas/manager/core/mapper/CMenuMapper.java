@@ -1,5 +1,10 @@
 package com.suixingpay.datas.manager.core.mapper;
 
+import com.suixingpay.datas.manager.core.entity.CMenu;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+
 /**
  * 菜单目录表 Mapper接口
  *
@@ -10,4 +15,9 @@ package com.suixingpay.datas.manager.core.mapper;
  */
 public interface CMenuMapper {
 
+    List<CMenu> findByFatherCodef(String fatherCode);
+
+    List<CMenu> findAll();
+
+    List<CMenu> findByFatherCodeAndRoleCode(@Param("fatherCode") String fatherCode, @Param("roleCode") String roleCode);
 }
