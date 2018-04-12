@@ -1,5 +1,9 @@
 package com.suixingpay.datas.manager.service;
 
+import com.suixingpay.datas.manager.core.entity.CRole;
+
+import java.util.List;
+
 /**
  * 角色表 服务接口类
  *
@@ -10,4 +14,5 @@ package com.suixingpay.datas.manager.service;
  */
 public interface CRoleService {
 
+    List<CRole> findAll();
 }

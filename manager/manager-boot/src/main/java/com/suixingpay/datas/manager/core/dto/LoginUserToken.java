@@ -13,6 +13,7 @@ public class LoginUserToken extends Token {
     private Long userId;
     private String loginName;
     private String passwd;
+    private String roleCode;
 
     public Long getUserId() {
         return userId;
@@ -38,4 +39,11 @@ public class LoginUserToken extends Token {
         this.passwd = passwd;
     }
 
+    public String getRoleCode() {
+        return roleCode;
+    }
+
+    public void setRoleCode(String roleCode) {
+        this.roleCode = roleCode;
+    }
 }

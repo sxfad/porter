@@ -60,7 +60,7 @@
 
     <!-- 根据主鍵查找 -->
     <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.CUser">
-        select id, loginname, loginpw, nickname, email, mobile, state, remark from c_user
+        select id, loginname, loginpw, nickname, email, mobile, state, remark, role_code AS roleCode, depart_ment AS departMent  from c_user
         where id = #{id}
     </select>
 
@@ -82,7 +82,7 @@
 
     <!-- 根据主鍵查找 -->
     <select id="selectByNameAndpasswd" resultType="com.suixingpay.datas.manager.core.entity.CUser">
-        select id, loginname, loginpw, nickname, email, mobile, state, remark from c_user
+        select id, loginname, loginpw, nickname, email, mobile, state, remark, role_code AS roleCode, depart_ment AS departMent from c_user
         where loginname = #{loginname} and loginpw = #{loginpw}
     </select>
 
@@ -177,7 +177,7 @@
         </set>
         where id = #{id,jdbcType=BIGINT}
     </update>
-    
+
     <select id="list" resultType="com.suixingpay.datas.manager.core.entity.CUser">
         select id, loginname, loginpw, nickname, email, mobile, state, remark from c_user
         where state=1

@@ -5,6 +5,7 @@ package com.suixingpay.datas.manager.controller;
 
 import com.suixingpay.datas.manager.core.dto.LoginUserToken;
 import com.suixingpay.datas.manager.core.entity.CUser;
+import com.suixingpay.datas.manager.core.init.MenuUtils;
 import com.suixingpay.datas.manager.exception.ExceptionCode;
 import com.suixingpay.datas.manager.service.CUserService;
 import com.suixingpay.datas.manager.web.message.ResponseMessage;
@@ -39,7 +40,7 @@ public class LoginController {
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ApiOperation(value = "用户登录", notes = "用户登录")
     public ResponseMessage login(@RequestParam(required = true) String LoginName,
-            @RequestParam(required = true) String passwd) throws Exception {
+                                 @RequestParam(required = true) String passwd) throws Exception {
         LoginUserToken loginUserToken = new LoginUserToken();
         CUser cuser = cuserService.selectByNameAndpasswd(LoginName, passwd);
         if (cuser == null) {
@@ -48,6 +49,7 @@ public class LoginController {
             loginUserToken.setUserId(cuser.getId());
             loginUserToken.setLoginName(cuser.getLoginname());
             loginUserToken.setPasswd(cuser.getLoginpw());
+            loginUserToken.setRoleCode(cuser.getRoleCode());
             String token = TokenUtil.sign(loginUserToken);
             Map<String, String> map = new HashMap<>();
             map.put("token", token);
@@ -65,7 +67,8 @@ public class LoginController {
         map.put("userId", loginUserToken.getUserId());
         map.put("loginName", loginUserToken.getLoginName());
         map.put("nickName", cuser.getNickname());
-        map.put("passwd", loginUserToken.getPasswd());
+        map.put("roleCode", loginUserToken.getRoleCode());
+        map.put("CMenu", MenuUtils.ROLE_MENU.get(loginUserToken.getRoleCode()));
         return ResponseMessage.ok(map);
     }
 

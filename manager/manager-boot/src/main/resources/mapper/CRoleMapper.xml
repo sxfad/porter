@@ -10,4 +10,11 @@
     <sql id="Base_Column_List">
         select id from c_role
     </sql>-->
+
+    <!-- 查询所有可用角色 -->
+    <select id="findAll" resultType="com.suixingpay.datas.manager.core.entity.CRole">
+        SELECT id, role_code AS roleCode
+        FROM c_role
+        WHERE iscancel = 0
+    </select>
 </mapper>

@@ -36,7 +36,7 @@ public class CMenuServiceImpl implements CMenuService {
 
         CMenu parentMenu = new CMenu();
 
-        parentMenu.setMenus(menus("-1", listtomap(menulist)));
+        parentMenu.setMenus(menus(fatherCode, listtomap(menulist)));
 
         return parentMenu;
     }

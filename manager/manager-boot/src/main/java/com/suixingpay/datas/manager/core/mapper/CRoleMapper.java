@@ -1,5 +1,9 @@
 package com.suixingpay.datas.manager.core.mapper;
 
+import com.suixingpay.datas.manager.core.entity.CRole;
+
+import java.util.List;
+
 /**
  * 角色表 Mapper接口
  *
@@ -10,4 +14,5 @@ package com.suixingpay.datas.manager.core.mapper;
  */
 public interface CRoleMapper {
 
+    List<CRole> findAll();
 }
