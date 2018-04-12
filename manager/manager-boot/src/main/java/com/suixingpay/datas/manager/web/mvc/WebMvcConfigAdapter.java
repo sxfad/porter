@@ -25,7 +25,9 @@ public class WebMvcConfigAdapter extends WebMvcConfigurerAdapter {
 
     public static final String API_PREFIX = "/api/manager";
 
-    public static final String SWAGER_URL_PATTERNS = API_PREFIX+"/swagger*/**,"+API_PREFIX+"/v2/api-docs";
+    public static final String API_PREFIX_SWAGGER = "/api";
+
+    public static final String SWAGER_URL_PATTERNS = API_PREFIX_SWAGGER+"/swagger*/**,"+API_PREFIX_SWAGGER+"/v2/api-docs";
 
     public static final String LOGIN_URL_PATTERNS = API_PREFIX+"/login,"+API_PREFIX+"/register";
 
@@ -34,8 +36,8 @@ public class WebMvcConfigAdapter extends WebMvcConfigurerAdapter {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-//        registry.addInterceptor(xtokenInterceptor).addPathPatterns("/**")
-//              .excludePathPatterns(SWAGER_URL_PATTERNS.split(",")).excludePathPatterns(LOGIN_URL_PATTERNS.split(","));
+        registry.addInterceptor(xtokenInterceptor).addPathPatterns("/**")
+              .excludePathPatterns(SWAGER_URL_PATTERNS.split(",")).excludePathPatterns(LOGIN_URL_PATTERNS.split(","));
     }
 
     @Override

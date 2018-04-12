@@ -1,23 +1,16 @@
 package com.suixingpay.datas.manager.controller;
 
-import com.suixingpay.datas.manager.core.entity.MrJobTasksMonitor;
-import com.suixingpay.datas.manager.service.MrJobTasksMonitorService;
-import com.suixingpay.datas.manager.web.message.ResponseMessage;
-import com.suixingpay.datas.manager.web.page.Page;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import static com.suixingpay.datas.manager.web.message.ResponseMessage.ok;
+import com.suixingpay.datas.manager.service.MrJobTasksMonitorService;
+import com.suixingpay.datas.manager.web.message.ResponseMessage;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 /**
  * 任务泳道实时监控表 controller控制器
@@ -35,40 +28,52 @@ public class MrJobTasksMonitorController {
     @Autowired
     protected MrJobTasksMonitorService mrJobTasksMonitorService;
 
-    @PostMapping
-    @ApiOperation(value = "新增", notes = "新增")
-    public ResponseMessage add(@RequestBody MrJobTasksMonitor mrJobTasksMonitor) {
-        Integer number = mrJobTasksMonitorService.insert(mrJobTasksMonitor);
-        return ok(number);
+    @ApiOperation(value = "任务泳道实时数据(按分)", notes = "任务泳道实时数据(按分)")
+    @GetMapping("/jobmonitor")
+    public ResponseMessage jobMonitor(@RequestParam(value = "jobId", required = false) String jobId,
+            @RequestParam(value = "swimlaneId", required = false) String swimlaneId,
+            @RequestParam(value = "intervalTime", required = false) Long intervalTime,
+            @RequestParam(value = "intervalCount", required = false) Long intervalCount) {
+        
+        
+        
+        return ResponseMessage.ok();
     }
 
-    @PutMapping("/{id}")
-    @ApiOperation(value = "修改", notes = "修改")
-    public ResponseMessage update(@PathVariable("id") Long id, @RequestBody MrJobTasksMonitor mrJobTasksMonitor) {
-        Integer number = mrJobTasksMonitorService.update(id, mrJobTasksMonitor);
-        return ok(number);
-    }
-
-    @DeleteMapping("/{id}")
-    @ApiOperation(value = "删除", notes = "删除")
-    public ResponseMessage delete(@PathVariable("id") Long id) {
-        mrJobTasksMonitorService.delete(id);
-        return ok();
-    }
-
-    @GetMapping("/{id}")
-    @ApiOperation(value = "查询明细", notes = "查询明细")
-    public ResponseMessage info(@PathVariable("id") Long id) {
-        MrJobTasksMonitor mrJobTasksMonitor = mrJobTasksMonitorService.selectById(id);
-        return ok(mrJobTasksMonitor);
-    }
-
-    @ApiOperation(value = "查询列表", notes = "查询列表")
-    @GetMapping
-    public ResponseMessage list(@RequestParam(value = "pageNo", required = false) Integer pageNo,
-            @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-        Page<MrJobTasksMonitor> page = mrJobTasksMonitorService.page(new Page<MrJobTasksMonitor>(pageNo, pageSize));
-        return ok(page);
-    }
+    /*
+     * @PostMapping
+     * 
+     * @ApiOperation(value = "新增", notes = "新增") public ResponseMessage
+     * add(@RequestBody MrJobTasksMonitor mrJobTasksMonitor) { Integer number =
+     * mrJobTasksMonitorService.insert(mrJobTasksMonitor); return ok(number); }
+     * 
+     * @PutMapping("/{id}")
+     * 
+     * @ApiOperation(value = "修改", notes = "修改") public ResponseMessage
+     * update(@PathVariable("id") Long id, @RequestBody MrJobTasksMonitor
+     * mrJobTasksMonitor) { Integer number = mrJobTasksMonitorService.update(id,
+     * mrJobTasksMonitor); return ok(number); }
+     * 
+     * @DeleteMapping("/{id}")
+     * 
+     * @ApiOperation(value = "删除", notes = "删除") public ResponseMessage
+     * delete(@PathVariable("id") Long id) { mrJobTasksMonitorService.delete(id);
+     * return ok(); }
+     * 
+     * @GetMapping("/{id}")
+     * 
+     * @ApiOperation(value = "查询明细", notes = "查询明细") public ResponseMessage
+     * info(@PathVariable("id") Long id) { MrJobTasksMonitor mrJobTasksMonitor =
+     * mrJobTasksMonitorService.selectById(id); return ok(mrJobTasksMonitor); }
+     * 
+     * @ApiOperation(value = "查询列表", notes = "查询列表")
+     * 
+     * @GetMapping public ResponseMessage list(@RequestParam(value = "pageNo",
+     * required = false) Integer pageNo,
+     * 
+     * @RequestParam(value = "pageSize", required = false) Integer pageSize) {
+     * Page<MrJobTasksMonitor> page = mrJobTasksMonitorService.page(new
+     * Page<MrJobTasksMonitor>(pageNo, pageSize)); return ok(page); }
+     */
 
 }

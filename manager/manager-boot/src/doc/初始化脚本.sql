@@ -375,12 +375,16 @@ CREATE TABLE `s_log_grade` (
 -- 初始用户
 INSERT  INTO `c_user`(`id`,`loginname`,`loginpw`,`nickname`,`email`,`mobile`,`depart_ment`,`role_code`,`state`,`remark`) VALUES 
 (1,'admin','admin','admin','fu_zz@suixingpay.com','13844836009','码农','A0001',1,'');
--- 初始化菜单
+-- 初始化角色
 INSERT  INTO `c_role`(`id`,`role_code`,`role_name`,`sort`,`iscancel`,`type`,`state`,`remark`) VALUES 
 (1,'A0001','超级管理员',0,0,1,1,'超级管理员角色组'),
 (2,'A0002','普通管理员',1,0,1,1,'普通管理员'),
 (3,'B0001','监控观察者',2,0,1,1,'观察者'),
 (4,'C0001','访客',4,0,1,1,'访客');
+-- 初始化菜单
+
+-- 初始化菜单权限
+
 -- 初始化告警数据字典
 INSERT  INTO `d_alarm_plugin`(`id`,`alert_type`,`field_name`,`field_code`,`field_order`,`field_type`,`field_type_key`,`state`,`iscancel`,`remark`) VALUES 
 (1,'EMAIL','邮件服务器','host',2,'TEXT',NULL,1,0,NULL),
