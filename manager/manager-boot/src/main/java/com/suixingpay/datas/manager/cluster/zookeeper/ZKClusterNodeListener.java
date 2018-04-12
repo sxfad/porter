@@ -88,12 +88,13 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements N
             LOGGER.info("节点[{}]状态上报", node.getNodeId());
             System.err.println("2-DNode...." + node.getNodeId() + "..." + JSON.toJSONString(node));
             // do something 心跳时间记录 并且表示节点在线
-            int i = nodesService.updateHeartBeatTime(node, heartBeatTime);            
+            int i = nodesService.updateHeartBeatTime(node, heartBeatTime);
             if (i == 0) {
                 LOGGER.warn("节点[{}]尚未完善管理后台节点信息，请及时配置！", node.getNodeId());
                 nodesService.insertState(node, heartBeatTime, 1);
             }
-            MrNodesScheduleService mrNodesScheduleService = ApplicationContextUtil.getBean(MrNodesScheduleServiceImpl.class);
+            MrNodesScheduleService mrNodesScheduleService = ApplicationContextUtil
+                    .getBean(MrNodesScheduleServiceImpl.class);
             mrNodesScheduleService.dealDNode(node);
         }
     }

@@ -427,7 +427,7 @@ public class JobTasks implements java.io.Serializable {
 
         StringBuffer linkSource = new StringBuffer();
         StringBuffer linkTarget = new StringBuffer();
-        //连接 源表表名 用,隔开  连接 目标表表名 用,隔开
+        // 连接 源表表名 用,隔开 连接 目标表表名 用,隔开
         for (int i = 0; i < tables.size(); i++) {
             if (i == 0) {
                 linkSource.append(tables.get(i).getSourceTableName());

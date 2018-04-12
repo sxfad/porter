@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.suixingpay.datas.manager.core.icon.MrJobMonitor;
 import com.suixingpay.datas.manager.service.MrJobTasksMonitorService;
 import com.suixingpay.datas.manager.web.message.ResponseMessage;
 
@@ -34,10 +35,9 @@ public class MrJobTasksMonitorController {
             @RequestParam(value = "swimlaneId", required = false) String swimlaneId,
             @RequestParam(value = "intervalTime", required = false) Long intervalTime,
             @RequestParam(value = "intervalCount", required = false) Long intervalCount) {
-        
-        
-        
-        return ResponseMessage.ok();
+        MrJobMonitor mrJobMonitor = mrJobTasksMonitorService.obMrJobMonitor(jobId, swimlaneId, intervalTime,
+                intervalCount);
+        return ResponseMessage.ok(mrJobMonitor);
     }
 
     /*

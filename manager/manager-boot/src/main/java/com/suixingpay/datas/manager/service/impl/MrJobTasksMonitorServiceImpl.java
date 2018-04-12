@@ -5,9 +5,13 @@ package com.suixingpay.datas.manager.service.impl;
 
 import com.suixingpay.datas.common.statistics.TaskPerformance;
 import com.suixingpay.datas.manager.core.entity.MrJobTasksMonitor;
+import com.suixingpay.datas.manager.core.icon.MrJobMonitor;
 import com.suixingpay.datas.manager.core.mapper.MrJobTasksMonitorMapper;
 import com.suixingpay.datas.manager.service.MrJobTasksMonitorService;
 import com.suixingpay.datas.manager.web.page.Page;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -59,5 +63,12 @@ public class MrJobTasksMonitorServiceImpl implements MrJobTasksMonitorService {
     public void dealTaskPerformance(TaskPerformance performance) {
         MrJobTasksMonitor mrJobTasksMonitor = new MrJobTasksMonitor(performance);
         mrJobTasksMonitorMapper.insert(mrJobTasksMonitor);
+    }
+
+    @Override
+    public MrJobMonitor obMrJobMonitor(String jobId, String swimlaneId, Long intervalTime, Long intervalCount) {
+        Long startRow = intervalTime * intervalCount;
+        List<MrJobTasksMonitor> list =  mrJobTasksMonitorMapper.selectByJobSwimlane(jobId, swimlaneId, startRow, intervalTime);
+        return new MrJobMonitor(list);
     }
 }

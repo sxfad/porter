@@ -25,7 +25,7 @@ public class MrLogMonitor implements java.io.Serializable {
         this.jobName = ResourceUtils.obtainJobName(log.getTaskId());
         this.ipAdress = log.getAddress();
         this.logDate = log.getTime();
-        this.logTitle = log.getType()==null?"(空)":log.getType().getTitle();
+        this.logTitle = log.getType() == null ? "(空)" : log.getType().getTitle();
         this.logContent = log.getError();
         this.partitionDay = log.getTime();
     }

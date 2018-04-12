@@ -56,9 +56,10 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
         if (TASK_STAT_PATTERN.matcher(zkPath).matches() && zkEvent.isDataChanged()) {
             DTaskStat stat = DTaskStat.fromString(zkEvent.getData(), DTaskStat.class);
             // do something
-            MrJobTasksScheduleService mrJobTasksScheduleService = ApplicationContextUtil.getBean(MrJobTasksScheduleServiceImpl.class);
+            MrJobTasksScheduleService mrJobTasksScheduleService = ApplicationContextUtil
+                    .getBean(MrJobTasksScheduleServiceImpl.class);
             mrJobTasksScheduleService.dealDTaskStat(stat);
-            LOGGER.debug("4-DTaskStat.... "+JSON.toJSON(stat));
+            LOGGER.debug("4-DTaskStat.... " + JSON.toJSON(stat));
         }
     }
 
@@ -82,18 +83,18 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
     public void push(TaskPushCommand command) throws Exception {
         TaskConfig config = command.getConfig();
         DataConsumerConfig consumerConfig = config.getConsumer();
-        //创建任务根节点
+        // 创建任务根节点
         String taskPath = ZK_PATH + "/" + config.getTaskId();
         String distPath = taskPath + "/dist";
         client.createWhenNotExists(taskPath, false, false, null);
         client.createWhenNotExists(distPath, false, false, null);
-        //拆分同步数据来源泳道
+        // 拆分同步数据来源泳道
         List<SourceConfig> sourceConfigs = SourceConfig.getConfig(consumerConfig.getSource()).swamlanes();
-        //遍历泳道
+        // 遍历泳道
         for (SourceConfig sc : sourceConfigs) {
             String pushPath = distPath + "/" + sc.getSwimlaneId();
             String errorPath = taskPath + "/error/" + sc.getSwimlaneId();
-            //为每个泳道填充参数
+            // 为每个泳道填充参数
             config.getConsumer().setSource(sc.getProperties());
             client.changeData(pushPath, false, false, JSONObject.toJSONString(config));
             client.delete(errorPath);

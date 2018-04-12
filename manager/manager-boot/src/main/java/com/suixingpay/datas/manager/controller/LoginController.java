@@ -40,7 +40,7 @@ public class LoginController {
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ApiOperation(value = "用户登录", notes = "用户登录")
     public ResponseMessage login(@RequestParam(required = true) String LoginName,
-                                 @RequestParam(required = true) String passwd) throws Exception {
+            @RequestParam(required = true) String passwd) throws Exception {
         LoginUserToken loginUserToken = new LoginUserToken();
         CUser cuser = cuserService.selectByNameAndpasswd(LoginName, passwd);
         if (cuser == null) {

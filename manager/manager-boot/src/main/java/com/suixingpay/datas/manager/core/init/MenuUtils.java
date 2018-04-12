@@ -45,11 +45,11 @@ public class MenuUtils {
     private void loadRoleMenu() {
         CMenuService cMenuService = ApplicationContextUtil.getBean(CMenuServiceImpl.class);
         CRoleService cRoleService = ApplicationContextUtil.getBean(CRoleServiceImpl.class);
-        //查询所有角色
+        // 查询所有角色
         List<CRole> roles = cRoleService.findAll();
         for (CRole cRole : roles) {
-            //根据不同角色生成菜单树
-            CMenu cMenu = cMenuService.menuTree("-1",cRole.getRoleCode());
+            // 根据不同角色生成菜单树
+            CMenu cMenu = cMenuService.menuTree("-1", cRole.getRoleCode());
             ROLE_MENU.put(cRole.getRoleCode(), cMenu);
         }
     }

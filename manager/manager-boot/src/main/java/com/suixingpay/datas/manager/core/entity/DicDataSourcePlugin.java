@@ -4,7 +4,6 @@ import com.suixingpay.datas.manager.core.enums.InputTypeEnum;
 
 import javax.validation.constraints.NotNull;
 
-
 /**
  * 数据源信息字典表 实体Entity
  *

@@ -78,7 +78,6 @@ public class CMenu implements java.io.Serializable {
      */
     private Integer isleaf;
 
-
     private List<CMenu> menus = new ArrayList<>();
 
     /**

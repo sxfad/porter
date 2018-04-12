@@ -78,6 +78,7 @@ public interface CUserMapper {
 
     /**
      * 根据 jobTasksId 查询告警人信息
+     * 
      * @param jobTasksId
      * @return
      */
@@ -85,6 +86,7 @@ public interface CUserMapper {
 
     /**
      * 根据alarmid查询通知人信息
+     * 
      * @param alarmId
      * @return
      */

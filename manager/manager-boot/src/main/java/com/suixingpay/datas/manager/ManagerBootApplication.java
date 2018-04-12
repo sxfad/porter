@@ -30,7 +30,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableScheduling
 @EnableTransactionManagement
 @ServletComponentScan
-@SpringBootApplication(scanBasePackages = {"com.suixingpay"})
+@SpringBootApplication(scanBasePackages = { "com.suixingpay" })
 @MapperScan("com.suixingpay.datas.manager.core.mapper")
 public class ManagerBootApplication {
 

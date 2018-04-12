@@ -68,7 +68,6 @@ public interface AlarmUserMapper {
      */
     Integer pageAll(@Param("state") Integer state);
 
-
     /**
      * 根據alarmId查找數據
      *

@@ -13,9 +13,8 @@ import lombok.AllArgsConstructor;
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum QuerySQL {
 
-    MYSQL("MYSQL",
-            "SELECT distinct table_schema AS prefixName FROM information_schema.tables WHERE "
-                    + "table_schema NOT IN ('test','mysql','information_schema','performance_schema','sys') ORDER BY table_schema,table_rows",
+    MYSQL("MYSQL", "SELECT distinct table_schema AS prefixName FROM information_schema.tables WHERE "
+            + "table_schema NOT IN ('test','mysql','information_schema','performance_schema','sys') ORDER BY table_schema,table_rows",
             "SELECT table_schema AS prefixName,table_name AS tableName, CONCAT(table_schema,'.',table_name) AS tableAllName FROM information_schema.tables WHERE "
                     + "table_schema NOT IN ('test','mysql','information_schema','performance_schema','sys') ORDER BY table_schema,table_rows",
             "SELECT column_name AS fieldName FROM information_schema.COLUMNS WHERE lower(CONCAT(table_schema,'.',table_name)) = lower('%s') ORDER BY ordinal_position",
@@ -37,7 +36,7 @@ public enum QuerySQL {
     /**
      * 前缀.
      */
-    private final String prefixSql; //select * from (prefixSql) as tab
+    private final String prefixSql; // select * from (prefixSql) as tab
 
     /**
      * 表名 sql.

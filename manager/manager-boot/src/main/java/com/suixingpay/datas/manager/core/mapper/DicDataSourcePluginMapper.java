@@ -68,5 +68,4 @@ public interface DicDataSourcePluginMapper {
      */
     List<DicDataSourcePlugin> findByType(@Param("sourceType") String sourceType);
 
-
 }

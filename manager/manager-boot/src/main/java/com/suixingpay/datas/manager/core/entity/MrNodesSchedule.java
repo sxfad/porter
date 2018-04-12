@@ -23,37 +23,37 @@ public class MrNodesSchedule implements java.io.Serializable {
     private static final long serialVersionUID = 1L;
 
     public MrNodesSchedule() {
-        
+
     }
 
     public MrNodesSchedule(DNode node) {
-        //节点id
+        // 节点id
         this.nodeId = node.getNodeId();
-        //机器名.
+        // 机器名.
         this.computerName = node.getHostName();
-        //ipAddress
+        // ipAddress
         this.ipAddress = node.getAddress();
-        //心跳时间.
+        // 心跳时间.
         this.heartBeatDate = node.getHeartbeat();
-        //进程号.
+        // 进程号.
         this.processNumber = node.getProcessId();
-        //任务json信息.
+        // 任务json信息.
         this.jobIdJson = JSON.toJSONString(node.getTasks());
-        //任务json-name信息.
+        // 任务json-name信息.
         this.jobNameJson = jobNameJson(node.getTasks());
-        //预留时间分区字段
-        //this.partitionDay = null;
-        //健康等级
+        // 预留时间分区字段
+        // this.partitionDay = null;
+        // 健康等级
         this.healthLevel = node.getHealthLevel();
-        //健康等级描述
+        // 健康等级描述
         this.healthLevelDesc = node.getHealthLevelDesc();
-        //修改时间
+        // 修改时间
         this.updateTime = new Date();
     }
 
     private String jobNameJson(Map<String, TreeSet<String>> tasks) {
         Map<String, TreeSet<String>> taskmap = new HashMap<String, TreeSet<String>>();
-        for(Map.Entry<String, TreeSet<String>> entry : tasks.entrySet()) {
+        for (Map.Entry<String, TreeSet<String>> entry : tasks.entrySet()) {
             taskmap.put(ResourceUtils.JOBNAME_MAP.get(entry.getKey()), entry.getValue());
         }
         return JSON.toJSONString(taskmap);

@@ -177,7 +177,6 @@ public class DataSource implements java.io.Serializable {
         this.remark = remark == null ? null : remark.trim();
     }
 
-
     public List<DataSourcePlugin> getPlugins() {
         return plugins;
     }

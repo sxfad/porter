@@ -52,23 +52,17 @@ public interface JobTasksMapper {
      *
      * @return
      */
-    List<JobTasks> page(@Param("page") Page<JobTasks> page,
-                        @Param("state") Integer state,
-                        @Param("jobName") String jobName,
-                        @Param("beginTime") String beginTime,
-                        @Param("endTime") String endTime,
-                        @Param("code") String code);
+    List<JobTasks> page(@Param("page") Page<JobTasks> page, @Param("state") Integer state,
+            @Param("jobName") String jobName, @Param("beginTime") String beginTime, @Param("endTime") String endTime,
+            @Param("code") String code);
 
     /**
      * 分頁All
      *
      * @return
      */
-    Integer pageAll(@Param("state") Integer state,
-                    @Param("jobName") String jobName,
-                    @Param("beginTime") String beginTime,
-                    @Param("endTime") String endTime,
-                    @Param("code") String code);
+    Integer pageAll(@Param("state") Integer state, @Param("jobName") String jobName,
+            @Param("beginTime") String beginTime, @Param("endTime") String endTime, @Param("code") String code);
 
     /**
      * 修改任务状态

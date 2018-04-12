@@ -62,6 +62,7 @@ public interface JobTasksUserMapper {
 
     /**
      * 批量新增告警人信息
+     * 
      * @param jobTaskId
      * @param userIds
      */

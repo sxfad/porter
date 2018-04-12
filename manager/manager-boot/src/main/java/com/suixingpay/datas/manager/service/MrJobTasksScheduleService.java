@@ -26,7 +26,7 @@ public interface MrJobTasksScheduleService {
 
     Page<MrJobTasksSchedule> page(Page<MrJobTasksSchedule> page);
 
-    /**解析处理 任务进度状态汇总.*/
+    /** 解析处理 任务进度状态汇总. */
     void dealDTaskStat(DTaskStat stat);
 
     List<MrJobTasksSchedule> selectSwimlaneByJobId(String jobId);

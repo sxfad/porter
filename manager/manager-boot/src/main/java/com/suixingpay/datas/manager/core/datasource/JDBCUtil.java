@@ -13,12 +13,12 @@ import java.sql.SQLException;
  */
 public class JDBCUtil {
 
-
     public static void JDBCPage() {
-//        String driverName = "com.mysql.cj.jdbc.Driver";
-//        String url = "jdbc:mysql://172.16.60.247:3306/ds_data?useUnicode=true&characterEncoding=utf-8&useSSL=false";
-//        String username = "fd";
-//        String password = "123456";
+        // String driverName = "com.mysql.cj.jdbc.Driver";
+        // String url =
+        // "jdbc:mysql://172.16.60.247:3306/ds_data?useUnicode=true&characterEncoding=utf-8&useSSL=false";
+        // String username = "fd";
+        // String password = "123456";
 
         String driverName = "oracle.jdbc.driver.OracleDriver";
         String url = "jdbc:oracle:thin:@172.16.135.252:1521/BAPDB";

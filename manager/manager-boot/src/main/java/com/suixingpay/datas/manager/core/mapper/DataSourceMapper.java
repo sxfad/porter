@@ -47,26 +47,20 @@ public interface DataSourceMapper {
     DataSource selectById(Long id);
 
     /**
-     * 分頁
-     * 条件查询:数据源名称 时间区间
+     * 分頁 条件查询:数据源名称 时间区间
      *
      * @return
      */
-    List<DataSource> page(@Param("page") Page<DataSource> page,
-                          @Param("state") Integer state,
-                          @Param("name") String name,
-                          @Param("beginTime") String beginTime,
-                          @Param("endTime") String endTime);
+    List<DataSource> page(@Param("page") Page<DataSource> page, @Param("state") Integer state,
+            @Param("name") String name, @Param("beginTime") String beginTime, @Param("endTime") String endTime);
 
     /**
      * 分頁All
      *
      * @return
      */
-    Integer pageAll(@Param("state") Integer state,
-                    @Param("name") String name,
-                    @Param("beginTime") String beginTime,
-                    @Param("endTime") String endTime);
+    Integer pageAll(@Param("state") Integer state, @Param("name") String name, @Param("beginTime") String beginTime,
+            @Param("endTime") String endTime);
 
     /**
      * 校验新增
@@ -101,11 +95,3 @@ public interface DataSourceMapper {
      */
     List<DataSource> findByTypePage(@Param("page") Page<DataSource> page, @Param("state") Integer state);
 }
-
-
-
-
-
-
-
-

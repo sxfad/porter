@@ -58,17 +58,16 @@ public interface MrNodesScheduleMapper {
      *
      * @return
      */
-    List<MrNodesSchedule> page(@Param("page") Page<MrNodesSchedule> page,
-                               @Param("state") Integer state,
-                               @Param("ipAddress") String ipAddress,
-                               @Param("computerName") String computerName);
+    List<MrNodesSchedule> page(@Param("page") Page<MrNodesSchedule> page, @Param("state") Integer state,
+            @Param("ipAddress") String ipAddress, @Param("computerName") String computerName);
 
     /**
      * 分頁All
      *
      * @return
      */
-    Integer pageAll(@Param("state") Integer state, @Param("ipAddress") String ipAddress, @Param("computerName") String computerName);
+    Integer pageAll(@Param("state") Integer state, @Param("ipAddress") String ipAddress,
+            @Param("computerName") String computerName);
 
     /**
      * 根据节点id查询

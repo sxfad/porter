@@ -16,7 +16,6 @@ import java.util.List;
  */
 public interface DataTableMapper {
 
-
     /**
      * 验证新增
      *
@@ -46,21 +45,16 @@ public interface DataTableMapper {
      *
      * @return
      */
-    List<DataTable> page(@Param("page") Page<DataTable> page,
-                         @Param("state") Integer state,
-                         @Param("bankName") String bankName,
-                         @Param("beginTime") String beginTime,
-                         @Param("endTime") String endTime);
+    List<DataTable> page(@Param("page") Page<DataTable> page, @Param("state") Integer state,
+            @Param("bankName") String bankName, @Param("beginTime") String beginTime, @Param("endTime") String endTime);
 
     /**
      * 分頁All
      *
      * @return
      */
-    Integer pageAll(@Param("state") Integer state,
-                    @Param("bankName") String bankName,
-                    @Param("beginTime") String beginTime,
-                    @Param("endTime") String endTime);
+    Integer pageAll(@Param("state") Integer state, @Param("bankName") String bankName,
+            @Param("beginTime") String beginTime, @Param("endTime") String endTime);
 
     /**
      * 目标/元数据表组分页All
@@ -79,20 +73,20 @@ public interface DataTableMapper {
      */
     List<DataTable> dataTablePage(@Param("page") Page<DataTable> page, @Param("state") Integer state);
 
-
-//    *
-//     * 新增
-//     *
-//     * @param dataTable
-//
-//    Integer insert(DataTable dataTable);
-//
-//    *
-//     * 修改
-//     *
-//     * @param dataTable
-//
-//    Integer update(@Param("id") Long id, @Param("dataTable") DataTable dataTable);
-//
+    // *
+    // * 新增
+    // *
+    // * @param dataTable
+    //
+    // Integer insert(DataTable dataTable);
+    //
+    // *
+    // * 修改
+    // *
+    // * @param dataTable
+    //
+    // Integer update(@Param("id") Long id, @Param("dataTable") DataTable
+    // dataTable);
+    //
 
 }

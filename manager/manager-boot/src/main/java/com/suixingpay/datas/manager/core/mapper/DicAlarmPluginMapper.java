@@ -66,5 +66,4 @@ public interface DicAlarmPluginMapper {
      */
     List<DicAlarmPlugin> findByAlertType(String alertType);
 
-
 }

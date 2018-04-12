@@ -36,13 +36,13 @@ public class MrNodesMonitor implements java.io.Serializable {
         this.monitorMinute = cal.get(Calendar.MINUTE);
         // 实时监控秒.
         this.monitorSecond = cal.get(Calendar.SECOND);
-        //每分钟总数
+        // 每分钟总数
         Long minutetotal = performance.getInsertRow() + performance.getErrorInsertRow() + performance.getUpdateRow()
                 + performance.getErrorUpdateRow() + performance.getDeleteRow() + performance.getErrorDeleteRow();
         this.monitorTps = minutetotal;
-        //告警次数
+        // 告警次数
         this.monitorAlarm = performance.getAlertedTimes();
-        //预留分区字段
+        // 预留分区字段
         this.partitionDay = performance.getTime();
     }
 

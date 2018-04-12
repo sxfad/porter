@@ -54,53 +54,53 @@ public class MrJobTasksScheduleController {
      *
      * @author FuZizheng
      * @date 2018/4/4 下午2:49
-     * @param: [jobId, heartBeatBeginDate, heartBeatEndDate]
+     * @param: [jobId,
+     *             heartBeatBeginDate, heartBeatEndDate]
      * @return: com.suixingpay.datas.manager.web.message.ResponseMessage
      */
     @GetMapping
     @ApiOperation(value = "查询列表", notes = "查询列表")
     public ResponseMessage list(@RequestParam(value = "jobId", required = true) String jobId,
-                                @RequestParam(value = "heartBeatBeginDate", required = false) String heartBeatBeginDate,
-                                @RequestParam(value = "heartBeatEndDate", required = false) String heartBeatEndDate) {
+            @RequestParam(value = "heartBeatBeginDate", required = false) String heartBeatBeginDate,
+            @RequestParam(value = "heartBeatEndDate", required = false) String heartBeatEndDate) {
         List<MrJobTasksSchedule> list = mrJobTasksScheduleService.list(jobId, heartBeatBeginDate, heartBeatEndDate);
         return ok(list);
     }
 
-
-/*    @PostMapping
-    @ApiOperation(value = "新增", notes = "新增")
-    public ResponseMessage add(@RequestBody MrJobTasksSchedule mrJobTasksSchedule) {
-        Integer number = mrJobTasksScheduleService.insert(mrJobTasksSchedule);
-        return ok(number);
-    }
-
-    @PutMapping("/{id}")
-    @ApiOperation(value = "修改", notes = "修改")
-    public ResponseMessage update(@PathVariable("id") Long id, @RequestBody MrJobTasksSchedule mrJobTasksSchedule) {
-        Integer number = mrJobTasksScheduleService.update(id, mrJobTasksSchedule);
-        return ok(number);
-    }
-
-    @DeleteMapping("/{id}")
-    @ApiOperation(value = "删除", notes = "删除")
-    public ResponseMessage delete(@PathVariable("id") Long id) {
-        mrJobTasksScheduleService.delete(id);
-        return ok();
-    }
-
-    @GetMapping("/{id}")
-    @ApiOperation(value = "查询明细", notes = "查询明细")
-    public ResponseMessage info(@PathVariable("id") Long id) {
-        MrJobTasksSchedule mrJobTasksSchedule = mrJobTasksScheduleService.selectById(id);
-        return ok(mrJobTasksSchedule);
-    }
-
-    @ApiOperation(value = "查询列表", notes = "查询列表")
-    @GetMapping
-    public ResponseMessage list(@RequestParam(value = "pageNo", required = false) Integer pageNo,
-            @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-        Page<MrJobTasksSchedule> page = mrJobTasksScheduleService.page(new Page<MrJobTasksSchedule>(pageNo, pageSize));
-        return ok(page);
-    }*/
+    /*
+     * @PostMapping
+     * 
+     * @ApiOperation(value = "新增", notes = "新增") public ResponseMessage
+     * add(@RequestBody MrJobTasksSchedule mrJobTasksSchedule) { Integer number =
+     * mrJobTasksScheduleService.insert(mrJobTasksSchedule); return ok(number); }
+     * 
+     * @PutMapping("/{id}")
+     * 
+     * @ApiOperation(value = "修改", notes = "修改") public ResponseMessage
+     * update(@PathVariable("id") Long id, @RequestBody MrJobTasksSchedule
+     * mrJobTasksSchedule) { Integer number = mrJobTasksScheduleService.update(id,
+     * mrJobTasksSchedule); return ok(number); }
+     * 
+     * @DeleteMapping("/{id}")
+     * 
+     * @ApiOperation(value = "删除", notes = "删除") public ResponseMessage
+     * delete(@PathVariable("id") Long id) { mrJobTasksScheduleService.delete(id);
+     * return ok(); }
+     * 
+     * @GetMapping("/{id}")
+     * 
+     * @ApiOperation(value = "查询明细", notes = "查询明细") public ResponseMessage
+     * info(@PathVariable("id") Long id) { MrJobTasksSchedule mrJobTasksSchedule =
+     * mrJobTasksScheduleService.selectById(id); return ok(mrJobTasksSchedule); }
+     * 
+     * @ApiOperation(value = "查询列表", notes = "查询列表")
+     * 
+     * @GetMapping public ResponseMessage list(@RequestParam(value = "pageNo",
+     * required = false) Integer pageNo,
+     * 
+     * @RequestParam(value = "pageSize", required = false) Integer pageSize) {
+     * Page<MrJobTasksSchedule> page = mrJobTasksScheduleService.page(new
+     * Page<MrJobTasksSchedule>(pageNo, pageSize)); return ok(page); }
+     */
 
 }

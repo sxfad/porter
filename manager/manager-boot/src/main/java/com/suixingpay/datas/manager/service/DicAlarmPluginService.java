@@ -5,7 +5,6 @@ import com.suixingpay.datas.manager.web.page.Page;
 
 import java.util.List;
 
-
 /**
  * 告警配置策略字典表 服务接口类
  *

@@ -3,6 +3,8 @@
  */
 package com.suixingpay.datas.manager.core.icon;
 
+import java.util.Date;
+
 /**
  * @author guohongjian[guo_hj@suixingpay.com]
  *
@@ -12,39 +14,39 @@ public class MrNodeMonitor {
     /**
      * 时间字符串
      */
-    private String[] xAxisData;
+    private Date[] xAxisData;
 
     /**
      * 告警次数
      */
-    private String[] alarmNumber;
+    private Long[] alarmNumber;
 
     /**
      * tps数据
      */
-    private String[] tps;
+    private Long[] tps;
 
-    public String[] getAlarmNumber() {
-        return alarmNumber;
-    }
-
-    public void setAlarmNumber(String[] alarmNumber) {
-        this.alarmNumber = alarmNumber;
-    }
-
-    public String[] getTps() {
-        return tps;
-    }
-
-    public void setTps(String[] tps) {
-        this.tps = tps;
-    }
-
-    public String[] getxAxisData() {
+    public Date[] getxAxisData() {
         return xAxisData;
     }
 
-    public void setxAxisData(String[] xAxisData) {
+    public void setxAxisData(Date[] xAxisData) {
         this.xAxisData = xAxisData;
+    }
+
+    public Long[] getAlarmNumber() {
+        return alarmNumber;
+    }
+
+    public void setAlarmNumber(Long[] alarmNumber) {
+        this.alarmNumber = alarmNumber;
+    }
+
+    public Long[] getTps() {
+        return tps;
+    }
+
+    public void setTps(Long[] tps) {
+        this.tps = tps;
     }
 }

@@ -37,7 +37,6 @@ public class DataSourcePlugin implements java.io.Serializable {
      */
     private String fieldValue;
 
-
     /**
      * 主键 get方法.
      */
@@ -107,6 +106,5 @@ public class DataSourcePlugin implements java.io.Serializable {
     public void setFieldValue(String fieldValue) {
         this.fieldValue = fieldValue == null ? null : fieldValue.trim();
     }
-
 
 }

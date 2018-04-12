@@ -24,6 +24,6 @@ public interface MrNodesScheduleService {
 
     Page<MrNodesSchedule> page(Page<MrNodesSchedule> page, String ipAddress, String computerName);
 
-    /**节点监听.*/
+    /** 节点监听. */
     void dealDNode(DNode node);
 }

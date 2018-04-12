@@ -19,9 +19,7 @@ import java.util.Map;
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum InputTypeEnum {
 
-
-    TEXT("TEXT", "文本框"),
-    RADIO("RADIO", "单选框");
+    TEXT("TEXT", "文本框"), RADIO("RADIO", "单选框");
 
     @Getter
     private final String code;

@@ -56,9 +56,9 @@ public class MrJobTasksMonitor implements java.io.Serializable {
         this.deleteSucces = performance.getDeleteRow();
         /** 删除失败. */
         this.deleteFailure = performance.getErrorDeleteRow();
-        //告警次数
+        // 告警次数
         this.alarmNumber = performance.getAlertedTimes();
-        //分区预留字段
+        // 分区预留字段
         this.partitionDay = performance.getTime();
     }
 

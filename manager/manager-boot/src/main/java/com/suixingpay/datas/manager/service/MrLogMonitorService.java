@@ -24,6 +24,6 @@ public interface MrLogMonitorService {
 
     Page<MrLogMonitor> page(Page<MrLogMonitor> page, String ipAddress, Integer state, String beginTime, String endTime);
 
-    /** 解析任务日志.*/
+    /** 解析任务日志. */
     void dealNodeLog(NodeLog log);
 }

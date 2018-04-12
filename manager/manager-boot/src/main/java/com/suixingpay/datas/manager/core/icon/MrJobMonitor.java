@@ -3,113 +3,200 @@
  */
 package com.suixingpay.datas.manager.core.icon;
 
+import java.util.Date;
+import java.util.List;
+
+import com.suixingpay.datas.manager.core.entity.MrJobTasksMonitor;
+
 /**
  * @author guohongjian[guo_hj@suixingpay.com]
  *
  */
 public class MrJobMonitor {
 
+    public MrJobMonitor(List<MrJobTasksMonitor> list) {
+
+        int number = list.size();
+        /**
+         * 时间字符串
+         */
+        this.xAxisData = new Date[number];
+        /**
+         * 插入成功.
+         */
+        this.insertSucces = new Long[number];
+        /**
+         * 插入失败.
+         */
+        this.insertFailure = new Long[number];
+
+        /**
+         * 更新成功.
+         */
+        this.updateSucces = new Long[number];
+
+        /**
+         * 更新失败.
+         */
+        this.updateFailure = new Long[number];
+
+        /**
+         * 删除成功.
+         */
+        this.deleteSucces = new Long[number];
+
+        /**
+         * 删除失败.
+         */
+        this.deleteFailure = new Long[number];
+
+        /**
+         * 告警次数
+         */
+        this.alarmNumber = new Long[number];
+
+        for (int i = 0; i < list.size(); i++) {
+            /**
+             * 时间字符串
+             */
+            this.xAxisData[i] = list.get(i).getMonitorDate();
+            /**
+             * 插入成功.
+             */
+            this.insertSucces[i] = list.get(i).getInsertSucces();
+            /**
+             * 插入失败.
+             */
+            this.insertFailure[i] = list.get(i).getInsertFailure();
+
+            /**
+             * 更新成功.
+             */
+            this.updateSucces[i] = list.get(i).getUpdateSucces();
+
+            /**
+             * 更新失败.
+             */
+            this.updateFailure[i] = list.get(i).getUpdateFailure();
+
+            /**
+             * 删除成功.
+             */
+            this.deleteSucces[i] = list.get(i).getDeleteSucces();
+
+            /**
+             * 删除失败.
+             */
+            this.deleteFailure[i] = list.get(i).getDeleteFailure();
+
+            /**
+             * 告警次数
+             */
+            this.alarmNumber[i] = list.get(i).getAlarmNumber();
+        }
+    }
+
     /**
      * 时间字符串
      */
-    private String[] xAxisData;
+    private Date[] xAxisData;
 
     /**
      * 插入成功.
      */
-    private String[] insertSucces;
+    private Long[] insertSucces;
 
     /**
      * 插入失败.
      */
-    private String[] insertFailure;
+    private Long[] insertFailure;
 
     /**
      * 更新成功.
      */
-    private String[] updateSucces;
+    private Long[] updateSucces;
 
     /**
      * 更新失败.
      */
-    private String[] updateFailure;
+    private Long[] updateFailure;
 
     /**
      * 删除成功.
      */
-    private String[] deleteSucces;
+    private Long[] deleteSucces;
 
     /**
      * 删除失败.
      */
-    private String[] deleteFailure;
+    private Long[] deleteFailure;
 
     /**
      * 告警次数
      */
-    private String[] alarmNumber;
+    private Long[] alarmNumber;
 
-    public String[] getxAxisData() {
+    public Date[] getxAxisData() {
         return xAxisData;
     }
 
-    public void setxAxisData(String[] xAxisData) {
+    public void setxAxisData(Date[] xAxisData) {
         this.xAxisData = xAxisData;
     }
 
-    public String[] getInsertSucces() {
+    public Long[] getInsertSucces() {
         return insertSucces;
     }
 
-    public void setInsertSucces(String[] insertSucces) {
+    public void setInsertSucces(Long[] insertSucces) {
         this.insertSucces = insertSucces;
     }
 
-    public String[] getInsertFailure() {
+    public Long[] getInsertFailure() {
         return insertFailure;
     }
 
-    public void setInsertFailure(String[] insertFailure) {
+    public void setInsertFailure(Long[] insertFailure) {
         this.insertFailure = insertFailure;
     }
 
-    public String[] getUpdateSucces() {
+    public Long[] getUpdateSucces() {
         return updateSucces;
     }
 
-    public void setUpdateSucces(String[] updateSucces) {
+    public void setUpdateSucces(Long[] updateSucces) {
         this.updateSucces = updateSucces;
     }
 
-    public String[] getUpdateFailure() {
+    public Long[] getUpdateFailure() {
         return updateFailure;
     }
 
-    public void setUpdateFailure(String[] updateFailure) {
+    public void setUpdateFailure(Long[] updateFailure) {
         this.updateFailure = updateFailure;
     }
 
-    public String[] getDeleteSucces() {
+    public Long[] getDeleteSucces() {
         return deleteSucces;
     }
 
-    public void setDeleteSucces(String[] deleteSucces) {
+    public void setDeleteSucces(Long[] deleteSucces) {
         this.deleteSucces = deleteSucces;
     }
 
-    public String[] getDeleteFailure() {
+    public Long[] getDeleteFailure() {
         return deleteFailure;
     }
 
-    public void setDeleteFailure(String[] deleteFailure) {
+    public void setDeleteFailure(Long[] deleteFailure) {
         this.deleteFailure = deleteFailure;
     }
 
-    public String[] getAlarmNumber() {
+    public Long[] getAlarmNumber() {
         return alarmNumber;
     }
 
-    public void setAlarmNumber(String[] alarmNumber) {
+    public void setAlarmNumber(Long[] alarmNumber) {
         this.alarmNumber = alarmNumber;
     }
 

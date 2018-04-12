@@ -51,19 +51,14 @@ public interface MrLogMonitorMapper {
      *
      * @return
      */
-    List<MrLogMonitor> page(@Param("page") Page<MrLogMonitor> page,
-                            @Param("ipAddress") String ipAddress,
-                            @Param("state") Integer state,
-                            @Param("beginTime") String beginTime,
-                            @Param("endTime") String endTime);
+    List<MrLogMonitor> page(@Param("page") Page<MrLogMonitor> page, @Param("ipAddress") String ipAddress,
+            @Param("state") Integer state, @Param("beginTime") String beginTime, @Param("endTime") String endTime);
 
     /**
      * 分頁All
      *
      * @return
      */
-    Integer pageAll(@Param("ipAddress") String ipAddress,
-                    @Param("state") Integer state,
-                    @Param("beginTime") String beginTime,
-                    @Param("endTime") String endTime);
+    Integer pageAll(@Param("ipAddress") String ipAddress, @Param("state") Integer state,
+            @Param("beginTime") String beginTime, @Param("endTime") String endTime);
 }

@@ -55,7 +55,7 @@ public class ZKClusterStatisticListener extends ZookeeperClusterListener {
             // 日志
             if (LOG_PATTERN.matcher(zkPath).matches()) {
                 NodeLog log = JSONObject.parseObject(zkEvent.getData(), NodeLog.class);
-                LOGGER.debug("3-NodeLog....."+JSON.toJSON(log));
+                LOGGER.debug("3-NodeLog....." + JSON.toJSON(log));
                 // do something
                 MrLogMonitorService mrLogMonitorService = ApplicationContextUtil.getBean(MrLogMonitorServiceImpl.class);
                 mrLogMonitorService.dealNodeLog(log);
@@ -64,13 +64,15 @@ public class ZKClusterStatisticListener extends ZookeeperClusterListener {
             // 性能指标数据
             if (TASK_PATTERN.matcher(zkPath).matches()) {
                 TaskPerformance performance = JSONObject.parseObject(zkEvent.getData(), TaskPerformance.class);
-                LOGGER.debug("3-TaskPerformance....."+JSON.toJSON(performance));
+                LOGGER.debug("3-TaskPerformance....." + JSON.toJSON(performance));
                 // do something
-                //任务泳道实时监控表 服务接口类
-                MrJobTasksMonitorService mrJobTasksMonitorService = ApplicationContextUtil.getBean(MrJobTasksMonitorServiceImpl.class);
+                // 任务泳道实时监控表 服务接口类
+                MrJobTasksMonitorService mrJobTasksMonitorService = ApplicationContextUtil
+                        .getBean(MrJobTasksMonitorServiceImpl.class);
                 mrJobTasksMonitorService.dealTaskPerformance(performance);
-                //节点任务实时监控表
-                MrNodesMonitorService mrNodesMonitorService = ApplicationContextUtil.getBean(MrNodesMonitorServiceImpl.class);
+                // 节点任务实时监控表
+                MrNodesMonitorService mrNodesMonitorService = ApplicationContextUtil
+                        .getBean(MrNodesMonitorServiceImpl.class);
                 mrNodesMonitorService.dealTaskPerformance(performance);
             }
             // 删除已获取的事件
