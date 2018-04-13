@@ -83,10 +83,17 @@
         where 1=1 limit #{page.offset},#{page.pageSize}
     </select>
 
+    <!-- 节点监控统计 -->
+    <select id="selectByNodeId" resultType="com.suixingpay.datas.manager.core.entity.MrNodesMonitor">
+        select id, node_id AS nodeId, monitor_date AS monitorDate, monitor_ymd AS monitorYmd, monitor_hour AS monitorHour, monitor_minute AS monitorMinute, monitor_second AS monitorSecond, monitor_tps AS monitorTps, monitor_alarm AS monitorAlarm, partition_day AS partitionDay from mr_nodes_monitor
+        WHERE node_id = #{nodeId}
+        limit #{startRow},#{intervalTime}
+    </select>
+
     <!-- 验证新增 -->
     <insert id="insertSelective">
         insert into mr_nodes_monitor
-        <trim prefix="(" suffix=")" suffixOverrides=",">            
+        <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="nodeId != null">
                 node_id,
             </if>
@@ -115,7 +122,7 @@
                 partition_day,
             </if>
         </trim>
-        <trim prefix="values (" suffix=")" suffixOverrides=",">            
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="nodeId != null">
                 #{nodeId,jdbcType=VARCHAR},
             </if>

@@ -1,15 +1,52 @@
 /**
- * 
+ *
  */
 package com.suixingpay.datas.manager.core.icon;
 
+import com.suixingpay.datas.manager.core.entity.MrNodesMonitor;
+
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author guohongjian[guo_hj@suixingpay.com]
- *
  */
 public class MrNodeMonitor {
+
+    public MrNodeMonitor(List<MrNodesMonitor> list) {
+
+        int size = list.size();
+
+        /**
+         * 时间字符串
+         */
+        this.xAxisData = new Date[size];
+
+        /**
+         * 告警次数
+         */
+        this.alarmNumber = new Long[size];
+
+        /**
+         * tps数据
+         */
+        this.tps = new Long[size];
+
+        for (int i = 0; i < list.size(); i++) {
+            /**
+             * 时间字符串
+             */
+            this.xAxisData[i] = list.get(i).getMonitorDate();
+            /**
+             * 告警次数
+             */
+            this.alarmNumber[i] = list.get(i).getMonitorAlarm();
+            /**
+             * tps数据
+             */
+            this.tps[i] = list.get(i).getMonitorTps();
+        }
+    }
 
     /**
      * 时间字符串

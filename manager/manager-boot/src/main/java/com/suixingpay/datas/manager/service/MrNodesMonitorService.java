@@ -2,6 +2,7 @@ package com.suixingpay.datas.manager.service;
 
 import com.suixingpay.datas.common.statistics.TaskPerformance;
 import com.suixingpay.datas.manager.core.entity.MrNodesMonitor;
+import com.suixingpay.datas.manager.core.icon.MrNodeMonitor;
 import com.suixingpay.datas.manager.web.page.Page;
 
 /**
@@ -26,4 +27,6 @@ public interface MrNodesMonitorService {
 
     /** 节点区间数据统计. */
     void dealTaskPerformance(TaskPerformance performance);
+
+    MrNodeMonitor obNodeMonitor(String nodeId, Long intervalTime, Long intervalCount);
 }

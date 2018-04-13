@@ -62,4 +62,13 @@ public interface MrNodesMonitorMapper {
      */
     Integer pageAll(@Param("state") Integer state);
 
+    /**
+     * @param nodeId
+     * @param startRow
+     * @param intervalTime
+     * @return
+     */
+    List<MrNodesMonitor> selectByNodeId(@Param("nodeId") String nodeId,
+                                        @Param("startRow") Long startRow,
+                                        @Param("intervalTime") Long intervalTime);
 }

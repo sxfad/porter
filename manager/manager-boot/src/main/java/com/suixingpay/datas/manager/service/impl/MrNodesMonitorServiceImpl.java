@@ -3,8 +3,10 @@
  */
 package com.suixingpay.datas.manager.service.impl;
 
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.suixingpay.datas.manager.core.icon.MrNodeMonitor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -84,6 +86,13 @@ public class MrNodesMonitorServiceImpl implements MrNodesMonitorService {
         } finally {
             map.remove(key);
         }
+    }
+
+    @Override
+    public MrNodeMonitor obNodeMonitor(String nodeId, Long intervalTime, Long intervalCount) {
+        Long startRow = intervalTime * intervalCount;
+        List<MrNodesMonitor> list = mrNodesMonitorMapper.selectByNodeId(nodeId, startRow, intervalTime);
+        return new MrNodeMonitor(list);
     }
 
     private void dealTaskPerformanceSync(String nodeId, String dataTimes, MrNodesMonitor mrNodesMonitor) {

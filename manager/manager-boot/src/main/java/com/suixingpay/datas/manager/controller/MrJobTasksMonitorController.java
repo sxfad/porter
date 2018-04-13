@@ -32,9 +32,9 @@ public class MrJobTasksMonitorController {
     @ApiOperation(value = "任务泳道实时数据(按分)", notes = "任务泳道实时数据(按分)")
     @GetMapping("/jobmonitor")
     public ResponseMessage jobMonitor(@RequestParam(value = "jobId", required = false) String jobId,
-            @RequestParam(value = "swimlaneId", required = false) String swimlaneId,
-            @RequestParam(value = "intervalTime", required = false) Long intervalTime,
-            @RequestParam(value = "intervalCount", required = false) Long intervalCount) {
+                                      @RequestParam(value = "swimlaneId", required = false) String swimlaneId,
+                                      @RequestParam(value = "intervalTime", required = false) Long intervalTime,
+                                      @RequestParam(value = "intervalCount", required = false) Long intervalCount) {
         MrJobMonitor mrJobMonitor = mrJobTasksMonitorService.obMrJobMonitor(jobId, swimlaneId, intervalTime,
                 intervalCount);
         return ResponseMessage.ok(mrJobMonitor);

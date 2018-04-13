@@ -1,6 +1,7 @@
 package com.suixingpay.datas.manager.controller;
 
 import com.suixingpay.datas.manager.core.entity.MrNodesMonitor;
+import com.suixingpay.datas.manager.core.icon.MrNodeMonitor;
 import com.suixingpay.datas.manager.service.MrNodesMonitorService;
 import com.suixingpay.datas.manager.web.message.ResponseMessage;
 import com.suixingpay.datas.manager.web.page.Page;
@@ -35,40 +36,57 @@ public class MrNodesMonitorController {
     @Autowired
     protected MrNodesMonitorService mrNodesMonitorService;
 
-    @PostMapping
-    @ApiOperation(value = "新增", notes = "新增")
-    public ResponseMessage add(@RequestBody MrNodesMonitor mrNodesMonitor) {
-        Integer number = mrNodesMonitorService.insert(mrNodesMonitor);
-        return ok(number);
+    /**
+     * 节点实时数据(按分)
+     *
+     * @author FuZizheng
+     * @date 2018/4/13 下午2:13
+     * @param: [nodeId, intervalTime, intervalCount]
+     * @return: com.suixingpay.datas.manager.web.message.ResponseMessage
+     */
+    @GetMapping("/nodeMonitor")
+    @ApiOperation(value = "节点实时数据(按分)", notes = "节点实时数据(按分)")
+    public ResponseMessage nodeMonitor(@RequestParam(value = "nodeId", required = false) String nodeId,
+                                       @RequestParam(value = "intervalTime", required = false) Long intervalTime,
+                                       @RequestParam(value = "intervalCount", required = false) Long intervalCount) {
+        MrNodeMonitor mrNodeMonitor = mrNodesMonitorService.obNodeMonitor(nodeId, intervalTime, intervalCount);
+        return ok(mrNodeMonitor);
     }
 
-    @PutMapping("/{id}")
-    @ApiOperation(value = "修改", notes = "修改")
-    public ResponseMessage update(@PathVariable("id") Long id, @RequestBody MrNodesMonitor mrNodesMonitor) {
-        Integer number = mrNodesMonitorService.update(id, mrNodesMonitor);
-        return ok(number);
-    }
-
-    @DeleteMapping("/{id}")
-    @ApiOperation(value = "删除", notes = "删除")
-    public ResponseMessage delete(@PathVariable("id") Long id) {
-        mrNodesMonitorService.delete(id);
-        return ok();
-    }
-
-    @GetMapping("/{id}")
-    @ApiOperation(value = "查询明细", notes = "查询明细")
-    public ResponseMessage info(@PathVariable("id") Long id) {
-        MrNodesMonitor mrNodesMonitor = mrNodesMonitorService.selectById(id);
-        return ok(mrNodesMonitor);
-    }
-
-    @ApiOperation(value = "查询列表", notes = "查询列表")
-    @GetMapping
-    public ResponseMessage list(@RequestParam(value = "pageNo", required = false) Integer pageNo,
-            @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-        Page<MrNodesMonitor> page = mrNodesMonitorService.page(new Page<MrNodesMonitor>(pageNo, pageSize));
-        return ok(page);
-    }
+//    @PostMapping
+//    @ApiOperation(value = "新增", notes = "新增")
+//    public ResponseMessage add(@RequestBody MrNodesMonitor mrNodesMonitor) {
+//        Integer number = mrNodesMonitorService.insert(mrNodesMonitor);
+//        return ok(number);
+//    }
+//
+//    @PutMapping("/{id}")
+//    @ApiOperation(value = "修改", notes = "修改")
+//    public ResponseMessage update(@PathVariable("id") Long id, @RequestBody MrNodesMonitor mrNodesMonitor) {
+//        Integer number = mrNodesMonitorService.update(id, mrNodesMonitor);
+//        return ok(number);
+//    }
+//
+//    @DeleteMapping("/{id}")
+//    @ApiOperation(value = "删除", notes = "删除")
+//    public ResponseMessage delete(@PathVariable("id") Long id) {
+//        mrNodesMonitorService.delete(id);
+//        return ok();
+//    }
+//
+//    @GetMapping("/{id}")
+//    @ApiOperation(value = "查询明细", notes = "查询明细")
+//    public ResponseMessage info(@PathVariable("id") Long id) {
+//        MrNodesMonitor mrNodesMonitor = mrNodesMonitorService.selectById(id);
+//        return ok(mrNodesMonitor);
+//    }
+//
+//    @ApiOperation(value = "查询列表", notes = "查询列表")
+//    @GetMapping
+//    public ResponseMessage list(@RequestParam(value = "pageNo", required = false) Integer pageNo,
+//            @RequestParam(value = "pageSize", required = false) Integer pageSize) {
+//        Page<MrNodesMonitor> page = mrNodesMonitorService.page(new Page<MrNodesMonitor>(pageNo, pageSize));
+//        return ok(page);
+//    }
 
 }
