@@ -41,6 +41,7 @@
     <insert id="insert">
         insert into mr_job_tasks_schedule(
         job_id,
+        job_name,
         swimlane_id,
         node_id,
         node_id_ip,
@@ -62,6 +63,7 @@
         partition_day
         ) values (
         #{jobId},
+        #{jobName,}
         #{swimlaneId},
         #{nodeId},
         #{nodeIdIp},
@@ -89,6 +91,7 @@
         update mr_job_tasks_schedule
         set
         job_id = #{mrJobTasksSchedule.jobId},
+        job_name = #{mrJobTasksSchedule.jobName},
         swimlane_id = #{mrJobTasksSchedule.swimlaneId},
         node_id = #{mrJobTasksSchedule.nodeId},
         node_id_ip = #{mrJobTasksSchedule.nodeIdIp},
@@ -124,13 +127,13 @@
 
     <!-- 根据主鍵查找 -->
     <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.MrJobTasksSchedule">
-        select id, job_id AS jobId, swimlane_id AS swimlaneId, node_id AS nodeId, node_id_ip AS nodeIdIp, schema_table AS schemaTable, register_time AS registerTime, heart_beat_date AS heartBeatDate, alarm_number AS alarmNumber, last_checked_time AS lastCheckedTime, insert_success AS insertSuccess, insert_failure AS insertFailure, update_success AS updateSuccess, update_failure AS updateFailure, delete_success AS deleteSuccess, delete_failure AS deleteFailure, dispose_schedule AS disposeSchedule, last_loaded_data_time AS lastLoadedDataTime, last_loaded_system_time AS lastLoadedSystemTime, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, partition_day AS partitionDay, remark from mr_job_tasks_schedule
+        select id, job_id AS jobId, job_name AS jobName, swimlane_id AS swimlaneId, node_id AS nodeId, node_id_ip AS nodeIdIp, schema_table AS schemaTable, register_time AS registerTime, heart_beat_date AS heartBeatDate, alarm_number AS alarmNumber, last_checked_time AS lastCheckedTime, insert_success AS insertSuccess, insert_failure AS insertFailure, update_success AS updateSuccess, update_failure AS updateFailure, delete_success AS deleteSuccess, delete_failure AS deleteFailure, dispose_schedule AS disposeSchedule, last_loaded_data_time AS lastLoadedDataTime, last_loaded_system_time AS lastLoadedSystemTime, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, partition_day AS partitionDay, remark from mr_job_tasks_schedule
         where id = #{id}
     </select>
 
     <!-- 根据任务id和泳道查询 -->
     <select id="selectByJobIdAndSwimlaneId" resultType="com.suixingpay.datas.manager.core.entity.MrJobTasksSchedule">
-        select id, job_id AS jobId, swimlane_id AS swimlaneId from mr_job_tasks_schedule
+        select id, job_id AS jobId, job_name AS jobName, swimlane_id AS swimlaneId from mr_job_tasks_schedule
         where job_id = #{jobId} and swimlane_id = #{swimlaneId}
     </select>
 
@@ -144,7 +147,7 @@
     <!-- 条件查询获取列表 -->
     <select id="list" resultType="com.suixingpay.datas.manager.core.entity.MrJobTasksSchedule">
         select
-        id, job_id AS jobId, swimlane_id AS swimlaneId, node_id AS nodeId, node_id_ip AS nodeIdIp,
+        id, job_id AS jobId, job_name AS jobName, swimlane_id AS swimlaneId, node_id AS nodeId, node_id_ip AS nodeIdIp,
         schema_table AS schemaTable, register_time AS registerTime, heart_beat_date AS heartBeatDate,
         alarm_number AS alarmNumber, insert_success AS insertSuccess, insert_failure AS insertFailure,
         update_success AS updateSuccess, update_failure AS updateFailure,
@@ -172,7 +175,7 @@
 
     <!-- 分页 -->
     <select id="page" resultType="com.suixingpay.datas.manager.core.entity.MrJobTasksSchedule">
-        select id, job_id AS jobId, swimlane_id AS swimlaneId, node_id AS nodeId, node_id_ip AS nodeIdIp, schema_table AS schemaTable, register_time AS registerTime, heart_beat_date AS heartBeatDate, alarm_number AS alarmNumber, last_checked_time AS lastCheckedTime, insert_success AS insertSuccess, insert_failure AS insertFailure, update_success AS updateSuccess, update_failure AS updateFailure, delete_success AS deleteSuccess, delete_failure AS deleteFailure, dispose_schedule AS disposeSchedule, last_loaded_data_time AS lastLoadedDataTime, last_loaded_system_time AS lastLoadedSystemTime, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, partition_day AS partitionDay, remark from mr_job_tasks_schedule
+        select id, job_id AS jobId, job_name AS jobName, swimlane_id AS swimlaneId, node_id AS nodeId, node_id_ip AS nodeIdIp, schema_table AS schemaTable, register_time AS registerTime, heart_beat_date AS heartBeatDate, alarm_number AS alarmNumber, last_checked_time AS lastCheckedTime, insert_success AS insertSuccess, insert_failure AS insertFailure, update_success AS updateSuccess, update_failure AS updateFailure, delete_success AS deleteSuccess, delete_failure AS deleteFailure, dispose_schedule AS disposeSchedule, last_loaded_data_time AS lastLoadedDataTime, last_loaded_system_time AS lastLoadedSystemTime, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, partition_day AS partitionDay, remark from mr_job_tasks_schedule
         where 1=1 limit #{page.offset},#{page.pageSize}
     </select>
 
@@ -182,6 +185,9 @@
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="jobId != null">
                 job_id,
+            </if>
+            <if test="jobName != null">
+                job_name,
             </if>
             <if test="swimlaneId != null">
                 swimlane_id,
@@ -262,6 +268,9 @@
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="jobId != null">
                 #{jobId,jdbcType=VARCHAR},
+            </if>
+            <if test="jobName != null">
+                #{jobName,jdbcType=VARCHAR},
             </if>
             <if test="swimlaneId != null">
                 #{swimlaneId,jdbcType=VARCHAR},
@@ -347,6 +356,9 @@
         <set>
             <if test="mrJobTasksSchedule.jobId != null">
                 job_id = #{mrJobTasksSchedule.jobId,jdbcType=VARCHAR},
+            </if>
+            <if test="mrJobTasksSchedule.jobName != null">
+                job_name = #{mrJobTasksSchedule.jobName,jdbcType=VARCHAR},
             </if>
             <if test="mrJobTasksSchedule.swimlaneId != null">
                 swimlane_id = #{mrJobTasksSchedule.swimlaneId,jdbcType=VARCHAR},

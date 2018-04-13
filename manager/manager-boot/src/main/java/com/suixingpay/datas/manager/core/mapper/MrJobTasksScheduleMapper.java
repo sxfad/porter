@@ -32,7 +32,7 @@ public interface MrJobTasksScheduleMapper {
 
     /**
      * 修改 判断为空字段
-     * 
+     *
      * @param id
      * @param mrJobTasksSchedule
      * @return
@@ -71,7 +71,7 @@ public interface MrJobTasksScheduleMapper {
 
     /**
      * 根据任务id和泳道查询
-     * 
+     *
      * @param jobId
      * @param swimlaneId
      * @return
@@ -80,7 +80,7 @@ public interface MrJobTasksScheduleMapper {
 
     /**
      * 根据jobId获取任务泳道
-     * 
+     *
      * @param jobId
      * @return
      */
@@ -88,12 +88,12 @@ public interface MrJobTasksScheduleMapper {
 
     /**
      * 条件查询获取列表
-     * 
+     *
      * @param jobId
      * @param heartBeatBeginDate
      * @param heartBeatEndDate
      * @return
      */
     List<MrJobTasksSchedule> list(@Param("jobId") String jobId, @Param("heartBeatBeginDate") String heartBeatBeginDate,
-            @Param("heartBeatEndDate") String heartBeatEndDate);
+                                  @Param("heartBeatEndDate") String heartBeatEndDate);
 }

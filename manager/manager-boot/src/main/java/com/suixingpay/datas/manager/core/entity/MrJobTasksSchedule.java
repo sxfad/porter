@@ -24,6 +24,8 @@ public class MrJobTasksSchedule implements java.io.Serializable {
     public MrJobTasksSchedule(DTaskStat stat) {
         // 任务id
         this.jobId = stat.getTaskId();
+        // 任务名称
+        this.jobName = ResourceUtils.obtainJobName(stat.getTaskId());
         // 任务泳道
         this.swimlaneId = stat.getSwimlaneId();
         // 节点id.
@@ -73,6 +75,11 @@ public class MrJobTasksSchedule implements java.io.Serializable {
      * 任务id.
      */
     private String jobId;
+
+    /**
+     * 任务名称
+     */
+    private String jobName;
 
     /**
      * 任务泳道.
@@ -225,6 +232,20 @@ public class MrJobTasksSchedule implements java.io.Serializable {
      */
     public void setJobId(String jobId) {
         this.jobId = jobId == null ? null : jobId.trim();
+    }
+
+    /**
+     * 任务名称 get方法.
+     */
+    public String getJobName() {
+        return jobName == null ? null : jobName.trim();
+    }
+
+    /**
+     * 任务名称 set方法.
+     */
+    public void setJobName(String jobName) {
+        this.jobName = jobName == null ? null : jobName.trim();
     }
 
     /**

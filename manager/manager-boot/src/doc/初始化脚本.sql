@@ -215,6 +215,7 @@ DROP TABLE IF EXISTS `mr_job_tasks_schedule`;
 CREATE TABLE `mr_job_tasks_schedule` (
   `id` BIGINT(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
   `job_id` VARCHAR(100) DEFAULT NULL COMMENT '任务id',
+  `job_name` VARCHAR(100) DEFAULT NULL COMMENT '任务名称',
   `swimlane_id` VARCHAR(100) DEFAULT NULL COMMENT '任务泳道',
   `node_id` VARCHAR(200) DEFAULT NULL COMMENT '节点id',
   `node_id_ip` VARCHAR(200) DEFAULT NULL COMMENT '节点id[ip]',
