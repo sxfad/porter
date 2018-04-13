@@ -63,7 +63,7 @@
         partition_day
         ) values (
         #{jobId},
-        #{jobName,}
+        #{jobName},
         #{swimlaneId},
         #{nodeId},
         #{nodeIdIp},
