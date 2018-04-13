@@ -115,7 +115,7 @@
     <select id="page" resultType="com.suixingpay.datas.manager.core.entity.MrNodesSchedule">
         select
         id, node_id AS nodeId, computer_name AS computerName, ip_address AS ipAddress, heart_beat_date AS heartBeatDate,
-        process_number AS processNumber, job_id_json AS jobIdJson,
+        process_number AS processNumber, job_id_json AS jobIdJson,job_name_json AS jobNameJson,
         health_level AS healthLevel, health_level_desc AS healthLevelDesc
         from mr_nodes_schedule
         <where>
