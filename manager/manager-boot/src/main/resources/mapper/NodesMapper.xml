@@ -26,7 +26,7 @@
     <!-- 查询 -->
     <select id="selectList" resultType="com.suixingpay.datas.manager.core.entity.Nodes">
         select id, node_id AS nodeId, machine_name AS machineName, ip_address AS ipAddress, pid_number AS pidNumber, heart_beat_time AS heartBeatTime, state, node_type as nodeType, task_push_state as taskPushState, creater, create_time AS createTime, iscancel, remark from b_nodes
-        where iscancel = 0
+        where 1=1
     </select>
 
     <!-- 新增 -->
