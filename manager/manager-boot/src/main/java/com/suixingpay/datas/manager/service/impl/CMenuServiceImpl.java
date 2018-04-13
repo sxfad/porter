@@ -59,11 +59,10 @@ public class CMenuServiceImpl implements CMenuService {
 
     //递归方法
     private List<CMenu> menus(String fatherCode, Map<String, List<CMenu>> menuMap) {
-        Map<String, List<CMenu>> map = new HashMap<>();
         List<CMenu> childlist = menuMap.get(fatherCode);
         //根据父类id查询旗下子类
         for (CMenu cMenu : childlist) {
-            if (cMenu.getIsleaf()==null||cMenu.getIsleaf() == 1) {
+            if (cMenu==null||cMenu.getIsleaf()==null||cMenu.getIsleaf() == 1) {
                 continue;
             }
             cMenu.setMenus(menus(cMenu.getCode(), menuMap));
