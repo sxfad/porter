@@ -13,6 +13,14 @@ import java.util.List;
  */
 public class CMenu implements java.io.Serializable {
 
+    public CMenu() {
+
+    }
+
+    public CMenu(Integer isleaf) {
+        this.isleaf = isleaf;
+    }
+
     private static final long serialVersionUID = 1L;
 
     /**

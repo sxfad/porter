@@ -34,8 +34,8 @@ public class CMenuServiceImpl implements CMenuService {
         //List<CMenu> menuList = cmenuMapper.findByFatherCodeAndRoleCode(fatherCode, roleCode);
         List<CMenu> menulist = cmenuMapper.findAll();
 
-        CMenu parentMenu = new CMenu();
-
+        CMenu parentMenu = new CMenu(0);
+        
         parentMenu.setMenus(menus(fatherCode, listtomap(menulist)));
 
         return parentMenu;
@@ -60,6 +60,9 @@ public class CMenuServiceImpl implements CMenuService {
     //递归方法
     private List<CMenu> menus(String fatherCode, Map<String, List<CMenu>> menuMap) {
         List<CMenu> childlist = menuMap.get(fatherCode);
+        if(childlist==null||childlist.size()==0) {
+            return null;
+        }
         //根据父类id查询旗下子类
         for (CMenu cMenu : childlist) {
             if (cMenu==null||cMenu.getIsleaf()==null||cMenu.getIsleaf() == 1) {
