@@ -63,7 +63,7 @@ public class CMenuServiceImpl implements CMenuService {
         List<CMenu> childlist = menuMap.get(fatherCode);
         //根据父类id查询旗下子类
         for (CMenu cMenu : childlist) {
-            if (cMenu.getIsleaf() == 1) {
+            if (cMenu.getIsleaf()==null||cMenu.getIsleaf() == 1) {
                 continue;
             }
             cMenu.setMenus(menus(cMenu.getCode(), menuMap));

@@ -24,6 +24,7 @@ CREATE TABLE `c_menu` (
   `menu_image` VARCHAR(200) DEFAULT '#' COMMENT '图片',
   `level` INT(5) DEFAULT '-1' COMMENT '目录等级',
   `sort` INT(5) DEFAULT '0' COMMENT '目录排序',
+  `isleaf` int(2) DEFAULT NULL COMMENT '是否叶子 1是 0不是',
   `iscancel` INT(2) DEFAULT '0' COMMENT '是否作废',
   `type` INT(5) DEFAULT '1' COMMENT '类型',
   `state` INT(5) DEFAULT '1' COMMENT '状态',
