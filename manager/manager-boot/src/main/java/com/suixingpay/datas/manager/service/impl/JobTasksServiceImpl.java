@@ -80,9 +80,9 @@ public class JobTasksServiceImpl implements JobTasksService {
     public Integer insert(JobTasks jobTasks) {
         // 新增 JobTasks
         Integer number = jobTasksMapper.insert(jobTasks);
-        //新增 JobTasksUser
+        // 新增 JobTasksUser
         jobTasksUserService.insertList(jobTasks);
-        //新增 JobTasksTable
+        // 新增 JobTasksTable
         jobTasksTableService.insertList(jobTasks);
         return number;
     }
@@ -90,15 +90,15 @@ public class JobTasksServiceImpl implements JobTasksService {
     @Override
     @Transactional
     public Integer update(JobTasks jobTasks) {
-        //删除关联表字段
+        // 删除关联表字段
         jobTasksUserService.delete(jobTasks.getId());
         jobTasksTableService.delete(jobTasks.getId());
         jobTasksFieldService.delete(jobTasks.getId());
-        //修改主表
+        // 修改主表
         Integer number = jobTasksMapper.update(jobTasks);
-        //新增 JobTasksUser
+        // 新增 JobTasksUser
         jobTasksUserService.insertList(jobTasks);
-        //新增 JobTasksTable
+        // 新增 JobTasksTable
         jobTasksTableService.insertList(jobTasks);
         return number;
     }
@@ -114,22 +114,27 @@ public class JobTasksServiceImpl implements JobTasksService {
         JobTasks jobTasks = jobTasksMapper.selectById(id);
         // 根据 JobTasksId 查询 JobTasksTable 详情
         List<JobTasksTable> tables = jobTasksTableService.selectById(id);
-        jobTasks.setTables(tables);
-        //根据 JobTasksId 查询 CUser 详情
-        List<CUser> cusers = cUserService.selectByJobTasksId(id);
-        jobTasks.setUsers(cusers);
-        //获取 CUser 主键集合
-        List<Long> userIds = new ArrayList<>();
-        for (CUser cUser : cusers) {
-            userIds.add(cUser.getId());
+        if (tables != null && tables.size() > 0) {
+            jobTasks.setTables(tables);
         }
-        jobTasks.setUserIds(userIds);
+        // 根据 JobTasksId 查询 CUser 详情
+        List<CUser> cusers = cUserService.selectByJobTasksId(id);
+        if (cusers != null && cusers.size() > 0) {
+            jobTasks.setUsers(cusers);
+            // 获取 CUser 主键集合
+            List<Long> userIds = new ArrayList<>();
+            for (CUser cUser : cusers) {
+                userIds.add(cUser.getId());
+            }
+            jobTasks.setUserIds(userIds);
+        }
 
         return jobTasks;
     }
 
     @Override
-    public Page<JobTasks> page(Page<JobTasks> page, String jobName, String beginTime, String endTime, TaskStatusType jobState) {
+    public Page<JobTasks> page(Page<JobTasks> page, String jobName, String beginTime, String endTime,
+            TaskStatusType jobState) {
         String code = "";
         if (null != jobState) {
             code = jobState.getCode();
@@ -218,8 +223,9 @@ public class JobTasksServiceImpl implements JobTasksService {
         List<JobTasksTable> tables = jobTasks.getTables();
 
         // 来源数据构造函数
-        DataConsumerConfig dataConsumerConfig = new DataConsumerConfig(sourceConsumeAdt.getCode(), sourceConvertAdt.getCode(), jobTasks.getSourceTablesName(),
-                dataSourceMap(syncDataSource), dataSourceMap(souDataSource));
+        DataConsumerConfig dataConsumerConfig = new DataConsumerConfig(sourceConsumeAdt.getCode(),
+                sourceConvertAdt.getCode(), jobTasks.getSourceTablesName(), dataSourceMap(syncDataSource),
+                dataSourceMap(souDataSource));
         // 目标数据构造函数
         DataLoaderConfig loader = new DataLoaderConfig(targetLoadAdt.getCode(), dataSourceMap(tarDataSource));
         // 表对应关系映射
@@ -233,7 +239,8 @@ public class JobTasksServiceImpl implements JobTasksService {
     private AlertReceiver[] receiver(List<CUser> cusers) {
         AlertReceiver[] alertReceivers = new AlertReceiver[cusers.size()];
         for (int i = 0; i < cusers.size(); i++) {
-            alertReceivers[i] = new AlertReceiver(cusers.get(0).getNickname(), cusers.get(0).getEmail(), cusers.get(0).getMobile());
+            alertReceivers[i] = new AlertReceiver(cusers.get(0).getNickname(), cusers.get(0).getEmail(),
+                    cusers.get(0).getMobile());
         }
         return alertReceivers;
     }
@@ -242,8 +249,10 @@ public class JobTasksServiceImpl implements JobTasksService {
         List<TableMapperConfig> tableList = new ArrayList<>();
         TableMapperConfig tableMapperConfig = null;
         for (JobTasksTable jobTasksTable : tables) {
-            String[] schema = {jobTasksTable.getSourceTableName().split("[.]")[0], jobTasksTable.getTargetTableName().split("[.]")[0]};
-            String[] table = {jobTasksTable.getSourceTableName().split("[.]")[1], jobTasksTable.getTargetTableName().split("[.]")[1]};
+            String[] schema = { jobTasksTable.getSourceTableName().split("[.]")[0],
+                    jobTasksTable.getTargetTableName().split("[.]")[0] };
+            String[] table = { jobTasksTable.getSourceTableName().split("[.]")[1],
+                    jobTasksTable.getTargetTableName().split("[.]")[1] };
             Map<String, String> column = fieldsMap(jobTasksTable.getFields());
             tableMapperConfig = new TableMapperConfig(schema, table, column);
             tableList.add(tableMapperConfig);
