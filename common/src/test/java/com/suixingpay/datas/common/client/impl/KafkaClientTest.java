@@ -9,14 +9,15 @@
 
 package com.suixingpay.datas.common.client.impl;
 
-import com.alibaba.fastjson.JSON;
 import com.suixingpay.datas.common.consumer.ConsumeClient;
 import com.suixingpay.datas.common.config.source.KafkaConfig;
+import com.suixingpay.datas.common.exception.TaskStopTriggerException;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Arrays;
-import java.util.UUID;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -29,25 +30,45 @@ public class KafkaClientTest {
     private static KafkaConfig CONFIG;
 
     @BeforeClass
-    public static void initSource() {
+    public static void initSource() throws Exception {
         CONFIG = new KafkaConfig();
-        CONFIG.setTopics(Arrays.asList("zkw.t_user_debug_001"));
-        CONFIG.setGroup(UUID.randomUUID().toString());
-        CONFIG.setOncePollSize(1);
-        CONFIG.setServers("172.16.135.30:9092,172.16.135.30:9093");
+        CONFIG.setTopics(Arrays.asList("SSP_debug"));
+        CONFIG.setGroup("zkevin_0416211");
+        CONFIG.setOncePollSize(2);
+        CONFIG.setAutoCommit(false);
+        CONFIG.setServers("172.16.154.5:9092,172.16.154.7:9092");
         KAFKA_CLIENT = new KafkaClient(CONFIG);
+        KAFKA_CLIENT.start();
+        KAFKA_CLIENT.initializePosition("1", "SSP_debug", "");
+        //KAFKA_CLIENT.initializePosition("1", "SSP_debug", "{'topic':'SSP_debug','offset':14,'partition':0}");
     }
 
 
 
     @Test
+    @Ignore
     public void fetch() {
         KAFKA_CLIENT.fetch(new ConsumeClient.FetchCallback<Object, Object>() {
             @Override
             public <F, O> F accept(O o) {
-                System.out.println(JSON.toJSONString(o));
+                ConsumerRecord<String,String> record = (ConsumerRecord<String, String>) o;
+                System.out.println("----------" + record.value());
+                try {
+                    KAFKA_CLIENT.commitPosition(new KafkaClient.KafkaPosition(record.topic(),record.offset() , record.partition()));
+                } catch (TaskStopTriggerException e) {
+                    e.printStackTrace();
+                }
                 return null;
             }
         });
+    }
+
+    @Test
+    @Ignore
+    public void betchFetch() {
+        fetch();
+        fetch();
+        fetch();
+        fetch();
     }
 }

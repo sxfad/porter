@@ -20,22 +20,14 @@ import com.suixingpay.datas.common.exception.ConfigParseException;
 import com.suixingpay.datas.common.exception.TaskStopTriggerException;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.kafka.clients.consumer.OffsetAndMetadata;
+import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import org.apache.kafka.clients.consumer.Consumer;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
 
-import java.util.Properties;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.HashMap;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  *
@@ -48,8 +40,9 @@ public class KafkaClient extends AbstractClient<KafkaConfig> implements ConsumeC
 
     private Consumer<String, String> consumer;
     private CountDownLatch canFetch = new CountDownLatch(1);
-    private long pollTimeOut;
 
+    private Map<String, AtomicReference<KafkaPosition>> lazyCommitOffsetMap = new ConcurrentHashMap<>();
+    private long pollTimeOut;
     public KafkaClient(KafkaConfig config) {
         super(config);
     }
@@ -107,6 +100,8 @@ public class KafkaClient extends AbstractClient<KafkaConfig> implements ConsumeC
         if (isStarted()) {
             ConsumerRecords<String, String> results = null;
             synchronized (consumer) {
+                //提交kafka消费进度
+                commitLazyPosition();
                 results = consumer.poll(pollTimeOut);
             }
             if (null != results && !results.isEmpty()) {
@@ -163,6 +158,13 @@ public class KafkaClient extends AbstractClient<KafkaConfig> implements ConsumeC
         if (!isAutoCommitPosition()) {
             try {
                 KafkaPosition kafkaPosition = (KafkaPosition) position;
+                //由于kafka不是线程安全的缘故，commitPosition与fetch属于不同的线程，有对象锁的机制。
+                //为保证消费效率，取消对象锁，这里只做offset提交请求，在fetch时先做commitPosition再fetch数据
+                AtomicReference reference = lazyCommitOffsetMap.computeIfAbsent(kafkaPosition.getPositionKey(), key -> new AtomicReference<>());
+                synchronized (reference) {
+                    reference.set(kafkaPosition);
+                }
+                /**
                 synchronized (consumer) {
                     consumer.commitSync(new HashMap<TopicPartition, OffsetAndMetadata>() {
                         {
@@ -170,6 +172,7 @@ public class KafkaClient extends AbstractClient<KafkaConfig> implements ConsumeC
                         }
                     });
                 }
+                 **/
             } catch (Throwable e) {
                 throw new TaskStopTriggerException(e);
             }
@@ -224,9 +227,27 @@ public class KafkaClient extends AbstractClient<KafkaConfig> implements ConsumeC
             }
         }
 
+        public String getPositionKey() {
+            return topic + "_" + partition;
+        }
+
         @Override
         public boolean checksum() {
             return checksum;
         }
+    }
+
+    private void commitLazyPosition() {
+        //每次查询数据前都要提交
+        lazyCommitOffsetMap.values().stream().filter(v -> null != v.get()).forEach(v -> {
+            KafkaPosition position = v.get();
+            if (null != position) {
+                synchronized (v) {
+                    v.set(null);
+                }
+                consumer.commitSync(Collections.singletonMap(new TopicPartition(position.topic, position.partition),
+                        new OffsetAndMetadata(position.offset)));
+            }
+        });
     }
 }
