@@ -240,5 +240,85 @@
     查询条件：用户    昵称     角色组
     列表：序号   用户  昵称   部门   角色组    操作（编辑（可以变更状态）、禁用、删除）
     新增：用户（登陆）     昵称      邮箱      手机号     部门      角色组（选择）     备注信息
-    接口：
-    
+        路径：/manager/cuser(post)
+        格式：
+            {
+              "departMent": "部门",
+              "email": "邮箱",
+              "loginname": "登录名",
+              "loginpw": "登录密码",
+              "mobile": "手机号",
+              "nickname": "昵称",
+              "roleCode": "角色code"
+            }
+    修改：
+        路径：/manager/cuser(put)
+        格式：
+            {
+              "departMent": "部门",
+              "email": "邮箱",
+              "loginname": "登录名",
+              "loginpw": "登录密码",
+              "mobile": "手机号",
+              "nickname": "昵称",
+              "roleCode": "角色code"
+            }
+        参数：id
+
+菜单管理
+    查询全部菜单:
+        路径：/manager/cmenu(get)
+    根据fatherCode查询
+        路径：/manager/cmenu/findByFatherCode(get)
+        参数： fatherCode(父类编号)
+    根据主键查询
+        路径：/manager/cmenu/{id}(get)
+        参数：id
+    新增
+        路径：/manager/cmenu(post)
+        格式：
+            {
+              "code": "编号",
+              "fathercode": "父类编号",
+              "isleaf": 0,
+              "level": 0,
+              "menuImage": "图片",
+              "menuUrl": "路径",
+              "name": "宁城",
+              "sort": 0
+            }
+    修改
+        路径：/manager/cmenu/{id}(put)
+        格式：
+            {
+              "code": "编号",
+              "fathercode": "父类编号",
+              "isleaf": 0,
+              "level": 0,
+              "menuImage": "图片",
+              "menuUrl": "路径",
+              "name": "宁城",
+              "sort": 0
+            }
+        参数：id
+    逻辑删除
+        路径：/manager/cmenu/{id}(delete)
+        参数：id
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
