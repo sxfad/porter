@@ -15,4 +15,6 @@ import java.util.List;
 public interface CRoleService {
 
     List<CRole> findAll();
+
+    List<CRole> findList();
 }

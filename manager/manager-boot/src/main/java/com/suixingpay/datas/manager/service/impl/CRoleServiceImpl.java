@@ -29,4 +29,9 @@ public class CRoleServiceImpl implements CRoleService {
     public List<CRole> findAll() {
         return croleMapper.findAll();
     }
+
+    @Override
+    public List<CRole> findList() {
+        return croleMapper.findList();
+    }
 }

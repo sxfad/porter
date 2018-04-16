@@ -39,6 +39,14 @@ public class CUserController {
     @Autowired
     protected CUserService cuserService;
 
+    /**
+     * 用户新增
+     *
+     * @author FuZizheng
+     * @date 2018/4/16 上午10:18
+     * @param: [cuser]
+     * @return: com.suixingpay.datas.manager.web.message.ResponseMessage
+     */
     @PostMapping
     @ApiOperation(value = "新增", notes = "新增")
     public ResponseMessage add(@RequestBody CUser cuser) {
@@ -46,6 +54,14 @@ public class CUserController {
         return ok(number);
     }
 
+    /**
+     * 用户修改
+     *
+     * @author FuZizheng
+     * @date 2018/4/16 上午10:20
+     * @param: [id, cuser]
+     * @return: com.suixingpay.datas.manager.web.message.ResponseMessage
+     */
     @PutMapping("/{id}")
     @ApiOperation(value = "修改", notes = "修改")
     public ResponseMessage update(@PathVariable("id") Long id, @RequestBody CUser cuser) {

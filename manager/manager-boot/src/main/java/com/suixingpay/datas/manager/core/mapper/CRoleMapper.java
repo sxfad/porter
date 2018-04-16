@@ -15,4 +15,6 @@ import java.util.List;
 public interface CRoleMapper {
 
     List<CRole> findAll();
+
+    List<CRole> findList();
 }

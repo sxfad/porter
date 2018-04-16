@@ -28,7 +28,7 @@ public interface CUserMapper {
      *
      * @param cuser
      */
-    Integer update(@Param("id") Long id, @Param("cuser") CUser cuser);
+    Integer updateSelective(@Param("id") Long id, @Param("cuser") CUser cuser);
 
     /**
      * 刪除

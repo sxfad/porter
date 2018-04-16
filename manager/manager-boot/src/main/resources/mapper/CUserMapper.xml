@@ -26,16 +26,16 @@
         nickname,
         email,
         mobile,
-        state,
-        remark
+        depart_ment,
+        role_code
         ) values (
         #{loginname},
         #{loginpw},
         #{nickname},
         #{email},
         #{mobile},
-        #{state},
-        #{remark}
+        #{departMent},
+        #{roleCode}
         )
     </insert>
 
@@ -167,6 +167,12 @@
             </if>
             <if test="cuser.mobile != null">
                 mobile = #{cuser.mobile,jdbcType=VARCHAR},
+            </if>
+            <if test="cuser.departMent != null">
+                depart_ment = #{cuser.departMent,jdbcType=VARCHAR},
+            </if>
+            <if test="cuser.roleCode != null">
+                role_code = #{cuser.roleCode,jdbcType=VARCHAR},
             </if>
             <if test="cuser.state != null">
                 state = #{cuser.state,jdbcType=INTEGER},

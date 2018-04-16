@@ -17,4 +17,12 @@
         FROM c_role
         WHERE iscancel = 0
     </select>
+
+    <!-- 用户新增角色接口 -->
+    <select id="findList" resultType="com.suixingpay.datas.manager.core.entity.CRole">
+        SELECT id, role_code AS roleCode, role_name AS roleName, sort, iscancel, type, state
+        FROM c_role
+        WHERE iscancel = 0
+        ORDER BY sort asc
+    </select>
 </mapper>
