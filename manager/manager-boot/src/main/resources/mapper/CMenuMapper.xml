@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.suixingpay.datas.manager.core.mapper.CMenuMapper">
-    <!-- 通用查询映射结果 
+    <!-- 通用查询映射结果
     <resultMap id="BaseResultMap" type="com.suixingpay.datas.manager.core.entity.CMenu">
         <result column="id" property="id" />
         <result column="code" property="code" />
@@ -23,18 +23,74 @@
         select id, code, fathercode, name, menu_url AS menuUrl, level, sort, iscancel, type, state, remark from c_menu
     </sql>-->
 
+    <!-- 新增 -->
+    <insert id="insert">
+        insert into c_menu (
+          code,
+          fathercode,
+          name,
+          menu_url,
+          menu_image,
+          level,
+          sort,
+          isleaf
+        ) VALUES (
+          #{code},
+          #{fathercode},
+          #{name},
+          #{menuUrl},
+          #{menuImage},
+          #{level},
+          #{sort},
+          #{isleaf}
+        )
+    </insert>
+
+    <!-- 修改 -->
+    <update id="update">
+        update c_menu
+        SET
+          code = #{cMenu.code},
+          fathercode = #{cMenu.fathercode},
+          name = #{cMenu.name},
+          menu_url = #{cMenu.menuUrl},
+          menu_image = #{cMenu.menuImage},
+          level = #{cMenu.level},
+          sort = #{cMenu.sort},
+          isleaf = #{cMenu.isleaf}
+        where id = #{id}
+    </update>
+
+    <!-- 逻辑删除 -->
+    <update id="delete">
+        update c_menu
+        SET iscancel = 1
+        WHERE id = #{id}
+    </update>
+
     <!-- 根据fatherCode查询 -->
-    <select id="findByFatherCodef" resultType="com.suixingpay.datas.manager.core.entity.CMenu">
+    <select id="findByFatherCode" resultType="com.suixingpay.datas.manager.core.entity.CMenu">
         select id, code, fathercode, name, menu_url AS menuUrl,
         menu_image AS menuImage, level, sort, iscancel, type, isleaf
         from c_menu
-        WHERE fathercode = #{fatherCode}
+        WHERE fathercode = #{fatherCode} and
+        iscancel = 0
         order by sort asc
     </select>
 
+    <!-- 查询全部 -->
     <select id="findAll" resultType="com.suixingpay.datas.manager.core.entity.CMenu">
         select id, code, fathercode, name, menu_url AS menuUrl,
         menu_image AS menuImage, level, sort, iscancel, type, isleaf
         from c_menu
+        WHERE iscancel = 0
+    </select>
+
+    <!-- 根据主键查询 -->
+    <select id="findById" resultType="com.suixingpay.datas.manager.core.entity.CMenu">
+        select id, code, fathercode, name, menu_url AS menuUrl,
+        menu_image AS menuImage, level, sort, iscancel, type, isleaf
+        from c_menu
+        WHERE id = #{id}
     </select>
 </mapper>

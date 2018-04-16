@@ -2,6 +2,8 @@ package com.suixingpay.datas.manager.service;
 
 import com.suixingpay.datas.manager.core.entity.CMenu;
 
+import java.util.List;
+
 /**
  * 菜单目录表 服务接口类
  *
@@ -14,4 +16,15 @@ public interface CMenuService {
 
     CMenu menuTree(String fatherCode, String roleCode);
 
+    CMenu findAll();
+
+    Integer insert(CMenu cMenu);
+
+    List<CMenu> findByFatherCode(String fatherCode);
+
+    Integer update(Long id, CMenu cMenu);
+
+    CMenu findById(Long id);
+
+    Integer delete(Long id);
 }
