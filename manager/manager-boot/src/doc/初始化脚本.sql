@@ -179,6 +179,13 @@ CREATE TABLE `job_tasks` (
   `remark` VARCHAR(100) DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`)
 ) ENGINE=INNODB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8 COMMENT='同步任务表';
+-- 任务节点分发表
+CREATE TABLE `job_task_nodes` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `job_task_id` bigint(20) NOT NULL COMMENT '任务id',
+  `node_id` varchar(100) NOT NULL COMMENT '节点id',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='任务节点分发表'
 -- 任务数据表对照关系表
 DROP TABLE IF EXISTS `job_tasks_table`;
 CREATE TABLE `job_tasks_table` (
