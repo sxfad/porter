@@ -53,7 +53,7 @@ public class LoginController {
             String token = TokenUtil.sign(loginUserToken);
             Map<String, Object> map = new HashMap<>();
             map.put("token", token);
-            map.put("CMenu", MenuUtils.ROLE_MENU.get(loginUserToken.getRoleCode()));
+//            map.put("CMenu", MenuUtils.ROLE_MENU.get(loginUserToken.getRoleCode()));
             log.info("token=[{}]", token);
             return ResponseMessage.ok(map);
         }
