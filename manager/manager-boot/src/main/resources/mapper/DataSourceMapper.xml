@@ -89,6 +89,9 @@
             <if test="endTime != null and endTime != ''">
                 and create_time &lt; #{endTime}
             </if>
+            <if test="dataType != null and dataType != ''">
+                and data_type = #{dataType}
+            </if>
         </where>
     </select>
 
@@ -106,6 +109,9 @@
             </if>
             <if test="endTime != null and endTime != ''">
                 and create_time &lt; #{endTime}
+            </if>
+            <if test="dataType != null and dataType != ''">
+                and data_type = #{dataType}
             </if>
             and iscancel = 0
         </where>

@@ -52,7 +52,8 @@ public interface DataSourceMapper {
      * @return
      */
     List<DataSource> page(@Param("page") Page<DataSource> page, @Param("state") Integer state,
-            @Param("name") String name, @Param("beginTime") String beginTime, @Param("endTime") String endTime);
+                          @Param("name") String name, @Param("beginTime") String beginTime,
+                          @Param("endTime") String endTime, @Param("dataType") String dataType);
 
     /**
      * 分頁All
@@ -60,7 +61,7 @@ public interface DataSourceMapper {
      * @return
      */
     Integer pageAll(@Param("state") Integer state, @Param("name") String name, @Param("beginTime") String beginTime,
-            @Param("endTime") String endTime);
+                    @Param("endTime") String endTime, @Param("dataType") String dataType);
 
     /**
      * 校验新增

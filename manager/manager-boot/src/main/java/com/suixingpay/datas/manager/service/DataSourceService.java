@@ -21,7 +21,7 @@ public interface DataSourceService {
 
     DataSource selectById(Long id);
 
-    Page<DataSource> page(Page<DataSource> page, String name, String beginTime, String endTime);
+    Page<DataSource> page(Page<DataSource> page, String name, String beginTime, String endTime, String dataType);
 
     Page<DataSource> findByTypePage(Page<DataSource> page);
 }

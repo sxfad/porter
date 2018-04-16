@@ -68,11 +68,11 @@ public class DataSourceServiceImpl implements DataSourceService {
     }
 
     @Override
-    public Page<DataSource> page(Page<DataSource> page, String name, String beginTime, String endTime) {
-        Integer total = dataSourceMapper.pageAll(1, name, beginTime, endTime);
+    public Page<DataSource> page(Page<DataSource> page, String name, String beginTime, String endTime, String dataType) {
+        Integer total = dataSourceMapper.pageAll(1, name, beginTime, endTime, dataType);
         if (total > 0) {
             page.setTotalItems(total);
-            page.setResult(dataSourceMapper.page(page, 1, name, beginTime, endTime));
+            page.setResult(dataSourceMapper.page(page, 1, name, beginTime, endTime, dataType));
         }
         return page;
     }

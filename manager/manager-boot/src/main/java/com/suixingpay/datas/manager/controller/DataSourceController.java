@@ -58,7 +58,7 @@ public class DataSourceController {
      * @author FuZizheng
      * @date 2018/3/13 下午3:00
      * @param: [id,
-     *             dataSource]
+     * dataSource]
      * @return: com.suixingpay.datas.manager.web.message.ResponseMessage
      */
     @PutMapping("/{id}")
@@ -94,7 +94,7 @@ public class DataSourceController {
     @GetMapping("/findByType")
     @ApiOperation(value = "消费数据来源", notes = "消费数据来源")
     public ResponseMessage findByType(@RequestParam(value = "pageNo", required = true) Integer pageNo,
-            @RequestParam(value = "pageSize", required = true) Integer pageSize) {
+                                      @RequestParam(value = "pageSize", required = true) Integer pageSize) {
         Page<DataSource> page = dataSourceService.findByTypePage(new Page<DataSource>(pageNo, pageSize));
         return ok(page);
     }
@@ -120,19 +120,21 @@ public class DataSourceController {
      * @author FuZizheng
      * @date 2018/3/13 下午1:51
      * @param: [pageNo,
-     *             pageSize]
+     * pageSize]
      * @return: com.suixingpay.datas.manager.web.message.ResponseMessage
      */
     @GetMapping
     @ApiOperation(value = "查询列表", notes = "查询列表")
     public ResponseMessage page(@RequestParam(value = "pageNo", required = true) Integer pageNo,
-            @RequestParam(value = "pageSize", required = true) Integer pageSize,
-            @RequestParam(value = "name", required = false) String name,
-            @RequestParam(value = "beginTime", required = false) String beginTime,
-            @RequestParam(value = "endTime", required = false) String endTime) {
+                                @RequestParam(value = "pageSize", required = true) Integer pageSize,
+                                @RequestParam(value = "name", required = false) String name,
+                                @RequestParam(value = "beginTime", required = false) String beginTime,
+                                @RequestParam(value = "endTime", required = false) String endTime,
+                                @RequestParam(value = "dataType", required = false) String dataType) {
         Page<DataSource> page = dataSourceService.page(new Page<DataSource>(pageNo, pageSize), name, beginTime,
-                endTime);
+                endTime, dataType);
         return ok(page);
     }
+
 
 }
