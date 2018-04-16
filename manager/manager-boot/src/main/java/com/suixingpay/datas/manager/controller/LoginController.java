@@ -51,8 +51,9 @@ public class LoginController {
             loginUserToken.setPasswd(cuser.getLoginpw());
             loginUserToken.setRoleCode(cuser.getRoleCode());
             String token = TokenUtil.sign(loginUserToken);
-            Map<String, String> map = new HashMap<>();
+            Map<String, Object> map = new HashMap<>();
             map.put("token", token);
+            map.put("CMenu", MenuUtils.ROLE_MENU.get(loginUserToken.getRoleCode()));
             log.info("token=[{}]", token);
             return ResponseMessage.ok(map);
         }
