@@ -15,9 +15,17 @@ import java.util.List;
  */
 public interface CMenuMapper {
 
-    List<CMenu> findByFatherCodef(String fatherCode);
+    List<CMenu> findByFatherCode(String fatherCode);
 
     List<CMenu> findAll();
 
     List<CMenu> findByFatherCodeAndRoleCode(@Param("fatherCode") String fatherCode, @Param("roleCode") String roleCode);
+
+    Integer insert(CMenu cMenu);
+
+    Integer update(@Param("id") Long id, @Param("cMenu") CMenu cMenu);
+
+    CMenu findById(Long id);
+
+    Integer delete(Long id);
 }
