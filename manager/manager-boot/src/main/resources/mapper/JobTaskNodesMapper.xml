@@ -24,6 +24,20 @@
         )
     </insert>
 
+    <!-- 批量节点插入 -->
+    <insert id="insertList">
+        insert into job_task_nodes(
+                job_task_id,
+                node_id
+        ) values 
+        <foreach collection="nodeIds" index="index" item="nodeId" separator=",">
+            (
+            #{jobTaskId},
+            #{nodeId}
+            )
+        </foreach>
+    </insert>
+
     <!-- 修改 -->
     <update id="update">
         update job_task_nodes
@@ -35,13 +49,13 @@
 
     <!-- 刪除 -->
     <delete id="delete">
-        delete from job_task_nodes where id = #{id}
+        delete from job_task_nodes where job_task_id = #{jobTaskId}
     </delete>
 
     <!-- 根据主鍵查找 -->
     <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.JobTaskNodes">
         select id, job_task_id AS jobTaskId, node_id AS nodeId from job_task_nodes
-        where id = #{id}
+        where job_task_id = #{jobTaskId}
     </select>
 
     <!-- 分页All -->

@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.suixingpay.datas.manager.service.JobTasksFieldService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +27,7 @@ import com.suixingpay.datas.manager.core.entity.CUser;
 import com.suixingpay.datas.manager.core.entity.DataSource;
 import com.suixingpay.datas.manager.core.entity.DataSourcePlugin;
 import com.suixingpay.datas.manager.core.entity.DataTable;
+import com.suixingpay.datas.manager.core.entity.JobTaskNodes;
 import com.suixingpay.datas.manager.core.entity.JobTasks;
 import com.suixingpay.datas.manager.core.entity.JobTasksField;
 import com.suixingpay.datas.manager.core.entity.JobTasksTable;
@@ -38,6 +38,8 @@ import com.suixingpay.datas.manager.service.CUserService;
 import com.suixingpay.datas.manager.service.DataSourceService;
 import com.suixingpay.datas.manager.service.DataTableService;
 import com.suixingpay.datas.manager.service.DbSelectService;
+import com.suixingpay.datas.manager.service.JobTaskNodesService;
+import com.suixingpay.datas.manager.service.JobTasksFieldService;
 import com.suixingpay.datas.manager.service.JobTasksService;
 import com.suixingpay.datas.manager.service.JobTasksTableService;
 import com.suixingpay.datas.manager.service.JobTasksUserService;
@@ -75,6 +77,9 @@ public class JobTasksServiceImpl implements JobTasksService {
     @Autowired
     private CUserService cUserService;
 
+    @Autowired
+    private JobTaskNodesService jobTaskNodesService;
+
     @Override
     @Transactional
     public Integer insert(JobTasks jobTasks) {
@@ -84,6 +89,8 @@ public class JobTasksServiceImpl implements JobTasksService {
         jobTasksUserService.insertList(jobTasks);
         // 新增 JobTasksTable
         jobTasksTableService.insertList(jobTasks);
+        // 新增 jobtaskNode
+        jobTaskNodesService.insertList(jobTasks);
         return number;
     }
 
@@ -94,12 +101,15 @@ public class JobTasksServiceImpl implements JobTasksService {
         jobTasksUserService.delete(jobTasks.getId());
         jobTasksTableService.delete(jobTasks.getId());
         jobTasksFieldService.delete(jobTasks.getId());
+        jobTaskNodesService.delete(jobTasks.getId());
         // 修改主表
         Integer number = jobTasksMapper.update(jobTasks);
         // 新增 JobTasksUser
         jobTasksUserService.insertList(jobTasks);
         // 新增 JobTasksTable
         jobTasksTableService.insertList(jobTasks);
+        // 新增 jobtaskNode
+        jobTaskNodesService.insertList(jobTasks);
         return number;
     }
 
@@ -128,7 +138,11 @@ public class JobTasksServiceImpl implements JobTasksService {
             }
             jobTasks.setUserIds(userIds);
         }
-
+        // 查询jobtasknodeid 详情
+        List<JobTaskNodes> nodes = jobTaskNodesService.selectById(id);
+        if (nodes != null && nodes.size() > 0) {
+            jobTasks.setNodes(nodes);
+        }
         return jobTasks;
     }
 

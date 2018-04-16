@@ -30,10 +30,10 @@
         job_task_id,
         user_id
         ) values
-        <foreach collection="userIds" index="index" item="userIds" separator=",">
+        <foreach collection="userIds" index="index" item="userId" separator=",">
             (
             #{jobTaskId},
-            #{userIds}
+            #{userId}
             )
         </foreach>
     </insert>

@@ -39,15 +39,15 @@ public interface JobTaskNodesMapper {
      * @param id
      * @return
      */
-    public Integer delete(Long id);
+    public Integer delete(Long jobTaskId);
 
     /**
-     * 根據主鍵id查找數據
+     * 根據jobtaskid查找數據
      *
      * @param id
      * @return
      */
-    public JobTaskNodes selectById(Long id);
+    public List<JobTaskNodes> selectById(Long jobTaskId);
 
     /**
      * 分頁
@@ -63,4 +63,10 @@ public interface JobTaskNodesMapper {
      */
     public Integer pageAll(@Param("state") Integer state);
 
+    /**
+     * 保存
+     * @param jobTaskId
+     * @param userIds
+     */
+    public void insertList(@Param("jobTaskId") Long jobTaskId, @Param("nodeIds") List<String> nodeIds);
 }

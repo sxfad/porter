@@ -3,7 +3,10 @@
  */
 package com.suixingpay.datas.manager.service;
 
+import java.util.List;
+
 import com.suixingpay.datas.manager.core.entity.JobTaskNodes;
+import com.suixingpay.datas.manager.core.entity.JobTasks;
 import com.suixingpay.datas.manager.web.page.Page;
 
 /**
@@ -17,11 +20,13 @@ public interface JobTaskNodesService {
 
     Integer insert(JobTaskNodes jobTaskNodes);
 
+    void insertList(JobTasks jobTasks);
+
     Integer update(Long id, JobTaskNodes jobTaskNodes);
 
-    Integer delete(Long id);
+    Integer delete(Long jobTaskId);
 
-    JobTaskNodes selectById(Long id);
+    List<JobTaskNodes> selectById(Long jobTaskId);
 
     Page<JobTaskNodes> page(Page<JobTaskNodes> page);
 

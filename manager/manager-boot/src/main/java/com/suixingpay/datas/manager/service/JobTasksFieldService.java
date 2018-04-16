@@ -12,7 +12,7 @@ public interface JobTasksFieldService {
 
     Integer update(Long id, JobTasksField jobTasksField);
 
-    Integer delete(Long id);
+    Integer delete(Long jobTaskId);
 
     JobTasksField selectById(Long id);
 

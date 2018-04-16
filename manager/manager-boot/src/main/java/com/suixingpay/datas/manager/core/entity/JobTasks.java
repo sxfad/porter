@@ -126,6 +126,21 @@ public class JobTasks implements java.io.Serializable {
     private String remark;
 
     /**
+     * 分发节点
+     */
+    private List<JobTaskNodes> nodes = new ArrayList<>();
+
+    /**
+     * 分发节点id
+     */
+    private List<String> nodeIds = new ArrayList<>();
+
+    /**
+     * 分发节点id字符串-,隔开
+     */
+    private String nodesString;
+
+    /**
      * 告警人id列表.
      */
     private List<Long> userIds = new ArrayList<>();
@@ -433,9 +448,8 @@ public class JobTasks implements java.io.Serializable {
                 linkSource.append(tables.get(i).getSourceTableName());
                 linkTarget.append(tables.get(i).getTargetTableName());
             } else {
-                linkTarget.append("," + tables.get(i).getTargetTableName());
-                linkSource.append("," + tables.get(i).getSourceTableName());
-
+                linkTarget.append(",").append(tables.get(i).getTargetTableName());
+                linkSource.append(",").append(tables.get(i).getSourceTableName());
             }
         }
 
@@ -522,5 +536,41 @@ public class JobTasks implements java.io.Serializable {
 
     public void setTargetLoadAdtName(String targetLoadAdtName) {
         this.targetLoadAdtName = targetLoadAdtName;
+    }
+
+    public List<JobTaskNodes> getNodes() {
+        return nodes;
+    }
+
+    public void setNodes(List<JobTaskNodes> nodes) {
+        List<String> nodesIds = new ArrayList<>();
+        StringBuffer nodesString = new StringBuffer();
+        for (int i = 0; i < nodes.size(); i++) {
+            nodesIds.add(nodes.get(i).getNodeId());
+            if (i == 0) {
+                nodesString.append(nodes.get(i).getNodeId());
+            } else {
+                nodesString.append(",").append(nodes.get(i).getNodeId());
+            }
+        }
+        this.nodeIds = nodesIds;
+        this.nodesString = nodesString.toString();
+        this.nodes = nodes;
+    }
+
+    public String getNodesString() {
+        return nodesString;
+    }
+
+    public void setNodesString(String nodesString) {
+        this.nodesString = nodesString;
+    }
+
+    public List<String> getNodeIds() {
+        return nodeIds;
+    }
+
+    public void setNodeIds(List<String> nodeIds) {
+        this.nodeIds = nodeIds;
     }
 }
