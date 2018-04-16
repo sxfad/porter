@@ -60,7 +60,7 @@ public class MrJobTasksScheduleController {
      */
     @GetMapping
     @ApiOperation(value = "查询列表", notes = "查询列表")
-    public ResponseMessage list(@RequestParam(value = "jobId", required = true) String jobId,
+    public ResponseMessage list(@RequestParam(value = "jobId", required = false) String jobId,
             @RequestParam(value = "heartBeatBeginDate", required = false) String heartBeatBeginDate,
             @RequestParam(value = "heartBeatEndDate", required = false) String heartBeatEndDate) {
         List<MrJobTasksSchedule> list = mrJobTasksScheduleService.list(jobId, heartBeatBeginDate, heartBeatEndDate);
