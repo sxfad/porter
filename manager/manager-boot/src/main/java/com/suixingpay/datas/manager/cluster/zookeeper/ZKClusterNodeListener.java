@@ -8,7 +8,6 @@
  */
 package com.suixingpay.datas.manager.cluster.zookeeper;
 
-import java.util.Date;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -56,12 +55,13 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements N
         ZookeeperClusterEvent zkEvent = (ZookeeperClusterEvent) event;
         LOGGER.debug("NodeListener:{},{},{}", zkEvent.getPath(), zkEvent.getData(), zkEvent.getEventType());
         // 当前时间
-        String heartBeatTime = DateFormatUtils.formatDate(DateFormatUtils.PATTERN_DEFAULT, new Date());
+        //String heartBeatTime = DateFormatUtils.formatDate(DateFormatUtils.PATTERN_DEFAULT, new Date());
         NodesService nodesService = ApplicationContextUtil.getBean(NodesServiceImpl.class);
         // 节点上下线
         if (NODE_LOCK_PATTERN.matcher(zkEvent.getPath()).matches()) {
             String nodeInfoPath = zkEvent.getPath().replace("/lock", "/stat");
             DNode node = getDNode(nodeInfoPath);
+            String heartBeatTime = DateFormatUtils.formatDate(DateFormatUtils.PATTERN_DEFAULT, node.getHeartbeat());
             if (zkEvent.isOnline()) { // 节点上线
                 LOGGER.info("节点[{}]上线", node.getNodeId());
                 // 服务启动，在线通知
@@ -85,6 +85,7 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements N
         // 节点状态更新
         if (NODE_STAT_PATTERN.matcher(zkEvent.getPath()).matches()) {
             DNode node = getDNode(zkEvent.getPath());
+            String heartBeatTime = DateFormatUtils.formatDate(DateFormatUtils.PATTERN_DEFAULT, node.getHeartbeat());
             LOGGER.info("节点[{}]状态上报", node.getNodeId());
             System.err.println("2-DNode...." + node.getNodeId() + "..." + JSON.toJSONString(node));
             // do something 心跳时间记录 并且表示节点在线
@@ -124,7 +125,6 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements N
         String nodePath = ZK_PATH + "/" + command.getConfig().getNodeId();
         String baseOrderPath = nodePath + "/order";
         String orderPath = baseOrderPath + "/" + UUID.randomUUID().toString();
-
         client.createWhenNotExists(nodePath, false, true, null);
         client.createWhenNotExists(baseOrderPath, false, true, null);
         client.changeData(orderPath, false, false, command.render());
