@@ -48,15 +48,18 @@
         nickname = #{cuser.nickname},
         email = #{cuser.email},
         mobile = #{cuser.mobile},
-        state = #{cuser.state},
-        remark = #{cuser.remark}
+        depart_ment = #{cuser.departMent},
+        role_code = #{cuser.roleCode}
         where id = #{id}
     </update>
 
     <!-- 刪除 -->
-    <delete id="delete">
-        delete from c_user where id = #{id}
-    </delete>
+    <update id="delete">
+        update c_user
+        set
+        state = -1
+        where id = #{id}
+    </update>
 
     <!-- 根据主鍵查找 -->
     <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.CUser">
@@ -89,13 +92,13 @@
     <!-- 分页All -->
     <select id="pageAll" resultType="java.lang.Integer">
         select count(id) from c_user
-        where 1=1
+        where state = 1
     </select>
 
     <!-- 分页 -->
     <select id="page" resultType="com.suixingpay.datas.manager.core.entity.CUser">
         select id, loginname, loginpw, nickname, email, mobile, state, remark, role_code AS roleCode, depart_ment AS departMent from c_user
-        where 1=1 limit #{page.offset},#{page.pageSize}
+        where state = 1 limit #{page.offset},#{page.pageSize}
     </select>
 
     <!-- 验证邮箱或登录名是否重复 -->
@@ -186,12 +189,6 @@
             </if>
             <if test="cuser.roleCode != null">
                 role_code = #{cuser.roleCode,jdbcType=VARCHAR},
-            </if>
-            <if test="cuser.state != null">
-                state = #{cuser.state,jdbcType=INTEGER},
-            </if>
-            <if test="cuser.remark != null">
-                remark = #{cuser.remark,jdbcType=VARCHAR},
             </if>
         </set>
         where id = #{id,jdbcType=BIGINT}

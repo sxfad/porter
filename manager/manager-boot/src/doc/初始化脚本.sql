@@ -391,7 +391,22 @@ INSERT  INTO `c_role`(`id`,`role_code`,`role_name`,`sort`,`iscancel`,`type`,`sta
 (3,'B0001','监控观察者',2,0,1,1,'观察者'),
 (4,'C0001','访客',4,0,1,1,'访客');
 -- 初始化菜单
-
+BEGIN;
+INSERT INTO `c_menu` VALUES (1, 'J001', '-1', '同步管理', '#', 'sync', 1, 1, 0, 0, 1, 1, NULL);
+INSERT INTO `c_menu` VALUES (2, 'J001001', 'J001', '任务管理', '/synchTask', 'fa-tasks', 2, 1, 1, 0, 1, 1, NULL);
+INSERT INTO `c_menu` VALUES (3, 'N001', '-1', '集群管理', '#', 'fa-cubes', 1, 2, 0, 0, 1, 1, NULL);
+INSERT INTO `c_menu` VALUES (4, 'N001001', 'N001', '同步节点管理', '/nodeCluster', 'scan', 2, 1, 1, 0, 1, 1, NULL);
+INSERT INTO `c_menu` VALUES (5, 'B001', '-1', '配置管理', '#', 'fa-gears', 1, 3, 0, 0, 1, 1, NULL);
+INSERT INTO `c_menu` VALUES (6, 'B001001', 'B001', '数据源配置', '/dataSource', 'fa-sliders', 2, 1, 1, 0, 1, 1, NULL);
+INSERT INTO `c_menu` VALUES (7, 'B001002', 'B001', '数据表配置', '/dataTable', 'api', 2, 2, 1, 0, 1, 1, NULL);
+INSERT INTO `c_menu` VALUES (8, 'B001003', 'B001', '全局配置', '/globalConfig', 'fa-database', 2, 3, 1, 0, 1, 1, NULL);
+INSERT INTO `c_menu` VALUES (9, 'M001', '-1', '监控管理', '#', 'line-chart', 1, 4, 0, 0, 1, 1, NULL);
+INSERT INTO `c_menu` VALUES (10, 'M001001', 'M001', '运行日志', '/logMonitor', 'calendar', 2, 1, 1, 0, 1, 1, NULL);
+INSERT INTO `c_menu` VALUES (11, 'M001002', 'M001', '任务监控', '/taskMonitor', 'fa-dashboard', 2, 2, 1, 0, 1, 1, NULL);
+INSERT INTO `c_menu` VALUES (12, 'M001003', 'M001', '节点监控', '/nodeMonitor', 'dot-chart', 2, 3, 1, 0, 1, 1, NULL);
+INSERT INTO `c_menu` VALUES (13, 'C001', '-1', '系统设置', '#', 'setting', 1, 5, 0, 0, 1, 1, NULL);
+INSERT INTO `c_menu` VALUES (14, 'C001001', 'C001', '用户管理', '/user', 'fa-user-md', 2, 1, 1, 0, 1, 1, NULL);
+COMMIT;
 -- 初始化菜单权限
 
 -- 初始化告警数据字典

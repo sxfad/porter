@@ -101,10 +101,18 @@ public class CUserController {
         return ok(page);
     }
 
+    /**
+     * 逻辑删除
+     *
+     * @author FuZizheng
+     * @date 2018/4/17 下午5:06
+     * @param: [id]
+     * @return: com.suixingpay.datas.manager.web.message.ResponseMessage
+     */
     @DeleteMapping("/{id}")
-    @ApiOperation(value = "删除", notes = "删除")
+    @ApiOperation(value = "逻辑删除", notes = "逻辑删除")
     public ResponseMessage delete(@PathVariable("id") Long id) {
-        //cuserService.delete(id);
+        cuserService.delete(id);
         return ok();
     }
 
