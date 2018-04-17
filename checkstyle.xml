@@ -26,8 +26,9 @@
     <module name="TreeWalker">
 
         <!-- Checks for imports    -->
-        <!-- 必须导入类的完整路径，即不能使用*导入所需的类 -->
+        <!-- 必须导入类的完整路径，即不能使用*导入所需的类
         <module name="AvoidStarImport"/>
+	-->
 
         <!-- 检查是否从非法的包中导入了类 illegalPkgs: 定义非法的包名称
         <module name="IllegalImport"/> 
