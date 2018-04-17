@@ -37,4 +37,9 @@ public class ExceptionCode {
      */
     public static final int EXCEPTION_LOGIN = 901;
 
+    /**
+     * 数据源异常
+     */
+    public static final int EXCEPTION_DATASOURCE = 902;
+
 }

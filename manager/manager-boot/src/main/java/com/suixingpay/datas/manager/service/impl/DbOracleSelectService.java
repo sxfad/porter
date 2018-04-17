@@ -5,6 +5,8 @@ package com.suixingpay.datas.manager.service.impl;
 
 import com.suixingpay.datas.manager.core.datasource.DataSourceUtil;
 import com.suixingpay.datas.manager.core.dto.JDBCVo;
+import com.suixingpay.datas.manager.exception.BaseException;
+import com.suixingpay.datas.manager.exception.ExceptionCode;
 import com.suixingpay.datas.manager.service.DbSelectService;
 import com.suixingpay.datas.manager.web.page.Page;
 import org.springframework.stereotype.Service;
@@ -39,6 +41,7 @@ public class DbOracleSelectService implements DbSelectService {
             }
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
+            throw new BaseException(String.valueOf(ExceptionCode.EXCEPTION_DATASOURCE), "数据源连接错误,请获取数据库权限、网络权限");
         } finally {
             DataSourceUtil.closed(connection, preparedStatement, results);
         }
@@ -70,6 +73,7 @@ public class DbOracleSelectService implements DbSelectService {
             }
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
+            throw new BaseException(String.valueOf(ExceptionCode.EXCEPTION_DATASOURCE), "数据源连接错误,请获取数据库权限、网络权限");
         } finally {
             DataSourceUtil.closed(connection, preparedStatement, results);
         }
@@ -109,6 +113,7 @@ public class DbOracleSelectService implements DbSelectService {
             }
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
+            throw new BaseException(String.valueOf(ExceptionCode.EXCEPTION_DATASOURCE), "数据源连接错误,请获取数据库权限、网络权限");
         } finally {
             DataSourceUtil.closed(connection, preparedStatement, results);
         }
@@ -132,6 +137,7 @@ public class DbOracleSelectService implements DbSelectService {
             }
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
+            throw new BaseException(String.valueOf(ExceptionCode.EXCEPTION_DATASOURCE), "数据源连接错误,请获取数据库权限、网络权限");
         } finally {
             DataSourceUtil.closed(connection, preparedStatement, results);
         }
