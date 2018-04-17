@@ -38,14 +38,18 @@ public class TransformJob extends AbstractStageJob {
     private final ExecutorService executorService;
     private final Map<String, Future<ETLBucket>> carrier = new ConcurrentHashMap<>();
     private final TaskWork work;
+
+    //工作线程数量
+    private static final int JOB_THREAD_SIZE = 1;
+
     public TransformJob(TaskWork work) {
         super(work.getBasicThreadName());
         this.work = work;
         transformFactory = NodeContext.INSTANCE.getBean(TransformFactory.class);
         //线程阻塞时，在调用者线程中执行
-        executorService = new ThreadPoolExecutor(LOGIC_THREAD_SIZE, LOGIC_THREAD_SIZE * 2,
+        executorService = new ThreadPoolExecutor(JOB_THREAD_SIZE, JOB_THREAD_SIZE * 3,
                 0L, TimeUnit.MILLISECONDS,
-                new LinkedBlockingQueue<Runnable>(LOGIC_THREAD_SIZE * 4),
+                new LinkedBlockingQueue<Runnable>(JOB_THREAD_SIZE * 5),
                 getThreadFactory(), new ThreadPoolExecutor.CallerRunsPolicy());
     }
 
