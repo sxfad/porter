@@ -31,6 +31,7 @@ public class TableMapperConfig {
         this.schema = schema;
         this.table = table;
         this.column = column;
+        this.ignoreTargetCase = false;
     }
     
     @Getter
