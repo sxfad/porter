@@ -51,10 +51,10 @@ public class KafkaClientTest {
         KAFKA_CLIENT.fetch(new ConsumeClient.FetchCallback<Object, Object>() {
             @Override
             public <F, O> F accept(O o) {
-                ConsumerRecord<String,String> record = (ConsumerRecord<String, String>) o;
+                ConsumerRecord<String, String> record = (ConsumerRecord<String, String>) o;
                 System.out.println("----------" + record.value());
                 try {
-                    KAFKA_CLIENT.commitPosition(new KafkaClient.KafkaPosition(record.topic(),record.offset() , record.partition()));
+                    KAFKA_CLIENT.commitPosition(new KafkaClient.KafkaPosition(record.topic(), record.offset(), record.partition()));
                 } catch (TaskStopTriggerException e) {
                     e.printStackTrace();
                 }

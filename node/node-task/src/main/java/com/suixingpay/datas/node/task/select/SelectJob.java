@@ -30,9 +30,11 @@ import java.util.List;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月24日 11:15
  */
 public class SelectJob extends AbstractStageJob {
-    private static final int PULL_BATCH_SIZE = 1000;
+    //已无效,实际根据任务配置设置单次处理数据数量
+    private static final int PULL_BATCH_SIZE = 100;
+
     //只需要保证select出来的数据不致使ExtractJob的所有消费线程饥饿即可
-    private static final int BUFFER_SIZE = PULL_BATCH_SIZE * 10;
+    private static final int BUFFER_SIZE = 100;
 
     private final DataConsumer consumer;
     private final TaskWork work;

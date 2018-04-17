@@ -34,7 +34,10 @@ import java.util.concurrent.TimeUnit;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月24日 11:20
  */
 public class ExtractJob extends AbstractStageJob {
-    private static final int BUFFER_SIZE = LOGIC_THREAD_SIZE * 10;
+    //工作线程数量
+    private static final int JOB_THREAD_SIZE = 2;
+
+    private static final int BUFFER_SIZE = JOB_THREAD_SIZE * 10;
     private final TaskWork work;
     private final ExecutorService executorService;
     private final DataCarrier<ETLBucket> carrier;
@@ -48,9 +51,9 @@ public class ExtractJob extends AbstractStageJob {
         metadata = new ExtractMetadata(work.getDataConsumer().getExcludes(), work.getDataConsumer().getIncludes(),
                 work.getDataConsumer().getEventProcessor());
         //线程阻塞时，在调用者线程中执行
-        executorService = new ThreadPoolExecutor(LOGIC_THREAD_SIZE, LOGIC_THREAD_SIZE,
+        executorService = new ThreadPoolExecutor(JOB_THREAD_SIZE, JOB_THREAD_SIZE * 3,
                 0L, TimeUnit.MILLISECONDS,
-                new LinkedBlockingQueue<Runnable>(LOGIC_THREAD_SIZE * 2),
+                new LinkedBlockingQueue<Runnable>(JOB_THREAD_SIZE * 5),
                 getThreadFactory(), new ThreadPoolExecutor.CallerRunsPolicy());
         carrier = NodeContext.INSTANCE.getBean(DataCarrierFactory.class).newDataCarrier(BUFFER_SIZE, 1);
         orderedBucket = NodeContext.INSTANCE.getBean(DataCarrierFactory.class).newDataCarrier(BUFFER_SIZE, 1);

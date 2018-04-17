@@ -41,7 +41,7 @@ public class KafkaClient extends AbstractClient<KafkaConfig> implements ConsumeC
     private Consumer<String, String> consumer;
     private CountDownLatch canFetch = new CountDownLatch(1);
 
-    private Map<String, AtomicReference<KafkaPosition>> lazyCommitOffsetMap = new ConcurrentHashMap<>();
+    private final Map<String, AtomicReference<KafkaPosition>> lazyCommitOffsetMap = new ConcurrentHashMap<>();
     private long pollTimeOut;
     public KafkaClient(KafkaConfig config) {
         super(config);
@@ -240,11 +240,12 @@ public class KafkaClient extends AbstractClient<KafkaConfig> implements ConsumeC
     private void commitLazyPosition() {
         //每次查询数据前都要提交
         lazyCommitOffsetMap.values().stream().filter(v -> null != v.get()).forEach(v -> {
-            KafkaPosition position = v.get();
+            KafkaPosition position = null;
+            synchronized (v) {
+                position = v.get();
+                v.set(null);
+            }
             if (null != position) {
-                synchronized (v) {
-                    v.set(null);
-                }
                 consumer.commitSync(Collections.singletonMap(new TopicPartition(position.topic, position.partition),
                         new OffsetAndMetadata(position.offset)));
             }
