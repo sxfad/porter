@@ -386,7 +386,7 @@ INSERT  INTO `c_user`(`id`,`loginname`,`loginpw`,`nickname`,`email`,`mobile`,`de
 (1,'admin','admin','21232f297a57a5a743894a0e4a801fc3','fu_zz@suixingpay.com','13844836009','码农','A0001',1,'');
 -- 初始化角色
 INSERT  INTO `c_role`(`id`,`role_code`,`role_name`,`sort`,`iscancel`,`type`,`state`,`remark`) VALUES 
-(1,'A0001','超级管理员',0,0,1,1,'超级管理员角色组'),
+(1,'A0001','超级管理员',0,0,1,1,'超级管理员'),
 (2,'A0002','普通管理员',1,0,1,1,'普通管理员'),
 (3,'B0001','监控观察者',2,0,1,1,'观察者'),
 (4,'C0001','访客',4,0,1,1,'访客');
