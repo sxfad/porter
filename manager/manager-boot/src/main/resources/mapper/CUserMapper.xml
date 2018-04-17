@@ -98,6 +98,19 @@
         where 1=1 limit #{page.offset},#{page.pageSize}
     </select>
 
+    <!-- 验证邮箱或登录名是否重复 -->
+    <select id="findByNameOrEmail" resultType="com.suixingpay.datas.manager.core.entity.CUser">
+        select id, loginname, email from c_user
+        <where>
+            <if test="email != null and email != ''">
+                AND email = #{email}
+            </if>
+            <if test="loginname != null and loginname != ''">
+                AND loginname = #{loginname}
+            </if>
+        </where>
+    </select>
+
     <!-- 验证新增 -->
     <insert id="insertSelective">
         insert into c_user
@@ -188,6 +201,7 @@
         select id, loginname, loginpw, nickname, email, mobile, state, remark from c_user
         where state=1
     </select>
+
 
 </mapper>
 

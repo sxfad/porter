@@ -91,4 +91,13 @@ public interface CUserMapper {
      * @return
      */
     List<CUser> selectByAlarmId(Long alarmId);
+
+    /**
+     * 验证邮箱或登录名是否重复
+     *
+     * @param loginname
+     * @param email
+     * @return
+     */
+    CUser findByNameOrEmail(@Param("loginname") String loginname, @Param("email") String email);
 }

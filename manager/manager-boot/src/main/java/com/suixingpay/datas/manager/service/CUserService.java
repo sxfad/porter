@@ -32,4 +32,6 @@ public interface CUserService {
     List<CUser> selectByJobTasksId(Long JobTasksId);
 
     List<CUser> selectByAlarmId(Long alarmId);
+
+    boolean findByNameOrEmail(String loginname, String email);
 }

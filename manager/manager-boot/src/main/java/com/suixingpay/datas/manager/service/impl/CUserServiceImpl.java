@@ -77,4 +77,14 @@ public class CUserServiceImpl implements CUserService {
         return cuserMapper.selectByAlarmId(alarmId);
     }
 
+    @Override
+    public boolean findByNameOrEmail(String loginname, String email) {
+        boolean flag = false;
+        CUser cUser = cuserMapper.findByNameOrEmail(loginname, email);
+        if (cUser == null) {
+            flag = true;
+        }
+        return flag;
+    }
+
 }

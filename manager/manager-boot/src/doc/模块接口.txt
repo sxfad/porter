@@ -264,6 +264,9 @@
               "roleCode": "角色code"
             }
         参数：id
+    验证登录名或密码是否重复：
+        路径：/manager/cuser/findByNameOrEmail
+        参数: loginname、email
 
 菜单管理
     查询全部菜单:

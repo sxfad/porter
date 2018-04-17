@@ -69,6 +69,22 @@ public class CUserController {
         return ok(number);
     }
 
+    /**
+     * 验证邮箱或者登录名是否重复
+     *
+     * @author FuZizheng
+     * @date 2018/4/17 下午3:26
+     * @param: [loginname, email]
+     * @return: com.suixingpay.datas.manager.web.message.ResponseMessage
+     */
+    @GetMapping("/findByNameOrEmail")
+    @ApiOperation(value = "验证邮箱或者登录名是否重复", notes = "参数：登录名、邮箱")
+    public ResponseMessage findByNameOrEmail(@RequestParam(value = "loginname", required = false) String loginname,
+                                                @RequestParam(value = "email", required = false) String email) {
+        boolean flag = cuserService.findByNameOrEmail(loginname, email);
+        return ok(flag);
+    }
+
     @DeleteMapping("/{id}")
     @ApiOperation(value = "删除", notes = "删除")
     public ResponseMessage delete(@PathVariable("id") Long id) {
