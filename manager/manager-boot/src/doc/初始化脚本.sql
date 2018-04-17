@@ -383,7 +383,7 @@ CREATE TABLE `s_log_grade` (
 
 -- 初始用户
 INSERT  INTO `c_user`(`id`,`loginname`,`loginpw`,`nickname`,`email`,`mobile`,`depart_ment`,`role_code`,`state`,`remark`) VALUES 
-(1,'admin','admin','admin','fu_zz@suixingpay.com','13844836009','码农','A0001',1,'');
+(1,'admin','admin','21232f297a57a5a743894a0e4a801fc3','fu_zz@suixingpay.com','13844836009','码农','A0001',1,'');
 -- 初始化角色
 INSERT  INTO `c_role`(`id`,`role_code`,`role_name`,`sort`,`iscancel`,`type`,`state`,`remark`) VALUES 
 (1,'A0001','超级管理员',0,0,1,1,'超级管理员角色组'),
