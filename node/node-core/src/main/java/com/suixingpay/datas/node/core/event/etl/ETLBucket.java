@@ -157,4 +157,18 @@ public class ETLBucket {
     public Position getPosition() {
         return position;
     }
+
+    public void markUnUsed() {
+        try {
+            rows.forEach(r -> {
+                r.getExtendsField().clear();
+                r.getColumns().clear();
+                r.getAdditionalRequired().clear();
+            });
+            rows.clear();
+            batchRows.clear();
+        } catch (Throwable e) {
+
+        }
+    }
 }

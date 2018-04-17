@@ -88,6 +88,9 @@ public class LoadJob extends AbstractStageJob {
                     }
                     //更新消费统计数据
                     loadResult.getRight().forEach(o -> updateStat(o));
+                    //标记数据已清除
+                    loadResult.getRight().clear();
+                    bucket.markUnUsed();
                 }
             } catch (TaskStopTriggerException stopException) {
                 LOGGER.error("Load ETLRow error", stopException);
