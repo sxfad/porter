@@ -105,6 +105,7 @@
     <select id="findByNameOrEmail" resultType="com.suixingpay.datas.manager.core.entity.CUser">
         select id, loginname, email from c_user
         <where>
+            state = 1
             <if test="email != null and email != ''">
                 AND email = #{email}
             </if>
