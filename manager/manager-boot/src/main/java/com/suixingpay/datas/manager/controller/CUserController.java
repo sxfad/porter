@@ -80,9 +80,25 @@ public class CUserController {
     @GetMapping("/findByNameOrEmail")
     @ApiOperation(value = "验证邮箱或者登录名是否重复", notes = "参数：登录名、邮箱")
     public ResponseMessage findByNameOrEmail(@RequestParam(value = "loginname", required = false) String loginname,
-                                                @RequestParam(value = "email", required = false) String email) {
+                                             @RequestParam(value = "email", required = false) String email) {
         boolean flag = cuserService.findByNameOrEmail(loginname, email);
         return ok(flag);
+    }
+
+    /**
+     * 分页
+     *
+     * @author FuZizheng
+     * @date 2018/4/17 下午3:46
+     * @param: [pageNo, pageSize]
+     * @return: com.suixingpay.datas.manager.web.message.ResponseMessage
+     */
+    @ApiOperation(value = "分页列表", notes = "分页列表")
+    @GetMapping
+    public ResponseMessage page(@RequestParam(value = "pageNo", required = true) Integer pageNo,
+                                @RequestParam(value = "pageSize", required = true) Integer pageSize) {
+        Page<CUser> page = cuserService.page(new Page<CUser>(pageNo, pageSize));
+        return ok(page);
     }
 
     @DeleteMapping("/{id}")
@@ -99,13 +115,6 @@ public class CUserController {
         return ok(cUser);
     }
 
-    @ApiOperation(value = "分页列表", notes = "分页列表")
-    @GetMapping
-    public ResponseMessage page(@RequestParam(value = "pageNo", required = false) Integer pageNo,
-            @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-        Page<CUser> page = cuserService.page(new Page<CUser>(pageNo, pageSize));
-        return ok(page);
-    }
 
     @ApiOperation(value = "全部列表", notes = "全部列表")
     @GetMapping("/list")

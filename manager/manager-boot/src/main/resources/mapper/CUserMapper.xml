@@ -94,7 +94,7 @@
 
     <!-- 分页 -->
     <select id="page" resultType="com.suixingpay.datas.manager.core.entity.CUser">
-        select id, loginname, loginpw, nickname, email, mobile, state, remark from c_user
+        select id, loginname, loginpw, nickname, email, mobile, state, remark, role_code AS roleCode, depart_ment AS departMent from c_user
         where 1=1 limit #{page.offset},#{page.pageSize}
     </select>
 
