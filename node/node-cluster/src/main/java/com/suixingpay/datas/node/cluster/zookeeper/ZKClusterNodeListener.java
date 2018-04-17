@@ -32,6 +32,7 @@ import com.suixingpay.datas.common.task.TaskEventListener;
 import com.suixingpay.datas.common.task.TaskEventProvider;
 import com.suixingpay.datas.common.dic.TaskStatusType;
 import com.suixingpay.datas.common.util.DefaultNamedThreadFactory;
+import com.suixingpay.datas.common.util.MachineUtils;
 import com.suixingpay.datas.node.core.NodeContext;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -186,6 +187,10 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener  implements 
                             Pair<NodeHealthLevel, String> level = NodeContext.INSTANCE.getHealthLevel();
                             nodeData.setHealthLevel(level.getLeft());
                             nodeData.setHealthLevelDesc(level.getRight());
+                            //设置机器信息
+                            nodeData.setAddress(MachineUtils.IP_ADDRESS);
+                            nodeData.setProcessId(MachineUtils.CURRENT_JVM_PID + "");
+                            nodeData.setHostName(MachineUtils.HOST_NAME);
                             //通知数据到zookeeper
                             client.setData(statPath, nodeData.toString(), dataPair.getRight().getVersion());
                         }

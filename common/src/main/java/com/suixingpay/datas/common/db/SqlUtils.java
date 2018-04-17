@@ -70,7 +70,7 @@ public class SqlUtils {
 
         // byte[]
         SQL_TYPE_TO_JAVA_TYPE_MAP.put(Types.REF, byte[].class);
-        SQL_TYPE_TO_JAVA_TYPE_MAP.put(Types.OTHER, byte[].class);
+
         SQL_TYPE_TO_JAVA_TYPE_MAP.put(Types.ARRAY, byte[].class);
         SQL_TYPE_TO_JAVA_TYPE_MAP.put(Types.STRUCT, byte[].class);
         SQL_TYPE_TO_JAVA_TYPE_MAP.put(Types.SQLXML, byte[].class);
@@ -90,6 +90,9 @@ public class SqlUtils {
         SQL_TYPE_TO_JAVA_TYPE_MAP.put(Types.NVARCHAR, String.class);
         SQL_TYPE_TO_JAVA_TYPE_MAP.put(Types.NCLOB, String.class);
         SQL_TYPE_TO_JAVA_TYPE_MAP.put(Types.CLOB, String.class);
+
+        //无法识别的other类型默认转换为字符串类型
+        SQL_TYPE_TO_JAVA_TYPE_MAP.put(Types.OTHER, String.class);
     }
 
     /**
