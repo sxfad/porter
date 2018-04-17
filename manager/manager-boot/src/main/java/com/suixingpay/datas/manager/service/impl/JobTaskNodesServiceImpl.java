@@ -35,7 +35,9 @@ public class JobTaskNodesServiceImpl implements JobTaskNodesService {
 
     @Override
     public void insertList(JobTasks jobTasks) {
-        jobTaskNodesMapper.insertList(jobTasks.getId(), jobTasks.getNodeIds());
+        if (jobTasks.getNodeIds() != null && jobTasks.getNodeIds().size() > 0) {
+            jobTaskNodesMapper.insertList(jobTasks.getId(), jobTasks.getNodeIds());
+        }
     }
 
     @Override
