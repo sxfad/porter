@@ -152,7 +152,7 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
             tableSchema.addColumn(column);
         });
         LOGGER.debug("schema:{},table:{},detail:{}", schema, tableName, JSONObject.toJSONString(dbTable));
-        return tableSchema.toUpperCase();
+        return tableSchema;
     }
 
     @Override
