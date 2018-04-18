@@ -100,13 +100,13 @@
     <!-- 根据主鍵查找 -->
     <select id="selectByNameAndpasswd" resultType="com.suixingpay.datas.manager.core.entity.CUser">
         select id, loginname, loginpw, nickname, email, mobile, state, remark, role_code AS roleCode, depart_ment AS departMent from c_user
-        where loginname = #{loginname} and loginpw = #{loginpw}
+        where loginname = #{loginname} and loginpw = #{loginpw} and state &gt;= 0
     </select>
 
     <!-- 分页All -->
     <select id="pageAll" resultType="java.lang.Integer">
         select count(id) from c_user
-        where state >= 0
+        where state &gt;= 0
     </select>
 
     <!-- 分页 -->
@@ -115,7 +115,7 @@
         u.id, u.loginname, u.loginpw, u.nickname, u.email,
         u.mobile, u.state, u.remark, u.role_code, u.depart_ment, r.role_name
         from c_user u, c_role r
-        where u.state >= 0 and u.role_code = r.role_code
+        where u.state &gt;= 0 and u.role_code = r.role_code
         order by u.state desc
         limit #{page.offset},#{page.pageSize}
     </select>
@@ -124,7 +124,7 @@
     <select id="findByNameOrEmail" resultType="com.suixingpay.datas.manager.core.entity.CUser">
         select id, loginname, email from c_user
         <where>
-            state >= 0
+            state &gt;= 0
             <if test="email != null and email != ''">
                 AND email = #{email}
             </if>

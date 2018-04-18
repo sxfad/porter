@@ -45,7 +45,9 @@ public class LoginController {
         CUser cuser = cuserService.selectByNameAndpasswd(LoginName, passwd);
         if (cuser == null) {
             return ResponseMessage.error("Login error", ExceptionCode.EXCEPTION_LOGIN);
-        } else {
+        } else if (cuser.getState() == 0){
+            return ResponseMessage.error("对不起,您被禁止登陆。", ExceptionCode.EXCEPTION_LOGIN);
+        }else {
             loginUserToken.setUserId(cuser.getId());
             loginUserToken.setLoginName(cuser.getLoginname());
             loginUserToken.setPasswd(cuser.getLoginpw());
