@@ -12,6 +12,7 @@ package com.suixingpay.datas.common.config.source;
 import com.alibaba.otter.canal.instance.manager.model.CanalParameter;
 import com.suixingpay.datas.common.config.SourceConfig;
 import com.suixingpay.datas.common.dic.SourceType;
+import com.suixingpay.datas.common.util.MachineUtils;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -29,7 +30,7 @@ public class CanalConfig extends SourceConfig {
     @Setter @Getter private Long canalId = System.nanoTime();
     @Setter @Getter private String canalName = UUID.randomUUID().toString();
     @Setter @Getter private CanalParameter.SourcingType sourcingType = CanalParameter.SourcingType.MYSQL;
-    @Setter @Getter private Long slaveId;
+    @Setter @Getter private Long slaveId = System.nanoTime();
 
     @Setter @Getter private String address;
     @Setter @Getter private String database;
