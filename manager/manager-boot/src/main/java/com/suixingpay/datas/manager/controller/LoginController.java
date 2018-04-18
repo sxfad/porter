@@ -40,14 +40,14 @@ public class LoginController {
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ApiOperation(value = "用户登录", notes = "用户登录")
     public ResponseMessage login(@RequestParam(required = true) String LoginName,
-            @RequestParam(required = true) String passwd) throws Exception {
+                                 @RequestParam(required = true) String passwd) throws Exception {
         LoginUserToken loginUserToken = new LoginUserToken();
         CUser cuser = cuserService.selectByNameAndpasswd(LoginName, passwd);
         if (cuser == null) {
             return ResponseMessage.error("Login error", ExceptionCode.EXCEPTION_LOGIN);
-        } else if (cuser.getState() == 0){
+        } else if (cuser.getState() == 0) {
             return ResponseMessage.error("对不起,您被禁止登陆。", ExceptionCode.EXCEPTION_LOGIN);
-        }else {
+        } else {
             loginUserToken.setUserId(cuser.getId());
             loginUserToken.setLoginName(cuser.getLoginname());
             loginUserToken.setPasswd(cuser.getLoginpw());
