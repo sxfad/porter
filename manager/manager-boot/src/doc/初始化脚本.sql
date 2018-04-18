@@ -383,7 +383,7 @@ CREATE TABLE `s_log_grade` (
 
 -- 初始用户
 INSERT  INTO `c_user`(`id`,`loginname`,`loginpw`,`nickname`,`email`,`mobile`,`depart_ment`,`role_code`,`state`,`remark`) VALUES 
-(1,'admin','admin','21232f297a57a5a743894a0e4a801fc3','fu_zz@suixingpay.com','13844836009','码农','A0001',1,'');
+(1,'admin','21232f297a57a5a743894a0e4a801fc3','admin','fu_zz@suixingpay.com','13844836009','码农','A0001',1,'');
 -- 初始化角色
 INSERT  INTO `c_role`(`id`,`role_code`,`role_name`,`sort`,`iscancel`,`type`,`state`,`remark`) VALUES 
 (1,'A0001','超级管理员',0,0,1,1,'超级管理员'),
@@ -391,40 +391,37 @@ INSERT  INTO `c_role`(`id`,`role_code`,`role_name`,`sort`,`iscancel`,`type`,`sta
 (3,'B0001','监控观察者',2,0,1,1,'观察者'),
 (4,'C0001','访客',4,0,1,1,'访客');
 -- 初始化菜单
-BEGIN;
-INSERT INTO `c_menu` VALUES (1, 'F001', '-1', '首页', '#', '#', 1, 1, 0, 0, 1, 1, NULL);
-INSERT INTO `c_menu` VALUES (2, 'J001', '-1', '同步管理', '#', 'sync', 1, 1, 0, 0, 1, 1, NULL);
+INSERT INTO `c_menu` VALUES (1, 'F001', '-1', '首页', '/', 'home', 1, 1, 1, 0, 1, 1, NULL);
+INSERT INTO `c_menu` VALUES (2, 'J001', '-1', '同步管理', '#', 'sync', 1, 2, 0, 0, 1, 1, NULL);
 INSERT INTO `c_menu` VALUES (3, 'J001001', 'J001', '任务管理', '/synchTask', 'fa-tasks', 2, 1, 1, 0, 1, 1, NULL);
-INSERT INTO `c_menu` VALUES (4, 'N001', '-1', '集群管理', '#', 'fa-cubes', 1, 2, 0, 0, 1, 1, NULL);
+INSERT INTO `c_menu` VALUES (4, 'N001', '-1', '集群管理', '#', 'fa-cubes', 1, 3, 0, 0, 1, 1, NULL);
 INSERT INTO `c_menu` VALUES (5, 'N001001', 'N001', '同步节点管理', '/nodeCluster', 'scan', 2, 1, 1, 0, 1, 1, NULL);
-INSERT INTO `c_menu` VALUES (6, 'B001', '-1', '配置管理', '#', 'fa-gears', 1, 3, 0, 0, 1, 1, NULL);
+INSERT INTO `c_menu` VALUES (6, 'B001', '-1', '配置管理', '#', 'fa-gears', 1, 4, 0, 0, 1, 1, NULL);
 INSERT INTO `c_menu` VALUES (7, 'B001001', 'B001', '数据源配置', '/dataSource', 'fa-sliders', 2, 1, 1, 0, 1, 1, NULL);
 INSERT INTO `c_menu` VALUES (8, 'B001002', 'B001', '数据表配置', '/dataTable', 'api', 2, 2, 1, 0, 1, 1, NULL);
 INSERT INTO `c_menu` VALUES (9, 'B001003', 'B001', '全局配置', '/globalConfig', 'fa-database', 2, 3, 1, 0, 1, 1, NULL);
-INSERT INTO `c_menu` VALUES (10, 'M001', '-1', '监控管理', '#', 'line-chart', 1, 4, 0, 0, 1, 1, NULL);
+INSERT INTO `c_menu` VALUES (10, 'M001', '-1', '监控管理', '#', 'line-chart', 1, 5, 0, 0, 1, 1, NULL);
 INSERT INTO `c_menu` VALUES (11, 'M001001', 'M001', '运行日志', '/logMonitor', 'calendar', 2, 1, 1, 0, 1, 1, NULL);
 INSERT INTO `c_menu` VALUES (12, 'M001002', 'M001', '任务监控', '/taskMonitor', 'fa-dashboard', 2, 2, 1, 0, 1, 1, NULL);
 INSERT INTO `c_menu` VALUES (13, 'M001003', 'M001', '节点监控', '/nodeMonitor', 'dot-chart', 2, 3, 1, 0, 1, 1, NULL);
-INSERT INTO `c_menu` VALUES (14, 'C001', '-1', '系统设置', '#', 'setting', 1, 5, 0, 0, 1, 1, NULL);
+INSERT INTO `c_menu` VALUES (14, 'C001', '-1', '系统设置', '#', 'setting', 1, 6, 0, 0, 1, 1, NULL);
 INSERT INTO `c_menu` VALUES (15, 'C001001', 'C001', '用户管理', '/user', 'fa-user-md', 2, 1, 1, 0, 1, 1, NULL);
-COMMIT;
 -- 初始化菜单权限
 
 -- 初始化告警数据字典
-INSERT  INTO `d_alarm_plugin`(`id`,`alert_type`,`field_name`,`field_code`,`field_order`,`field_type`,`field_type_key`,`state`,`iscancel`,`remark`) VALUES 
+INSERT  INTO `d_alarm_plugin`(`id`,`alert_type`,`field_name`,`field_code`,`field_order`,`field_type`,`field_type_key`,`state`,`iscancel`,`remark`) VALUES
 (1,'EMAIL','邮件服务器','host',2,'TEXT',NULL,1,0,NULL),
 (2,'EMAIL','邮件账户','username',3,'TEXT',NULL,1,0,NULL),
 (3,'EMAIL','邮箱密码','password',4,'TEXT',NULL,1,0,NULL),
 (4,'MOBILE','手机号','phone',1,'TEXT',NULL,1,0,NULL);
 -- 初始化数据源数据字典
-INSERT  INTO `d_data_source_plugin`(`id`,`source_type`,`field_name`,`field_code`,`field_order`,`field_type`,`field_type_key`,`state`,`iscancel`,`remark`) VALUES 
+INSERT  INTO `d_data_source_plugin`(`id`,`source_type`,`field_name`,`field_code`,`field_order`,`field_type`,`field_type_key`,`state`,`iscancel`,`remark`) VALUES
 (1,'JDBC','数据库类型','dbtype',1,'RADIO','DbType',1,0,NULL),
 (2,'JDBC','url','url',2,'TEXT',NULL,1,0,NULL),
 (3,'JDBC','用户名','userName',3,'TEXT',NULL,1,0,NULL),
 (4,'JDBC','密码','password',4,'TEXT',NULL,1,0,NULL),
 (5,'KAFKA','服务器列表','dateServers',1,'TEXT',NULL,1,0,NULL),
 (6,'KAFKA','主题','dateTopics',2,'TEXT',NULL,1,0,NULL),
-(8,'CANAL','从属id','slaveId',1,'TEXT',NULL,1,0,NULL),
 (9,'CANAL','地址','address',2,'TEXT',NULL,1,0,NULL),
 (10,'CANAL','数据库','database',3,'TEXT',NULL,1,0,NULL),
 (11,'CANAL','用户','username',4,'TEXT',NULL,1,0,NULL),
