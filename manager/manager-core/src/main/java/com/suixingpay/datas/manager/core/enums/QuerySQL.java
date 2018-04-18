@@ -16,7 +16,7 @@ public enum QuerySQL {
     MYSQL("MYSQL", "SELECT distinct table_schema AS prefixName FROM information_schema.tables WHERE "
             + "table_schema NOT IN ('test','mysql','information_schema','performance_schema','sys') ORDER BY table_schema",
             "SELECT table_schema AS prefixName,table_name AS tableName, CONCAT(table_schema,'.',table_name) AS tableAllName FROM information_schema.tables WHERE "
-                    + "table_schema NOT IN ('test','mysql','information_schema','performance_schema','sys') ORDER BY table_schema",
+                    + "table_schema NOT IN ('test','mysql','information_schema','performance_schema','sys') ORDER BY tableAllName",
             "SELECT column_name AS fieldName FROM information_schema.COLUMNS WHERE lower(CONCAT(table_schema,'.',table_name)) = lower('%s') ORDER BY ordinal_position",
             "com.mysql.cj.jdbc.Driver"),
 
