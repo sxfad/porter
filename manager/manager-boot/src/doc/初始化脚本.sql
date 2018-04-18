@@ -306,7 +306,7 @@ CREATE TABLE `mr_nodes_schedule` (
   `job_id_json` VARCHAR(200) DEFAULT NULL COMMENT '任务json信息',
   `job_name_json` VARCHAR(200) DEFAULT NULL COMMENT '任务json-name信息',
   `health_level` VARCHAR(100) DEFAULT NULL COMMENT '节点健康级别',
-  `health_level_desc` VARCHAR(200) DEFAULT NULL COMMENT '节点健康级别描述',
+  `health_level_desc` VARCHAR(2000) DEFAULT NULL COMMENT '节点健康级别描述',
   `create_user_id` BIGINT(20) NOT NULL DEFAULT '-1' COMMENT '创建人',
   `update_user_id` BIGINT(20) NOT NULL DEFAULT '-1' COMMENT '修改人',
   `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
