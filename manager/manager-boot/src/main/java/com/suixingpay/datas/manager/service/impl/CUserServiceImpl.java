@@ -87,4 +87,9 @@ public class CUserServiceImpl implements CUserService {
         return flag;
     }
 
+    @Override
+    public Integer updateState(Long id, Integer state) {
+        return cuserMapper.updateState(id, state);
+    }
+
 }

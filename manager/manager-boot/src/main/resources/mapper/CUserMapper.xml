@@ -1,17 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.suixingpay.datas.manager.core.mapper.CUserMapper">
-    <!-- 通用查询映射结果 
+    <!-- 通用查询映射结果 --> 
     <resultMap id="BaseResultMap" type="com.suixingpay.datas.manager.core.entity.CUser">
-        <result column="id" property="id" />
+        <id column="id" property="id" />
         <result column="loginname" property="loginname" />
         <result column="loginpw" property="loginpw" />
         <result column="nickname" property="nickname" />
         <result column="email" property="email" />
         <result column="mobile" property="mobile" />
+        <result column="depart_ment" property="departMent"/>
+        <result column="role_code" property="roleCode"/>
         <result column="state" property="state" />
         <result column="remark" property="remark" />
-    </resultMap>-->
+        <association property="cRole" javaType="com.suixingpay.datas.manager.core.entity.CRole">
+            <result column="role_code" property="roleCode"/>
+            <result column="role_name" property="roleName"/>
+        </association>
+    </resultMap>
 
     <!-- 通用查询结果列 
     <sql id="Base_Column_List">
@@ -38,6 +44,14 @@
         #{roleCode}
         )
     </insert>
+
+    <!-- 验证修改 -->
+    <update id="updateState">
+        update c_user
+        SET
+          state = #{state}
+        where id = #{id}
+    </update>
 
     <!-- 修改 -->
     <update id="update">
@@ -92,20 +106,25 @@
     <!-- 分页All -->
     <select id="pageAll" resultType="java.lang.Integer">
         select count(id) from c_user
-        where state = 1
+        where state >= 0
     </select>
 
     <!-- 分页 -->
-    <select id="page" resultType="com.suixingpay.datas.manager.core.entity.CUser">
-        select id, loginname, loginpw, nickname, email, mobile, state, remark, role_code AS roleCode, depart_ment AS departMent from c_user
-        where state = 1 limit #{page.offset},#{page.pageSize}
+    <select id="page" resultMap="BaseResultMap">
+        select
+        u.id, u.loginname, u.loginpw, u.nickname, u.email,
+        u.mobile, u.state, u.remark, u.role_code, u.depart_ment, r.role_name
+        from c_user u, c_role r
+        where u.state >= 0 and u.role_code = r.role_code
+        order by u.state desc
+        limit #{page.offset},#{page.pageSize}
     </select>
 
     <!-- 验证邮箱或登录名是否重复 -->
     <select id="findByNameOrEmail" resultType="com.suixingpay.datas.manager.core.entity.CUser">
         select id, loginname, email from c_user
         <where>
-            state = 1
+            state >= 0
             <if test="email != null and email != ''">
                 AND email = #{email}
             </if>
@@ -196,7 +215,7 @@
     </update>
 
     <select id="list" resultType="com.suixingpay.datas.manager.core.entity.CUser">
-        select id, loginname, loginpw, nickname, email, mobile, state, remark from c_user
+        select id, loginname, loginpw, nickname, email, mobile, state, remark, role_code AS roleCode from c_user
         where state=1
     </select>
 

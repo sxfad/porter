@@ -45,7 +45,7 @@ public enum AlertPlugin {
 
         {
             put(EMAIL.code, EMAIL.name);
-            put(MOBILE.code, MOBILE.name);
+            //put(MOBILE.code, MOBILE.name);
         }
     };
 

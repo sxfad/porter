@@ -88,7 +88,7 @@
         id, job_task_id AS jobTaskId, job_tasks_table_id AS jobTasksTableId, source_table_name AS sourceTableName,
         source_table_field AS sourceTableField, target_table_name AS targetTableName, target_table_field AS targetTableField
         from job_tasks_field
-        where job_task_id = #{jobTaskId} and job_tasks_table_id = #{jobTasksTableId}
+        where job_task_id = #{jobTaskId} and job_tasks_table_id = #{jobTasksTableId} ORDER BY id 
     </select>
 
     <!-- 根据主鍵查找 -->
