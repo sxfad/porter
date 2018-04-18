@@ -128,6 +128,9 @@ public class CUserController {
     @ApiOperation(value = "修改状态", notes = " 修改状态")
     public ResponseMessage updateState(@PathVariable("id") Long id,
                                        @RequestParam(value = "state", required = false) Integer state) {
+        if (id == 1) {
+            return ok(false);
+        }
         Integer number = cuserService.updateState(id, state);
         return ok(number);
     }
