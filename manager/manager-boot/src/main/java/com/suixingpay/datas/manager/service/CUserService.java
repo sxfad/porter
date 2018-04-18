@@ -34,4 +34,6 @@ public interface CUserService {
     List<CUser> selectByAlarmId(Long alarmId);
 
     boolean findByNameOrEmail(String loginname, String email);
+
+    Integer updateState(Long id, Integer state);
 }

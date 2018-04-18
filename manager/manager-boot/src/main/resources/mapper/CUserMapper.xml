@@ -3,7 +3,7 @@
 <mapper namespace="com.suixingpay.datas.manager.core.mapper.CUserMapper">
     <!-- 通用查询映射结果 --> 
     <resultMap id="BaseResultMap" type="com.suixingpay.datas.manager.core.entity.CUser">
-        <result column="id" property="id" />
+        <id column="id" property="id" />
         <result column="loginname" property="loginname" />
         <result column="loginpw" property="loginpw" />
         <result column="nickname" property="nickname" />
@@ -14,7 +14,6 @@
         <result column="state" property="state" />
         <result column="remark" property="remark" />
         <association property="cRole" javaType="com.suixingpay.datas.manager.core.entity.CRole">
-            <result column="id" property="id"/>
             <result column="role_code" property="roleCode"/>
             <result column="role_name" property="roleName"/>
         </association>
@@ -45,6 +44,14 @@
         #{roleCode}
         )
     </insert>
+
+    <!-- 验证修改 -->
+    <update id="updateState">
+        update c_user
+        SET
+          state = #{state}
+        where id = #{id}
+    </update>
 
     <!-- 修改 -->
     <update id="update">

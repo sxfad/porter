@@ -100,4 +100,13 @@ public interface CUserMapper {
      * @return
      */
     CUser findByNameOrEmail(@Param("loginname") String loginname, @Param("email") String email);
+
+    /**
+     * 修改状态
+     *
+     * @param id
+     * @param state
+     * @return
+     */
+    Integer updateState(@Param("id") Long id, @Param("state") Integer state);
 }

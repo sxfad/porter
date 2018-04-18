@@ -116,6 +116,22 @@ public class CUserController {
         return ok();
     }
 
+    /**
+     * 修改状态
+     *
+     * @author FuZizheng
+     * @date 2018/4/18 上午11:37
+     * @param: [state]
+     * @return: com.suixingpay.datas.manager.web.message.ResponseMessage
+     */
+    @PutMapping("/state/{id}")
+    @ApiOperation(value = "修改状态", notes = " 修改状态")
+    public ResponseMessage updateState(@PathVariable("id") Long id,
+                                       @RequestParam(value = "state", required = false) Integer state) {
+        Integer number = cuserService.updateState(id, state);
+        return ok(number);
+    }
+
     @GetMapping("/{id}")
     @ApiOperation(value = "查询明细", notes = "查询明细")
     public ResponseMessage info(@PathVariable("id") Long id) {
