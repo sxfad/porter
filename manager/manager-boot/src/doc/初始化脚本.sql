@@ -391,7 +391,6 @@ INSERT  INTO `c_role`(`id`,`role_code`,`role_name`,`sort`,`iscancel`,`type`,`sta
 (3,'B0001','监控观察者',2,0,1,1,'观察者'),
 (4,'C0001','访客',4,0,1,1,'访客');
 -- 初始化菜单
-BEGIN;
 INSERT INTO `c_menu` VALUES (1, 'F001', '-1', '首页', '#', '#', 1, 1, 0, 0, 1, 1, NULL);
 INSERT INTO `c_menu` VALUES (2, 'J001', '-1', '同步管理', '#', 'sync', 1, 1, 0, 0, 1, 1, NULL);
 INSERT INTO `c_menu` VALUES (3, 'J001001', 'J001', '任务管理', '/synchTask', 'fa-tasks', 2, 1, 1, 0, 1, 1, NULL);
@@ -407,7 +406,6 @@ INSERT INTO `c_menu` VALUES (12, 'M001002', 'M001', '任务监控', '/taskMonito
 INSERT INTO `c_menu` VALUES (13, 'M001003', 'M001', '节点监控', '/nodeMonitor', 'dot-chart', 2, 3, 1, 0, 1, 1, NULL);
 INSERT INTO `c_menu` VALUES (14, 'C001', '-1', '系统设置', '#', 'setting', 1, 5, 0, 0, 1, 1, NULL);
 INSERT INTO `c_menu` VALUES (15, 'C001001', 'C001', '用户管理', '/user', 'fa-user-md', 2, 1, 1, 0, 1, 1, NULL);
-COMMIT;
 -- 初始化菜单权限
 
 -- 初始化告警数据字典
