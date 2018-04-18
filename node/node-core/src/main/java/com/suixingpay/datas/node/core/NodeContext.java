@@ -161,6 +161,11 @@ public enum  NodeContext {
         tagHealthLevelWhenWorkChange();
     }
 
+    public void resetHealthLevel() {
+        syncHealthLevel(NodeHealthLevel.GREEN, "");
+    }
+
+
     /**
      * 更新节点健康级别
      */
@@ -170,12 +175,16 @@ public enum  NodeContext {
             int nowCounter = node.getWorkUsed().get();
             double percent = new Double(nowCounter) / new Double(node.getWorkLimit());
             //黄色告警
+            if (percent < 0.7) {
+                syncHealthLevel(NodeHealthLevel.GREEN, "");
+            }
+            //黄色告警
             if (percent >= 0.7 && percent < 0.9) {
                 syncHealthLevel(NodeHealthLevel.YELLOW, "节点工作资源超70%");
             }
             //红色警报
             if (percent >= 0.9) {
-                syncHealthLevel(NodeHealthLevel.YELLOW, "节点工作资源已饱和");
+                syncHealthLevel(NodeHealthLevel.RED, "节点工作资源已饱和");
             }
         } finally {
             nodeLock.readLock().unlock();

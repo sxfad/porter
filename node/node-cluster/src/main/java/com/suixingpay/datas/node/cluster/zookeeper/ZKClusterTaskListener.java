@@ -74,6 +74,8 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
     @Override
     public void onEvent(ClusterEvent event) {
         ZookeeperClusterEvent zkEvent = (ZookeeperClusterEvent) event;
+        //重置任务状态
+        NodeContext.INSTANCE.resetHealthLevel();
         //获取任务信息
         //注册
         LOGGER.debug("{},{},{}", zkEvent.getPath(), zkEvent.getData(), zkEvent.getEventType());

@@ -45,6 +45,7 @@ public class DNode extends DObject {
     //节点健康级别描述
     @Getter @Setter private String healthLevelDesc;
 
+
     public DNode() {
         heartbeat = new Date();
         tasks = new LinkedHashMap<>();

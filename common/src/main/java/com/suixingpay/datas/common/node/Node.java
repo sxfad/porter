@@ -34,7 +34,7 @@ public class Node {
     //节点健康级别描述
     @Getter @Setter private String healthLevelDesc;
     //工作总阀值
-    @Getter @Setter private int workLimit = 20;
+    @Getter @Setter private int workLimit = 5;
     //工作指标用量
     @Getter @Setter private AtomicInteger workUsed = new AtomicInteger(0);
 

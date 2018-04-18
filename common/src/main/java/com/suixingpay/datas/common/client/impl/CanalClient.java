@@ -26,6 +26,7 @@ import com.suixingpay.datas.common.consumer.ConsumeClient;
 import com.suixingpay.datas.common.config.source.CanalConfig;
 import com.suixingpay.datas.common.consumer.Position;
 import com.suixingpay.datas.common.exception.TaskStopTriggerException;
+import com.suixingpay.datas.common.statistics.NodeLog;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
@@ -158,6 +159,11 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
                             if (hasBroken.compareAndSet(false, true)) {
                                 brokenError = new TaskStopTriggerException("【Canal链接建立失败】【" + config.getProperties() + "】" + msg);
                             }
+                        }
+                        try {
+                            NodeLog.upload(NodeLog.LogType.TASK_LOG, config.getProperties() + ", error:" + msg);
+                        } catch (Throwable e) {
+
                         }
                     }
 
