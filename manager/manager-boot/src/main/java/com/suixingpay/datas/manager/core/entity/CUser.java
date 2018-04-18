@@ -53,6 +53,11 @@ public class CUser implements java.io.Serializable {
     private String roleCode;
 
     /**
+     * 角色名称
+     */
+    private CRole cRole;
+
+    /**
      * 状态 1正常，0禁止登陆，-1删除.
      */
     private Integer state;
@@ -202,4 +207,21 @@ public class CUser implements java.io.Serializable {
         this.remark = remark == null ? null : remark.trim();
     }
 
+    /**
+     * 角色名称 get方法
+     *
+     * @return
+     */
+    public CRole getcRole() {
+        return cRole;
+    }
+
+    /**
+     * 角色名称 set方法
+     *
+     * @param cRole
+     */
+    public void setcRole(CRole cRole) {
+        this.cRole = cRole;
+    }
 }
