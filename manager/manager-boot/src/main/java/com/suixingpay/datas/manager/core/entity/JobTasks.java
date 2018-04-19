@@ -73,6 +73,11 @@ public class JobTasks implements java.io.Serializable {
     private Long sourceDataId;
 
     /**
+     * 来源数据-同步数据源实体.(kafka\cancl)
+     */
+    private DataSource sourceDataEntity;
+
+    /**
      * 来源数据-同步数据源名称.
      */
     private String sourceDataName;
@@ -572,5 +577,13 @@ public class JobTasks implements java.io.Serializable {
 
     public void setNodeIds(List<String> nodeIds) {
         this.nodeIds = nodeIds;
+    }
+
+    public DataSource getSourceDataEntity() {
+        return sourceDataEntity;
+    }
+
+    public void setSourceDataEntity(DataSource sourceDataEntity) {
+        this.sourceDataEntity = sourceDataEntity;
     }
 }
