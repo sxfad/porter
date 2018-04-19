@@ -22,7 +22,7 @@
     <select id="findList" resultType="com.suixingpay.datas.manager.core.entity.CRole">
         SELECT id, role_code AS roleCode, role_name AS roleName, sort, iscancel, type, state
         FROM c_role
-        WHERE iscancel = 0
+        WHERE iscancel = 0 and role_code &lt;&gt; 'A0001'
         ORDER BY sort asc
     </select>
 </mapper>
