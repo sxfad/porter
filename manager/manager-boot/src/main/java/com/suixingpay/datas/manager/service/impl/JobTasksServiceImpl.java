@@ -247,7 +247,7 @@ public class JobTasksServiceImpl implements JobTasksService {
         // 告警用户信息
         AlertReceiver[] receiver = receiver(cusers);
         // 返回构造函数
-        return new TaskConfig(status, id.toString(), dataConsumerConfig, loader, tableMapper, receiver);
+        return new TaskConfig(status, id.toString(),jobTasks.getNodesString(), dataConsumerConfig, loader, tableMapper, receiver);
     }
 
     private AlertReceiver[] receiver(List<CUser> cusers) {

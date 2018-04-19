@@ -31,10 +31,11 @@ public class TaskConfig {
 
     }
 
-    public TaskConfig(TaskStatusType status, String taskId, DataConsumerConfig consumer, DataLoaderConfig loader,
+    public TaskConfig(TaskStatusType status, String taskId, String nodeIds, DataConsumerConfig consumer, DataLoaderConfig loader,
             List<TableMapperConfig> mapper, AlertReceiver[] receiver) {
         this.status = status;
         this.taskId = taskId;
+        this.nodeId = nodeIds;
         this.consumer = consumer;
         this.loader = loader;
         this.mapper = mapper;
