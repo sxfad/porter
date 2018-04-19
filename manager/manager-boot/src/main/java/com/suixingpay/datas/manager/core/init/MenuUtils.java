@@ -49,7 +49,7 @@ public class MenuUtils {
         List<CRole> roles = cRoleService.findAll();
         for (CRole cRole : roles) {
             // 根据不同角色生成菜单树
-            CMenu cMenu = cMenuService.menuTree("-1", cRole.getRoleCode());
+            CMenu cMenu = cMenuService.menuTree(cRole.getRoleCode());
             ROLE_MENU.put(cRole.getRoleCode(), cMenu);
         }
     }

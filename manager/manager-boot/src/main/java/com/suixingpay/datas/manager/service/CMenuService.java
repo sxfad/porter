@@ -14,7 +14,7 @@ import java.util.List;
  */
 public interface CMenuService {
 
-    CMenu menuTree(String fatherCode, String roleCode);
+    CMenu menuTree(String roleCode);
 
     CMenu findAll();
 

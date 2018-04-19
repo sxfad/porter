@@ -25,7 +25,6 @@ import static com.suixingpay.datas.manager.web.message.ResponseMessage.ok;
  *
  * @author: 付紫钲
  * @date: 2018/4/16
- * @copyright: ©2017 Suixingpay. All rights reserved. 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
  */
 @Api(description = "菜单管理")
 @RestController
@@ -124,4 +123,5 @@ public class CMenuController {
         Integer number = cMenuService.delete(id);
         return ok(number);
     }
+
 }

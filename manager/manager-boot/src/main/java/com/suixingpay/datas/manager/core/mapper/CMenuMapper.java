@@ -19,7 +19,7 @@ public interface CMenuMapper {
 
     List<CMenu> findAll();
 
-    List<CMenu> findByFatherCodeAndRoleCode(@Param("fatherCode") String fatherCode, @Param("roleCode") String roleCode);
+    List<CMenu> findByRoleCode(@Param("roleCode") String roleCode);
 
     Integer insert(CMenu cMenu);
 

@@ -93,4 +93,17 @@
         from c_menu
         WHERE id = #{id}
     </select>
+
+    <!-- 根据权限查询菜单 -->
+    <select id="findByRoleCode" resultType="com.suixingpay.datas.manager.core.entity.CMenu">
+        select t.id, t.code, t.fathercode, t.name, t.menu_url AS menuUrl,
+        t.menu_image AS menuImage, t.level, t.sort, t.iscancel, t.type, t.isleaf
+        from c_menu t
+        <where>
+            1 = 1
+            <if test=" roleCode != 'A0001'">
+                AND code IN (select menu_code from c_role_menu a where role_code = #{roleCode})
+            </if>
+        </where>
+    </select>
 </mapper>

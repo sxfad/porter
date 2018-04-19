@@ -29,10 +29,8 @@ public class CMenuServiceImpl implements CMenuService {
     private CMenuMapper cmenuMapper;
 
     @Override
-    public CMenu menuTree(String fatherCode, String roleCode) {
-        //查询该权限下所有的menu集合
-        //List<CMenu> menuList = cmenuMapper.findByFatherCodeAndRoleCode(fatherCode, roleCode);
-        List<CMenu> menulist = cmenuMapper.findAll();
+    public CMenu menuTree(String roleCode) {
+        List<CMenu> menulist = cmenuMapper.findByRoleCode(roleCode);
         return parentMenu(menulist);
     }
 
