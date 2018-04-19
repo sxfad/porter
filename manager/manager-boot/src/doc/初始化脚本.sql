@@ -408,6 +408,28 @@ INSERT INTO `c_menu` VALUES (13, 'M001003', 'M001', '节点监控', '/nodeMonito
 INSERT INTO `c_menu` VALUES (14, 'C001', '-1', '系统设置', '#', 'setting', 1, 6, 0, 0, 1, 1, NULL);
 INSERT INTO `c_menu` VALUES (15, 'C001001', 'C001', '用户管理', '/user', 'fa-user-md', 2, 1, 1, 0, 1, 1, NULL);
 -- 初始化菜单权限
+INSERT INTO `c_role_menu` VALUES (1, 'A0002', 'F001');
+INSERT INTO `c_role_menu` VALUES (2, 'A0002', 'J001');
+INSERT INTO `c_role_menu` VALUES (3, 'A0002', 'J001001');
+INSERT INTO `c_role_menu` VALUES (4, 'A0002', 'N001');
+INSERT INTO `c_role_menu` VALUES (5, 'A0002', 'N001001');
+INSERT INTO `c_role_menu` VALUES (6, 'A0002', 'B001');
+INSERT INTO `c_role_menu` VALUES (7, 'A0002', 'B001001');
+INSERT INTO `c_role_menu` VALUES (8, 'A0002', 'B001002');
+INSERT INTO `c_role_menu` VALUES (9, 'A0002', 'M001');
+INSERT INTO `c_role_menu` VALUES (10, 'A0002', 'M001001');
+INSERT INTO `c_role_menu` VALUES (11, 'A0002', 'M001002');
+INSERT INTO `c_role_menu` VALUES (12, 'A0002', 'M001003');
+INSERT INTO `c_role_menu` VALUES (13, 'B0001', 'F001');
+INSERT INTO `c_role_menu` VALUES (14, 'B0001', 'M001');
+INSERT INTO `c_role_menu` VALUES (15, 'B0001', 'M001001');
+INSERT INTO `c_role_menu` VALUES (16, 'B0001', 'M001002');
+INSERT INTO `c_role_menu` VALUES (17, 'B0001', 'M001003');
+INSERT INTO `c_role_menu` VALUES (18, 'C0001', 'F001');
+INSERT INTO `c_role_menu` VALUES (19, 'C0001', 'M001');
+INSERT INTO `c_role_menu` VALUES (20, 'C0001', 'M001001');
+INSERT INTO `c_role_menu` VALUES (21, 'C0001', 'M001002');
+INSERT INTO `c_role_menu` VALUES (22, 'C0001', 'M001003');
 
 -- 初始化告警数据字典
 INSERT  INTO `d_alarm_plugin`(`id`,`alert_type`,`field_name`,`field_code`,`field_order`,`field_type`,`field_type_key`,`state`,`iscancel`,`remark`) VALUES
