@@ -1,6 +1,8 @@
 package com.suixingpay.datas.manager.controller;
 
 import com.suixingpay.datas.manager.core.entity.CMenu;
+import com.suixingpay.datas.manager.core.init.MenuUtils;
+import com.suixingpay.datas.manager.core.init.ResourceUtils;
 import com.suixingpay.datas.manager.service.CMenuService;
 import com.suixingpay.datas.manager.web.message.ResponseMessage;
 import io.swagger.annotations.Api;
@@ -122,6 +124,24 @@ public class CMenuController {
     public ResponseMessage delete(@PathVariable("id") Long id) {
         Integer number = cMenuService.delete(id);
         return ok(number);
+    }
+
+    @GetMapping("/ref")
+    @ApiOperation(value = "重新加载初始化数据", notes = "重新加载初始化数据")
+    public ResponseMessage reflash() {
+        //清空节点id与节点名称的对照关系
+        ResourceUtils.NODEIDNAME_MAP.clear();
+        //清空任务id与任务名称的对照关系
+        ResourceUtils.JOBNAME_MAP.clear();
+        //清空菜单权限
+        MenuUtils.ROLE_MENU.clear();
+        //清空角色-菜单-路劲关系
+        MenuUtils.ROLE_MENU_URL.clear();
+
+        ResourceUtils.getInstance().init();
+        MenuUtils.getInstance().init();
+
+        return ok();
     }
 
 }
