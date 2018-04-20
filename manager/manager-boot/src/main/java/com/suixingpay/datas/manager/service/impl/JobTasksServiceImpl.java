@@ -21,6 +21,7 @@ import com.suixingpay.datas.common.config.TaskConfig;
 import com.suixingpay.datas.common.dic.ConsumeConverterPlugin;
 import com.suixingpay.datas.common.dic.ConsumerPlugin;
 import com.suixingpay.datas.common.dic.LoaderPlugin;
+import com.suixingpay.datas.common.dic.SourceType;
 import com.suixingpay.datas.common.dic.TaskStatusType;
 import com.suixingpay.datas.manager.core.dto.JDBCVo;
 import com.suixingpay.datas.manager.core.entity.CUser;
@@ -122,9 +123,11 @@ public class JobTasksServiceImpl implements JobTasksService {
     public JobTasks selectById(Long id) {
 
         JobTasks jobTasks = jobTasksMapper.selectById(id);
-        //根据 sourceDataId 查询 同步数据来源实体信息
-        DataSource sourceDataEntity = dataSourceService.selectById(jobTasks.getSourceDataId());
-        jobTasks.setSourceDataEntity(sourceDataEntity);
+        // 根据 sourceDataId 查询 同步数据来源实体信息
+        if (jobTasks != null && jobTasks.getSourceDataId() != null) {
+            DataSource sourceDataEntity = dataSourceService.selectById(jobTasks.getSourceDataId());
+            jobTasks.setSourceDataEntity(sourceDataEntity);
+        }
         // 根据 JobTasksId 查询 JobTasksTable 详情
         List<JobTasksTable> tables = jobTasksTableService.selectById(id);
         if (tables != null && tables.size() > 0) {
@@ -250,7 +253,8 @@ public class JobTasksServiceImpl implements JobTasksService {
         // 告警用户信息
         AlertReceiver[] receiver = receiver(cusers);
         // 返回构造函数
-        return new TaskConfig(status, id.toString(),jobTasks.getNodesString(), dataConsumerConfig, loader, tableMapper, receiver);
+        return new TaskConfig(status, id.toString(), jobTasks.getNodesString(), dataConsumerConfig, loader, tableMapper,
+                receiver);
     }
 
     private AlertReceiver[] receiver(List<CUser> cusers) {
@@ -292,6 +296,9 @@ public class JobTasksServiceImpl implements JobTasksService {
             sourceMap.put(dataSourcePlugin.getFieldCode(), dataSourcePlugin.getFieldValue());
         }
         sourceMap.put(SourceConfig.SOURCE_TYPE_KEY, souDataSource.getDataType().getCode());
+        if(souDataSource.getDataType()==SourceType.KAFKA) {
+            sourceMap.put("group", System.currentTimeMillis()+"");
+        }
         return sourceMap;
     }
 
