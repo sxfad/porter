@@ -65,7 +65,7 @@ public class CanalConfig extends SourceConfig {
 
     @Override
     protected boolean doCheck() {
-        return StringUtils.isBlank(address) || address.split(ADDRESS_SPLIT_CHARACTER).length != 2;
+        return !StringUtils.isBlank(address) && address.split(ADDRESS_SPLIT_CHARACTER).length == 2;
     }
 
 
