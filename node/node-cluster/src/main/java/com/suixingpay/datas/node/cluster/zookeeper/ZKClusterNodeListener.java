@@ -74,8 +74,6 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener  implements 
     public void onEvent(ClusterEvent event) {
         ZookeeperClusterEvent zkEvent = (ZookeeperClusterEvent) event;
         LOGGER.debug("集群节点监听->{},{},{}", zkEvent.getPath(), zkEvent.getData(), zkEvent.getEventType());
-        //重置任务状态
-        NodeContext.INSTANCE.resetHealthLevel();
         //下发命令
         if (NODE_ORDER_PATTERN.matcher(zkEvent.getPath()).matches()) {
             NodeCommandConfig commandConfig = JSONObject.parseObject(zkEvent.getData(), NodeCommandConfig.class);
@@ -158,6 +156,8 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener  implements 
     public void nodeRegister(NodeRegisterCommand nrCommend) throws Exception {
         NodeContext.INSTANCE.syncNodeId(nrCommend.getId());
         NodeContext.INSTANCE.syncUploadStatistic(nrCommend.isUploadStatistic());
+        //重置任务状态
+        NodeContext.INSTANCE.resetHealthLevel();
         String nodePath = listenPath() + "/" + nrCommend.getId();
         String lockPath = nodePath + "/lock";
         String statPath = nodePath + "/stat";

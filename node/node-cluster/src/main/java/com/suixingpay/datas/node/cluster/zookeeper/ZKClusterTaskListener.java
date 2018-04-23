@@ -74,8 +74,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
     @Override
     public void onEvent(ClusterEvent event) {
         ZookeeperClusterEvent zkEvent = (ZookeeperClusterEvent) event;
-        //重置任务状态
-        NodeContext.INSTANCE.resetHealthLevel();
+
         //获取任务信息
         //注册
         LOGGER.debug("{},{},{}", zkEvent.getPath(), zkEvent.getData(), zkEvent.getEventType());
@@ -84,6 +83,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
         if (taskMatcher.matches()) {
             TaskConfig config = JSONObject.parseObject(zkEvent.getData(), TaskConfig.class);
             if (zkEvent.isOnline() || zkEvent.isDataChanged()) { //任务创建 、任务修改
+                NodeContext.INSTANCE.removeTaskError(config.getTaskId());
                 triggerTaskEvent(config);
             }
         }
@@ -91,7 +91,6 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
         //任务释放
         if (TASK_UNLOCKED_PATTERN.matcher(zkEvent.getPath()).matches() && event.isOffline()
                 && NodeContext.INSTANCE.getNodeStatus().isWorking()) {
-
             String stoppedErrorPath = zkEvent.getPath().replace("/lock/", "/error/");
             //如果不是因为错误停止任务
             if (!client.isExists(stoppedErrorPath, false)) {
@@ -99,6 +98,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
                 //获取任务配置信息
                 if (null != taskConfig && !StringUtils.isBlank(taskConfig.getLeft())) {
                     TaskConfig config = JSONObject.parseObject(taskConfig.getLeft(), TaskConfig.class);
+                    NodeContext.INSTANCE.removeTaskError(config.getTaskId());
                     triggerTaskEvent(config);
                 }
             }
