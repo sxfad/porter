@@ -8,10 +8,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.alibaba.fastjson.JSON;
 import com.suixingpay.datas.common.alert.AlertReceiver;
 import com.suixingpay.datas.common.config.DataConsumerConfig;
 import com.suixingpay.datas.common.config.DataLoaderConfig;
@@ -56,6 +59,8 @@ import com.suixingpay.datas.manager.web.page.Page;
  */
 @Service
 public class JobTasksServiceImpl implements JobTasksService {
+
+    private Logger logger = LoggerFactory.getLogger(JobTasksServiceImpl.class);
 
     @Autowired
     private JobTasksMapper jobTasksMapper;
@@ -253,8 +258,10 @@ public class JobTasksServiceImpl implements JobTasksService {
         // 告警用户信息
         AlertReceiver[] receiver = receiver(cusers);
         // 返回构造函数
-        return new TaskConfig(status, id.toString(), jobTasks.getNodesString(), dataConsumerConfig, loader, tableMapper,
-                receiver);
+        TaskConfig taskConfig = new TaskConfig(status, id.toString(), jobTasks.getNodesString(), dataConsumerConfig,
+                loader, tableMapper, receiver);
+        logger.info("taskConfig:"+JSON.toJSONString(taskConfig));
+        return taskConfig;
     }
 
     private AlertReceiver[] receiver(List<CUser> cusers) {
@@ -296,8 +303,8 @@ public class JobTasksServiceImpl implements JobTasksService {
             sourceMap.put(dataSourcePlugin.getFieldCode(), dataSourcePlugin.getFieldValue());
         }
         sourceMap.put(SourceConfig.SOURCE_TYPE_KEY, souDataSource.getDataType().getCode());
-        if(souDataSource.getDataType()==SourceType.KAFKA) {
-            sourceMap.put("group", System.currentTimeMillis()+"");
+        if (souDataSource.getDataType() == SourceType.KAFKA) {
+            sourceMap.put("group", System.currentTimeMillis() + "");
         }
         return sourceMap;
     }
