@@ -249,10 +249,10 @@ public class JobTasksServiceImpl implements JobTasksService {
 
         // 来源数据构造函数
         DataConsumerConfig dataConsumerConfig = new DataConsumerConfig(sourceConsumeAdt.getCode(),
-                sourceConvertAdt.getCode(), jobTasks.getSourceTablesName(), dataSourceMap(syncDataSource),
-                dataSourceMap(souDataSource));
+                sourceConvertAdt.getCode(), jobTasks.getSourceTablesName(), dataSourceMap(id, syncDataSource),
+                dataSourceMap(id, souDataSource));
         // 目标数据构造函数
-        DataLoaderConfig loader = new DataLoaderConfig(targetLoadAdt.getCode(), dataSourceMap(tarDataSource));
+        DataLoaderConfig loader = new DataLoaderConfig(targetLoadAdt.getCode(), dataSourceMap(id, tarDataSource));
         // 表对应关系映射
         List<TableMapperConfig> tableMapper = tableMapperList(tables);
         // 告警用户信息
@@ -260,7 +260,7 @@ public class JobTasksServiceImpl implements JobTasksService {
         // 返回构造函数
         TaskConfig taskConfig = new TaskConfig(status, id.toString(), jobTasks.getNodesString(), dataConsumerConfig,
                 loader, tableMapper, receiver);
-        logger.info("taskConfig:"+JSON.toJSONString(taskConfig));
+        logger.info("taskConfig:" + JSON.toJSONString(taskConfig));
         return taskConfig;
     }
 
@@ -285,7 +285,7 @@ public class JobTasksServiceImpl implements JobTasksService {
             tableMapperConfig = new TableMapperConfig(schema, table, column);
             tableList.add(tableMapperConfig);
         }
-        logger.info("tableMapper:"+JSON.toJSONString(tableList));
+        logger.info("tableMapper:" + JSON.toJSONString(tableList));
         return tableList;
     }
 
@@ -297,7 +297,7 @@ public class JobTasksServiceImpl implements JobTasksService {
         return map;
     }
 
-    private Map<String, String> dataSourceMap(DataSource souDataSource) {
+    private Map<String, String> dataSourceMap(Long id, DataSource souDataSource) {
         Map<String, String> sourceMap = new HashMap<>();
         List<DataSourcePlugin> plugins = souDataSource.getPlugins();
         for (DataSourcePlugin dataSourcePlugin : plugins) {
@@ -305,7 +305,7 @@ public class JobTasksServiceImpl implements JobTasksService {
         }
         sourceMap.put(SourceConfig.SOURCE_TYPE_KEY, souDataSource.getDataType().getCode());
         if (souDataSource.getDataType() == SourceType.KAFKA) {
-            sourceMap.put("group", System.currentTimeMillis() + "");
+            sourceMap.put("group", "task{"+id+"}-group");
         }
         return sourceMap;
     }
