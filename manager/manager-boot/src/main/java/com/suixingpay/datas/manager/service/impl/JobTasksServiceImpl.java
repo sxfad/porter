@@ -285,6 +285,7 @@ public class JobTasksServiceImpl implements JobTasksService {
             tableMapperConfig = new TableMapperConfig(schema, table, column);
             tableList.add(tableMapperConfig);
         }
+        logger.info("tableMapper:"+JSON.toJSONString(tableList));
         return tableList;
     }
 
