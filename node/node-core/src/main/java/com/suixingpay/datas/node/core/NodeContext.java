@@ -10,12 +10,15 @@
 package com.suixingpay.datas.node.core;
 
 import com.suixingpay.datas.common.dic.NodeHealthLevel;
+import com.suixingpay.datas.common.exception.TaskStopTriggerException;
 import com.suixingpay.datas.common.node.Node;
 import com.suixingpay.datas.common.dic.NodeStatusType;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.context.ApplicationContext;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -28,8 +31,10 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public enum  NodeContext {
     INSTANCE();
     private final ReadWriteLock nodeLock = new ReentrantReadWriteLock();
-    private ApplicationContext context;
     private final Node node = new Node();
+    private final Map<String, String> taskErrorMarked = new ConcurrentHashMap<>();
+
+    private ApplicationContext context;
     public <T> T getBean(Class<T> clazz) {
         return null != context ? context.getBean(clazz) : null;
     }
@@ -92,7 +97,7 @@ public enum  NodeContext {
         }
     }
 
-    public void syncHealthLevel(NodeHealthLevel level, String desc) {
+    private void syncHealthLevel(NodeHealthLevel level, String desc) {
         try {
             nodeLock.writeLock().lock();
             node.setHealthLevel(level);
@@ -170,26 +175,40 @@ public enum  NodeContext {
      * 更新节点健康级别
      */
     private void tagHealthLevelWhenWorkChange() {
-        double percent = 0;
-        try {
-            nodeLock.readLock().lock();
-            int nowCounter = node.getWorkUsed().get();
-            percent = new Double(nowCounter) / new Double(node.getWorkLimit());
-        } finally {
-            nodeLock.readLock().unlock();
+        //如果不存在任务运行异常
+        if (taskErrorMarked.isEmpty()) {
+            double percent = 0;
+            try {
+                nodeLock.readLock().lock();
+                int nowCounter = node.getWorkUsed().get();
+                percent = new Double(nowCounter) / new Double(node.getWorkLimit());
+            } finally {
+                nodeLock.readLock().unlock();
+            }
+            //黄色告警
+            if (percent < 0.7) {
+                syncHealthLevel(NodeHealthLevel.GREEN, "");
+            }
+            //黄色告警
+            if (percent >= 0.7 && percent < 0.9) {
+                syncHealthLevel(NodeHealthLevel.YELLOW, "节点工作资源超70%");
+            }
+            //红色警报
+            if (percent >= 0.9) {
+                syncHealthLevel(NodeHealthLevel.RED, "节点工作资源已饱和");
+            }
         }
+    }
 
-        //黄色告警
-        if (percent < 0.7) {
+    public void removeTaskError(String taskId) {
+        taskErrorMarked.remove(taskId);
+        if (taskErrorMarked.isEmpty()) {
             syncHealthLevel(NodeHealthLevel.GREEN, "");
         }
-        //黄色告警
-        if (percent >= 0.7 && percent < 0.9) {
-            syncHealthLevel(NodeHealthLevel.YELLOW, "节点工作资源超70%");
-        }
-        //红色警报
-        if (percent >= 0.9) {
-            syncHealthLevel(NodeHealthLevel.RED, "节点工作资源已饱和");
-        }
+    }
+
+    public void markTaskError(String taskId, String e) {
+        taskErrorMarked.put(taskId, null);
+        syncHealthLevel(NodeHealthLevel.RED, e);
     }
 }

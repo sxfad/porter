@@ -39,7 +39,6 @@ import com.suixingpay.datas.node.task.load.LoadJob;
 import com.suixingpay.datas.node.task.select.SelectJob;
 import com.suixingpay.datas.node.task.transform.TransformJob;
 import lombok.SneakyThrows;
-import org.apache.zookeeper.KeeperException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -213,15 +212,14 @@ public class TaskWork {
 
     public void submitStat() {
         stats.forEach((s, stat) -> {
-            try {
-                LOGGER.debug("stat before submit:{}", JSON.toJSONString(stat));
-                //多线程访问情况下（目前是两个线程:状态上报线程、任务状态更新线程），获取JOB的运行状态。
-                DTaskStat newStat = null;
-                synchronized (stat) {
-                    newStat = stat.snapshot(DTaskStat.class);
-                    LOGGER.debug("stat snapshot:{}", JSON.toJSONString(newStat));
-                    stat.reset();
-                    LOGGER.debug("stat after reset:{}", JSON.toJSONString(stat));
+            LOGGER.debug("stat before submit:{}", JSON.toJSONString(stat));
+            //多线程访问情况下（目前是两个线程:状态上报线程、任务状态更新线程），获取JOB的运行状态。
+            DTaskStat newStat = null;
+            synchronized (stat) {
+                newStat = stat.snapshot(DTaskStat.class);
+                LOGGER.debug("stat snapshot:{}", JSON.toJSONString(newStat));
+                stat.reset();
+                try {
                     ClusterProviderProxy.INSTANCE.broadcast(new TaskStatCommand(newStat, new DCallback() {
                         @Override
                         public void callback(DObject object) {
@@ -238,18 +236,19 @@ public class TaskWork {
                             }
                         }
                     }));
-                    //上传统计
+                } catch (Throwable e) {
+                    NodeLog.upload(NodeLog.LogType.TASK_LOG, taskId, dataConsumer.getSwimlaneId(), "上传任务状态信息失败:" + e.getMessage());
+                }
+
+                //上传统计
+                try {
                     //TaskPerformance
                     if (NodeContext.INSTANCE.isUploadStatistic()) {
                         ClusterProviderProxy.INSTANCE.broadcast(new StatisticUploadCommand(new TaskPerformance(newStat)));
                     }
+                } catch (Throwable e) {
+                    NodeLog.upload(NodeLog.LogType.TASK_LOG, taskId, dataConsumer.getSwimlaneId(), "上传任务统计信息失败:" + e.getMessage());
                 }
-            } catch (Exception e) {
-                NodeLog.LogType type = NodeLog.LogType.TASK_LOG;
-                if (e instanceof KeeperException.SessionExpiredException) {
-                    type = NodeLog.LogType.TASK_ALARM;
-                }
-                NodeLog.upload(type, taskId, dataConsumer.getSwimlaneId(), "上传任务消费进度失败:" + e.getMessage());
             }
         });
     }
@@ -308,7 +307,7 @@ public class TaskWork {
                     //停止任务
                     NodeContext.INSTANCE.getBean(TaskController.class).stopTask(taskId, dataConsumer.getSwimlaneId());
                     //调整节点健康级别
-                    NodeContext.INSTANCE.syncHealthLevel(NodeHealthLevel.RED, notice);
+                    NodeContext.INSTANCE.markTaskError(taskId, notice);
                 }
             }.start();
         }
