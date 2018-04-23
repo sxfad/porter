@@ -25,4 +25,6 @@ public class TaskStoppedByErrorCommand implements ClusterCommand {
     @Getter private String taskId;
     //泳道id
     @Getter private String swimlaneId;
+    //泳道id
+    @Getter private String msg;
 }

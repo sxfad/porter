@@ -248,7 +248,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
     @Override
     public void tagError(TaskStoppedByErrorCommand command) {
         String errorPath = listenPath() + "/" + command.getTaskId() + "/error/" + command.getSwimlaneId();
-        client.createWhenNotExists(errorPath, false, false, null);
+        client.createWhenNotExists(errorPath, false, false, command.getMsg());
     }
 
     @Override

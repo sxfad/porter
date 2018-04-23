@@ -10,11 +10,12 @@
 package com.suixingpay.datas.node.core;
 
 import com.suixingpay.datas.common.dic.NodeHealthLevel;
-import com.suixingpay.datas.common.exception.TaskStopTriggerException;
 import com.suixingpay.datas.common.node.Node;
 import com.suixingpay.datas.common.dic.NodeStatusType;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
 import java.util.Map;
@@ -208,7 +209,7 @@ public enum  NodeContext {
     }
 
     public void markTaskError(String taskId, String e) {
-        taskErrorMarked.put(taskId, null);
+        taskErrorMarked.put(taskId, taskId);
         syncHealthLevel(NodeHealthLevel.RED, e);
     }
 }
