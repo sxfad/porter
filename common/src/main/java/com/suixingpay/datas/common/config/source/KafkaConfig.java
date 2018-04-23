@@ -76,4 +76,9 @@ public class KafkaConfig  extends SourceConfig {
     public String getSwimlaneId() {
         return StringUtils.join(topics, "_");
     }
+
+    @Override
+    protected boolean doCheck() {
+        return true;
+    }
 }

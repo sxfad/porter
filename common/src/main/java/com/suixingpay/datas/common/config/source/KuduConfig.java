@@ -49,4 +49,9 @@ public class KuduConfig extends SourceConfig {
     protected String[] childStuffColumns() {
         return new String[] {"servers"};
     }
+
+    @Override
+    protected boolean doCheck() {
+        return true;
+    }
 }

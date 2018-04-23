@@ -54,15 +54,18 @@ public class ZookeeperClusterMonitor extends AbstractClusterMonitor implements W
                 client.create(ZookeeperClusterListener.BASE_CATALOG, false, "{}");
             }
             for (ClusterListener listener : listeners.values()) {
-                ZookeeperClusterListener zkListener = (ZookeeperClusterListener) listener;
-                client.createWhenNotExists(zkListener.listenPath(), false, false, "{}");
-                //watch children changed
-                triggerTreeEvent(zkListener.listenPath());
+                try {
+                    ZookeeperClusterListener zkListener = (ZookeeperClusterListener) listener;
+                    client.createWhenNotExists(zkListener.listenPath(), false, false, "{}");
+                    //watch children changed
+                    triggerTreeEvent(zkListener.listenPath());
+                } catch (Throwable e) {
+                    e.printStackTrace();
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-
     }
 
     /**

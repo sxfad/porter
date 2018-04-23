@@ -44,4 +44,9 @@ public class ZookeeperConfig extends SourceConfig {
     protected String[] childStuffColumns() {
         return new String[0];
     }
+
+    @Override
+    protected boolean doCheck() {
+        return true;
+    }
 }

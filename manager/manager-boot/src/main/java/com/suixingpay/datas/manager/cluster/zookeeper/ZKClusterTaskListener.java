@@ -51,15 +51,18 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
         ZookeeperClusterEvent zkEvent = (ZookeeperClusterEvent) event;
         String zkPath = zkEvent.getPath();
         LOGGER.debug("TaskListener:{},{},{}", zkEvent.getPath(), zkEvent.getData(), zkEvent.getEventType());
-
-        // 任务进度更新
-        if (TASK_STAT_PATTERN.matcher(zkPath).matches() && zkEvent.isDataChanged()) {
-            DTaskStat stat = DTaskStat.fromString(zkEvent.getData(), DTaskStat.class);
-            // do something
-            MrJobTasksScheduleService mrJobTasksScheduleService = ApplicationContextUtil
-                    .getBean(MrJobTasksScheduleServiceImpl.class);
-            mrJobTasksScheduleService.dealDTaskStat(stat);
-            LOGGER.debug("4-DTaskStat.... " + JSON.toJSON(stat));
+        try {
+            // 任务进度更新
+            if (TASK_STAT_PATTERN.matcher(zkPath).matches() && zkEvent.isDataChanged()) {
+                DTaskStat stat = DTaskStat.fromString(zkEvent.getData(), DTaskStat.class);
+                // do something
+                MrJobTasksScheduleService mrJobTasksScheduleService = ApplicationContextUtil
+                        .getBean(MrJobTasksScheduleServiceImpl.class);
+                mrJobTasksScheduleService.dealDTaskStat(stat);
+                LOGGER.debug("4-DTaskStat.... " + JSON.toJSON(stat));
+            }
+        } catch (Throwable e) {
+            e.printStackTrace();
         }
     }
 

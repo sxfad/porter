@@ -54,4 +54,9 @@ public class JDBCConfig extends SourceConfig {
     protected String[] childStuffColumns() {
         return new String[] {"dbType"};
     }
+
+    @Override
+    protected boolean doCheck() {
+        return true;
+    }
 }

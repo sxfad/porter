@@ -47,4 +47,9 @@ public class EmailConfig extends SourceConfig {
     protected String[] childStuffColumns() {
         return new String[] {};
     }
+
+    @Override
+    protected boolean doCheck() {
+        return true;
+    }
 }

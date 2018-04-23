@@ -54,49 +54,53 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements N
     public void onEvent(ClusterEvent event) {
         ZookeeperClusterEvent zkEvent = (ZookeeperClusterEvent) event;
         LOGGER.debug("NodeListener:{},{},{}", zkEvent.getPath(), zkEvent.getData(), zkEvent.getEventType());
-        // 当前时间
-        //String heartBeatTime = DateFormatUtils.formatDate(DateFormatUtils.PATTERN_DEFAULT, new Date());
-        NodesService nodesService = ApplicationContextUtil.getBean(NodesServiceImpl.class);
-        // 节点上下线
-        if (NODE_LOCK_PATTERN.matcher(zkEvent.getPath()).matches()) {
-            String nodeInfoPath = zkEvent.getPath().replace("/lock", "/stat");
-            DNode node = getDNode(nodeInfoPath);
-            String heartBeatTime = DateFormatUtils.formatDate(DateFormatUtils.PATTERN_DEFAULT, node.getHeartbeat());
-            if (zkEvent.isOnline()) { // 节点上线
-                LOGGER.info("节点[{}]上线", node.getNodeId());
-                // 服务启动，在线通知
-                int i = nodesService.updateState(node, heartBeatTime, 1);
-                if (i == 0) {
-                    nodesService.insertState(node, heartBeatTime, 1);
-                    LOGGER.warn("节点[{}]尚未完善管理后台节点信息，请及时配置！", node.getNodeId());
+        try {
+            // 当前时间
+            //String heartBeatTime = DateFormatUtils.formatDate(DateFormatUtils.PATTERN_DEFAULT, new Date());
+            NodesService nodesService = ApplicationContextUtil.getBean(NodesServiceImpl.class);
+            // 节点上下线
+            if (NODE_LOCK_PATTERN.matcher(zkEvent.getPath()).matches()) {
+                String nodeInfoPath = zkEvent.getPath().replace("/lock", "/stat");
+                DNode node = getDNode(nodeInfoPath);
+                String heartBeatTime = DateFormatUtils.formatDate(DateFormatUtils.PATTERN_DEFAULT, node.getHeartbeat());
+                if (zkEvent.isOnline()) { // 节点上线
+                    LOGGER.info("节点[{}]上线", node.getNodeId());
+                    // 服务启动，在线通知
+                    int i = nodesService.updateState(node, heartBeatTime, 1);
+                    if (i == 0) {
+                        nodesService.insertState(node, heartBeatTime, 1);
+                        LOGGER.warn("节点[{}]尚未完善管理后台节点信息，请及时配置！", node.getNodeId());
+                    }
+                }
+                if (zkEvent.isOffline()) {// 节点下线
+                    // do something 服务停止，离线通知
+                    int i = nodesService.updateState(node, heartBeatTime, -1);
+                    LOGGER.info("节点[{}]下线", node.getNodeId());
+                    if (i == 0) {
+                        LOGGER.warn("节点[{}]尚未完善管理后台节点信息，请及时配置！", node.getNodeId());
+                        nodesService.insertState(node, heartBeatTime, -1);
+                    }
                 }
             }
-            if (zkEvent.isOffline()) {// 节点下线
-                // do something 服务停止，离线通知
-                int i = nodesService.updateState(node, heartBeatTime, -1);
-                LOGGER.info("节点[{}]下线", node.getNodeId());
-                if (i == 0) {
-                    LOGGER.warn("节点[{}]尚未完善管理后台节点信息，请及时配置！", node.getNodeId());
-                    nodesService.insertState(node, heartBeatTime, -1);
-                }
-            }
-        }
 
-        // 节点状态更新
-        if (NODE_STAT_PATTERN.matcher(zkEvent.getPath()).matches()) {
-            DNode node = getDNode(zkEvent.getPath());
-            String heartBeatTime = DateFormatUtils.formatDate(DateFormatUtils.PATTERN_DEFAULT, node.getHeartbeat());
-            LOGGER.info("节点[{}]状态上报", node.getNodeId());
-            System.err.println("2-DNode...." + node.getNodeId() + "..." + JSON.toJSONString(node));
-            // do something 心跳时间记录 并且表示节点在线
-            int i = nodesService.updateHeartBeatTime(node, heartBeatTime);
-            if (i == 0) {
-                LOGGER.warn("节点[{}]尚未完善管理后台节点信息，请及时配置！", node.getNodeId());
-                nodesService.insertState(node, heartBeatTime, 1);
+            // 节点状态更新
+            if (NODE_STAT_PATTERN.matcher(zkEvent.getPath()).matches()) {
+                DNode node = getDNode(zkEvent.getPath());
+                String heartBeatTime = DateFormatUtils.formatDate(DateFormatUtils.PATTERN_DEFAULT, node.getHeartbeat());
+                LOGGER.info("节点[{}]状态上报", node.getNodeId());
+                System.err.println("2-DNode...." + node.getNodeId() + "..." + JSON.toJSONString(node));
+                // do something 心跳时间记录 并且表示节点在线
+                int i = nodesService.updateHeartBeatTime(node, heartBeatTime);
+                if (i == 0) {
+                    LOGGER.warn("节点[{}]尚未完善管理后台节点信息，请及时配置！", node.getNodeId());
+                    nodesService.insertState(node, heartBeatTime, 1);
+                }
+                MrNodesScheduleService mrNodesScheduleService = ApplicationContextUtil
+                        .getBean(MrNodesScheduleServiceImpl.class);
+                mrNodesScheduleService.dealDNode(node);
             }
-            MrNodesScheduleService mrNodesScheduleService = ApplicationContextUtil
-                    .getBean(MrNodesScheduleServiceImpl.class);
-            mrNodesScheduleService.dealDNode(node);
+        } catch (Throwable e) {
+            e.printStackTrace();
         }
     }
 

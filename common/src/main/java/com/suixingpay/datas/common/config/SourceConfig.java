@@ -91,7 +91,9 @@ public abstract class SourceConfig implements SwamlaneSupport {
             if (null != config) {
                 config.setProperties(properties);
                 config.stuff();
+                if (!config.check()) throw new ConfigParseException("参数格式不正确:" + properties);
             }
+
         } catch (Exception e) {
             LOGGER.error("failed to parse config:{}", properties, e);
             throw new ConfigParseException(e.getMessage());
@@ -110,4 +112,14 @@ public abstract class SourceConfig implements SwamlaneSupport {
     public <T extends SourceConfig> List<T> swamlanes() throws ConfigParseException {
         return Arrays.asList((T) this);
     }
+
+    /**
+     * 格式校验
+     * @return
+     */
+    protected boolean check() {
+        return doCheck();
+    }
+
+    protected abstract boolean doCheck();
 }

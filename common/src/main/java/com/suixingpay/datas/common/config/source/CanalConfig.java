@@ -12,9 +12,9 @@ package com.suixingpay.datas.common.config.source;
 import com.alibaba.otter.canal.instance.manager.model.CanalParameter;
 import com.suixingpay.datas.common.config.SourceConfig;
 import com.suixingpay.datas.common.dic.SourceType;
-import com.suixingpay.datas.common.util.MachineUtils;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 
 import java.net.InetSocketAddress;
 import java.util.UUID;
@@ -26,6 +26,8 @@ import java.util.UUID;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月02日 14:24
  */
 public class CanalConfig extends SourceConfig {
+    private static final String ADDRESS_SPLIT_CHARACTER = ":";
+
     //实例描述
     @Setter @Getter private Long canalId = System.nanoTime();
     @Setter @Getter private String canalName = UUID.randomUUID().toString();
@@ -49,7 +51,7 @@ public class CanalConfig extends SourceConfig {
     }
 
     public InetSocketAddress getSocketAddress() {
-        String[] addressArray = address.split(":");
+        String[] addressArray = address.split(ADDRESS_SPLIT_CHARACTER);
         if (null != addressArray && addressArray.length == 2) {
             return new InetSocketAddress(addressArray[0], Integer.parseInt(addressArray[1]));
         }
@@ -59,6 +61,11 @@ public class CanalConfig extends SourceConfig {
     @Override
     protected String[] childStuffColumns() {
         return new String[0];
+    }
+
+    @Override
+    protected boolean doCheck() {
+        return StringUtils.isBlank(address) || address.split(ADDRESS_SPLIT_CHARACTER).length != 2;
     }
 
 
