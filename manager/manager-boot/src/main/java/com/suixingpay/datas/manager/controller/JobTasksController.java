@@ -1,5 +1,6 @@
 package com.suixingpay.datas.manager.controller;
 
+import com.alibaba.druid.support.logging.Log;
 import com.suixingpay.datas.common.cluster.ClusterProviderProxy;
 import com.suixingpay.datas.common.cluster.command.TaskPushCommand;
 import com.suixingpay.datas.common.dic.TaskStatusType;
@@ -10,6 +11,9 @@ import com.suixingpay.datas.manager.web.page.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,6 +41,8 @@ import static com.suixingpay.datas.manager.web.message.ResponseMessage.ok;
 @RestController
 @RequestMapping("/manager/jobtasks")
 public class JobTasksController {
+
+    private Logger log = LoggerFactory.getLogger(JobTasksController.class);
 
     @Autowired
     protected JobTasksService jobTasksService;
@@ -151,11 +157,16 @@ public class JobTasksController {
     @PutMapping("/{id}")
     @ApiOperation(value = "修改任务状态", notes = "TaskStatusType 枚举类: NEW、STOPPED、WORKING")
     public ResponseMessage updateState(@PathVariable("id") Long id,
-            @RequestParam("taskStatusType") TaskStatusType taskStatusType) throws Exception {
+            @RequestParam("taskStatusType") TaskStatusType taskStatusType) {
         Integer number = jobTasksService.updateState(id, taskStatusType);
         if (taskStatusType == TaskStatusType.WORKING || taskStatusType == TaskStatusType.STOPPED) {
-            ClusterProviderProxy.INSTANCE
-                    .broadcast(new TaskPushCommand(jobTasksService.fitJobTask(id, taskStatusType)));
+            try {
+                ClusterProviderProxy.INSTANCE
+                        .broadcast(new TaskPushCommand(jobTasksService.fitJobTask(id, taskStatusType)));
+            } catch (Exception e) {
+                log.error("zk变更任务节点[{}]状态[{}]失败,请关注！", id, taskStatusType);
+                e.printStackTrace();
+            }
         }
         return ok(number);
     }
@@ -172,6 +183,15 @@ public class JobTasksController {
     @ApiOperation(value = "逻辑删除任务", notes = "参数：id")
     public ResponseMessage delete(@PathVariable("id") Long id) {
         Integer number = jobTasksService.delete(id);
+        if (number == 1) {
+            try {
+                ClusterProviderProxy.INSTANCE
+                        .broadcast(new TaskPushCommand(jobTasksService.fitJobTask(id, TaskStatusType.DELETED)));
+            } catch (Exception e) {
+                log.error("zk删除任务节点[{}]失败,请关注！", id);
+                e.printStackTrace();
+            }
+        }
         return ok(number);
     }
 }
