@@ -71,4 +71,19 @@ public class MrJobTasksMonitorServiceImpl implements MrJobTasksMonitorService {
         List<MrJobTasksMonitor> list =  mrJobTasksMonitorMapper.selectByJobSwimlane(jobId, swimlaneId, schemaTable, startRow, intervalTime);
         return new MrJobMonitor(list);
     }
+
+    @Override
+    public void createTable(String mrJobTasksMonitorName, String newDate) {
+        mrJobTasksMonitorMapper.createTable(mrJobTasksMonitorName, newDate);
+    }
+
+    @Override
+    public void deleteByDate(String newDate) {
+        mrJobTasksMonitorMapper.deleteByDate(newDate);
+    }
+
+    @Override
+    public void dropTable(String mrJobTasksMonitorName) {
+        mrJobTasksMonitorMapper.dropTable(mrJobTasksMonitorName);
+    }
 }

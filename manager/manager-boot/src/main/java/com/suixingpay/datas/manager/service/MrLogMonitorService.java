@@ -26,4 +26,10 @@ public interface MrLogMonitorService {
 
     /** 解析任务日志. */
     void dealNodeLog(NodeLog log);
+
+    void createTable(String mrLogMonitorName, String newDate);
+
+    void deleteByDate(String newDate);
+
+    void dropTable(String mrLogMonitorName);
 }

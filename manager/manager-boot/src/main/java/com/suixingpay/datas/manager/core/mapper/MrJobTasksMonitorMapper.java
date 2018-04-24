@@ -61,6 +61,29 @@ public interface MrJobTasksMonitorMapper {
     Integer pageAll(@Param("state") Integer state);
 
     List<MrJobTasksMonitor> selectByJobSwimlane(@Param("jobId") String jobId, @Param("swimlaneId") String swimlaneId,
-            @Param("schemaTable") String schemaTable, @Param("startRow") Long startRow,
-            @Param("intervalSize") Long intervalSize);
+                                                @Param("schemaTable") String schemaTable, @Param("startRow") Long startRow,
+                                                @Param("intervalSize") Long intervalSize);
+
+
+    /**
+     * 复制表结构和数据到新表
+     *
+     * @param mrJobTasksMonitorName
+     * @param newDate
+     */
+    void createTable(@Param("mrJobTasksMonitorName") String mrJobTasksMonitorName, @Param("newDate") String newDate);
+
+    /**
+     * 删除前天数据
+     *
+     * @param newDate
+     */
+    void deleteByDate(@Param("newDate") String newDate);
+
+    /**
+     * 删除存在30天的数据迁移表
+     *
+     * @param mrJobTasksMonitorName
+     */
+    void dropTable(@Param("mrJobTasksMonitorName") String mrJobTasksMonitorName);
 }

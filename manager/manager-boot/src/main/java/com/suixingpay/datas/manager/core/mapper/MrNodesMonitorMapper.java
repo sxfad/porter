@@ -71,4 +71,26 @@ public interface MrNodesMonitorMapper {
     List<MrNodesMonitor> selectByNodeId(@Param("nodeId") String nodeId,
                                         @Param("startRow") Long startRow,
                                         @Param("intervalTime") Long intervalTime);
+
+    /**
+     * 复制表结构和数据到新表
+     *
+     * @param mrNodesMonitorName
+     * @param newDate
+     */
+    void createTable(@Param("mrNodesMonitorName") String mrNodesMonitorName, @Param("newDate") String newDate);
+
+    /**
+     * 删除前天数据
+     *
+     * @param newDate
+     */
+    void deleteByDate(@Param("newDate") String newDate);
+
+    /**
+     * 删除存在30天的数据迁移表
+     *
+     * @param mrNodesMonitorName
+     */
+    void dropTable(@Param("mrNodesMonitorName") String mrNodesMonitorName);
 }

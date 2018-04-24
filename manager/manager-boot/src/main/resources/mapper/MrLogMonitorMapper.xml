@@ -76,6 +76,11 @@
         delete from mr_log_monitor where id = #{id}
     </delete>
 
+    <!-- 删除前天数据 -->
+    <delete id="deleteByDate">
+        delete from mr_log_monitor where log_date &lt; #{newDate}
+    </delete>
+
     <!-- 根据主鍵查找 -->
     <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.MrLogMonitor">
         select id, node_id AS nodeId, job_id AS jobId, job_name AS jobName, ip_adress AS ipAdress, log_date AS logDate, log_title AS logTitle, log_content AS logContent, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, partition_day AS partitionDay, remark from mr_log_monitor
@@ -124,6 +129,17 @@
         order by log_date desc
         limit #{page.offset},#{page.pageSize}
     </select>
+
+    <!-- 复制表结构和数据到新表 -->
+    <update id="createTable">
+        create table ${mrLogMonitorName} like mr_log_monitor;
+        insert into ${mrLogMonitorName} select * from mr_log_monitor where log_date &lt; #{newDate};
+    </update>
+
+    <!-- 删除存在30天的数据迁移表 -->
+    <update id="dropTable">
+        DROP table ${mrLogMonitorName};
+    </update>
 
     <!-- 验证新增 -->
     <insert id="insertSelective">
@@ -276,5 +292,6 @@
         </set>
         where id = #{id}
     </update>
+
 
 </mapper>
