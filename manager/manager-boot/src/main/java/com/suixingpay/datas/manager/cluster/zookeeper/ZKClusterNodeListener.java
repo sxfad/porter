@@ -88,7 +88,7 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements N
                 DNode node = getDNode(zkEvent.getPath());
                 String heartBeatTime = DateFormatUtils.formatDate(DateFormatUtils.PATTERN_DEFAULT, node.getHeartbeat());
                 LOGGER.info("节点[{}]状态上报", node.getNodeId());
-                System.err.println("2-DNode...." + node.getNodeId() + "..." + JSON.toJSONString(node));
+                LOGGER.info("2-DNode...." + node.getNodeId() + "..." + JSON.toJSONString(node));
                 // do something 心跳时间记录 并且表示节点在线
                 int i = nodesService.updateHeartBeatTime(node, heartBeatTime);
                 if (i == 0) {
