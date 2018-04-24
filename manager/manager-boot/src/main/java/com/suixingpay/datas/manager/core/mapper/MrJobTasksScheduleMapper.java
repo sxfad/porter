@@ -76,7 +76,8 @@ public interface MrJobTasksScheduleMapper {
      * @param swimlaneId
      * @return
      */
-    MrJobTasksSchedule selectByJobIdAndSwimlaneId(@Param("jobId") String jobId, @Param("swimlaneId") String swimlaneId);
+    MrJobTasksSchedule selectByJobIdAndSwimlaneId(@Param("jobId") String jobId, @Param("swimlaneId") String swimlaneId,
+            @Param("schemaTable") String schemaTable);
 
     /**
      * 根据jobId获取任务泳道
@@ -95,5 +96,5 @@ public interface MrJobTasksScheduleMapper {
      * @return
      */
     List<MrJobTasksSchedule> list(@Param("jobId") String jobId, @Param("heartBeatBeginDate") String heartBeatBeginDate,
-                                  @Param("heartBeatEndDate") String heartBeatEndDate);
+            @Param("heartBeatEndDate") String heartBeatEndDate);
 }

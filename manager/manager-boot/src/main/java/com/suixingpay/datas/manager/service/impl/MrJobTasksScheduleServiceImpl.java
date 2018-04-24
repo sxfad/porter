@@ -66,7 +66,8 @@ public class MrJobTasksScheduleServiceImpl implements MrJobTasksScheduleService 
         MrJobTasksSchedule mrJobTasksSchedule = new MrJobTasksSchedule(stat);
         String jobId = mrJobTasksSchedule.getJobId();
         String swimlaneId = mrJobTasksSchedule.getSwimlaneId();
-        String key = jobId + swimlaneId;
+        String schemaTable = mrJobTasksSchedule.getSchemaTable();
+        String key = jobId + swimlaneId + schemaTable;
         Object lock = map.get(key);
         if (null == lock) {
             Object tmp = new Object();
@@ -79,7 +80,7 @@ public class MrJobTasksScheduleServiceImpl implements MrJobTasksScheduleService 
         }
         try {
             synchronized (lock) {
-                dealDTaskStatSync(jobId, swimlaneId, mrJobTasksSchedule);
+                dealDTaskStatSync(jobId, swimlaneId, schemaTable, mrJobTasksSchedule);
             }
         } finally {
             map.remove(key);
@@ -96,11 +97,12 @@ public class MrJobTasksScheduleServiceImpl implements MrJobTasksScheduleService 
         return mrJobTasksScheduleMapper.list(jobId, heartBeatBeginDate, heartBeatEndDate);
     }
 
-    private void dealDTaskStatSync(String jobId, String swimlaneId, MrJobTasksSchedule mrJobTasksSchedule) {
-        MrJobTasksSchedule old = mrJobTasksScheduleMapper.selectByJobIdAndSwimlaneId(jobId, swimlaneId);
+    private void dealDTaskStatSync(String jobId, String swimlaneId, String schemaTable,
+            MrJobTasksSchedule mrJobTasksSchedule) {
+        MrJobTasksSchedule old = mrJobTasksScheduleMapper.selectByJobIdAndSwimlaneId(jobId, swimlaneId, schemaTable);
         if (old == null || old.getId() == null) {
             mrJobTasksScheduleMapper.insert(mrJobTasksSchedule);
-        }else {
+        } else {
             mrJobTasksSchedule.setId(old.getId());
             mrJobTasksScheduleMapper.updateSelective(old.getId(), mrJobTasksSchedule);
         }
