@@ -8,6 +8,7 @@
         <result column="node_id" property="nodeId" />
         <result column="node_id_ip" property="nodeIdIp" />
         <result column="swimlane_id" property="swimlaneId" />
+        <result column="schema_table" property="schemaTable" />
         <result column="monitor_date" property="monitorDate" />
         <result column="monitor_ymd" property="monitorYmd" />
         <result column="monitor_hour" property="monitorHour" />
@@ -25,7 +26,7 @@
 
     <!-- 通用查询结果列
     <sql id="Base_Column_List">
-        select id, job_id AS jobId, node_id AS nodeId, node_id_ip AS nodeIdIp, swimlane_id AS swimlaneId, monitor_date AS monitorDate, monitor_ymd AS monitorYmd, monitor_hour AS monitorHour, monitor_minute AS monitorMinute, monitor_second AS monitorSecond, insert_succes AS insertSucces, insert_failure AS insertFailure, update_succes AS updateSucces, update_failure AS updateFailure, delete_succes AS deleteSucces, delete_failure AS deleteFailure, partition_day AS partitionDay from mr_job_tasks_monitor
+        select id, job_id AS jobId, node_id AS nodeId, node_id_ip AS nodeIdIp, swimlane_id AS swimlaneId, schema_table as schemaTable, monitor_date AS monitorDate, monitor_ymd AS monitorYmd, monitor_hour AS monitorHour, monitor_minute AS monitorMinute, monitor_second AS monitorSecond, insert_succes AS insertSucces, insert_failure AS insertFailure, update_succes AS updateSucces, update_failure AS updateFailure, delete_succes AS deleteSucces, delete_failure AS deleteFailure, partition_day AS partitionDay from mr_job_tasks_monitor
     </sql>-->
 
     <!-- 新增 -->
@@ -35,6 +36,7 @@
         node_id,
         node_id_ip,
         swimlane_id,
+        schema_table,
         monitor_date,
         monitor_ymd,
         monitor_hour,
@@ -53,6 +55,7 @@
         #{nodeId},
         #{nodeIdIp},
         #{swimlaneId},
+        #{schemaTable}
         #{monitorDate},
         #{monitorYmd},
         #{monitorHour},
@@ -77,6 +80,7 @@
         node_id = #{mrJobTasksMonitor.nodeId},
         node_id_ip = #{mrJobTasksMonitor.nodeIdIp},
         swimlane_id = #{mrJobTasksMonitor.swimlaneId},
+        schema_table = #{mrJobTasksMonitor.schemaTable},
         monitor_date = #{mrJobTasksMonitor.monitorDate},
         monitor_ymd = #{mrJobTasksMonitor.monitorYmd},
         monitor_hour = #{mrJobTasksMonitor.monitorHour},
@@ -100,7 +104,7 @@
 
     <!-- 根据主鍵查找 -->
     <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.MrJobTasksMonitor">
-        select id, job_id AS jobId, node_id AS nodeId, node_id_ip AS nodeIdIp, swimlane_id AS swimlaneId, monitor_date AS monitorDate, monitor_ymd AS monitorYmd, monitor_hour AS monitorHour, monitor_minute AS monitorMinute, monitor_second AS monitorSecond, insert_succes AS insertSucces, insert_failure AS insertFailure, update_succes AS updateSucces, update_failure AS updateFailure, delete_succes AS deleteSucces, delete_failure AS deleteFailure, alarm_number as alarmNumber, partition_day AS partitionDay from mr_job_tasks_monitor
+        select id, job_id AS jobId, node_id AS nodeId, node_id_ip AS nodeIdIp, swimlane_id AS swimlaneId, schema_table as schemaTable, monitor_date AS monitorDate, monitor_ymd AS monitorYmd, monitor_hour AS monitorHour, monitor_minute AS monitorMinute, monitor_second AS monitorSecond, insert_succes AS insertSucces, insert_failure AS insertFailure, update_succes AS updateSucces, update_failure AS updateFailure, delete_succes AS deleteSucces, delete_failure AS deleteFailure, alarm_number as alarmNumber, partition_day AS partitionDay from mr_job_tasks_monitor
         where id = #{id}
     </select>
 
@@ -112,13 +116,13 @@
 
     <!-- 分页 -->
     <select id="page" resultType="com.suixingpay.datas.manager.core.entity.MrJobTasksMonitor">
-        select id, job_id AS jobId, node_id AS nodeId, node_id_ip AS nodeIdIp, swimlane_id AS swimlaneId, monitor_date AS monitorDate, monitor_ymd AS monitorYmd, monitor_hour AS monitorHour, monitor_minute AS monitorMinute, monitor_second AS monitorSecond, insert_succes AS insertSucces, insert_failure AS insertFailure, update_succes AS updateSucces, update_failure AS updateFailure, delete_succes AS deleteSucces, delete_failure AS deleteFailure, alarm_number as alarmNumber, partition_day AS partitionDay from mr_job_tasks_monitor
+        select id, job_id AS jobId, node_id AS nodeId, node_id_ip AS nodeIdIp, swimlane_id AS swimlaneId, schema_table as schemaTable, monitor_date AS monitorDate, monitor_ymd AS monitorYmd, monitor_hour AS monitorHour, monitor_minute AS monitorMinute, monitor_second AS monitorSecond, insert_succes AS insertSucces, insert_failure AS insertFailure, update_succes AS updateSucces, update_failure AS updateFailure, delete_succes AS deleteSucces, delete_failure AS deleteFailure, alarm_number as alarmNumber, partition_day AS partitionDay from mr_job_tasks_monitor
         where 1=1 limit #{page.offset},#{page.pageSize}
     </select>
 
     <select id="selectByJobSwimlane" resultType="com.suixingpay.datas.manager.core.entity.MrJobTasksMonitor">
-        select id, job_id AS jobId, node_id AS nodeId, node_id_ip AS nodeIdIp, swimlane_id AS swimlaneId, monitor_date AS monitorDate, monitor_ymd AS monitorYmd, monitor_hour AS monitorHour, monitor_minute AS monitorMinute, monitor_second AS monitorSecond, insert_succes AS insertSucces, insert_failure AS insertFailure, update_succes AS updateSucces, update_failure AS updateFailure, delete_succes AS deleteSucces, delete_failure AS deleteFailure, alarm_number as alarmNumber, partition_day AS partitionDay from mr_job_tasks_monitor
-        where job_id = #{jobId} and swimlane_id = #{swimlaneId} limit #{startRow},#{intervalSize} 
+        select id, job_id AS jobId, node_id AS nodeId, node_id_ip AS nodeIdIp, swimlane_id AS swimlaneId, schema_table as schemaTable, monitor_date AS monitorDate, monitor_ymd AS monitorYmd, monitor_hour AS monitorHour, monitor_minute AS monitorMinute, monitor_second AS monitorSecond, insert_succes AS insertSucces, insert_failure AS insertFailure, update_succes AS updateSucces, update_failure AS updateFailure, delete_succes AS deleteSucces, delete_failure AS deleteFailure, alarm_number as alarmNumber, partition_day AS partitionDay from mr_job_tasks_monitor
+        where job_id = #{jobId} and swimlane_id = #{swimlaneId} and schema_table = #{schemaTable} limit #{startRow},#{intervalSize} 
     </select>
 
     <!-- 验证新增 -->
@@ -136,6 +140,9 @@
             </if>
             <if test="swimlaneId != null">
                 swimlane_id,
+            </if>
+            <if test="schemaTable != null">
+                schema_table,
             </if>
             <if test="monitorDate != null">
                 monitor_date,
@@ -189,6 +196,9 @@
             </if>
             <if test="swimlaneId != null">
                 #{swimlaneId,jdbcType=VARCHAR},
+            </if>
+            <if test="schemaTable != null">
+                #{schemaTable,jdbcType=VARCHAR},
             </if>
             <if test="monitorDate != null">
                 #{monitorDate,jdbcType=TIMESTAMP},
@@ -247,6 +257,9 @@
             </if>
             <if test="mrJobTasksMonitor.swimlaneId != null">
                 swimlane_id = #{mrJobTasksMonitor.swimlaneId,jdbcType=VARCHAR},
+            </if>
+            <if test="mrJobTasksMonitor.schemaTable != null">
+                schema_table = #{mrJobTasksMonitor.schemaTable,jdbcType=VARCHAR},
             </if>
             <if test="mrJobTasksMonitor.monitorDate != null">
                 monitor_date = #{mrJobTasksMonitor.monitorDate,jdbcType=TIMESTAMP},

@@ -66,9 +66,9 @@ public class MrJobTasksMonitorServiceImpl implements MrJobTasksMonitorService {
     }
 
     @Override
-    public MrJobMonitor obMrJobMonitor(String jobId, String swimlaneId, Long intervalTime, Long intervalCount) {
+    public MrJobMonitor obMrJobMonitor(String jobId, String swimlaneId, String schemaTable, Long intervalTime, Long intervalCount) {
         Long startRow = intervalTime * intervalCount;
-        List<MrJobTasksMonitor> list =  mrJobTasksMonitorMapper.selectByJobSwimlane(jobId, swimlaneId, startRow, intervalTime);
+        List<MrJobTasksMonitor> list =  mrJobTasksMonitorMapper.selectByJobSwimlane(jobId, swimlaneId, schemaTable, startRow, intervalTime);
         return new MrJobMonitor(list);
     }
 }

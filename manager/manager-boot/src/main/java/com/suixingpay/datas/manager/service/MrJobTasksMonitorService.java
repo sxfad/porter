@@ -29,5 +29,5 @@ public interface MrJobTasksMonitorService {
     void dealTaskPerformance(TaskPerformance performance);
 
     /** 获取实时监控数据 . */
-    MrJobMonitor obMrJobMonitor(String jobId, String swimlaneId, Long intervalTime, Long intervalCount);
+    MrJobMonitor obMrJobMonitor(String jobId, String swimlaneId, String schemaTable, Long intervalTime, Long intervalCount);
 }

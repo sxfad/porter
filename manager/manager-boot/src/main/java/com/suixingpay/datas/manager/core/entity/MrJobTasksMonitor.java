@@ -31,6 +31,8 @@ public class MrJobTasksMonitor implements java.io.Serializable {
         this.nodeIdIp = ResourceUtils.obtainNodeIp(performance.getNodeId());
         // 泳道ID
         this.swimlaneId = performance.getSwimlaneId();
+        // 数据表
+        this.schemaTable = performance.getSchema() + "." + performance.getTable();
         // 实际监控日期
         this.monitorDate = performance.getTime();
         // 实际监控年月日
@@ -86,6 +88,11 @@ public class MrJobTasksMonitor implements java.io.Serializable {
      * 任务泳道.
      */
     private String swimlaneId;
+
+    /**
+     * 表全名
+     */
+    private String schemaTable;
 
     /**
      * 实时监控时间.
@@ -397,4 +404,13 @@ public class MrJobTasksMonitor implements java.io.Serializable {
     public void setAlarmNumber(Long alarmNumber) {
         this.alarmNumber = alarmNumber;
     }
+
+    public String getSchemaTable() {
+        return schemaTable;
+    }
+
+    public void setSchemaTable(String schemaTable) {
+        this.schemaTable = schemaTable;
+    }
+
 }
