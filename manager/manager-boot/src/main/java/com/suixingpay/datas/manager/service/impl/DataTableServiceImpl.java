@@ -3,6 +3,7 @@
  */
 package com.suixingpay.datas.manager.service.impl;
 
+import com.suixingpay.datas.common.dic.SourceType;
 import com.suixingpay.datas.manager.core.dto.JDBCVo;
 import com.suixingpay.datas.manager.core.entity.DataSource;
 import com.suixingpay.datas.manager.core.entity.DataSourcePlugin;
@@ -63,76 +64,94 @@ public class DataTableServiceImpl implements DataTableService {
 
     @Override
     public List<String> prefixList(Long sourceId) {
+        List<String> lists = null;
         DataSource dataSource = dataSourceService.selectById(sourceId);
-        List<DataSourcePlugin> list = dataSource.getPlugins();
-        String url = null;
-        String username = null;
-        String password = null;
-        QuerySQL query = null;
-        //根据数据源id获取数据源信息
-        for (DataSourcePlugin dataSourcePlugin : list) {
-            if (dataSourcePlugin.getFieldCode().toLowerCase().equals("dbtype")) {
-                if (dataSourcePlugin.getFieldValue().toLowerCase().equals("mysql")) {
-                    query = QuerySQL.MYSQL;
+        if(dataSource.getDataType() == SourceType.JDBC) {
+            List<DataSourcePlugin> dataSourcePlugins = dataSource.getPlugins();
+            String url = null;
+            String username = null;
+            String password = null;
+            QuerySQL query = null;
+            //根据数据源id获取数据源信息
+            for (DataSourcePlugin dataSourcePlugin : dataSourcePlugins) {
+                if (dataSourcePlugin.getFieldCode().toLowerCase().equals("dbtype")) {
+                    if (dataSourcePlugin.getFieldValue().toLowerCase().equals("mysql")) {
+                        query = QuerySQL.MYSQL;
+                    }
+                    if (dataSourcePlugin.getFieldValue().toLowerCase().equals("oracle")) {
+                        query = QuerySQL.ORACLE;
+                    }
                 }
-                if (dataSourcePlugin.getFieldValue().toLowerCase().equals("oracle")) {
-                    query = QuerySQL.ORACLE;
+                if (dataSourcePlugin.getFieldCode().toLowerCase().equals("url")) {
+                    url = dataSourcePlugin.getFieldValue();
+                }
+                if (dataSourcePlugin.getFieldCode().toLowerCase().equals("username")) {
+                    username = dataSourcePlugin.getFieldValue();
+                }
+                if (dataSourcePlugin.getFieldCode().toLowerCase().equals("password")) {
+                    password = dataSourcePlugin.getFieldValue();
                 }
             }
-            if (dataSourcePlugin.getFieldCode().toLowerCase().equals("url")) {
-                url = dataSourcePlugin.getFieldValue();
-            }
-            if (dataSourcePlugin.getFieldCode().toLowerCase().equals("username")) {
-                username = dataSourcePlugin.getFieldValue();
-            }
-            if (dataSourcePlugin.getFieldCode().toLowerCase().equals("password")) {
-                password = dataSourcePlugin.getFieldValue();
-            }
+            String sql = query.getPrefixSql();
+            //根据DbType获取相应的实现类
+            DbSelectService dbSelectService = ApplicationContextUtil.getBean("dbJDBC" + query.getDbType() + "SelectService");
+            lists = dbSelectService.list(dataSource, new JDBCVo(query.getDriverName(), url, username, password), sql, null);
+            return lists;
+        }else {
+            DbSelectService dbSelectService = ApplicationContextUtil.getBean("db" + dataSource.getDataType() + "SelectService");
+            lists = dbSelectService.list(dataSource, null, null, null);
+            return lists;
         }
-
-        String sql = query.getPrefixSql();
-        //根据DbType获取相应的实现类
-        DbSelectService dbSelectService = ApplicationContextUtil.getBean("db" + query.getDbType() + "SelectService");
-        List<String> lists = dbSelectService.list(new JDBCVo(query.getDriverName(), url, username, password), sql, null);
-        return lists;
     }
 
     @Override
     public Page<Object> tableList(Page<Object> page, Long sourceId, String prefix, String tableName) {
         DataSource dataSource = dataSourceService.selectById(sourceId);
-        List<DataSourcePlugin> list = dataSource.getPlugins();
-        String url = null;
-        String username = null;
-        String password = null;
-        QuerySQL query = null;
-        for (DataSourcePlugin dataSourcePlugin : list) {
-            if (dataSourcePlugin.getFieldCode().toLowerCase().equals("dbtype")) {
-                if (dataSourcePlugin.getFieldValue().toLowerCase().equals("mysql")) {
-                    query = QuerySQL.MYSQL;
+        if(dataSource.getDataType() == SourceType.JDBC) {
+            List<DataSourcePlugin> list = dataSource.getPlugins();
+            String url = null;
+            String username = null;
+            String password = null;
+            QuerySQL query = null;
+            for (DataSourcePlugin dataSourcePlugin : list) {
+                if (dataSourcePlugin.getFieldCode().toLowerCase().equals("dbtype")) {
+                    if (dataSourcePlugin.getFieldValue().toLowerCase().equals("mysql")) {
+                        query = QuerySQL.MYSQL;
+                    }
+                    if (dataSourcePlugin.getFieldValue().toLowerCase().equals("oracle")) {
+                        query = QuerySQL.ORACLE;
+                    }
                 }
-                if (dataSourcePlugin.getFieldValue().toLowerCase().equals("oracle")) {
-                    query = QuerySQL.ORACLE;
+                if (dataSourcePlugin.getFieldCode().toLowerCase().equals("url")) {
+                    url = dataSourcePlugin.getFieldValue();
+                }
+                if (dataSourcePlugin.getFieldCode().toLowerCase().equals("username")) {
+                    username = dataSourcePlugin.getFieldValue();
+                }
+                if (dataSourcePlugin.getFieldCode().toLowerCase().equals("password")) {
+                    password = dataSourcePlugin.getFieldValue();
                 }
             }
-            if (dataSourcePlugin.getFieldCode().toLowerCase().equals("url")) {
-                url = dataSourcePlugin.getFieldValue();
+            String sql = query.getTablesSql();
+            DbSelectService dbSelectService = ApplicationContextUtil.getBean("dbJDBC" + query.getDbType() + "SelectService");
+            Long total = dbSelectService.pageTotal(dataSource, new JDBCVo(query.getDriverName(), url, username, password), sql, prefix, tableName);
+            if (total > 0) {
+                page.setTotalItems(total);
+                List<Object> lists = dbSelectService.page(dataSource ,new JDBCVo(query.getDriverName(), url, username, password), page, sql, prefix, tableName);
+                page.setResult(lists);
             }
-            if (dataSourcePlugin.getFieldCode().toLowerCase().equals("username")) {
-                username = dataSourcePlugin.getFieldValue();
+            return page;
+        }else {
+            DbSelectService dbSelectService = ApplicationContextUtil.getBean("db" + dataSource.getDataType() + "SelectService");
+            Long total = dbSelectService.pageTotal(dataSource, null, null, prefix, tableName);
+            if (total > 0) {
+                page.setTotalItems(total);
+                List<Object> lists = dbSelectService.page(dataSource, null, page, null, prefix, tableName);
+                page.setResult(lists);
             }
-            if (dataSourcePlugin.getFieldCode().toLowerCase().equals("password")) {
-                password = dataSourcePlugin.getFieldValue();
-            }
+            return page;
         }
-        String sql = query.getTablesSql();
-        DbSelectService dbSelectService = ApplicationContextUtil.getBean("db" + query.getDbType() + "SelectService");
-        Long total = dbSelectService.pageTotal(new JDBCVo(query.getDriverName(), url, username, password), sql, prefix, tableName);
-        if (total > 0) {
-            page.setTotalItems(total);
-            List<Object> lists = dbSelectService.page(new JDBCVo(query.getDriverName(), url, username, password), page, sql, prefix, tableName);
-            page.setResult(lists);
-        }
-        return page;
+        
     }
 
     @Override

@@ -183,36 +183,44 @@ public class JobTasksServiceImpl implements JobTasksService {
 
     @Override
     public List<String> fields(Long sourceId, Long tablesId, String tableAllName) {
+        List<String> fields = null;
         DataSource dataSource = dataSourceService.selectById(sourceId);
-        List<DataSourcePlugin> list = dataSource.getPlugins();
-        String url = null;
-        String username = null;
-        String password = null;
-        QuerySQL query = null;
-        for (DataSourcePlugin dataSourcePlugin : list) {
-            if (dataSourcePlugin.getFieldCode().toLowerCase().equals("dbtype")) {
-                if (dataSourcePlugin.getFieldValue().toLowerCase().equals("mysql")) {
-                    query = QuerySQL.MYSQL;
+        if(dataSource.getDataType() == SourceType.JDBC) {
+            List<DataSourcePlugin> list = dataSource.getPlugins();
+            String url = null;
+            String username = null;
+            String password = null;
+            QuerySQL query = null;
+            for (DataSourcePlugin dataSourcePlugin : list) {
+                if (dataSourcePlugin.getFieldCode().toLowerCase().equals("dbtype")) {
+                    if (dataSourcePlugin.getFieldValue().toLowerCase().equals("mysql")) {
+                        query = QuerySQL.MYSQL;
+                    }
+                    if (dataSourcePlugin.getFieldValue().toLowerCase().equals("oracle")) {
+                        query = QuerySQL.ORACLE;
+                    }
                 }
-                if (dataSourcePlugin.getFieldValue().toLowerCase().equals("oracle")) {
-                    query = QuerySQL.ORACLE;
+                if (dataSourcePlugin.getFieldCode().toLowerCase().equals("url")) {
+                    url = dataSourcePlugin.getFieldValue();
+                }
+                if (dataSourcePlugin.getFieldCode().toLowerCase().equals("username")) {
+                    username = dataSourcePlugin.getFieldValue();
+                }
+                if (dataSourcePlugin.getFieldCode().toLowerCase().equals("password")) {
+                    password = dataSourcePlugin.getFieldValue();
                 }
             }
-            if (dataSourcePlugin.getFieldCode().toLowerCase().equals("url")) {
-                url = dataSourcePlugin.getFieldValue();
-            }
-            if (dataSourcePlugin.getFieldCode().toLowerCase().equals("username")) {
-                username = dataSourcePlugin.getFieldValue();
-            }
-            if (dataSourcePlugin.getFieldCode().toLowerCase().equals("password")) {
-                password = dataSourcePlugin.getFieldValue();
-            }
+            String sql = query.getTableFieldsSql();
+            DbSelectService dbSelectService = ApplicationContextUtil.getBean("dbJDBC" + query.getDbType() + "SelectService");
+            fields = dbSelectService.fieldList(dataSource, new JDBCVo(query.getDriverName(), url, username, password), sql,
+                    tableAllName);
+            return fields;
+        }else {
+            DbSelectService dbSelectService = ApplicationContextUtil.getBean("db" + dataSource.getDataType() + "SelectService");
+            fields = dbSelectService.fieldList(dataSource, null, null,tableAllName);
+            return fields;
         }
-        String sql = query.getTableFieldsSql();
-        DbSelectService dbSelectService = ApplicationContextUtil.getBean("db" + query.getDbType() + "SelectService");
-        List<String> fields = dbSelectService.fieldList(new JDBCVo(query.getDriverName(), url, username, password), sql,
-                tableAllName);
-        return fields;
+        
     }
 
     @Override

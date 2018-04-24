@@ -5,6 +5,7 @@ package com.suixingpay.datas.manager.service.impl;
 
 import com.suixingpay.datas.manager.core.datasource.DataSourceUtil;
 import com.suixingpay.datas.manager.core.dto.JDBCVo;
+import com.suixingpay.datas.manager.core.entity.DataSource;
 import com.suixingpay.datas.manager.exception.BaseException;
 import com.suixingpay.datas.manager.exception.ExceptionCode;
 import com.suixingpay.datas.manager.service.DbSelectService;
@@ -22,11 +23,11 @@ import java.util.Map;
 /**
  * @author guohongjian[guo_hj@suixingpay.com]
  */
-@Service("dbMYSQLSelectService")
+@Service("dbJDBCMYSQLSelectService")
 public class DbMysqlSelectService implements DbSelectService {
 
     @Override
-    public List<String> list(JDBCVo jvo, String sql, Map<String, Object> map) {
+    public List<String> list(DataSource dataSource, JDBCVo jvo, String sql, Map<String, Object> map) {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet results = null;
@@ -49,7 +50,7 @@ public class DbMysqlSelectService implements DbSelectService {
     }
 
     @Override
-    public Long pageTotal(JDBCVo jvo, String sql, String prefix, String tableName1) {
+    public Long pageTotal(DataSource dataSource, JDBCVo jvo, String sql, String prefix, String tableName1) {
         Long total = 0l;
         String executeSql = "select count(*) as total from (" + sql + ") as t where %term";
         StringBuffer termSql = new StringBuffer("1=1");
@@ -83,7 +84,7 @@ public class DbMysqlSelectService implements DbSelectService {
     }
 
     @Override
-    public List<Object> page(JDBCVo jvo, Page<Object> page, String sql, String prefix, String tableName1) {
+    public List<Object> page(DataSource dataSource, JDBCVo jvo, Page<Object> page, String sql, String prefix, String tableName1) {
         int offset = (page.getPageNo() - 1) * page.getPageSize();//(pageNo - 1) * pageSize
         int pageSize = page.getPageSize();
         List<Object> list = new ArrayList<Object>();
@@ -125,7 +126,7 @@ public class DbMysqlSelectService implements DbSelectService {
     }
 
     @Override
-    public List<String> fieldList(JDBCVo jvo, String sql, String tableAllName) {
+    public List<String> fieldList(DataSource dataSource, JDBCVo jvo, String sql, String tableAllName) {
         sql = sql.replace("%s", tableAllName);
         Connection connection = null;
         PreparedStatement preparedStatement = null;
