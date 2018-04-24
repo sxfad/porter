@@ -69,6 +69,11 @@ public class NodeLog extends StatisticData {
         return NAME;
     }
 
+    @Override
+    protected String getSubId() {
+        return processId;
+    }
+
     public static void upload(LogType type, String taskId, String swimlaneId, String error, List<AlertReceiver> receivers) {
         try {
             NodeLog log = new NodeLog(type, taskId, swimlaneId, error);

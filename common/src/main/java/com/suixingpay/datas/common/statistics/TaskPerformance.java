@@ -76,4 +76,9 @@ public class TaskPerformance extends StatisticData {
     public String getCategory() {
         return NAME;
     }
+
+    @Override
+    protected String getSubId() {
+        return taskId + "-" + swimlaneId;
+    }
 }

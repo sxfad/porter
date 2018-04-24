@@ -181,30 +181,23 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
                 + "/" + dataStat.getSchema() + "." + dataStat.getTable()).intern();
         //控制锁的粒度到每个consume-resource节点，
         synchronized (node) {
-            Stat stat = client.exists(node, true);
-            //节点不存在，创建新节点
-            if (null == stat) {
-                DTaskStat thisStat = new DTaskStat(dataStat.getTaskId(), NodeContext.INSTANCE.getNodeId(),
-                        dataStat.getSwimlaneId(), dataStat.getSchema(), dataStat.getTable());
-                client.create(node, false, thisStat.toString());
-                stat = client.exists(node, true);
-            }
+            //1.创建默认节点
+            DTaskStat thisStat = new DTaskStat(dataStat.getTaskId(), NodeContext.INSTANCE.getNodeId(),
+                    dataStat.getSwimlaneId(), dataStat.getSchema(), dataStat.getTable());
+            client.createWhenNotExists(node, false, true, thisStat.toString());
 
-            //节点合并赋值并上传
-            if (null != stat) {
-                Pair<String, Stat> nodePair = client.getData(node);
-                LOGGER.debug("stat checkout from zookeeper:{}", nodePair.getLeft());
-                //remoteStat
-                DTaskStat taskStat = DTaskStat.fromString(nodePair.getLeft(), DTaskStat.class);
-                //run callback before merge data
-                if (null != command.getCallback()) command.getCallback().callback(taskStat);
-                //merge from localStat
-                taskStat.merge(dataStat);
-                //upload stat
-                client.setData(node, taskStat.toString(), nodePair.getRight().getVersion());
-
-                LOGGER.debug("stat store in zookeeper:{}", JSON.toJSONString(taskStat));
-            }
+            //2.节点合并赋值并上传
+            Pair<String, Stat> nodePair = client.getData(node);
+            LOGGER.debug("stat checkout from zookeeper:{}", nodePair.getLeft());
+            //remoteStat
+            DTaskStat taskStat = DTaskStat.fromString(nodePair.getLeft(), DTaskStat.class);
+            //run callback before merge data
+            if (null != command.getCallback()) command.getCallback().callback(taskStat);
+            //merge from localStat
+            taskStat.merge(dataStat);
+            //upload stat
+            client.setData(node, taskStat.toString(), nodePair.getRight().getVersion());
+            LOGGER.debug("stat store in zookeeper:{}", JSON.toJSONString(taskStat));
         }
     }
 
