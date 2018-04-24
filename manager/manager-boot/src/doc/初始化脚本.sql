@@ -284,7 +284,7 @@ CREATE TABLE `mr_log_monitor` (
   `ip_adress` VARCHAR(20) DEFAULT NULL COMMENT 'IP地址',
   `log_date` DATETIME DEFAULT NULL COMMENT '日志时间',
   `log_title` VARCHAR(200) DEFAULT NULL COMMENT '日志标题',
-  `log_content` VARCHAR(2000) DEFAULT NULL COMMENT '日志内容',
+  `log_content` text DEFAULT NULL COMMENT '日志内容',
   `create_user_id` BIGINT(20) NOT NULL DEFAULT '-1' COMMENT '创建人',
   `update_user_id` BIGINT(20) NOT NULL DEFAULT '-1' COMMENT '修改人',
   `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -307,7 +307,7 @@ CREATE TABLE `mr_nodes_schedule` (
   `job_id_json` VARCHAR(200) DEFAULT NULL COMMENT '任务json信息',
   `job_name_json` VARCHAR(200) DEFAULT NULL COMMENT '任务json-name信息',
   `health_level` VARCHAR(100) DEFAULT NULL COMMENT '节点健康级别',
-  `health_level_desc` VARCHAR(2000) DEFAULT NULL COMMENT '节点健康级别描述',
+  `health_level_desc` text DEFAULT NULL COMMENT '节点健康级别描述',
   `create_user_id` BIGINT(20) NOT NULL DEFAULT '-1' COMMENT '创建人',
   `update_user_id` BIGINT(20) NOT NULL DEFAULT '-1' COMMENT '修改人',
   `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -456,3 +456,10 @@ INSERT  INTO `d_data_source_plugin`(`id`,`source_type`,`field_name`,`field_code`
 INSERT  INTO `d_dictionary`(`id`,`code`,`name`,`parentcode`,`level`,`dictype`,`state`,`remark`) VALUES 
 (1,'Manual','手动','-1',1,'PTmaintain',1,NULL),
 (2,'Automatic','自动','-1',1,'PTmaintain',1,NULL);
+-- 初始化邮箱
+insert  into `s_alarm`(`id`,`alarm_type`,`create_user_id`,`update_user_id`,`create_time`,`update_time`,`state`,`iscancel`,`remark`) values (1,'EMAIL',-1,-1,'2018-04-19 15:15:21','2018-04-19 15:15:21',1,0,NULL);
+insert  into `s_alarm_plugin`(`id`,`alarm_id`,`alarm_type`,`plugin_code`,`plugin_name`,`plugin_value`) values 
+(1,1,'EMAIL','host','邮件服务器','smtp.163.com'),
+(2,1,'EMAIL','username','邮件账户','datas_test@163.com'),
+(3,1,'EMAIL','password','邮箱密码','datas123456');
+insert  into `s_alarm_user`(`id`,`alarm_id`,`user_id`) values (1,1,5);
