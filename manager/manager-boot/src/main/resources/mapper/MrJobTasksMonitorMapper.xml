@@ -122,7 +122,7 @@
 
     <select id="selectByJobSwimlane" resultType="com.suixingpay.datas.manager.core.entity.MrJobTasksMonitor">
         select id, job_id AS jobId, node_id AS nodeId, node_id_ip AS nodeIdIp, swimlane_id AS swimlaneId, schema_table as schemaTable, monitor_date AS monitorDate, monitor_ymd AS monitorYmd, monitor_hour AS monitorHour, monitor_minute AS monitorMinute, monitor_second AS monitorSecond, insert_succes AS insertSucces, insert_failure AS insertFailure, update_succes AS updateSucces, update_failure AS updateFailure, delete_succes AS deleteSucces, delete_failure AS deleteFailure, alarm_number as alarmNumber, partition_day AS partitionDay from mr_job_tasks_monitor
-        where job_id = #{jobId} and swimlane_id = #{swimlaneId} and schema_table = #{schemaTable} limit #{startRow},#{intervalSize} 
+        where job_id = #{jobId} and swimlane_id = #{swimlaneId} and schema_table = #{schemaTable} ORDER BY monitor_date DESC limit #{startRow},#{intervalSize} 
     </select>
 
     <!-- 验证新增 -->

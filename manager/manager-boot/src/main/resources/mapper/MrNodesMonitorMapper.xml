@@ -86,7 +86,7 @@
     <!-- 节点监控统计 -->
     <select id="selectByNodeId" resultType="com.suixingpay.datas.manager.core.entity.MrNodesMonitor">
         select id, node_id AS nodeId, monitor_date AS monitorDate, monitor_ymd AS monitorYmd, monitor_hour AS monitorHour, monitor_minute AS monitorMinute, monitor_second AS monitorSecond, monitor_tps AS monitorTps, monitor_alarm AS monitorAlarm, partition_day AS partitionDay from mr_nodes_monitor
-        WHERE node_id = #{nodeId}
+        WHERE node_id = #{nodeId} ORDER BY monitor_date DESC
         limit #{startRow},#{intervalTime}
     </select>
 
