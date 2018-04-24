@@ -60,4 +60,9 @@ public interface ClusterProvider {
      * @throws Exception
      */
     void broadcastCommand(ClusterCommand command) throws Exception;
+
+    /**
+     * 集群插件是否有效
+     */
+    boolean available();
 }

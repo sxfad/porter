@@ -35,6 +35,7 @@ import com.suixingpay.datas.common.cluster.impl.zookeeper.ZookeeperClusterListen
 import com.suixingpay.datas.common.cluster.data.DTaskStat;
 import com.suixingpay.datas.common.config.TaskConfig;
 import com.suixingpay.datas.common.exception.TaskLockException;
+import com.suixingpay.datas.common.exception.TaskStopTriggerException;
 import com.suixingpay.datas.common.task.TaskEventListener;
 import com.suixingpay.datas.common.task.TaskEventProvider;
 import com.suixingpay.datas.common.util.MachineUtils;
@@ -251,6 +252,9 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
 
     @Override
     public void upload(TaskPositionUploadCommand command) throws Exception {
+        if (!client.alive()) {
+            throw new TaskStopTriggerException("节点集群客户端链接失效");
+        }
         String position = listenPath() + "/" + command.getTaskId() + "/position/" + command.getSwimlaneId();
         client.changeData(position, false, false, command.getPosition());
     }

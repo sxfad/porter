@@ -149,4 +149,13 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
             e.printStackTrace();
         }
     }
+
+    /**
+     * zk客户端必须是CONNECTED状态，否则将会导致任务同步状态失效
+     * @return
+     */
+    @Override
+    public boolean alive() {
+        return null != zk && null != zk.getState() && zk.getState() == ZooKeeper.States.CONNECTED;
+    }
 }

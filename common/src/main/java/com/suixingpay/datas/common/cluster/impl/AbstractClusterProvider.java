@@ -179,6 +179,7 @@ public abstract class AbstractClusterProvider<C extends Client> implements Clust
         }
     }
 
+
     private void initialize(ClusterConfig config) throws ClientException, IOException, ConfigParseException {
         client = initClient(config);
         if (null == client || !(client instanceof ClusterClient)) {
@@ -193,5 +194,10 @@ public abstract class AbstractClusterProvider<C extends Client> implements Clust
             listener.setClient(client);
             monitor.addListener(listener);
         });
+    }
+
+    @Override
+    public boolean available() {
+        return null != client && client.isAlive();
     }
 }

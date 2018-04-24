@@ -33,4 +33,6 @@ public interface ClusterClient<S> {
     S exists(String path, boolean watch)  throws Exception;
 
     void delete(String path) throws Exception;
+
+    boolean alive();
 }

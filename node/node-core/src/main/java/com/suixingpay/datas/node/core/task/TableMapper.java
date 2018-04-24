@@ -10,8 +10,6 @@
 package com.suixingpay.datas.node.core.task;
 
 import com.suixingpay.datas.common.config.TableMapperConfig;
-import lombok.Getter;
-import lombok.Setter;
 
 import java.util.Arrays;
 import java.util.Map;
