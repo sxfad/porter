@@ -251,7 +251,7 @@ CREATE TABLE `mr_job_tasks_schedule` (
   `remark` VARCHAR(100) DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`)
 ) ENGINE=INNODB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COMMENT='任务泳道进度表';
--- 任务泳道实时监控表
+-- 任务泳道表名实时监控表
 DROP TABLE IF EXISTS `mr_job_tasks_monitor`;
 CREATE TABLE `mr_job_tasks_monitor` (
   `id` BIGINT(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -259,6 +259,7 @@ CREATE TABLE `mr_job_tasks_monitor` (
   `node_id` VARCHAR(100) DEFAULT NULL COMMENT '节点id',
   `node_id_ip` VARCHAR(200) DEFAULT NULL COMMENT '节点id[ip]',
   `swimlane_id` VARCHAR(100) DEFAULT NULL COMMENT '任务泳道',
+  `schema_table` varchar(200) DEFAULT NULL COMMENT '表全名',
   `monitor_date` DATETIME DEFAULT NULL COMMENT '实时监控时间',
   `monitor_ymd` DATE DEFAULT NULL COMMENT '实时监控年月日',
   `monitor_hour` INT(5) DEFAULT NULL COMMENT '实时监控小时(24h)',
@@ -273,7 +274,7 @@ CREATE TABLE `mr_job_tasks_monitor` (
   `alarm_number` BIGINT(20) DEFAULT NULL COMMENT '告警次数',
   `partition_day` DATE DEFAULT NULL COMMENT '预留时间分区字段',
   PRIMARY KEY (`id`)
-) ENGINE=INNODB AUTO_INCREMENT=1609 DEFAULT CHARSET=utf8 COMMENT='任务泳道实时监控表';
+) ENGINE=INNODB AUTO_INCREMENT=1609 DEFAULT CHARSET=utf8 COMMENT='任务泳道表名实时监控表';
 -- 日志信息表
 DROP TABLE IF EXISTS `mr_log_monitor`;
 CREATE TABLE `mr_log_monitor` (
