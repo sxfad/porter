@@ -30,7 +30,7 @@ import lombok.Getter;
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum TaskStatusType {
 
-    NEW("NEW", "新建"), STOPPED("STOPPED", "已停止"), WORKING("WORKING", "工作中");
+    NEW("NEW", "新建"), STOPPED("STOPPED", "已停止"), WORKING("WORKING", "工作中"), DELETED("DELETED", "已删除");
 
     @Getter
     private final String code;
@@ -43,6 +43,10 @@ public enum TaskStatusType {
 
     public boolean isWorking() {
         return this == WORKING;
+    }
+
+    public boolean isDeleted() {
+        return this == DELETED;
     }
 
     public static final HashMap<String, Object> LINKMAP = new LinkedHashMap<String, Object>() {

@@ -97,9 +97,13 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
         for (SourceConfig sc : sourceConfigs) {
             String pushPath = distPath + "/" + sc.getSwimlaneId();
             String errorPath = taskPath + "/error/" + sc.getSwimlaneId();
-            // 为每个泳道填充参数
-            config.getConsumer().setSource(sc.getProperties());
-            client.changeData(pushPath, false, false, JSONObject.toJSONString(config));
+            if (!config.getStatus().isDeleted()) {
+                // 为每个泳道填充参数
+                config.getConsumer().setSource(sc.getProperties());
+                client.changeData(pushPath, false, false, JSONObject.toJSONString(config));
+            } else {
+                client.delete(pushPath);
+            }
             client.delete(errorPath);
         }
     }
