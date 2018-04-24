@@ -55,7 +55,7 @@
         #{nodeId},
         #{nodeIdIp},
         #{swimlaneId},
-        #{schemaTable}
+        #{schemaTable},
         #{monitorDate},
         #{monitorYmd},
         #{monitorHour},
