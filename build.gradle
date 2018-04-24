@@ -51,7 +51,7 @@ subprojects {
                 'mysql:mysql-connector-java:5.1.45'
         )
         compile files(rootProject.getRootDir().path+'/other_dependencies/ojdbc7.jar')
-        compile('org.apache.zookeeper:zookeeper:3.4.10'){
+        compile('org.apache.zookeeper:zookeeper:3.4.11'){
             exclude group:'org.slf4j',module:'slf4j-api'
             exclude group:'org.slf4j',module:'slf4j-log4j12'
             exclude group:'log4j',module:'log4j'
