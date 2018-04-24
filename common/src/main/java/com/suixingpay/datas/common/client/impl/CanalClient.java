@@ -68,7 +68,7 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
         CanalConfig config = getConfig();
         perPullSize = config.getOncePollSize();
         pollTimeOut = config.getPollTimeOut();
-        clientId = new ClientIdentity(config.getDatabase(), config.getSlaveId().shortValue());
+        clientId = new ClientIdentity(config.getDatabase(), config.getSlaveId().shortValue(), config.getFilter());
     }
 
     @Override
