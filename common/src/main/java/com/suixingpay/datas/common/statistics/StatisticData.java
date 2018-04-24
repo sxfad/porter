@@ -36,9 +36,13 @@ public abstract class StatisticData {
     public abstract String getCategory();
 
     @JSONField(serialize = false, deserialize = false)
+    protected abstract String getSubId();
+
+    @JSONField(serialize = false, deserialize = false)
     public String getId() {
-        return new StringBuilder(nodeId).append("-").append(ID_DATE_FORMAT.format(new Date())).toString();
+        return new StringBuilder(nodeId).append("-").append(getSubId()).append("-").append(ID_DATE_FORMAT.format(new Date())).toString();
     }
+
 
     public String toString() {
         return JSONObject.toJSONString(this);
