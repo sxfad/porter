@@ -31,4 +31,8 @@ public interface Client {
     default void testConnection() throws ClientConnectionException {
 
     }
+
+    default boolean isAlive() {
+        return true;
+    }
 }
