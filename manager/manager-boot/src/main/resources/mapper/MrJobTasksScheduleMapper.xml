@@ -133,8 +133,8 @@
 
     <!-- 根据任务id和泳道查询 -->
     <select id="selectByJobIdAndSwimlaneId" resultType="com.suixingpay.datas.manager.core.entity.MrJobTasksSchedule">
-        select id, job_id AS jobId, job_name AS jobName, swimlane_id AS swimlaneId from mr_job_tasks_schedule
-        where job_id = #{jobId} and swimlane_id = #{swimlaneId}
+        select id, job_id AS jobId, job_name AS jobName, swimlane_id AS swimlaneId , schema_table AS schemaTable from mr_job_tasks_schedule
+        where job_id = #{jobId} and swimlane_id = #{swimlaneId} and schema_table = #{schemaTable}
     </select>
 
     <!-- 根据任务id获取泳道 -->
