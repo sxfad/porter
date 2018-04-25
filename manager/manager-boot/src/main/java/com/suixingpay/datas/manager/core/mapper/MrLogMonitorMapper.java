@@ -62,24 +62,4 @@ public interface MrLogMonitorMapper {
     Integer pageAll(@Param("ipAddress") String ipAddress, @Param("state") Integer state,
             @Param("beginTime") String beginTime, @Param("endTime") String endTime);
 
-    /**
-     * 复制表结构和数据到新表
-     * @param mrLogMonitorName
-     * @param newDate
-     */
-    void createTable(@Param("mrLogMonitorName") String mrLogMonitorName, @Param("newDate") String newDate);
-
-    /**
-     * 删除前天数据
-     *
-     * @param newDate
-     */
-    void deleteByDate(@Param("newDate") String newDate);
-
-    /**
-     * 删除存在30天的数据迁移表
-     *
-     * @param mrLogMonitorName
-     */
-    void dropTable(@Param("mrLogMonitorName") String mrLogMonitorName);
 }

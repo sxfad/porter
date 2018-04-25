@@ -30,9 +30,4 @@ public interface MrNodesMonitorService {
 
     MrNodeMonitor obNodeMonitor(String nodeId, Long intervalTime, Long intervalCount);
 
-    void createTable(String mrNodesMonitorName, String newDate);
-
-    void deleteByDate(String newDate);
-
-    void dropTable(String mrNodesMonitorName);
 }

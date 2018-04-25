@@ -95,21 +95,6 @@ public class MrNodesMonitorServiceImpl implements MrNodesMonitorService {
         return new MrNodeMonitor(list);
     }
 
-    @Override
-    public void createTable(String mrNodesMonitorName, String newDate) {
-        mrNodesMonitorMapper.createTable(mrNodesMonitorName, newDate);
-    }
-
-    @Override
-    public void deleteByDate(String newDate) {
-        mrNodesMonitorMapper.deleteByDate(newDate);
-    }
-
-    @Override
-    public void dropTable(String mrNodesMonitorName) {
-        mrNodesMonitorMapper.dropTable(mrNodesMonitorName);
-    }
-
     private void dealTaskPerformanceSync(String nodeId, String dataTimes, MrNodesMonitor mrNodesMonitor) {
         MrNodesMonitor old = mrNodesMonitorMapper.selectByNodeIdAndTime(nodeId, dataTimes);
         if (old == null || old.getId() == null) {

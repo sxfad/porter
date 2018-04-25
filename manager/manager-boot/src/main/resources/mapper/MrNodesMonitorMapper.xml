@@ -90,17 +90,6 @@
         limit #{startRow},#{intervalTime}
     </select>
 
-    <!-- 复制表结构和数据到新表 -->
-    <update id="createTable">
-        create table ${mrNodesMonitorName} like mr_nodes_monitor;
-        insert into ${mrNodesMonitorName} select * from mr_nodes_monitor WHERE monitor_date &lt; #{newDate};
-    </update>
-
-    <!-- 删除存在30天的数据迁移表 -->
-    <update id="dropTable">
-        DROP TABLE ${mrNodesMonitorName};
-    </update>
-
     <!-- 验证新增 -->
     <insert id="insertSelective">
         insert into mr_nodes_monitor

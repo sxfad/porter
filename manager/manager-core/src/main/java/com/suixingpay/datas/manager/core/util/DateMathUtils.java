@@ -77,7 +77,7 @@ public class DateMathUtils {
     }
 
     public static void main(String[] args) {
-        Date date = DateMathUtils.dateAddDays(new Date(), +30);
+        Date date = DateMathUtils.dateAddDays(new Date(), -30);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
         String newDate = sdf.format(date);
         System.out.println(newDate);

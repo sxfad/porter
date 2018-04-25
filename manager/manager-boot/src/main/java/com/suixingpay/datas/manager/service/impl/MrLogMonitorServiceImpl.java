@@ -61,18 +61,4 @@ public class MrLogMonitorServiceImpl implements MrLogMonitorService {
         mrLogMonitorMapper.insert(mrLogMonitor);
     }
 
-    @Override
-    public void createTable(String mrLogMonitorName, String newDate) {
-        mrLogMonitorMapper.createTable(mrLogMonitorName, newDate);
-    }
-
-    @Override
-    public void deleteByDate(String newDate) {
-        mrLogMonitorMapper.deleteByDate(newDate);
-    }
-
-    @Override
-    public void dropTable(String mrLogMonitorName) {
-        mrLogMonitorMapper.dropTable(mrLogMonitorName);
-    }
 }

@@ -31,10 +31,4 @@ public interface MrJobTasksMonitorService {
     /** 获取实时监控数据 . */
     MrJobMonitor obMrJobMonitor(String jobId, String swimlaneId, String schemaTable, Long intervalTime, Long intervalCount);
 
-    void createTable(String mrJobTasksMonitorName, String newDate);
-
-    void deleteByDate(String newDate);
-
-    void dropTable(String mrJobTasksMonitorName);
-
 }
