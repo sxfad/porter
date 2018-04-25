@@ -59,7 +59,7 @@ public class ZookeeperClusterMonitor extends AbstractClusterMonitor implements W
                     client.createWhenNotExists(zkListener.listenPath(), false, false, "{}");
                     //watch children changed
                     triggerTreeEvent(zkListener.listenPath());
-                } catch (Throwable e){
+                } catch (Throwable e) {
                     e.printStackTrace();
                 }
             }

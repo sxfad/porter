@@ -18,7 +18,6 @@ import java.util.LinkedHashMap;
 
 /**
  * 数据源类型
- *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年02月02日 18:07
  * @version: V1.0
@@ -27,8 +26,14 @@ import java.util.LinkedHashMap;
 @AllArgsConstructor
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum SourceType {
-    ZOOKEEPER("ZOOKEEPER", "zookeeper"), KAFKA("KAFKA", "kafka"), JDBC("JDBC", "zookeeper"), EMAIL("EMAIL",
-            "email"), NAME_SOURCE("NAME_SOURCE", "nameSource"), KUDU("KUDU", "kudu"), CANAL("CANAL", "canal");
+    ZOOKEEPER("ZOOKEEPER", "zookeeper"),
+    KAFKA("KAFKA", "kafka"),
+    JDBC("JDBC", "zookeeper"),
+    EMAIL("EMAIL", "email"),
+    NAME_SOURCE("NAME_SOURCE", "nameSource"),
+    KUDU("KUDU", "kudu"),
+    CANAL("CANAL", "canal"),
+    HBASE("HBASE", "hbase");
     @Getter
     private final String code;
     @Getter
@@ -46,6 +51,7 @@ public enum SourceType {
             put(CANAL.code, CANAL.name);
             put(KUDU.code, KUDU.name);
             put(NAME_SOURCE.code, NAME_SOURCE.name);
+            put(HBASE.code, HBASE.name);
         }
     };
 }

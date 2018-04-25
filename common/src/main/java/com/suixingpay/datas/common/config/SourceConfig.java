@@ -14,13 +14,16 @@ import com.alibaba.fastjson.annotation.JSONField;
 import com.suixingpay.datas.common.dic.SourceType;
 import com.suixingpay.datas.common.exception.ConfigParseException;
 import com.suixingpay.datas.common.util.BeanUtils;
+import com.suixingpay.datas.common.util.compile.JavaFileCompiler;
 import lombok.Getter;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.support.SpringFactoriesLoader;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,6 +33,11 @@ import java.util.Map;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月23日 11:53
  */
 public abstract class SourceConfig {
+    //插件服务配置文件
+    @JSONField(serialize = false, deserialize = false)
+    private static final List<PluginServiceConfig> PLUGIN_SERVICE_CONFIGS =
+            SpringFactoriesLoader.loadFactories(PluginServiceConfig.class, JavaFileCompiler.getInstance());
+
     @JSONField(serialize = false, deserialize = false)
     protected static final Logger LOGGER = LoggerFactory.getLogger(SourceConfig.class);
     @JSONField(serialize = false, deserialize = false)
@@ -86,6 +94,17 @@ public abstract class SourceConfig {
             } else if (properties.containsKey(NAME_SOURCE_KEY)) {
                 config = (T) new NameSourceConfig();
             }
+
+            //如果配置文件对象仍不存在，尝试从插件服务SPI加载
+            if (null == config) {
+                for (PluginServiceConfig c : PLUGIN_SERVICE_CONFIGS) {
+                    if (c instanceof SourceConfig && c.isMatch(sourceType.getCode())) {
+                        config = (T) c.getClass().newInstance();
+                        break;
+                    }
+                }
+            }
+
             if (null != config) {
                 config.setProperties(properties);
                 config.stuff();
