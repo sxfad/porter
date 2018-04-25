@@ -149,9 +149,9 @@
             <if test="endTime != null and endTime != ''">
                 and create_time &lt; #{endTime}
             </if>
-            <if test="code != null and code != ''">
+           <!--  <if test="code != null and code != ''">
                 and job_state = #{code}
-            </if>
+            </if> -->
         </where>
         order by create_time desc
         limit #{page.offset},#{page.pageSize}
