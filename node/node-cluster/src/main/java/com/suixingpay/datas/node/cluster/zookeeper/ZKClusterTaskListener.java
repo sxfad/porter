@@ -42,6 +42,7 @@ import com.suixingpay.datas.common.util.MachineUtils;
 import com.suixingpay.datas.node.core.NodeContext;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.data.Stat;
 
 import java.util.ArrayList;
@@ -164,11 +165,15 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
         //任务分配
         String topicPath = assignPath + "/" + task.getSwimlaneId();
         if (!client.isExists(topicPath, true)) {
-            //为当前工作节点分配任务topic
-            client.create(topicPath, false, new DTaskLock(task.getTaskId(), NodeContext.INSTANCE.getNodeId(),
-                    task.getSwimlaneId()).toString());
-            //通知对此感兴趣的Listener
-            ClusterProviderProxy.INSTANCE.broadcast(new TaskAssignedCommand(task.getTaskId(), task.getSwimlaneId()));
+            try {
+                //为当前工作节点分配任务topic
+                client.create(topicPath, false, new DTaskLock(task.getTaskId(), NodeContext.INSTANCE.getNodeId(),
+                        task.getSwimlaneId()).toString());
+                //通知对此感兴趣的Listener
+                ClusterProviderProxy.INSTANCE.broadcast(new TaskAssignedCommand(task.getTaskId(), task.getSwimlaneId()));
+            } catch (KeeperException.NodeExistsException e) {
+                throw  new TaskLockException(topicPath + ",锁定资源失败。");
+            }
         } else {
             throw  new TaskLockException(topicPath + ",锁定资源失败。");
         }
@@ -196,9 +201,13 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
             if (null != command.getCallback()) command.getCallback().callback(taskStat);
             //merge from localStat
             taskStat.merge(dataStat);
-            //upload stat
-            client.setData(node, taskStat.toString(), nodePair.getRight().getVersion());
-            LOGGER.debug("stat store in zookeeper:{}", JSON.toJSONString(taskStat));
+            try {
+                //upload stat
+                client.setData(node, taskStat.toString(), nodePair.getRight().getVersion());
+                LOGGER.debug("stat store in zookeeper:{}", JSON.toJSONString(taskStat));
+            } catch (KeeperException.BadVersionException e) {
+                //进度上传失败，异常吃掉
+            }
         }
     }
 

@@ -1,4 +1,4 @@
-jar.baseName = 'datas-plugin-jdb-loader'
+jar.baseName = 'datas-plugin-jdbc-loader'
 dependencies {
     compile (
             project(":node:node-core")

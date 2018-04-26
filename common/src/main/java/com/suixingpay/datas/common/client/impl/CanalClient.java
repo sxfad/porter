@@ -163,7 +163,7 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
                         try {
                             NodeLog.upload(NodeLog.LogType.TASK_LOG, config.getProperties() + ", error:" + msg);
                         } catch (Throwable e) {
-
+                            e.printStackTrace();
                         }
                     }
 

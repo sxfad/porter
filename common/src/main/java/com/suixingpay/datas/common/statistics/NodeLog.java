@@ -10,6 +10,7 @@
 package com.suixingpay.datas.common.statistics;
 
 import com.alibaba.fastjson.annotation.JSONField;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.suixingpay.datas.common.alert.AlertProviderFactory;
 import com.suixingpay.datas.common.alert.AlertReceiver;
 import com.suixingpay.datas.common.cluster.ClusterProviderProxy;
@@ -99,7 +100,7 @@ public class NodeLog extends StatisticData {
     }
 
 
-
+    @JsonFormat(shape = JsonFormat.Shape.OBJECT)
     public enum LogType {
         TASK_ALARM("任务停止告警", "taskStopAlarm"), TASK_LOG("任务日志", "taskLog");
         @Getter private String title;
