@@ -61,4 +61,5 @@ public interface MrLogMonitorMapper {
      */
     Integer pageAll(@Param("ipAddress") String ipAddress, @Param("state") Integer state,
             @Param("beginTime") String beginTime, @Param("endTime") String endTime);
+
 }

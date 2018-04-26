@@ -241,6 +241,9 @@
             </if>
         </trim>
     </insert>
+    <insert id="copydata">
+        insert into ${mrNodesScheduleName} select * from mr_nodes_schedule
+    </insert>
 
     <!-- 验证修改 -->
     <update id="updateSelective">

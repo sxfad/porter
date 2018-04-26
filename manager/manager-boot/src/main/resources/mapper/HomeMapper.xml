@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.suixingpay.datas.manager.core.mapper.HomeMapper">
+
+
+    <select id="block" resultType="com.suixingpay.datas.manager.core.icon.HomeBlockResult">
+        SELECT a.num1 AS tenMinutesCount ,b.num2 AS oneHourCount, c.num3 AS twentyFourHourCount, d.num4 AS TasksWorkingCount
+        FROM
+        (SELECT COUNT(id) num1 FROM mr_log_monitor WHERE log_date >DATE_ADD(NOW(), INTERVAL -1 HOUR)) a,
+        (SELECT COUNT(id) num2 FROM mr_log_monitor WHERE log_date >DATE_ADD(NOW(), INTERVAL -8 HOUR)) b,
+        (SELECT COUNT(id) num3 FROM mr_log_monitor WHERE log_date >DATE_ADD(NOW(), INTERVAL -24 HOUR)) c,
+        (SELECT COUNT(id) num4 FROM job_tasks WHERE job_state = 'WORKING') d;
+    </select>
+</mapper>

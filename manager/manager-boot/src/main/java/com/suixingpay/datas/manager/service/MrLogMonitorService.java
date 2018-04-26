@@ -26,4 +26,5 @@ public interface MrLogMonitorService {
 
     /** 解析任务日志. */
     void dealNodeLog(NodeLog log);
+
 }

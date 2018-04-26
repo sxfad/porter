@@ -463,4 +463,4 @@ insert  into `s_alarm_plugin`(`id`,`alarm_id`,`alarm_type`,`plugin_code`,`plugin
 (1,1,'EMAIL','host','邮件服务器','smtp.163.com'),
 (2,1,'EMAIL','username','邮件账户','datas_test@163.com'),
 (3,1,'EMAIL','password','邮箱密码','datas123456');
-insert  into `s_alarm_user`(`id`,`alarm_id`,`user_id`) values (1,1,5);
+insert  into `s_alarm_user`(`id`,`alarm_id`,`user_id`) values (1,1,1);

@@ -71,4 +71,5 @@ public class MrJobTasksMonitorServiceImpl implements MrJobTasksMonitorService {
         List<MrJobTasksMonitor> list =  mrJobTasksMonitorMapper.selectByJobSwimlane(jobId, swimlaneId, schemaTable, startRow, intervalTime);
         return new MrJobMonitor(list);
     }
+
 }

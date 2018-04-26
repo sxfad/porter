@@ -116,7 +116,7 @@
         u.mobile, u.state, u.remark, u.role_code, u.depart_ment, r.role_name
         from c_user u, c_role r
         where u.state &gt;= 0 and u.role_code = r.role_code
-        order by u.state desc
+        order by u.state desc,r.role_code asc
         limit #{page.offset},#{page.pageSize}
     </select>
 

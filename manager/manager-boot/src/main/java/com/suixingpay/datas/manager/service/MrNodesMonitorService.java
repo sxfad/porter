@@ -29,4 +29,5 @@ public interface MrNodesMonitorService {
     void dealTaskPerformance(TaskPerformance performance);
 
     MrNodeMonitor obNodeMonitor(String nodeId, Long intervalTime, Long intervalCount);
+
 }

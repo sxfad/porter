@@ -61,6 +61,7 @@ public interface MrJobTasksMonitorMapper {
     Integer pageAll(@Param("state") Integer state);
 
     List<MrJobTasksMonitor> selectByJobSwimlane(@Param("jobId") String jobId, @Param("swimlaneId") String swimlaneId,
-            @Param("schemaTable") String schemaTable, @Param("startRow") Long startRow,
-            @Param("intervalSize") Long intervalSize);
+                                                @Param("schemaTable") String schemaTable, @Param("startRow") Long startRow,
+                                                @Param("intervalSize") Long intervalSize);
+
 }

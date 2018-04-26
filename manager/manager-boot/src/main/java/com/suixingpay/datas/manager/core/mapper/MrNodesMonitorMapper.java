@@ -71,4 +71,5 @@ public interface MrNodesMonitorMapper {
     List<MrNodesMonitor> selectByNodeId(@Param("nodeId") String nodeId,
                                         @Param("startRow") Long startRow,
                                         @Param("intervalTime") Long intervalTime);
+
 }

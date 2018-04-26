@@ -60,4 +60,5 @@ public class MrLogMonitorServiceImpl implements MrLogMonitorService {
         MrLogMonitor mrLogMonitor = new MrLogMonitor(log);
         mrLogMonitorMapper.insert(mrLogMonitor);
     }
+
 }
