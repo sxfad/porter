@@ -4,10 +4,16 @@
 package com.suixingpay.datas.manager.test;
 
 import com.suixingpay.datas.manager.BaseTest;
+import com.suixingpay.datas.manager.core.icon.HomeBlockResult;
 import com.suixingpay.datas.manager.core.util.ApplicationContextUtil;
+import com.suixingpay.datas.manager.service.HomeService;
 import com.suixingpay.datas.manager.service.MonitorScheduledService;
+import com.suixingpay.datas.manager.service.impl.HomeServiceImpl;
 import com.suixingpay.datas.manager.service.impl.MonitorScheduledServiceImpl;
 import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author guohongjian[guo_hj@suixingpay.com]
@@ -37,6 +43,13 @@ public class ManagerTest extends BaseTest {
 
         MonitorScheduledService monitorScheduledService = ApplicationContextUtil.getBean(MonitorScheduledServiceImpl.class);
         monitorScheduledService.dropTableTask();
+    }
+
+    @Test
+    public void test2() {
+        HomeService homeService = ApplicationContextUtil.getBean(HomeServiceImpl.class);
+        HomeBlockResult homeBlockResult = homeService.bolck();
+
     }
 }
 
