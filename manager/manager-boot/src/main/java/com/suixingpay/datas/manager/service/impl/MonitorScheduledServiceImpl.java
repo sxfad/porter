@@ -32,13 +32,12 @@ public class MonitorScheduledServiceImpl implements MonitorScheduledService {
         Date date = DateMathUtils.dateAddDays(new Date(), -2);
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
         String newDate = sdf.format(date);
-        String nowDate = sdf.format(DateMathUtils.getDate());
         //节点任务实时监控表
-        String mrNodesMonitorName = "mr_nodes_monitor_" + nowDate;
+        String mrNodesMonitorName = "mr_nodes_monitor_" + newDate;
         //日志信息表
-        String mrLogMonitorName = "mr_log_monitor_" + nowDate;
+        String mrLogMonitorName = "mr_log_monitor_" + newDate;
         //任务泳道实时监控表
-        String mrJobTasksMonitorName = "mr_job_tasks_monitor_" + nowDate;
+        String mrJobTasksMonitorName = "mr_job_tasks_monitor_" + newDate;
 
         Map<String, Map<String, String>> dataMap = new HashMap<>();
         //key:旧表表名 value:新表表名
