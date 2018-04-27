@@ -129,7 +129,7 @@ public class ETLRowTransformer implements Transformer {
 
         row.getColumns().removeAll(removeables);
 
-        return !removeables.isEmpty() || !targetNew.isEmpty();
+        return !removeables.isEmpty();
     }
 
 
