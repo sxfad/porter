@@ -22,6 +22,10 @@ import java.util.Map;
  */
 public class TableMapperConfig {
     @Getter @Setter private boolean auto = true;
+    /**
+     * 字段映射后，强制目标端字段和源端字段一致，否则任务抛出异常停止
+     */
+    @Getter @Setter private boolean forceMatched = false;
     @Getter @Setter private String[] schema;
     @Getter @Setter private String[] table;
     @Getter @Setter private String[] updateDate;

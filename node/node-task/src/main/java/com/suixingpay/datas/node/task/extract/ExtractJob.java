@@ -89,7 +89,7 @@ public class ExtractJob extends AbstractStageJob {
                             extractorFactory.extract(bucket, metadata);
                             carrier.push(bucket);
                             LOGGER.debug("push bucket {} into carrier after extract.", inThreadEvents.getLeft());
-                        } catch (Exception e) {
+                        } catch (Throwable e) {
                             work.stopAndAlarm(e.getMessage());
                             LOGGER.error("批次[{}]执行ExtractJob失败!", inThreadEvents.getLeft(), e);
                         }

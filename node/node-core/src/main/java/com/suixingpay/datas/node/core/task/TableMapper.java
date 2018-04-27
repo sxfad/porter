@@ -22,10 +22,22 @@ import java.util.Map;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月28日 16:03
  */
 public class TableMapper {
+    /**
+     * 字段映射后，强制目标端字段和源端字段一致，否则任务抛出异常停止
+     */
+    private boolean forceMatched = false;
     private String[] schema;
     private String[] table;
     private String[] updateDate;
     private Map<String, String> column;
+
+    public boolean isForceMatched() {
+        return forceMatched;
+    }
+
+    public void setForceMatched(boolean forceMatched) {
+        this.forceMatched = forceMatched;
+    }
 
     public String[] getSchema() {
         return schema;
@@ -78,6 +90,7 @@ public class TableMapper {
         mapper.setSchema(config.getSchema());
         mapper.setTable(config.getTable());
         mapper.setUpdateDate(config.getUpdateDate());
+        mapper.setForceMatched(config.isForceMatched());
         return mapper;
     }
 
@@ -109,5 +122,7 @@ public class TableMapper {
         }
         return this;
     }
+
+
 
 }
