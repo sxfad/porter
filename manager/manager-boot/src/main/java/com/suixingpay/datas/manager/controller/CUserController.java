@@ -112,6 +112,9 @@ public class CUserController {
     @DeleteMapping("/{id}")
     @ApiOperation(value = "逻辑删除", notes = "逻辑删除")
     public ResponseMessage delete(@PathVariable("id") Long id) {
+        if (id == 1) {
+            return ok(false);
+        }
         cuserService.delete(id);
         return ok();
     }
