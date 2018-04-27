@@ -25,7 +25,9 @@ public enum  SqlErrorCode {
     //ORA-01438: 值大于为此列指定的允许精度
     ERROR_1438(1438),
     //字段长度与插入内容不符
-    ERROR_12899(12899);
+    ERROR_12899(12899),
+    //ORA-01400: cannot insert NULL into
+    ERROR_1400(1400);
 
     public final int code;
     SqlErrorCode(int code) {

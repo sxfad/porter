@@ -54,6 +54,7 @@ public class TaskStopTriggerException extends TaskException {
             return sqlError.getErrorCode() == SqlErrorCode.ERROR_904.code || sqlError.getErrorCode() == SqlErrorCode.ERROR_942.code
                     || sqlError.getErrorCode() == SqlErrorCode.ERROR_1438.code || sqlError.getErrorCode() == SqlErrorCode.ERROR_12899.code
                     || sqlError.getErrorCode() == SqlErrorCode.ERROR_1364.code;
+                    //|| sqlError.getErrorCode() == SqlErrorCode.ERROR_1400.code;
         }
         return match;
     }
