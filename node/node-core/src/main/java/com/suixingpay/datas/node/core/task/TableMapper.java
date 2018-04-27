@@ -22,6 +22,10 @@ import java.util.Map;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月28日 16:03
  */
 public class TableMapper {
+    /**
+     * 字段映射后，强制目标端字段和源端字段一致，否则任务抛出异常停止
+     */
+    private boolean forceMatched = false;
     //[源端(统一大写),目标端schema(区分大小写)]
     private String[] schema;
     //[源端表(统一大写),目标端表(区分大小写)]
@@ -32,6 +36,15 @@ public class TableMapper {
     private Map<String, String> column;
     //忽略目标端大小写
     private boolean ignoreTargetCase = true;
+
+    public boolean isForceMatched() {
+        return forceMatched;
+    }
+
+    public void setForceMatched(boolean forceMatched) {
+        this.forceMatched = forceMatched;
+    }
+
     public String[] getSchema() {
         return schema;
     }
@@ -84,6 +97,7 @@ public class TableMapper {
         mapper.setTable(config.getTable());
         mapper.setUpdateDate(config.getUpdateDate());
         mapper.ignoreTargetCase = config.isIgnoreTargetCase();
+        mapper.setForceMatched(config.isForceMatched());
         return mapper;
     }
 

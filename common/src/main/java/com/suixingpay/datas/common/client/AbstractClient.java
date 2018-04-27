@@ -9,16 +9,21 @@
 
 package com.suixingpay.datas.common.client;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.suixingpay.datas.common.client.impl.*;
+import com.suixingpay.datas.common.config.PluginServiceConfig;
 import com.suixingpay.datas.common.config.source.*;
 import com.suixingpay.datas.common.config.SourceConfig;
 import com.suixingpay.datas.common.exception.ClientException;
 import com.suixingpay.datas.common.exception.ClientMatchException;
+import com.suixingpay.datas.common.util.compile.JavaFileCompiler;
 import lombok.Getter;
 import lombok.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.support.SpringFactoriesLoader;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -29,8 +34,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月02日 14:06
  */
 public abstract class AbstractClient<T extends SourceConfig> implements Client {
-
     protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+    //插件服务配置文件
+    @JSONField(serialize = false, deserialize = false)
+    private static final List<PluginServiceClient> PLUGIN_SERVICE_CLIENTS =
+            SpringFactoriesLoader.loadFactories(PluginServiceClient.class, JavaFileCompiler.getInstance());
+
     private final AtomicBoolean status = new AtomicBoolean(false);
     @Getter @Setter private boolean isPublic = false;
     private final T config;
@@ -102,6 +111,21 @@ public abstract class AbstractClient<T extends SourceConfig> implements Client {
         }
         if (config instanceof KuduConfig) {
             return new KUDUClient((KuduConfig) config);
+        }
+
+        //自定义插件配置文件
+        if (config instanceof PluginServiceConfig) {
+            PluginServiceConfig  pluginConfig = (PluginServiceConfig) config;
+            //如果仍不能匹配客户端，尝试从插件服务SPI加载
+            for (PluginServiceClient c : PLUGIN_SERVICE_CLIENTS) {
+                if (c.isMatch(pluginConfig.getTargetName())) {
+                    try {
+                        return (Client) c.getClass().getConstructor(config.getClass()).newInstance(config);
+                    } catch (Throwable e) {
+                        continue;
+                    }
+                }
+            }
         }
         throw  new ClientMatchException();
     }

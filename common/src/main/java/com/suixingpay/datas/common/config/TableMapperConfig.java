@@ -55,4 +55,8 @@ public class TableMapperConfig {
     private Map<String, String> column;
     //忽略目标端大小写
     @Getter @Setter private boolean ignoreTargetCase = true;
+    /**
+     * 字段映射后，强制目标端字段和源端字段一致，否则任务抛出异常停止
+     */
+    @Getter @Setter private boolean forceMatched = false;
 }

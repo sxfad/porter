@@ -28,8 +28,9 @@ import java.util.LinkedHashMap;
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum SourceType {
 
-    ZOOKEEPER("ZOOKEEPER", "zookeeper", -1), KAFKA("KAFKA", "kafka", 1), JDBC("JDBC", "jdbc", 1), EMAIL("EMAIL", "email", -1),
-    NAME_SOURCE("NAME_SOURCE", "nameSource", -1), KUDU("KUDU", "kudu", -1), CANAL("CANAL", "canal", 1);
+    ZOOKEEPER("ZOOKEEPER", "zookeeper", -1), KAFKA("KAFKA", "kafka", 1), JDBC("JDBC", "jdbc", 1),
+    EMAIL("EMAIL", "email", -1), NAME_SOURCE("NAME_SOURCE", "nameSource", -1), KUDU("KUDU", "kudu", -1),
+    CANAL("CANAL", "canal", 1), HBASE("HBASE", "hbase", -1);
 
     @Getter
     private final String code;
@@ -57,6 +58,8 @@ public enum SourceType {
                 put(KUDU.code, KUDU.name);
             if (NAME_SOURCE.state == 1)
                 put(NAME_SOURCE.code, NAME_SOURCE.name);
+            if (HBASE.state == 1)
+                put(HBASE.code, HBASE.name);
 
         }
     };
