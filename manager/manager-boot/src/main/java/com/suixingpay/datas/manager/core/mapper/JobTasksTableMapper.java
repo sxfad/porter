@@ -21,22 +21,22 @@ public interface JobTasksTableMapper {
      *
      * @param jobTasksTable
      */
-    public Integer insert(JobTasksTable jobTasksTable);
+    Integer insert(JobTasksTable jobTasksTable);
 
     /**
      * 修改
      *
      * @param jobTasksTable
      */
-    public Integer update(@Param("id") Long id, @Param("jobTasksTable") JobTasksTable jobTasksTable);
+    Integer update(@Param("id") Long id, @Param("jobTasksTable") JobTasksTable jobTasksTable);
 
     /**
      * 刪除
      *
-     * @param id
+     * @param jobTaskId
      * @return
      */
-    public Integer delete(Long jobTaskId);
+    Integer delete(Long jobTaskId);
 
     /**
      * 根據主鍵id查找數據
@@ -51,14 +51,14 @@ public interface JobTasksTableMapper {
      *
      * @return
      */
-    public List<JobTasksTable> page(@Param("page") Page<JobTasksTable> page, @Param("state") Integer state);
+    List<JobTasksTable> page(@Param("page") Page<JobTasksTable> page, @Param("state") Integer state);
 
     /**
      * 分頁All
      *
      * @return
      */
-    public Integer pageAll(@Param("state") Integer state);
+    Integer pageAll(@Param("state") Integer state);
 
     /**
      * 批量新增 JobTasksTable

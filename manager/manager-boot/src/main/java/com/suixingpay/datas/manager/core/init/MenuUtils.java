@@ -28,13 +28,13 @@ public class MenuUtils {
 
     public static Map<String, Map<String, Object>> ROLE_MENU_URL = new HashMap<>();
 
-    public static MenuUtils instance;
+    public static MenuUtils INSTANCE;
 
     public static MenuUtils getInstance() {
-        if (instance == null) {
-            instance = new MenuUtils();
+        if (INSTANCE == null) {
+            INSTANCE = new MenuUtils();
         }
-        return instance;
+        return INSTANCE;
     }
 
     public void init() {

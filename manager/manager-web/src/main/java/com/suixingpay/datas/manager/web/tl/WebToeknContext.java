@@ -11,21 +11,21 @@ import com.suixingpay.datas.manager.web.token.TokenUtil;
  */
 public class WebToeknContext {
 
-    private static ThreadLocal<String> tokenHodler = new ThreadLocal<String>();
+    private static ThreadLocal<String> TOKENHODLER = new ThreadLocal<String>();
 
     public static void initToken(String tokenId) {
-        tokenHodler.set(tokenId);
+        TOKENHODLER.set(tokenId);
     }
 
     public static ThreadLocal<String> getTokenHodler() {
-        return tokenHodler;
+        return TOKENHODLER;
     }
 
     public static void setTokenHodler(ThreadLocal<String> tokenHodler) {
-        WebToeknContext.tokenHodler = tokenHodler;
+        WebToeknContext.TOKENHODLER = tokenHodler;
     }
 
     public static <T extends Token> T getToken(Class<T> classT) throws Exception {
-        return TokenUtil.unsign(tokenHodler.get(), classT);
+        return TokenUtil.unsign(TOKENHODLER.get(), classT);
     }
 }

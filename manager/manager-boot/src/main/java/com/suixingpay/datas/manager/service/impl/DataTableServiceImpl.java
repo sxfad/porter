@@ -66,7 +66,7 @@ public class DataTableServiceImpl implements DataTableService {
     public List<String> prefixList(Long sourceId) {
         List<String> lists = null;
         DataSource dataSource = dataSourceService.selectById(sourceId);
-        if(dataSource.getDataType() == SourceType.JDBC) {
+        if (dataSource.getDataType() == SourceType.JDBC) {
             List<DataSourcePlugin> dataSourcePlugins = dataSource.getPlugins();
             String url = null;
             String username = null;
@@ -97,7 +97,7 @@ public class DataTableServiceImpl implements DataTableService {
             DbSelectService dbSelectService = ApplicationContextUtil.getBean("dbJDBC" + query.getDbType() + "SelectService");
             lists = dbSelectService.list(dataSource, new JDBCVo(query.getDriverName(), url, username, password), sql, null);
             return lists;
-        }else {
+        } else {
             DbSelectService dbSelectService = ApplicationContextUtil.getBean("db" + dataSource.getDataType() + "SelectService");
             lists = dbSelectService.list(dataSource, null, null, null);
             return lists;
@@ -107,7 +107,7 @@ public class DataTableServiceImpl implements DataTableService {
     @Override
     public Page<Object> tableList(Page<Object> page, Long sourceId, String prefix, String tableName) {
         DataSource dataSource = dataSourceService.selectById(sourceId);
-        if(dataSource.getDataType() == SourceType.JDBC) {
+        if (dataSource.getDataType() == SourceType.JDBC) {
             List<DataSourcePlugin> list = dataSource.getPlugins();
             String url = null;
             String username = null;
@@ -137,11 +137,12 @@ public class DataTableServiceImpl implements DataTableService {
             Long total = dbSelectService.pageTotal(dataSource, new JDBCVo(query.getDriverName(), url, username, password), sql, prefix, tableName);
             if (total > 0) {
                 page.setTotalItems(total);
-                List<Object> lists = dbSelectService.page(dataSource ,new JDBCVo(query.getDriverName(), url, username, password), page, sql, prefix, tableName);
+                List<Object> lists = dbSelectService.page(dataSource, new JDBCVo(query.getDriverName(), url, username, password),
+                        page, sql, prefix, tableName);
                 page.setResult(lists);
             }
             return page;
-        }else {
+        } else {
             DbSelectService dbSelectService = ApplicationContextUtil.getBean("db" + dataSource.getDataType() + "SelectService");
             Long total = dbSelectService.pageTotal(dataSource, null, null, prefix, tableName);
             if (total > 0) {
@@ -151,7 +152,7 @@ public class DataTableServiceImpl implements DataTableService {
             }
             return page;
         }
-        
+
     }
 
     @Override

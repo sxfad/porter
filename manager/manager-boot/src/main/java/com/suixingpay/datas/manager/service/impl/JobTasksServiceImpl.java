@@ -159,7 +159,7 @@ public class JobTasksServiceImpl implements JobTasksService {
 
     @Override
     public Page<JobTasks> page(Page<JobTasks> page, String jobName, String beginTime, String endTime,
-            TaskStatusType jobState) {
+                               TaskStatusType jobState) {
         String code = "";
         if (null != jobState) {
             code = jobState.getCode();
@@ -185,7 +185,7 @@ public class JobTasksServiceImpl implements JobTasksService {
     public List<String> fields(Long sourceId, Long tablesId, String tableAllName) {
         List<String> fields = null;
         DataSource dataSource = dataSourceService.selectById(sourceId);
-        if(dataSource.getDataType() == SourceType.JDBC) {
+        if (dataSource.getDataType() == SourceType.JDBC) {
             List<DataSourcePlugin> list = dataSource.getPlugins();
             String url = null;
             String username = null;
@@ -215,12 +215,12 @@ public class JobTasksServiceImpl implements JobTasksService {
             fields = dbSelectService.fieldList(dataSource, new JDBCVo(query.getDriverName(), url, username, password), sql,
                     tableAllName);
             return fields;
-        }else {
+        } else {
             DbSelectService dbSelectService = ApplicationContextUtil.getBean("db" + dataSource.getDataType() + "SelectService");
-            fields = dbSelectService.fieldList(dataSource, null, null,tableAllName);
+            fields = dbSelectService.fieldList(dataSource, null, null, tableAllName);
             return fields;
         }
-        
+
     }
 
     @Override
@@ -285,10 +285,10 @@ public class JobTasksServiceImpl implements JobTasksService {
         List<TableMapperConfig> tableList = new ArrayList<>();
         TableMapperConfig tableMapperConfig = null;
         for (JobTasksTable jobTasksTable : tables) {
-            String[] schema = { jobTasksTable.getSourceTableName().split("[.]")[0],
-                    jobTasksTable.getTargetTableName().split("[.]")[0] };
-            String[] table = { jobTasksTable.getSourceTableName().split("[.]")[1],
-                    jobTasksTable.getTargetTableName().split("[.]")[1] };
+            String[] schema = {jobTasksTable.getSourceTableName().split("[.]")[0],
+                    jobTasksTable.getTargetTableName().split("[.]")[0]};
+            String[] table = {jobTasksTable.getSourceTableName().split("[.]")[1],
+                    jobTasksTable.getTargetTableName().split("[.]")[1]};
             Map<String, String> column = fieldsMap(jobTasksTable.getFields());
             tableMapperConfig = new TableMapperConfig(schema, table, column);
             tableList.add(tableMapperConfig);
@@ -313,7 +313,7 @@ public class JobTasksServiceImpl implements JobTasksService {
         }
         sourceMap.put(SourceConfig.SOURCE_TYPE_KEY, souDataSource.getDataType().getCode());
         if (souDataSource.getDataType() == SourceType.KAFKA) {
-            sourceMap.put("group", "task{"+id+"}-group");
+            sourceMap.put("group", "task{" + id + "}-group");
         }
         return sourceMap;
     }

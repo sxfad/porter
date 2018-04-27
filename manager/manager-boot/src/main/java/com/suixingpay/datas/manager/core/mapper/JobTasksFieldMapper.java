@@ -21,22 +21,22 @@ public interface JobTasksFieldMapper {
      *
      * @param jobTasksField
      */
-    public Integer insert(JobTasksField jobTasksField);
+    Integer insert(JobTasksField jobTasksField);
 
     /**
      * 修改
      *
      * @param jobTasksField
      */
-    public Integer update(@Param("id") Long id, @Param("jobTasksField") JobTasksField jobTasksField);
+    Integer update(@Param("id") Long id, @Param("jobTasksField") JobTasksField jobTasksField);
 
     /**
      * 刪除
      *
-     * @param id
+     * @param jobTaskId
      * @return
      */
-    public Integer delete(Long jobTaskId);
+    Integer delete(Long jobTaskId);
 
     /**
      * 根據主鍵id查找數據
@@ -44,21 +44,21 @@ public interface JobTasksFieldMapper {
      * @param id
      * @return
      */
-    public JobTasksField selectById(Long id);
+    JobTasksField selectById(Long id);
 
     /**
      * 分頁
      *
      * @return
      */
-    public List<JobTasksField> page(@Param("page") Page<JobTasksField> page, @Param("state") Integer state);
+    List<JobTasksField> page(@Param("page") Page<JobTasksField> page, @Param("state") Integer state);
 
     /**
      * 分頁All
      *
      * @return
      */
-    public Integer pageAll(@Param("state") Integer state);
+    Integer pageAll(@Param("state") Integer state);
 
     /**
      * 批量新增

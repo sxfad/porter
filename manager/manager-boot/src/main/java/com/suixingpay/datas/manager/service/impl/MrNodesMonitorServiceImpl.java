@@ -68,7 +68,7 @@ public class MrNodesMonitorServiceImpl implements MrNodesMonitorService {
         MrNodesMonitor mrNodesMonitor = new MrNodesMonitor(performance);
         String nodeId = mrNodesMonitor.getNodeId();
         String dataTimes = DateFormatUtils.formatDate("yyyy-MM-dd HH:mm:ss", mrNodesMonitor.getMonitorDate());
-        String key = nodeId+dataTimes;
+        String key = nodeId + dataTimes;
         Object lock = map.get(key);
         if (null == lock) {
             Object tmp = new Object();
@@ -99,10 +99,10 @@ public class MrNodesMonitorServiceImpl implements MrNodesMonitorService {
         MrNodesMonitor old = mrNodesMonitorMapper.selectByNodeIdAndTime(nodeId, dataTimes);
         if (old == null || old.getId() == null) {
             mrNodesMonitorMapper.insert(mrNodesMonitor);
-        }else {
+        } else {
             mrNodesMonitor.setId(old.getId());
-            mrNodesMonitor.setMonitorTps(mrNodesMonitor.getMonitorTps()+old.getMonitorTps());
-            mrNodesMonitor.setMonitorAlarm(mrNodesMonitor.getMonitorAlarm()+old.getMonitorAlarm());
+            mrNodesMonitor.setMonitorTps(mrNodesMonitor.getMonitorTps() + old.getMonitorTps());
+            mrNodesMonitor.setMonitorAlarm(mrNodesMonitor.getMonitorAlarm() + old.getMonitorAlarm());
             mrNodesMonitorMapper.update(old.getId(), mrNodesMonitor);
         }
     }

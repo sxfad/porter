@@ -88,7 +88,7 @@ public class MrNodesScheduleServiceImpl implements MrNodesScheduleService {
         MrNodesSchedule old = mrNodesScheduleMapper.selectByNodeId(nodeId);
         if (old == null || old.getId() == null) {
             mrNodesScheduleMapper.insert(mrNodesSchedule);
-        }else {
+        } else {
             mrNodesSchedule.setId(old.getId());
             mrNodesScheduleMapper.updateSelective(old.getId(), mrNodesSchedule);
         }

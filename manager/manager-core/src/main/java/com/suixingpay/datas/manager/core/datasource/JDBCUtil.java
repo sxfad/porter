@@ -13,7 +13,7 @@ import java.sql.SQLException;
  */
 public class JDBCUtil {
 
-    public static void JDBCPage() {
+    public static void jdbcPage() {
         // String driverName = "com.mysql.cj.jdbc.Driver";
         // String url =
         // "jdbc:mysql://172.16.60.247:3306/ds_data?useUnicode=true&characterEncoding=utf-8&useSSL=false";
@@ -45,6 +45,6 @@ public class JDBCUtil {
     }
 
     public static void main(String[] args) {
-        JDBCUtil.JDBCPage();
+        JDBCUtil.jdbcPage();
     }
 }

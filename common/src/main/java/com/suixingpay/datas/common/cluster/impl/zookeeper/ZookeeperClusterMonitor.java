@@ -59,7 +59,7 @@ public class ZookeeperClusterMonitor extends AbstractClusterMonitor implements W
                     client.createWhenNotExists(zkListener.listenPath(), false, false, "{}");
                     //watch children changed
                     triggerTreeEvent(zkListener.listenPath());
-                } catch (Throwable e){
+                } catch (Throwable e) {
                     e.printStackTrace();
                 }
             }
@@ -73,6 +73,7 @@ public class ZookeeperClusterMonitor extends AbstractClusterMonitor implements W
      * NodeDeleted A watch is set with a call to either exists or getData.
      * NodeDataChanged A watch is set with either exists or getData.
      * NodeChildrenChanged A watch is set with getChildren.
+     *
      * @param event
      */
     @Override

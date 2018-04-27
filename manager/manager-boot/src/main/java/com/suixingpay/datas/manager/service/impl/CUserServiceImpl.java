@@ -48,8 +48,8 @@ public class CUserServiceImpl implements CUserService {
     }
 
     @Override
-    public CUser selectByNameAndpasswd(String LoginName, String passwd) {
-        return cuserMapper.selectByNameAndpasswd(LoginName, passwd);
+    public CUser selectByNameAndpasswd(String loginName, String passwd) {
+        return cuserMapper.selectByNameAndpasswd(loginName, passwd);
     }
 
     @Override
@@ -68,8 +68,8 @@ public class CUserServiceImpl implements CUserService {
     }
 
     @Override
-    public List<CUser> selectByJobTasksId(Long JobTasksId) {
-        return cuserMapper.selectByJobTasksId(JobTasksId);
+    public List<CUser> selectByJobTasksId(Long jobTasksId) {
+        return cuserMapper.selectByJobTasksId(jobTasksId);
     }
 
     @Override

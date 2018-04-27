@@ -72,7 +72,7 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements N
                         LOGGER.warn("节点[{}]尚未完善管理后台节点信息，请及时配置！", node.getNodeId());
                     }
                 }
-                if (zkEvent.isOffline()) {// 节点下线
+                if (zkEvent.isOffline()) { // 节点下线
                     // do something 服务停止，离线通知
                     int i = nodesService.updateState(node, heartBeatTime, -1);
                     LOGGER.info("节点[{}]下线", node.getNodeId());

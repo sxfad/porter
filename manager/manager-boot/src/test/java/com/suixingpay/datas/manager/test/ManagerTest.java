@@ -12,9 +12,6 @@ import com.suixingpay.datas.manager.service.impl.HomeServiceImpl;
 import com.suixingpay.datas.manager.service.impl.MonitorScheduledServiceImpl;
 import org.junit.Test;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * @author guohongjian[guo_hj@suixingpay.com]
  */

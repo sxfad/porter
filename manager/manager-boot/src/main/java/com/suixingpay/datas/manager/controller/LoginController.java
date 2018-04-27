@@ -39,10 +39,10 @@ public class LoginController {
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ApiOperation(value = "用户登录", notes = "用户登录")
-    public ResponseMessage login(@RequestParam(required = true) String LoginName,
+    public ResponseMessage login(@RequestParam(required = true) String loginName,
                                  @RequestParam(required = true) String passwd) throws Exception {
         LoginUserToken loginUserToken = new LoginUserToken();
-        CUser cuser = cuserService.selectByNameAndpasswd(LoginName, passwd);
+        CUser cuser = cuserService.selectByNameAndpasswd(loginName, passwd);
         if (cuser == null) {
             return ResponseMessage.error("Login error", ExceptionCode.EXCEPTION_LOGIN);
         } else if (cuser.getState() == 0) {

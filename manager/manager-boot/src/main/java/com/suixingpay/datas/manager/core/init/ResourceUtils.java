@@ -25,17 +25,17 @@ public class ResourceUtils {
 
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private static ResourceUtils instance;
+    private static ResourceUtils INSTANCE;
 
     public static Map<String, String> NODEIDNAME_MAP = new HashMap<>();
 
     public static Map<String, String> JOBNAME_MAP = new HashMap<>();
 
     public static ResourceUtils getInstance() {
-        if (instance == null) {
-            instance = new ResourceUtils();
+        if (INSTANCE == null) {
+            INSTANCE = new ResourceUtils();
         }
-        return instance;
+        return INSTANCE;
     }
 
     public void init() {

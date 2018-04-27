@@ -33,7 +33,7 @@ public class MrJobTasksSchedule implements java.io.Serializable {
         // 节点id[ip]
         this.nodeIdIp = ResourceUtils.obtainNodeIp(stat.getNodeId());
         // 数据表
-        this.schemaTable = stat.getSchema() +"."+ stat.getTable();
+        this.schemaTable = stat.getSchema() + "." + stat.getTable();
         // 注册时间
         this.registerTime = stat.getRegisteredTime();
         // 最后心跳时间

@@ -24,49 +24,50 @@ public interface JobTaskNodesMapper {
      *
      * @param jobTaskNodes
      */
-    public Integer insert(JobTaskNodes jobTaskNodes);
+    Integer insert(JobTaskNodes jobTaskNodes);
 
     /**
      * 修改
      *
      * @param jobTaskNodes
      */
-    public Integer update(@Param("id") Long id, @Param("jobTaskNodes") JobTaskNodes jobTaskNodes);
+    Integer update(@Param("id") Long id, @Param("jobTaskNodes") JobTaskNodes jobTaskNodes);
 
     /**
      * 刪除
      *
-     * @param id
+     * @param jobTaskId
      * @return
      */
-    public Integer delete(Long jobTaskId);
+    Integer delete(Long jobTaskId);
 
     /**
      * 根據jobtaskid查找數據
      *
-     * @param id
+     * @param nodeIds
      * @return
      */
-    public List<JobTaskNodes> selectById(Long jobTaskId);
+    List<JobTaskNodes> selectById(Long nodeIds);
 
     /**
      * 分頁
      *
      * @return
      */
-    public List<JobTaskNodes> page(@Param("page") Page<JobTaskNodes> page, @Param("state") Integer state);
+    List<JobTaskNodes> page(@Param("page") Page<JobTaskNodes> page, @Param("state") Integer state);
 
     /**
      * 分頁All
      *
      * @return
      */
-    public Integer pageAll(@Param("state") Integer state);
+    Integer pageAll(@Param("state") Integer state);
 
     /**
      * 保存
+     *
      * @param jobTaskId
-     * @param userIds
+     * @param nodeIds
      */
-    public void insertList(@Param("jobTaskId") Long jobTaskId, @Param("nodeIds") List<String> nodeIds);
+    void insertList(@Param("jobTaskId") Long jobTaskId, @Param("nodeIds") List<String> nodeIds);
 }

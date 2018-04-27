@@ -51,7 +51,7 @@ public class DbOracleSelectService implements DbSelectService {
 
     @Override
     public Long pageTotal(DataSource dataSource, JDBCVo jvo, String sql, String prefix, String tableName1) {
-        Long total = 0l;
+        Long total = 0L;
         String executeSql = "select count(*) as tatal from (" + sql + ") t where %term";
         StringBuffer termSql = new StringBuffer("1=1");
         if (prefix != null && !prefix.equals("")) {

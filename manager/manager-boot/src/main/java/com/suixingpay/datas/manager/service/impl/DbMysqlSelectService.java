@@ -51,7 +51,7 @@ public class DbMysqlSelectService implements DbSelectService {
 
     @Override
     public Long pageTotal(DataSource dataSource, JDBCVo jvo, String sql, String prefix, String tableName1) {
-        Long total = 0l;
+        Long total = 0L;
         String executeSql = "select count(*) as total from (" + sql + ") as t where %term";
         StringBuffer termSql = new StringBuffer("1=1");
         if (prefix != null && !prefix.equals("")) {
@@ -85,7 +85,7 @@ public class DbMysqlSelectService implements DbSelectService {
 
     @Override
     public List<Object> page(DataSource dataSource, JDBCVo jvo, Page<Object> page, String sql, String prefix, String tableName1) {
-        int offset = (page.getPageNo() - 1) * page.getPageSize();//(pageNo - 1) * pageSize
+        int offset = (page.getPageNo() - 1) * page.getPageSize(); //(pageNo - 1) * pageSize
         int pageSize = page.getPageSize();
         List<Object> list = new ArrayList<Object>();
         String executeSql = "select * from (" + sql + ") as t where %term limit ?,?";

@@ -16,30 +16,30 @@ import org.springframework.stereotype.Component;
 @Component
 public class ApplicationContextUtil implements ApplicationContextAware {
 
-    private static ApplicationContext applicationContext;
+    private static ApplicationContext APPLICATIONCONTEXT;
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        ApplicationContextUtil.applicationContext = applicationContext;
+        ApplicationContextUtil.APPLICATIONCONTEXT = applicationContext;
     }
 
     @SuppressWarnings("unchecked")
     public static <T> T getBean(String name) {
         checkApplicationContext();
-        return (T) applicationContext.getBean(name);
+        return (T) APPLICATIONCONTEXT.getBean(name);
     }
 
     public static <T> T getBean(Class<T> clazz) {
         checkApplicationContext();
-        return (T) applicationContext.getBean(clazz);
+        return (T) APPLICATIONCONTEXT.getBean(clazz);
     }
 
     public static void cleanApplicationContext() {
-        applicationContext = null;
+        APPLICATIONCONTEXT = null;
     }
 
     private static void checkApplicationContext() {
-        if (applicationContext == null) {
+        if (APPLICATIONCONTEXT == null) {
             throw new IllegalStateException("applicaitonContext未注入");
         }
     }

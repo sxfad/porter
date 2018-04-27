@@ -53,7 +53,7 @@ public interface CUserMapper {
      * @param loginpw
      * @return
      */
-    CUser selectByNameAndpasswd(@Param("loginname") String LoginName, @Param("loginpw") String loginpw);
+    CUser selectByNameAndpasswd(@Param("loginname") String loginName, @Param("loginpw") String loginpw);
 
     /**
      * 分頁
