@@ -56,8 +56,8 @@ public class ETLRowTransformer implements Transformer {
              * 最后根据tableMapper配置判断是否要求源端与目标端字段强一致
              */
             if (null != table && remedyColumns(table, row) && null != tableMapper && tableMapper.isForceMatched()) {
-                throw new TaskStopTriggerException("基于Mapper config(" + tableMapper + ")任务中断执行，等待DBA修改目标端表结构。"
-                        + "涉及Row data:" + JSON.toJSONString(row));
+                throw new TaskStopTriggerException("基于Mapper config(" + JSON.toJSONString(tableMapper) + ")任务中断执行，等待DBA修改目标端表结构。"
+                        + "涉及Table:" + row.getFinalSchema() + "." + row.getFinalTable());
             }
 
             //当是更新时，判断主键是否变更
