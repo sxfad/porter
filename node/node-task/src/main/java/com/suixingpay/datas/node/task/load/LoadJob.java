@@ -84,7 +84,7 @@ public class LoadJob extends AbstractStageJob {
                             LOGGER.info("开始提交消费同步点:{}", bucket.getPosition().render());
                             ClusterProviderProxy.INSTANCE.broadcast(new TaskPositionUploadCommand(work.getTaskId(),
                                     work.getDataConsumer().getSwimlaneId(), bucket.getPosition().render()));
-                            LOGGER.info("结束TableMapper.java提交消费同步点:{}", bucket.getPosition().render());
+                            LOGGER.info("结束提交消费同步点:{}", bucket.getPosition().render());
                         }
                     }
                     //更新消费统计数据
