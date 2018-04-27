@@ -52,8 +52,16 @@ public class ETLRowTransformer implements Transformer {
             mappingRowData(tableMapper, row);
             //目标端表结构元数据
             TableSchema table = findTable(work.getDataLoader(), row.getFinalSchema(), row.getFinalTable());
-            if (tableMapper.isIgnoreTargetCase()) table.toUpperCase();
-            if (null != table) remedyColumns(table, row);
+            if (null != tableMapper && tableMapper.isIgnoreTargetCase()) table.toUpperCase();
+            /**
+             * 数据库元数据正反向映射
+             * 先根据table是否为null执行remedyColumns方法判断是否发生字段数量变更，
+             * 最后根据tableMapper配置判断是否要求源端与目标端字段强一致
+             */
+            if (null != table && remedyColumns(table, row) && null != tableMapper && tableMapper.isForceMatched()) {
+                throw new TaskStopTriggerException("基于Mapper config(" + JSON.toJSONString(tableMapper) + ")任务中断执行，等待DBA修改目标端表结构。"
+                        + "涉及Table:" + row.getFinalSchema() + "." + row.getFinalTable());
+            }
 
             //当是更新时，判断主键是否变更
             if (row.getFinalOpType() == EventType.UPDATE) {
@@ -84,7 +92,7 @@ public class ETLRowTransformer implements Transformer {
         }
     }
 
-    private void remedyColumns(TableSchema table, ETLRow row) {
+    private boolean remedyColumns(TableSchema table, ETLRow row) {
         List<ETLColumn> removeables = new ArrayList<>();
         //正向查找
         for (ETLColumn c : row.getColumns()) {
@@ -111,14 +119,17 @@ public class ETLRowTransformer implements Transformer {
          * 如果目标库表中有新增必填的字段的话需要补充上去
          */
         //table.getColumns().stream().filter(p -> !inColumnNames.contains(p.getName()) && p.isRequired() && null == p.getDefaultValue())
-        table.getColumns().stream().filter(p -> !inColumnNames.contains(p.getName()) && p.isRequired())
-                .forEach(p -> {
-                    ETLColumn column = new ETLColumn(false, false, p.getName(), p.getDefaultValue(), p.getDefaultValue(), p.getDefaultValue(),
-                            p.isPrimaryKey(), p.isRequired(), p.getTypeCode());
-                    row.getAdditionalRequired().add(column);
-                });
+        List<TableColumn> targetNew = table.getColumns().stream().filter(p -> !inColumnNames.contains(p.getName()) && p.isRequired())
+                .collect(Collectors.toList());
+        targetNew.forEach(p -> {
+            ETLColumn column = new ETLColumn(false, false, p.getName(), p.getDefaultValue(),
+                    p.getDefaultValue(), p.getDefaultValue(), p.isPrimaryKey(), p.isRequired(), p.getTypeCode());
+            row.getAdditionalRequired().add(column);
+        });
 
         row.getColumns().removeAll(removeables);
+
+        return !removeables.isEmpty() || !targetNew.isEmpty();
     }
 
 

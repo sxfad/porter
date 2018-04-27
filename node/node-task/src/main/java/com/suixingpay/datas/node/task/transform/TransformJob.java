@@ -79,7 +79,7 @@ public class TransformJob extends AbstractStageJob {
                             if (null == inThreadBucket.getException()) {
                                 transformFactory.transform(inThreadBucket, work);
                             }
-                        } catch (Exception e) {
+                        } catch (Throwable e) {
                             e.printStackTrace();
                             inThreadBucket.tagException(new TaskStopTriggerException(e));
                             LOGGER.error("批次[{}]执行TransformJob失败!", inThreadBucket.getSequence(), e);
