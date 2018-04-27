@@ -131,6 +131,6 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements N
         String orderPath = baseOrderPath + "/" + UUID.randomUUID().toString();
         client.createWhenNotExists(nodePath, false, true, null);
         client.createWhenNotExists(baseOrderPath, false, true, null);
-        client.changeData(orderPath, false, false, command.render());
+        client.changeData(orderPath, true, false, command.render());
     }
 }
