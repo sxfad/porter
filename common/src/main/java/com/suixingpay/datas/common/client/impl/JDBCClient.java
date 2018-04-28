@@ -182,7 +182,7 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
         return  count[0];
     }
 
-    public int[] batchUpdate(String sql, List<Object[]> batchArgs) throws TaskStopTriggerException {
+    public int[] batchUpdate(String sqlType, String sql, List<Object[]> batchArgs) throws TaskStopTriggerException {
         int[] affect = new int[]{};
         try {
             affect = transactionTemplate.execute(new TransactionCallback<int[]>() {
@@ -199,7 +199,7 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
         if (null == affect || affect.length == 0) {
             List<Integer> affectList = new ArrayList<>();
             //分组执行
-            batchErroUpdate(50, sql, batchArgs, 0, affectList);
+            batchErroUpdate(sqlType, 50, sql, batchArgs, 0, affectList);
 
             affect = Arrays.stream(affectList.toArray(new Integer[]{})).mapToInt(Integer::intValue).toArray();
         }
@@ -208,7 +208,7 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
     }
 
 
-    public int update(String sql, Object... args) throws TaskStopTriggerException {
+    public int update(String type, String sql, Object... args) throws TaskStopTriggerException {
         int affect = 0;
         try {
             affect = transactionTemplate.execute(new TransactionCallback<Integer>() {
@@ -241,7 +241,7 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
     }
 
 
-    private void batchErroUpdate(int batchSize, String sql, List<Object[]> batchArgs, int from, List<Integer> affect)
+    private void batchErroUpdate(String sqlType, int batchSize, String sql, List<Object[]> batchArgs, int from, List<Integer> affect)
             throws TaskStopTriggerException {
         int size = batchArgs.size();
         int batchEnd = from + batchSize;
@@ -268,12 +268,12 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
         //如果仍然插入失败,改为单条插入
         if (null == reGroupAffect || reGroupAffect.length == 0) {
             for (int i = 0; i < subArgs.size(); i++) {
-                affect.add(update(sql, subArgs.get(i)));
+                affect.add(update(sqlType, sql, subArgs.get(i)));
             }
         } else {
             Arrays.stream(reGroupAffect).boxed().forEach(i -> affect.add(i));
         }
         //递归下次分组
-        if (batchEnd < size) batchErroUpdate(batchSize, sql, batchArgs, from, affect);
+        if (batchEnd < size) batchErroUpdate(sqlType, batchSize, sql, batchArgs, from, affect);
     }
 }
