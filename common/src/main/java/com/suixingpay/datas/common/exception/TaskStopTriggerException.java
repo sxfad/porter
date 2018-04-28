@@ -11,6 +11,7 @@ package com.suixingpay.datas.common.exception;
 
 import com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException;
 import com.suixingpay.datas.common.db.SqlErrorCode;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.BadSqlGrammarException;
@@ -36,7 +37,7 @@ public class TaskStopTriggerException extends TaskException {
         super(cause);
     }
 
-    public static boolean isMatch(Throwable cause) {
+    public static boolean isMatch(Throwable cause, String sqlType) {
         boolean match = false;
 
         if (cause instanceof DuplicateKeyException || cause instanceof SQLIntegrityConstraintViolationException) {
@@ -53,9 +54,13 @@ public class TaskStopTriggerException extends TaskException {
             SQLException sqlError = (SQLException) cause;
             return sqlError.getErrorCode() == SqlErrorCode.ERROR_904.code || sqlError.getErrorCode() == SqlErrorCode.ERROR_942.code
                     || sqlError.getErrorCode() == SqlErrorCode.ERROR_1438.code || sqlError.getErrorCode() == SqlErrorCode.ERROR_12899.code
-                    || sqlError.getErrorCode() == SqlErrorCode.ERROR_1364.code;
-                    //|| sqlError.getErrorCode() == SqlErrorCode.ERROR_1400.code;
+                    || sqlError.getErrorCode() == SqlErrorCode.ERROR_1364.code
+                    || (StringUtils.isNotBlank(sqlType) && StringUtils.trimToEmpty(sqlType).equalsIgnoreCase("INSERT")
+                    && sqlError.getErrorCode() == SqlErrorCode.ERROR_1400.code);
         }
         return match;
+    }
+    public static boolean isMatch(Throwable cause) {
+        return isMatch(cause, null);
     }
 }
