@@ -312,4 +312,12 @@ public class TaskWork {
     public List<AlertReceiver> getReceivers() {
         return receivers;
     }
+
+
+    /**
+     * 当前任务是否触发
+     */
+    public boolean triggerStopped() {
+        return stopTrigger.get();
+    }
 }
