@@ -97,13 +97,17 @@ public class LoadJob extends AbstractStageJob {
                 LOGGER.error("Load ETLRow error", stopException);
                 stopException.printStackTrace();
                 work.stopAndAlarm(stopException.getMessage());
+                /**
+                 * 立即停止目标端载入逻辑,理论上存在任务停止线程和当前载入线程同时执行的情况
+                 */
+                break;
             } catch (Throwable e) {
                 e.printStackTrace();
                 NodeLog.upload(NodeLog.LogType.TASK_LOG, work.getTaskId(), work.getDataConsumer().getSwimlaneId(),
                         "Load ETLRow error"  + e.getMessage());
                 LOGGER.error("Load ETLRow error!", e);
             }
-        } while (null != bucket);
+        } while (null != bucket && !work.triggerStopped()); //数据不为空并且当前任务没有触发停止告警
     }
     @Override
     public ETLBucket output() throws Exception {
