@@ -41,7 +41,7 @@ public class JdbcBatchLoader extends BaseJdbcLoader {
             if (rows.size() == 1) {
                 ETLRow row = rows.get(0);
                 //更新目标仓储
-                int affect = loadSql(buildSql(row));
+                int affect = loadSql(buildSql(row), row.getOpType());
 
                 //插入影响行数
                 affectRow.add(new SubmitStatObject(row.getFinalSchema(), row.getFinalTable(), row.getOpType(),
@@ -56,7 +56,7 @@ public class JdbcBatchLoader extends BaseJdbcLoader {
                 }
 
                 //执行sql
-                int[] results = batchLoadSql(subList);
+                int[] results = batchLoadSql(subList, rows.get(0).getOpType());
 
 
                 //处理状态变更

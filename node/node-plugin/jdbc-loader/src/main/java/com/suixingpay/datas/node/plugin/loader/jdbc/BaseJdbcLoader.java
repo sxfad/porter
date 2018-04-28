@@ -39,14 +39,14 @@ public abstract class BaseJdbcLoader extends AbstractDataLoader {
      * @param sqlList
      * @return
      */
-    protected int loadSql(List<Pair<String, Object[]>> sqlList) throws TaskStopTriggerException {
+    protected int loadSql(List<Pair<String, Object[]>> sqlList, EventType eventType) throws TaskStopTriggerException {
         int affect = 0;
         int times = 0;
         try {
             JDBCClient client = getLoadClient();
             for (Pair<String, Object[]> sqlOnce : sqlList) {
                 times++;
-                affect = client.update(sqlOnce.getLeft(), sqlOnce.getRight());
+                affect = client.update(eventType.getValue(), sqlOnce.getLeft(), sqlOnce.getRight());
                 if (affect > 0) break;
             }
         } catch (TaskStopTriggerException e) {
@@ -61,13 +61,13 @@ public abstract class BaseJdbcLoader extends AbstractDataLoader {
      * @param sqlList
      * @return
      */
-    protected int[] batchLoadSql(List<Pair<String, Object[]>> sqlList) throws TaskStopTriggerException {
+    protected int[] batchLoadSql(List<Pair<String, Object[]>> sqlList, EventType eventType) throws TaskStopTriggerException {
         JDBCClient client = getLoadClient();
         List<Pair<String, List<Object[]>>> reGroupList = new ArrayList<Pair<String, List<Object[]>>>();
         groupSql4Batch(reGroupList, sqlList, 0);
         int[] allAffects = new int[]{};
         for (Pair<String, List<Object[]>> batch : reGroupList) {
-            int[] subResult = client.batchUpdate(batch.getLeft(), batch.getRight());
+            int[] subResult = client.batchUpdate(eventType.getValue(), batch.getLeft(), batch.getRight());
             allAffects = ArrayUtils.addAll(allAffects, subResult);
         }
         return allAffects;
