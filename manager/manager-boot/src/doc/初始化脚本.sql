@@ -1,4 +1,5 @@
--- 登陆用户表 
+use datas_manager;
+-- 登陆用户表
 DROP TABLE IF EXISTS `c_user`;
 CREATE TABLE `c_user` (
   `id` BIGINT(20) NOT NULL AUTO_INCREMENT COMMENT '主键',

@@ -9,6 +9,7 @@
 package com.suixingpay.datas.manager.cluster.zookeeper;
 
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.alibaba.fastjson.JSON;
@@ -24,6 +25,7 @@ import com.suixingpay.datas.common.cluster.impl.zookeeper.ZookeeperClusterListen
 import com.suixingpay.datas.common.config.DataConsumerConfig;
 import com.suixingpay.datas.common.config.SourceConfig;
 import com.suixingpay.datas.common.config.TaskConfig;
+import com.suixingpay.datas.manager.ManagerContext;
 import com.suixingpay.datas.manager.core.util.ApplicationContextUtil;
 import com.suixingpay.datas.manager.service.MrJobTasksScheduleService;
 import com.suixingpay.datas.manager.service.impl.MrJobTasksScheduleServiceImpl;
@@ -40,6 +42,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
 
     private static final String ZK_PATH = BASE_CATALOG + "/task";
     private static final Pattern TASK_STAT_PATTERN = Pattern.compile(ZK_PATH + "/.*/stat/.*");
+    private static final Pattern TASK_ERROR_PATTERN = Pattern.compile(ZK_PATH + "/.*/error/.*");
 
     @Override
     public String listenPath() {
@@ -60,6 +63,27 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
                         .getBean(MrJobTasksScheduleServiceImpl.class);
                 mrJobTasksScheduleService.dealDTaskStat(stat);
                 LOGGER.info("4-DTaskStat.... " + JSON.toJSON(stat));
+            }
+
+            //任务错误
+            if (TASK_ERROR_PATTERN.matcher(zkEvent.getPath()).matches()) {
+                String[] taskAndSwimlane = null;
+                try {
+                    taskAndSwimlane = zkPath.replace(listenPath(), "").substring(1).split("/error/");
+                } catch (Throwable e) {
+                }
+
+                if (null == taskAndSwimlane || taskAndSwimlane.length != 2) return;
+
+                if (zkEvent.isDataChanged() || zkEvent.isOnline()) {
+                    ManagerContext.INSTANCE.newStoppedTask(taskAndSwimlane[0], taskAndSwimlane[1]);
+                    return;
+                }
+
+                if (zkEvent.isOffline()) {
+                    ManagerContext.INSTANCE.removeStoppedTask(taskAndSwimlane[0], taskAndSwimlane[1]);
+                    return;
+                }
             }
         } catch (Throwable e) {
             e.printStackTrace();
