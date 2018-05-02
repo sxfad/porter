@@ -20,9 +20,8 @@ import org.apache.commons.lang3.tuple.Pair;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月25日 14:01
  */
 
-public interface DataCarrier<E> {
+public interface DataCarrier<E>  extends DataContainer {
     void push(E item) throws InterruptedException;
     Pair<String, E> pullByOrder();
     <E> E pull();
-    long size();
 }
