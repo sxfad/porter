@@ -27,13 +27,16 @@ public class WebMvcConfigAdapter extends WebMvcConfigurerAdapter {
 
     public static final String LOGIN_URL_PATTERNS = "/manager/login,/manager/register";
 
+    public static final String ALARM_URL_PATTERNS = "/alarm/task/check";
     @Autowired
     private XTokenInterceptor xtokenInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(xtokenInterceptor).addPathPatterns("/**")
-                .excludePathPatterns(SWAGER_URL_PATTERNS.split(",")).excludePathPatterns(LOGIN_URL_PATTERNS.split(","));
+                .excludePathPatterns(ALARM_URL_PATTERNS.split(","))
+                .excludePathPatterns(SWAGER_URL_PATTERNS.split(","))
+                .excludePathPatterns(LOGIN_URL_PATTERNS.split(","));
     }
 
     @Override
