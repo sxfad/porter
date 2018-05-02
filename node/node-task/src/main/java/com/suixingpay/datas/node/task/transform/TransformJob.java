@@ -13,14 +13,14 @@ import com.suixingpay.datas.node.core.NodeContext;
 import com.suixingpay.datas.node.core.event.etl.ETLBucket;
 import com.suixingpay.datas.node.core.task.AbstractStageJob;
 import com.suixingpay.datas.node.core.task.StageType;
+import com.suixingpay.datas.node.datacarrier.DataMapCarrier;
+import com.suixingpay.datas.node.datacarrier.simple.FixedCapacityCarrier;
 import com.suixingpay.datas.node.task.transform.transformer.TransformFactory;
 import com.suixingpay.datas.node.task.worker.TaskWork;
 
-import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -36,7 +36,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 public class TransformJob extends AbstractStageJob {
     private final TransformFactory transformFactory;
     private final ExecutorService executorService;
-    private final Map<String, Future<ETLBucket>> carrier = new ConcurrentHashMap<>();
+    //容量为线程池容量的100倍
+    private final DataMapCarrier<String, Future<ETLBucket>> carrier = new FixedCapacityCarrier(JOB_THREAD_SIZE * 100);
     private final TaskWork work;
 
     //工作线程数量
@@ -87,7 +88,8 @@ public class TransformJob extends AbstractStageJob {
                         return inThreadBucket;
                     });
                     LOGGER.debug("transform ETLBucket batch {} end.", bucket.getSequence());
-                    carrier.put(inThreadBucket.getSequence(), result);
+                    carrier.push(inThreadBucket.getSequence(), result);
+                    carrier.printState();
                 }
             } catch (Throwable e) {
                 LOGGER.error("transform ETLBucket error!", e);
@@ -119,10 +121,7 @@ public class TransformJob extends AbstractStageJob {
                 }
             }
             LOGGER.info("got sequence:{}, Future: {}", sequence, carrier.containsKey(sequence));
-            result = carrier.computeIfPresent(sequence, (key, etlBucketFuture) -> {
-                carrier.remove(key);
-                return etlBucketFuture;
-            });
+            result = carrier.pull(sequence);
         }
         return null != result ? result.get() : null;
     }
