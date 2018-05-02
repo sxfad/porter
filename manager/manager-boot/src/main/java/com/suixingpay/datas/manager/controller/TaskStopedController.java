@@ -3,11 +3,11 @@ package com.suixingpay.datas.manager.controller;
 
 import com.suixingpay.datas.manager.ManagerContext;
 import io.swagger.annotations.Api;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 import java.util.Map;
 
@@ -23,9 +23,17 @@ import java.util.Map;
 @RestController
 @RequestMapping("/alarm/task")
 public class TaskStopedController {
+
     @GetMapping("/check")
-    public String info() {
+    public void info(HttpServletResponse response) {
         Map<String, List<String>> tasks = ManagerContext.INSTANCE.getStoppedTasks();
-        return tasks.isEmpty() ? StringUtils.EMPTY : tasks.toString();
+        if (null != tasks && !tasks.isEmpty()) {
+            try {
+                response.getWriter().write(tasks.toString());
+                response.getWriter().flush();
+            } catch (Throwable e) {
+            }
+        }
+        //return null != tasks && !tasks.isEmpty() ? tasks.toString() : "";
     }
 }
