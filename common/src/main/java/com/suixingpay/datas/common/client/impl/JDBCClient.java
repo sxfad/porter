@@ -151,7 +151,7 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
             column.setTypeCode(c.getTypeCode());
             tableSchema.addColumn(column);
         });
-        LOGGER.debug("schema:{},table:{},detail:{}", schema, tableName, JSONObject.toJSONString(dbTable));
+        LOGGER.info("schema:{},table:{},detail:{}", schema, tableName, JSONObject.toJSONString(dbTable));
         return tableSchema;
     }
 
