@@ -33,8 +33,8 @@ import java.util.List;
 public abstract class AbstractDataConsumer implements DataConsumer {
     private EventProcessor eventProcessor;
     protected EventConverter converter;
-    private MetaQueryClient metaQueryClient;
-    protected ConsumeClient consumeClient;
+    private  volatile MetaQueryClient metaQueryClient;
+    protected volatile  ConsumeClient consumeClient;
 
 
     @Getter private final List<String> includes = new ArrayList<>();

@@ -132,7 +132,6 @@ public class ETLRowTransformer implements Transformer {
         return !removeables.isEmpty();
     }
 
-
     private TableSchema findTable(DataLoader loader, String finalSchema, String finalTable)
             throws TaskStopTriggerException {
         TableSchema table = null;

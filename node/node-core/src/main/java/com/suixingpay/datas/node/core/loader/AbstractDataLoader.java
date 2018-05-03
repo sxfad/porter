@@ -25,8 +25,8 @@ import java.util.Date;
  */
 public abstract class AbstractDataLoader implements DataLoader {
     protected  final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
-    private LoadClient loadClient;
-    private MetaQueryClient metaQueryClient;
+    private  volatile LoadClient loadClient;
+    private  volatile MetaQueryClient metaQueryClient;
 
     protected abstract String getPluginName();
 
@@ -67,7 +67,7 @@ public abstract class AbstractDataLoader implements DataLoader {
     }
 
     @Override
-    public TableSchema findTable(String finalSchema, String finalTable) throws Exception {
+    public  TableSchema findTable(String finalSchema, String finalTable) throws Exception {
         return metaQueryClient.getTable(finalSchema, finalTable);
     }
 

@@ -26,7 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public enum ManagerContext {
     INSTANCE();
     private ApplicationContext context;
-    private final Map<String, List<String>> stoppedTask= new ConcurrentHashMap<>();
+    private final Map<String, List<String>> stoppedTask = new ConcurrentHashMap<>();
 
     public <T> T getBean(Class<T> clazz) {
         return null != context ? context.getBean(clazz) : null;

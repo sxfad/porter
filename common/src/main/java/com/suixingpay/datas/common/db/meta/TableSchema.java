@@ -12,10 +12,8 @@ package com.suixingpay.datas.common.db.meta;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
@@ -28,14 +26,17 @@ import java.util.stream.Collectors;
 public class TableSchema {
     @Setter @Getter private String schemaName;
     @Setter @Getter private String tableName;
-    private Map<String, TableColumn> columns = new HashMap<>();
-    private AtomicBoolean isUpperCased = new AtomicBoolean(false);
+    private final Map<String, TableColumn> columns = new HashMap<>();
+    private final AtomicBoolean isUpperCased = new AtomicBoolean(false);
+    //定义门栓,仅控制toUpperCase多线程访问逻辑
+    private final CountDownLatch  upperCased = new CountDownLatch(1);
     public TableColumn findColumn(String columnsName) {
         return columns.getOrDefault(columnsName, null);
     }
 
+
     public List<TableColumn> getColumns() {
-        return columns.values().stream().collect(Collectors.toList());
+        return Collections.unmodifiableList(columns.values().stream().collect(Collectors.toList()));
     }
 
     public void addColumn(TableColumn column) {
@@ -43,7 +44,8 @@ public class TableSchema {
     }
 
 
-    public TableSchema toUpperCase() {
+    public final TableSchema toUpperCase() throws InterruptedException {
+        //在if逻辑里打开门闩
         if (!isUpperCased.get() && isUpperCased.compareAndSet(false, true)) {
             this.schemaName = schemaName.toUpperCase();
             this.tableName = tableName.toUpperCase();
@@ -55,7 +57,10 @@ public class TableSchema {
                 //添加新key
                 columns.put(k.toString().toUpperCase(), column);
             });
+            upperCased.countDown();
         }
+        //所有调用该方法的线程，等待toUpperCase逻辑完成才能继续往下执行，确保方法安全的发布
+        upperCased.await();
         return this;
     }
 }

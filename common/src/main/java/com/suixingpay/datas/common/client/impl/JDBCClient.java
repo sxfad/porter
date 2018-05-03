@@ -111,7 +111,7 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
     }
 
     @Override
-    public TableSchema getTable(String schema, String tableName) throws Exception {
+    public final TableSchema getTable(String schema, String tableName) throws Exception {
         return getTable(schema, tableName, true);
     }
 
@@ -151,7 +151,7 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
             column.setTypeCode(c.getTypeCode());
             tableSchema.addColumn(column);
         });
-        LOGGER.info("schema:{},table:{},detail:{}", schema, tableName, JSONObject.toJSONString(dbTable));
+        LOGGER.info("schema:{},table:{},detail:{}", schema, tableName, JSONObject.toJSONString(tableSchema));
         return tableSchema;
     }
 

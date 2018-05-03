@@ -62,7 +62,7 @@ public class KUDUClient extends AbstractClient<KuduConfig> implements LoadClient
     }
 
     @Override
-    public TableSchema getTable(String schema, String tableName) throws Exception {
+    public final TableSchema getTable(String schema, String tableName) throws Exception {
         List<String> keyList = Arrays.asList(schema, tableName);
         String newTableName = getTableName(schema, tableName);
         //如果表存在
