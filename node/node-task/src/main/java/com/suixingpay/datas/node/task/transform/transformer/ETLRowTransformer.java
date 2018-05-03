@@ -60,7 +60,7 @@ public class ETLRowTransformer implements Transformer {
              */
             if (null != table && remedyColumns(table, row) && null != tableMapper && tableMapper.isForceMatched()) {
                 throw new TaskStopTriggerException("基于Mapper config(" + JSON.toJSONString(tableMapper) + ")任务中断执行，等待DBA修改目标端表结构。"
-                        + "涉及Table:" + row.getFinalSchema() + "." + row.getFinalTable());
+                        + "涉及表结构:" + JSON.toJSONString(table));
             }
 
             //当是更新时，判断主键是否变更
