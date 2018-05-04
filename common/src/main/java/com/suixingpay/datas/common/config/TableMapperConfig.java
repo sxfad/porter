@@ -58,5 +58,5 @@ public class TableMapperConfig {
     /**
      * 字段映射后，强制目标端字段和源端字段一致，否则任务抛出异常停止
      */
-    @Getter @Setter private boolean forceMatched = false;
+    @Getter @Setter private boolean forceMatched = true;
 }

@@ -25,7 +25,7 @@ public class TableMapper {
     /**
      * 字段映射后，强制目标端字段和源端字段一致，否则任务抛出异常停止
      */
-    private boolean forceMatched = false;
+    private boolean forceMatched = true;
     //[源端(统一大写),目标端schema(区分大小写)]
     private String[] schema;
     //[源端表(统一大写),目标端表(区分大小写)]
