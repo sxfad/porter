@@ -66,7 +66,7 @@ public class ResourceUtils {
         if (name == null) {
             NodesService nodesService = ApplicationContextUtil.getBean(NodesService.class);
             Nodes node = nodesService.selectByNodeId(nodeId);
-            name = node == null ? "(空)" : node.getIpAddress();
+            name = node == null ? "(空-id("+nodeId+"))" : node.getIpAddress();
             ResourceUtils.NODEIDNAME_MAP.put(nodeId, name);
         }
         return name;
