@@ -66,7 +66,7 @@ public class ResourceUtils {
         if (name == null) {
             NodesService nodesService = ApplicationContextUtil.getBean(NodesService.class);
             Nodes node = nodesService.selectByNodeId(nodeId);
-            name = node == null ? "(空-id("+nodeId+"))" : node.getIpAddress();
+            name = node == null ? "(空-id(" + nodeId + "))" : node.getIpAddress();
             ResourceUtils.NODEIDNAME_MAP.put(nodeId, name);
         }
         return name;
@@ -77,7 +77,7 @@ public class ResourceUtils {
         if (name == null) {
             JobTasksService jobTasksService = ApplicationContextUtil.getBean(JobTasksService.class);
             JobTasks jobtask = jobTasksService.selectById(Long.valueOf(jobId));
-            name = jobtask == null ? "(空-id("+jobId+"))" : jobtask.getJobName();
+            name = jobtask == null ? "(空-id(" + jobId + "))" : jobtask.getJobName();
         }
         return name;
     }
