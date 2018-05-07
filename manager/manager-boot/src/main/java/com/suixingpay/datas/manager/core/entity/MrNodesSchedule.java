@@ -55,7 +55,7 @@ public class MrNodesSchedule implements java.io.Serializable {
         Map<String, TreeSet<String>> taskmap = new HashMap<String, TreeSet<String>>();
         for (Map.Entry<String, TreeSet<String>> entry : tasks.entrySet()) {
             String jobName = ResourceUtils.obtainJobName(entry.getKey());
-            taskmap.put(jobName != null ? jobName : "(空)", entry.getValue());
+            taskmap.put(jobName != null ? jobName : "(空-id("+entry.getKey()+"))", entry.getValue());
         }
         return JSON.toJSONString(taskmap);
     }
