@@ -1,3 +1,4 @@
+archivesBaseName = 'datas-manager-core'
 dependencies {
     compile project(':common')
     //数据源

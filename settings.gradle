@@ -30,4 +30,6 @@ findProject(':manager:manager-web')?.name = 'manager-web'
 include 'node:node-plugin:kudu-loader'
 findProject('node:node-plugin:kudu-loader')?.name = 'kudu-loader'
 include 'node:node-plugin:kudu-loader'
+include 'manager:manager-cluster'
+findProject(':manager:manager-cluster')?.name = 'manager-cluster'
 

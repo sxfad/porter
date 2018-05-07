@@ -1,3 +1,4 @@
+archivesBaseName = 'datas-manager-web'
 dependencies {
     compile project(':manager:manager-core')
     //token
