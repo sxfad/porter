@@ -68,7 +68,7 @@
     <!-- 根据节点id和时间yyyyMMddHHmm查找数据 -->
     <select id="selectByNodeIdAndTime" resultType="com.suixingpay.datas.manager.core.entity.MrNodesMonitor">
         select id, monitor_tps AS monitorTps, monitor_alarm AS monitorAlarm from mr_nodes_monitor
-        where node_id = #{nodeId} and date_format(monitor_date,'%y-%m-%d %h:%i:%s') = #{dataTimes}
+        where node_id = #{nodeId} and date_format(monitor_date,'%Y-%m-%d %H:%i:%s') = #{dataTimes}
     </select>
 
     <!-- 分页All -->
