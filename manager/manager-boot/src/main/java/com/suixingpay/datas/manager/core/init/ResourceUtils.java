@@ -77,7 +77,7 @@ public class ResourceUtils {
         if (name == null) {
             JobTasksService jobTasksService = ApplicationContextUtil.getBean(JobTasksService.class);
             JobTasks jobtask = jobTasksService.selectById(Long.valueOf(jobId));
-            name = jobtask == null ? "(空)" : jobtask.getJobName();
+            name = jobtask == null ? "(空-id("+jobId+"))" : jobtask.getJobName();
         }
         return name;
     }
