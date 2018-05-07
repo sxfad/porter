@@ -53,15 +53,33 @@ public class ETLRowTransformer implements Transformer {
             //目标端表结构元数据
             TableSchema table = findTable(work.getDataLoader(), row.getFinalSchema(), row.getFinalTable());
             if (null != tableMapper && tableMapper.isIgnoreTargetCase()) table.toUpperCase();
+
             /**
              * 数据库元数据正反向映射
              * 先根据table是否为null执行remedyColumns方法判断是否发生字段数量变更，
              * 最后根据tableMapper配置判断是否要求源端与目标端字段强一致
              */
             if (null != table && remedyColumns(table, row) && (null == tableMapper || tableMapper.isForceMatched())) {
-                throw new TaskStopTriggerException("基于Mapper config(" + JSON.toJSONString(tableMapper) + ")任务中断执行，等待DBA修改目标端表结构。"
-                        + "涉及表结构:" + JSON.toJSONString(table));
+                throw new TaskStopTriggerException("基于Mapper config(" + JSON.toJSONString(tableMapper) + ")任务中断执行"
+                        + "，等待DBA修改目标端表结构。涉及表结构:" + JSON.toJSONString(table));
             }
+
+            /**
+             * 为了减少表结构造成的数据问题，增加人工介入机会。
+             * 默认TableMapper为绝对正确的输入，当前ETLRow数据类型为Insert时，如果有不存在预配置字段项的映射，任务停止，人工介入
+             */
+            if (row.getFinalOpType() == EventType.INSERT && null != tableMapper && null != tableMapper.getColumn()
+                    && !tableMapper.getColumn().isEmpty()) {
+                for (String columnName : tableMapper.getColumn().values()) {
+                    //最终字段与映射表匹配数量
+                    long matchCount = row.getColumns().stream().filter(c -> c.getFinalName().equalsIgnoreCase(columnName)).count();
+                    if (matchCount < 1) {
+                        throw new TaskStopTriggerException("映射表与实际目标端表结构不一致，等待DBA修改目标端表结构。映射表:"
+                                + JSON.toJSONString(tableMapper) + "，目标端表结构:" + JSON.toJSONString(table));
+                    }
+                }
+            }
+
 
             //当是更新时，判断主键是否变更
             if (row.getFinalOpType() == EventType.UPDATE) {
