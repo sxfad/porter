@@ -45,6 +45,8 @@ public enum DataLoaderFactory {
         }
         loader.setLoadClient((LoadClient) client);
         loader.setMetaQueryClient((MetaQueryClient) client);
+        //新增数据载入策略开关
+        loader.setInsertOnUpdateError(config.isInsertOnUpdateError());
         return loader;
     }
 

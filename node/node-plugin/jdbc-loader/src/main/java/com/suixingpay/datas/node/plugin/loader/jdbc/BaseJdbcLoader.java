@@ -158,9 +158,11 @@ public abstract class BaseJdbcLoader extends AbstractDataLoader {
                     addArray(strArrayComponent, keyNames, oldColumnNames), addArray(strArrayComponent, keyNames, columnNames)),
                     addArray(keyNewValues, columnValues, keyOldValues, oldColumnValues)));
 
-            //插入
-            sqlList.add(new ImmutablePair<>(template.getInsertSql(row.getFinalSchema(), row.getFinalTable(),
-                    addArray(strArrayComponent, keyNames, columnNames)), addArray(keyNewValues, columnValues)));
+            //更新转插入
+            if (isInsertOnUpdateError()) {
+                sqlList.add(new ImmutablePair<>(template.getInsertSql(row.getFinalSchema(), row.getFinalTable(),
+                        addArray(strArrayComponent, keyNames, columnNames)), addArray(keyNewValues, columnValues)));
+            }
         } else if (row.getFinalOpType() == EventType.TRUNCATE) {
             sqlList.add(new ImmutablePair<>(template.getTruncateSql(row.getFinalSchema(), row.getFinalTable()), new Object[]{}));
         }

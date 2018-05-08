@@ -10,6 +10,7 @@
 package com.suixingpay.datas.common.config;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Map;
@@ -20,12 +21,8 @@ import java.util.Map;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月03日 16:44
  */
+@NoArgsConstructor
 public class DataLoaderConfig {
-
-    public DataLoaderConfig() {
-
-    }
-
     public DataLoaderConfig(String loaderName, Map<String, String> source) {
         this.loaderName = loaderName;
         this.source = source;
@@ -38,4 +35,7 @@ public class DataLoaderConfig {
     @Getter
     @Setter
     private Map<String, String> source;
+
+    //新增更新转插入策略开关
+    @Getter @Setter private boolean insertOnUpdateError = true;
 }

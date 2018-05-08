@@ -27,6 +27,8 @@ public abstract class AbstractDataLoader implements DataLoader {
     protected  final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
     private  volatile LoadClient loadClient;
     private  volatile MetaQueryClient metaQueryClient;
+    //更新转插入策略开关
+    private volatile boolean insertOnUpdateError = true;
 
     protected abstract String getPluginName();
 
@@ -71,5 +73,11 @@ public abstract class AbstractDataLoader implements DataLoader {
         return metaQueryClient.getTable(finalSchema, finalTable);
     }
 
+    public boolean isInsertOnUpdateError() {
+        return insertOnUpdateError;
+    }
 
+    public void setInsertOnUpdateError(boolean insertOnUpdateError) {
+        this.insertOnUpdateError = insertOnUpdateError;
+    }
 }

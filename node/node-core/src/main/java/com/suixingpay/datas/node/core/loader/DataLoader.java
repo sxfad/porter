@@ -28,6 +28,7 @@ import java.util.List;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月03日 16:23
  */
 public interface DataLoader {
+
     /**
      * 用于Loader模块儿加载匹配
      * @param loaderName
@@ -90,5 +91,7 @@ public interface DataLoader {
      */
     void mouldRow(ETLRow row) throws TaskDataException;
 
+    boolean isInsertOnUpdateError();
 
+    void setInsertOnUpdateError(boolean insertOnUpdateError);
 }
