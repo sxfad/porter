@@ -102,11 +102,11 @@ public class TransformJob extends AbstractStageJob {
         String sequence = work.waitSequence();
         Future<ETLBucket> result = null;
         if (null != sequence) {
-            LOGGER.info("got sequence:{}, Future: {}", sequence, carrier.containsKey(sequence));
+            LOGGER.debug("got sequence:{}, Future: {}", sequence, carrier.containsKey(sequence));
             long waitTime = 0;
             //等待该sequence对应的ETLBucket transform完成。捕获InterruptedException异常,是为了保证该sequence能够被处理。
             while (null != sequence && !carrier.containsKey(sequence)) {
-                LOGGER.debug("waiting sequence Future:{}", sequence);
+                LOGGER.info("waiting sequence Future:{}", sequence);
                 //等待超过5分钟，释放任务
                 if (waitTime > 1000 * 60 * 5) {
                     String msg  = "等待批次" + sequence + "SET完成超时(5m)，任务退出。";
@@ -120,7 +120,7 @@ public class TransformJob extends AbstractStageJob {
                 } catch (InterruptedException e) {
                 }
             }
-            LOGGER.info("got sequence:{}, Future: {}", sequence, carrier.containsKey(sequence));
+            LOGGER.debug("got sequence:{}, Future: {}", sequence, carrier.containsKey(sequence));
             result = carrier.pull(sequence);
         }
         return null != result ? result.get() : null;

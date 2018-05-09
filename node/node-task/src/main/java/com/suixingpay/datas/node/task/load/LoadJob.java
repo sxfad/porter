@@ -60,6 +60,9 @@ public class LoadJob extends AbstractStageJob {
         //只要队列有消息，持续读取
         ETLBucket bucket = null;
         do {
+            //确保任务出错停止后不执行do{}逻辑
+            if (work.triggerStopped()) break;
+            //正常逻辑
             try {
                 bucket = work.waitEvent(StageType.TRANSFORM);
                 //异常

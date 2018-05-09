@@ -136,7 +136,8 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
                 canal.getCanalParameter().setSourcingType(config.getSourcingType());
                 //消息存储模型
                 canal.getCanalParameter().setStorageMode(CanalParameter.StorageMode.MEMORY);
-                canal.getCanalParameter().setMemoryStorageBufferSize(32 * 1024);
+                //采用默认大小
+                //canal.getCanalParameter().setMemoryStorageBufferSize(32 * 1024);
                 //忽略表解析异常
                 canal.getCanalParameter().setFilterTableError(true);
                 //从上次失败位置开始消费
