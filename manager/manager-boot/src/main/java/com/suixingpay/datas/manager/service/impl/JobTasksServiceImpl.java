@@ -133,13 +133,13 @@ public class JobTasksServiceImpl implements JobTasksService {
             DataSource sourceDataEntity = dataSourceService.selectById(jobTasks.getSourceDataId());
             jobTasks.setSourceDataEntity(sourceDataEntity);
         }
-        // 根据 SourceDataSourceId 查询来源数据数据源信息 
+        // 根据 SourceDataSourceId 查询来源数据数据源信息
         if (jobTasks != null && jobTasks.getSourceDataSourceId() != null) {
             DataSource sourceDataSourceDba = dataSourceService.selectById(jobTasks.getSourceDataSourceId());
             jobTasks.setSourceDataSourceDba(sourceDataSourceDba);
         }
         // 根据TargetDataSourceId 查询目标数据源信息
-        if(jobTasks != null && jobTasks.getTargetDataSourceId() != null) {
+        if (jobTasks != null && jobTasks.getTargetDataSourceId() != null) {
             DataSource sourceDataSourceDba = dataSourceService.selectById(jobTasks.getTargetDataSourceId());
             jobTasks.setTargetDataSourceDba(sourceDataSourceDba);
         }
