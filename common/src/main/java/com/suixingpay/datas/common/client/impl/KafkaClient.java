@@ -237,4 +237,11 @@ public class KafkaClient extends AbstractClient<KafkaConfig> implements ConsumeC
             }
         });
     }
+
+    @Override
+    public String getClientInfo() {
+        KafkaConfig config = getConfig();
+        return new StringBuilder().append("kafka地址->").append(config.getServers()).append(",topic->").append(config.getSwimlaneId())
+                .toString();
+    }
 }

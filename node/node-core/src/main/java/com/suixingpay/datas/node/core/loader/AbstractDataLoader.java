@@ -80,4 +80,14 @@ public abstract class AbstractDataLoader implements DataLoader {
     public void setInsertOnUpdateError(boolean insertOnUpdateError) {
         this.insertOnUpdateError = insertOnUpdateError;
     }
+
+    @Override
+    public String getClientInfo() {
+        StringBuffer clientInfo = new StringBuffer();
+        if (null != metaQueryClient && metaQueryClient != loadClient) {
+            clientInfo.append("元数据->").append(metaQueryClient.getClientInfo()).append(System.lineSeparator()).append("\t");
+        }
+        clientInfo.append("载入源->").append(loadClient.getClientInfo());
+        return clientInfo.toString();
+    }
 }

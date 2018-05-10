@@ -12,6 +12,7 @@ package com.suixingpay.datas.common.client.impl;
 import com.suixingpay.datas.common.client.AbstractClient;
 import com.suixingpay.datas.common.client.LoadClient;
 import com.suixingpay.datas.common.client.MetaQueryClient;
+import com.suixingpay.datas.common.config.source.JDBCConfig;
 import com.suixingpay.datas.common.config.source.KuduConfig;
 import com.suixingpay.datas.common.db.meta.TableColumn;
 import com.suixingpay.datas.common.db.meta.TableSchema;
@@ -213,5 +214,11 @@ public class KUDUClient extends AbstractClient<KuduConfig> implements LoadClient
         }
         nameBuilder.append(table);
         return nameBuilder.toString();
+    }
+
+    @Override
+    public String getClientInfo() {
+        KuduConfig config = getConfig();
+        return new StringBuilder().append("数据库地址->").append(config.getServers()).toString();
     }
 }

@@ -289,24 +289,46 @@ public class TaskWork {
         return Collections.unmodifiableList(stats.values().stream().collect(Collectors.toList()));
     }
 
-    public void stopAndAlarm(String notice) {
+    public void stopAndAlarm(final String notice) {
         if (stopTrigger.compareAndSet(false, true)) {
             new Thread("suixingpay-TaskStopByErrorTrigger-stopTask-" + taskId + "-" + dataConsumer.getSwimlaneId()) {
                 @Override
                 public void run() {
+                    StringBuffer alarmNoticeBuilder = new StringBuffer(notice);
+                    String alarmNotice = notice;
+                    //增加插件连接信息
                     try {
-                        ClusterProviderProxy.INSTANCE.broadcast(new TaskStoppedByErrorCommand(taskId, dataConsumer.getSwimlaneId(), notice));
+                        alarmNoticeBuilder.append(System.lineSeparator()).append("消费源:").append(dataConsumer.getClientInfo()).append(System.lineSeparator())
+                                .append("目标端:").append(dataLoader.getClientInfo());
+                        alarmNotice = alarmNoticeBuilder.toString();
+                    } catch (Throwable e) {
+
+                    }
+                    try {
+                        ClusterProviderProxy.INSTANCE.broadcast(new TaskStoppedByErrorCommand(taskId, dataConsumer.getSwimlaneId(), alarmNotice));
                     } catch (Throwable e) {
                         e.printStackTrace();
                         NodeLog.upload(NodeLog.LogType.TASK_LOG, taskId, dataConsumer.getSwimlaneId(), "在集群策略存储引擎标识任务因错误失败出错:" + e.getMessage(),
                                 getReceivers());
                     }
-                    //上传日志
-                    NodeLog.upload(NodeLog.LogType.TASK_ALARM, taskId, dataConsumer.getSwimlaneId(), notice, getReceivers());
-                    //停止任务
-                    NodeContext.INSTANCE.getBean(TaskController.class).stopTask(taskId, dataConsumer.getSwimlaneId());
-                    //调整节点健康级别
-                    NodeContext.INSTANCE.markTaskError(taskId, notice);
+                    try {
+                        //上传日志
+                        NodeLog.upload(NodeLog.LogType.TASK_ALARM, taskId, dataConsumer.getSwimlaneId(), alarmNotice, getReceivers());
+                    } catch (Throwable e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        //停止任务
+                        NodeContext.INSTANCE.getBean(TaskController.class).stopTask(taskId, dataConsumer.getSwimlaneId());
+                    } catch (Throwable e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        //调整节点健康级别
+                        NodeContext.INSTANCE.markTaskError(taskId, alarmNotice);
+                    } catch (Throwable e) {
+                        e.printStackTrace();
+                    }
                 }
             }.start();
         }

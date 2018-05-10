@@ -35,4 +35,6 @@ public interface Client {
     default boolean isAlive() {
         return true;
     }
+
+    String getClientInfo();
 }

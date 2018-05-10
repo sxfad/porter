@@ -22,6 +22,7 @@ import com.alibaba.otter.canal.protocol.Message;
 import com.alibaba.otter.canal.server.embedded.CanalServerWithEmbedded;
 import com.alibaba.otter.canal.server.exception.CanalServerException;
 import com.suixingpay.datas.common.client.AbstractClient;
+import com.suixingpay.datas.common.config.source.JDBCConfig;
 import com.suixingpay.datas.common.consumer.ConsumeClient;
 import com.suixingpay.datas.common.config.source.CanalConfig;
 import com.suixingpay.datas.common.consumer.Position;
@@ -309,5 +310,12 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
         public boolean checksum() {
             return checksum;
         }
+    }
+
+    @Override
+    public String getClientInfo() {
+        CanalConfig config = getConfig();
+        return new StringBuilder().append("数据库地址->").append(config.getAddress()).append(",数据库->").append(config.getDatabase())
+                .append(",用户->").append(config.getUsername()).toString();
     }
 }

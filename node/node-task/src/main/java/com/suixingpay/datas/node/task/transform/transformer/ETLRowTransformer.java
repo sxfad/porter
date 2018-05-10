@@ -60,8 +60,8 @@ public class ETLRowTransformer implements Transformer {
              * 最后根据tableMapper配置判断是否要求源端与目标端字段强一致
              */
             if (null != table && remedyColumns(table, row) && (null == tableMapper || tableMapper.isForceMatched())) {
-                throw new TaskStopTriggerException("目标端与源端表结构不一致。" +
-                        "映射表:" + JSON.toJSONString(tableMapper) + ",目标端表:" + JSON.toJSONString(table));
+                throw new TaskStopTriggerException("目标端与源端表结构不一致。"
+                        + "映射表:" + JSON.toJSONString(tableMapper) + ",目标端表:" + JSON.toJSONString(table));
             }
 
             /**

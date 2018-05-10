@@ -19,6 +19,7 @@ import com.suixingpay.datas.common.exception.ClientMatchException;
 import com.suixingpay.datas.common.util.compile.JavaFileCompiler;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.support.SpringFactoriesLoader;
@@ -128,5 +129,10 @@ public abstract class AbstractClient<T extends SourceConfig> implements Client {
             }
         }
         throw  new ClientMatchException();
+    }
+
+    @Override
+    public String getClientInfo() {
+        return null != config && null != config.getProperties() ? config.getProperties().toString() : StringUtils.EMPTY;
     }
 }

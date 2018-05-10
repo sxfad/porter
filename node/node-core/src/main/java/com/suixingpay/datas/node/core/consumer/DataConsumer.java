@@ -123,4 +123,7 @@ public interface DataConsumer {
     default boolean supportMetaQuery() {
         return false;
     }
+
+
+    String getClientInfo();
 }

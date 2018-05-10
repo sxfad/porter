@@ -94,4 +94,6 @@ public interface DataLoader {
     boolean isInsertOnUpdateError();
 
     void setInsertOnUpdateError(boolean insertOnUpdateError);
+
+    String getClientInfo();
 }

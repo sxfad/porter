@@ -276,4 +276,11 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
         //递归下次分组
         if (batchEnd < size) batchErroUpdate(sqlType, batchSize, sql, batchArgs, from, affect);
     }
+
+    @Override
+    public String getClientInfo() {
+        JDBCConfig config = getConfig();
+        return new StringBuilder().append("数据库地址->").append(config.getUrl()).append(",用户->").append(config.getUserName())
+                .toString();
+    }
 }

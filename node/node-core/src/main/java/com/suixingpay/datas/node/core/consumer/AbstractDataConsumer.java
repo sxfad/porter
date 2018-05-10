@@ -136,4 +136,14 @@ public abstract class AbstractDataConsumer implements DataConsumer {
     public void setConverter(EventConverter converter) {
         this.converter = converter;
     }
+
+    @Override
+    public String getClientInfo() {
+        StringBuffer clientInfo = new StringBuffer();
+        if (null != metaQueryClient && metaQueryClient != consumeClient) {
+            clientInfo.append("元数据->").append(metaQueryClient.getClientInfo()).append(System.lineSeparator()).append("\t");
+        }
+        clientInfo.append("消费源->").append(consumeClient.getClientInfo());
+        return clientInfo.toString();
+    }
 }
