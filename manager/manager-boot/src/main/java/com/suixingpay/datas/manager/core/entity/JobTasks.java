@@ -63,6 +63,11 @@ public class JobTasks implements java.io.Serializable {
     private Long sourceDataSourceId;
 
     /**
+     * 来源数据-元数据数据源信息.
+     */
+    private DataSource sourceDataSourceDba;
+
+    /**
      * 来源数据-元数据表分组名称.
      */
     private String sourceDataTablesName;
@@ -99,6 +104,11 @@ public class JobTasks implements java.io.Serializable {
      * 目标数据-数据源id.
      */
     private Long targetDataSourceId;
+
+    /**
+     * 目标数据-数据源信息.
+     */
+    private DataSource targetDataSourceDba;
 
     /**
      * 目标数据-载入源名称.
@@ -585,5 +595,21 @@ public class JobTasks implements java.io.Serializable {
 
     public void setSourceDataEntity(DataSource sourceDataEntity) {
         this.sourceDataEntity = sourceDataEntity;
+    }
+
+    public DataSource getSourceDataSourceDba() {
+        return sourceDataSourceDba;
+    }
+
+    public void setSourceDataSourceDba(DataSource sourceDataSourceDba) {
+        this.sourceDataSourceDba = sourceDataSourceDba;
+    }
+
+    public DataSource getTargetDataSourceDba() {
+        return targetDataSourceDba;
+    }
+
+    public void setTargetDataSourceDba(DataSource targetDataSourceDba) {
+        this.targetDataSourceDba = targetDataSourceDba;
     }
 }

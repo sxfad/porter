@@ -133,6 +133,16 @@ public class JobTasksServiceImpl implements JobTasksService {
             DataSource sourceDataEntity = dataSourceService.selectById(jobTasks.getSourceDataId());
             jobTasks.setSourceDataEntity(sourceDataEntity);
         }
+        // 根据 SourceDataSourceId 查询来源数据数据源信息 
+        if (jobTasks != null && jobTasks.getSourceDataSourceId() != null) {
+            DataSource sourceDataSourceDba = dataSourceService.selectById(jobTasks.getSourceDataSourceId());
+            jobTasks.setSourceDataSourceDba(sourceDataSourceDba);
+        }
+        // 根据TargetDataSourceId 查询目标数据源信息
+        if(jobTasks != null && jobTasks.getTargetDataSourceId() != null) {
+            DataSource sourceDataSourceDba = dataSourceService.selectById(jobTasks.getTargetDataSourceId());
+            jobTasks.setTargetDataSourceDba(sourceDataSourceDba);
+        }
         // 根据 JobTasksId 查询 JobTasksTable 详情
         List<JobTasksTable> tables = jobTasksTableService.selectById(id);
         if (tables != null && tables.size() > 0) {
@@ -159,7 +169,7 @@ public class JobTasksServiceImpl implements JobTasksService {
 
     @Override
     public Page<JobTasks> page(Page<JobTasks> page, String jobName, String beginTime, String endTime,
-                               TaskStatusType jobState) {
+            TaskStatusType jobState) {
         String code = "";
         if (null != jobState) {
             code = jobState.getCode();
@@ -211,12 +221,14 @@ public class JobTasksServiceImpl implements JobTasksService {
                 }
             }
             String sql = query.getTableFieldsSql();
-            DbSelectService dbSelectService = ApplicationContextUtil.getBean("dbJDBC" + query.getDbType() + "SelectService");
-            fields = dbSelectService.fieldList(dataSource, new JDBCVo(query.getDriverName(), url, username, password), sql,
-                    tableAllName);
+            DbSelectService dbSelectService = ApplicationContextUtil
+                    .getBean("dbJDBC" + query.getDbType() + "SelectService");
+            fields = dbSelectService.fieldList(dataSource, new JDBCVo(query.getDriverName(), url, username, password),
+                    sql, tableAllName);
             return fields;
         } else {
-            DbSelectService dbSelectService = ApplicationContextUtil.getBean("db" + dataSource.getDataType() + "SelectService");
+            DbSelectService dbSelectService = ApplicationContextUtil
+                    .getBean("db" + dataSource.getDataType() + "SelectService");
             fields = dbSelectService.fieldList(dataSource, null, null, tableAllName);
             return fields;
         }
@@ -285,10 +297,10 @@ public class JobTasksServiceImpl implements JobTasksService {
         List<TableMapperConfig> tableList = new ArrayList<>();
         TableMapperConfig tableMapperConfig = null;
         for (JobTasksTable jobTasksTable : tables) {
-            String[] schema = {jobTasksTable.getSourceTableName().split("[.]")[0],
-                    jobTasksTable.getTargetTableName().split("[.]")[0]};
-            String[] table = {jobTasksTable.getSourceTableName().split("[.]")[1],
-                    jobTasksTable.getTargetTableName().split("[.]")[1]};
+            String[] schema = { jobTasksTable.getSourceTableName().split("[.]")[0],
+                    jobTasksTable.getTargetTableName().split("[.]")[0] };
+            String[] table = { jobTasksTable.getSourceTableName().split("[.]")[1],
+                    jobTasksTable.getTargetTableName().split("[.]")[1] };
             Map<String, String> column = fieldsMap(jobTasksTable.getFields());
             tableMapperConfig = new TableMapperConfig(schema, table, column);
             tableList.add(tableMapperConfig);
