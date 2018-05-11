@@ -449,7 +449,7 @@ INSERT  INTO `d_data_source_plugin`(`id`,`source_type`,`field_name`,`field_code`
 (4,'JDBC','密码','password',4,'TEXT',NULL,'','',1,0,NULL),
 (5,'KAFKA','服务器列表','servers',1,'TEXT',NULL,'','例如:0.0.0.1:9092,0.0.0.2:9092',1,0,NULL),
 (6,'KAFKA','主题','topics',2,'TEXT',NULL,'','例如:test1(多个,隔开)',1,0,NULL),
-(7,'KAFKA','查询超时时间','pollTimeOut',3,'TEXT',NULL,'','例如:5000ms',1,0,NULL),
+(7,'KAFKA','查询超时时间','pollTimeOut',3,'TEXT',NULL,'','例如:5000',1,0,NULL),
 (8,'KAFKA','单次查询数量','oncePollSize',4,'TEXT',NULL,'','例如:1000',1,0,NULL),
 (9,'CANAL','地址','address',2,'TEXT',NULL,'','例如:0.0.0.0:3306',1,0,NULL),
 (10,'CANAL','数据库','database',3,'TEXT',NULL,'','例如:paytest',1,0,NULL),
