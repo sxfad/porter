@@ -163,6 +163,8 @@ DROP TABLE IF EXISTS `job_tasks`;
 CREATE TABLE `job_tasks` (
   `id` BIGINT(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
   `job_name` VARCHAR(100) NOT NULL COMMENT '任务名称',
+  `java_class_name` VARCHAR(200) NOT NULL COMMENT '自定义处理类包路径和类名',
+  `java_class_content` VARCHAR(200) NOT NULL COMMENT '自定义处理类文件路径',
   `job_state` VARCHAR(100) NOT NULL DEFAULT 'NEW' COMMENT '任务状态',
   `source_consume_adt` VARCHAR(100) NOT NULL COMMENT '来源数据-消费插件',
   `source_convert_adt` VARCHAR(100) NOT NULL COMMENT '来源数据-消费转换插件',
@@ -195,6 +197,9 @@ DROP TABLE IF EXISTS `job_tasks_table`;
 CREATE TABLE `job_tasks_table` (
   `id` BIGINT(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
   `job_task_id` BIGINT(20) NOT NULL COMMENT '任务id',
+  `ignore_target_case` INT(2) NOT NULL DEFAULT '1' COMMENT '忽略目标端大小写',
+  `force_matched` INT(2) NOT NULL DEFAULT '1' COMMENT '强制目标端字段和源端字段一致',
+  `direct_map_table` INT(2) NOT NULL DEFAULT '0' COMMENT '直接映射表，不进行表字段映射配置',
   `source_table_name` VARCHAR(200) NOT NULL COMMENT '来源数据-数据表名-记录全名',
   `target_table_name` VARCHAR(200) NOT NULL COMMENT '目标数据-数据表名-记录全名',
   PRIMARY KEY (`id`)
