@@ -19,8 +19,22 @@ import lombok.Setter;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年03月19日 16:18
  */
 public class JavaFileConfig {
-    //package.className
-    @Getter @Setter private String className;
-    //文件路径或源码内容
-    @Getter @Setter private String content;
+
+    public JavaFileConfig() {
+
+    }
+
+    public JavaFileConfig(String className, String content) {
+        this.className = className;
+        this.content = content;
+    }
+
+    // package.className
+    @Getter
+    @Setter
+    private String className;
+    // 文件路径或源码内容
+    @Getter
+    @Setter
+    private String content;
 }

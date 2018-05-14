@@ -5,6 +5,8 @@
     <resultMap id="BaseResultMap" type="com.suixingpay.datas.manager.core.entity.JobTasks">
         <result column="id" property="id" />
         <result column="job_name" property="jobName" />
+        <result column="java_class_name" property="javaClassName" />
+        <result column="java_class_content" property="javaClassContent" />
         <result column="source_consume_adt" property="sourceConsumeAdt" />
         <result column="source_convert_adt" property="sourceConvertAdt" />
         <result column="source_data_tables_id" property="sourceDataTablesId" />
@@ -23,12 +25,12 @@
 
     <!-- 通用查询结果列
     <sql id="Base_Column_List">
-        select id, job_name AS jobName, source_consume_adt AS sourceConsumeAdt, source_convert_adt AS sourceConvertAdt, source_data_tables_id AS sourceDataTablesId, source_data_tables_name AS sourceDataTablesName, source_data_id AS sourceDataId, source_data_name AS sourceDataName, target_load_adt AS targetLoadAdt, target_data_tables_id AS targetDataTablesId, target_data_tables_name AS targetDataTablesName, creater, create_time AS createTime, state, iscancel, remark from job_tasks
+        select id, job_name AS jobName, java_class_name as javaClassName, java_class_content as javaClassContent, source_consume_adt AS sourceConsumeAdt, source_convert_adt AS sourceConvertAdt, source_data_tables_id AS sourceDataTablesId, source_data_tables_name AS sourceDataTablesName, source_data_id AS sourceDataId, source_data_name AS sourceDataName, target_load_adt AS targetLoadAdt, target_data_tables_id AS targetDataTablesId, target_data_tables_name AS targetDataTablesName, creater, create_time AS createTime, state, iscancel, remark from job_tasks
     </sql>-->
 
     <!-- 查询所有 -->
     <select id="selectList" resultType="com.suixingpay.datas.manager.core.entity.JobTasks">
-        select id, job_name AS jobName, source_consume_adt AS sourceConsumeAdt, source_convert_adt AS sourceConvertAdt, source_data_tables_id AS sourceDataTablesId, source_data_tables_name AS sourceDataTablesName, source_data_id AS sourceDataId, source_data_name AS sourceDataName, target_load_adt AS targetLoadAdt, target_data_tables_id AS targetDataTablesId, target_data_tables_name AS targetDataTablesName, creater, create_time AS createTime, state, iscancel, remark from job_tasks
+        select id, job_name AS jobName, java_class_name as javaClassName, java_class_content as javaClassContent, source_consume_adt AS sourceConsumeAdt, source_convert_adt AS sourceConvertAdt, source_data_tables_id AS sourceDataTablesId, source_data_tables_name AS sourceDataTablesName, source_data_id AS sourceDataId, source_data_name AS sourceDataName, target_load_adt AS targetLoadAdt, target_data_tables_id AS targetDataTablesId, target_data_tables_name AS targetDataTablesName, creater, create_time AS createTime, state, iscancel, remark from job_tasks
         where iscancel = 0
     </select>
 
@@ -36,6 +38,8 @@
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         insert into job_tasks(
             job_name,
+            java_class_name,
+            java_class_content,
             job_state,
             source_consume_adt,
             source_convert_adt,
@@ -50,6 +54,8 @@
             target_data_tables_name
         ) values (
             #{jobName},
+            #{javaClassName},
+            #{javaClassContent},
             #{jobState},
             #{sourceConsumeAdt},
             #{sourceConvertAdt},
@@ -78,6 +84,8 @@
     <update id="update">
         update job_tasks
         set
+            java_class_name = #{jobTasks.javaClassName},
+            java_class_content = #{jobTasks.javaClassContent},
             job_state = #{jobTasks.jobState},
             source_consume_adt = #{jobTasks.sourceConsumeAdt},
             source_convert_adt = #{jobTasks.sourceConvertAdt},
@@ -103,7 +111,7 @@
     <!-- 根据主鍵查找 -->
     <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.JobTasks">
         select
-            id, job_name AS jobName, job_state AS jobState, source_consume_adt AS sourceConsumeAdt, source_convert_adt AS sourceConvertAdt,
+            id, job_name AS jobName, java_class_name as javaClassName, java_class_content as javaClassContent, job_state AS jobState, source_consume_adt AS sourceConsumeAdt, source_convert_adt AS sourceConvertAdt,
             source_data_tables_id AS sourceDataTablesId, source_data_source_id AS sourceDataSourceId, source_data_tables_name AS sourceDataTablesName,
             source_data_id AS sourceDataId, source_data_name AS sourceDataName, target_load_adt AS targetLoadAdt,
             target_data_tables_id AS targetDataTablesId, target_data_source_id AS targetDataSourceId, target_data_tables_name AS targetDataTablesName, creater,
@@ -135,7 +143,7 @@
     <!-- 分页 -->
     <select id="page" resultType="com.suixingpay.datas.manager.core.entity.JobTasks">
         select
-        id, job_name AS jobName, job_state AS jobState, source_consume_adt AS sourceConsumeAdt, source_convert_adt AS sourceConvertAdt,
+        id, job_name AS jobName, java_class_name as javaClassName, java_class_content as javaClassContent,  job_state AS jobState, source_consume_adt AS sourceConsumeAdt, source_convert_adt AS sourceConvertAdt,
         target_load_adt AS targetLoadAdt, create_time AS createTime
         from job_tasks
         <where>
@@ -163,6 +171,12 @@
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="jobName != null">
                 job_name,
+            </if>
+            <if test="javaClassName != null">
+                java_class_name,
+            </if>
+            <if test="javaClassContent != null">
+                java_class_content,
             </if>
             <if test="sourceConsumeAdt != null">
                 source_consume_adt,
@@ -210,6 +224,12 @@
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="jobName != null">
                 #{jobName,jdbcType=VARCHAR},
+            </if>
+            <if test="javaClassName != null">
+                #{javaClassName,jdbcType=VARCHAR},
+            </if>
+            <if test="javaClassContent != null">
+                #{javaClassContent,jdbcType=VARCHAR},
             </if>
             <if test="sourceConsumeAdt != null">
                 #{sourceConsumeAdt,jdbcType=VARCHAR},
@@ -262,6 +282,12 @@
         <set>
             <if test="jobTasks.jobName != null">
                 job_name = #{jobTasks.jobName,jdbcType=VARCHAR},
+            </if>
+            <if test="jobTasks.javaClassName != null">
+                java_class_name = #{jobTasks.javaClassName,jdbcType=VARCHAR},
+            </if>
+            <if test="jobTasks.javaClassContent != null">
+                java_class_content #{jobTasks.javaClassContent,jdbcType=VARCHAR},
             </if>
             <if test="jobTasks.sourceConsumeAdt != null">
                 source_consume_adt = #{jobTasks.sourceConsumeAdt,jdbcType=VARCHAR},

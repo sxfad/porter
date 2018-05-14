@@ -10,6 +10,8 @@
         <result column="field_order" property="fieldOrder" />
         <result column="field_type" property="fieldType" />
         <result column="field_type_key" property="fieldTypeKey" />
+        <result column="field_validate" property="fieldValidate" />
+        <result column="field_explain" property="fieldExplain" />
         <result column="state" property="state" />
         <result column="iscancel" property="iscancel" />
         <result column="remark" property="remark" />
@@ -85,7 +87,8 @@
     <select id="findByType" resultType="com.suixingpay.datas.manager.core.entity.DicDataSourcePlugin">
         SELECT
         id, source_type AS sourceType, field_name AS fieldName, field_code AS fieldCode,
-        field_order AS fieldOrder, field_type AS fieldType, field_type_key AS fieldTypeKey
+        field_order AS fieldOrder, field_type AS fieldType, field_type_key AS fieldTypeKey,
+        field_validate as fieldValidate,field_explain as fieldExplain
         FROM d_data_source_plugin
         <where>
             1 = 1

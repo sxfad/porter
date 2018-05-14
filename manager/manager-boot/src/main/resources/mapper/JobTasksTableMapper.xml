@@ -7,11 +7,16 @@
         <result column="job_task_id" property="jobTaskId" />
         <result column="source_table_name" property="sourceTableName" />
         <result column="target_table_name" property="targetTableName" />
+        <result column="ignore_target_case" property="ignoreTargetCase" />
+        <result column="force_matched" property="forceMatched" />
+        <result column="direct_map_table" property="directMapTable" />
     </resultMap>-->
 
     <!-- 通用查询结果列
     <sql id="Base_Column_List">
-        select id, job_task_id AS jobTaskId, source_table_name AS sourceTableName, target_table_name AS targetTableName from job_tasks_table
+        select id, job_task_id AS jobTaskId, source_table_name AS sourceTableName, target_table_name AS targetTableName,
+        ignore_target_case as ignoreTargetCase, force_matched as forceMatched, direct_map_table as directMapTable
+        from job_tasks_table
     </sql>-->
 
     <!-- 新增 -->
@@ -19,11 +24,17 @@
         insert into job_tasks_table(
         job_task_id,
         source_table_name,
-        target_table_name
+        target_table_name,
+        ignore_target_case,
+        force_matched,
+        direct_map_table
         ) values (
         #{jobTaskId},
         #{sourceTableName},
-        #{targetTableName}
+        #{targetTableName},
+        #{ignoreTargetCase},
+        #{forceMatched},
+        #{directMapTable}
         )
     </insert>
 
@@ -32,13 +43,19 @@
         insert into job_tasks_table(
         job_task_id,
         source_table_name,
-        target_table_name
+        target_table_name,
+        ignore_target_case,
+        force_matched,
+        direct_map_table
         ) VALUE
         <foreach collection="list" item="tables" index="index" separator=",">
             (
             #{tables.jobTaskId},
             #{tables.sourceTableName},
-            #{tables.targetTableName}
+            #{tables.targetTableName},
+            #{tables.ignoreTargetCase},
+            #{tables.forceMatched},
+            #{tables.directMapTable}
             )
         </foreach>
     </insert>
@@ -49,7 +66,10 @@
         set
         job_task_id = #{jobTasksTable.jobTaskId},
         source_table_name = #{jobTasksTable.sourceTableName},
-        target_table_name = #{jobTasksTable.targetTableName}
+        target_table_name = #{jobTasksTable.targetTableName},
+        ignore_target_case = #{jobTasksTable.ignoreTargetCase},
+        force_matched = #{jobTasksTable.forceMatched},
+        direct_map_table = #{jobTasksTable.directMapTable}
         where id = #{id}
     </update>
 
@@ -60,7 +80,8 @@
 
     <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.JobTasksTable">
         select
-        id, job_task_id AS jobTaskId, source_table_name AS sourceTableName, target_table_name AS targetTableName
+        id, job_task_id AS jobTaskId, source_table_name AS sourceTableName, target_table_name AS targetTableName,
+        ignore_target_case as ignoreTargetCase, force_matched as forceMatched, direct_map_table as directMapTable
         from job_tasks_table
         WHERE
         job_task_id = #{jobTaskId}
@@ -74,7 +95,9 @@
 
     <!-- 分页 -->
     <select id="page" resultType="com.suixingpay.datas.manager.core.entity.JobTasksTable">
-        select id, job_task_id AS jobTaskId, source_table_name AS sourceTableName, target_table_name AS targetTableName from job_tasks_table
+        select id, job_task_id AS jobTaskId, source_table_name AS sourceTableName, target_table_name AS targetTableName,
+        ignore_target_case as ignoreTargetCase, force_matched as forceMatched, direct_map_table as directMapTable
+        from job_tasks_table
         where 1=1 limit #{page.offset},#{page.pageSize}
     </select>
 
@@ -91,6 +114,15 @@
             <if test="targetTableName != null">
                 target_table_name,
             </if>
+            <if test="ignoreTargetCase != null">
+                ignore_target_case,
+            </if>
+            <if test="forceMatched != null">
+                force_matched,
+            </if>
+            <if test="directMapTable != null">
+                direct_map_table,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="jobTaskId != null">
@@ -101,6 +133,15 @@
             </if>
             <if test="targetTableName != null">
                 #{targetTableName,jdbcType=VARCHAR},
+            </if>
+            <if test="ignoreTargetCase != null">
+                #{ignoreTargetCase,jdbcType=INTEGER},
+            </if>
+            <if test="forceMatched != null">
+                #{forceMatched,jdbcType=INTEGER},
+            </if>
+            <if test="directMapTable != null">
+                #{directMapTable,jdbcType=INTEGER},
             </if>
         </trim>
     </insert>
@@ -117,6 +158,15 @@
             </if>
             <if test="jobTasksTable.targetTableName != null">
                 target_table_name = #{jobTasksTable.targetTableName,jdbcType=VARCHAR},
+            </if>
+            <if test="jobTasksTable.ignoreTargetCase != null">
+                ignore_target_case = #{jobTasksTable.ignoreTargetCase,jdbcType=INTEGER},
+            </if>
+            <if test="jobTasksTable.forceMatched != null">
+                force_matched = #{jobTasksTable.forceMatched,jdbcType=INTEGER},
+            </if>
+            <if test="jobTasksTable.directMapTable != null">
+                direct_map_table = #{jobTasksTable.directMapTable,jdbcType=INTEGER},
             </if>
         </set>
         where id = #{id}

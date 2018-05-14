@@ -53,6 +53,16 @@ public class DicDataSourcePlugin implements java.io.Serializable {
     private String fieldTypeKey;
 
     /**
+     * 页面字段对应正则校验
+     */
+    private String fieldValidate;
+
+    /**
+     * 页面字段对应校验说明
+     */
+    private String fieldExplain;
+
+    /**
      * 状态1启用 -1禁用.
      */
     private Integer state;
@@ -207,4 +217,19 @@ public class DicDataSourcePlugin implements java.io.Serializable {
         this.fieldTypeKey = fieldTypeKey == null ? null : fieldTypeKey.trim();
     }
 
+    public String getFieldValidate() {
+        return fieldValidate;
+    }
+
+    public void setFieldValidate(String fieldValidate) {
+        this.fieldValidate = fieldValidate;
+    }
+
+    public String getFieldExplain() {
+        return fieldExplain;
+    }
+
+    public void setFieldExplain(String fieldExplain) {
+        this.fieldExplain = fieldExplain;
+    }
 }

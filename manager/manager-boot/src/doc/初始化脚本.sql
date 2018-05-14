@@ -137,6 +137,8 @@ CREATE TABLE `d_data_source_plugin` (
   `field_order` INT(5) DEFAULT NULL COMMENT '页面展示顺序',
   `field_type` VARCHAR(20) DEFAULT 'TEXT' COMMENT '页面字段类型',
   `field_type_key` VARCHAR(50) DEFAULT NULL COMMENT '页面字段类型对应字典',
+  `field_validate` VARCHAR(50) DEFAULT NULL COMMENT '页面字段对应正则校验',
+  `field_explain` VARCHAR(200) DEFAULT NULL COMMENT '页面字段对应校验说明',
   `state` INT(5) DEFAULT '1' COMMENT '状态1启用 -1禁用',
   `iscancel` INT(2) DEFAULT '0' COMMENT '是否作废',
   `remark` VARCHAR(100) DEFAULT NULL COMMENT '备注字段',
@@ -161,6 +163,8 @@ DROP TABLE IF EXISTS `job_tasks`;
 CREATE TABLE `job_tasks` (
   `id` BIGINT(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
   `job_name` VARCHAR(100) NOT NULL COMMENT '任务名称',
+  `java_class_name` VARCHAR(200) DEFAULT NULL COMMENT '自定义处理类包路径和类名',
+  `java_class_content` VARCHAR(200) DEFAULT NULL COMMENT '自定义处理类文件路径',
   `job_state` VARCHAR(100) NOT NULL DEFAULT 'NEW' COMMENT '任务状态',
   `source_consume_adt` VARCHAR(100) NOT NULL COMMENT '来源数据-消费插件',
   `source_convert_adt` VARCHAR(100) NOT NULL COMMENT '来源数据-消费转换插件',
@@ -193,6 +197,9 @@ DROP TABLE IF EXISTS `job_tasks_table`;
 CREATE TABLE `job_tasks_table` (
   `id` BIGINT(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
   `job_task_id` BIGINT(20) NOT NULL COMMENT '任务id',
+  `ignore_target_case` INT(2) NOT NULL DEFAULT '1' COMMENT '忽略目标端大小写',
+  `force_matched` INT(2) NOT NULL DEFAULT '1' COMMENT '强制目标端字段和源端字段一致',
+  `direct_map_table` INT(2) NOT NULL DEFAULT '0' COMMENT '直接映射表，不进行表字段映射配置',
   `source_table_name` VARCHAR(200) NOT NULL COMMENT '来源数据-数据表名-记录全名',
   `target_table_name` VARCHAR(200) NOT NULL COMMENT '目标数据-数据表名-记录全名',
   PRIMARY KEY (`id`)
@@ -440,20 +447,20 @@ INSERT  INTO `d_alarm_plugin`(`id`,`alert_type`,`field_name`,`field_code`,`field
 (3,'EMAIL','邮箱密码','password',4,'TEXT',NULL,1,0,NULL),
 (4,'MOBILE','手机号','phone',1,'TEXT',NULL,1,0,NULL);
 -- 初始化数据源数据字典
-INSERT  INTO `d_data_source_plugin`(`id`,`source_type`,`field_name`,`field_code`,`field_order`,`field_type`,`field_type_key`,`state`,`iscancel`,`remark`) VALUES
-(1,'JDBC','数据库类型','dbtype',1,'RADIO','DbType',1,0,NULL),
-(2,'JDBC','url','url',2,'TEXT',NULL,1,0,NULL),
-(3,'JDBC','用户名','userName',3,'TEXT',NULL,1,0,NULL),
-(4,'JDBC','密码','password',4,'TEXT',NULL,1,0,NULL),
-(5,'KAFKA','服务器列表','servers',1,'TEXT',NULL,1,0,NULL),
-(6,'KAFKA','主题','topics',2,'TEXT',NULL,1,0,NULL),
-(7,'KAFKA','查询超时时间','pollTimeOut',3,'TEXT',NULL,1,0,NULL),
-(8,'KAFKA','单次查询数量','oncePollSize',4,'TEXT',NULL,1,0,NULL),
-(9,'CANAL','地址','address',2,'TEXT',NULL,1,0,NULL),
-(10,'CANAL','数据库','database',3,'TEXT',NULL,1,0,NULL),
-(11,'CANAL','用户','username',4,'TEXT',NULL,1,0,NULL),
-(12,'CANAL','密码','password',5,'TEXT',NULL,1,0,NULL),
-(13,'CANAL','过滤器','filter',6,'TEXT',NULL,1,0,NULL);
+INSERT  INTO `d_data_source_plugin`(`id`,`source_type`,`field_name`,`field_code`,`field_order`,`field_type`,`field_type_key`,`field_validate`,`field_explain`,`state`,`iscancel`,`remark`) VALUES
+(1,'JDBC','数据库类型','dbtype',1,'RADIO','DbType','','',1,0,NULL),
+(2,'JDBC','url','url',2,'TEXT',NULL,'','例如:mysql(jdbc:mysql://0.0.0.0:3306/test?useUnicode=true&characterEncoding=utf8) oracle(jdbc:oracle:thin:@0.0.0.0:1521:test)',1,0,NULL),
+(3,'JDBC','用户名','userName',3,'TEXT',NULL,'','',1,0,NULL),
+(4,'JDBC','密码','password',4,'TEXT',NULL,'','',1,0,NULL),
+(5,'KAFKA','服务器列表','servers',1,'TEXT',NULL,'','例如:0.0.0.1:9092,0.0.0.2:9092',1,0,NULL),
+(6,'KAFKA','主题','topics',2,'TEXT',NULL,'','例如:test1(多个,隔开)',1,0,NULL),
+(7,'KAFKA','查询超时时间','pollTimeOut',3,'TEXT',NULL,'','例如:5000',1,0,NULL),
+(8,'KAFKA','单次查询数量','oncePollSize',4,'TEXT',NULL,'','例如:1000',1,0,NULL),
+(9,'CANAL','地址','address',2,'TEXT',NULL,'','例如:0.0.0.0:3306',1,0,NULL),
+(10,'CANAL','数据库','database',3,'TEXT',NULL,'','例如:paytest',1,0,NULL),
+(11,'CANAL','用户','username',4,'TEXT',NULL,'','',1,0,NULL),
+(12,'CANAL','密码','password',5,'TEXT',NULL,'','',1,0,NULL),
+(13,'CANAL','过滤器','filter',6,'TEXT',NULL,'','例如:paytest\.(aaa|aab|test_table|test_table2)',1,0,NULL);
 -- 初始化字典表
 INSERT  INTO `d_dictionary`(`id`,`code`,`name`,`parentcode`,`level`,`dictype`,`state`,`remark`) VALUES 
 (1,'Manual','手动','-1',1,'PTmaintain',1,NULL),

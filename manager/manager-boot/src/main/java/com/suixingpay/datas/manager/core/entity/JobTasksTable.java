@@ -36,6 +36,21 @@ public class JobTasksTable implements java.io.Serializable {
     private String targetTableName;
 
     /**
+     * 忽略目标端大小写
+     */
+    private Boolean ignoreTargetCase = true;
+
+    /**
+     * 强制目标端字段和源端字段一致(针对目标表来说)
+     */
+    private Boolean forceMatched = true;
+
+    /**
+     * 直接映射表，不进行表字段映射配置 默认false
+     */
+    private Boolean directMapTable = false;
+
+    /**
      * 表字段对应关系
      */
     private List<JobTasksField> fields = new ArrayList<>();
@@ -103,4 +118,29 @@ public class JobTasksTable implements java.io.Serializable {
     public void setFields(List<JobTasksField> fields) {
         this.fields = fields;
     }
+
+    public Boolean isIgnoreTargetCase() {
+        return ignoreTargetCase;
+    }
+
+    public void setIgnoreTargetCase(Boolean ignoreTargetCase) {
+        this.ignoreTargetCase = ignoreTargetCase;
+    }
+
+    public Boolean isForceMatched() {
+        return forceMatched;
+    }
+
+    public void setForceMatched(Boolean forceMatched) {
+        this.forceMatched = forceMatched;
+    }
+
+    public Boolean isDirectMapTable() {
+        return directMapTable;
+    }
+
+    public void setDirectMapTable(Boolean directMapTable) {
+        this.directMapTable = directMapTable;
+    }
+
 }

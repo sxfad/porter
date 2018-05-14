@@ -28,18 +28,26 @@ public class DataConsumerConfig {
 
     /**
      * 后台所用构造函数
-     * @param consumerName 消费插件
-     * @param converter 消费转换插件
-     * @param includes 期望处理的表 来源表 schema.table,schema.table
-     * @param source 消费元数据的数据源
-     * @param metaSource 同步数据数据源
+     * 
+     * @param consumerName
+     *            消费插件
+     * @param converter
+     *            消费转换插件
+     * @param includes
+     *            期望处理的表 来源表 schema.table,schema.table
+     * @param source
+     *            消费元数据的数据源
+     * @param metaSource
+     *            同步数据数据源
      */
-    public DataConsumerConfig(String consumerName, String converter, String includes, Map<String, String> source, Map<String, String> metaSource) {
+    public DataConsumerConfig(String consumerName, String converter, String includes, Map<String, String> source,
+            Map<String, String> metaSource, JavaFileConfig eventProcessor) {
         this.consumerName = consumerName;
         this.converter = converter;
         this.includes = includes;
         this.source = source;
         this.metaSource = metaSource;
+        this.eventProcessor = eventProcessor;
     }
 
     // 消费插件
