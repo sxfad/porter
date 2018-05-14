@@ -31,6 +31,12 @@ public class JobTasks implements java.io.Serializable {
      */
     private String jobName;
 
+    /** 自定义处理类包路径和类名 . */
+    private String javaClassName;
+
+    /** 自定义处理类文件路径. */
+    private String javaClassContent;
+
     /**
      * 任务状态.
      */
@@ -419,6 +425,22 @@ public class JobTasks implements java.io.Serializable {
      */
     public void setRemark(String remark) {
         this.remark = remark == null ? null : remark.trim();
+    }
+
+    public String getJavaClassName() {
+        return javaClassName;
+    }
+
+    public void setJavaClassName(String javaClassName) {
+        this.javaClassName = javaClassName == null ? null : javaClassName.trim();
+    }
+
+    public String getJavaClassContent() {
+        return javaClassContent;
+    }
+
+    public void setJavaClassContent(String javaClassContent) {
+        this.javaClassContent = javaClassContent == null ? null : javaClassContent.trim();
     }
 
     /**
