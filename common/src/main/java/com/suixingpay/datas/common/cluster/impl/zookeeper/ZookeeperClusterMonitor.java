@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Function;
 
@@ -32,7 +33,8 @@ import java.util.function.Function;
  */
 public class ZookeeperClusterMonitor extends AbstractClusterMonitor implements Watcher {
     private ZookeeperClient client;
-    private final Map<String, List<String>> nodeChildren = new HashMap<>();
+    private final Map<String, List<String>> nodeChildren = new ConcurrentHashMap<>();
+
     private final CountDownLatch ready = new CountDownLatch(1);
 
     @Override
@@ -57,8 +59,11 @@ public class ZookeeperClusterMonitor extends AbstractClusterMonitor implements W
                 try {
                     ZookeeperClusterListener zkListener = (ZookeeperClusterListener) listener;
                     client.createWhenNotExists(zkListener.listenPath(), false, false, "{}");
-                    //watch children changed
-                    triggerTreeEvent(zkListener.listenPath());
+                    //只有该ClusterListener监听path变化时才会触发triggerTreeEvent
+                    if (zkListener.watchListenPath()) {
+                        //watch children changed
+                        triggerTreeEvent(zkListener.listenPath());
+                    }
                 } catch (Throwable e) {
                     e.printStackTrace();
                 }

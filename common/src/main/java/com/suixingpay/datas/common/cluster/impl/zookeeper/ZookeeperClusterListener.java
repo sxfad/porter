@@ -34,4 +34,12 @@ public abstract class ZookeeperClusterListener implements ClusterListener {
     public void setClient(Client client) {
         this.client = (ZookeeperClient) client;
     }
+
+    /**
+     * 是否监听listenPath
+     * @return
+     */
+    public boolean watchListenPath() {
+        return true;
+    }
 }

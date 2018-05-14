@@ -34,6 +34,11 @@ public class ZKClusterStatisticListener extends ZookeeperClusterListener impleme
     }
 
     @Override
+    public boolean watchListenPath() {
+        return false;
+    }
+
+    @Override
     public void onEvent(ClusterEvent event) {
 
     }
