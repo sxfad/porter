@@ -163,8 +163,8 @@ DROP TABLE IF EXISTS `job_tasks`;
 CREATE TABLE `job_tasks` (
   `id` BIGINT(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
   `job_name` VARCHAR(100) NOT NULL COMMENT '任务名称',
-  `java_class_name` VARCHAR(200) NOT NULL COMMENT '自定义处理类包路径和类名',
-  `java_class_content` VARCHAR(200) NOT NULL COMMENT '自定义处理类文件路径',
+  `java_class_name` VARCHAR(200) DEFAULT NULL COMMENT '自定义处理类包路径和类名',
+  `java_class_content` VARCHAR(200) DEFAULT NULL COMMENT '自定义处理类文件路径',
   `job_state` VARCHAR(100) NOT NULL DEFAULT 'NEW' COMMENT '任务状态',
   `source_consume_adt` VARCHAR(100) NOT NULL COMMENT '来源数据-消费插件',
   `source_convert_adt` VARCHAR(100) NOT NULL COMMENT '来源数据-消费转换插件',
