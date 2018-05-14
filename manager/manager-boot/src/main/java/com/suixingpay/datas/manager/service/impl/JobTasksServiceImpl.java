@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import com.alibaba.fastjson.JSON;
 import com.suixingpay.datas.common.alert.AlertReceiver;
 import com.suixingpay.datas.common.config.DataConsumerConfig;
 import com.suixingpay.datas.common.config.DataLoaderConfig;
+import com.suixingpay.datas.common.config.JavaFileConfig;
 import com.suixingpay.datas.common.config.SourceConfig;
 import com.suixingpay.datas.common.config.TableMapperConfig;
 import com.suixingpay.datas.common.config.TaskConfig;
@@ -267,10 +269,17 @@ public class JobTasksServiceImpl implements JobTasksService {
         // 表对照关系
         List<JobTasksTable> tables = jobTasks.getTables();
 
+        // 自定义类
+        JavaFileConfig javaFileConfig = null;
+        if (StringUtils.isNotEmpty(jobTasks.getJavaClassName())
+                && StringUtils.isNotEmpty(jobTasks.getJavaClassContent())) {
+            javaFileConfig = new JavaFileConfig(jobTasks.getJavaClassName(), jobTasks.getJavaClassContent());
+        }
+
         // 来源数据构造函数
         DataConsumerConfig dataConsumerConfig = new DataConsumerConfig(sourceConsumeAdt.getCode(),
                 sourceConvertAdt.getCode(), jobTasks.getSourceTablesName(), dataSourceMap(id, syncDataSource),
-                dataSourceMap(id, souDataSource));
+                dataSourceMap(id, souDataSource), javaFileConfig);
         // 目标数据构造函数
         DataLoaderConfig loader = new DataLoaderConfig(targetLoadAdt.getCode(), dataSourceMap(id, tarDataSource));
         // 表对应关系映射
