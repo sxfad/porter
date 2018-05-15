@@ -310,8 +310,12 @@ public class JobTasksServiceImpl implements JobTasksService {
                     jobTasksTable.getTargetTableName().split("[.]")[0] };
             String[] table = { jobTasksTable.getSourceTableName().split("[.]")[1],
                     jobTasksTable.getTargetTableName().split("[.]")[1] };
-            Map<String, String> column = fieldsMap(jobTasksTable.getFields());
-            tableMapperConfig = new TableMapperConfig(schema, table, column);
+            Map<String, String> column = null;
+            if (!jobTasksTable.isDirectMapTable()) {
+                column = fieldsMap(jobTasksTable.getFields());
+            }
+            tableMapperConfig = new TableMapperConfig(schema, table, column, jobTasksTable.isIgnoreTargetCase(),
+                    jobTasksTable.isForceMatched());
             tableList.add(tableMapperConfig);
         }
         logger.info("tableMapper:" + JSON.toJSONString(tableList));

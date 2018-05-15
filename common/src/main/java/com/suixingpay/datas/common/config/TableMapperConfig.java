@@ -21,19 +21,21 @@ import java.util.Map;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月04日 19:07
  */
 public class TableMapperConfig {
-    
+
     public TableMapperConfig() {
-        
+
     }
 
-    public TableMapperConfig(String[] schema, String[] table, Map<String, String> column) {
+    public TableMapperConfig(String[] schema, String[] table, Map<String, String> column, Boolean ignoreTargetCase,
+            Boolean forceMatched) {
         this.auto = false;
         this.schema = schema;
         this.table = table;
         this.column = column;
-        this.ignoreTargetCase = false;
+        this.ignoreTargetCase = ignoreTargetCase;
+        this.forceMatched = forceMatched;
     }
-    
+
     @Getter
     @Setter
     private boolean auto = true;
@@ -53,10 +55,14 @@ public class TableMapperConfig {
     @Getter
     @Setter
     private Map<String, String> column;
-    //忽略目标端大小写
-    @Getter @Setter private boolean ignoreTargetCase = true;
+    // 忽略目标端大小写
+    @Getter
+    @Setter
+    private boolean ignoreTargetCase = true;
     /**
      * 字段映射后，强制目标端字段和源端字段一致，否则任务抛出异常停止
      */
-    @Getter @Setter private boolean forceMatched = true;
+    @Getter
+    @Setter
+    private boolean forceMatched = true;
 }
