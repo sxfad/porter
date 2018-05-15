@@ -22,7 +22,6 @@ import com.alibaba.otter.canal.protocol.Message;
 import com.alibaba.otter.canal.server.embedded.CanalServerWithEmbedded;
 import com.alibaba.otter.canal.server.exception.CanalServerException;
 import com.suixingpay.datas.common.client.AbstractClient;
-import com.suixingpay.datas.common.config.source.JDBCConfig;
 import com.suixingpay.datas.common.consumer.ConsumeClient;
 import com.suixingpay.datas.common.config.source.CanalConfig;
 import com.suixingpay.datas.common.consumer.Position;

@@ -1,0 +1,6 @@
+jar.baseName = 'datas-plugin-kafka-loader'
+dependencies {
+    compile (
+            project(":node:node-core")
+    )
+}

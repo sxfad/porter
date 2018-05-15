@@ -35,7 +35,7 @@ public class KafkaConsumer extends AbstractDataConsumer {
             public <F, O> F accept(O o) {
                 ConsumerRecord<String, String> record = (ConsumerRecord<String, String>) o;
                 Position position = new KafkaClient.KafkaPosition(record.topic(), record.offset(), record.partition());
-                return (F) converter.convert(position, record.value());
+                return (F) converter.convert(record.timestamp(), position, record.value());
             }
         });
     }

@@ -134,7 +134,7 @@ public class ETLBucket {
                         event.getPrimaryKeys().contains(entity.getKey()));
                 columns.add(column);
             }
-            ETLRow row = new ETLRow(event.getSchema(), event.getTable(), event.getOpType(), columns, event.getOpTs(), event.getRowPosition());
+            ETLRow row = new ETLRow(event.getConsumerTime(), event.getSchema(), event.getTable(), event.getOpType(), columns, event.getOpTs(), event.getRowPosition());
             rows.add(row.toUpperCase());
             LOGGER.debug(JSON.toJSONString(row));
         }

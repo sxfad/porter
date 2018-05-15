@@ -12,7 +12,6 @@ package com.suixingpay.datas.common.client.impl;
 import com.suixingpay.datas.common.client.AbstractClient;
 import com.suixingpay.datas.common.client.LoadClient;
 import com.suixingpay.datas.common.client.MetaQueryClient;
-import com.suixingpay.datas.common.config.source.JDBCConfig;
 import com.suixingpay.datas.common.config.source.KuduConfig;
 import com.suixingpay.datas.common.db.meta.TableColumn;
 import com.suixingpay.datas.common.db.meta.TableSchema;

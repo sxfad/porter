@@ -38,8 +38,9 @@ public class OggJsonConverter implements EventConverter {
 
     @Override
     public MessageEvent convert(Object... params) {
-        Position position = (Position) params[0];
-        JSONObject obj = JSON.parseObject((String) params[1]);
+        Long consumerTime = (Long) params[0];
+        Position position = (Position) params[1];
+        JSONObject obj = JSON.parseObject((String) params[2]);
 
         EventType eventType = EventType.type(obj.getString("op_type"));
         //不能解析的事件跳过
@@ -73,6 +74,7 @@ public class OggJsonConverter implements EventConverter {
         event.setAfter(obj.getObject("after", Map.class));
         event.setRowPosition(position);
         event.setBucketPosition(event.getRowPosition());
+        event.setConsumerTime(consumerTime);
         return event;
     }
 }

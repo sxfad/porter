@@ -1,0 +1,3 @@
+com.suixingpay.datas.node.core.loader.DataLoader=\
+  com.suixingpay.datas.node.plugin.loader.kafka.KafkaLoader,\
+  com.suixingpay.datas.node.plugin.loader.kafka.KafkaAsyncLoader

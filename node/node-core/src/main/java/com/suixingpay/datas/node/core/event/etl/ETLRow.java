@@ -10,6 +10,8 @@ package com.suixingpay.datas.node.core.event.etl;
 
 import com.suixingpay.datas.common.consumer.Position;
 import com.suixingpay.datas.node.core.event.s.EventType;
+import lombok.Getter;
+
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -29,7 +31,9 @@ public class ETLRow {
     private final String schema;
     private final String table;
     //操作时间，保留该字段可以在需要的时候计算出与最终执行时间间隔
-    private final Date opTime;
+    @Getter private final Date opTime;
+    //消息存储到consumer的时间
+    @Getter private final long consumerTime;
     //当前消息所在消费源的下标、顺序位置
     private final Position position;
     //操作类型 I U D T
@@ -61,13 +65,13 @@ public class ETLRow {
 
 
 
-    public ETLRow(String schema, String table, EventType opType, List<ETLColumn> columns, Date opTime, Position position) {
+    public ETLRow(long consumerTime, String schema, String table, EventType opType, List<ETLColumn> columns, Date opTime, Position position) {
         this.schema = schema;
         this.table = table;
         this.opType = opType;
         this.columns = columns;
         this.opTime = opTime;
-
+        this.consumerTime = consumerTime;
         //数据映射时使用
         this.finalOpType = opType;
         this.finalSchema = schema;

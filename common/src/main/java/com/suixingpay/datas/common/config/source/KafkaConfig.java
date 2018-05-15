@@ -79,6 +79,6 @@ public class KafkaConfig  extends SourceConfig {
 
     @Override
     protected boolean doCheck() {
-        return true;
+        return !topics.isEmpty();
     }
 }

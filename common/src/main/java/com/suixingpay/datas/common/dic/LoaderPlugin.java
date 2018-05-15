@@ -31,9 +31,11 @@ public enum LoaderPlugin {
 
     JDBC_BATCH("JdbcBatch", "JDBC批量"),
     JDBC_SINGLE("JdbcSingle", "JDBC单行"),
-    KUDU_NATIVE("KuduNative", "kudu单行"),
-    JDBC_SQL_PRINT("JdbcSqlPrint", "SQL打印测试"),
-    HBASE_NATIVE("HBaseNative", "HBase原生");
+    KUDU_NATIVE("KUDU_NATIVE", "kudu单行"),
+    JDBC_SQL_PRINT("JDBC_SQL_PRINT", "SQL打印测试"),
+    HBASE_NATIVE("HBASE_NATIVE", "HBase原生"),
+    KAFKA_SYNC("KAFKA_SYNC", "kafka同步"),
+    KAFKA_ASYNC("KAFKA_ASYNC", "kafka异步");
 
     @Getter private final String code;
     @Getter private final String name;
@@ -45,9 +47,11 @@ public enum LoaderPlugin {
         {
             put("JDBC_BATCH", JDBC_BATCH.name);
             put("JDBC_SINGLE", JDBC_SINGLE.name);
-            put(KUDU_NATIVE.code, KUDU_NATIVE.name);
+            put(JDBC_SINGLE.code, KUDU_NATIVE.name);
             put(JDBC_SQL_PRINT.code, JDBC_SQL_PRINT.name);
             put(HBASE_NATIVE.code, HBASE_NATIVE.name);
+            put(KAFKA_SYNC.code, KAFKA_SYNC.name);
+            put(KAFKA_ASYNC.code, KAFKA_ASYNC.name);
         }
     };
 }
