@@ -26,6 +26,8 @@ import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -36,7 +38,8 @@ import java.util.stream.Stream;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月02日 11:53
  */
 public class KafkaLoader extends AbstractDataLoader {
-
+    private static final DateFormat OP_TS_F = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
+    private static final DateFormat C_TS_F = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS000");
     @Override
     protected String getPluginName() {
         return LoaderPlugin.KAFKA_SYNC.getCode();
@@ -83,7 +86,11 @@ public class KafkaLoader extends AbstractDataLoader {
 
         KafkaETLRowField.setRecordKey(row, keyBuilder.toString());
         //转换成目标端格式
-        KafkaETLRowField.setRecordValue(row, formatRow(row));
+        if (client.renderOggJson()) {
+            KafkaETLRowField.setRecordValue(row, formatOggRow(row));
+        } else {
+            KafkaETLRowField.setRecordValue(row, formatRow(row));
+        }
     }
 
     /**
@@ -137,6 +144,30 @@ public class KafkaLoader extends AbstractDataLoader {
             columns.add(object);
             if (c.isKey()) keys.add(c.getFinalName());
         });
+        return formattedRow.toJSONString();
+    }
+
+    public String formatOggRow(ETLRow row) {
+        JSONObject formattedRow = new JSONObject();
+        formattedRow.put("table", row.getFinalSchema() + "." + row.getFinalTable());
+        formattedRow.put("op_ts", OP_TS_F.format(new Date(row.getConsumerTime())));
+        formattedRow.put("current_ts", C_TS_F.format(new Date()));
+        formattedRow.put("op_type", row.getFinalOpType().getCode());
+        JSONObject before = new JSONObject();
+        JSONObject after = new JSONObject();
+        JSONArray keys = new JSONArray();
+        formattedRow.fluentPut("primary_keys", keys).fluentPut("before", before).fluentPut("after", after);
+        row.getColumns().stream().filter(c -> c.isKey()).forEach(c -> {
+            keys.add(c.getFinalName());
+        });
+        row.getColumns().stream().filter(c -> !c.isFinalBeforeMissing()).forEach(c -> {
+            before.put(c.getFinalName(), c.getFinalOldValue());
+        });
+
+        row.getColumns().stream().filter(c -> !c.isFinalAfterMissing()).forEach(c -> {
+            after.put(c.getFinalName(), c.getFinalValue());
+        });
+
         return formattedRow.toJSONString();
     }
 }

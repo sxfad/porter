@@ -16,24 +16,26 @@ package com.suixingpay.datas.node.core.event.s;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月06日 11:53
  */
 public enum EventType {
-    INSERT(0, "INSERT"),
-    UPDATE(1, "UPDATE"),
-    DELETE(2, "DELETE"),
-    TRANSACTION_BEGIN(3, "BEGIN"),
-    TRANSACTION_END(4, "END"),
-    TRUNCATE(5, "TRUNCATE"),
-    UNKNOWN(-1, "UNKNOWN");
+    INSERT(0, "INSERT", "I"),
+    UPDATE(1, "UPDATE", "U"),
+    DELETE(2, "DELETE", "D"),
+    TRANSACTION_BEGIN(3, "BEGIN", ""),
+    TRANSACTION_END(4, "END", "END"),
+    TRUNCATE(5, "TRUNCATE", "T"),
+    UNKNOWN(-1, "UNKNOWN", "UNKNOWN");
     private int index;
     private String value;
+    private String code;
     public static final int INSERT_INDEX = 0;
     public static final int UPDATE_INDEX = 1;
     public static final int DELETE_INDEX = 2;
     public static final int BEGIN_INDEX = 3;
     public static final int END_INDEX = 4;
     public static final int TRUNCATE_INDEX = 5;
-    EventType(int index, String value) {
+    EventType(int index, String value, String code) {
         this.index =  index;
         this.value = value;
+        this.code = code;
     }
 
 
@@ -60,5 +62,9 @@ public enum EventType {
 
     public String getValue() {
         return value;
+    }
+
+    public String getCode() {
+        return code;
     }
 }

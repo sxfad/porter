@@ -44,7 +44,7 @@ public class TransformJob extends AbstractStageJob {
     private static final int JOB_THREAD_SIZE = 1;
 
     public TransformJob(TaskWork work) {
-        super(work.getBasicThreadName());
+        super(work.getBasicThreadName(), 50L);
         this.work = work;
         transformFactory = NodeContext.INSTANCE.getBean(TransformFactory.class);
         //线程阻塞时，在调用者线程中执行

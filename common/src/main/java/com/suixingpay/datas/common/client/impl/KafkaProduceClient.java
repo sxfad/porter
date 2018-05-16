@@ -39,6 +39,7 @@ public class KafkaProduceClient extends AbstractClient<KafkaProduceConfig> imple
     private volatile Producer<String, String> producer;
     private final String topic;
     private final boolean transaction;
+    private final boolean oggJson;
     private final List<PartitionInfo> partitionInfoList = new ArrayList<>();
     private final Map<List<String>, List<String>> partitionKeyCache = new ConcurrentHashMap<>();
     private volatile CountDownLatch canProduce = new CountDownLatch(1);
@@ -47,6 +48,7 @@ public class KafkaProduceClient extends AbstractClient<KafkaProduceConfig> imple
         super(config);
         this.topic = config.getTopic();
         this.transaction = config.isTransaction();
+        this.oggJson = config.isOggJson();
     }
 
     @Override
@@ -167,5 +169,10 @@ public class KafkaProduceClient extends AbstractClient<KafkaProduceConfig> imple
      */
     private String getDefaultGroup() {
         return MachineUtils.IP_ADDRESS + "_" + MachineUtils.HOST_NAME + "_" + MachineUtils.CURRENT_JVM_PID;
+    }
+
+
+    public boolean renderOggJson() {
+        return oggJson;
     }
 }

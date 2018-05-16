@@ -45,7 +45,7 @@ public class ExtractJob extends AbstractStageJob {
     private final ExtractorFactory extractorFactory;
     private final ExtractMetadata metadata;
     public ExtractJob(TaskWork work) {
-        super(work.getBasicThreadName(), 1000L);
+        super(work.getBasicThreadName(), 50L);
         extractorFactory = NodeContext.INSTANCE.getBean(ExtractorFactory.class);
         this.work = work;
         metadata = new ExtractMetadata(work.getDataConsumer().getExcludes(), work.getDataConsumer().getIncludes(),

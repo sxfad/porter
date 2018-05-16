@@ -28,6 +28,7 @@ public class KafkaProduceConfig extends SourceConfig {
     @Setter @Getter private String group;
     @Setter @Getter private String topic;
     @Setter @Getter private boolean transaction = true;
+    @Setter @Getter private boolean oggJson = true;
     //分片字段名
     //schema.表名->字段名1,字段名2
     @Setter @Getter private Map<String, String> partitionKey = new HashMap<>();
