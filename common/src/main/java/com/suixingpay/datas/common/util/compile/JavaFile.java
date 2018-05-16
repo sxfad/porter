@@ -17,5 +17,5 @@ package com.suixingpay.datas.common.util.compile;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年03月19日 14:03
  */
 public interface JavaFile {
-
+    String getClassName();
 }

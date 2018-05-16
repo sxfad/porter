@@ -79,6 +79,14 @@ public class   JavaFileCompiler extends URLClassLoader {
     }
 
     private Class<?> compile(JavaFile javaFile) throws IOException, ClassNotFoundException {
+        //判断当前类是否已被jvm加载
+        try {
+            Class<?> findExistsClass = Class.forName(javaFile.getClassName(), true, this);
+            if (null != findExistsClass) {
+                return findExistsClass;
+            }
+        } catch (Throwable e) {
+        }
         //java class file
         if (null != javaFile && javaFile instanceof JavaClass) {
             JavaClass javaClass = (JavaClass) javaFile;
