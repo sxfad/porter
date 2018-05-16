@@ -30,7 +30,7 @@ public enum SourceType {
 
     ZOOKEEPER("ZOOKEEPER", "zookeeper", -1), KAFKA("KAFKA", "kafka", 1), JDBC("JDBC", "jdbc", 1),
     EMAIL("EMAIL", "email", -1), NAME_SOURCE("NAME_SOURCE", "nameSource", -1), KUDU("KUDU", "kudu", -1),
-    CANAL("CANAL", "canal", 1), HBASE("HBASE", "hbase", -1);
+    CANAL("CANAL", "canal", 1), HBASE("HBASE", "hbase", -1), KAFKA_PRODUCE("KAFKA_PRODUCE", "kafkaProduce", 1);
 
     @Getter
     private final String code;
@@ -60,6 +60,8 @@ public enum SourceType {
                 put(NAME_SOURCE.code, NAME_SOURCE.name);
             if (HBASE.state == 1)
                 put(HBASE.code, HBASE.name);
+            if (KAFKA_PRODUCE.state == 1)
+                put(KAFKA_PRODUCE.code, KAFKA_PRODUCE.name);
 
         }
     };

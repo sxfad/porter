@@ -91,6 +91,9 @@ public abstract class SourceConfig implements SwamlaneSupport {
                     case KUDU:
                         config = (T) new KuduConfig();
                         break;
+                    case KAFKA_PRODUCE:
+                        config = (T) new KafkaProduceConfig();
+                        break;
                 }
             } else if (properties.containsKey(NAME_SOURCE_KEY)) {
                 config = (T) new NameSourceConfig();

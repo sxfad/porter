@@ -52,7 +52,7 @@ public class ETLRowTransformer implements Transformer {
             mappingRowData(tableMapper, row);
             //目标端表结构元数据
             TableSchema table = findTable(work.getDataLoader(), row.getFinalSchema(), row.getFinalTable());
-            if (null != tableMapper && tableMapper.isIgnoreTargetCase()) table.toUpperCase();
+            if (null != tableMapper && tableMapper.isIgnoreTargetCase() && null != table) table.toUpperCase();
 
             /**
              * 数据库元数据正反向映射

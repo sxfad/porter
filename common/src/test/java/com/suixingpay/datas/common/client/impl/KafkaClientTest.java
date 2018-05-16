@@ -32,43 +32,28 @@ public class KafkaClientTest {
     @BeforeClass
     public static void initSource() throws Exception {
         CONFIG = new KafkaConfig();
-        CONFIG.setTopics(Arrays.asList("SSP_debug"));
-        CONFIG.setGroup("zkevin_0416211");
-        CONFIG.setOncePollSize(2);
+        CONFIG.setTopics(Arrays.asList("kafkaLoader"));
+        CONFIG.setGroup("zkevin_041621111");
+        CONFIG.setOncePollSize(1000);
         CONFIG.setAutoCommit(false);
         CONFIG.setServers("172.16.154.5:9092,172.16.154.7:9092");
         KAFKA_CLIENT = new KafkaClient(CONFIG);
         KAFKA_CLIENT.start();
-        KAFKA_CLIENT.initializePosition("1", "SSP_debug", "");
-        //KAFKA_CLIENT.initializePosition("1", "SSP_debug", "{'topic':'SSP_debug','offset':14,'partition':0}");
+        KAFKA_CLIENT.initializePosition("1", "kafkaLoader", "{'topic':'kafkaLoader','offset':0,'partition':1}");
     }
 
 
 
     @Test
-    @Ignore
+    //@Ignore
     public void fetch() {
         KAFKA_CLIENT.fetch(new ConsumeClient.FetchCallback<Object, Object>() {
             @Override
             public <F, O> F accept(O o) {
                 ConsumerRecord<String, String> record = (ConsumerRecord<String, String>) o;
-                System.out.println("----------" + record.value());
-                try {
-                    KAFKA_CLIENT.commitPosition(new KafkaClient.KafkaPosition(record.topic(), record.offset(), record.partition()));
-                } catch (TaskStopTriggerException e) {
-                    e.printStackTrace();
-                }
+                System.out.println(record.partition() + "----------" + record.key() + "----------" + record.value());
                 return null;
             }
         });
-    }
-
-    @Test
-    @Ignore
-    public void betchFetch() {
-        fetch();
-        fetch();
-        fetch();
-        fetch();
     }
 }

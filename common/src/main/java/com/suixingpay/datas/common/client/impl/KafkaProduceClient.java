@@ -12,7 +12,7 @@ package com.suixingpay.datas.common.client.impl;
 import com.suixingpay.datas.common.client.AbstractClient;
 import com.suixingpay.datas.common.client.LoadClient;
 import com.suixingpay.datas.common.client.MetaQueryClient;
-import com.suixingpay.datas.common.config.source.KafkaConfig;
+import com.suixingpay.datas.common.config.source.KafkaProduceConfig;
 import com.suixingpay.datas.common.db.meta.TableSchema;
 import com.suixingpay.datas.common.exception.TaskStopTriggerException;
 import com.suixingpay.datas.common.util.MachineUtils;
@@ -23,8 +23,10 @@ import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.serialization.StringSerializer;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 /**
  *
@@ -33,20 +35,21 @@ import java.util.concurrent.Future;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月02日 15:14
  */
-public class KafkaProduceClient extends AbstractClient<KafkaConfig> implements LoadClient, MetaQueryClient {
+public class KafkaProduceClient extends AbstractClient<KafkaProduceConfig> implements LoadClient, MetaQueryClient {
     private volatile Producer<String, String> producer;
     private final String topic;
     private final List<PartitionInfo> partitionInfoList = new ArrayList<>();
+    private final Map<List<String>, List<String>> partitionKeyCache = new ConcurrentHashMap<>();
     private volatile CountDownLatch canProduce = new CountDownLatch(1);
 
-    public KafkaProduceClient(KafkaConfig config) {
+    public KafkaProduceClient(KafkaProduceConfig config) {
         super(config);
-        this.topic = config.getTopics().get(0);
+        this.topic = config.getTopic();
     }
 
     @Override
     protected void doStart() {
-        KafkaConfig config = getConfig();
+        KafkaProduceConfig config = getConfig();
         String group = StringUtils.isBlank(config.getGroup()) ? getDefaultGroup() : config.getGroup();
         final Properties props = new Properties();
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, config.getServers());
@@ -54,9 +57,9 @@ public class KafkaProduceClient extends AbstractClient<KafkaConfig> implements L
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         props.put(ProducerConfig.TRANSACTIONAL_ID_CONFIG, group + "_" + System.nanoTime());
-        props.put(ProducerConfig.ACKS_CONFIG, 1);
+        //props.put(ProducerConfig.ACKS_CONFIG, "1");
         //在重试次数大于0的情况下，严格保证produce顺序
-        props.put(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, 1);
+        props.put(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, "1");
         producer = new KafkaProducer<>(props);
         partitionInfoList.addAll(producer.partitionsFor(topic));
         producer.initTransactions();
@@ -119,7 +122,7 @@ public class KafkaProduceClient extends AbstractClient<KafkaConfig> implements L
     }
 
     @Override
-    public TableSchema getTable(String schema, String tableName) throws Exception {
+    public TableSchema getTable(String schema, String tableName) {
         return null;
     }
 
@@ -130,6 +133,22 @@ public class KafkaProduceClient extends AbstractClient<KafkaConfig> implements L
 
     public List<PartitionInfo> getPartitionInfoList() {
         return Collections.unmodifiableList(partitionInfoList);
+    }
+
+
+    public List<String> getPartitionKey(String schema, String table) {
+
+        return partitionKeyCache.computeIfAbsent(Arrays.asList(schema, table), key -> {
+            List<String>  keyNames = new ArrayList<>();
+            Map<String, String> partitionKeyMap = getConfig().getPartitionKey();
+            if (null != partitionKeyMap && !partitionKeyMap.isEmpty()) {
+                String keys = partitionKeyMap.getOrDefault(schema + "." + table, null);
+                if (StringUtils.isNoneBlank(keys)) {
+                    keyNames.addAll(Arrays.stream(keys.split(",")).collect(Collectors.toList()));
+                }
+            }
+            return keyNames;
+        });
     }
 
     /**

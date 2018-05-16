@@ -8,6 +8,7 @@ dependencies {
             project(":node:node-plugin:kafka-consumer"),
             project(":node:node-plugin:jdbc-loader"),
             project(":node:node-plugin:kudu-loader"),
-            project(":node:node-plugin:canal-consumer")
+            project(":node:node-plugin:canal-consumer"),
+            project(":node:node-plugin:kafka-loader")
     )
 }

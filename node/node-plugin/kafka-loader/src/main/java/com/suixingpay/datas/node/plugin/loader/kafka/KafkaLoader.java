@@ -27,6 +27,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -65,10 +66,21 @@ public class KafkaLoader extends AbstractDataLoader {
 
     @Override
     public void mouldRow(ETLRow row) throws TaskDataException {
-        //计算保存分区
+        KafkaProduceClient client = getLoadClient();
+        //计算分区key
         StringBuilder keyBuilder = new StringBuilder();
-        row.getColumns().stream().filter(c -> c.isKey()).sorted(Comparator.comparing(ETLColumn::getFinalName))
+        List<String> partitionKey = client.getPartitionKey(row.getFinalSchema(), row.getFinalTable());
+        Stream<ETLColumn> filteredStream = null;
+        if (null == partitionKey || partitionKey.isEmpty()) {
+            //默认根据主键分区
+            filteredStream = row.getColumns().stream().filter(c -> c.isKey());
+        } else {
+            //根据目标端配置指定分片key
+            filteredStream = row.getColumns().stream().filter(c -> partitionKey.contains(c.getFinalName()));
+        }
+        if (null != filteredStream) filteredStream.sorted(Comparator.comparing(ETLColumn::getFinalName))
                 .forEach(c -> keyBuilder.append(c.getFinalValue()).append("_"));
+
         KafkaETLRowField.setRecordKey(row, keyBuilder.toString());
         //转换成目标端格式
         KafkaETLRowField.setRecordValue(row, formatRow(row));

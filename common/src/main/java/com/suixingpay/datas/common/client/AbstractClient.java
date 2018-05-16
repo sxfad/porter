@@ -113,6 +113,9 @@ public abstract class AbstractClient<T extends SourceConfig> implements Client {
         if (config instanceof KuduConfig) {
             return new KUDUClient((KuduConfig) config);
         }
+        if (config instanceof KafkaProduceConfig) {
+            return new KafkaProduceClient((KafkaProduceConfig) config);
+        }
 
         //自定义插件配置文件
         if (config instanceof PluginServiceConfig) {
