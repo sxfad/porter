@@ -38,6 +38,7 @@ import java.util.stream.Collectors;
 public class KafkaProduceClient extends AbstractClient<KafkaProduceConfig> implements LoadClient, MetaQueryClient {
     private volatile Producer<String, String> producer;
     private final String topic;
+    private final boolean transaction;
     private final List<PartitionInfo> partitionInfoList = new ArrayList<>();
     private final Map<List<String>, List<String>> partitionKeyCache = new ConcurrentHashMap<>();
     private volatile CountDownLatch canProduce = new CountDownLatch(1);
@@ -45,6 +46,7 @@ public class KafkaProduceClient extends AbstractClient<KafkaProduceConfig> imple
     public KafkaProduceClient(KafkaProduceConfig config) {
         super(config);
         this.topic = config.getTopic();
+        this.transaction = config.isTransaction();
     }
 
     @Override
@@ -56,13 +58,15 @@ public class KafkaProduceClient extends AbstractClient<KafkaProduceConfig> imple
         props.put(ProducerConfig.CLIENT_ID_CONFIG, group);
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
         props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
-        props.put(ProducerConfig.TRANSACTIONAL_ID_CONFIG, group + "_" + System.nanoTime());
+        if (transaction) {
+            props.put(ProducerConfig.TRANSACTIONAL_ID_CONFIG, group + "_" + System.nanoTime());
+        }
         //props.put(ProducerConfig.ACKS_CONFIG, "1");
         //在重试次数大于0的情况下，严格保证produce顺序
         props.put(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, "1");
         producer = new KafkaProducer<>(props);
         partitionInfoList.addAll(producer.partitionsFor(topic));
-        producer.initTransactions();
+        if (transaction) producer.initTransactions();
         canProduce.countDown();
     }
 
@@ -106,7 +110,9 @@ public class KafkaProduceClient extends AbstractClient<KafkaProduceConfig> imple
     private void sendTo(List<ProducerRecord<String, String>> msgList, boolean sync) throws TaskStopTriggerException {
         try {
             canProduce.await();
-            producer.beginTransaction();
+            if (transaction) {
+                producer.beginTransaction();
+            }
             List<Future<RecordMetadata>> futures = new ArrayList<>();
             for (ProducerRecord<String, String> record : msgList) {
                 if (sync) futures.add(producer.send(record));
@@ -115,7 +121,11 @@ public class KafkaProduceClient extends AbstractClient<KafkaProduceConfig> imple
             for (Future<RecordMetadata> f : futures) {
                 f.get();
             }
-            producer.commitTransaction();
+            if (transaction) {
+                producer.commitTransaction();
+            } else {
+                producer.flush();
+            }
         } catch (Throwable e) {
             throw new TaskStopTriggerException(e);
         }
