@@ -38,7 +38,7 @@ public class JobTasksTable implements java.io.Serializable {
     /**
      * 忽略目标端大小写
      */
-    private Boolean ignoreTargetCase = true;
+    private Boolean ignoreTargetCase = false;
 
     /**
      * 强制目标端字段和源端字段一致(针对目标表来说)
