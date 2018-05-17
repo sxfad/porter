@@ -22,7 +22,6 @@ import com.alibaba.otter.canal.protocol.Message;
 import com.alibaba.otter.canal.server.embedded.CanalServerWithEmbedded;
 import com.alibaba.otter.canal.server.exception.CanalServerException;
 import com.suixingpay.datas.common.client.AbstractClient;
-import com.suixingpay.datas.common.config.source.JDBCConfig;
 import com.suixingpay.datas.common.consumer.ConsumeClient;
 import com.suixingpay.datas.common.config.source.CanalConfig;
 import com.suixingpay.datas.common.consumer.Position;
@@ -155,7 +154,7 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
                     @Override
                     public void sendAlarm(String destination, String msg) {
                         //过滤密码
-                        msg = StringUtils.trimToEmpty(msg).replaceAll("password=[^,]*," ,"");
+                        msg = StringUtils.trimToEmpty(msg).replaceAll("password=[^,]*," , "");
                         //master连接不上
                         if (msg.contains("CanalParseException: java.io.IOException")
                                 || msg.contains("java.io.IOException: Received error packet: errno")) {
