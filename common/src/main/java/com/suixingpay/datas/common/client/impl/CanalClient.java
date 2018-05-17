@@ -154,7 +154,8 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
 
                     @Override
                     public void sendAlarm(String destination, String msg) {
-                        msg = StringUtils.trimToEmpty(msg);
+                        //过滤密码
+                        msg = StringUtils.trimToEmpty(msg).replaceAll("password=[^,]*," ,"");
                         //master连接不上
                         if (msg.contains("CanalParseException: java.io.IOException")
                                 || msg.contains("java.io.IOException: Received error packet: errno")) {
