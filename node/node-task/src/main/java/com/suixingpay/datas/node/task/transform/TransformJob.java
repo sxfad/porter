@@ -115,8 +115,8 @@ public class TransformJob extends AbstractStageJob {
                     break;
                 }
                 try {
-                    waitTime += 500;
-                    Thread.sleep(500);
+                    waitTime += 50;
+                    Thread.sleep(50);
                 } catch (InterruptedException e) {
                 }
             }
