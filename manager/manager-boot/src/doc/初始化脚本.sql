@@ -197,7 +197,7 @@ DROP TABLE IF EXISTS `job_tasks_table`;
 CREATE TABLE `job_tasks_table` (
   `id` BIGINT(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
   `job_task_id` BIGINT(20) NOT NULL COMMENT '任务id',
-  `ignore_target_case` INT(2) NOT NULL DEFAULT '1' COMMENT '忽略目标端大小写',
+  `ignore_target_case` INT(2) NOT NULL DEFAULT '0' COMMENT '忽略目标端大小写',
   `force_matched` INT(2) NOT NULL DEFAULT '1' COMMENT '强制目标端字段和源端字段一致',
   `direct_map_table` INT(2) NOT NULL DEFAULT '0' COMMENT '直接映射表，不进行表字段映射配置',
   `source_table_name` VARCHAR(200) NOT NULL COMMENT '来源数据-数据表名-记录全名',
