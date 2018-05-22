@@ -91,10 +91,9 @@ public class JobTasksController {
             @RequestParam(value = "jobName", required = false) String jobName,
             @RequestParam(value = "beginTime", required = false) String beginTime,
             @RequestParam(value = "endTime", required = false) String endTime,
-            @RequestParam(value = "jobState", required = false) TaskStatusType jobState,
-            @RequestParam(value = "jobType", required = false) Integer jobType) {
+            @RequestParam(value = "jobState", required = false) TaskStatusType jobState) {
         Page<JobTasks> page = jobTasksService.page(new Page<>(pageNo, pageSize), jobName, beginTime, endTime, jobState,
-                jobType);
+                null);
         return ok(page);
     }
 
