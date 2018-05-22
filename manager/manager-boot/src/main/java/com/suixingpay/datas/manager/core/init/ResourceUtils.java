@@ -55,7 +55,7 @@ public class ResourceUtils {
 
     private void loadJobNameMap() {
         JobTasksService jobTasksService = ApplicationContextUtil.getBean(JobTasksService.class);
-        List<JobTasks> jobTasksList = jobTasksService.selectList();
+        List<JobTasks> jobTasksList = jobTasksService.selectJobNameList();
         for (JobTasks jobTasks : jobTasksList) {
             JOBNAME_MAP.put(jobTasks.getId().toString(), jobTasks.getJobName());
         }

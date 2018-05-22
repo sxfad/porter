@@ -81,4 +81,6 @@ public interface JobTasksMapper {
     Integer updateState(@Param("id") Long id, @Param("code") String code);
 
     List<JobTasks> selectList();
+
+    List<JobTasks> selectJobNameList();
 }

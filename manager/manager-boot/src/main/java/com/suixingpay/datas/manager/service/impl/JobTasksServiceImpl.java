@@ -107,9 +107,9 @@ public class JobTasksServiceImpl implements JobTasksService {
         Integer number = 0;
         try {
             number = jobTasksMapper.insertCapture(jobTasks);
-            logger.info("抓取任务id[{}]插入数据库Success.",jobTasks.getId());
+            logger.info("抓取任务id[{}]插入数据库Success.", jobTasks.getId());
         } catch (Exception e) {
-            logger.warn("抓取任务id[{}]插入数据库Error.",jobTasks.getId());
+            logger.warn("抓取任务id[{}]插入数据库Error.", jobTasks.getId());
         }
         return number;
     }
@@ -365,4 +365,10 @@ public class JobTasksServiceImpl implements JobTasksService {
     public List<JobTasks> selectList() {
         return jobTasksMapper.selectList();
     }
+
+    @Override
+    public List<JobTasks> selectJobNameList() {
+        return jobTasksMapper.selectJobNameList();
+    }
+
 }
