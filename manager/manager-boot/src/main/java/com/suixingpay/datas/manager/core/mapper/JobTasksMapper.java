@@ -25,6 +25,13 @@ public interface JobTasksMapper {
     Integer insert(JobTasks jobTasks);
 
     /**
+     * 新增
+     *
+     * @param jobTasks
+     */
+    Integer insertCapture(JobTasks jobTasks);
+
+    /**
      * 修改
      *
      * @param jobTasks
@@ -53,15 +60,15 @@ public interface JobTasksMapper {
      * @return
      */
     List<JobTasks> page(@Param("page") Page<JobTasks> page, @Param("state") Integer state,
-            @Param("jobName") String jobName, @Param("beginTime") String beginTime, @Param("endTime") String endTime,
-            @Param("code") String code);
+            @Param("jobType") Integer jobType, @Param("jobName") String jobName, @Param("beginTime") String beginTime,
+            @Param("endTime") String endTime, @Param("code") String code);
 
     /**
      * 分頁All
      *
      * @return
      */
-    Integer pageAll(@Param("state") Integer state, @Param("jobName") String jobName,
+    Integer pageAll(@Param("state") Integer state, @Param("jobType") Integer jobType, @Param("jobName") String jobName,
             @Param("beginTime") String beginTime, @Param("endTime") String endTime, @Param("code") String code);
 
     /**

@@ -19,13 +19,18 @@ public interface JobTasksService {
 
     Integer insert(JobTasks jobTasks);
 
+    Integer insertCapture(JobTasks jobTasks);
+
     Integer update(JobTasks jobTasks);
 
     Integer delete(Long id);
 
     JobTasks selectById(Long id);
 
-    Page<JobTasks> page(Page<JobTasks> page, String jobName, String beginTime, String endTime, TaskStatusType jobState);
+    JobTasks selectEntityById(Long id);
+
+    Page<JobTasks> page(Page<JobTasks> page, String jobName, String beginTime, String endTime, TaskStatusType jobState,
+            Integer jobType);
 
     Object tableNames(Long tablesId);
 

@@ -103,6 +103,18 @@ public class JobTasksServiceImpl implements JobTasksService {
     }
 
     @Override
+    public Integer insertCapture(JobTasks jobTasks) {
+        Integer number = 0;
+        try {
+            number = jobTasksMapper.insert(jobTasks);
+            logger.info("抓取任务id[{}]插入数据库Success.",jobTasks.getId());
+        } catch (Exception e) {
+            logger.warn("抓取任务id[{}]插入数据库Error.",jobTasks.getId());
+        }
+        return number;
+    }
+
+    @Override
     @Transactional
     public Integer update(JobTasks jobTasks) {
         // 删除关联表字段
@@ -170,16 +182,22 @@ public class JobTasksServiceImpl implements JobTasksService {
     }
 
     @Override
+    public JobTasks selectEntityById(Long id) {
+        JobTasks jobTasks = jobTasksMapper.selectById(id);
+        return jobTasks;
+    }
+
+    @Override
     public Page<JobTasks> page(Page<JobTasks> page, String jobName, String beginTime, String endTime,
-            TaskStatusType jobState) {
+            TaskStatusType jobState, Integer jobType) {
         String code = "";
         if (null != jobState) {
             code = jobState.getCode();
         }
-        Integer total = jobTasksMapper.pageAll(1, jobName, beginTime, endTime, code);
+        Integer total = jobTasksMapper.pageAll(1, jobType, jobName, beginTime, endTime, code);
         if (total > 0) {
             page.setTotalItems(total);
-            page.setResult(jobTasksMapper.page(page, 1, jobName, beginTime, endTime, code));
+            page.setResult(jobTasksMapper.page(page, 1, jobType, jobName, beginTime, endTime, code));
         }
         return page;
     }
