@@ -106,7 +106,7 @@ public class JobTasksServiceImpl implements JobTasksService {
     public Integer insertCapture(JobTasks jobTasks) {
         Integer number = 0;
         try {
-            number = jobTasksMapper.insert(jobTasks);
+            number = jobTasksMapper.insertCapture(jobTasks);
             logger.info("抓取任务id[{}]插入数据库Success.",jobTasks.getId());
         } catch (Exception e) {
             logger.warn("抓取任务id[{}]插入数据库Error.",jobTasks.getId());
