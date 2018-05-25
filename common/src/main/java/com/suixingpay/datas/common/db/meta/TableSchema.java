@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
@@ -27,7 +28,7 @@ public class TableSchema {
     @Setter @Getter private boolean noPrimaryKey = false;
     @Setter @Getter private String schemaName;
     @Setter @Getter private String tableName;
-    private final Map<String, TableColumn> columns = new HashMap<>();
+    private final Map<String, TableColumn> columns = new ConcurrentHashMap<>();
     private final AtomicBoolean isUpperCased = new AtomicBoolean(false);
     //定义门栓,仅控制toUpperCase多线程访问逻辑
     private final CountDownLatch  upperCased = new CountDownLatch(1);

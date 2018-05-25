@@ -123,6 +123,17 @@ public class ETLRowTransformer implements Transformer {
                  */
                 if (!table.isNoPrimaryKey()) {
                     c.setKey(column.isPrimaryKey());
+                    /**
+                     * 如果此字段在目标端是主键在源端不是主键，并且更新前值不存在，将原值设置为目标端的值
+                     * 例如目标端DT_CTE、UUID为主键
+                     * {"table":"DCM_OWNER.T_MSP_ORDER","op_type":"U","primary_keys":["UUID"],"before":{},
+                     * "after":{"UUID":"3fd9e39aead54fc2bdd385bdf29cdc08","DT_CTE":"20180506",}}
+                     * 2018.05.25 23:25
+                     */
+                    if (column.isPrimaryKey() && c.isFinalBeforeMissing() && row.getFinalOpType() == EventType.UPDATE) {
+                        c.setFinalOldValue(c.getFinalValue());
+                        c.setFinalBeforeMissing(false);
+                    }
                 }
                 c.setRequired(column.isRequired());
 
