@@ -9,8 +9,6 @@
 
 package com.suixingpay.datas.common.db;
 
-import com.suixingpay.datas.common.db.meta.DdlSchemaFilter;
-import com.suixingpay.datas.common.db.meta.DdlTableNameFilter;
 import com.suixingpay.datas.common.db.meta.DdlUtilsFilter;
 import com.suixingpay.datas.common.db.meta.TableType;
 import org.apache.commons.lang.builder.ToStringBuilder;
@@ -27,7 +25,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCallback;
-import org.springframework.jdbc.core.SingleColumnRowMapper;
 import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.util.Assert;
 
@@ -69,49 +66,13 @@ public class DdlUtils {
         DEFAULT_SIZES.put(new Integer(2), "15,15");
     }
 
-    /**
-     * !!!Only supports MySQL
-     */
-    @SuppressWarnings("unchecked")
-    public static List<String> findSchemas(JdbcTemplate jdbcTemplate, final String schemaPattern) {
-        try {
-            if (StringUtils.isEmpty(schemaPattern)) {
-                return jdbcTemplate.query("show databases", new SingleColumnRowMapper(String.class));
-            }
-            return jdbcTemplate.query("show databases like ?",
-                new Object[] {schemaPattern},
-                new SingleColumnRowMapper(String.class));
-        } catch (Exception e) {
-            LOGGER.error(e.getMessage(), e);
-            return new ArrayList<String>();
-        }
-    }
-
-    /**
-     * !!!Only supports MySQL
-     */
-    public static List<String> findSchemas(JdbcTemplate jdbcTemplate, final String schemaPattern,
-                                           final DdlSchemaFilter ddlSchemaFilter) {
-        List<String> schemas = findSchemas(jdbcTemplate, schemaPattern);
-        if (ddlSchemaFilter == null) {
-            return schemas;
-        }
-        List<String> filterSchemas = new ArrayList<String>();
-        for (String schema : schemas) {
-            if (ddlSchemaFilter.accept(schema)) {
-                filterSchemas.add(schema);
-            }
-        }
-        return filterSchemas;
-    }
-
     public static Table findTable(JdbcTemplate jdbcTemplate, final String catalogName, final String schemaName,
-                                  final String tableName) throws Exception {
-        return findTable(jdbcTemplate, catalogName, schemaName, tableName, null);
+                                  final String tableName, boolean makePrimaryKeyWhenNo) throws DataAccessException {
+        return findTable(jdbcTemplate, catalogName, schemaName, tableName, null, makePrimaryKeyWhenNo);
     }
 
-    public static Table findTable(final JdbcTemplate jdbcTemplate, final String catalogName, final String schemaName,
-                                  final String tableName, final DdlUtilsFilter filter) throws DataAccessException {
+    private static Table findTable(final JdbcTemplate jdbcTemplate, final String catalogName, final String schemaName,
+                                  final String tableName, final DdlUtilsFilter filter, boolean makePrimaryKeyWhenNo) throws DataAccessException {
         return (Table) jdbcTemplate.execute(new ConnectionCallback() {
 
             public Object doInConnection(Connection con) throws SQLException, DataAccessException {
@@ -172,89 +133,11 @@ public class DdlUtils {
                     LOGGER.error(e.getMessage(), e);
                 }
 
-                makeAllColumnsPrimaryKeysIfNoPrimaryKeysFound(table);
+                if (makePrimaryKeyWhenNo) makeAllColumnsPrimaryKeysIfNoPrimaryKeysFound(table);
                 if (isDRDS) {
                     makeDRDSShardColumnsAsPrimaryKeys(table, jdbcTemplate, catalogName, schemaName, tableName);
                 }
                 return table;
-            }
-        });
-    }
-
-    @SuppressWarnings("unchecked")
-    public static List<Table> findTables(final JdbcTemplate jdbcTemplate, final String catalogName,
-                                         final String schemaName, final String tableNamePattern,
-                                         final DdlUtilsFilter filter, final DdlTableNameFilter tableNameFilter)
-                                                                                                               throws Exception {
-        return (List<Table>) jdbcTemplate.execute(new ConnectionCallback() {
-
-            public Object doInConnection(Connection con) throws SQLException, DataAccessException {
-                List<Table> tables = new ArrayList<Table>();
-                DatabaseMetaDataWrapper metaData = new DatabaseMetaDataWrapper();
-                boolean isDRDS = false;
-                try {
-                    if (filter != null) {
-                        con = filter.filterConnection(con);
-                        Assert.notNull(con);
-                    }
-                    DatabaseMetaData databaseMetaData = con.getMetaData();
-                    if (filter != null) {
-                        databaseMetaData = filter.filterDataBaseMetaData(jdbcTemplate, con, databaseMetaData);
-                        Assert.notNull(databaseMetaData);
-                    }
-
-                    String databaseName = databaseMetaData.getDatabaseProductName();
-                    String version = databaseMetaData.getDatabaseProductVersion();
-                    if (StringUtils.startsWithIgnoreCase(databaseName, "mysql")
-                        && StringUtils.contains(version, "-TDDL-")) {
-                        isDRDS = true;
-                    }
-
-                    metaData.setMetaData(databaseMetaData);
-                    metaData.setTableTypes(TableType.toStrings(SUPPORTED_TABLE_TYPES));
-                    metaData.setCatalog(catalogName);
-                    metaData.setSchemaPattern(schemaName);
-
-                    String convertTableName = tableNamePattern;
-                    if (databaseMetaData.storesUpperCaseIdentifiers()) {
-                        metaData.setCatalog(catalogName.toUpperCase());
-                        metaData.setSchemaPattern(schemaName.toUpperCase());
-                        convertTableName = tableNamePattern.toUpperCase();
-                    }
-                    if (databaseMetaData.storesLowerCaseIdentifiers()) {
-                        metaData.setCatalog(catalogName.toLowerCase());
-                        metaData.setSchemaPattern(schemaName.toLowerCase());
-                        convertTableName = tableNamePattern.toLowerCase();
-                    }
-
-                    ResultSet tableData = null;
-                    try {
-                        tableData = metaData.getTables(convertTableName);
-
-                        while ((tableData != null) && tableData.next()) {
-                            Map<String, Object> values = readColumns(tableData, initColumnsForTable());
-
-                            Table table = readTable(metaData, values);
-                            if ((tableNameFilter == null)
-                                || tableNameFilter.accept(catalogName, schemaName, table.getName())) {
-                                tables.add(table);
-                            }
-                        }
-                    } finally {
-                        JdbcUtils.closeResultSet(tableData);
-                    }
-                } catch (Exception e) {
-                    LOGGER.error(e.getMessage(), e);
-                }
-
-                for (Table table : tables) {
-                    makeAllColumnsPrimaryKeysIfNoPrimaryKeysFound(table);
-                    if (isDRDS) {
-                        makeDRDSShardColumnsAsPrimaryKeys(table, jdbcTemplate, catalogName, schemaName, table.getName());
-                    }
-                }
-
-                return tables;
             }
         });
     }

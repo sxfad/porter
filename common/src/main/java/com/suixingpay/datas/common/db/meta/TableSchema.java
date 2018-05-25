@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月06日 16:07
  */
 public class TableSchema {
+    @Setter @Getter private boolean noPrimaryKey = false;
     @Setter @Getter private String schemaName;
     @Setter @Getter private String tableName;
     private final Map<String, TableColumn> columns = new HashMap<>();

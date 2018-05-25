@@ -59,12 +59,14 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
     private DruidDataSource dataSource;
     private JdbcTemplate jdbcTemplate;
     private TransactionTemplate transactionTemplate;
+    private final boolean makePrimaryKeyWhenNo;
 
     @Getter private SqlTemplate sqlTemplate;
 
 
     public JDBCClient(JDBCConfig config) {
         super(config);
+        this.makePrimaryKeyWhenNo = config.isMakePrimaryKeyWhenNo();
         sqlTemplate = new SqlTemplateImpl();
     }
 
@@ -137,7 +139,7 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
      * @return
      */
     private TableSchema getTableSchema(String schema, String tableName) {
-        Table dbTable = DdlUtils.findTable(jdbcTemplate, schema, schema, tableName, null);
+        Table dbTable = DdlUtils.findTable(jdbcTemplate, schema, schema, tableName, makePrimaryKeyWhenNo);
         TableSchema tableSchema = new TableSchema();
         //mysql特殊场景下(例如大小写敏感)，schema字段为空
         tableSchema.setSchemaName(StringUtils.isBlank(dbTable.getSchema()) ? schema : dbTable.getSchema());
@@ -151,6 +153,10 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
             column.setTypeCode(c.getTypeCode());
             tableSchema.addColumn(column);
         });
+
+        long primaryKeyCount = tableSchema.getColumns().stream().filter(c -> c.isPrimaryKey()).count();
+        tableSchema.setNoPrimaryKey(primaryKeyCount < 1);
+
         LOGGER.info("schema:{},table:{},detail:{}", schema, tableName, JSONObject.toJSONString(tableSchema));
         return tableSchema;
     }

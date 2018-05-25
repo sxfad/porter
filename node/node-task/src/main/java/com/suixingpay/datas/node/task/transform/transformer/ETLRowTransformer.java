@@ -117,7 +117,13 @@ public class ETLRowTransformer implements Transformer {
             TableColumn column = table.findColumn(c.getFinalName());
             if (null != column) {
                 c.setFinalType(column.getTypeCode());
-                c.setKey(column.isPrimaryKey());
+                /**
+                 * 如果目标端没有查出来主键，则默认按照源端主键
+                 * 2018.05.25
+                 */
+                if (!table.isNoPrimaryKey()) {
+                    c.setKey(column.isPrimaryKey());
+                }
                 c.setRequired(column.isRequired());
 
                 //如果是更新且字段必填，更新前的值不存在
