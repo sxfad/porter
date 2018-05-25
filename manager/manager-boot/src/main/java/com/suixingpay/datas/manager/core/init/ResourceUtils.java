@@ -76,7 +76,7 @@ public class ResourceUtils {
         String name = JOBNAME_MAP.get(jobId);
         if (name == null) {
             JobTasksService jobTasksService = ApplicationContextUtil.getBean(JobTasksService.class);
-            JobTasks jobtask = jobTasksService.selectById(Long.valueOf(jobId));
+            JobTasks jobtask = jobTasksService.selectEntityById(Long.valueOf(jobId));
             if (jobtask != null && jobtask.getJobName() != null) {
                 JOBNAME_MAP.put(jobId, jobtask.getJobName());
             }
