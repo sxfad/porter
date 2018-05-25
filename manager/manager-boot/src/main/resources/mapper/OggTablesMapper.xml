@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.suixingpay.datas.manager.core.mapper.OggTablesMapper">
+    <!-- 通用查询映射结果 
+    <resultMap id="BaseResultMap" type="com.suixingpay.datas.manager.core.entity.OggTables">
+        <result column="id" property="id" />
+        <result column="ip_address" property="ipAddress" />
+        <result column="ip_name" property="ipName" />
+        <result column="table_name" property="tableName" />
+        <result column="table_value" property="tableValue" />
+        <result column="table_marker" property="tableMarker" />
+        <result column="heart_beat_time" property="heartBeatTime" />
+        <result column="create_time" property="createTime" />
+        <result column="iscancel" property="iscancel" />
+        <result column="remark" property="remark" />
+    </resultMap>-->
+
+    <!-- 通用查询结果列 
+    <sql id="Base_Column_List">
+        select id, ip_address AS ipAddress, ip_name AS ipName, table_name AS tableName, table_value AS tableValue, table_marker AS tableMarker, heart_beat_time AS heartBeatTime, create_time AS createTime, iscancel, remark from ogg_tables
+    </sql>-->
+
+    <!-- 新增 只插入非空字段 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        insert into ogg_tables
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="ipAddress != null">
+                ip_address,
+            </if>
+            <if test="ipName != null">
+                ip_name,
+            </if>
+            <if test="tableName != null">
+                table_name,
+            </if>
+            <if test="tableValue != null">
+                table_value,
+            </if>
+            <if test="tableMarker != null">
+                table_marker,
+            </if>
+            <if test="heartBeatTime != null">
+                heart_beat_time,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="iscancel != null">
+                iscancel,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="ipAddress != null">
+                #{ipAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="ipName != null">
+                #{ipName,jdbcType=VARCHAR},
+            </if>
+            <if test="tableName != null">
+                #{tableName,jdbcType=VARCHAR},
+            </if>
+            <if test="tableValue != null">
+                #{tableValue,jdbcType=VARCHAR},
+            </if>
+            <if test="tableMarker != null">
+                #{tableMarker,jdbcType=VARCHAR},
+            </if>
+            <if test="heartBeatTime != null">
+                #{heartBeatTime,jdbcType=VARCHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="iscancel != null">
+                #{iscancel,jdbcType=INTEGER},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 新增 全部字段 -->
+    <insert id="insertAllColumn" useGeneratedKeys="true" keyProperty="id">
+        insert into ogg_tables(
+            ip_address,
+            ip_name,
+            table_name,
+            table_value,
+            table_marker,
+            heart_beat_time,
+            create_time,
+            iscancel,
+            remark
+        ) values (
+            ipAddress,
+            ipName,
+            tableName,
+            tableValue,
+            tableMarker,
+            heartBeatTime,
+            createTime,
+            iscancel,
+            remark
+        )
+    </insert>
+
+    <!-- 修改 只修改非空字段 -->
+    <update id="update">
+        update ogg_tables
+        <set>
+            <if test="oggTables.id != null">
+                id = #{oggTables.id,jdbcType=BIGINT},
+            </if>
+            <if test="oggTables.ipAddress != null">
+                ip_address = #{oggTables.ipAddress,jdbcType=VARCHAR},
+            </if>
+            <if test="oggTables.ipName != null">
+                ip_name = #{oggTables.ipName,jdbcType=VARCHAR},
+            </if>
+            <if test="oggTables.tableName != null">
+                table_name = #{oggTables.tableName,jdbcType=VARCHAR},
+            </if>
+            <if test="oggTables.tableValue != null">
+                table_value = #{oggTables.tableValue,jdbcType=VARCHAR},
+            </if>
+            <if test="oggTables.tableMarker != null">
+                table_marker = #{oggTables.tableMarker,jdbcType=VARCHAR},
+            </if>
+            <if test="oggTables.heartBeatTime != null">
+                heart_beat_time = #{oggTables.heartBeatTime,jdbcType=VARCHAR},
+            </if>
+            <if test="oggTables.createTime != null">
+                create_time = #{oggTables.createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="oggTables.iscancel != null">
+                iscancel = #{oggTables.iscancel,jdbcType=INTEGER},
+            </if>
+            <if test="oggTables.remark != null">
+                remark = #{oggTables.remark,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!-- 修改 全部字段 -->
+    <update id="updateAllColumn">
+        update ogg_tables
+        <set>
+            id = #{oggTables.id},
+            ip_address = #{oggTables.ipAddress},
+            ip_name = #{oggTables.ipName},
+            table_name = #{oggTables.tableName},
+            table_value = #{oggTables.tableValue},
+            table_marker = #{oggTables.tableMarker},
+            heart_beat_time = #{oggTables.heartBeatTime},
+            create_time = #{oggTables.createTime},
+            iscancel = #{oggTables.iscancel},
+            remark = #{oggTables.remark},
+        </set>
+        where id = #{id}
+    </update>
+
+    <!-- 根据主鍵查找 -->
+    <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.OggTables">
+        select id, ip_address AS ipAddress, ip_name AS ipName, table_name AS tableName, table_value AS tableValue, table_marker AS tableMarker, heart_beat_time AS heartBeatTime, create_time AS createTime, iscancel, remark from ogg_tables
+        where id = #{id}
+    </select>
+
+    <!-- 列表查询 -->
+    <select id="selectList" resultType="com.suixingpay.datas.manager.core.entity.OggTables">
+        select id, ip_address AS ipAddress, ip_name AS ipName, table_name AS tableName, table_value AS tableValue, table_marker AS tableMarker, heart_beat_time AS heartBeatTime, create_time AS createTime, iscancel, remark from ogg_tables
+        where 1=1
+    </select>
+
+    <!-- 分页total查询 -->
+    <select id="pageAll" resultType="java.lang.Integer">
+        select count(id) from ogg_tables
+        where 1=1
+    </select>
+
+    <!-- 分页数据查询 -->
+    <select id="page" resultType="com.suixingpay.datas.manager.core.entity.OggTables">
+        select id, ip_address AS ipAddress, ip_name AS ipName, table_name AS tableName, table_value AS tableValue, table_marker AS tableMarker, heart_beat_time AS heartBeatTime, create_time AS createTime, iscancel, remark from ogg_tables
+        where 1=1
+        limit #{page.offset},#{page.pageSize}
+    </select>
+
+    <!-- 刪除 -->
+    <delete id="delete">
+        delete from ogg_tables where id = #{id}
+    </delete>
+</mapper>
