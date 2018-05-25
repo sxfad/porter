@@ -78,7 +78,7 @@ public class ResourceUtils {
             JobTasksService jobTasksService = ApplicationContextUtil.getBean(JobTasksService.class);
             JobTasks jobtask = jobTasksService.selectEntityById(Long.valueOf(jobId));
             if (jobtask != null && jobtask.getJobName() != null) {
-                String value = jobtask.getJobName();
+                String value = jobtask.getJobName()+"-id(" + jobId + ")";
                 if(value.indexOf("空") > -1) {
                     value = "(空-id(" + jobId + "))";
                 }
@@ -86,7 +86,7 @@ public class ResourceUtils {
             }
             name = (jobtask == null || jobtask.getJobName() == null || jobtask.getJobName().indexOf("空") > -1)
                     ? "(空-id(" + jobId + "))"
-                    : jobtask.getJobName();
+                    : jobtask.getJobName()+"-id(" + jobId + ")";
         }
         return name;
     }
