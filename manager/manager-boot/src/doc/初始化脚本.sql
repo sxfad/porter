@@ -390,7 +390,21 @@ CREATE TABLE `s_log_grade` (
   `remark` VARCHAR(100) DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`)
 ) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='日志级别表';
--- 
+-- ogg表数据信息
+DROP TABLE IF EXISTS `ogg_tables`;
+CREATE TABLE `ogg_tables` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `ip_address` varchar(100) DEFAULT NULL COMMENT 'ip地址',
+  `ip_name` varchar(100) DEFAULT NULL COMMENT 'ip名称',
+  `table_name` varchar(200) DEFAULT NULL COMMENT '表名汉字',
+  `table_value` varchar(200) DEFAULT NULL COMMENT '表名字段',
+  `table_marker` varchar(200) DEFAULT NULL COMMENT '表名标识',
+  `heart_beat_time` varchar(100) DEFAULT '0000-00-00 00:00:00' COMMENT '心跳时间',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `iscancel` int(2) DEFAULT '0' COMMENT '是否作废',
+  `remark` varchar(500) DEFAULT NULL COMMENT '备注',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='ogg表数据信息'
 
 -- 初始用户
 INSERT  INTO `c_user`(`id`,`loginname`,`loginpw`,`nickname`,`email`,`mobile`,`depart_ment`,`role_code`,`state`,`remark`) VALUES 
