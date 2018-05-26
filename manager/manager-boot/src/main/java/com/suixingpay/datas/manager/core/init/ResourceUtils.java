@@ -57,7 +57,7 @@ public class ResourceUtils {
         JobTasksService jobTasksService = ApplicationContextUtil.getBean(JobTasksService.class);
         List<JobTasks> jobTasksList = jobTasksService.selectJobNameList();
         for (JobTasks jobTasks : jobTasksList) {
-            JOBNAME_MAP.put(jobTasks.getId().toString(), jobTasks.getJobName());
+            JOBNAME_MAP.put(jobTasks.getId().toString(), jobTasks.getJobName()+"-id("+jobTasks.getId()+")");
         }
     }
 
@@ -78,15 +78,15 @@ public class ResourceUtils {
             JobTasksService jobTasksService = ApplicationContextUtil.getBean(JobTasksService.class);
             JobTasks jobtask = jobTasksService.selectEntityById(Long.valueOf(jobId));
             if (jobtask != null && jobtask.getJobName() != null) {
-                String value = jobtask.getJobName()+"-id(" + jobId + ")";
-                if(value.indexOf("空") > -1) {
-                    value = "(空-id(" + jobId + "))";
+                String value = jobtask.getJobName() + "-id(" + jobId + ")";
+                if (value.indexOf("空") > -1) {
+                    value = "空-id(" + jobId + ")";
                 }
                 JOBNAME_MAP.put(jobId, value);
             }
             name = (jobtask == null || jobtask.getJobName() == null || jobtask.getJobName().indexOf("空") > -1)
-                    ? "(空-id(" + jobId + "))"
-                    : jobtask.getJobName()+"-id(" + jobId + ")";
+                    ? "空-id(" + jobId + ")"
+                    : jobtask.getJobName() + "-id(" + jobId + ")";
         }
         return name;
     }
