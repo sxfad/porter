@@ -1,15 +1,20 @@
 package com.suixingpay.datas.manager.service.impl;
 
+import java.util.List;
+
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.suixingpay.datas.manager.core.entity.OggTables;
+import com.suixingpay.datas.manager.core.init.OggUtils;
 import com.suixingpay.datas.manager.core.mapper.OggTablesMapper;
 import com.suixingpay.datas.manager.service.OggTablesService;
 import com.suixingpay.datas.manager.web.page.Page;
 
- /**  
+/**
  * ogg表数据信息 服务实现类
+ * 
  * @author: FairyHood
  * @date: 2018-05-25 16:30:41
  * @version: V1.0-auto
@@ -20,6 +25,27 @@ public class OggTablesServiceImpl implements OggTablesService {
 
     @Autowired
     private OggTablesMapper oggTablesMapper;
+
+    @Override
+    public void accept(String hearthead, String ip, String tables) {
+        if (StringUtils.isEmpty(tables)) {
+            return;
+        }
+        String[] tabs = tables.split(",");
+        for (String tableName : tabs) {
+            if (OggUtils.existOggTables(ip, tableName)) {
+                Long id = OggUtils.getOggTableId(ip, tableName);
+                oggTablesMapper.update(id, new OggTables(id, hearthead));
+            } else {
+                oggTablesMapper.insert(new OggTables(ip, tableName, hearthead));
+            }
+        }
+    }
+
+    @Override
+    public List<OggTables> ipTables(String ipAddress, String tableValue) {
+        return oggTablesMapper.selectList(ipAddress, tableValue);
+    }
 
     @Override
     public Integer insert(OggTables oggTables) {

@@ -178,8 +178,14 @@
 
     <!-- 列表查询 -->
     <select id="selectList" resultType="com.suixingpay.datas.manager.core.entity.OggTables">
-        select id, ip_address AS ipAddress, ip_name AS ipName, table_name AS tableName, table_value AS tableValue, table_marker AS tableMarker, heart_beat_time AS heartBeatTime, create_time AS createTime, iscancel, remark from ogg_tables
-        where 1=1
+        select id, ip_address AS ipAddress,table_value AS tableValue from ogg_tables
+        where iscancel=0
+        <if test="ipAddress != null and ipAddress != ''">
+            and lower(ip_address) = lower(#{ipAddress})
+        </if>
+        <if test="tableValue != null and tableValue != ''">
+            and lower(table_value) = lower(#{tableValue})
+        </if>
     </select>
 
     <!-- 分页total查询 -->
