@@ -70,7 +70,7 @@ public interface OggTablesMapper {
      * @param other
      * @return Integer
      */
-    public Integer pageAll(@Param("other") String other);
+    public Integer pageAll(@Param("ipAddress") String ipAddress, @Param("tableValue") String tableValue);
 
     /**
      * 分頁
@@ -79,7 +79,8 @@ public interface OggTablesMapper {
      * @param other
      * @return List
      */
-    public List<OggTables> page(@Param("page") Page<OggTables> page, @Param("other") String other);
+    public List<OggTables> page(@Param("page") Page<OggTables> page, @Param("ipAddress") String ipAddress,
+            @Param("tableValue") String tableValue);
 
     /**
      * 刪除

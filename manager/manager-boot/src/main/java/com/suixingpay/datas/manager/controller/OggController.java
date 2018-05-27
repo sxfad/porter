@@ -3,16 +3,21 @@
  */
 package com.suixingpay.datas.manager.controller;
 
+import static com.suixingpay.datas.manager.web.message.ResponseMessage.ok;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.suixingpay.datas.manager.core.entity.OggTables;
 import com.suixingpay.datas.manager.service.OggTablesService;
 import com.suixingpay.datas.manager.web.message.ResponseMessage;
+import com.suixingpay.datas.manager.web.page.Page;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -27,7 +32,7 @@ import io.swagger.annotations.ApiOperation;
 public class OggController {
 
     private Logger log = LoggerFactory.getLogger(OggController.class);
-    
+
     @Autowired
     protected OggTablesService oggTablesService;
 
@@ -39,6 +44,16 @@ public class OggController {
         log.info("hearthead:[{}]" + " ip:[{}]" + " tables:[{}]", hearthead, ip, tables);
         oggTablesService.accept(hearthead, ip, tables);
         return ResponseMessage.ok();
+    }
+
+    @GetMapping("/tablespage")
+    @ApiOperation(value = "查询分页", notes = "查询分页")
+    public ResponseMessage page(@RequestParam(value = "pageNo", required = true) Integer pageNo,
+            @RequestParam(value = "pageSize", required = true) Integer pageSize,
+            @RequestParam(value = "ipAddress", required = false) String ipAddress,
+            @RequestParam(value = "tableValue", required = false) String tableValue) {
+        Page<OggTables> page = oggTablesService.selectPage(new Page<>(pageNo, pageSize), ipAddress, tableValue);
+        return ok(page);
     }
 
 }

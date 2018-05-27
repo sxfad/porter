@@ -78,7 +78,7 @@ public interface OggTablesService {
      * @param other
      * @return Page
      */
-    public Page<OggTables> selectPage(Page<OggTables> page, String other);
+    public Page<OggTables> selectPage(Page<OggTables> page, String ipAddress, String tableValue);
 
     /**
      * 刪除

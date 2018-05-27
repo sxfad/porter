@@ -191,14 +191,27 @@
     <!-- 分页total查询 -->
     <select id="pageAll" resultType="java.lang.Integer">
         select count(id) from ogg_tables
-        where 1=1
+        where iscancel=0
+        <if test="ipAddress != null and ipAddress != ''">
+            and lower(ip_address) like CONCAT('%',lower(#{ipAddress}),'%') 
+        </if>
+        <if test="tableValue != null and tableValue != ''">
+            and lower(table_value) like CONCAT('%',lower(#{tableValue}),'%') 
+        </if>
     </select>
 
     <!-- 分页数据查询 -->
     <select id="page" resultType="com.suixingpay.datas.manager.core.entity.OggTables">
         select id, ip_address AS ipAddress, ip_name AS ipName, table_name AS tableName, table_value AS tableValue, table_marker AS tableMarker, heart_beat_time AS heartBeatTime, create_time AS createTime, iscancel, remark from ogg_tables
-        where 1=1
-        limit #{page.offset},#{page.pageSize}
+        where iscancel=0
+        <if test="ipAddress != null and ipAddress != ''">
+            and lower(ip_address) like CONCAT('%',lower(#{ipAddress}),'%') 
+        </if>
+        <if test="tableValue != null and tableValue != ''">
+            and lower(table_value) like CONCAT('%',lower(#{tableValue}),'%') 
+        </if>
+        order by ip_address,table_value
+        limit #{page.offset},#{page.pageSize} 
     </select>
 
     <!-- 刪除 -->

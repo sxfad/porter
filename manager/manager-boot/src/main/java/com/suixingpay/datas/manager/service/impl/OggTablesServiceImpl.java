@@ -78,11 +78,11 @@ public class OggTablesServiceImpl implements OggTablesService {
     }
 
     @Override
-    public Page<OggTables> selectPage(Page<OggTables> page, String other) {
-        Integer total = oggTablesMapper.pageAll(other);
+    public Page<OggTables> selectPage(Page<OggTables> page, String ipAddress, String tableValue) {
+        Integer total = oggTablesMapper.pageAll(ipAddress, tableValue);
         if (total > 0) {
             page.setTotalItems(total);
-            page.setResult(oggTablesMapper.page(page, other));
+            page.setResult(oggTablesMapper.page(page, ipAddress, tableValue));
         }
         return page;
     }
