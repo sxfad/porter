@@ -64,7 +64,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
                 LOGGER.info("4-DTaskStat.... " + JSON.toJSON(stat));
             }
 
-            //任务错误
+            // 任务错误
             if (TASK_ERROR_PATTERN.matcher(zkEvent.getPath()).matches()) {
                 String[] taskAndSwimlane = null;
                 try {
@@ -72,7 +72,8 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
                 } catch (Throwable e) {
                 }
 
-                if (null == taskAndSwimlane || taskAndSwimlane.length != 2) return;
+                if (null == taskAndSwimlane || taskAndSwimlane.length != 2)
+                    return;
 
                 if (zkEvent.isDataChanged() || zkEvent.isOnline()) {
                     ManagerContext.INSTANCE.newStoppedTask(taskAndSwimlane[0], taskAndSwimlane[1]);

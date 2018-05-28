@@ -23,7 +23,7 @@ public interface OggTablesMapper {
      * @param oggTables
      * @return Integer
      */
-    public Integer insert(OggTables oggTables);
+    Integer insert(OggTables oggTables);
 
     /**
      * 新增(插入全部字段)
@@ -31,7 +31,7 @@ public interface OggTablesMapper {
      * @param oggTables
      * @return Integer
      */
-    public Integer insertAllColumn(OggTables oggTables);
+    Integer insertAllColumn(OggTables oggTables);
 
     /**
      * 修改(修改非空字段)
@@ -39,7 +39,7 @@ public interface OggTablesMapper {
      * @param oggTables
      * @return Integer
      */
-    public Integer update(@Param("id") Long id, @Param("oggTables") OggTables oggTables);
+    Integer update(@Param("id") Long id, @Param("oggTables") OggTables oggTables);
 
     /**
      * 修改(修改全部字段)
@@ -47,7 +47,7 @@ public interface OggTablesMapper {
      * @param oggTables
      * @return Integer
      */
-    public Integer updateAllColumn(@Param("id") Long id, @Param("oggTables") OggTables oggTables);
+    Integer updateAllColumn(@Param("id") Long id, @Param("oggTables") OggTables oggTables);
 
     /**
      * 根据主键查找实体
@@ -55,14 +55,14 @@ public interface OggTablesMapper {
      * @param id
      * @return OggTables
      */
-    public OggTables selectById(Long id);
+    OggTables selectById(Long id);
 
     /**
      * list数据
      * 
      * @return List
      */
-    public List<OggTables> selectList(@Param("ipAddress") String ipAddress, @Param("tableValue") String tableValue);
+    List<OggTables> selectList(@Param("ipAddress") String ipAddress, @Param("tableValue") String tableValue);
 
     /**
      * 分頁total
@@ -70,7 +70,7 @@ public interface OggTablesMapper {
      * @param other
      * @return Integer
      */
-    public Integer pageAll(@Param("ipAddress") String ipAddress, @Param("tableValue") String tableValue);
+    Integer pageAll(@Param("ipAddress") String ipAddress, @Param("tableValue") String tableValue);
 
     /**
      * 分頁
@@ -79,7 +79,7 @@ public interface OggTablesMapper {
      * @param other
      * @return List
      */
-    public List<OggTables> page(@Param("page") Page<OggTables> page, @Param("ipAddress") String ipAddress,
+    List<OggTables> page(@Param("page") Page<OggTables> page, @Param("ipAddress") String ipAddress,
             @Param("tableValue") String tableValue);
 
     /**
@@ -88,5 +88,5 @@ public interface OggTablesMapper {
      * @param id
      * @return Integer
      */
-    public Integer delete(Long id);
+    Integer delete(Long id);
 }

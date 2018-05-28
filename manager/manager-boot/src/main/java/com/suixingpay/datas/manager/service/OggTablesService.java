@@ -22,14 +22,14 @@ public interface OggTablesService {
      * @param ip
      * @param tables
      */
-    public void accept(String hearthead, String ip, String tables);
+    void accept(String hearthead, String ip, String tables);
 
     /**
      * 查询数据
      * 
      * @return
      */
-    public List<OggTables> ipTables(String ipAddress, String tableValue);
+    List<OggTables> ipTables(String ipAddress, String tableValue);
 
     /**
      * 新增(插入非空字段)
@@ -37,7 +37,7 @@ public interface OggTablesService {
      * @param oggTables
      * @return Integer
      */
-    public Integer insert(OggTables oggTables);
+    Integer insert(OggTables oggTables);
 
     /**
      * 新增(插入全部字段)
@@ -45,7 +45,7 @@ public interface OggTablesService {
      * @param oggTables
      * @return Integer
      */
-    public Integer insertAllColumn(OggTables oggTables);
+    Integer insertAllColumn(OggTables oggTables);
 
     /**
      * 修改(修改非空字段)
@@ -53,7 +53,7 @@ public interface OggTablesService {
      * @param oggTables
      * @return Integer
      */
-    public Integer update(Long id, OggTables oggTables);
+    Integer update(Long id, OggTables oggTables);
 
     /**
      * 修改(修改全部字段)
@@ -61,7 +61,7 @@ public interface OggTablesService {
      * @param oggTables
      * @return Integer
      */
-    public Integer updateAllColumn(Long id, OggTables oggTables);
+    Integer updateAllColumn(Long id, OggTables oggTables);
 
     /**
      * 根据主键查找实体
@@ -69,7 +69,7 @@ public interface OggTablesService {
      * @param id
      * @return OggTables
      */
-    public OggTables selectById(Long id);
+    OggTables selectById(Long id);
 
     /**
      * 分頁
@@ -78,7 +78,7 @@ public interface OggTablesService {
      * @param other
      * @return Page
      */
-    public Page<OggTables> selectPage(Page<OggTables> page, String ipAddress, String tableValue);
+    Page<OggTables> selectPage(Page<OggTables> page, String ipAddress, String tableValue);
 
     /**
      * 刪除
@@ -86,6 +86,6 @@ public interface OggTablesService {
      * @param id
      * @return Integer
      */
-    public Integer delete(Long id);
+    Integer delete(Long id);
 
 }
