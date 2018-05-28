@@ -103,7 +103,8 @@
             1 = 1
             <if test=" roleCode != 'A0001'">
                 AND code IN (select menu_code from c_role_menu a where role_code = #{roleCode})
-            </if>
+            </if> 
         </where>
+        ORDER BY sort
     </select>
 </mapper>

@@ -55,9 +55,9 @@ public class ResourceUtils {
 
     private void loadJobNameMap() {
         JobTasksService jobTasksService = ApplicationContextUtil.getBean(JobTasksService.class);
-        List<JobTasks> jobTasksList = jobTasksService.selectList();
+        List<JobTasks> jobTasksList = jobTasksService.selectJobNameList();
         for (JobTasks jobTasks : jobTasksList) {
-            JOBNAME_MAP.put(jobTasks.getId().toString(), jobTasks.getJobName());
+            JOBNAME_MAP.put(jobTasks.getId().toString(), jobTasks.getJobName() + "-id(" + jobTasks.getId() + ")");
         }
     }
 
@@ -76,9 +76,31 @@ public class ResourceUtils {
         String name = JOBNAME_MAP.get(jobId);
         if (name == null) {
             JobTasksService jobTasksService = ApplicationContextUtil.getBean(JobTasksService.class);
-            JobTasks jobtask = jobTasksService.selectById(Long.valueOf(jobId));
-            name = jobtask == null ? "(空-id(" + jobId + "))" : jobtask.getJobName();
+            JobTasks jobtask = jobTasksService.selectEntityById(Long.valueOf(jobId));
+            if (jobtask != null && jobtask.getJobName() != null) {
+                String value = jobtask.getJobName() + "-id(" + jobId + ")";
+                if (value.indexOf("空") > -1) {
+                    value = "空-id(" + jobId + ")";
+                }
+                JOBNAME_MAP.put(jobId, value);
+            }
+            name = (jobtask == null || jobtask.getJobName() == null || jobtask.getJobName().indexOf("空") > -1)
+                    ? "空-id(" + jobId + ")"
+                    : jobtask.getJobName() + "-id(" + jobId + ")";
         }
         return name;
+    }
+
+    public static Boolean existJob(String jobId) {
+        Boolean key = false;
+        key = JOBNAME_MAP.containsKey(jobId);
+        if (!key) {
+            JobTasksService jobTasksService = ApplicationContextUtil.getBean(JobTasksService.class);
+            JobTasks jobtask = jobTasksService.selectEntityById(Long.valueOf(jobId));
+            if (jobtask != null && jobtask.getJobName() != null) {
+                key = true;
+            }
+        }
+        return key;
     }
 }

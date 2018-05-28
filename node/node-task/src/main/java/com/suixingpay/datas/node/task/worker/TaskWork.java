@@ -307,14 +307,7 @@ public class TaskWork {
                     try {
                         ClusterProviderProxy.INSTANCE.broadcast(new TaskStoppedByErrorCommand(taskId, dataConsumer.getSwimlaneId(), alarmNotice));
                     } catch (Throwable e) {
-                        e.printStackTrace();
-                        NodeLog.upload(NodeLog.LogType.TASK_LOG, taskId, dataConsumer.getSwimlaneId(), "在集群策略存储引擎标识任务因错误失败出错:" + e.getMessage(),
-                                getReceivers());
-                    }
-                    try {
-                        //上传日志
-                        NodeLog.upload(NodeLog.LogType.TASK_ALARM, taskId, dataConsumer.getSwimlaneId(), alarmNotice, getReceivers());
-                    } catch (Throwable e) {
+                        LOGGER.error("在集群策略存储引擎标识任务因错误失败出错:{}", e.getMessage());
                         e.printStackTrace();
                     }
                     try {
@@ -326,6 +319,13 @@ public class TaskWork {
                     try {
                         //调整节点健康级别
                         NodeContext.INSTANCE.markTaskError(taskId, alarmNotice);
+                    } catch (Throwable e) {
+                        e.printStackTrace();
+                    }
+
+                    try {
+                        //上传日志
+                        NodeLog.upload(NodeLog.LogType.TASK_ALARM, taskId, dataConsumer.getSwimlaneId(), alarmNotice, getReceivers());
                     } catch (Throwable e) {
                         e.printStackTrace();
                     }

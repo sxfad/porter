@@ -79,7 +79,22 @@ public class JobTasksController {
             @RequestParam(value = "beginTime", required = false) String beginTime,
             @RequestParam(value = "endTime", required = false) String endTime,
             @RequestParam(value = "jobState", required = false) TaskStatusType jobState) {
-        Page<JobTasks> page = jobTasksService.page(new Page<>(pageNo, pageSize), jobName, beginTime, endTime, jobState);
+        Page<JobTasks> page = jobTasksService.page(new Page<>(pageNo, pageSize), jobName, beginTime, endTime, jobState,
+                1);
+        return ok(page);
+    }
+
+    @GetMapping("/page")
+    @ApiOperation(value = "查询分页", notes = "查询分页")
+    public ResponseMessage page(@RequestParam(value = "pageNo", required = true) Integer pageNo,
+            @RequestParam(value = "pageSize", required = true) Integer pageSize,
+            @RequestParam(value = "jobName", required = false) String jobName,
+            @RequestParam(value = "beginTime", required = false) String beginTime,
+            @RequestParam(value = "endTime", required = false) String endTime,
+            @RequestParam(value = "jobState", required = false) TaskStatusType jobState,
+            @RequestParam(value = "jobType", required = false) Integer jobType) {
+        Page<JobTasks> page = jobTasksService.page(new Page<>(pageNo, pageSize), jobName, beginTime, endTime, jobState,
+                jobType);
         return ok(page);
     }
 

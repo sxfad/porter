@@ -10,8 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.suixingpay.datas.common.cluster.data.DTaskStat;
+import com.suixingpay.datas.manager.core.entity.JobTasks;
 import com.suixingpay.datas.manager.core.entity.MrJobTasksSchedule;
+import com.suixingpay.datas.manager.core.init.ResourceUtils;
 import com.suixingpay.datas.manager.core.mapper.MrJobTasksScheduleMapper;
+import com.suixingpay.datas.manager.service.JobTasksService;
 import com.suixingpay.datas.manager.service.MrJobTasksScheduleService;
 import com.suixingpay.datas.manager.web.page.Page;
 
@@ -30,6 +33,9 @@ public class MrJobTasksScheduleServiceImpl implements MrJobTasksScheduleService 
 
     @Autowired
     private MrJobTasksScheduleMapper mrJobTasksScheduleMapper;
+
+    @Autowired
+    private JobTasksService jobTasksService;
 
     @Override
     public Integer insert(MrJobTasksSchedule mrJobTasksSchedule) {
@@ -106,5 +112,11 @@ public class MrJobTasksScheduleServiceImpl implements MrJobTasksScheduleService 
             mrJobTasksSchedule.setId(old.getId());
             mrJobTasksScheduleMapper.updateSelective(old.getId(), mrJobTasksSchedule);
         }
+
+        Boolean key = ResourceUtils.existJob(jobId);
+        if (!key) {
+            jobTasksService.insertCapture(new JobTasks(jobId));
+        }
+
     }
 }

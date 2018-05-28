@@ -21,6 +21,14 @@ public class JobTasks implements java.io.Serializable {
 
     private static final long serialVersionUID = 1L;
 
+    public JobTasks() {
+
+    }
+
+    public JobTasks(String jobId) {
+        this.id = Long.valueOf(jobId);
+    }
+
     /**
      * 主键.
      */
@@ -41,6 +49,11 @@ public class JobTasks implements java.io.Serializable {
      * 任务状态.
      */
     private TaskStatusType jobState;
+
+    /**
+     * 任务类型
+     */
+    private Integer jobType;
 
     /**
      * 来源数据-消费插件.
@@ -135,6 +148,11 @@ public class JobTasks implements java.io.Serializable {
      * 状态.
      */
     private Integer state;
+
+    /**
+     * 任务类型
+     */
+    private Integer type;
 
     /**
      * 是否作废.
@@ -633,5 +651,21 @@ public class JobTasks implements java.io.Serializable {
 
     public void setTargetDataSourceDba(DataSource targetDataSourceDba) {
         this.targetDataSourceDba = targetDataSourceDba;
+    }
+
+    public Integer getJobType() {
+        return jobType;
+    }
+
+    public void setJobType(Integer jobType) {
+        this.jobType = jobType;
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
     }
 }

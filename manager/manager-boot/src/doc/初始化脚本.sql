@@ -13,7 +13,7 @@ CREATE TABLE `c_user` (
   `state` INT(5) NOT NULL DEFAULT '1' COMMENT '状态 1正常，0禁止登陆，-1删除',
   `remark` VARCHAR(200) DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`)
-) ENGINE=INNODB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COMMENT='登陆用户表';
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='登陆用户表';
 -- 菜单目录表
 DROP TABLE IF EXISTS `c_menu`;
 CREATE TABLE `c_menu` (
@@ -44,7 +44,7 @@ CREATE TABLE `c_role` (
   `state` INT(5) DEFAULT '1' COMMENT '状态',
   `remark` VARCHAR(200) DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`)
-) ENGINE=INNODB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COMMENT='角色表';
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='角色表';
 -- 角色菜单关联表
 DROP TABLE IF EXISTS `c_role_menu`;
 CREATE TABLE `c_role_menu` (
@@ -66,7 +66,7 @@ CREATE TABLE `b_data_source` (
   `iscancel` INT(5) NOT NULL DEFAULT '0' COMMENT '是否作废',
   `remark` VARCHAR(200) DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`)
-) ENGINE=INNODB AUTO_INCREMENT=65 DEFAULT CHARSET=utf8 COMMENT='数据源信息表';
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='数据源信息表';
 -- 数据源字段信息表
 DROP TABLE IF EXISTS `b_data_source_plugin`;
 CREATE TABLE `b_data_source_plugin` (
@@ -76,7 +76,7 @@ CREATE TABLE `b_data_source_plugin` (
   `field_code` VARCHAR(100) DEFAULT NULL COMMENT '字段code',
   `field_value` VARCHAR(100) DEFAULT NULL COMMENT '页面传入的实际值',
   PRIMARY KEY (`id`)
-) ENGINE=INNODB AUTO_INCREMENT=115 DEFAULT CHARSET=utf8 COMMENT='数据源字段信息表';
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='数据源字段信息表';
 -- 数据表组信息表
 DROP TABLE IF EXISTS `b_data_table`;
 CREATE TABLE `b_data_table` (
@@ -91,7 +91,7 @@ CREATE TABLE `b_data_table` (
   `iscancel` INT(2) NOT NULL DEFAULT '0' COMMENT '是否作废',
   `remark` VARCHAR(200) DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`)
-) ENGINE=INNODB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8 COMMENT='数据表组信息表';
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='数据表组信息表';
 -- 节点信息表
 DROP TABLE IF EXISTS `b_nodes`;
 CREATE TABLE `b_nodes` (
@@ -110,7 +110,7 @@ CREATE TABLE `b_nodes` (
   `remark` VARCHAR(200) DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`),
   UNIQUE KEY `node_id` (`node_id`)
-) ENGINE=INNODB AUTO_INCREMENT=65 DEFAULT CHARSET=utf8 COMMENT='节点信息表';
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='节点信息表';
 
 -- 告警字段字典
 DROP TABLE IF EXISTS `d_alarm_plugin`;
@@ -126,7 +126,7 @@ CREATE TABLE `d_alarm_plugin` (
   `iscancel` INT(2) DEFAULT '0' COMMENT '是否作废',
   `remark` VARCHAR(100) DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`)
-) ENGINE=INNODB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COMMENT='告警字段字典';
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='告警字段字典';
 -- 数据源数据字典
 DROP TABLE IF EXISTS `d_data_source_plugin`;
 CREATE TABLE `d_data_source_plugin` (
@@ -143,7 +143,7 @@ CREATE TABLE `d_data_source_plugin` (
   `iscancel` INT(2) DEFAULT '0' COMMENT '是否作废',
   `remark` VARCHAR(100) DEFAULT NULL COMMENT '备注字段',
   PRIMARY KEY (`id`)
-) ENGINE=INNODB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8  COMMENT='数据源数据字典';
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8  COMMENT='数据源数据字典';
 -- 数据字典表
 DROP TABLE IF EXISTS `d_dictionary`;
 CREATE TABLE `d_dictionary` (
@@ -156,7 +156,7 @@ CREATE TABLE `d_dictionary` (
   `state` INT(2) NOT NULL DEFAULT '1' COMMENT '数据状态1正常-1作废0警告',
   `remark` VARCHAR(100) DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`)
-) ENGINE=INNODB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COMMENT='数据字典表';
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='数据字典表';
 
 -- 同步任务表
 DROP TABLE IF EXISTS `job_tasks`;
@@ -183,7 +183,7 @@ CREATE TABLE `job_tasks` (
   `iscancel` INT(2) NOT NULL DEFAULT '0' COMMENT '是否作废',
   `remark` VARCHAR(100) DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`)
-) ENGINE=INNODB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8 COMMENT='同步任务表';
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='同步任务表';
 -- 任务节点分发表
 DROP TABLE IF EXISTS `job_task_nodes`;
 CREATE TABLE `job_task_nodes` (
@@ -203,7 +203,7 @@ CREATE TABLE `job_tasks_table` (
   `source_table_name` VARCHAR(200) NOT NULL COMMENT '来源数据-数据表名-记录全名',
   `target_table_name` VARCHAR(200) NOT NULL COMMENT '目标数据-数据表名-记录全名',
   PRIMARY KEY (`id`)
-) ENGINE=INNODB AUTO_INCREMENT=41 DEFAULT CHARSET=utf8 COMMENT='任务数据表对照关系表';
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='任务数据表对照关系表';
 -- 任务数据字段对照关系表
 DROP TABLE IF EXISTS `job_tasks_field`;
 CREATE TABLE `job_tasks_field` (
@@ -216,7 +216,7 @@ CREATE TABLE `job_tasks_field` (
   `target_table_field` VARCHAR(200) NOT NULL COMMENT '目标字段-数据表字段名称',
   `sort_order` INT(10) DEFAULT '-1' COMMENT '顺序，暂不启用',
   PRIMARY KEY (`id`)
-) ENGINE=INNODB AUTO_INCREMENT=72 DEFAULT CHARSET=utf8 COMMENT='任务数据字段对照关系表';
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='任务数据字段对照关系表';
 -- 任务与人员对照关系表
 DROP TABLE IF EXISTS `job_tasks_user`;
 CREATE TABLE `job_tasks_user` (
@@ -224,7 +224,7 @@ CREATE TABLE `job_tasks_user` (
   `job_task_id` BIGINT(20) NOT NULL COMMENT '任务id',
   `user_id` BIGINT(20) NOT NULL COMMENT '用户id',
   PRIMARY KEY (`id`)
-) ENGINE=INNODB AUTO_INCREMENT=96 DEFAULT CHARSET=utf8 COMMENT='任务与人员对照关系表';
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='任务与人员对照关系表';
 
 -- 任务泳道进度表
 DROP TABLE IF EXISTS `mr_job_tasks_schedule`;
@@ -258,7 +258,7 @@ CREATE TABLE `mr_job_tasks_schedule` (
   `partition_day` DATE DEFAULT NULL COMMENT '预留时间分区字段',
   `remark` VARCHAR(100) DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`)
-) ENGINE=INNODB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COMMENT='任务泳道进度表';
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='任务泳道进度表';
 -- 任务泳道表名实时监控表
 DROP TABLE IF EXISTS `mr_job_tasks_monitor`;
 CREATE TABLE `mr_job_tasks_monitor` (
@@ -282,7 +282,7 @@ CREATE TABLE `mr_job_tasks_monitor` (
   `alarm_number` BIGINT(20) DEFAULT NULL COMMENT '告警次数',
   `partition_day` DATE DEFAULT NULL COMMENT '预留时间分区字段',
   PRIMARY KEY (`id`)
-) ENGINE=INNODB AUTO_INCREMENT=1609 DEFAULT CHARSET=utf8 COMMENT='任务泳道表名实时监控表';
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='任务泳道表名实时监控表';
 -- 日志信息表
 DROP TABLE IF EXISTS `mr_log_monitor`;
 CREATE TABLE `mr_log_monitor` (
@@ -303,7 +303,7 @@ CREATE TABLE `mr_log_monitor` (
   `partition_day` DATE DEFAULT NULL COMMENT '预留分区字段',
   `remark` VARCHAR(200) DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`)
-) ENGINE=INNODB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8 COMMENT='日志信息表';
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='日志信息表';
 -- 节点任务监控表
 DROP TABLE IF EXISTS `mr_nodes_schedule`;
 CREATE TABLE `mr_nodes_schedule` (
@@ -326,7 +326,7 @@ CREATE TABLE `mr_nodes_schedule` (
   `partition_day` DATE DEFAULT NULL COMMENT '预留时间分区字段',
   `remark` VARCHAR(100) DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`)
-) ENGINE=INNODB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8 COMMENT='节点任务监控表';
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='节点任务监控表';
 -- 节点任务实时监控表
 DROP TABLE IF EXISTS `mr_nodes_monitor`;
 CREATE TABLE `mr_nodes_monitor` (
@@ -341,7 +341,7 @@ CREATE TABLE `mr_nodes_monitor` (
   `monitor_alarm` INT(20) DEFAULT NULL COMMENT '告警次数',
   `partition_day` DATE DEFAULT NULL COMMENT '预留时间分区字段',
   PRIMARY KEY (`id`)
-) ENGINE=INNODB AUTO_INCREMENT=1609 DEFAULT CHARSET=utf8 COMMENT='节点任务实时监控表';
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='节点任务实时监控表';
 
 -- 告警配置表
 DROP TABLE IF EXISTS `s_alarm`;
@@ -356,7 +356,7 @@ CREATE TABLE `s_alarm` (
   `iscancel` INT(2) DEFAULT '0' COMMENT '是否作废',
   `remark` VARCHAR(100) DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`)
-) ENGINE=INNODB AUTO_INCREMENT=90 DEFAULT CHARSET=utf8 COMMENT='告警配置表';
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='告警配置表';
 -- 告警配置策略内容表
 DROP TABLE IF EXISTS `s_alarm_plugin`;
 CREATE TABLE `s_alarm_plugin` (
@@ -367,7 +367,7 @@ CREATE TABLE `s_alarm_plugin` (
   `plugin_name` VARCHAR(100) DEFAULT NULL COMMENT '字段名称',
   `plugin_value` VARCHAR(200) DEFAULT NULL COMMENT '字段内容',
   PRIMARY KEY (`id`)
-) ENGINE=INNODB AUTO_INCREMENT=276 DEFAULT CHARSET=utf8 COMMENT='告警配置策略内容表';
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='告警配置策略内容表';
 -- 告警用户关联表
 DROP TABLE IF EXISTS `s_alarm_user`;
 CREATE TABLE `s_alarm_user` (
@@ -375,7 +375,7 @@ CREATE TABLE `s_alarm_user` (
   `alarm_id` BIGINT(20) NOT NULL COMMENT '告警信息表id',
   `user_id` BIGINT(20) NOT NULL COMMENT '用户id',
   PRIMARY KEY (`id`)
-) ENGINE=INNODB AUTO_INCREMENT=111 DEFAULT CHARSET=utf8 COMMENT='告警用户关联表';
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='告警用户关联表';
 -- 日志级别表
 DROP TABLE IF EXISTS `s_log_grade`;
 CREATE TABLE `s_log_grade` (
@@ -389,7 +389,22 @@ CREATE TABLE `s_log_grade` (
   `iscancel` INT(2) DEFAULT '0' COMMENT '是否作废',
   `remark` VARCHAR(100) DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`)
-) ENGINE=INNODB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8 COMMENT='日志级别表';
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='日志级别表';
+-- ogg表数据信息
+DROP TABLE IF EXISTS `ogg_tables`;
+CREATE TABLE `ogg_tables` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `ip_address` varchar(100) DEFAULT NULL COMMENT 'ip地址',
+  `ip_name` varchar(100) DEFAULT NULL COMMENT 'ip名称',
+  `table_name` varchar(200) DEFAULT NULL COMMENT '表名汉字',
+  `table_value` varchar(200) DEFAULT NULL COMMENT '表名字段',
+  `table_marker` varchar(200) DEFAULT NULL COMMENT '表名标识',
+  `heart_beat_time` varchar(100) DEFAULT '0000-00-00 00:00:00' COMMENT '心跳时间',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `iscancel` int(2) DEFAULT '0' COMMENT '是否作废',
+  `remark` varchar(500) DEFAULT NULL COMMENT '备注',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='ogg表数据信息'
 
 -- 初始用户
 INSERT  INTO `c_user`(`id`,`loginname`,`loginpw`,`nickname`,`email`,`mobile`,`depart_ment`,`role_code`,`state`,`remark`) VALUES 
@@ -414,8 +429,11 @@ INSERT INTO `c_menu` VALUES (10, 'M001', '-1', '监控管理', '#', 'line-chart'
 INSERT INTO `c_menu` VALUES (11, 'M001001', 'M001', '运行日志', '/logMonitor', 'calendar', 2, 1, 1, 0, 1, 1, NULL);
 INSERT INTO `c_menu` VALUES (12, 'M001002', 'M001', '任务监控', '/taskMonitor', 'fa-dashboard', 2, 2, 1, 0, 1, 1, NULL);
 INSERT INTO `c_menu` VALUES (13, 'M001003', 'M001', '节点监控', '/nodeMonitor', 'dot-chart', 2, 3, 1, 0, 1, 1, NULL);
-INSERT INTO `c_menu` VALUES (14, 'C001', '-1', '系统设置', '#', 'setting', 1, 6, 0, 0, 1, 1, NULL);
+INSERT INTO `c_menu` VALUES (14, 'C001', '-1', '系统设置', '#', 'setting', 1, 10, 0, 0, 1, 1, NULL);
 INSERT INTO `c_menu` VALUES (15, 'C001001', 'C001', '用户管理', '/user', 'fa-user-md', 2, 1, 1, 0, 1, 1, NULL);
+    -- ogg管理模块新增
+INSERT INTO `c_menu` VALUES (18, 'O001', '-1', 'OGG管理', '#', 'setting', 1, 6, 0, 0, 1, 1, NULL);
+INSERT INTO `c_menu` VALUES (19, 'O001001', 'O001', '表名查询', '/user', 'fa-user-md', 2, 1, 1, 0, 1, 1, NULL);
 -- 初始化菜单权限
 INSERT INTO `c_role_menu` VALUES (1, 'A0002', 'F001');
 INSERT INTO `c_role_menu` VALUES (2, 'A0002', 'J001');
@@ -439,6 +457,13 @@ INSERT INTO `c_role_menu` VALUES (19, 'C0001', 'M001');
 INSERT INTO `c_role_menu` VALUES (20, 'C0001', 'M001001');
 INSERT INTO `c_role_menu` VALUES (21, 'C0001', 'M001002');
 INSERT INTO `c_role_menu` VALUES (22, 'C0001', 'M001003');
+    -- ogg管理模块新增
+INSERT INTO `c_role_menu` VALUES (23, 'A0002', 'O001');
+INSERT INTO `c_role_menu` VALUES (24, 'A0002', 'O001001');
+INSERT INTO `c_role_menu` VALUES (25, 'B0001', 'O001');
+INSERT INTO `c_role_menu` VALUES (26, 'B0001', 'O001001');
+INSERT INTO `c_role_menu` VALUES (27, 'C0001', 'O001');
+INSERT INTO `c_role_menu` VALUES (28, 'C0001', 'O001001');
 
 -- 初始化告警数据字典
 INSERT  INTO `d_alarm_plugin`(`id`,`alert_type`,`field_name`,`field_code`,`field_order`,`field_type`,`field_type_key`,`state`,`iscancel`,`remark`) VALUES

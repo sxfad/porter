@@ -20,7 +20,6 @@ import com.suixingpay.datas.common.exception.ClientConnectionException;
 import com.suixingpay.datas.common.exception.ConfigParseException;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -55,13 +54,8 @@ public enum AlertProviderFactory {
     }
 
     public void notice(String title, String msg, List<AlertReceiver> receiverList) {
-        try {
-            if (initializedLock.readLock().tryLock(5, TimeUnit.SECONDS)) {
-                if (null != alert) alert.notice(title, msg, receiverList);
-                initializedLock.readLock().unlock();
-            }
-        } catch (InterruptedException e) {
-
-        }
+        initializedLock.readLock().lock();
+        if (null != alert) alert.notice(title, msg, receiverList);
+        initializedLock.readLock().unlock();
     }
 }
