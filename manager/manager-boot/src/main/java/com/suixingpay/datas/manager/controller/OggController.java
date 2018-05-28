@@ -38,11 +38,11 @@ public class OggController {
 
     @PostMapping("/tables")
     @ApiOperation(value = "接收数据接口", notes = "接收数据接口")
-    public ResponseMessage accept(@RequestParam(value = "hearthead", required = true) String hearthead,
+    public ResponseMessage accept(@RequestParam(value = "heartbeat", required = true) String heartbeat,
             @RequestParam(value = "ip", required = true) String ip,
             @RequestParam(value = "tables", required = true) String tables) {
-        log.info("hearthead:[{}]" + " ip:[{}]" + " tables:[{}]", hearthead, ip, tables);
-        oggTablesService.accept(hearthead, ip, tables);
+        log.info("hearthead:[{}]" + " ip:[{}]" + " tables:[{}]", heartbeat, ip, tables);
+        oggTablesService.accept(heartbeat, ip, tables);
         return ResponseMessage.ok();
     }
 
