@@ -27,7 +27,7 @@ public class WebMvcConfigAdapter extends WebMvcConfigurerAdapter {
 
     public static final String LOGIN_URL_PATTERNS = "/manager/login,/manager/register";
 
-    public static final String ALARM_URL_PATTERNS = "/alarm/task/check";
+    public static final String ALARM_URL_PATTERNS = "/alarm/task/check,/manager/ogg/tables";
     @Autowired
     private XTokenInterceptor xtokenInterceptor;
 
