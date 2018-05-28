@@ -41,7 +41,7 @@ public class OggController {
     public ResponseMessage accept(@RequestParam(value = "heartbeat", required = true) String heartbeat,
             @RequestParam(value = "ip", required = true) String ip,
             @RequestParam(value = "tables", required = true) String tables) {
-        log.info("hearthead:[{}]" + " ip:[{}]" + " tables:[{}]", heartbeat, ip, tables);
+        log.info("ogg数据接收信息-heartbeat:[{}]" + " ip:[{}]" + " tables:[{}]", heartbeat, ip, tables);
         oggTablesService.accept(heartbeat, ip, tables);
         return ResponseMessage.ok();
     }
