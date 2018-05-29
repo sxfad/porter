@@ -39,10 +39,10 @@ public class OggController {
     @PostMapping("/tables")
     @ApiOperation(value = "接收数据接口", notes = "接收数据接口")
     public ResponseMessage accept(@RequestParam(value = "heartbeat", required = true) String heartbeat,
-            @RequestParam(value = "ip", required = true) String ip,
+            @RequestParam(value = "ipaddress", required = true) String ipaddress,
             @RequestParam(value = "tables", required = true) String tables) {
-        log.info("ogg数据接收信息-heartbeat:[{}]" + " ip:[{}]" + " tables:[{}]", heartbeat, ip, tables);
-        oggTablesService.accept(heartbeat, ip, tables);
+        log.info("ogg数据接收信息-heartbeat:[{}]" + " ipaddress:[{}]" + " tables:[{}]", heartbeat, ipaddress, tables);
+        oggTablesService.accept(heartbeat, ipaddress, tables);
         return ResponseMessage.ok();
     }
 

@@ -65,7 +65,9 @@ public class JobTasksFieldServiceImpl implements JobTasksFieldService {
                 jobTasksField.setJobTaskId(jobTasks.getId());
                 jobTasksField.setJobTasksTableId(jobTasksTable.getId());
             }
-            jobTasksFieldMapper.insertList(jobTasksTable.getFields());
+            if(!jobTasksTable.isDirectMapTable()) {
+                jobTasksFieldMapper.insertList(jobTasksTable.getFields());
+            }
         }
     }
 
