@@ -9,6 +9,7 @@
 
 package com.suixingpay.datas.common.statistics;
 
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.suixingpay.datas.common.alert.AlertProviderFactory;
@@ -79,7 +80,9 @@ public class NodeLog extends StatisticData {
         try {
             NodeLog log = new NodeLog(type, taskId, swimlaneId, error);
             ClusterProviderProxy.INSTANCE.broadcast(new StatisticUploadCommand(log));
+            LOGGER.info("判断是否发送邮件通知....." + JSONObject.toJSONString(log));
             if (type == LogType.TASK_ALARM) {
+                LOGGER.info("需要发送邮件通知.....");
                 AlertProviderFactory.INSTANCE.notice(type.title, log.toPrintln(), receivers);
             }
         } catch (Throwable e) {

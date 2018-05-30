@@ -83,9 +83,11 @@ public class EmailClient  extends AbstractClient<EmailConfig> implements AlertCl
 
     @Override
     public void send(String notice, String title, List<AlertReceiver> receivers) {
+        LOGGER.info("开始发送邮件通知.....");
         String checkContent = new StringBuffer(StringUtils.trimToEmpty(notice)).append(StringUtils.trimToEmpty(title))
                 .toString();
         if (!frequencyStat.canSend(checkContent)) return;
+        LOGGER.info("判断可以发送邮件通知.....");
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(getConfig().getUsername());
         message.setSubject(title);
@@ -98,11 +100,13 @@ public class EmailClient  extends AbstractClient<EmailConfig> implements AlertCl
         if (!globalReceiver.isEmpty()) {
             globalReceiver.stream().filter(r -> !StringUtils.isBlank(r.getEmail())).forEach(r -> emails.add(r.getEmail()));
         }
-
+        LOGGER.info("判断待发送邮件通知名单.....");
         if (!emails.isEmpty()) {
             message.setTo(emails.toArray(new String[0]));
+            LOGGER.info("正式发送邮件.....");
             sender.send(message);
         }
         frequencyStat.updateFrequency(checkContent);
+        LOGGER.info("结束发送邮件通知.....");
     }
 }
