@@ -40,7 +40,7 @@ public class SelectJob extends AbstractStageJob {
     private final TaskWork work;
     private final DataCarrier<List<MessageEvent>> carrier;
     public SelectJob(TaskWork work) {
-        super(work.getBasicThreadName());
+        super(work.getBasicThreadName(), 100L);
         this.work = work;
         consumer = work.getDataConsumer();
         carrier = NodeContext.INSTANCE.getBean(DataCarrierFactory.class).newDataCarrier(BUFFER_SIZE, PULL_BATCH_SIZE);

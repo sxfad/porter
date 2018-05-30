@@ -159,11 +159,11 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
                         if (msg.contains("CanalParseException: java.io.IOException")
                                 || msg.contains("java.io.IOException: Received error packet: errno")) {
                             if (hasBroken.compareAndSet(false, true)) {
-                                brokenError = new TaskStopTriggerException("【Canal链接建立失败】【" + config.getProperties() + "】" + msg);
+                                brokenError = new TaskStopTriggerException("【Canal链接建立失败】【" + getClientInfo() + "】" + msg);
                             }
                         }
                         try {
-                            NodeLog.upload(NodeLog.LogType.TASK_LOG, config.getProperties() + ", error:" + msg);
+                            NodeLog.upload(NodeLog.LogType.TASK_LOG, getClientInfo() + ", error:" + msg);
                         } catch (Throwable e) {
                             e.printStackTrace();
                         }

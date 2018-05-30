@@ -36,7 +36,7 @@ public class LoadJob extends AbstractStageJob {
     private final DataLoader dataLoder;
     private final TaskWork work;
     public LoadJob(TaskWork work) {
-        super(work.getBasicThreadName());
+        super(work.getBasicThreadName(), 100L);
         this.dataLoder = work.getDataLoader();
         this.work = work;
     }
