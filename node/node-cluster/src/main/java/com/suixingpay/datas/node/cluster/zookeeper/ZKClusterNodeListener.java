@@ -43,7 +43,6 @@ import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Pattern;
 
 /**
@@ -61,7 +60,6 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener  implements 
     private static final Pattern NODE_LOCK_PATTERN = Pattern.compile(ZK_PATH + "/.*/lock");
 
     private final List<TaskEventListener> TASK_LISTENER = new ArrayList<>();
-    private final ReentrantLock lock =  new ReentrantLock();
     private final ScheduledExecutorService heartbeatWorker =
             Executors.newSingleThreadScheduledExecutor(new DefaultNamedThreadFactory("node-heartbeat"));
 
@@ -175,32 +173,31 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener  implements 
             heartbeatWorker.scheduleAtFixedRate(new Runnable() {
                 @Override
                 public void run() {
-                    lock.lock();
                     try {
-                        Pair<String, Stat> dataPair = client.getData(statPath);
-                        if (null != dataPair && null != dataPair.getRight()) {
-                            DNode nodeData = DNode.fromString(dataPair.getLeft(), DNode.class);
-                            //设置心跳时间
-                            nodeData.setHeartbeat(new Date());
-                            //设置节点工作状态
-                            nodeData.setStatus(NodeContext.INSTANCE.getNodeStatus());
-                            //设置节点健康状态
-                            Pair<NodeHealthLevel, String> level = NodeContext.INSTANCE.getHealthLevel();
-                            nodeData.setHealthLevel(level.getLeft());
-                            nodeData.setHealthLevelDesc(level.getRight());
-                            //设置机器信息
-                            nodeData.setAddress(MachineUtils.IP_ADDRESS);
-                            nodeData.setProcessId(MachineUtils.CURRENT_JVM_PID + "");
-                            nodeData.setHostName(MachineUtils.HOST_NAME);
-                            //通知数据到zookeeper
-                            client.setData(statPath, nodeData.toString(), dataPair.getRight().getVersion());
+                        synchronized (statPath.intern()) {
+                            Pair<String, Stat> dataPair = client.getData(statPath);
+                            if (null != dataPair && null != dataPair.getRight()) {
+                                DNode nodeData = DNode.fromString(dataPair.getLeft(), DNode.class);
+                                //设置心跳时间
+                                nodeData.setHeartbeat(new Date());
+                                //设置节点工作状态
+                                nodeData.setStatus(NodeContext.INSTANCE.getNodeStatus());
+                                //设置节点健康状态
+                                Pair<NodeHealthLevel, String> level = NodeContext.INSTANCE.getHealthLevel();
+                                nodeData.setHealthLevel(level.getLeft());
+                                nodeData.setHealthLevelDesc(level.getRight());
+                                //设置机器信息
+                                nodeData.setAddress(MachineUtils.IP_ADDRESS);
+                                nodeData.setProcessId(MachineUtils.CURRENT_JVM_PID + "");
+                                nodeData.setHostName(MachineUtils.HOST_NAME);
+                                //通知数据到zookeeper
+                                client.setData(statPath, nodeData.toString(), dataPair.getRight().getVersion());
+                            }
                         }
                     } catch (KeeperException e) {
                         e.printStackTrace();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
-                    } finally {
-                        lock.unlock();
                     }
                 }
             }, 10, 30, TimeUnit.SECONDS);
@@ -219,29 +216,29 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener  implements 
     @Override
     public void taskAssigned(TaskAssignedCommand command) throws Exception {
         String path = listenPath() + "/" + NodeContext.INSTANCE.getNodeId() + "/stat";
-        lock.lock();
-        DNode nodeData = getDNode(path);
-        TreeSet<String> resources = nodeData.getTasks().getOrDefault(command.getTaskId(), new TreeSet<>());
-        resources.add(command.getSwimlaneId());
-        nodeData.getTasks().put(command.getTaskId(), resources);
-        Stat nowStat = client.exists(path, true);
-        client.setData(path, nodeData.toString(), nowStat.getVersion());
-        lock.unlock();
+        synchronized (path.intern()) {
+            DNode nodeData = getDNode(path);
+            TreeSet<String> resources = nodeData.getTasks().getOrDefault(command.getTaskId(), new TreeSet<>());
+            resources.add(command.getSwimlaneId());
+            nodeData.getTasks().put(command.getTaskId(), resources);
+            Stat nowStat = client.exists(path, true);
+            client.setData(path, nodeData.toString(), nowStat.getVersion());
+        }
     }
 
     @Override
     public void stopTask(TaskStopCommand command) throws Exception {
         String path = listenPath() + "/" + NodeContext.INSTANCE.getNodeId() + "/stat";
-        lock.lock();
-        DNode nodeData = getDNode(path);
-        if (null != nodeData.getTasks() && !nodeData.getTasks().isEmpty()) {
-            TreeSet<String> swimlaneIdList = nodeData.getTasks().getOrDefault(command.getTaskId(), new TreeSet<>());
-            if (swimlaneIdList.contains(command.getSwimlaneId())) swimlaneIdList.remove(command.getSwimlaneId());
-            if (swimlaneIdList.isEmpty()) nodeData.getTasks().remove(command.getTaskId());
+        synchronized (path.intern()) {
+            DNode nodeData = getDNode(path);
+            if (null != nodeData.getTasks() && !nodeData.getTasks().isEmpty()) {
+                TreeSet<String> swimlaneIdList = nodeData.getTasks().getOrDefault(command.getTaskId(), new TreeSet<>());
+                if (swimlaneIdList.contains(command.getSwimlaneId())) swimlaneIdList.remove(command.getSwimlaneId());
+                if (swimlaneIdList.isEmpty()) nodeData.getTasks().remove(command.getTaskId());
+            }
+            Stat nowStat = client.exists(path, true);
+            client.setData(path, nodeData.toString(), nowStat.getVersion());
         }
-        Stat nowStat = client.exists(path, true);
-        client.setData(path, nodeData.toString(), nowStat.getVersion());
-        lock.unlock();
     }
 
     private void triggerTaskEvent(TaskConfig event) {

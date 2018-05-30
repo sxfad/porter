@@ -102,6 +102,7 @@ public class ZookeeperClusterMonitor extends AbstractClusterMonitor implements W
             }
         } catch (Exception e) {
             //do something
+            e.printStackTrace();
         }
     }
 
