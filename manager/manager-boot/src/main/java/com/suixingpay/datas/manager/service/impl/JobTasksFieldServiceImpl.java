@@ -26,7 +26,6 @@ public class JobTasksFieldServiceImpl implements JobTasksFieldService {
     @Autowired
     private JobTasksFieldMapper jobTasksFieldMapper;
 
-
     @Override
     public Integer insert(JobTasksField jobTasksField) {
         return jobTasksFieldMapper.insert(jobTasksField);
@@ -61,11 +60,16 @@ public class JobTasksFieldServiceImpl implements JobTasksFieldService {
     public void insertList(JobTasks jobTasks) {
 
         for (JobTasksTable jobTasksTable : jobTasks.getTables()) {
+            if (jobTasksTable.getFields() == null || jobTasksTable.getFields().size() == 0) {
+                continue;
+            }
             for (JobTasksField jobTasksField : jobTasksTable.getFields()) {
                 jobTasksField.setJobTaskId(jobTasks.getId());
                 jobTasksField.setJobTasksTableId(jobTasksTable.getId());
             }
-            jobTasksFieldMapper.insertList(jobTasksTable.getFields());
+            if (!jobTasksTable.isDirectMapTable()) {
+                jobTasksFieldMapper.insertList(jobTasksTable.getFields());
+            }
         }
     }
 

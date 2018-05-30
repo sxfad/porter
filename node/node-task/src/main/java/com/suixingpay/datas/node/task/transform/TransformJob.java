@@ -104,6 +104,7 @@ public class TransformJob extends AbstractStageJob {
         if (null != sequence) {
             LOGGER.debug("got sequence:{}, Future: {}", sequence, carrier.containsKey(sequence));
             long waitTime = 0;
+            long peerWaitTime = 50;
             //等待该sequence对应的ETLBucket transform完成。捕获InterruptedException异常,是为了保证该sequence能够被处理。
             while (null != sequence && !carrier.containsKey(sequence)) {
                 LOGGER.debug("waiting sequence Future:{}", sequence);
@@ -115,8 +116,8 @@ public class TransformJob extends AbstractStageJob {
                     break;
                 }
                 try {
-                    waitTime += 50;
-                    Thread.sleep(50);
+                    waitTime += peerWaitTime;
+                    Thread.sleep(peerWaitTime);
                 } catch (InterruptedException e) {
                 }
             }

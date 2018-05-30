@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,6 +74,9 @@ public class ResourceUtils {
     }
 
     public static String obtainJobName(String jobId) {
+        if(StringUtils.isEmpty(jobId)) {
+            return "任务id为空";
+        }
         String name = JOBNAME_MAP.get(jobId);
         if (name == null) {
             JobTasksService jobTasksService = ApplicationContextUtil.getBean(JobTasksService.class);

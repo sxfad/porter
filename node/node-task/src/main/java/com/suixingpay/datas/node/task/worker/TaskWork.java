@@ -324,8 +324,10 @@ public class TaskWork {
                     }
 
                     try {
+                        LOGGER.info("开始发送日志通知.....");
                         //上传日志
                         NodeLog.upload(NodeLog.LogType.TASK_ALARM, taskId, dataConsumer.getSwimlaneId(), alarmNotice, getReceivers());
+                        LOGGER.info("结束发送日志通知.....");
                     } catch (Throwable e) {
                         e.printStackTrace();
                     }
