@@ -57,9 +57,12 @@ public class ZookeeperClusterMonitor extends AbstractClusterMonitor implements W
             for (ClusterListener listener : listeners.values()) {
                 try {
                     ZookeeperClusterListener zkListener = (ZookeeperClusterListener) listener;
+                    LOGGER.info("init:{},watch:{}", zkListener.listenPath(), zkListener.watchListenPath());
                     client.createWhenNotExists(zkListener.listenPath(), false, false, "{}");
+                    LOGGER.info("attempted create node:{}", zkListener.listenPath());
                     //只有该ClusterListener监听path变化时才会触发triggerTreeEvent
                     if (zkListener.watchListenPath()) {
+                        LOGGER.info("trigger children watch event:{}", zkListener.listenPath());
                         //watch children changed
                         triggerTreeEvent(zkListener.listenPath());
                     }
@@ -108,12 +111,7 @@ public class ZookeeperClusterMonitor extends AbstractClusterMonitor implements W
 
     private void triggerTreeEvent(String path) {
         //构造子节点集合
-        List<String> localChildren = nodeChildren.computeIfAbsent(path, new Function<String, List<String>>() {
-            @Override
-            public List<String> apply(String s) {
-                return new ArrayList<>();
-            }
-        });
+        List<String> localChildren = nodeChildren.computeIfAbsent(path, s -> new ArrayList<>());
 
         //create a watch event:NodeChildrenChanged
         List<String> remoteChildren = client.getChildren(path);
