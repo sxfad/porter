@@ -12,6 +12,8 @@ package com.suixingpay.datas.node.core.loader;
 import com.suixingpay.datas.common.client.LoadClient;
 import com.suixingpay.datas.common.client.MetaQueryClient;
 import com.suixingpay.datas.common.db.meta.TableSchema;
+import com.suixingpay.datas.node.core.event.etl.ETLRow;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +27,7 @@ import java.util.Date;
  */
 public abstract class AbstractDataLoader implements DataLoader {
     protected  final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+    protected static final String TIME_TAKEN_FORMAT = "yyyy-MM-dd HH:mm:ss.S";
     private  volatile LoadClient loadClient;
     private  volatile MetaQueryClient metaQueryClient;
     //更新转插入策略开关
@@ -89,5 +92,17 @@ public abstract class AbstractDataLoader implements DataLoader {
         }
         clientInfo.append("载入源->").append(loadClient.getClientInfo());
         return clientInfo.toString();
+    }
+
+    protected void printTimeTaken(ETLRow row) {
+        try {
+            LOGGER.info("消息处理耗时->trail操作:{},存储kafka:{},kafka消费:{},数据库载入:{}",
+                    DateFormatUtils.format(row.getOpTime(), TIME_TAKEN_FORMAT),
+                    DateFormatUtils.format(row.getConsumerTime(), TIME_TAKEN_FORMAT),
+                    DateFormatUtils.format(row.getConsumedTime(), TIME_TAKEN_FORMAT),
+                    DateFormatUtils.format(System.currentTimeMillis(), TIME_TAKEN_FORMAT));
+        } catch (Throwable e) {
+
+        }
     }
 }

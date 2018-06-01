@@ -75,6 +75,7 @@ public class OggJsonConverter implements EventConverter {
         event.setRowPosition(position);
         event.setBucketPosition(event.getRowPosition());
         event.setConsumerTime(consumerTime);
+        event.setConsumedTime(System.currentTimeMillis());
         return event;
     }
 }

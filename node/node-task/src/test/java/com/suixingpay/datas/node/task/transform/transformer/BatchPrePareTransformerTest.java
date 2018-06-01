@@ -33,19 +33,19 @@ public class BatchPrePareTransformerTest {
     @Test
     public void transform() {
         List<ETLRow> rows = new ArrayList<>();
-        rows.add(new ETLRow(0, "s", "t", EventType.DELETE, null, null, null));
-        rows.add(new ETLRow(0, "s", "t", EventType.DELETE, null, null, null));
-        rows.add(new ETLRow(0, "s", "t", EventType.INSERT, null, null, null));
-        rows.add(new ETLRow(0, "s", "t", EventType.DELETE, null, null, null));
-        rows.add(new ETLRow(0, "s", "t", EventType.INSERT, null, null, null));
-        rows.add(new ETLRow(0, "s", "t", EventType.INSERT, null, null, null));
-        rows.add(new ETLRow(0, "s", "t", EventType.INSERT, null, null, null));
-        rows.add(new ETLRow(0, "s", "t", EventType.TRUNCATE, null, null, null));
-        rows.add(new ETLRow(0, "s", "t", EventType.TRUNCATE, null, null, null));
-        rows.add(new ETLRow(0, "s", "t", EventType.UPDATE, null, null, null));
-        rows.add(new ETLRow(0, "s", "t", EventType.TRUNCATE, null, null, null));
-        rows.add(new ETLRow(0, "s", "t", EventType.INSERT, null, null, null));
-        rows.add(new ETLRow(0, "s", "t", EventType.INSERT, null, null, null));
+        rows.add(new ETLRow(0, 0, "s", "t", EventType.DELETE, null, null, null));
+        rows.add(new ETLRow(0, 0, "s", "t", EventType.DELETE, null, null, null));
+        rows.add(new ETLRow(0, 0, "s", "t", EventType.INSERT, null, null, null));
+        rows.add(new ETLRow(0, 0, "s", "t", EventType.DELETE, null, null, null));
+        rows.add(new ETLRow(0, 0, "s", "t", EventType.INSERT, null, null, null));
+        rows.add(new ETLRow(0, 0, "s", "t", EventType.INSERT, null, null, null));
+        rows.add(new ETLRow(0, 0, "s", "t", EventType.INSERT, null, null, null));
+        rows.add(new ETLRow(0, 0, "s", "t", EventType.TRUNCATE, null, null, null));
+        rows.add(new ETLRow(0, 0, "s", "t", EventType.TRUNCATE, null, null, null));
+        rows.add(new ETLRow(0, 0, "s", "t", EventType.UPDATE, null, null, null));
+        rows.add(new ETLRow(0, 0, "s", "t", EventType.TRUNCATE, null, null, null));
+        rows.add(new ETLRow(0, 0, "s", "t", EventType.INSERT, null, null, null));
+        rows.add(new ETLRow(0, 0, "s", "t", EventType.INSERT, null, null, null));
 
         ETLBucket bucket = new ETLBucket("0", rows, new Position() {
             @Override

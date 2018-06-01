@@ -39,8 +39,9 @@ public class MessageEvent {
     @Getter @Setter private Date opTs;
     //解析事件的时间
     @Getter @Setter private Date currentTs;
-    //解析事件的时间
     @Getter @Setter private long consumerTime;
+    //解析事件的时间
+    @Getter @Setter private long consumedTime;
     //修改之后的值
     @Getter @Setter private Map<String, Object> after = new HashMap<>();
     //修改之前的值

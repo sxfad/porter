@@ -11,7 +11,6 @@ package com.suixingpay.datas.common.client.impl;
 
 import com.suixingpay.datas.common.consumer.ConsumeClient;
 import com.suixingpay.datas.common.config.source.KafkaConfig;
-import com.suixingpay.datas.common.exception.TaskStopTriggerException;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -45,7 +44,7 @@ public class KafkaClientTest {
 
 
     @Test
-    //@Ignore
+    @Ignore
     public void fetch() {
         KAFKA_CLIENT.fetch(new ConsumeClient.FetchCallback<Object, Object>() {
             @Override

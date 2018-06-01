@@ -34,6 +34,7 @@ public class ETLRow {
     @Getter private final Date opTime;
     //消息存储到consumer的时间
     @Getter private final long consumerTime;
+    @Getter private final long consumedTime;
     //当前消息所在消费源的下标、顺序位置
     private final Position position;
     //操作类型 I U D T
@@ -65,13 +66,14 @@ public class ETLRow {
 
 
 
-    public ETLRow(long consumerTime, String schema, String table, EventType opType, List<ETLColumn> columns, Date opTime, Position position) {
+    public ETLRow(long consumedTime, long consumerTime, String schema, String table, EventType opType, List<ETLColumn> columns, Date opTime, Position position) {
         this.schema = schema;
         this.table = table;
         this.opType = opType;
         this.columns = columns;
         this.opTime = opTime;
         this.consumerTime = consumerTime;
+        this.consumedTime = consumedTime;
         //数据映射时使用
         this.finalOpType = opType;
         this.finalSchema = schema;

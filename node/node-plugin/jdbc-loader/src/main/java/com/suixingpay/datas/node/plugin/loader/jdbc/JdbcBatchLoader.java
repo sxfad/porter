@@ -68,6 +68,7 @@ public class JdbcBatchLoader extends BaseJdbcLoader {
                 }
             }
         }
+        if (null != bucket && null != bucket.getRows() && !bucket.getRows().isEmpty()) printTimeTaken(bucket.getRows().get(0));
         return new ImmutablePair(Boolean.TRUE, affectRow);
     }
 }
