@@ -65,6 +65,7 @@ public class CanalRowConverter implements EventConverter {
             event.setCurrentTs(currentTs);
             event.setOpTs(opTs);
             event.setConsumerTime(entry.getHeader().hasExecuteTime() ? entry.getHeader().getExecuteTime() : -1);
+            event.setConsumedTime(System.currentTimeMillis());
             if (eventType == CanalEntry.EventType.DELETE) {
                 event.setOpType(EventType.DELETE);
                 rowData.getBeforeColumnsList().forEach(c -> {
