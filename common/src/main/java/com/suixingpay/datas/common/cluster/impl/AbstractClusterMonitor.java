@@ -15,6 +15,8 @@ import com.suixingpay.datas.common.cluster.ClusterMonitor;
 import com.suixingpay.datas.common.cluster.ClusterProviderProxy;
 import com.suixingpay.datas.common.cluster.command.ShutdownCommand;
 import com.suixingpay.datas.common.cluster.event.ClusterEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -27,6 +29,7 @@ import java.util.Map;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月07日 14:47
  */
 public abstract class AbstractClusterMonitor implements ClusterMonitor {
+    protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
     protected final Map<String, ClusterListener> listeners = new LinkedHashMap<>();
 
     protected abstract void doStart();
