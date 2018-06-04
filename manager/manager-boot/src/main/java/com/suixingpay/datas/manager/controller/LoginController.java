@@ -50,7 +50,7 @@ public class LoginController {
         } else {
             loginUserToken.setUserId(cuser.getId());
             loginUserToken.setLoginName(cuser.getLoginname());
-            loginUserToken.setPasswd(cuser.getLoginpw());
+            //loginUserToken.setPasswd(cuser.getLoginpw());
             loginUserToken.setRoleCode(cuser.getRoleCode());
             String token = TokenUtil.sign(loginUserToken);
             Map<String, Object> map = new HashMap<>();
