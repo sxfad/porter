@@ -9,6 +9,10 @@
 
 package com.suixingpay.datas.common.exception;
 
+import com.alibaba.druid.pool.DataSourceClosedException;
+import com.alibaba.druid.pool.DataSourceDisableException;
+import com.alibaba.druid.pool.DataSourceNotAvailableException;
+import com.alibaba.druid.pool.GetConnectionTimeoutException;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException;
 import com.suixingpay.datas.common.db.SqlErrorCode;
 import org.apache.commons.lang3.StringUtils;
@@ -44,6 +48,14 @@ public class TaskStopTriggerException extends TaskException {
             return false;
         }
 
+        /**
+         * druid 数据库连接异常
+         * 在遇到数据库重启等问题导致任务无法继续同步时触发报警机制
+         */
+        if (cause instanceof DataSourceClosedException || cause instanceof DataSourceDisableException
+                || cause instanceof DataSourceNotAvailableException || cause instanceof GetConnectionTimeoutException) {
+            return true;
+        }
         if (cause instanceof CannotGetJdbcConnectionException || cause instanceof UncategorizedSQLException
                 || cause instanceof MySQLSyntaxErrorException || cause instanceof BadSqlGrammarException
                 || cause instanceof DataIntegrityViolationException) {

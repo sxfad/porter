@@ -14,6 +14,7 @@ import com.suixingpay.datas.common.client.AbstractClient;
 import com.suixingpay.datas.common.consumer.ConsumeClient;
 import com.suixingpay.datas.common.config.source.KafkaConfig;
 import com.suixingpay.datas.common.consumer.Position;
+import com.suixingpay.datas.common.exception.DataConsumerBuildException;
 import com.suixingpay.datas.common.exception.TaskStopTriggerException;
 import com.suixingpay.datas.common.util.MachineUtils;
 import lombok.Getter;
@@ -87,7 +88,15 @@ public class KafkaClient extends AbstractClient<KafkaConfig> implements ConsumeC
                     synchronized (consumer) {
                         consumer.assign(Arrays.asList(tp));
                         //AUTO_OFFSET_RESET_CONFIG值等于none时，如果position大于topic有效offset时会抛出OffsetOutOfRangeException
-                        consumer.seek(tp, kafkaPosition.offset + 1);
+                        //判断设置的消费进度是否当前分区可用最小进度
+                        long endOffset = consumer.endOffsets(Arrays.asList(tp)).get(tp);
+                        long beginOffset = consumer.beginningOffsets(Arrays.asList(tp)).get(tp);
+                        if (endOffset >= kafkaPosition.offset + 1 && beginOffset <= kafkaPosition.offset + 1) {
+                            consumer.seek(tp, kafkaPosition.offset + 1);
+                        } else {
+                            throw new DataConsumerBuildException("拟消费下标:" + (kafkaPosition.offset + 1)
+                                    + ", 实际可消费下标范围:" + beginOffset + "~" + endOffset);
+                        }
                     }
                 } else {
                     //默认消费分区0,该消费组上次
@@ -139,11 +148,11 @@ public class KafkaClient extends AbstractClient<KafkaConfig> implements ConsumeC
     }
 
     @Override
-    public  void commitPosition(Position position) throws TaskStopTriggerException {
+    public  long commitPosition(Position position) throws TaskStopTriggerException {
+        KafkaPosition kafkaPosition = (KafkaPosition) position;
         //如果提交方式为手动提交
         if (!isAutoCommitPosition()) {
             try {
-                KafkaPosition kafkaPosition = (KafkaPosition) position;
                 //由于kafka不是线程安全的缘故，commitPosition与fetch属于不同的线程，有对象锁的机制。
                 //为保证消费效率，取消对象锁，这里只做offset提交请求，在fetch时先做commitPosition再fetch数据
                 AtomicReference reference = lazyCommitOffsetMap.computeIfAbsent(kafkaPosition.getPositionKey(), key -> new AtomicReference<>());
@@ -162,6 +171,16 @@ public class KafkaClient extends AbstractClient<KafkaConfig> implements ConsumeC
             } catch (Throwable e) {
                 throw new TaskStopTriggerException(e);
             }
+        }
+        /**
+         * 找出当前消费进度与最新消息下标之间的差值，用于计算消息堆积情况
+         */
+        try {
+            TopicPartition tp = new TopicPartition(kafkaPosition.topic, kafkaPosition.partition);
+            long endOffset = consumer.endOffsets(Arrays.asList(tp)).get(tp);
+            return endOffset - kafkaPosition.offset;
+        } catch (Throwable e) {
+            return 0;
         }
     }
 

@@ -37,6 +37,9 @@ public class JDBCConfig extends SourceConfig {
     @Setter @Getter private DbType dbType;
     @Setter @Getter private boolean makePrimaryKeyWhenNo = true;
 
+    @Setter @Getter private boolean testOnReturn = true;
+    @Setter @Getter private boolean testOnBorrow = true;
+
     public  JDBCConfig() {
         sourceType =  SourceType.JDBC;
     }

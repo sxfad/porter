@@ -12,6 +12,7 @@ package com.suixingpay.datas.common.client.impl;
 import com.suixingpay.datas.common.consumer.ConsumeClient;
 import com.suixingpay.datas.common.config.source.KafkaConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.common.TopicPartition;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -33,12 +34,12 @@ public class KafkaClientTest {
         CONFIG = new KafkaConfig();
         CONFIG.setTopics(Arrays.asList("kafkaLoader"));
         CONFIG.setGroup("zkevin_041621111");
-        CONFIG.setOncePollSize(1000);
+        CONFIG.setOncePollSize(1);
         CONFIG.setAutoCommit(false);
         CONFIG.setServers("172.16.154.5:9092,172.16.154.7:9092");
         KAFKA_CLIENT = new KafkaClient(CONFIG);
         KAFKA_CLIENT.start();
-        KAFKA_CLIENT.initializePosition("1", "kafkaLoader", "{'topic':'kafkaLoader','offset':0,'partition':1}");
+        KAFKA_CLIENT.initializePosition("1", "kafkaLoader", "{'topic':'SSP','offset':129477,'partition':0}");
     }
 
 

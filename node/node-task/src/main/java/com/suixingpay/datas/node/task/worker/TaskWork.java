@@ -85,7 +85,7 @@ public class TaskWork {
     private final AtomicBoolean stopTrigger = new AtomicBoolean(false);
 
     public TaskWork(DataConsumer dataConsumer, DataLoader dataLoader, String taskId, List<AlertReceiver> receivers,
-                    TaskWorker worker) throws Exception {
+                    TaskWorker worker, long positionCheckInterval, long alarmPositionCount) throws Exception {
         this.dataConsumer = dataConsumer;
         this.dataLoader = dataLoader;
         basicThreadName = "TaskWork-[taskId:" + taskId + "]-[consumer:" + dataConsumer.getSwimlaneId() + "]";
@@ -100,7 +100,7 @@ public class TaskWork {
                 put(StageType.SELECT, new SelectJob(work));
                 put(StageType.EXTRACT, new ExtractJob(work));
                 put(StageType.TRANSFORM, new TransformJob(work));
-                put(StageType.LOAD, new LoadJob(work));
+                put(StageType.LOAD, new LoadJob(work, positionCheckInterval, alarmPositionCount));
 
                 /**
                  * 源端数据源支持元数据查询

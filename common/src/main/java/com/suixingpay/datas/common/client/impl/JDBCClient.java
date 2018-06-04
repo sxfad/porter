@@ -86,6 +86,9 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
         dataSource.setValidationQueryTimeout(config.getValidationQueryTimeout());
         //超出错误连接次数后是否退出尝试连接
         dataSource.setBreakAfterAcquireFailure(true);
+        //数据库重启等因素导致连接池状态异常
+        dataSource.setTestOnBorrow(config.isTestOnBorrow());
+        dataSource.setTestOnReturn(config.isTestOnReturn());
         dataSource.setTestWhileIdle(true);
         if (config.getDbType() == DbType.MYSQL) {
             dataSource.setValidationQuery("select 1");

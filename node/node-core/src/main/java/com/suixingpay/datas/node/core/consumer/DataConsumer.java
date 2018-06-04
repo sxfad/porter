@@ -108,7 +108,7 @@ public interface DataConsumer {
 
     void initializePosition(String taskId, String swimlaneId, String position) throws TaskStopTriggerException;
 
-    void commitPosition(Position position) throws TaskStopTriggerException;
+    long commitPosition(Position position) throws TaskStopTriggerException;
 
     boolean isAutoCommitPosition();
 

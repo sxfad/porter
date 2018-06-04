@@ -104,8 +104,8 @@ public abstract class AbstractDataConsumer implements DataConsumer {
     }
 
     @Override
-    public void commitPosition(Position position) throws TaskStopTriggerException {
-        consumeClient.commitPosition(position);
+    public long commitPosition(Position position) throws TaskStopTriggerException {
+        return consumeClient.commitPosition(position);
     }
 
     @Override

@@ -12,6 +12,7 @@ package com.suixingpay.datas.common.config;
 import com.suixingpay.datas.common.alert.AlertReceiver;
 import com.suixingpay.datas.common.dic.TaskStatusType;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
@@ -25,11 +26,8 @@ import java.util.List;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月04日 18:10
  */
+@NoArgsConstructor
 public class TaskConfig {
-
-    public TaskConfig() {
-
-    }
 
     public TaskConfig(TaskStatusType status, String taskId, String nodeIds, DataConsumerConfig consumer, DataLoaderConfig loader,
             List<TableMapperConfig> mapper, AlertReceiver[] receiver) {
@@ -71,4 +69,16 @@ public class TaskConfig {
     @Getter
     @Setter
     private AlertReceiver[] receiver = new AlertReceiver[0];
+
+    /**
+     * 小于1时表示不进行消费进度检查
+     * 单位秒
+     */
+    @Getter
+    @Setter
+    private long positionCheckInterval = -1;
+    @Getter
+    @Setter
+    private long alarmPositionCount = 10000;
+
 }

@@ -10,6 +10,7 @@
 package com.suixingpay.datas.common.config;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Map;
@@ -20,11 +21,8 @@ import java.util.Map;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月03日 16:43
  */
+@NoArgsConstructor
 public class DataConsumerConfig {
-
-    public DataConsumerConfig() {
-
-    }
 
     /**
      * 后台所用构造函数

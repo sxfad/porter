@@ -31,9 +31,10 @@ public interface ConsumeClient extends Client {
     /**
      * 提交消费同步点，只有是手动提交时才会更新消费器客户端
      * @param position
+     * @return 与生产进度差额
      * @throws TaskStopTriggerException
      */
-    void commitPosition(Position position) throws TaskStopTriggerException;
+    long commitPosition(Position position) throws TaskStopTriggerException;
 
     /**
      * 初始化消费同步点，只有是手动提交时才会更新消费器客户端

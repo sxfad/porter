@@ -253,7 +253,7 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
     }
 
     @Override
-    public  void commitPosition(Position position) throws TaskStopTriggerException {
+    public  long commitPosition(Position position) throws TaskStopTriggerException {
         //如果提交方式为手动提交
         /**
         if (!isAutoCommitPosition() && isStarted()) {
@@ -265,6 +265,7 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
             }
         }
          **/
+        return 0;
     }
 
     @Override

@@ -18,6 +18,8 @@ import com.suixingpay.datas.node.core.consumer.DataConsumer;
 import com.suixingpay.datas.node.core.consumer.DataConsumerFactory;
 import com.suixingpay.datas.node.core.loader.DataLoader;
 import com.suixingpay.datas.node.core.loader.DataLoaderFactory;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -36,6 +38,15 @@ public class Task {
     private DataLoader loader;
     private List<TableMapper> mappers;
     private List<AlertReceiver> receivers = new ArrayList<>();
+    /**
+     * 小于1时表示不进行消费进度检查
+     */
+    @Getter
+    @Setter
+    private long positionCheckInterval = -1;
+    @Getter
+    @Setter
+    private long alarmPositionCount = 10000;
 
     public String getTaskId() {
         return taskId;
@@ -89,8 +100,8 @@ public class Task {
         task.setConsumers(consumers);
         task.setLoader(DataLoaderFactory.INSTANCE.getLoader(config.getLoader()));
         task.getReceivers().addAll(Arrays.stream(config.getReceiver()).collect(Collectors.toList()));
+        task.setAlarmPositionCount(config.getAlarmPositionCount());
+        task.setPositionCheckInterval(config.getPositionCheckInterval());
         return task;
     }
-
-
 }

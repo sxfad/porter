@@ -24,6 +24,9 @@ import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 完成SQL事件的最终执行，单线程执行,通过interrupt终止线程
@@ -35,15 +38,34 @@ import java.util.List;
 public class LoadJob extends AbstractStageJob {
     private final DataLoader dataLoder;
     private final TaskWork work;
-    public LoadJob(TaskWork work) {
+    //最新的消费进度差值
+    private volatile long newestPositionDiffer = 0;
+    private final ScheduledExecutorService positionCheckService;
+
+    public LoadJob(TaskWork work, long positionCheckInterval, long alarmPositionCount) {
         super(work.getBasicThreadName(), 50L);
         this.dataLoder = work.getDataLoader();
         this.work = work;
+
+        //消费进度告警
+        if (positionCheckInterval > 0) {
+            positionCheckService = Executors.newSingleThreadScheduledExecutor(getThreadFactory());
+            positionCheckService.scheduleAtFixedRate(() -> {
+                //当前进度差值超过告警线
+                if (newestPositionDiffer >= alarmPositionCount) {
+                    NodeLog.upload(NodeLog.LogType.TASK_ALARM, work.getTaskId(), work.getDataConsumer().getSwimlaneId(),
+                            "未消费消息堆积:" + newestPositionDiffer + "条,告警阀值:" + alarmPositionCount, work.getReceivers());
+                }
+            }, positionCheckInterval, positionCheckInterval, TimeUnit.SECONDS);
+        } else {
+            positionCheckService = null;
+        }
     }
 
     @Override
     protected void doStop() {
         try {
+            if (null != positionCheckService) positionCheckService.shutdownNow();
             dataLoder.shutdown();
         } catch (Exception e) {
             e.printStackTrace();
@@ -76,11 +98,10 @@ public class LoadJob extends AbstractStageJob {
                     Pair<Boolean, List<SubmitStatObject>> loadResult = dataLoder.load(bucket);
                     //逻辑执行失败
                     if (!loadResult.getLeft()) throw new TaskStopTriggerException("批次" + bucket.getSequence() + "Load失败!");
-
                     //提交批次消费同步点
                     if (null != bucket.getPosition()) {
                         LOGGER.debug("提交消费同步点到集群策略:{}", bucket.getPosition().render());
-                        work.getDataConsumer().commitPosition(bucket.getPosition());
+                        newestPositionDiffer = work.getDataConsumer().commitPosition(bucket.getPosition());
                         LOGGER.debug("提交消费同步点到消费器客户端:{}", bucket.getPosition().render());
 
                         if (bucket.getPosition().checksum()) {

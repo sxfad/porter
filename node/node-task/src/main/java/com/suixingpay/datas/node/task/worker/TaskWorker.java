@@ -46,6 +46,7 @@ public class TaskWorker {
      */
     private final Map<String, TaskWork> JOBS;
     private final Map<String, TableMapper> TABLE_MAPPERS;
+
     public TaskWorker() {
         STAT_WORKER = Executors.newSingleThreadScheduledExecutor(new DefaultNamedThreadFactory("TaskStat"));
         JOBS = new ConcurrentHashMap<>();
@@ -110,7 +111,8 @@ public class TaskWorker {
             TaskWork job = null;
             try {
                 //启动JOB
-                job = new TaskWork(c, task.getLoader(), task.getTaskId(), task.getReceivers(), this);
+                job = new TaskWork(c, task.getLoader(), task.getTaskId(), task.getReceivers(), this, task.getPositionCheckInterval(),
+                task.getAlarmPositionCount());
                 job.start();
                 JOBS.put(c.getSwimlaneId(), job);
             } catch (Throwable e) {
