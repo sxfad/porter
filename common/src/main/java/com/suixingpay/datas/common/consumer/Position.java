@@ -18,7 +18,6 @@ import com.alibaba.fastjson.JSONObject;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年03月17日 19:52
  */
 public abstract class Position {
-
     public String render() {
         return JSONObject.toJSONString(this);
     }

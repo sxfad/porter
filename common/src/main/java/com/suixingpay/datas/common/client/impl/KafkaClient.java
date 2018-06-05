@@ -26,7 +26,6 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  *
@@ -40,7 +39,8 @@ public class KafkaClient extends AbstractClient<KafkaConfig> implements ConsumeC
     private Consumer<String, String> consumer;
     private CountDownLatch canFetch = new CountDownLatch(1);
 
-    private final Map<String, AtomicReference<KafkaPosition>> lazyCommitOffsetMap = new ConcurrentHashMap<>();
+    private final Map<String, KafkaPosition> lazyCommitOffsetMap = new ConcurrentHashMap<>();
+    private final Map<String, Long> lazyEndOffsetQueryMap = new ConcurrentHashMap<>();
     private long pollTimeOut;
     public KafkaClient(KafkaConfig config) {
         super(config);
@@ -147,41 +147,26 @@ public class KafkaClient extends AbstractClient<KafkaConfig> implements ConsumeC
         return getConfig().getSwimlaneId();
     }
 
+    /**
+     * 在fetch时提交进度
+     * @param position
+     * @return
+     * @throws TaskStopTriggerException
+     */
     @Override
-    public  long commitPosition(Position position) throws TaskStopTriggerException {
+    public  long commitPosition(Position position) {
         KafkaPosition kafkaPosition = (KafkaPosition) position;
         //如果提交方式为手动提交
         if (!isAutoCommitPosition()) {
-            try {
-                //由于kafka不是线程安全的缘故，commitPosition与fetch属于不同的线程，有对象锁的机制。
-                //为保证消费效率，取消对象锁，这里只做offset提交请求，在fetch时先做commitPosition再fetch数据
-                AtomicReference reference = lazyCommitOffsetMap.computeIfAbsent(kafkaPosition.getPositionKey(), key -> new AtomicReference<>());
-                synchronized (reference) {
-                    reference.set(kafkaPosition);
-                }
-                /**
-                synchronized (consumer) {
-                    consumer.commitSync(new HashMap<TopicPartition, OffsetAndMetadata>() {
-                        {
-                            put(new TopicPartition(kafkaPosition.topic, kafkaPosition.partition), new OffsetAndMetadata(kafkaPosition.offset));
-                        }
-                    });
-                }
-                 **/
-            } catch (Throwable e) {
-                throw new TaskStopTriggerException(e);
-            }
+            //由于kafka不是线程安全的缘故，commitPosition与fetch属于不同的线程，有对象锁的机制。
+            //为保证消费效率，取消对象锁，这里只做offset提交请求，在fetch时先做commitPosition再fetch数据
+            lazyCommitOffsetMap.put(kafkaPosition.getPositionKey(), kafkaPosition);
         }
         /**
          * 找出当前消费进度与最新消息下标之间的差值，用于计算消息堆积情况
          */
-        try {
-            TopicPartition tp = new TopicPartition(kafkaPosition.topic, kafkaPosition.partition);
-            long endOffset = consumer.endOffsets(Arrays.asList(tp)).get(tp);
-            return endOffset - kafkaPosition.offset;
-        } catch (Throwable e) {
-            return 0;
-        }
+        long endOffset = lazyEndOffsetQueryMap.getOrDefault(kafkaPosition.getPositionKey(), 0L);
+        return endOffset >= kafkaPosition.offset ? endOffset - kafkaPosition.offset : 0;
     }
 
 
@@ -244,15 +229,14 @@ public class KafkaClient extends AbstractClient<KafkaConfig> implements ConsumeC
 
     private void commitLazyPosition() {
         //每次查询数据前都要提交
-        lazyCommitOffsetMap.values().stream().filter(v -> null != v.get()).forEach(v -> {
-            KafkaPosition position = null;
-            synchronized (v) {
-                position = v.get();
-                v.set(null);
-            }
+        lazyCommitOffsetMap.forEach((s, position) -> {
             if (null != position) {
+                //提交消费进度
                 consumer.commitSync(Collections.singletonMap(new TopicPartition(position.topic, position.partition),
                         new OffsetAndMetadata(position.offset)));
+                //查询最新进度
+                TopicPartition tp = new TopicPartition(position.topic, position.partition);
+                lazyEndOffsetQueryMap.put(position.getPositionKey(), consumer.endOffsets(Arrays.asList(tp)).get(tp));
             }
         });
     }
