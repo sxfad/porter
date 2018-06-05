@@ -21,6 +21,7 @@ import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.errors.WakeupException;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
 import java.util.*;
@@ -115,9 +116,17 @@ public class KafkaClient extends AbstractClient<KafkaConfig> implements ConsumeC
         if (isStarted()) {
             ConsumerRecords<String, String> results = null;
             synchronized (consumer) {
-                //提交kafka消费进度
-                commitLazyPosition();
-                results = consumer.poll(pollTimeOut);
+                try {
+                    //提交kafka消费进度
+                    commitLazyPosition();
+                    results = consumer.poll(pollTimeOut);
+                } catch (WakeupException e) {
+                    LOGGER.info("trigger kafka consumer WakeupException:{}", getClientInfo());
+                    consumer.unsubscribe();
+                    consumer.close();
+                    consumer = null;
+                    canFetch = new CountDownLatch(1);
+                }
             }
             if (null != results && !results.isEmpty()) {
                 Iterator<ConsumerRecord<String, String>> it = results.iterator();
@@ -173,11 +182,13 @@ public class KafkaClient extends AbstractClient<KafkaConfig> implements ConsumeC
     @Override
     protected void doShutdown() {
         if (null != consumer) {
-            consumer.unsubscribe();
-            consumer.close();
-            consumer = null;
+            LOGGER.info("wakeup kafka consumer:{}", getClientInfo());
+            consumer.wakeup();
+            //consumer.unsubscribe();
+            //consumer.close();
+            //consumer = null;
         }
-        canFetch = new CountDownLatch(1);
+        //canFetch = new CountDownLatch(1);
     }
 
     @Override
