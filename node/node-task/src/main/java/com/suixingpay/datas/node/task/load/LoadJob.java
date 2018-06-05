@@ -13,6 +13,7 @@ import com.suixingpay.datas.common.cluster.command.TaskPositionUploadCommand;
 import com.suixingpay.datas.common.cluster.data.DTaskStat;
 import com.suixingpay.datas.common.exception.TaskStopTriggerException;
 import com.suixingpay.datas.common.statistics.NodeLog;
+import com.suixingpay.datas.common.util.DefaultNamedThreadFactory;
 import com.suixingpay.datas.node.core.event.etl.ETLBucket;
 import com.suixingpay.datas.node.core.event.s.EventType;
 import com.suixingpay.datas.node.core.loader.DataLoader;
@@ -46,10 +47,10 @@ public class LoadJob extends AbstractStageJob {
         super(work.getBasicThreadName(), 50L);
         this.dataLoder = work.getDataLoader();
         this.work = work;
-
         //消费进度告警
         if (positionCheckInterval > 0) {
-            positionCheckService = Executors.newSingleThreadScheduledExecutor(getThreadFactory());
+            positionCheckService = Executors.newSingleThreadScheduledExecutor(
+                    new DefaultNamedThreadFactory(work.getBasicThreadName() + "-positionConsumedCheck"));
             positionCheckService.scheduleAtFixedRate(() -> {
                 //当前进度差值超过告警线
                 if (newestPositionDiffer >= alarmPositionCount) {
