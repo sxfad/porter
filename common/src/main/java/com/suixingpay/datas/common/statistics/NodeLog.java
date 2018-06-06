@@ -81,7 +81,7 @@ public class NodeLog extends StatisticData {
             NodeLog log = new NodeLog(type, taskId, swimlaneId, error);
             ClusterProviderProxy.INSTANCE.broadcast(new StatisticUploadCommand(log));
             LOGGER.info("判断是否发送邮件通知....." + JSONObject.toJSONString(log));
-            if (type == LogType.TASK_ALARM) {
+            if (type == LogType.TASK_ALARM || type == LogType.TASK_WARNING) {
                 LOGGER.info("需要发送邮件通知.....");
                 AlertProviderFactory.INSTANCE.notice(type.title, log.toPrintln(), receivers);
             }
@@ -105,7 +105,7 @@ public class NodeLog extends StatisticData {
 
     @JsonFormat(shape = JsonFormat.Shape.OBJECT)
     public enum LogType {
-        TASK_ALARM("任务停止告警", "taskStopAlarm"), TASK_LOG("任务日志", "taskLog");
+        TASK_ALARM("任务停止告警", "taskStopAlarm"), TASK_LOG("任务日志", "taskLog"), TASK_WARNING("任务关注警告", "taskWatchAlarm");
         @Getter private String title;
         @Getter private String type;
         LogType(String title, String type) {

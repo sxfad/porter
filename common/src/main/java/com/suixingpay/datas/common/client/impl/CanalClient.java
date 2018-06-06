@@ -95,7 +95,6 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
         hasBroken = new AtomicBoolean(false);
         brokenError = null;
     }
-
     @Override
     public void  initializePosition(String taskId, String swimlaneId, String position) throws TaskStopTriggerException {
         CanalConfig config = getConfig();
@@ -162,6 +161,11 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
                                 brokenError = new TaskStopTriggerException("【Canal链接建立失败】【" + getClientInfo() + "】" + msg);
                             }
                         }
+                        //canal 1.0.25 socket超时 不发送通知
+                        if (msg.contains("CanalException: read channel timeout")) {
+                            return;
+                        }
+
                         try {
                             NodeLog.upload(NodeLog.LogType.TASK_LOG, getClientInfo() + ", error:" + msg);
                         } catch (Throwable e) {

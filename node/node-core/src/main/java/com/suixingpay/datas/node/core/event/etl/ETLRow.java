@@ -31,7 +31,7 @@ public class ETLRow {
     private final String schema;
     private final String table;
     //操作时间，保留该字段可以在需要的时候计算出与最终执行时间间隔
-    @Getter private final Date opTime;
+    private final Date opTime;
     //消息存储到consumer的时间
     @Getter private final long consumerTime;
     @Getter private final long consumedTime;
