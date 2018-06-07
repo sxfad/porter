@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.alibaba.fastjson.JSON;
 import com.suixingpay.datas.common.cluster.ClusterProviderProxy;
 import com.suixingpay.datas.common.cluster.command.TaskPushCommand;
 import com.suixingpay.datas.common.dic.TaskStatusType;
@@ -176,8 +177,9 @@ public class JobTasksController {
         Integer number = jobTasksService.updateState(id, taskStatusType);
         if (taskStatusType == TaskStatusType.WORKING || taskStatusType == TaskStatusType.STOPPED) {
             try {
-                ClusterProviderProxy.INSTANCE
-                        .broadcast(new TaskPushCommand(jobTasksService.fitJobTask(id, taskStatusType)));
+                TaskPushCommand config = new TaskPushCommand(jobTasksService.fitJobTask(id, taskStatusType));                
+                ClusterProviderProxy.INSTANCE.broadcast(config);
+                log.info("zk任务节点:[{}] 状态:[{}] 详情:[{}].", id, taskStatusType,JSON.toJSONString(config));
             } catch (Exception e) {
                 log.error("zk变更任务节点[{}]状态[{}]失败,请关注！", id, taskStatusType);
                 e.printStackTrace();
