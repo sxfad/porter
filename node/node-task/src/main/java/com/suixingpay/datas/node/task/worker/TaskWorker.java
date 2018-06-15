@@ -40,7 +40,10 @@ public class TaskWorker {
     private final int workerSequence;
     private final AtomicBoolean STAT = new AtomicBoolean(false);
     //负责将任务工作者的状态定时上传
-    private final ScheduledExecutorService STAT_WORKER;
+    private final ScheduledExecutorService WORKER_STAT_JOB;
+
+
+
     /**
      * consumeSourceId -> work
      */
@@ -48,7 +51,7 @@ public class TaskWorker {
     private final Map<String, TableMapper> TABLE_MAPPERS;
 
     public TaskWorker() {
-        STAT_WORKER = Executors.newSingleThreadScheduledExecutor(new DefaultNamedThreadFactory("TaskStat"));
+        WORKER_STAT_JOB = Executors.newSingleThreadScheduledExecutor(new DefaultNamedThreadFactory("TaskStat"));
         JOBS = new ConcurrentHashMap<>();
         workerSequence = SEQUENCE.incrementAndGet();
         TABLE_MAPPERS = new ConcurrentHashMap<>();
@@ -57,7 +60,7 @@ public class TaskWorker {
     public void start() {
         if (STAT.compareAndSet(false, true)) {
             LOGGER.info("工人上线.......");
-            STAT_WORKER.scheduleAtFixedRate(new Runnable() {
+            WORKER_STAT_JOB.scheduleAtFixedRate(new Runnable() {
                 @Override
                 public void run() {
                     //如果没有JOB，让线程睡眠1分钟.
@@ -82,7 +85,7 @@ public class TaskWorker {
     public void stop() {
         if (STAT.compareAndSet(true, false)) {
             LOGGER.info("工人下线.......");
-            STAT_WORKER.shutdown();
+            WORKER_STAT_JOB.shutdown();
             for (TaskWork job : JOBS.values()) {
                 job.stop();
             }
