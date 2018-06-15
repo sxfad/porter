@@ -90,7 +90,7 @@ public abstract class AbstractStageJob implements StageJob {
         @Override
         public void run() {
             //如果线程没有中断信号，持续执行
-            while (!Thread.currentThread().isInterrupted()) {
+            while (!Thread.currentThread().isInterrupted() && stat.get()) {
                 try {
                     stopSignal.acquire();
                     LOGGER.debug("源队列为空，线程恢复执行.");

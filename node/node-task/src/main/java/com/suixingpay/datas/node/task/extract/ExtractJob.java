@@ -70,7 +70,7 @@ public class ExtractJob extends AbstractStageJob {
     }
 
     @Override
-    protected void loopLogic() {
+    protected void loopLogic() throws InterruptedException {
         //只要队列有消息，持续读取
         Pair<String, List<MessageEvent>> events = null;
         do {
@@ -95,6 +95,8 @@ public class ExtractJob extends AbstractStageJob {
                         }
                     });
                 }
+            } catch (InterruptedException interrupt) {
+                throw interrupt;
             } catch (Throwable e) {
                 e.printStackTrace();
                 NodeLog.upload(NodeLog.LogType.TASK_LOG, work.getTaskId(),  work.getDataConsumer().getSwimlaneId(),
