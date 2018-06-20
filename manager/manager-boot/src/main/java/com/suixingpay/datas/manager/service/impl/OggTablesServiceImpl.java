@@ -84,6 +84,13 @@ public class OggTablesServiceImpl implements OggTablesService {
             page.setTotalItems(total);
             page.setResult(oggTablesMapper.page(page, ipAddress, tableValue));
         }
+
+        page.getResult().forEach(l -> {
+            //检查表关联任务信息
+            String[] schemaAndTable = l.getTableValue().split(".");
+            String relatedInfo = oggTablesMapper.relatedTask(schemaAndTable[schemaAndTable.length - 1]);
+            l.setRelatedTaskInfo(relatedInfo);
+        });
         return page;
     }
 
@@ -92,5 +99,4 @@ public class OggTablesServiceImpl implements OggTablesService {
         Integer i = oggTablesMapper.delete(id);
         return i;
     }
-
 }

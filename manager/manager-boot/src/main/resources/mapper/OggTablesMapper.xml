@@ -214,8 +214,13 @@
         limit #{page.offset},#{page.pageSize} 
     </select>
 
+    <select id="relatedTask" resultType="java.lang.String">
+          select group_concat(distinct concat(m.node_id,'-',m.swimlane_id)) from mr_job_tasks_monitor m where lower(m.schema_table) like concat('%',lower(#{tableName}),'%')
+    </select>
+
     <!-- 刪除 -->
     <delete id="delete">
         delete from ogg_tables where id = #{id}
     </delete>
+
 </mapper>
