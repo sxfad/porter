@@ -89,4 +89,6 @@ public interface OggTablesMapper {
      * @return Integer
      */
     Integer delete(Long id);
+
+    String relatedTask(@Param("tableName") String tableName);
 }

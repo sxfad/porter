@@ -59,6 +59,8 @@ public class OggTables implements java.io.Serializable {
     /** 备注. */
     private String remark;
 
+    private String relatedTaskInfo;
+
     /** 主键 get方法. */
     public Long getId() {
         return id;
@@ -157,5 +159,13 @@ public class OggTables implements java.io.Serializable {
     /** 备注 set方法. */
     public void setRemark(String remark) {
         this.remark = remark == null ? null : remark.trim();
+    }
+
+    public String getRelatedTaskInfo() {
+        return relatedTaskInfo;
+    }
+
+    public void setRelatedTaskInfo(String relatedTaskInfo) {
+        this.relatedTaskInfo = relatedTaskInfo == null ? null : relatedTaskInfo.trim();
     }
 }
