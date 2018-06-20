@@ -87,7 +87,7 @@ public class OggTablesServiceImpl implements OggTablesService {
 
         page.getResult().forEach(l -> {
             //检查表关联任务信息
-            String[] schemaAndTable = l.getTableValue().split(".");
+            String[] schemaAndTable = l.getTableValue().split("\\.");
             String relatedInfo = oggTablesMapper.relatedTask(schemaAndTable[schemaAndTable.length - 1]);
             l.setRelatedTaskInfo(relatedInfo);
         });
