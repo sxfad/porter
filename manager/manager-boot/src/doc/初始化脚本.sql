@@ -403,6 +403,7 @@ CREATE TABLE `ogg_tables` (
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `iscancel` int(2) DEFAULT '0' COMMENT '是否作废',
   `remark` varchar(500) DEFAULT NULL COMMENT '备注',
+  `related_task_info` varchar(500) DEFAULT NULL COMMENT '关联任务信息',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='ogg表数据信息'
 

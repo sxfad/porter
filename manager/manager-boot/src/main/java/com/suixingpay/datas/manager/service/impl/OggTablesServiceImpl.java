@@ -33,11 +33,18 @@ public class OggTablesServiceImpl implements OggTablesService {
         }
         String[] tabs = tables.split(",");
         for (String tableName : tabs) {
+            //检查表关联任务信息
+            String[] schemaAndTable = tableName.split("\\.");
+            String relatedInfo = oggTablesMapper.relatedTask(schemaAndTable[schemaAndTable.length - 1]);
             if (OggUtils.existOggTables(ip, tableName)) {
                 Long id = OggUtils.getOggTableId(ip, tableName);
-                oggTablesMapper.update(id, new OggTables(id, hearthead));
+                OggTables table = new OggTables(id, hearthead);
+                table.setRelatedTaskInfo(relatedInfo);
+                oggTablesMapper.update(id, table);
             } else {
-                oggTablesMapper.insert(new OggTables(ip, tableName, hearthead));
+                OggTables table = new OggTables(ip, tableName, hearthead);
+                table.setRelatedTaskInfo(relatedInfo);
+                oggTablesMapper.insert(table);
             }
         }
     }
@@ -84,12 +91,6 @@ public class OggTablesServiceImpl implements OggTablesService {
             page.setTotalItems(total);
             page.setResult(oggTablesMapper.page(page, ipAddress, tableValue));
         }
-        page.getResult().forEach(l -> {
-            //检查表关联任务信息
-            String[] schemaAndTable = l.getTableValue().split("\\.");
-            String relatedInfo = oggTablesMapper.relatedTask(schemaAndTable[schemaAndTable.length - 1]);
-            l.setRelatedTaskInfo(relatedInfo);
-        });
         return page;
     }
 
