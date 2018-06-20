@@ -95,8 +95,8 @@ public class ExtractJob extends AbstractStageJob {
                         }
                     });
                 }
-            } catch (InterruptedException e) {
-                throw e;
+            } catch (InterruptedException interrupt) {
+                throw interrupt;
             } catch (Throwable e) {
                 e.printStackTrace();
                 NodeLog.upload(NodeLog.LogType.TASK_LOG, work.getTaskId(),  work.getDataConsumer().getSwimlaneId(),

@@ -54,6 +54,9 @@
             <if test="remark != null">
                 remark,
             </if>
+            <if test="relatedTaskInfo != null">
+                related_task_info,
+            </if>
         </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="id != null">
@@ -86,6 +89,9 @@
             <if test="remark != null">
                 #{remark,jdbcType=VARCHAR},
             </if>
+            <if test="relatedTaskInfo != null">
+                #{relatedTaskInfo,jdbcType=VARCHAR},
+            </if>
         </trim>
     </insert>
 
@@ -100,7 +106,8 @@
             heart_beat_time,
             create_time,
             iscancel,
-            remark
+            remark,
+            related_task_info
         ) values (
             ipAddress,
             ipName,
@@ -110,7 +117,8 @@
             heartBeatTime,
             createTime,
             iscancel,
-            remark
+            remark,
+            relatedTaskInfo
         )
     </insert>
 
@@ -148,6 +156,9 @@
             <if test="oggTables.remark != null">
                 remark = #{oggTables.remark,jdbcType=VARCHAR},
             </if>
+            <if test="oggTables.relatedTaskInfo != null">
+                related_task_info = #{oggTables.relatedTaskInfo,jdbcType=VARCHAR},
+            </if>
         </set>
         where id = #{id}
     </update>
@@ -166,13 +177,14 @@
             create_time = #{oggTables.createTime},
             iscancel = #{oggTables.iscancel},
             remark = #{oggTables.remark},
+            related_task_info = #{oggTables.relatedTaskInfo},
         </set>
         where id = #{id}
     </update>
 
     <!-- 根据主鍵查找 -->
     <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.OggTables">
-        select id, ip_address AS ipAddress, ip_name AS ipName, table_name AS tableName, table_value AS tableValue, table_marker AS tableMarker, heart_beat_time AS heartBeatTime, create_time AS createTime, iscancel, remark from ogg_tables
+        select id, ip_address AS ipAddress, ip_name AS ipName, table_name AS tableName, table_value AS tableValue, table_marker AS tableMarker, heart_beat_time AS heartBeatTime, create_time AS createTime, iscancel, remark, related_task_info as relatedTaskInfo from ogg_tables
         where id = #{id}
     </select>
 
@@ -202,7 +214,7 @@
 
     <!-- 分页数据查询 -->
     <select id="page" resultType="com.suixingpay.datas.manager.core.entity.OggTables">
-        select id, ip_address AS ipAddress, ip_name AS ipName, table_name AS tableName, table_value AS tableValue, table_marker AS tableMarker, heart_beat_time AS heartBeatTime, create_time AS createTime, iscancel, remark from ogg_tables
+        select id, ip_address AS ipAddress, ip_name AS ipName, table_name AS tableName, table_value AS tableValue, table_marker AS tableMarker, heart_beat_time AS heartBeatTime, create_time AS createTime, iscancel, remark, related_task_info as relatedTaskInfo from ogg_tables
         where iscancel=0
         <if test="ipAddress != null and ipAddress != ''">
             and lower(ip_address) like CONCAT('%',lower(#{ipAddress}),'%') 
@@ -215,7 +227,7 @@
     </select>
 
     <select id="relatedTask" resultType="java.lang.String">
-          select group_concat(distinct concat(m.node_id,'-',m.swimlane_id)) from mr_job_tasks_monitor m where lower(m.schema_table) like concat('%',lower(#{tableName}),'%')
+	    select group_concat(distinct concat('[',m.node_id_ip,']','[',m.job_id,']',m.swimlane_id)) from mr_job_tasks_monitor m where lower(m.schema_table) like concat('%',lower(#{tableName}),'%')
     </select>
 
     <!-- 刪除 -->
