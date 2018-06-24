@@ -122,6 +122,9 @@ public enum  NodeContext {
         } finally {
             nodeLock.writeLock().unlock();
         }
+
+        //刷新健康级别
+        tagHealthLevelWhenWorkChange();
     }
 
     /**
