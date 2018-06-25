@@ -1,3 +1,4 @@
+group 'com.suixingpay.datas.plugin'
 jar.baseName = 'datas-plugin-canal-consumer'
 dependencies {
     compile (

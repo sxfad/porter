@@ -1,3 +1,4 @@
+group 'com.suixingpay.datas.manager'
 apply plugin: 'application'
 archivesBaseName = 'datas-manager-boot'
 mainClassName = "com.suixingpay.datas.manager.ManagerBootApplication"

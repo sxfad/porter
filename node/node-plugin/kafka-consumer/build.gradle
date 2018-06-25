@@ -1,3 +1,4 @@
+group 'com.suixingpay.datas.plugin'
 jar.baseName = 'datas-plugin-kafka-consumer'
 dependencies {
     compile (

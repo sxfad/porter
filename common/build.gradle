@@ -1,3 +1,4 @@
+group 'com.suixingpay.datas'
 archivesBaseName = 'datas-commons'
 dependencies {
     compile(

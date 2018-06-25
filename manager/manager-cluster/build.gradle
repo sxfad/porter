@@ -1,1 +1,2 @@
+group 'com.suixingpay.datas.manager'
 archivesBaseName = 'datas-manager-cluster'

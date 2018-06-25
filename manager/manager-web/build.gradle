@@ -1,3 +1,4 @@
+group 'com.suixingpay.datas.manager'
 archivesBaseName = 'datas-manager-web'
 dependencies {
     compile project(':manager:manager-core')
