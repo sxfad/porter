@@ -63,11 +63,11 @@ public class FixedCapacityCarrier implements DataMapCarrier {
 
     @Override
     public void printState() {
-        LOGGER.debug("total:{},usable:{},used:{}", capacity, resources.availablePermits(), size());
+        LOGGER.info("total:{},usable:{},used:{}", capacity, resources.availablePermits(), size());
     }
 
     @Override
     public void print() {
-        LOGGER.debug("total:{},usable:{},used:{},data:{}", capacity, resources.availablePermits(), size(), container);
+        LOGGER.info("total:{},usable:{},used:{},data:{}", capacity, resources.availablePermits(), size(), container);
     }
 }
