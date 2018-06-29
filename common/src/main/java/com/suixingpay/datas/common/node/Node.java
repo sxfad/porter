@@ -9,6 +9,7 @@
 
 package com.suixingpay.datas.common.node;
 
+import com.suixingpay.datas.common.cluster.data.DNode;
 import com.suixingpay.datas.common.dic.NodeHealthLevel;
 import com.suixingpay.datas.common.dic.NodeStatusType;
 import lombok.Getter;
@@ -37,6 +38,5 @@ public class Node {
     @Getter @Setter private int workLimit = 5;
     //工作指标用量
     @Getter @Setter private AtomicInteger workUsed = new AtomicInteger(0);
-
-
+    @Getter @Setter private volatile DNode dnodeSnapshot = new DNode();
 }

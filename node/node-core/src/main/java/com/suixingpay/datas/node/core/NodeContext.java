@@ -9,6 +9,9 @@
 
 package com.suixingpay.datas.node.core;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.suixingpay.datas.common.cluster.data.DNode;
 import com.suixingpay.datas.common.dic.NodeHealthLevel;
 import com.suixingpay.datas.common.node.Node;
 import com.suixingpay.datas.common.dic.NodeStatusType;
@@ -16,6 +19,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.context.ApplicationContext;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -31,7 +35,9 @@ public enum  NodeContext {
     INSTANCE();
     private final ReadWriteLock nodeLock = new ReentrantReadWriteLock();
     private final Node node = new Node();
+
     private final Map<String, String> taskErrorMarked = new ConcurrentHashMap<>();
+    private final Map<String, Object> consumeProcess = new ConcurrentHashMap<>();
 
     private ApplicationContext context;
     public <T> T getBean(Class<T> clazz) {
@@ -212,5 +218,23 @@ public enum  NodeContext {
     public void markTaskError(String taskId, String e) {
         taskErrorMarked.put(taskId, taskId);
         syncHealthLevel(NodeHealthLevel.RED, e);
+    }
+
+    public void flushClusterNode(DNode dnode) {
+        node.setDnodeSnapshot(dnode);
+    }
+
+    public void flushConsumeProcess(String key, String position) {
+        consumeProcess.put(key, position);
+    }
+
+    public Map<String, String> getTaskErrorMarked() {
+        return Collections.unmodifiableMap(taskErrorMarked);
+    }
+
+    public String dumpNode() {
+        JSONObject object = (JSONObject) JSON.toJSON(node);
+        object.put("consume", Collections.unmodifiableMap(consumeProcess));
+        return object.toJSONString();
     }
 }

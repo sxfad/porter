@@ -14,6 +14,7 @@ import com.suixingpay.datas.common.cluster.data.DTaskStat;
 import com.suixingpay.datas.common.exception.TaskStopTriggerException;
 import com.suixingpay.datas.common.statistics.NodeLog;
 import com.suixingpay.datas.common.util.DefaultNamedThreadFactory;
+import com.suixingpay.datas.node.core.NodeContext;
 import com.suixingpay.datas.node.core.event.etl.ETLBucket;
 import com.suixingpay.datas.node.core.event.s.EventType;
 import com.suixingpay.datas.node.core.loader.DataLoader;
@@ -104,13 +105,16 @@ public class LoadJob extends AbstractStageJob {
                         LOGGER.debug("提交消费同步点到集群策略:{}", bucket.getPosition().render());
                         newestPositionDiffer = work.getDataConsumer().commitPosition(bucket.getPosition());
                         LOGGER.debug("提交消费同步点到消费器客户端:{}", bucket.getPosition().render());
-
                         if (bucket.getPosition().checksum()) {
                             LOGGER.info("提交消费同步点:{},消息堆积:{}", bucket.getPosition().render(), newestPositionDiffer);
                             ClusterProviderProxy.INSTANCE.broadcast(new TaskPositionUploadCommand(work.getTaskId(),
                                     work.getDataConsumer().getSwimlaneId(), bucket.getPosition().render()));
                             //LOGGER.info("结束提交消费同步点:{},消息堆积:{}", bucket.getPosition().render(), newestPositionDiffer);
                         }
+
+                        NodeContext.INSTANCE.flushConsumeProcess(
+                                work.getTaskId() + "-" + work.getDataConsumer().getSwimlaneId(),
+                                newestPositionDiffer + "");
                     }
                     //更新消费统计数据
                     loadResult.getRight().forEach(o -> updateStat(o));

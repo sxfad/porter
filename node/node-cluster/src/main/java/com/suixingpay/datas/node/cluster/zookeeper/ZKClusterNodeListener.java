@@ -190,6 +190,7 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener  implements 
                                 nodeData.setAddress(MachineUtils.IP_ADDRESS);
                                 nodeData.setProcessId(MachineUtils.CURRENT_JVM_PID + "");
                                 nodeData.setHostName(MachineUtils.HOST_NAME);
+                                NodeContext.INSTANCE.flushClusterNode(nodeData);
                                 //通知数据到zookeeper
                                 client.setData(statPath, nodeData.toString(), dataPair.getRight().getVersion());
                             }

@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
+import java.util.stream.Collectors;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -130,11 +131,10 @@ public class ZookeeperClusterMonitor extends AbstractClusterMonitor implements W
         }
 
         //删除旧节点
-        localChildren.stream().forEach(s -> {
+        List<String> needRemoves = localChildren.stream().filter(s -> {
             String remotePath = s.replace(path + "/", "");
-            if (!remoteChildren.contains(remotePath)) {
-                localChildren.remove(s);
-            }
-        });
+            return !remoteChildren.contains(remotePath);
+        }).collect(Collectors.toList());
+        localChildren.removeAll(needRemoves);
     }
 }

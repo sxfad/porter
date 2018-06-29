@@ -59,6 +59,7 @@ startScripts {
 dependencies {
     compile(
             project(":node:node-cluster"),
-            project(":node:node-task")
+            project(":node:node-task"),
+            "org.springframework.boot:spring-boot-starter-web:${springVersion}"
     )
 }

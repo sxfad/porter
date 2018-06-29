@@ -50,7 +50,6 @@ public class NodeBootApplication {
     public static void main(String[] args) {
         SpringApplication app = new SpringApplication(NodeBootApplication.class);
         app.setBannerMode(Banner.Mode.OFF);
-        app.setWebEnvironment(false);
         ConfigurableApplicationContext context = app.run(args);
 
         //注入spring工具类
