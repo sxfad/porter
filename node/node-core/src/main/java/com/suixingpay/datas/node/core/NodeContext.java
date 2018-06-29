@@ -231,7 +231,7 @@ public enum  NodeContext {
 
     public void flushConsumerIdle(String taskId, String swimlaneId, long secondsTime) {
         if (secondsTime > 0) {
-            consumerIdle.put(taskId + "_" + swimlaneId, secondsTime + "");
+            consumerIdle.put(taskId + "_" + swimlaneId, secondsTime + "s");
         } else {
             consumerIdle.remove(taskId + "_" + swimlaneId);
         }

@@ -19,9 +19,10 @@ import com.suixingpay.datas.node.datacarrier.DataCarrierFactory;
 import com.suixingpay.datas.node.task.worker.TaskWork;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.time.Duration;
-import java.time.LocalDate;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 完成SQL事件从数据源的消费。为了提升消费能力，不做过多业务逻辑处理和数据模型转换
@@ -42,8 +43,8 @@ public class SelectJob extends AbstractStageJob {
     private final TaskWork work;
     private final DataCarrier<List<MessageEvent>> carrier;
     //最后一次查不到数据时间
-    private volatile LocalDate lastNoneFetchTime;
-    private volatile LocalDate lastNoneFetchNoticeTime;
+    private volatile Date lastNoneFetchTime;
+    private volatile Date lastNoneFetchNoticeTime;
     private final long fetchNoticeSpan;
     private final long fetchNoticeThreshould;
     public SelectJob(TaskWork work) {
@@ -97,11 +98,12 @@ public class SelectJob extends AbstractStageJob {
 
         try {
             //退出轮训循环，判断累计查不到数据时间，按照配置发送邮件告警
-            LocalDate now = LocalDate.now();
-            long nofetchTime = null != lastNoneFetchTime ? Math.abs(Duration.between(now, lastNoneFetchTime).getSeconds()) : -1;
+            Date now = Calendar.getInstance().getTime();
+            long nofetchTime = null != lastNoneFetchTime
+                    ? TimeUnit.SECONDS.convert(Math.abs(now.getTime() - lastNoneFetchTime.getTime()), TimeUnit.MILLISECONDS) : -1;
             boolean overThresHold = fetchNoticeThreshould > -1  && nofetchTime >= fetchNoticeThreshould;
             boolean triggerNotice = null == lastNoneFetchNoticeTime
-                    || Math.abs(Duration.between(now, lastNoneFetchNoticeTime).getSeconds()) >= fetchNoticeSpan;
+                    || TimeUnit.SECONDS.convert(Math.abs(now.getTime() - lastNoneFetchNoticeTime.getTime()), TimeUnit.MILLISECONDS) >= fetchNoticeSpan;
             //fetchNoticeThreshould，并且持续fetchNoticeSpan秒没有发送通知
             if (overThresHold && triggerNotice) {
                 NodeLog log = new NodeLog(NodeLog.LogType.TASK_WARNING, work.getTaskId(), work.getDataConsumer().getSwimlaneId(),
@@ -110,10 +112,10 @@ public class SelectJob extends AbstractStageJob {
                 NodeLog.upload(log, work.getReceivers());
                 lastNoneFetchNoticeTime = now;
             }
-            lastNoneFetchTime = now;
+            if (null == lastNoneFetchTime) lastNoneFetchTime = now;
             NodeContext.INSTANCE.flushConsumerIdle(work.getTaskId(), work.getDataConsumer().getSwimlaneId(), nofetchTime);
         } catch (Throwable e) {
-
+            e.printStackTrace();
         }
     }
 
