@@ -81,6 +81,12 @@ public enum DataConsumerFactory {
             consumer.setExcludes(config.getExcludes());
             consumer.setIncludes(config.getIncludes());
             consumer.setEventProcessor(processor);
+
+            /**
+             * 空查询告警参数
+             */
+            consumer.setEmptyFetchNoticeSpan(config.getEmptyFetchNoticeSpan());
+            consumer.setEmptyFetchThreshold(config.getEmptyFetchThreshold());
             consumers.add(consumer);
         }
         return consumers;

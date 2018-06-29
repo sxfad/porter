@@ -38,6 +38,7 @@ public enum  NodeContext {
 
     private final Map<String, String> taskErrorMarked = new ConcurrentHashMap<>();
     private final Map<String, Object> consumeProcess = new ConcurrentHashMap<>();
+    private final Map<String, Object> consumerIdle = new ConcurrentHashMap<>();
 
     private ApplicationContext context;
     public <T> T getBean(Class<T> clazz) {
@@ -228,13 +229,22 @@ public enum  NodeContext {
         consumeProcess.put(key, position);
     }
 
+    public void flushConsumerIdle(String taskId, String swimlaneId, long secondsTime) {
+        if (secondsTime > 0) {
+            consumerIdle.put(taskId + "_" + swimlaneId, secondsTime + "");
+        } else {
+            consumerIdle.remove(taskId + "_" + swimlaneId);
+        }
+    }
+
     public Map<String, String> getTaskErrorMarked() {
         return Collections.unmodifiableMap(taskErrorMarked);
     }
 
     public String dumpNode() {
         JSONObject object = (JSONObject) JSON.toJSON(node);
-        object.put("consume", Collections.unmodifiableMap(consumeProcess));
+        object.put("consumeProcess", Collections.unmodifiableMap(consumeProcess));
+        object.put("consumerIdle", Collections.unmodifiableMap(consumerIdle));
         return object.toJSONString();
     }
 }

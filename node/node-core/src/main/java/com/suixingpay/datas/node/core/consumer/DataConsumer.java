@@ -126,4 +126,10 @@ public interface DataConsumer {
 
 
     String getClientInfo();
+
+    long getEmptyFetchNoticeSpan();
+    long getEmptyFetchThreshold();
+
+    void setEmptyFetchNoticeSpan(long secondsValue);
+    void setEmptyFetchThreshold(long secondsValue);
 }

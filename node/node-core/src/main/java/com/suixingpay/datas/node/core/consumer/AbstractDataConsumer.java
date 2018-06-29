@@ -17,6 +17,7 @@ import com.suixingpay.datas.node.core.event.s.EventConverter;
 import com.suixingpay.datas.node.core.event.s.EventProcessor;
 import com.suixingpay.datas.node.core.event.s.MessageEvent;
 import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -39,6 +40,11 @@ public abstract class AbstractDataConsumer implements DataConsumer {
 
     @Getter private final List<String> includes = new ArrayList<>();
     @Getter private final List<String> excludes = new ArrayList<>();
+    //空查询通知间隔,单位秒
+    @Setter @Getter private volatile long emptyFetchNoticeSpan = 30 * 60;
+
+    //空查询通知时间阀值
+    @Setter @Getter private volatile long emptyFetchThreshold = -1;
 
     protected abstract String getPluginName();
     protected abstract List<MessageEvent> doFetch() throws TaskStopTriggerException, InterruptedException;

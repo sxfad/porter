@@ -89,4 +89,11 @@ public class DataConsumerConfig {
     @Getter
     @Setter
     private JavaFileConfig eventProcessor;
+
+
+    //空查询通知间隔,单位秒
+    @Setter @Getter private volatile long emptyFetchNoticeSpan = 60 * 60;
+
+    //空查询通知时间阀值
+    @Setter @Getter private volatile long emptyFetchThreshold = 60 * 60;
 }

@@ -16,9 +16,11 @@ import com.suixingpay.datas.common.alert.AlertProviderFactory;
 import com.suixingpay.datas.common.alert.AlertReceiver;
 import com.suixingpay.datas.common.cluster.ClusterProviderProxy;
 import com.suixingpay.datas.common.cluster.command.StatisticUploadCommand;
+import com.suixingpay.datas.common.node.Node;
 import com.suixingpay.datas.common.util.MachineUtils;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Date;
 import java.util.List;
@@ -53,6 +55,7 @@ public class NodeLog extends StatisticData {
     //异常上报时间
     @JSONField(format = "yyyyMMddHHmmss")
     @Setter @Getter private Date time;
+    @Setter @Getter private String title;
 
     public NodeLog() {
         this.time = new Date();
@@ -77,13 +80,16 @@ public class NodeLog extends StatisticData {
     }
 
     public static void upload(LogType type, String taskId, String swimlaneId, String error, List<AlertReceiver> receivers) {
+        upload(new NodeLog(type, taskId, swimlaneId, error), receivers);
+    }
+
+    public static void upload(NodeLog log, List<AlertReceiver> receivers) {
         try {
-            NodeLog log = new NodeLog(type, taskId, swimlaneId, error);
             ClusterProviderProxy.INSTANCE.broadcast(new StatisticUploadCommand(log));
             LOGGER.info("判断是否发送邮件通知....." + JSONObject.toJSONString(log));
-            if (type == LogType.TASK_ALARM || type == LogType.TASK_WARNING) {
+            if (log.type == LogType.TASK_ALARM || log.type == LogType.TASK_WARNING) {
                 LOGGER.info("需要发送邮件通知.....");
-                AlertProviderFactory.INSTANCE.notice(type.title, log.toPrintln(), receivers);
+                AlertProviderFactory.INSTANCE.notice(StringUtils.isBlank(log.type.title) ? log.type.title : log.title, log.toPrintln(), receivers);
             }
         } catch (Throwable e) {
             e.printStackTrace();
@@ -91,15 +97,15 @@ public class NodeLog extends StatisticData {
     }
 
     public static void upload(LogType type, String taskId, String swimlaneId, String error) {
-        upload(type, taskId, swimlaneId, error, null);
+        upload(new NodeLog(type, taskId, swimlaneId, error), null);
     }
 
     public static void upload(String taskId, LogType type, String error) {
-        upload(type, taskId, "", error, null);
+        upload(new NodeLog(type, taskId, null, error), null);
     }
 
     public static void upload(LogType type, String error) {
-        upload(type, "", "", error, null);
+        upload(new NodeLog(type, "", "", error), null);
     }
 
 

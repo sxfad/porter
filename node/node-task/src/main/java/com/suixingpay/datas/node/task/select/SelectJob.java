@@ -19,6 +19,8 @@ import com.suixingpay.datas.node.datacarrier.DataCarrierFactory;
 import com.suixingpay.datas.node.task.worker.TaskWork;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.time.Duration;
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -39,11 +41,18 @@ public class SelectJob extends AbstractStageJob {
     private final DataConsumer consumer;
     private final TaskWork work;
     private final DataCarrier<List<MessageEvent>> carrier;
+    //最后一次查不到数据时间
+    private volatile LocalDate lastNoneFetchTime;
+    private volatile LocalDate lastNoneFetchNoticeTime;
+    private final long fetchNoticeSpan;
+    private final long fetchNoticeThreshould;
     public SelectJob(TaskWork work) {
         super(work.getBasicThreadName(), 50L);
         this.work = work;
         consumer = work.getDataConsumer();
         carrier = NodeContext.INSTANCE.getBean(DataCarrierFactory.class).newDataCarrier(BUFFER_SIZE, PULL_BATCH_SIZE);
+        fetchNoticeSpan = work.getDataConsumer().getEmptyFetchNoticeSpan();
+        fetchNoticeThreshould = work.getDataConsumer().getEmptyFetchThreshold();
     }
 
     /**
@@ -70,7 +79,10 @@ public class SelectJob extends AbstractStageJob {
         do {
             try {
                 events = consumer.fetch();
-                if (null != events && !events.isEmpty()) carrier.push(events);
+                if (null != events && !events.isEmpty()) {
+                    carrier.push(events);
+                    lastNoneFetchTime = null;
+                }
             } catch (TaskStopTriggerException stopError) {
                 stopError.printStackTrace();
                 work.stopAndAlarm(stopError.getMessage());
@@ -82,6 +94,27 @@ public class SelectJob extends AbstractStageJob {
                 LOGGER.error("fetch MessageEvent error!", e);
             }
         } while (null != events && !events.isEmpty());
+
+        try {
+            //退出轮训循环，判断累计查不到数据时间，按照配置发送邮件告警
+            LocalDate now = LocalDate.now();
+            long nofetchTime = null != lastNoneFetchTime ? Math.abs(Duration.between(now, lastNoneFetchTime).getSeconds()) : -1;
+            boolean overThresHold = fetchNoticeThreshould > -1  && nofetchTime >= fetchNoticeThreshould;
+            boolean triggerNotice = null == lastNoneFetchNoticeTime
+                    || Math.abs(Duration.between(now, lastNoneFetchNoticeTime).getSeconds()) >= fetchNoticeSpan;
+            //fetchNoticeThreshould，并且持续fetchNoticeSpan秒没有发送通知
+            if (overThresHold && triggerNotice) {
+                NodeLog log = new NodeLog(NodeLog.LogType.TASK_WARNING, work.getTaskId(), work.getDataConsumer().getSwimlaneId(),
+                        "\"" + work.getDataConsumer().getClientInfo() + "\"持续" + (nofetchTime / 60) + "分未消费到数据，通知间隔"
+                                + (fetchNoticeSpan / 60) + "分");
+                NodeLog.upload(log, work.getReceivers());
+                lastNoneFetchNoticeTime = now;
+            }
+            lastNoneFetchTime = now;
+            NodeContext.INSTANCE.flushConsumerIdle(work.getTaskId(), work.getDataConsumer().getSwimlaneId(), nofetchTime);
+        } catch (Throwable e) {
+
+        }
     }
 
     @Override
