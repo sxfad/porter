@@ -39,7 +39,7 @@ public class NodeController {
         String javaHome = System.getProperty("java.home", "");
         String cmd =  StringUtils.isBlank(javaHome) ? "jstack" : javaHome + "/../bin/jstack";
         JPS_CMD = cmd;
-        JSTAT_CMD = StringUtils.isBlank(javaHomegitq) ? "jstat" : javaHome + "/../bin/jstat";
+        JSTAT_CMD = StringUtils.isBlank(javaHome) ? "jstat" : javaHome + "/../bin/jstat";
         JINFO_CMD = StringUtils.isBlank(javaHome) ? "jinfo" : javaHome + "/../bin/jinfo";
         JMAP_CMD = StringUtils.isBlank(javaHome) ? "jmap" : javaHome + "/../bin/jmap";
     }
