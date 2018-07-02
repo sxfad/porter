@@ -98,6 +98,8 @@ public class SelectJob extends AbstractStageJob {
 
         try {
             //退出轮训循环，判断累计查不到数据时间，按照配置发送邮件告警
+            String taskId = work.getTaskId();
+            String swimlaneId = work.getDataConsumer().getSwimlaneId();
             Date now = Calendar.getInstance().getTime();
             long nofetchTime = null != lastNoneFetchTime
                     ? TimeUnit.SECONDS.convert(Math.abs(now.getTime() - lastNoneFetchTime.getTime()), TimeUnit.MILLISECONDS) : -1;
@@ -106,14 +108,15 @@ public class SelectJob extends AbstractStageJob {
                     || TimeUnit.SECONDS.convert(Math.abs(now.getTime() - lastNoneFetchNoticeTime.getTime()), TimeUnit.MILLISECONDS) >= fetchNoticeSpan;
             //fetchNoticeThreshould，并且持续fetchNoticeSpan秒没有发送通知
             if (overThresHold && triggerNotice) {
-                NodeLog log = new NodeLog(NodeLog.LogType.TASK_WARNING, work.getTaskId(), work.getDataConsumer().getSwimlaneId(),
-                        "\"" + work.getDataConsumer().getClientInfo() + "\"持续" + (nofetchTime / 60) + "分未消费到数据，通知间隔"
-                                + (fetchNoticeSpan / 60) + "分");
+                NodeLog log = new NodeLog(NodeLog.LogType.TASK_WARNING, taskId, swimlaneId,
+                        "\"" + work.getDataConsumer().getClientInfo() + "\"已持续" + (nofetchTime / 60) + "分钟未消费到数据，通知间隔"
+                                + (fetchNoticeSpan / 60) + "分钟");
+                log.setTitle("【关注】" + taskId + "-" + swimlaneId + "持续无数据消费" + (nofetchTime / 60) + "分钟");
                 NodeLog.upload(log, work.getReceivers());
                 lastNoneFetchNoticeTime = now;
             }
             if (null == lastNoneFetchTime) lastNoneFetchTime = now;
-            NodeContext.INSTANCE.flushConsumerIdle(work.getTaskId(), work.getDataConsumer().getSwimlaneId(), nofetchTime);
+            NodeContext.INSTANCE.flushConsumerIdle(taskId, swimlaneId, nofetchTime);
         } catch (Throwable e) {
             e.printStackTrace();
         }

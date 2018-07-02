@@ -25,6 +25,7 @@ import com.suixingpay.datas.common.exception.TaskStopTriggerException;
 import com.suixingpay.datas.common.exception.WorkResourceAcquireException;
 import com.suixingpay.datas.common.statistics.NodeLog;
 import com.suixingpay.datas.common.statistics.TaskPerformance;
+import com.suixingpay.datas.common.util.MachineUtils;
 import com.suixingpay.datas.node.core.NodeContext;
 import com.suixingpay.datas.node.core.consumer.DataConsumer;
 import com.suixingpay.datas.node.core.loader.DataLoader;
@@ -325,8 +326,11 @@ public class TaskWork {
 
                     try {
                         LOGGER.info("开始发送日志通知.....");
+
                         //上传日志
-                        NodeLog.upload(NodeLog.LogType.TASK_ALARM, taskId, dataConsumer.getSwimlaneId(), alarmNotice, getReceivers());
+                        NodeLog log = new NodeLog(NodeLog.LogType.TASK_ALARM, taskId, dataConsumer.getSwimlaneId(), alarmNotice);
+                        log.setTitle("【告警】【" + MachineUtils.IP_ADDRESS + "】" + taskId + "-" + dataConsumer.getSwimlaneId() + "任务异常停止");
+                        NodeLog.upload(log, getReceivers());
                         LOGGER.info("结束发送日志通知.....");
                     } catch (Throwable e) {
                         e.printStackTrace();

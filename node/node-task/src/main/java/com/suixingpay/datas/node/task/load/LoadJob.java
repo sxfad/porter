@@ -55,8 +55,12 @@ public class LoadJob extends AbstractStageJob {
             positionCheckService.scheduleAtFixedRate(() -> {
                 //当前进度差值超过告警线
                 if (newestPositionDiffer >= alarmPositionCount) {
-                    NodeLog.upload(NodeLog.LogType.TASK_WARNING, work.getTaskId(), work.getDataConsumer().getSwimlaneId(),
-                            "未消费消息堆积:" + newestPositionDiffer + "条,告警阀值:" + alarmPositionCount, work.getReceivers());
+                    String taskId = work.getTaskId();
+                    String swimlaneId = work.getDataConsumer().getSwimlaneId();
+                    NodeLog noticeMsg = new NodeLog(NodeLog.LogType.TASK_WARNING,taskId , swimlaneId,
+                            "未消费消息堆积:" + newestPositionDiffer + "条,告警阀值:" + alarmPositionCount);
+                    noticeMsg.setTitle("【关注】" + taskId + "-" + swimlaneId + "消息堆积" + newestPositionDiffer + "条");
+                    NodeLog.upload(noticeMsg, work.getReceivers());
                 }
             }, positionCheckInterval, positionCheckInterval, TimeUnit.SECONDS);
         } else {
