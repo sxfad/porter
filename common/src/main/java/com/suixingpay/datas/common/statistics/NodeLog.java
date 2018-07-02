@@ -16,7 +16,6 @@ import com.suixingpay.datas.common.alert.AlertProviderFactory;
 import com.suixingpay.datas.common.alert.AlertReceiver;
 import com.suixingpay.datas.common.cluster.ClusterProviderProxy;
 import com.suixingpay.datas.common.cluster.command.StatisticUploadCommand;
-import com.suixingpay.datas.common.node.Node;
 import com.suixingpay.datas.common.util.MachineUtils;
 import lombok.Getter;
 import lombok.Setter;

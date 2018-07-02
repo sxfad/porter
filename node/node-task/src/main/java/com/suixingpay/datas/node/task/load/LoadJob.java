@@ -57,7 +57,7 @@ public class LoadJob extends AbstractStageJob {
                 if (newestPositionDiffer >= alarmPositionCount) {
                     String taskId = work.getTaskId();
                     String swimlaneId = work.getDataConsumer().getSwimlaneId();
-                    NodeLog noticeMsg = new NodeLog(NodeLog.LogType.TASK_WARNING,taskId , swimlaneId,
+                    NodeLog noticeMsg = new NodeLog(NodeLog.LogType.TASK_WARNING, taskId, swimlaneId,
                             "未消费消息堆积:" + newestPositionDiffer + "条,告警阀值:" + alarmPositionCount);
                     noticeMsg.setTitle("【关注】" + taskId + "-" + swimlaneId + "消息堆积" + newestPositionDiffer + "条");
                     NodeLog.upload(noticeMsg, work.getReceivers());

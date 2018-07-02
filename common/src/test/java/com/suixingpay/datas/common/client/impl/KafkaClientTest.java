@@ -12,7 +12,6 @@ package com.suixingpay.datas.common.client.impl;
 import com.suixingpay.datas.common.consumer.ConsumeClient;
 import com.suixingpay.datas.common.config.source.KafkaConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.common.TopicPartition;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
