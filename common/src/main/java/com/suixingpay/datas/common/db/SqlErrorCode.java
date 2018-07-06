@@ -27,7 +27,10 @@ public enum  SqlErrorCode {
     //字段长度与插入内容不符
     ERROR_12899(12899),
     //ORA-01400: cannot insert NULL into
-    ERROR_1400(1400);
+    ERROR_1400(1400),
+    //errorCode 17002, state 08006
+    //IO Error: The Network Adapter could not establish the connection
+    ERROR_17002(17002);
 
     public final int code;
     SqlErrorCode(int code) {

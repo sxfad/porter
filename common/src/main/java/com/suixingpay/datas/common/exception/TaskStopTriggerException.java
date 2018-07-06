@@ -24,6 +24,7 @@ import org.springframework.jdbc.UncategorizedSQLException;
 
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.sql.SQLRecoverableException;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -53,7 +54,8 @@ public class TaskStopTriggerException extends TaskException {
          * 在遇到数据库重启等问题导致任务无法继续同步时触发报警机制
          */
         if (cause instanceof DataSourceClosedException || cause instanceof DataSourceDisableException
-                || cause instanceof DataSourceNotAvailableException || cause instanceof GetConnectionTimeoutException) {
+                || cause instanceof DataSourceNotAvailableException || cause instanceof GetConnectionTimeoutException
+                || cause instanceof SQLRecoverableException) {
             return true;
         }
         if (cause instanceof CannotGetJdbcConnectionException || cause instanceof UncategorizedSQLException
@@ -67,6 +69,7 @@ public class TaskStopTriggerException extends TaskException {
             return sqlError.getErrorCode() == SqlErrorCode.ERROR_904.code || sqlError.getErrorCode() == SqlErrorCode.ERROR_942.code
                     || sqlError.getErrorCode() == SqlErrorCode.ERROR_1438.code || sqlError.getErrorCode() == SqlErrorCode.ERROR_12899.code
                     || sqlError.getErrorCode() == SqlErrorCode.ERROR_1364.code
+                    || sqlError.getErrorCode() == SqlErrorCode.ERROR_17002.code
                     || (StringUtils.isNotBlank(sqlType) && StringUtils.trimToEmpty(sqlType).equalsIgnoreCase("INSERT")
                     && sqlError.getErrorCode() == SqlErrorCode.ERROR_1400.code);
         }
