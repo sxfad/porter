@@ -9,22 +9,22 @@
 
 package com.suixingpay.datas.common.client.impl;
 
-import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.suixingpay.datas.common.client.AbstractClient;
 import com.suixingpay.datas.common.client.LoadClient;
 import com.suixingpay.datas.common.client.MetaQueryClient;
-import com.suixingpay.datas.common.db.SqlTemplate;
 import com.suixingpay.datas.common.config.source.JDBCConfig;
-import com.suixingpay.datas.common.db.SqlTemplateImpl;
-import com.suixingpay.datas.common.dic.DbType;
 import com.suixingpay.datas.common.db.DdlUtils;
+import com.suixingpay.datas.common.db.SqlTemplate;
+import com.suixingpay.datas.common.db.SqlTemplateImpl;
 import com.suixingpay.datas.common.db.meta.TableColumn;
 import com.suixingpay.datas.common.db.meta.TableSchema;
+import com.suixingpay.datas.common.dic.DbType;
 import com.suixingpay.datas.common.exception.TaskStopTriggerException;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ddlutils.model.Table;
 import org.springframework.dao.DataAccessException;
@@ -38,16 +38,15 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Date;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 /**
- *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年02月02日 15:14
  * @version: V1.0
@@ -56,12 +55,13 @@ import java.util.function.Function;
 public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient, MetaQueryClient {
     private final Map<List<String>, TableSchema> tables = new ConcurrentHashMap<>();
 
-    private DruidDataSource dataSource;
+    private BasicDataSource dataSource;
     private JdbcTemplate jdbcTemplate;
     private TransactionTemplate transactionTemplate;
     private final boolean makePrimaryKeyWhenNo;
 
-    @Getter private SqlTemplate sqlTemplate;
+    @Getter
+    private SqlTemplate sqlTemplate;
 
 
     public JDBCClient(JDBCConfig config) {
@@ -73,19 +73,14 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
     @Override
     protected void doStart() {
         JDBCConfig config = getConfig();
-        dataSource = new DruidDataSource();
+        dataSource = new BasicDataSource();
         dataSource.setDriverClassName(config.getDriverClassName());
         dataSource.setUrl(config.getUrl());
         dataSource.setUsername(config.getUserName());
         dataSource.setPassword(config.getPassword());
         dataSource.setMaxWait(config.getMaxWait());
-        //连接错误重试次数
-        dataSource.setConnectionErrorRetryAttempts(config.getConnectionErrorRetryAttempts());
         //连接错误重试时间间隔
-        //dataSource.setTimeBetweenConnectErrorMillis(1000);
         dataSource.setValidationQueryTimeout(config.getValidationQueryTimeout());
-        //超出错误连接次数后是否退出尝试连接
-        dataSource.setBreakAfterAcquireFailure(true);
         //数据库重启等因素导致连接池状态异常
         dataSource.setTestOnBorrow(config.isTestOnBorrow());
         dataSource.setTestOnReturn(config.isTestOnReturn());
@@ -107,9 +102,8 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
     }
 
 
-
     @Override
-    protected void doShutdown() {
+    protected void doShutdown() throws SQLException {
         if (dataSource != null) {
             dataSource.close();
         }
@@ -137,6 +131,7 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
 
     /**
      * schema大写
+     *
      * @param schema
      * @param tableName
      * @return
@@ -188,7 +183,7 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
         } catch (Throwable e) {
             e.printStackTrace();
         }
-        return  count[0];
+        return count[0];
     }
 
     public int[] batchUpdate(String sqlType, String sql, List<Object[]> batchArgs) throws TaskStopTriggerException {
@@ -236,7 +231,7 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
         } else {
             LOGGER.debug("sql:{},params:{},affect:{}", sql, JSON.toJSONString(Arrays.asList(args)), affect);
         }
-        return  affect;
+        return affect;
     }
 
     public void query(String sql, RowCallbackHandler rch, Object... args) throws TaskStopTriggerException {
