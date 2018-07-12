@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.suixingpay.datas.manager.core.mapper.JobTasksFieldMapper">
+<mapper namespace="cn.vbill.middleware.porter.manager.core.mapper.JobTasksFieldMapper">
     <!-- 通用查询映射结果
-    <resultMap id="BaseResultMap" type="com.suixingpay.datas.manager.core.entity.JobTasksField">
+    <resultMap id="BaseResultMap" type="JobTasksField">
         <result column="id" property="id" />
         <result column="job_task_id" property="jobTaskId" />
         <result column="job_tasks_table_id" property="jobTasksTableId" />
@@ -83,7 +83,7 @@
     </delete>
 
     <!-- 根据jobTasksId和jobTasksTableId查询详情 -->
-    <select id="selectInfo" resultType="com.suixingpay.datas.manager.core.entity.JobTasksField">
+    <select id="selectInfo" resultType="cn.vbill.middleware.porter.manager.core.entity.JobTasksField">
         select
         id, job_task_id AS jobTaskId, job_tasks_table_id AS jobTasksTableId, source_table_name AS sourceTableName,
         source_table_field AS sourceTableField, target_table_name AS targetTableName, target_table_field AS targetTableField
@@ -92,7 +92,7 @@
     </select>
 
     <!-- 根据主鍵查找 -->
-    <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.JobTasksField">
+    <select id="selectById" resultType="cn.vbill.middleware.porter.manager.core.entity.JobTasksField">
         select id, job_task_id AS jobTaskId, job_tasks_table_id AS jobTasksTableId, source_table_name AS sourceTableName, source_table_field AS sourceTableField, target_table_name AS targetTableName, target_table_field AS targetTableField, sort_order AS sortOrder from job_tasks_field
         where id = #{id}
     </select>
@@ -104,7 +104,7 @@
     </select>
 
     <!-- 分页 -->
-    <select id="page" resultType="com.suixingpay.datas.manager.core.entity.JobTasksField">
+    <select id="page" resultType="cn.vbill.middleware.porter.manager.core.entity.JobTasksField">
         select id, job_task_id AS jobTaskId, job_tasks_table_id AS jobTasksTableId, source_table_name AS sourceTableName, source_table_field AS sourceTableField, target_table_name AS targetTableName, target_table_field AS targetTableField, sort_order AS sortOrder from job_tasks_field
         where 1=1 limit #{page.offset},#{page.pageSize}
     </select>

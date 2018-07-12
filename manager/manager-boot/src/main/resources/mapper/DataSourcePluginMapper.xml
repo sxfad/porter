@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.suixingpay.datas.manager.core.mapper.DataSourcePluginMapper">
+<mapper namespace="cn.vbill.middleware.porter.manager.core.mapper.DataSourcePluginMapper">
     <!-- 通用查询映射结果 
-    <resultMap id="BaseResultMap" type="com.suixingpay.datas.manager.core.entity.DataSourcePlugin">
+    <resultMap id="BaseResultMap" type="DataSourcePlugin">
         <result column="id" property="id" />
         <result column="source_id" property="sourceId" />
         <result column="field_name" property="fieldName" />
@@ -47,7 +47,7 @@
     </delete>
 
     <!-- 根据主鍵查找 -->
-    <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.DataSourcePlugin">
+    <select id="selectById" resultType="cn.vbill.middleware.porter.manager.core.entity.DataSourcePlugin">
         select id, source_id AS sourceId, field_name AS fieldName, field_code AS fieldCode, field_value AS fieldValue from b_data_source_plugin
         where id = #{id}
     </select>
@@ -59,13 +59,13 @@
     </select>
 
     <!-- 分页 -->
-    <select id="page" resultType="com.suixingpay.datas.manager.core.entity.DataSourcePlugin">
+    <select id="page" resultType="cn.vbill.middleware.porter.manager.core.entity.DataSourcePlugin">
         select id, source_id AS sourceId, field_name AS fieldName, field_code AS fieldCode, field_value AS fieldValue from b_data_source_plugin
         where 1=1 limit #{page.offset},#{page.pageSize}
     </select>
 
     <!-- 根据数据源id查询关联信息 -->
-    <select id="findListBySourceID" resultType="com.suixingpay.datas.manager.core.entity.DataSourcePlugin">
+    <select id="findListBySourceID" resultType="cn.vbill.middleware.porter.manager.core.entity.DataSourcePlugin">
         select id, source_id AS sourceId, field_name AS fieldName, field_code AS fieldCode, field_value AS fieldValue from b_data_source_plugin
         where source_id = #{source_id}
     </select>

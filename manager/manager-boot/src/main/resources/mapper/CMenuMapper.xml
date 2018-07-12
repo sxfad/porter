@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.suixingpay.datas.manager.core.mapper.CMenuMapper">
+<mapper namespace="cn.vbill.middleware.porter.manager.core.mapper.CMenuMapper">
     <!-- 通用查询映射结果
-    <resultMap id="BaseResultMap" type="com.suixingpay.datas.manager.core.entity.CMenu">
+    <resultMap id="BaseResultMap" type="CMenu">
         <result column="id" property="id" />
         <result column="code" property="code" />
         <result column="fathercode" property="fathercode" />
@@ -69,7 +69,7 @@
     </update>
 
     <!-- 根据fatherCode查询 -->
-    <select id="findByFatherCode" resultType="com.suixingpay.datas.manager.core.entity.CMenu">
+    <select id="findByFatherCode" resultType="cn.vbill.middleware.porter.manager.core.entity.CMenu">
         select id, code, fathercode, name, menu_url AS menuUrl,
         menu_image AS menuImage, level, sort, iscancel, type, isleaf
         from c_menu
@@ -79,7 +79,7 @@
     </select>
 
     <!-- 查询全部 -->
-    <select id="findAll" resultType="com.suixingpay.datas.manager.core.entity.CMenu">
+    <select id="findAll" resultType="cn.vbill.middleware.porter.manager.core.entity.CMenu">
         select id, code, fathercode, name, menu_url AS menuUrl,
         menu_image AS menuImage, level, sort, iscancel, type, isleaf
         from c_menu
@@ -87,7 +87,7 @@
     </select>
 
     <!-- 根据主键查询 -->
-    <select id="findById" resultType="com.suixingpay.datas.manager.core.entity.CMenu">
+    <select id="findById" resultType="cn.vbill.middleware.porter.manager.core.entity.CMenu">
         select id, code, fathercode, name, menu_url AS menuUrl,
         menu_image AS menuImage, level, sort, iscancel, type, isleaf
         from c_menu
@@ -95,7 +95,7 @@
     </select>
 
     <!-- 根据权限查询菜单 -->
-    <select id="findByRoleCode" resultType="com.suixingpay.datas.manager.core.entity.CMenu">
+    <select id="findByRoleCode" resultType="cn.vbill.middleware.porter.manager.core.entity.CMenu">
         select t.id, t.code, t.fathercode, t.name, t.menu_url AS menuUrl,
         t.menu_image AS menuImage, t.level, t.sort, t.iscancel, t.type, t.isleaf
         from c_menu t

@@ -1,0 +1,31 @@
+package cn.vbill.middleware.porter.manager.service;
+
+import cn.vbill.middleware.porter.manager.core.entity.Alarm;
+import cn.vbill.middleware.porter.manager.web.page.Page;
+
+/**
+ * 告警配置表 服务接口类
+ *
+ * @author: FairyHood
+ * @date: 2018-03-08 10:46:01
+ * @version: V1.0-auto
+ * @review: FairyHood/2018-03-08 10:46:01
+ */
+public interface AlarmService {
+
+    Alarm selectFinallyOne();
+
+    Integer insert(Alarm alarm);
+
+    Integer update(Long id, Alarm alarm);
+
+    Integer delete(Long id);
+
+    Alarm selectById(Long id);
+
+    Page<Alarm> page(Page<Alarm> page);
+
+    Integer insertSelective(Alarm alarm);
+
+    Integer updateSelective(Long id, Alarm alarm);
+}

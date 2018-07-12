@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.suixingpay.datas.manager.core.mapper.DicAlarmPluginMapper">
+<mapper namespace="cn.vbill.middleware.porter.manager.core.mapper.DicAlarmPluginMapper">
     <!-- 通用查询映射结果 
-    <resultMap id="BaseResultMap" type="com.suixingpay.datas.manager.core.entity.DicAlarmPlugin">
+    <resultMap id="BaseResultMap" type="DicAlarmPlugin">
         <result column="id" property="id" />
         <result column="alert_type" property="alertType" />
         <result column="field_name" property="fieldName" />
@@ -62,7 +62,7 @@
     </delete>
 
     <!-- 根据主鍵查找 -->
-    <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.DicAlarmPlugin">
+    <select id="selectById" resultType="cn.vbill.middleware.porter.manager.core.entity.DicAlarmPlugin">
         select id, alert_type AS alertType, field_name AS fieldName, field_code AS fieldCode, field_order AS fieldOrder, state, iscancel, remark from d_alarm_plugin
         where id = #{id}
     </select>
@@ -74,7 +74,7 @@
     </select>
 
     <!-- 分页 -->
-    <select id="page" resultType="com.suixingpay.datas.manager.core.entity.DicAlarmPlugin">
+    <select id="page" resultType="cn.vbill.middleware.porter.manager.core.entity.DicAlarmPlugin">
         select id, alert_type AS alertType, field_name AS fieldName, field_code AS fieldCode, field_order AS fieldOrder, state, iscancel, remark from d_alarm_plugin
         where 1=1 limit #{page.offset},#{page.pageSize}
     </select>
@@ -168,7 +168,7 @@
         where id = #{id,jdbcType=BIGINT}
     </update>
 
-    <select id="findByAlertType" resultType="com.suixingpay.datas.manager.core.entity.DicAlarmPlugin">
+    <select id="findByAlertType" resultType="cn.vbill.middleware.porter.manager.core.entity.DicAlarmPlugin">
         select id, alert_type AS alertType, field_name AS fieldName, field_code AS fieldCode, field_order AS fieldOrder,field_type as fieldType, field_type_key as fieldTypeKey, state, iscancel, remark from d_alarm_plugin
         where alert_type = #{alertType} and iscancel =0 order by field_order
     </select>

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.suixingpay.datas.manager.core.mapper.NodesMapper">
+<mapper namespace="cn.vbill.middleware.porter.manager.core.mapper.NodesMapper">
     <!-- 通用查询映射结果 
-    <resultMap id="BaseResultMap" type="com.suixingpay.datas.manager.core.entity.Nodes">
+    <resultMap id="BaseResultMap" type="Nodes">
         <result column="id" property="id" />
         <result column="node_id" property="nodeId" />
         <result column="machine_name" property="machineName" />
@@ -24,7 +24,7 @@
     </sql>-->
 
     <!-- 查询 -->
-    <select id="selectList" resultType="com.suixingpay.datas.manager.core.entity.Nodes">
+    <select id="selectList" resultType="cn.vbill.middleware.porter.manager.core.entity.Nodes">
         select id, node_id AS nodeId, machine_name AS machineName, ip_address AS ipAddress, pid_number AS pidNumber, heart_beat_time AS heartBeatTime, state, node_type as nodeType, task_push_state as taskPushState, creater, create_time AS createTime, iscancel, remark from b_nodes
         where iscancel = 0
     </select>
@@ -140,12 +140,12 @@
     </update>
 
     <!-- 根据主鍵查找 -->
-    <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.Nodes">
+    <select id="selectById" resultType="cn.vbill.middleware.porter.manager.core.entity.Nodes">
         select id, node_id AS nodeId, machine_name AS machineName, ip_address AS ipAddress, pid_number AS pidNumber, heart_beat_time AS heartBeatTime, state, node_type as nodeType, task_push_state as taskPushState, creater, create_time AS createTime, iscancel, remark from b_nodes
         where id = #{id}
     </select>
 
-    <select id="selectByNodeId" resultType="com.suixingpay.datas.manager.core.entity.Nodes">
+    <select id="selectByNodeId" resultType="cn.vbill.middleware.porter.manager.core.entity.Nodes">
         select id, node_id AS nodeId, machine_name AS machineName, ip_address AS ipAddress, pid_number AS pidNumber, heart_beat_time AS heartBeatTime, state, node_type as nodeType, task_push_state as taskPushState, creater, create_time AS createTime, iscancel, remark from b_nodes
         where node_id = #{nodeId}
     </select>
@@ -174,7 +174,7 @@
     </select>
 
     <!-- 分页 -->
-    <select id="page" resultType="com.suixingpay.datas.manager.core.entity.Nodes">
+    <select id="page" resultType="cn.vbill.middleware.porter.manager.core.entity.Nodes">
         select id, node_id AS nodeId, machine_name AS machineName, ip_address AS ipAddress, pid_number AS pidNumber,
         heart_beat_time AS heartBeatTime, state, node_type as nodeType, task_push_state as taskPushState
         from b_nodes

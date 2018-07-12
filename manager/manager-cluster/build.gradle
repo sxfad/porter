@@ -1,2 +1,2 @@
-group 'com.suixingpay.datas.manager'
-archivesBaseName = 'datas-manager-cluster'
+group 'cn.vbill.middleware.porter.manager'
+archivesBaseName = 'porter-manager-cluster'

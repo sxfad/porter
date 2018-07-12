@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.suixingpay.datas.manager.core.mapper.OggTablesMapper">
+<mapper namespace="cn.vbill.middleware.porter.manager.core.mapper.OggTablesMapper">
     <!-- 通用查询映射结果 
-    <resultMap id="BaseResultMap" type="com.suixingpay.datas.manager.core.entity.OggTables">
+    <resultMap id="BaseResultMap" type="OggTables">
         <result column="id" property="id" />
         <result column="ip_address" property="ipAddress" />
         <result column="ip_name" property="ipName" />
@@ -183,13 +183,13 @@
     </update>
 
     <!-- 根据主鍵查找 -->
-    <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.OggTables">
+    <select id="selectById" resultType="cn.vbill.middleware.porter.manager.core.entity.OggTables">
         select id, ip_address AS ipAddress, ip_name AS ipName, table_name AS tableName, table_value AS tableValue, table_marker AS tableMarker, heart_beat_time AS heartBeatTime, create_time AS createTime, iscancel, remark, related_task_info as relatedTaskInfo from ogg_tables
         where id = #{id}
     </select>
 
     <!-- 列表查询 -->
-    <select id="selectList" resultType="com.suixingpay.datas.manager.core.entity.OggTables">
+    <select id="selectList" resultType="cn.vbill.middleware.porter.manager.core.entity.OggTables">
         select id, ip_address AS ipAddress,table_value AS tableValue from ogg_tables
         where iscancel=0
         <if test="ipAddress != null and ipAddress != ''">
@@ -213,7 +213,7 @@
     </select>
 
     <!-- 分页数据查询 -->
-    <select id="page" resultType="com.suixingpay.datas.manager.core.entity.OggTables">
+    <select id="page" resultType="cn.vbill.middleware.porter.manager.core.entity.OggTables">
         select id, ip_address AS ipAddress, ip_name AS ipName, table_name AS tableName, table_value AS tableValue, table_marker AS tableMarker, heart_beat_time AS heartBeatTime, create_time AS createTime, iscancel, remark, related_task_info as relatedTaskInfo from ogg_tables
         where iscancel=0
         <if test="ipAddress != null and ipAddress != ''">

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.suixingpay.datas.manager.core.mapper.DictionaryMapper">
+<mapper namespace="cn.vbill.middleware.porter.manager.core.mapper.DictionaryMapper">
     <!-- 通用查询映射结果 
-    <resultMap id="BaseResultMap" type="com.suixingpay.datas.manager.core.entity.Dictionary">
+    <resultMap id="BaseResultMap" type="Dictionary">
         <result column="id" property="id" />
         <result column="code" property="code" />
         <result column="name" property="name" />
@@ -59,13 +59,13 @@
     </delete>
 
     <!-- 根据主鍵查找 -->
-    <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.Dictionary">
+    <select id="selectById" resultType="cn.vbill.middleware.porter.manager.core.entity.Dictionary">
         select id, code, name, parentcode, level, dictype, state, remark from d_dictionary
         where id = #{id}
     </select>
 
     <!-- 查询所有数据 -->
-    <select id="selectAll" resultType="com.suixingpay.datas.manager.core.entity.Dictionary">
+    <select id="selectAll" resultType="cn.vbill.middleware.porter.manager.core.entity.Dictionary">
         select id, code, name, parentcode, level, dictype, state, remark from d_dictionary
         where 1=1
         <if test="state !=null and state != ''">
@@ -80,7 +80,7 @@
     </select>
 
     <!-- 分页 -->
-    <select id="page" resultType="com.suixingpay.datas.manager.core.entity.Dictionary">
+    <select id="page" resultType="cn.vbill.middleware.porter.manager.core.entity.Dictionary">
         select id, code, name, parentcode, level, dictype, state, remark from d_dictionary
         where 1=1 limit #{page.offset},#{page.pageSize}
     </select>

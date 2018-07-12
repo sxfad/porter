@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.suixingpay.datas.manager.core.mapper.AlarmMapper">
+<mapper namespace="cn.vbill.middleware.porter.manager.core.mapper.AlarmMapper">
     <!-- 通用查询映射结果 
-    <resultMap id="BaseResultMap" type="com.suixingpay.datas.manager.core.entity.Alarm">
+    <resultMap id="BaseResultMap" type="Alarm">
         <result column="id" property="id" />
         <result column="alarm_type" property="alarmType" />
         <result column="create_user_id" property="createUserId" />
@@ -40,7 +40,7 @@
         delete from s_alarm where id = #{id}
     </delete>
     <!-- 根究主鍵查找 -->
-    <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.Alarm">
+    <select id="selectById" resultType="cn.vbill.middleware.porter.manager.core.entity.Alarm">
         select id, alarm_type AS alarmType, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, remark from s_alarm
         where id = #{id}
     </select>
@@ -48,7 +48,7 @@
         select count(id) from s_alarm
         where 1=1
     </select>
-    <select id="page" resultType="com.suixingpay.datas.manager.core.entity.Alarm">
+    <select id="page" resultType="cn.vbill.middleware.porter.manager.core.entity.Alarm">
         select id, alarm_type AS alarmType, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, remark from s_alarm
         where 1=1 limit #{page.offset},#{page.pageSize}
     </select>
@@ -142,7 +142,7 @@
         where id = #{id,jdbcType=BIGINT}
     </update>
         
-    <select id="selectFinallyOne" resultType="com.suixingpay.datas.manager.core.entity.Alarm">
+    <select id="selectFinallyOne" resultType="cn.vbill.middleware.porter.manager.core.entity.Alarm">
         select id, alarm_type AS alarmType, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, remark from s_alarm
             where iscancel = 0 ORDER BY id DESC LIMIT 1
     </select>

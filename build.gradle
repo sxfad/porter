@@ -23,7 +23,7 @@ subprojects {
     apply plugin: 'idea'
     apply plugin: 'checkstyle'
     ext {
-        group = 'com.suixingpay.datas'
+        group = 'cn.vbill.middleware.porter'
         junitVersion = '4.12'
         version '2.0.2'
         springVersion = '1.5.9.RELEASE'

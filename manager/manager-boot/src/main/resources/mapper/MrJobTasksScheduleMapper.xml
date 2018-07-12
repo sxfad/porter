@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.suixingpay.datas.manager.core.mapper.MrJobTasksScheduleMapper">
+<mapper namespace="cn.vbill.middleware.porter.manager.core.mapper.MrJobTasksScheduleMapper">
     <!-- 通用查询映射结果
-    <resultMap id="BaseResultMap" type="com.suixingpay.datas.manager.core.entity.MrJobTasksSchedule">
+    <resultMap id="BaseResultMap" type="MrJobTasksSchedule">
         <result column="id" property="id" />
         <result column="job_id" property="jobId" />
         <result column="swimlane_id" property="swimlaneId" />
@@ -126,26 +126,26 @@
     </delete>
 
     <!-- 根据主鍵查找 -->
-    <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.MrJobTasksSchedule">
+    <select id="selectById" resultType="cn.vbill.middleware.porter.manager.core.entity.MrJobTasksSchedule">
         select id, job_id AS jobId, job_name AS jobName, swimlane_id AS swimlaneId, node_id AS nodeId, node_id_ip AS nodeIdIp, schema_table AS schemaTable, register_time AS registerTime, heart_beat_date AS heartBeatDate, alarm_number AS alarmNumber, last_checked_time AS lastCheckedTime, insert_success AS insertSuccess, insert_failure AS insertFailure, update_success AS updateSuccess, update_failure AS updateFailure, delete_success AS deleteSuccess, delete_failure AS deleteFailure, dispose_schedule AS disposeSchedule, last_loaded_data_time AS lastLoadedDataTime, last_loaded_system_time AS lastLoadedSystemTime, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, partition_day AS partitionDay, remark from mr_job_tasks_schedule
         where id = #{id}
     </select>
 
     <!-- 根据任务id和泳道查询 -->
-    <select id="selectByJobIdAndSwimlaneId" resultType="com.suixingpay.datas.manager.core.entity.MrJobTasksSchedule">
+    <select id="selectByJobIdAndSwimlaneId" resultType="cn.vbill.middleware.porter.manager.core.entity.MrJobTasksSchedule">
         select id, job_id AS jobId, job_name AS jobName, swimlane_id AS swimlaneId , schema_table AS schemaTable from mr_job_tasks_schedule
         where job_id = #{jobId} and swimlane_id = #{swimlaneId} and schema_table = #{schemaTable}
     </select>
 
     <!-- 根据任务id获取泳道 -->
-    <select id="selectSwimlaneByJobId" resultType="com.suixingpay.datas.manager.core.entity.MrJobTasksSchedule">
+    <select id="selectSwimlaneByJobId" resultType="cn.vbill.middleware.porter.manager.core.entity.MrJobTasksSchedule">
         SELECT DISTINCT swimlane_id AS swimlaneId
         FROM mr_job_tasks_schedule
         WHERE job_id = #{jobId}
     </select>
 
     <!-- 条件查询获取列表 -->
-    <select id="list" resultType="com.suixingpay.datas.manager.core.entity.MrJobTasksSchedule">
+    <select id="list" resultType="cn.vbill.middleware.porter.manager.core.entity.MrJobTasksSchedule">
         select
         id, job_id AS jobId, job_name AS jobName, swimlane_id AS swimlaneId, node_id AS nodeId, node_id_ip AS nodeIdIp,
         schema_table AS schemaTable, register_time AS registerTime, heart_beat_date AS heartBeatDate,
@@ -174,7 +174,7 @@
     </select>
 
     <!-- 分页 -->
-    <select id="page" resultType="com.suixingpay.datas.manager.core.entity.MrJobTasksSchedule">
+    <select id="page" resultType="cn.vbill.middleware.porter.manager.core.entity.MrJobTasksSchedule">
         select id, job_id AS jobId, job_name AS jobName, swimlane_id AS swimlaneId, node_id AS nodeId, node_id_ip AS nodeIdIp, schema_table AS schemaTable, register_time AS registerTime, heart_beat_date AS heartBeatDate, alarm_number AS alarmNumber, last_checked_time AS lastCheckedTime, insert_success AS insertSuccess, insert_failure AS insertFailure, update_success AS updateSuccess, update_failure AS updateFailure, delete_success AS deleteSuccess, delete_failure AS deleteFailure, dispose_schedule AS disposeSchedule, last_loaded_data_time AS lastLoadedDataTime, last_loaded_system_time AS lastLoadedSystemTime, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, partition_day AS partitionDay, remark from mr_job_tasks_schedule
         where 1=1 limit #{page.offset},#{page.pageSize}
     </select>

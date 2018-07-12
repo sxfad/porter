@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.suixingpay.datas.manager.core.mapper.JobTasksMapper">
+<mapper namespace="cn.vbill.middleware.porter.manager.core.mapper.JobTasksMapper">
     <!-- 通用查询映射结果
-    <resultMap id="BaseResultMap" type="com.suixingpay.datas.manager.core.entity.JobTasks">
+    <resultMap id="BaseResultMap" type="JobTasks">
         <result column="id" property="id" />
         <result column="job_name" property="jobName" />
         <result column="job_state" property="jobState" />
@@ -32,7 +32,7 @@
     </sql>-->
 
     <!-- 查询所有 -->
-    <select id="selectList" resultType="com.suixingpay.datas.manager.core.entity.JobTasks">
+    <select id="selectList" resultType="cn.vbill.middleware.porter.manager.core.entity.JobTasks">
         select id, job_name AS jobName, job_state AS jobState, 
         job_type as jobType,
         java_class_name as javaClassName, java_class_content as javaClassContent, 
@@ -45,7 +45,7 @@
     </select>
 
     <!-- 查询所有 -->
-    <select id="selectJobNameList" resultType="com.suixingpay.datas.manager.core.entity.JobTasks">
+    <select id="selectJobNameList" resultType="cn.vbill.middleware.porter.manager.core.entity.JobTasks">
         select id, job_name AS jobName from job_tasks where iscancel = 0
     </select>
 
@@ -163,7 +163,7 @@
     </delete>
 
     <!-- 根据主鍵查找 -->
-    <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.JobTasks">
+    <select id="selectById" resultType="cn.vbill.middleware.porter.manager.core.entity.JobTasks">
         select
             id, job_name AS jobName, java_class_name as javaClassName, java_class_content as javaClassContent, job_state AS jobState, 
             job_type as jobType,
@@ -200,7 +200,7 @@
     </select>
 
     <!-- 分页 -->
-    <select id="page" resultType="com.suixingpay.datas.manager.core.entity.JobTasks">
+    <select id="page" resultType="cn.vbill.middleware.porter.manager.core.entity.JobTasks">
         select
         id, job_name AS jobName, java_class_name as javaClassName, java_class_content as javaClassContent, 
         job_state AS jobState, job_type as jobType,

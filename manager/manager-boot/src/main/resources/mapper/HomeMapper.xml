@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.suixingpay.datas.manager.core.mapper.HomeMapper">
+<mapper namespace="cn.vbill.middleware.porter.manager.core.mapper.HomeMapper">
 
 
-    <select id="block" resultType="com.suixingpay.datas.manager.core.icon.HomeBlockResult">
+    <select id="block" resultType="cn.vbill.middleware.porter.manager.core.icon.HomeBlockResult">
         SELECT
             a.num1 AS tenMinutesCount,
             b.num2 AS oneHourCount,

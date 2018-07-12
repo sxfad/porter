@@ -1,5 +1,5 @@
-group 'com.suixingpay.datas.manager'
-archivesBaseName = 'datas-manager-web'
+group 'cn.vbill.middleware.porter.manager'
+archivesBaseName = 'porter-manager-web'
 dependencies {
     compile project(':manager:manager-core')
     //token

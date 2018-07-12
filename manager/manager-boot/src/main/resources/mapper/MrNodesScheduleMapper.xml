@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.suixingpay.datas.manager.core.mapper.MrNodesScheduleMapper">
+<mapper namespace="cn.vbill.middleware.porter.manager.core.mapper.MrNodesScheduleMapper">
     <!-- 通用查询映射结果
-    <resultMap id="BaseResultMap" type="com.suixingpay.datas.manager.core.entity.MrNodesSchedule">
+    <resultMap id="BaseResultMap" type="MrNodesSchedule">
         <result column="id" property="id" />
         <result column="node_id" property="nodeId" />
         <result column="computer_name" property="computerName" />
@@ -87,7 +87,7 @@
     </delete>
 
     <!-- 根据主鍵查找 -->
-    <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.MrNodesSchedule">
+    <select id="selectById" resultType="cn.vbill.middleware.porter.manager.core.entity.MrNodesSchedule">
         select
         id, node_id AS nodeId, computer_name AS computerName, ip_address AS ipAddress, heart_beat_date AS heartBeatDate,
         process_number AS processNumber, job_id_json AS jobIdJson, job_name_json AS jobNameJson, create_user_id AS createUserId,
@@ -112,7 +112,7 @@
     </select>
 
     <!-- 分页 -->
-    <select id="page" resultType="com.suixingpay.datas.manager.core.entity.MrNodesSchedule">
+    <select id="page" resultType="cn.vbill.middleware.porter.manager.core.entity.MrNodesSchedule">
         select
         id, node_id AS nodeId, computer_name AS computerName, ip_address AS ipAddress, heart_beat_date AS heartBeatDate,
         process_number AS processNumber, job_id_json AS jobIdJson,job_name_json AS jobNameJson,
@@ -305,7 +305,7 @@
     </update>
 
     <!-- 根据节点id查询-->
-    <select id="selectByNodeId" resultType="com.suixingpay.datas.manager.core.entity.MrNodesSchedule">
+    <select id="selectByNodeId" resultType="cn.vbill.middleware.porter.manager.core.entity.MrNodesSchedule">
         select id, node_id AS nodeId from mr_nodes_schedule where node_id = #{nodeId}
     </select>
 </mapper>

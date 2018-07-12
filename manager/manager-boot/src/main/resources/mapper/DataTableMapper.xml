@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.suixingpay.datas.manager.core.mapper.DataTableMapper">
+<mapper namespace="cn.vbill.middleware.porter.manager.core.mapper.DataTableMapper">
     <!-- 通用查询映射结果 
-    <resultMap id="BaseResultMap" type="com.suixingpay.datas.manager.core.entity.DataTable">
+    <resultMap id="BaseResultMap" type="DataTable">
         <result column="id" property="id" />
         <result column="source_id" property="sourceId" />
         <result column="data_type" property="dataType" />
@@ -69,7 +69,7 @@
     </update>
 
     <!-- 根据主鍵查找 -->
-    <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.DataTable">
+    <select id="selectById" resultType="cn.vbill.middleware.porter.manager.core.entity.DataTable">
         SELECT
         b.id, b.source_id AS sourceId, b.data_type AS dataType, b.bank_name AS bankName,
         b.table_name AS tableName, b.create_time AS createTime, d.name AS sourceName
@@ -96,7 +96,7 @@
     </select>
 
     <!-- 分页 -->
-    <select id="page" resultType="com.suixingpay.datas.manager.core.entity.DataTable">
+    <select id="page" resultType="cn.vbill.middleware.porter.manager.core.entity.DataTable">
         SELECT
         b.id, b.source_id AS sourceId, b.data_type AS dataType, b.bank_name AS bankName,
         b.table_name AS tableName, b.create_time AS createTime, d.name AS sourceName
@@ -125,7 +125,7 @@
     </select>
 
     <!-- 目标/元数据表组分页 -->
-    <select id="dataTablePage" resultType="com.suixingpay.datas.manager.core.entity.DataTable">
+    <select id="dataTablePage" resultType="cn.vbill.middleware.porter.manager.core.entity.DataTable">
         SELECT
         b.id, b.source_id AS sourceId, b.data_type AS dataType, b.bank_name AS bankName,
         b.table_name AS tableName, b.create_time AS createTime, d.name AS sourceName

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.suixingpay.datas.manager.core.mapper.AlarmUserMapper">
+<mapper namespace="cn.vbill.middleware.porter.manager.core.mapper.AlarmUserMapper">
     <!-- 通用查询映射结果 
-    <resultMap id="BaseResultMap" type="com.suixingpay.datas.manager.core.entity.AlarmUser">
+    <resultMap id="BaseResultMap" type="AlarmUser">
         <result column="id" property="id" />
         <result column="alarm_id" property="alarmId" />
         <result column="user_id" property="userId" />
@@ -44,7 +44,7 @@
     </delete>
 
     <!-- 根据主鍵查找 -->
-    <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.AlarmUser">
+    <select id="selectById" resultType="cn.vbill.middleware.porter.manager.core.entity.AlarmUser">
         select id, alarm_id AS alarmId, user_id AS userId from s_alarm_user
         where id = #{id}
     </select>
@@ -56,13 +56,13 @@
     </select>
 
     <!-- 分页 -->
-    <select id="page" resultType="com.suixingpay.datas.manager.core.entity.AlarmUser">
+    <select id="page" resultType="cn.vbill.middleware.porter.manager.core.entity.AlarmUser">
         select id, alarm_id AS alarmId, user_id AS userId from s_alarm_user
         where 1=1 limit #{page.offset},#{page.pageSize}
     </select>
 
     <!-- 根据alarmId查找 -->
-    <select id="selectByAlarmId" resultType="com.suixingpay.datas.manager.core.entity.AlarmUser">
+    <select id="selectByAlarmId" resultType="cn.vbill.middleware.porter.manager.core.entity.AlarmUser">
         select id, alarm_id AS alarmId, user_id AS userId from s_alarm_user
         WHERE alarm_id = #{alarmId}
     </select>

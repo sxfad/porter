@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.suixingpay.datas.manager.core.mapper.LogGradeMapper">
+<mapper namespace="cn.vbill.middleware.porter.manager.core.mapper.LogGradeMapper">
     <!-- 通用查询映射结果 
-    <resultMap id="BaseResultMap" type="com.suixingpay.datas.manager.core.entity.LogGrade">
+    <resultMap id="BaseResultMap" type="LogGrade">
         <result column="id" property="id" />
         <result column="log_level" property="logLevel" />
         <result column="create_user_id" property="createUserId" />
@@ -63,7 +63,7 @@
     </delete>
 
     <!-- 根据主鍵查找 -->
-    <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.LogGrade">
+    <select id="selectById" resultType="cn.vbill.middleware.porter.manager.core.entity.LogGrade">
         select id, log_level AS logLevel, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, remark from s_log_grade
         where id = #{id}
     </select>
@@ -75,13 +75,13 @@
     </select>
 
     <!-- 分页 -->
-    <select id="page" resultType="com.suixingpay.datas.manager.core.entity.LogGrade">
+    <select id="page" resultType="cn.vbill.middleware.porter.manager.core.entity.LogGrade">
         select id, log_level AS logLevel, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, remark from s_log_grade
         where 1=1 limit #{page.offset},#{page.pageSize}
     </select>
 
     <!-- 查询最大id数据 -->
-    <select id="select" resultType="com.suixingpay.datas.manager.core.entity.LogGrade">
+    <select id="select" resultType="cn.vbill.middleware.porter.manager.core.entity.LogGrade">
         select id, log_level AS logLevel
         from s_log_grade
         ORDER BY id desc limit 1

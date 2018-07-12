@@ -1,0 +1,14 @@
+cn.vbill.middleware.porter.task.extract.extractor.Extractor = \
+  cn.vbill.middleware.porter.task.extract.extractor.IgnoreRowExtractor,\
+  cn.vbill.middleware.porter.task.extract.extractor.DynamicClassExtractor
+
+com.suixingpay.datas.node.task.load.loader.Loader = \
+  com.suixingpay.datas.node.task.load.loader.SQLSingleLoader,\
+  com.suixingpay.datas.node.task.load.loader.SQLBatchLoader
+
+cn.vbill.middleware.porter.task.transform.transformer.Transformer = \
+  cn.vbill.middleware.porter.task.transform.transformer.BatchPrePareTransformer,\
+  cn.vbill.middleware.porter.task.transform.transformer.ETLRowTransformer
+
+cn.vbill.middleware.porter.task.alert.alerter.Alerter = \
+  cn.vbill.middleware.porter.task.alert.alerter.ScanDataAlerter

@@ -1,5 +1,5 @@
-group 'com.suixingpay.datas.manager'
-archivesBaseName = 'datas-manager-core'
+group 'cn.vbill.middleware.porter.manager'
+archivesBaseName = 'porter-manager-core'
 dependencies {
     compile project(':common')
     //数据源

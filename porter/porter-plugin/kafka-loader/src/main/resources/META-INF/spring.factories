@@ -1,0 +1,3 @@
+cn.vbill.middleware.porter.core.loader.DataLoader=\
+  cn.vbill.middleware.porter.plugin.loader.kafka.KafkaLoader,\
+  cn.vbill.middleware.porter.plugin.loader.kafka.KafkaAsyncLoader

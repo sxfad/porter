@@ -1,5 +1,5 @@
-group 'com.suixingpay.datas'
-archivesBaseName = 'datas-commons'
+group 'cn.vbill.middleware.porter'
+archivesBaseName = 'porter-commons'
 dependencies {
     compile(
             'org.apache.ddlutils:ddlutils:1.0',

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.suixingpay.datas.manager.core.mapper.JobTasksTableMapper">
+<mapper namespace="cn.vbill.middleware.porter.manager.core.mapper.JobTasksTableMapper">
     <!-- 通用查询映射结果
-    <resultMap id="BaseResultMap" type="com.suixingpay.datas.manager.core.entity.JobTasksTable">
+    <resultMap id="BaseResultMap" type="JobTasksTable">
         <result column="id" property="id" />
         <result column="job_task_id" property="jobTaskId" />
         <result column="source_table_name" property="sourceTableName" />
@@ -78,7 +78,7 @@
         delete from job_tasks_table where job_task_id = #{jobTaskId}
     </delete>
 
-    <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.JobTasksTable">
+    <select id="selectById" resultType="cn.vbill.middleware.porter.manager.core.entity.JobTasksTable">
         select
         id, job_task_id AS jobTaskId, source_table_name AS sourceTableName, target_table_name AS targetTableName,
         ignore_target_case as ignoreTargetCase, force_matched as forceMatched, direct_map_table as directMapTable
@@ -94,7 +94,7 @@
     </select>
 
     <!-- 分页 -->
-    <select id="page" resultType="com.suixingpay.datas.manager.core.entity.JobTasksTable">
+    <select id="page" resultType="cn.vbill.middleware.porter.manager.core.entity.JobTasksTable">
         select id, job_task_id AS jobTaskId, source_table_name AS sourceTableName, target_table_name AS targetTableName,
         ignore_target_case as ignoreTargetCase, force_matched as forceMatched, direct_map_table as directMapTable
         from job_tasks_table

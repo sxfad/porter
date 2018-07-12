@@ -1,7 +1,0 @@
-group 'com.suixingpay.datas.plugin'
-jar.baseName = 'datas-plugin-jdbc-loader'
-dependencies {
-    compile (
-            project(":node:node-core")
-    )
-}

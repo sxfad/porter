@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.suixingpay.datas.manager.core.mapper.CUserMapper">
+<mapper namespace="cn.vbill.middleware.porter.manager.core.mapper.CUserMapper">
     <!-- 通用查询映射结果 --> 
-    <resultMap id="BaseResultMap" type="com.suixingpay.datas.manager.core.entity.CUser">
+    <resultMap id="BaseResultMap" type="cn.vbill.middleware.porter.manager.core.entity.CUser">
         <id column="id" property="id" />
         <result column="loginname" property="loginname" />
         <result column="loginpw" property="loginpw" />
@@ -13,7 +13,7 @@
         <result column="role_code" property="roleCode"/>
         <result column="state" property="state" />
         <result column="remark" property="remark" />
-        <association property="cRole" javaType="com.suixingpay.datas.manager.core.entity.CRole">
+        <association property="cRole" javaType="cn.vbill.middleware.porter.manager.core.entity.CRole">
             <result column="role_code" property="roleCode"/>
             <result column="role_name" property="roleName"/>
         </association>
@@ -76,13 +76,13 @@
     </update>
 
     <!-- 根据主鍵查找 -->
-    <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.CUser">
+    <select id="selectById" resultType="cn.vbill.middleware.porter.manager.core.entity.CUser">
         select id, loginname, loginpw, nickname, email, mobile, state, remark, role_code AS roleCode, depart_ment AS departMent  from c_user
         where id = #{id}
     </select>
 
     <!-- 根据 jobTasksId 查询告警人信息 -->
-    <select id="selectByJobTasksId" resultType="com.suixingpay.datas.manager.core.entity.CUser">
+    <select id="selectByJobTasksId" resultType="cn.vbill.middleware.porter.manager.core.entity.CUser">
         SELECT id, loginname, loginpw, nickname, email, mobile, state, remark
         from c_user
         WHERE id
@@ -90,7 +90,7 @@
     </select>
 
     <!-- 根据 alarmId 查询告警通知人信息 -->
-    <select id="selectByAlarmId" resultType="com.suixingpay.datas.manager.core.entity.CUser">
+    <select id="selectByAlarmId" resultType="cn.vbill.middleware.porter.manager.core.entity.CUser">
         SELECT id, loginname, loginpw, nickname, email, mobile, state, remark
         from c_user
         WHERE id
@@ -98,7 +98,7 @@
     </select>
 
     <!-- 根据主鍵查找 -->
-    <select id="selectByNameAndpasswd" resultType="com.suixingpay.datas.manager.core.entity.CUser">
+    <select id="selectByNameAndpasswd" resultType="cn.vbill.middleware.porter.manager.core.entity.CUser">
         select id, loginname, loginpw, nickname, email, mobile, state, remark, role_code AS roleCode, depart_ment AS departMent from c_user
         where loginname = #{loginname} and loginpw = #{loginpw} and state &gt;= 0
     </select>
@@ -121,7 +121,7 @@
     </select>
 
     <!-- 验证邮箱或登录名是否重复 -->
-    <select id="findByNameOrEmail" resultType="com.suixingpay.datas.manager.core.entity.CUser">
+    <select id="findByNameOrEmail" resultType="cn.vbill.middleware.porter.manager.core.entity.CUser">
         select id, loginname, email from c_user
         <where>
             state &gt;= 0
@@ -214,7 +214,7 @@
         where id = #{id,jdbcType=BIGINT}
     </update>
 
-    <select id="list" resultType="com.suixingpay.datas.manager.core.entity.CUser">
+    <select id="list" resultType="cn.vbill.middleware.porter.manager.core.entity.CUser">
         select id, loginname, loginpw, nickname, email, mobile, state, remark, role_code AS roleCode from c_user
         where state=1
     </select>

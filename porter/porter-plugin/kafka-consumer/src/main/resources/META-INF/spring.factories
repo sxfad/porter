@@ -1,0 +1,1 @@
+cn.vbill.middleware.porter.core.consumer.DataConsumer=cn.vbill.middleware.porter.plugin.consumer.kafka.KafkaConsumer

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.suixingpay.datas.manager.core.mapper.JobTasksUserMapper">
+<mapper namespace="cn.vbill.middleware.porter.manager.core.mapper.JobTasksUserMapper">
     <!-- 通用查询映射结果 
-    <resultMap id="BaseResultMap" type="com.suixingpay.datas.manager.core.entity.JobTasksUser">
+    <resultMap id="BaseResultMap" type="JobTasksUser">
         <result column="id" property="id" />
         <result column="job_task_id" property="jobTaskId" />
         <result column="user_id" property="userId" />
@@ -53,7 +53,7 @@
     </delete>
 
     <!-- 根据主鍵查找 -->
-    <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.JobTasksUser">
+    <select id="selectById" resultType="cn.vbill.middleware.porter.manager.core.entity.JobTasksUser">
         select id, job_task_id AS jobTaskId, user_id AS userId from job_tasks_user
         where id = #{id}
     </select>
@@ -65,7 +65,7 @@
     </select>
 
     <!-- 分页 -->
-    <select id="page" resultType="com.suixingpay.datas.manager.core.entity.JobTasksUser">
+    <select id="page" resultType="cn.vbill.middleware.porter.manager.core.entity.JobTasksUser">
         select id, job_task_id AS jobTaskId, user_id AS userId from job_tasks_user
         where 1=1 limit #{page.offset},#{page.pageSize}
     </select>

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.suixingpay.datas.manager.core.mapper.DataSourceMapper">
+<mapper namespace="cn.vbill.middleware.porter.manager.core.mapper.DataSourceMapper">
     <!-- 通用查询映射结果 -->
-    <!--<resultMap id="BaseResultMap" type="com.suixingpay.datas.manager.core.entity.DataSource">-->
+    <!--<resultMap id="BaseResultMap" type="DataSource">-->
         <!--<id column="id" property="id" />-->
         <!--<result column="name" property="name" />-->
         <!--<result column="data_type" property="dataType" />-->
@@ -11,7 +11,7 @@
         <!--<result column="state" property="state" />-->
         <!--<result column="iscancel" property="iscancel" />-->
         <!--<result column="remark" property="remark" />-->
-        <!--<collection property="plugins" column="id" ofType="com.suixingpay.datas.manager.core.entity.DataSourcePlugin">-->
+        <!--<collection property="plugins" column="id" ofType="DataSourcePlugin">-->
             <!--<result column="source_id" property="sourceId"/>-->
             <!--<result column="field_name" property="fieldName"/>-->
             <!--<result column="field_code" property="fieldCode"/>-->
@@ -68,7 +68,7 @@
     </update>
 
     <!-- 根据主鍵查找 -->
-    <select id="selectById" resultType="com.suixingpay.datas.manager.core.entity.DataSource">
+    <select id="selectById" resultType="cn.vbill.middleware.porter.manager.core.entity.DataSource">
         select
         id, name, data_type AS dataType, creater AS creater, create_time AS createTime
         from b_data_source
@@ -96,7 +96,7 @@
     </select>
 
     <!-- 分页 -->
-    <select id="page" resultType="com.suixingpay.datas.manager.core.entity.DataSource">
+    <select id="page" resultType="cn.vbill.middleware.porter.manager.core.entity.DataSource">
         select id, name, data_type AS dataType, create_time AS createTime
         from b_data_source
         <where>
@@ -126,7 +126,7 @@
     </select>
 
     <!-- 消费数据来源分页 -->
-    <select id="findByTypePage" resultType="com.suixingpay.datas.manager.core.entity.DataSource">
+    <select id="findByTypePage" resultType="cn.vbill.middleware.porter.manager.core.entity.DataSource">
         SELECT id, name, data_type AS dataType, create_time AS createTime
         FROM b_data_source
         WHERE iscancel = 0 and (data_type = 'KAFKA' or data_type = 'CANAL')
