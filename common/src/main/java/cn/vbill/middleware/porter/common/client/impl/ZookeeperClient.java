@@ -158,4 +158,20 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
     public boolean alive() {
         return null != zk && null != zk.getState() && zk.getState() == ZooKeeper.States.CONNECTED;
     }
+
+    /**
+     * zookeeper 链接自旋
+     */
+    public void clientSpinning() {
+        ZookeeperConfig config = getConfig();
+        int spinnedTime = 0;
+        while (!alive() && spinnedTime < config.getSpinningTime()) {
+            try {
+                spinnedTime += config.getSpinningPeer();
+                Thread.currentThread().sleep(config.getSpinningPeer());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

@@ -35,4 +35,8 @@ public interface ClusterClient<S> {
     void delete(String path) throws Exception;
 
     boolean alive();
+
+    default void clientSpinning() {
+
+    }
 }

@@ -256,6 +256,9 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
 
     @Override
     public void upload(TaskPositionUploadCommand command) throws Exception {
+        //自旋获得ZK链接
+        client.clientSpinning();
+        //如果仍不能获得数据库连接
         if (!client.alive()) {
             throw new TaskStopTriggerException("节点集群客户端链接失效");
         }

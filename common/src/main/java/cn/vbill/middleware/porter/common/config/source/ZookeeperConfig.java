@@ -25,6 +25,8 @@ import java.util.Map;
 public class ZookeeperConfig extends SourceConfig {
     @Setter @Getter private String url;
     @Setter @Getter private int sessionTimeout = 1000 * 60 * 10;
+    @Setter @Getter private int spinningTime = 1000 * 60 * 10;
+    @Setter @Getter private int spinningPeer = 200;
 
     public  ZookeeperConfig() {
         sourceType = SourceType.ZOOKEEPER;
