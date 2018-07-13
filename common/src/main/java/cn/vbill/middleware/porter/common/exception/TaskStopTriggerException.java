@@ -29,6 +29,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.jdbc.UncategorizedSQLException;
+import org.springframework.transaction.CannotCreateTransactionException;
 
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
@@ -68,7 +69,7 @@ public class TaskStopTriggerException extends TaskException {
         }
         if (cause instanceof CannotGetJdbcConnectionException || cause instanceof UncategorizedSQLException
                 || cause instanceof MySQLSyntaxErrorException || cause instanceof BadSqlGrammarException
-                || cause instanceof DataIntegrityViolationException) {
+                || cause instanceof DataIntegrityViolationException|| cause instanceof CannotCreateTransactionException) {
             return true;
         }
 
