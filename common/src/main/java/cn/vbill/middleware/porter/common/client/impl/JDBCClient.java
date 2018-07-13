@@ -99,6 +99,7 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
         dataSource.setTimeBetweenEvictionRunsMillis(60000);
         if (config.getDbType() == DbType.MYSQL) {
             dataSource.setValidationQuery("select 1");
+            dataSource.setConnectionProperties("autoReconnect=true;maxReconnects=10;failOverReadOnly=false");
         } else if (config.getDbType() == DbType.ORACLE) {
             dataSource.setValidationQuery("select 1 from dual");
             dataSource.addConnectionProperty("restrictGetTables", "true");
