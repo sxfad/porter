@@ -156,8 +156,13 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
      */
     @Override
     public boolean alive() {
-        return null != zk && null != zk.getState() && zk.getState() == ZooKeeper.States.CONNECTED;
+        return null != zk && null != zk.getState() && zk.getState().isConnected();
     }
+
+    private boolean canRestore() {
+        return null != zk && zk.getState().isAlive();
+    }
+
 
     /**
      * zookeeper 链接自旋
@@ -165,7 +170,7 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
     public void clientSpinning() {
         ZookeeperConfig config = getConfig();
         int spinnedTime = 0;
-        while (!alive() && spinnedTime < config.getSpinningTime()) {
+        while (!alive() && canRestore() && spinnedTime < config.getSpinningTime()) {
             try {
                 spinnedTime += config.getSpinningPeer();
                 Thread.currentThread().sleep(config.getSpinningPeer());

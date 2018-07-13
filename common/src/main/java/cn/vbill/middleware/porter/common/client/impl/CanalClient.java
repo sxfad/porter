@@ -248,7 +248,7 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
 
     @Override
     public boolean isAutoCommitPosition() {
-        return true;
+        return false;
     }
 
     @Override
