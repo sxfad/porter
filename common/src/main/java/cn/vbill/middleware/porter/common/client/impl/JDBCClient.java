@@ -175,29 +175,27 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
     @Override
     public int getDataCount(String schema, String table, String updateDateColumn, Date startTime, Date endTime) {
         String sql = sqlTemplate.getDataChangedCountSql(schema, table, updateDateColumn);
-        return countQuery(sql, startTime, endTime);
+        return uniqueValueQuery(sql, Integer.class, startTime, endTime);
     }
 
-    private int countQuery(String sql, Date startDate, Date endDate) {
+    public  <T> T uniqueValueQuery(String sql, Class<T> returnType, Object... args) {
         //数组形式仅仅是为了处理回调代码块儿对final局部变量的要求
-        int[] count = {0};
+        List<T> results = new ArrayList<>(1);
         try {
             this.query(sql, new RowCallbackHandler() {
                 @Override
                 public void processRow(ResultSet rs) throws SQLException {
                     if (null != rs) {
-                        String value = rs.getString(1);
-                        if (!StringUtils.isBlank(value) && StringUtils.isNumeric(value)) {
-                            count[0] = Integer.valueOf(value).intValue();
-                        }
+                        results.add(rs.getObject(1, returnType));
                     }
                 }
-            }, startDate, endDate);
+            }, args);
         } catch (Throwable e) {
             e.printStackTrace();
         }
-        return count[0];
+        return  null == results || results.isEmpty() ? null : results.get(0);
     }
+
 
     public int[] batchUpdate(String sqlType, String sql, List<Object[]> batchArgs) throws TaskStopTriggerException {
         int[] affect = new int[]{};

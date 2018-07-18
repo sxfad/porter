@@ -255,4 +255,7 @@ public enum  NodeContext {
         object.put("consumerIdle", Collections.unmodifiableMap(consumerIdle));
         return object.toJSONString();
     }
+    public String[] getEnvironment() {
+        return context.getEnvironment().getActiveProfiles();
+    }
 }
