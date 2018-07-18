@@ -5,7 +5,7 @@
 ## Core features
 
 ## Document
-+ [中文文档](./doc/)
++ [中文文档](./doc/document.md)
 + [英文文档](./doc/)
 
 ## Architecture
@@ -25,6 +25,7 @@
 + [快速开始](./doc/quick_start.md)
 + [部署需求](./doc/requirement.md)
 + [配置文档](./doc/profiles.md)
+
 ## Contact Us
 
 
