@@ -16,9 +16,6 @@
 [//]: # (todo)
 ![Node节点内存模型](./img/架构设计.png)
 
-[//]: # (todo)
-![Node节点内存模型](./img/功能结构.png)
-
 ## Node节点内存模型
 ![Node节点内存模型](./img/node-model.png)
 ```

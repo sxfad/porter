@@ -11,18 +11,18 @@ gradle build
 
 ## 运行
 ```
-tar zxvf build/distributions/node-boot-版本.tar
-node-boot-版本/bin/startup.sh
+tar zxvf build/distributions/porter-boot-版本.tar
+porter-boot-版本/bin/startup.sh
 ```
 
 ### 调试
-- node-boot-版本/bin/startup.sh  debug 端口号
+- porter-boot-版本/bin/startup.sh  debug 端口号
 
 ### 运行环境
-- node-boot-版本/bin/startup.sh --spring.profiles.active=运行环境
+- porter-boot-版本/bin/startup.sh --spring.profiles.active=运行环境
 
 ## 优雅关闭
-- node-boot-版本/bin/shutdown.sh
+- porter-boot-版本/bin/shutdown.sh
 
 ```
 signalId = `kill -l USR2`
