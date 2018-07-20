@@ -1,4 +1,4 @@
-# 数据同步工具 | [English](**)
+# 数据同步工具 | [English](./README_EN.md)
 **分布式数据同步中间件**：
 
 ## Abstract
