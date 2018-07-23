@@ -8,11 +8,11 @@
 
 通过spring.factories发布:
 
-com.suixingpay.datas.node.core.consumer.DataConsumer=xxx
+cn.vbill.middleware.porter.core.consumer.DataConsumer=xxx
 
 通过配置文件生效:
 
-node.task[index].consumer.consumerName=pluginName
+porter.task[index].consumer.consumerName=pluginName
 
 ```
 
@@ -21,12 +21,12 @@ node.task[index].consumer.consumerName=pluginName
 ```
 通过spring.factories发布:
 
-com.suixingpay.datas.node.core.event.s.EventConverter = \
-  com.suixingpay.datas.node.plugin.OggXmlConverter
+cn.vbill.middleware.porter.core.event.s.EventConverter = \
+  cn.vbill.middleware.porter.plugin.OggXmlConverter
 
 通过配置文件生效:
 
-node.task[index].consumer.converter=oggXml
+porter.task[index].consumer.converter=oggXml
 ```
 
 - EventProcessor(自定义消费数据抽取插件)
@@ -36,8 +36,8 @@ node.task[index].consumer.converter=oggXml
 
 通过配置文件生效：
 
-node.task[index].consumer.eventProcessor.className=com.suixingpay.datas.node.plugin.CustomEventProcessor
-node.task[index].consumer.eventProcessor.content=文件路径
+porter.task[index].consumer.eventProcessor.className=cn.vbill.middleware.porter.plugin.CustomEventProcessor
+porter.task[index].consumer.eventProcessor.content=文件路径
 
 ```
 
@@ -49,11 +49,11 @@ node.task[index].consumer.eventProcessor.content=文件路径
 
 通过spring.factories发布:
 
-com.suixingpay.datas.node.core.loader.DataLoader=xxx
+cn.vbill.middleware.porter.core.loader.DataLoader=xxx
 
 通过配置文件生效:
 
-node.task[index].loader.loaderName=pluginName
+porter.task[index].loader.loaderName=pluginName
 
 ```
 
@@ -71,7 +71,7 @@ node.task[index].loader.loaderName=pluginName
 ## 插件注册
 
 ```
-	放置到node-boot-version/plugins目录下，重启node-boot后生效。
+	放置到porter-boot-version/plugins目录下，重启porter-boot后生效。
 ```
 
 

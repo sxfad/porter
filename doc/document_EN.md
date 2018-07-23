@@ -4,33 +4,32 @@
 - [Architecture design](./architecture_EN.md)
 	- Applicable scene
 	- Realization basis
-	- 系统架构
-	- Node节点内存模型
-	- OGG部署结构
-	- 问题&方案(现象描述与补偿)
-- [Distributed cluster](./scale.md)
-    - 集群策略插件化
-    - zookeeper分布式策略
-- [Quick start](./quick_start.md)
-	- 从源码编译
-	- 运行
-	- 调试
-	- 运行环境
-	- 优雅关机
-- [Deployment requirements](./requirement.md)
-	- 硬件需求
-	- 软件需求
-	- 资源消耗
-- [Configuration document](./profiles.md)
-	- 文档结构
-	- 节点
-	- 告警
-	- 统计
-	- 公用连接池
-	- 任务
-- [Statistical Analysis](./statistics.md)
+	- System architecture
+	- Node Memory model
+	- OGG deployment structure
+	- Problem & Solution(Phenomenon description and compensation)
+- [Distributed cluster](./scale_EN.md)
+    - luster policy plugin
+    - zookeeper distributed policy
+- [Quick start](./quick_start_EN.md)
+	- Compile from source
+	- Run
+	- Debug
+	- Operating environment
+	- Elegant close
+- [Deployment requirements](./requirement_EN.md)
+	- Hardware requirements
+	- Software requirements
+	- Resource consumption
+- [Configuration document](./profiles_EN.md)
+	- Document structure
+	- Node number
+	- Alert
+	- Statistic
+	- Public connection pool
+	- Task configuration
 - [Performance](./performance.md)
 	- v0.2
 	- v0.3.1
-- [Plugin development](./plugin.md) 
-- [Access process](./how_to_use.md)
+- [Plugin development](./plugin_EN.md) 
+- [Access process](./how_to_use_EN.md)
