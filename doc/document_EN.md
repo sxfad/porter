@@ -1,7 +1,7 @@
 # Suixingpay Porter
 
 ## list
-- [Architecture design](./architecture.md)
+- [Architecture design](./architecture_EN.md)
 	- Applicable scene
 	- Realization basis
 	- 系统架构

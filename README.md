@@ -19,7 +19,7 @@
 
 ## Document
 + [中文文档](./doc/document.md)
-+ [英文文档](./doc/)
++ [英文文档](./doc/document_EN.md)
 
 ## Architecture
 ![Node节点内存模型](./doc/img/架构设计.png)
