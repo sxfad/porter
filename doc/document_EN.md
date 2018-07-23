@@ -1,0 +1,36 @@
+# Suixingpay Porter
+
+## list
+- [Architecture design](./architecture.md)
+	- Applicable scene
+	- Realization basis
+	- 系统架构
+	- Node节点内存模型
+	- OGG部署结构
+	- 问题&方案(现象描述与补偿)
+- [Distributed cluster](./scale.md)
+    - 集群策略插件化
+    - zookeeper分布式策略
+- [Quick start](./quick_start.md)
+	- 从源码编译
+	- 运行
+	- 调试
+	- 运行环境
+	- 优雅关机
+- [Deployment requirements](./requirement.md)
+	- 硬件需求
+	- 软件需求
+	- 资源消耗
+- [Configuration document](./profiles.md)
+	- 文档结构
+	- 节点
+	- 告警
+	- 统计
+	- 公用连接池
+	- 任务
+- [Statistical Analysis](./statistics.md)
+- [Performance](./performance.md)
+	- v0.2
+	- v0.3.1
+- [Plugin development](./plugin.md) 
+- [Access process](./how_to_use.md)
