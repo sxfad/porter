@@ -6,4 +6,4 @@
 ```
 
 ## zookeeper distributed policy
-![数据模型](./img/zk_data_schema.png)
+![zk_data_schem](./img/zk_data_schema.png)

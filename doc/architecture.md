@@ -13,7 +13,7 @@
 ## 系统架构
 
 [//]: # (todo)
-![Node节点内存模型](./img/架构设计.png)
+![Node节点内存模型](img/architecture_design.png)
 
 ## Node节点内存模型
 ![Node节点内存模型](./img/node-model.png)
