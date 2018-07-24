@@ -11,7 +11,6 @@
 - Table must have primary key、last update time
 
 ## System architecture
-![Node节点内存模型](./img/数据同步功能列表.png)
 
 ![Node节点内存模型](./img/架构设计.png)
 
@@ -32,8 +31,6 @@ AlertJob, the single-thread synchronous Zookeeper database checks the time point
 Alarms are configured according to the alarm mode configured in the configuration file.
 ```
 
-## OGG deployment structure
-![Node节点内存模型](./img/ogg.png)
 
 
 ## Problem & Solution(Phenomenon description and compensation)

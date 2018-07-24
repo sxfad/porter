@@ -28,8 +28,5 @@
 	- Statistic
 	- Public connection pool
 	- Task configuration
-- [Performance](./performance.md)
-	- v0.2
-	- v0.3.1
 - [Plugin development](./plugin_EN.md) 
 - [Access process](./how_to_use_EN.md)

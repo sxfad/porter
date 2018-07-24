@@ -2,8 +2,8 @@
 	
 ## 从源码编译
 ```
-git clone http://192.168.120.68/root/suixingpay-datas.git
-cd suixingpay-datas
+git clone http://192.168.120.68/root/vbill-proter.git
+cd vbill-proter
 git checkout 版本
 gradle build
 从build/distributions目录查找安装包
