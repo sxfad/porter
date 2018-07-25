@@ -145,6 +145,14 @@ public class CMenuController {
         return ok(number);
     }
 
+    /**
+     * 重新加载初始化数据
+     *
+     * @author FuZizheng
+     * @date 2018/4/16 下午4:51
+     * @param: []
+     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
+     */
     @GetMapping("/ref")
     @ApiOperation(value = "重新加载初始化数据", notes = "重新加载初始化数据")
     public ResponseMessage reflash() {

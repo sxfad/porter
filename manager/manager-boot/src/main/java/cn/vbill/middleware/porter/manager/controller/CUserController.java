@@ -155,6 +155,14 @@ public class CUserController {
         return ok(number);
     }
 
+    /**
+     * 查询明细
+     *
+     * @author FuZizheng
+     * @date 2018/7/25 下午5:31
+     * @param: [id]
+     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
+     */
     @GetMapping("/{id}")
     @ApiOperation(value = "查询明细", notes = "查询明细")
     public ResponseMessage info(@PathVariable("id") Long id) {
@@ -163,6 +171,14 @@ public class CUserController {
     }
 
 
+    /**
+     * 查询全部列表
+     *
+     * @author FuZizheng
+     * @date 2018/7/25 下午5:31
+     * @param: []
+     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
+     */
     @ApiOperation(value = "全部列表", notes = "全部列表")
     @GetMapping("/list")
     public ResponseMessage list() {

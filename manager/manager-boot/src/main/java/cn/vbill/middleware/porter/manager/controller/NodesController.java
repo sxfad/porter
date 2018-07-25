@@ -91,6 +91,14 @@ public class NodesController {
         return ok(flag);
     }
 
+    /**
+     * 新增
+     *
+     * @author FuZizheng
+     * @date 2018/7/25 下午5:33
+     * @param: [nodes]
+     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
+     */
     @PostMapping
     @ApiOperation(value = "新增", notes = "新增")
     public ResponseMessage add(@RequestBody Nodes nodes) {
@@ -98,6 +106,14 @@ public class NodesController {
         return ok(number);
     }
 
+    /**
+     * 删除
+     *
+     * @author FuZizheng
+     * @date 2018/7/25 下午5:33
+     * @param: [id]
+     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
+     */
     @DeleteMapping("/{id}")
     @ApiOperation(value = "删除", notes = "删除")
     public ResponseMessage delete(@PathVariable("id") Long id) {
@@ -105,6 +121,14 @@ public class NodesController {
         return ok(number);
     }
 
+    /**
+     * 任务状态推送
+     *
+     * @author FuZizheng
+     * @date 2018/7/25 下午5:34
+     * @param: [id, taskPushState]
+     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
+     */
     @PostMapping("/taskpushstate")
     @ApiOperation(value = "任务状态推送", notes = "任务状态推送")
     public ResponseMessage taskPushState(@RequestParam(value = "id", required = true) Long id,
@@ -119,6 +143,14 @@ public class NodesController {
         return ok(false);
     }
 
+    /**
+     * 停止任务
+     *
+     * @author FuZizheng
+     * @date 2018/7/25 下午5:34
+     * @param: [id]
+     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
+     */
     @PostMapping("/stoptask")
     @ApiOperation(value = "停止任务", notes = "停止任务")
     public ResponseMessage stopTask(@RequestParam(value = "id", required = true) Long id) throws Exception {
