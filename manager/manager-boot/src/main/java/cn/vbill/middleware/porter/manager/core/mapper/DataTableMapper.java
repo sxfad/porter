@@ -90,20 +90,4 @@ public interface DataTableMapper {
      */
     List<DataTable> dataTablePage(@Param("page") Page<DataTable> page, @Param("state") Integer state);
 
-    // *
-    // * 新增
-    // *
-    // * @param dataTable
-    //
-    // Integer insert(DataTable dataTable);
-    //
-    // *
-    // * 修改
-    // *
-    // * @param dataTable
-    //
-    // Integer update(@Param("id") Long id, @Param("dataTable") DataTable
-    // dataTable);
-    //
-
 }

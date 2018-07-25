@@ -50,7 +50,7 @@ public interface DataSourcePluginMapper {
     /**
      * 刪除
      *
-     * @param id
+     * @param sourceId
      * @return
      */
     Integer delete(Long sourceId);

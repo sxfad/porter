@@ -25,12 +25,9 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * All rights Reserved, Designed By Suixingpay.
+ * 日志级别
  *
- * @author: 付紫钲
- * @date: 2018/3/16
- * @copyright: ©2017 Suixingpay. All rights reserved.
- *             注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
+ * @author fuzizheng
  */
 @AllArgsConstructor
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)

@@ -40,10 +40,12 @@ import java.util.List;
 import static cn.vbill.middleware.porter.manager.web.message.ResponseMessage.ok;
 
 /**
- * All rights Reserved, Designed By Suixingpay.
+ * 菜单管理
  *
- * @author: 付紫钲
- * @date: 2018/4/16
+ * @author: fuzizheng
+ * @date: 2018年04月06日 10:09
+ * @version: V1.0
+ * @review: fuzizheng/2018年04月06日 10:09
  */
 @Api(description = "菜单管理")
 @RestController
