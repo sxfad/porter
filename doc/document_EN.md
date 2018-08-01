@@ -1,0 +1,32 @@
+# Porter
+
+## List
+- [Architecture design](./architecture_EN.md)
+	- Applicable scene
+	- Realization basis
+	- System architecture
+	- Node Memory model
+	- OGG deployment structure
+	- Problem & Solution(Phenomenon description and compensation)
+- [Distributed cluster](./scale_EN.md)
+    - luster policy plugin
+    - zookeeper distributed policy
+- [Quick start](./quick_start_EN.md)
+	- Compile from source
+	- Run
+	- Debug
+	- Operating environment
+	- Elegant close
+- [Deployment requirements](./requirement_EN.md)
+	- Hardware requirements
+	- Software requirements
+	- Resource consumption
+- [Configuration document](./profiles_EN.md)
+	- Document structure
+	- Node number
+	- Alert
+	- Statistic
+	- Public connection pool
+	- Task configuration
+- [Plugin development](./plugin_EN.md) 
+- [Access process](./how_to_use_EN.md)
