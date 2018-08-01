@@ -1,0 +1,8 @@
+group 'cn.vbill.middleware.porter'
+archivesBaseName = 'porter-node-core'
+
+dependencies {
+    compile(
+            project(':common')
+    )
+}

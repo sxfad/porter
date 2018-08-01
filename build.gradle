@@ -1,0 +1,94 @@
+apply plugin: 'java'
+version '2.0.2'
+
+repositories {
+    maven{ url"http://maven.aliyun.com/nexus/content/groups/public"}
+}
+buildscript {
+    repositories {
+        maven{ url"http://maven.aliyun.com/nexus/content/groups/public"}
+    }
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:1.5.9.RELEASE"
+    }
+}
+
+
+
+
+
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'maven'
+    apply plugin: 'idea'
+    apply plugin: 'checkstyle'
+    ext {
+        group = 'cn.vbill.middleware.porter'
+        junitVersion = '4.12'
+        version '2.0.2'
+        springVersion = '1.5.9.RELEASE'
+        swaggerVersion = '2.7.0'
+    }
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    repositories {
+        mavenLocal()
+        maven{ url"http://maven.aliyun.com/nexus/content/groups/public"}
+    }
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+    }
+    dependencies {
+        testCompile "junit:junit:${junitVersion}"
+        compile (
+                'com.alibaba:fastjson:1.2.28',
+                'com.alibaba:druid:1.1.9',
+                'commons-dbcp:commons-dbcp:1.4',
+                'org.apache.commons:commons-lang3:3.7',
+                "org.springframework.boot:spring-boot-starter:${springVersion}",
+                "org.springframework.boot:spring-boot-starter-jdbc:${springVersion}",
+                'commons-beanutils:commons-beanutils:1.9.2',
+                "org.springframework.boot:spring-boot-starter-mail:${springVersion}",
+                'mysql:mysql-connector-java:5.1.45'
+        )
+        compile files(rootProject.getRootDir().path+'/other_dependencies/ojdbc7.jar')
+        compile('org.apache.zookeeper:zookeeper:3.4.11'){
+            exclude group:'org.slf4j',module:'slf4j-api'
+            exclude group:'org.slf4j',module:'slf4j-log4j12'
+            exclude group:'log4j',module:'log4j'
+        }
+        compileOnly 'org.projectlombok:lombok:1.16.20'
+    }
+    //将子项目包复制到根目录
+    build.doLast {
+        def rootPath = rootProject.buildDir.getPath() + "/distributions"
+        copy {
+            from buildDir.getPath() + "/distributions" into rootPath
+        }
+    }
+
+    clean.doFirst {
+        delete "${buildDir}/../out"
+    }
+
+    checkstyle {
+        toolVersion = 7.7
+        ignoreFailures = true
+        configFile = file(rootProject.getRootDir().getPath() + "/checkstyle.xml")
+    }
+
+    test {
+        ignoreFailures true
+    }
+
+
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+                mavenLocal()
+            }
+        }
+    }
+}
+

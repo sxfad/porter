@@ -1,0 +1,7 @@
+group 'cn.vbill.middleware.porter'
+archivesBaseName = 'porter-porter-data-carrier'
+dependencies {
+    compile (
+            project(":porter:porter-core")
+    )
+}

@@ -1,0 +1,2 @@
+cn.vbill.middleware.porter.core.loader.DataLoader=\
+  cn.vbill.middleware.porter.plugin.loader.kudu.KuduLoader

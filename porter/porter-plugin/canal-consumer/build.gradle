@@ -1,0 +1,8 @@
+group 'cn.vbill.middleware.porter.plugin'
+jar.baseName = 'porter-plugin-canal-consumer'
+dependencies {
+    compile (
+            project(":porter:porter-core")
+
+    )
+}

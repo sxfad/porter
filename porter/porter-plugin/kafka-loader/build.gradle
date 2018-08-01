@@ -1,0 +1,7 @@
+group 'cn.vbill.middleware.porter.plugin'
+jar.baseName = 'porter-plugin-kafka-loader'
+dependencies {
+    compile (
+            project(":porter:porter-core")
+    )
+}
