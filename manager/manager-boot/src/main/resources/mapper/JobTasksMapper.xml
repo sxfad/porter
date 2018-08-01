@@ -1,0 +1,402 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.vbill.middleware.porter.manager.core.mapper.JobTasksMapper">
+    <!-- 通用查询映射结果
+    <resultMap id="BaseResultMap" type="JobTasks">
+        <result column="id" property="id" />
+        <result column="job_name" property="jobName" />
+        <result column="job_state" property="jobState" />
+        <result column="job_type" property="jobType" />
+        <result column="java_class_name" property="javaClassName" />
+        <result column="java_class_content" property="javaClassContent" />
+        <result column="source_consume_adt" property="sourceConsumeAdt" />
+        <result column="source_convert_adt" property="sourceConvertAdt" />
+        <result column="source_data_tables_id" property="sourceDataTablesId" />
+        <result column="source_data_tables_name" property="sourceDataTablesName" />
+        <result column="source_data_id" property="sourceDataId" />
+        <result column="source_data_name" property="sourceDataName" />
+        <result column="target_load_adt" property="targetLoadAdt" />
+        <result column="target_data_tables_id" property="targetDataTablesId" />
+        <result column="target_data_tables_name" property="targetDataTablesName" />
+        <result column="creater" property="creater" />
+        <result column="create_time" property="createTime" />
+        <result column="state" property="state" />
+        <result column="type" property="type" />
+        <result column="iscancel" property="iscancel" />
+        <result column="remark" property="remark" />
+    </resultMap>-->
+
+    <!-- 通用查询结果列
+    <sql id="Base_Column_List">
+        select id, job_name AS jobName, java_class_name as javaClassName, java_class_content as javaClassContent, source_consume_adt AS sourceConsumeAdt, source_convert_adt AS sourceConvertAdt, source_data_tables_id AS sourceDataTablesId, source_data_tables_name AS sourceDataTablesName, source_data_id AS sourceDataId, source_data_name AS sourceDataName, target_load_adt AS targetLoadAdt, target_data_tables_id AS targetDataTablesId, target_data_tables_name AS targetDataTablesName, creater, create_time AS createTime, state, type, iscancel, remark from job_tasks
+    </sql>-->
+
+    <!-- 查询所有 -->
+    <select id="selectList" resultType="cn.vbill.middleware.porter.manager.core.entity.JobTasks">
+        select id, job_name AS jobName, job_state AS jobState, 
+        job_type as jobType,
+        java_class_name as javaClassName, java_class_content as javaClassContent, 
+        source_consume_adt AS sourceConsumeAdt, source_convert_adt AS sourceConvertAdt, 
+        source_data_tables_id AS sourceDataTablesId, source_data_tables_name AS sourceDataTablesName, 
+        source_data_id AS sourceDataId, source_data_name AS sourceDataName, target_load_adt AS targetLoadAdt, 
+        target_data_tables_id AS targetDataTablesId, target_data_tables_name AS targetDataTablesName, 
+        creater, create_time AS createTime, state, iscancel, remark from job_tasks
+        where iscancel = 0
+    </select>
+
+    <!-- 查询所有 -->
+    <select id="selectJobNameList" resultType="cn.vbill.middleware.porter.manager.core.entity.JobTasks">
+        select id, job_name AS jobName from job_tasks where iscancel = 0
+    </select>
+
+    <!-- 新增 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        insert into job_tasks(
+            job_name,
+            java_class_name,
+            java_class_content,
+            job_state,
+            source_consume_adt,
+            source_convert_adt,
+            source_data_tables_id,
+            source_data_source_id,
+            source_data_tables_name,
+            source_data_id,
+            source_data_name,
+            target_load_adt,
+            target_data_tables_id,
+            target_data_source_id,
+            target_data_tables_name
+        ) values (
+            #{jobName},
+            #{javaClassName},
+            #{javaClassContent},
+            #{jobState},
+            #{sourceConsumeAdt},
+            #{sourceConvertAdt},
+            #{sourceDataTablesId},
+            #{sourceDataSourceId},
+            #{sourceDataTablesName},
+            #{sourceDataId},
+            #{sourceDataName},
+            #{targetLoadAdt},
+            #{targetDataTablesId},
+            #{targetDataSourceId},
+            #{targetDataTablesName}
+        )
+    </insert>
+
+    <!-- 新增 -->
+    <insert id="insertCapture" useGeneratedKeys="true" keyProperty="id">
+        insert into job_tasks(
+            id,
+            job_name,
+            job_state,
+            job_type,
+            source_consume_adt,
+            source_convert_adt,
+            source_data_tables_id,
+            source_data_source_id,
+            source_data_tables_name,
+            source_data_id,
+            source_data_name,
+            target_load_adt,
+            target_data_tables_id,
+            target_data_source_id,
+            target_data_tables_name,
+            type
+        ) values (
+            #{id},
+            '(空)',
+            'WORKING',
+            '2',
+            'CANAL',
+            'CANAL_ROW',
+            '0',
+            '0',
+            '0',
+            '0',
+            '0',
+            'JDBC_BATCH',
+            '0',
+            '0',
+            '0',
+            '2'
+        )
+    </insert>
+
+    <!-- 修改任务状态 -->
+    <update id="updateState">
+        update job_tasks
+        SET
+        job_state = #{code}
+        where
+        id = #{id}
+    </update>
+
+    <!-- 修改 -->
+    <update id="update">
+        update job_tasks
+        set
+            java_class_name = #{jobTasks.javaClassName},
+            java_class_content = #{jobTasks.javaClassContent},
+            job_state = #{jobTasks.jobState},
+            source_consume_adt = #{jobTasks.sourceConsumeAdt},
+            source_convert_adt = #{jobTasks.sourceConvertAdt},
+            source_data_tables_id = #{jobTasks.sourceDataTablesId},
+            source_data_source_id = #{jobTasks.sourceDataSourceId},
+            source_data_tables_name = #{jobTasks.sourceDataTablesName},
+            source_data_id = #{jobTasks.sourceDataId},
+            source_data_name = #{jobTasks.sourceDataName},
+            target_load_adt = #{jobTasks.targetLoadAdt},
+            target_data_tables_id = #{jobTasks.targetDataTablesId},
+            target_data_source_id = #{jobTasks.targetDataSourceId},
+            target_data_tables_name = #{jobTasks.targetDataTablesName}
+        where id = #{jobTasks.id}
+    </update>
+
+    <!-- 刪除 -->
+    <delete id="delete">
+        update job_tasks
+        SET iscancel = 1
+        where id = #{id}
+    </delete>
+
+    <!-- 根据主鍵查找 -->
+    <select id="selectById" resultType="cn.vbill.middleware.porter.manager.core.entity.JobTasks">
+        select
+            id, job_name AS jobName, java_class_name as javaClassName, java_class_content as javaClassContent, job_state AS jobState, 
+            job_type as jobType,
+            source_consume_adt AS sourceConsumeAdt, source_convert_adt AS sourceConvertAdt,
+            source_data_tables_id AS sourceDataTablesId, source_data_source_id AS sourceDataSourceId, source_data_tables_name AS sourceDataTablesName,
+            source_data_id AS sourceDataId, source_data_name AS sourceDataName, target_load_adt AS targetLoadAdt,
+            target_data_tables_id AS targetDataTablesId, target_data_source_id AS targetDataSourceId, target_data_tables_name AS targetDataTablesName, creater,
+            create_time AS createTime, iscancel
+        from job_tasks
+        where id = #{id}
+    </select>
+
+    <!-- 分页All -->
+    <select id="pageAll" resultType="java.lang.Integer">
+        select count(id) from job_tasks
+        <where>
+            iscancel = 0
+            <if test="jobName != null and jobName != ''">
+                and job_name LIKE CONCAT('%', #{jobName}, '%')
+            </if>
+            <if test="beginTime != null and beginTime != ''">
+                and create_time &gt; #{beginTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                and create_time &lt; #{endTime}
+            </if>
+            <if test="jobType != null and jobType != ''">
+                and job_type = #{jobType}
+            </if>
+            <!-- <if test="code != null and code != ''">
+                and job_state = #{code}
+            </if> -->
+        </where>
+    </select>
+
+    <!-- 分页 -->
+    <select id="page" resultType="cn.vbill.middleware.porter.manager.core.entity.JobTasks">
+        select
+        id, job_name AS jobName, java_class_name as javaClassName, java_class_content as javaClassContent, 
+        job_state AS jobState, job_type as jobType,
+        source_consume_adt AS sourceConsumeAdt, source_convert_adt AS sourceConvertAdt,
+        target_load_adt AS targetLoadAdt, create_time AS createTime
+        from job_tasks
+        <where>
+            iscancel = 0
+            <if test="jobName != null and jobName != ''">
+                and job_name LIKE CONCAT('%', #{jobName}, '%')
+            </if>
+            <if test="beginTime != null and beginTime != ''">
+                and create_time &gt; #{beginTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                and create_time &lt; #{endTime}
+            </if>
+            <if test="jobType != null and jobType != ''">
+                and job_type = #{jobType}
+            </if>
+           <!--  <if test="code != null and code != ''">
+                and job_state = #{code}
+            </if> -->
+        </where>
+        order by create_time desc
+        limit #{page.offset},#{page.pageSize}
+    </select>
+
+    <!-- 验证新增 -->
+    <insert id="insertSelective">
+        insert into job_tasks
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="jobName != null">
+                job_name,
+            </if>
+            <if test="javaClassName != null">
+                java_class_name,
+            </if>
+            <if test="javaClassContent != null">
+                java_class_content,
+            </if>
+            <if test="sourceConsumeAdt != null">
+                source_consume_adt,
+            </if>
+            <if test="sourceConvertAdt != null">
+                source_convert_adt,
+            </if>
+            <if test="sourceDataTablesId != null">
+                source_data_tables_id,
+            </if>
+            <if test="sourceDataTablesName != null">
+                source_data_tables_name,
+            </if>
+            <if test="sourceDataId != null">
+                source_data_id,
+            </if>
+            <if test="sourceDataName != null">
+                source_data_name,
+            </if>
+            <if test="targetLoadAdt != null">
+                target_load_adt,
+            </if>
+            <if test="targetDataTablesId != null">
+                target_data_tables_id,
+            </if>
+            <if test="targetDataTablesName != null">
+                target_data_tables_name,
+            </if>
+            <if test="creater != null">
+                creater,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="state != null">
+                state,
+            </if>
+            <if test="iscancel != null">
+                iscancel,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="jobName != null">
+                #{jobName,jdbcType=VARCHAR},
+            </if>
+            <if test="javaClassName != null">
+                #{javaClassName,jdbcType=VARCHAR},
+            </if>
+            <if test="javaClassContent != null">
+                #{javaClassContent,jdbcType=VARCHAR},
+            </if>
+            <if test="sourceConsumeAdt != null">
+                #{sourceConsumeAdt,jdbcType=VARCHAR},
+            </if>
+            <if test="sourceConvertAdt != null">
+                #{sourceConvertAdt,jdbcType=VARCHAR},
+            </if>
+            <if test="sourceDataTablesId != null">
+                #{sourceDataTablesId,jdbcType=BIGINT},
+            </if>
+            <if test="sourceDataTablesName != null">
+                #{sourceDataTablesName,jdbcType=VARCHAR},
+            </if>
+            <if test="sourceDataId != null">
+                #{sourceDataId,jdbcType=BIGINT},
+            </if>
+            <if test="sourceDataName != null">
+                #{sourceDataName,jdbcType=VARCHAR},
+            </if>
+            <if test="targetLoadAdt != null">
+                #{targetLoadAdt,jdbcType=VARCHAR},
+            </if>
+            <if test="targetDataTablesId != null">
+                #{targetDataTablesId,jdbcType=BIGINT},
+            </if>
+            <if test="targetDataTablesName != null">
+                #{targetDataTablesName,jdbcType=VARCHAR},
+            </if>
+            <if test="creater != null">
+                #{creater,jdbcType=BIGINT},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="state != null">
+                #{state,jdbcType=INTEGER},
+            </if>
+            <if test="iscancel != null">
+                #{iscancel,jdbcType=INTEGER},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 验证修改 -->
+    <update id="updateSelective">
+        update job_tasks
+        <set>
+            <if test="jobTasks.jobName != null">
+                job_name = #{jobTasks.jobName,jdbcType=VARCHAR},
+            </if>
+            <if test="jobTasks.javaClassName != null">
+                java_class_name = #{jobTasks.javaClassName,jdbcType=VARCHAR},
+            </if>
+            <if test="jobTasks.javaClassContent != null">
+                java_class_content #{jobTasks.javaClassContent,jdbcType=VARCHAR},
+            </if>
+            <if test="jobTasks.sourceConsumeAdt != null">
+                source_consume_adt = #{jobTasks.sourceConsumeAdt,jdbcType=VARCHAR},
+            </if>
+            <if test="jobTasks.sourceConvertAdt != null">
+                source_convert_adt = #{jobTasks.sourceConvertAdt,jdbcType=VARCHAR},
+            </if>
+            <if test="jobTasks.sourceDataTablesId != null">
+                source_data_tables_id = #{jobTasks.sourceDataTablesId,jdbcType=BIGINT},
+            </if>
+            <if test="jobTasks.sourceDataTablesName != null">
+                source_data_tables_name = #{jobTasks.sourceDataTablesName,jdbcType=VARCHAR},
+            </if>
+            <if test="jobTasks.sourceDataId != null">
+                source_data_id = #{jobTasks.sourceDataId,jdbcType=BIGINT},
+            </if>
+            <if test="jobTasks.sourceDataName != null">
+                source_data_name = #{jobTasks.sourceDataName,jdbcType=VARCHAR},
+            </if>
+            <if test="jobTasks.targetLoadAdt != null">
+                target_load_adt = #{jobTasks.targetLoadAdt,jdbcType=VARCHAR},
+            </if>
+            <if test="jobTasks.targetDataTablesId != null">
+                target_data_tables_id = #{jobTasks.targetDataTablesId,jdbcType=BIGINT},
+            </if>
+            <if test="jobTasks.targetDataTablesName != null">
+                target_data_tables_name = #{jobTasks.targetDataTablesName,jdbcType=VARCHAR},
+            </if>
+            <if test="jobTasks.creater != null">
+                creater = #{jobTasks.creater,jdbcType=BIGINT},
+            </if>
+            <if test="jobTasks.createTime != null">
+                create_time = #{jobTasks.createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="jobTasks.state != null">
+                state = #{jobTasks.state,jdbcType=INTEGER},
+            </if>
+            <if test="jobTasks.iscancel != null">
+                iscancel = #{jobTasks.iscancel,jdbcType=INTEGER},
+            </if>
+            <if test="jobTasks.remark != null">
+                remark = #{jobTasks.remark,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{jobTasks.id,jdbcType=BIGINT}
+    </update>
+
+</mapper>

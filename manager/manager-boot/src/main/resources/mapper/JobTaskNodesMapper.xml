@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.vbill.middleware.porter.manager.core.mapper.JobTaskNodesMapper">
+    <!-- 通用查询映射结果 
+    <resultMap id="BaseResultMap" type="JobTaskNodes">
+        <result column="id" property="id" />
+        <result column="job_task_id" property="jobTaskId" />
+        <result column="node_id" property="nodeId" />
+    </resultMap>-->
+
+    <!-- 通用查询结果列 
+    <sql id="Base_Column_List">
+        select id, job_task_id AS jobTaskId, node_id AS nodeId from job_task_nodes
+    </sql>-->
+
+    <!-- 新增 -->
+    <insert id="insert">
+        insert into job_task_nodes(
+                job_task_id,
+                node_id
+        ) values (
+                #{jobTaskId},
+                #{nodeId}
+        )
+    </insert>
+
+    <!-- 批量节点插入 -->
+    <insert id="insertList">
+        insert into job_task_nodes(
+                job_task_id,
+                node_id
+        ) values 
+        <foreach collection="nodeIds" index="index" item="nodeId" separator=",">
+            (
+            #{jobTaskId},
+            #{nodeId}
+            )
+        </foreach>
+    </insert>
+
+    <!-- 修改 -->
+    <update id="update">
+        update job_task_nodes
+        set
+                job_task_id = #{jobTaskNodes.jobTaskId},
+                node_id = #{jobTaskNodes.nodeId}
+                where id = #{id}
+    </update>
+
+    <!-- 刪除 -->
+    <delete id="delete">
+        delete from job_task_nodes where job_task_id = #{jobTaskId}
+    </delete>
+
+    <!-- 根据主鍵查找 -->
+    <select id="selectById" resultType="cn.vbill.middleware.porter.manager.core.entity.JobTaskNodes">
+        select id, job_task_id AS jobTaskId, node_id AS nodeId from job_task_nodes
+        where job_task_id = #{jobTaskId}
+    </select>
+
+    <!-- 分页All -->
+    <select id="pageAll" resultType="java.lang.Integer">
+        select count(id) from job_task_nodes
+        where 1=1
+    </select>
+
+    <!-- 分页 -->
+    <select id="page" resultType="cn.vbill.middleware.porter.manager.core.entity.JobTaskNodes">
+        select id, job_task_id AS jobTaskId, node_id AS nodeId from job_task_nodes
+        where 1=1 limit #{page.offset},#{page.pageSize}
+    </select>
+
+    <!-- 验证新增 -->
+    <insert id="insertSelective">
+        insert into job_task_nodes
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="jobTaskId != null">
+                job_task_id,
+            </if>
+            <if test="nodeId != null">
+                node_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="jobTaskId != null">
+                #{jobTaskId,jdbcType=BIGINT},
+            </if>
+            <if test="nodeId != null">
+                #{nodeId,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 验证修改 -->
+    <update id="updateSelective">
+        update job_task_nodes
+        <set>
+            <if test="jobTaskNodes.jobTaskId != null">
+                job_task_id = #{jobTaskNodes.jobTaskId,jdbcType=BIGINT},
+            </if>
+            <if test="jobTaskNodes.nodeId != null">
+                node_id = #{jobTaskNodes.nodeId,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+</mapper>

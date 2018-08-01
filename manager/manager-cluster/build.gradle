@@ -1,0 +1,2 @@
+group 'cn.vbill.middleware.porter.manager'
+archivesBaseName = 'porter-manager-cluster'

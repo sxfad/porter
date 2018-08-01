@@ -1,0 +1,13 @@
+group 'cn.vbill.middleware.porter.manager'
+archivesBaseName = 'porter-manager-core'
+dependencies {
+    compile project(':common')
+    //数据源
+    compile 'com.alibaba:druid-spring-boot-starter:1.1.2'
+    compile 'mysql:mysql-connector-java:6.0.6'
+    //配置mybatis
+    compile "org.mybatis.spring.boot:mybatis-spring-boot-starter:1.3.1"
+    compile 'com.alibaba:fastjson:1.2.37'
+    testCompile "org.springframework.boot:spring-boot-starter-actuator:${springVersion}"
+    testCompile "org.springframework.boot:spring-boot-starter-test:${springVersion}"
+}
