@@ -145,6 +145,7 @@ public class TaskWork {
                         jobs.getValue().stop();
                     } catch (Throwable e) {
                         e.printStackTrace();
+
                     }
                 }
                 try {
@@ -152,12 +153,14 @@ public class TaskWork {
                     submitStat();
                 } catch (Exception e) {
                     NodeLog.upload(NodeLog.LogType.TASK_LOG, taskId, dataConsumer.getSwimlaneId(), "停止上传消费进度失败:" + e.getMessage());
+
                 }
                 try {
                     //广播任务结束消息
                     ClusterProviderProxy.INSTANCE.broadcast(new TaskStopCommand(taskId, dataConsumer.getSwimlaneId()));
                 } catch (Exception e) {
                     NodeLog.upload(NodeLog.LogType.TASK_LOG, taskId, dataConsumer.getSwimlaneId(), "广播TaskStopCommand失败:" + e.getMessage());
+
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -247,6 +250,7 @@ public class TaskWork {
                     }));
                 } catch (Throwable e) {
                     NodeLog.upload(NodeLog.LogType.TASK_LOG, taskId, dataConsumer.getSwimlaneId(), "上传任务状态信息失败:" + e.getMessage());
+
                 }
 
                 //上传统计
@@ -257,6 +261,7 @@ public class TaskWork {
                     }
                 } catch (Throwable e) {
                     NodeLog.upload(NodeLog.LogType.TASK_LOG, taskId, dataConsumer.getSwimlaneId(), "上传任务统计信息失败:" + e.getMessage());
+
                 }
             }
         });
@@ -319,18 +324,21 @@ public class TaskWork {
                     } catch (Throwable e) {
                         LOGGER.error("在集群策略存储引擎标识任务因错误失败出错:{}", e.getMessage());
                         e.printStackTrace();
+
                     }
                     try {
                         //停止任务
                         NodeContext.INSTANCE.getBean(TaskController.class).stopTask(taskId, dataConsumer.getSwimlaneId());
                     } catch (Throwable e) {
                         e.printStackTrace();
+
                     }
                     try {
                         //调整节点健康级别
                         NodeContext.INSTANCE.markTaskError(taskId, alarmNotice);
                     } catch (Throwable e) {
                         e.printStackTrace();
+
                     }
 
                     try {
@@ -343,6 +351,7 @@ public class TaskWork {
                         LOGGER.info("结束发送日志通知.....");
                     } catch (Throwable e) {
                         e.printStackTrace();
+                        
                     }
                 }
             }.start();
