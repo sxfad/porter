@@ -49,7 +49,7 @@ public abstract class AbstractDataConsumer implements DataConsumer {
     @Getter private final List<String> includes = new ArrayList<>();
     @Getter private final List<String> excludes = new ArrayList<>();
     //空查询通知间隔,单位秒
-    @Setter @Getter private volatile long emptyFetchNoticeSpan = 30 * 60;
+    @Setter @Getter private volatile long emptyFetchNoticeSpan = 30L * 60;
 
     //空查询通知时间阀值
     @Setter @Getter private volatile long emptyFetchThreshold = -1;
