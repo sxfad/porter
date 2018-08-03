@@ -68,6 +68,7 @@ public abstract class AbstractClusterMonitor implements ClusterMonitor {
             ClusterProviderProxy.INSTANCE.broadcast(new ShutdownCommand());
         } catch (Exception e) {
             e.printStackTrace();
+            LOGGER.error("%s", e);
         }
     }
 
@@ -80,6 +81,7 @@ public abstract class AbstractClusterMonitor implements ClusterMonitor {
                 v.start();
             } catch (Exception e) {
                 e.printStackTrace();
+                LOGGER.error("%s", e);
             }
         });
     }

@@ -38,6 +38,8 @@ import cn.vbill.middleware.porter.common.consumer.Position;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -61,6 +63,9 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
     private final CanalServerWithEmbedded canalServer;
     private ClientIdentity clientId;
     private CountDownLatch canFetch = new CountDownLatch(1);
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CanalClient.class);
+
     /**
      * canal.server是否抛出异常
      */
@@ -91,11 +96,13 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
         } catch (Throwable e) {
             //https://github.com/alibaba/canal/issues/413
             //导致任务停止终止，无法销毁相关资源
+            LOGGER.error("%s", e);
         } finally {
             if (null != canalServer) {
                 try {
                     canalServer.stop();
                 } catch (Throwable e) {
+                    LOGGER.error("%s", e);
                 }
             }
         }
@@ -178,6 +185,7 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
                             NodeLog.upload(NodeLog.LogType.TASK_LOG, getClientInfo() + ", error:" + msg);
                         } catch (Throwable e) {
                             e.printStackTrace();
+                            LOGGER.error("%s", e);
                         }
                     }
 
@@ -242,6 +250,7 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
                     }
                 } catch (Throwable e) {
                     e.printStackTrace();
+                    LOGGER.error("%s", e);
                 }
 
                 //没有要处理的数据时需要直接ack
