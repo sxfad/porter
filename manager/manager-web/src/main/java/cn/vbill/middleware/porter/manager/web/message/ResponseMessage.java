@@ -19,6 +19,8 @@ package cn.vbill.middleware.porter.manager.web.message;
 
 import com.alibaba.fastjson.JSON;
 import cn.vbill.middleware.porter.manager.core.util.DateFormatUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.lang.reflect.Field;
@@ -37,6 +39,9 @@ import java.util.Set;
 public class ResponseMessage implements Serializable {
 
     private static final long serialVersionUID = 8992436576262574064L;
+
+    private Logger logger = LoggerFactory.getLogger(ResponseMessage.class);
+
     /**
      * 是否成功
      */
@@ -102,14 +107,14 @@ public class ResponseMessage implements Serializable {
     public ResponseMessage include(Class<?> type, String... fields) {
         return include(type, Arrays.asList(fields));
     }
-
-    public static void main(String[] args) {
-        String o = "aaaaa.bbbbb.cccc.ddddd";
-        String[] op = o.split("[.]", 2);
-        for (String str : op) {
-            System.out.println(str);
-        }
-    }
+//
+//    public static void main(String[] args) {
+//        String o = "aaaaa.bbbbb.cccc.ddddd";
+//        String[] op = o.split("[.]", 2);
+//        for (String str : op) {
+//            System.out.println(str);
+//        }
+//    }
 
     public ResponseMessage include(Class<?> type, Collection<String> fields) {
         if (includes == null)
@@ -125,6 +130,7 @@ public class ResponseMessage implements Serializable {
                         include(field1.getType(), tmp[1]);
                     }
                 } catch (Throwable e) {
+                    logger.info("%s", e);
                 }
             } else {
                 getStringListFormMap(includes, type).add(field);
@@ -147,6 +153,7 @@ public class ResponseMessage implements Serializable {
                         exclude(field1.getType(), tmp[1]);
                     }
                 } catch (Throwable e) {
+                    logger.info("%s", e);
                 }
             } else {
                 getStringListFormMap(excludes, type).add(field);
