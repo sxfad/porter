@@ -177,7 +177,6 @@ public class ETLBucket {
             rows.clear();
             batchRows.clear();
         } catch (Throwable e) {
-
         }
     }
 }
