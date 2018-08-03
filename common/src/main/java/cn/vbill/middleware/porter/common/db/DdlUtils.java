@@ -59,19 +59,19 @@ public class DdlUtils {
     private static TableType[]                SUPPORTED_TABLE_TYPES = new TableType[] {TableType.view, TableType.table};
     private static final  Map<Integer, String> DEFAULT_SIZES = new HashMap<>();
     static {
-        DEFAULT_SIZES.put(new Integer(1), "254");
-        DEFAULT_SIZES.put(new Integer(12), "254");
-        DEFAULT_SIZES.put(new Integer(-1), "254");
-        DEFAULT_SIZES.put(new Integer(-2), "254");
-        DEFAULT_SIZES.put(new Integer(-3), "254");
-        DEFAULT_SIZES.put(new Integer(-4), "254");
-        DEFAULT_SIZES.put(new Integer(4), "32");
-        DEFAULT_SIZES.put(new Integer(-5), "64");
-        DEFAULT_SIZES.put(new Integer(7), "7,0");
-        DEFAULT_SIZES.put(new Integer(6), "15,0");
-        DEFAULT_SIZES.put(new Integer(8), "15,0");
-        DEFAULT_SIZES.put(new Integer(3), "15,15");
-        DEFAULT_SIZES.put(new Integer(2), "15,15");
+        DEFAULT_SIZES.put(Integer.valueOf(1), "254");
+        DEFAULT_SIZES.put(Integer.valueOf(12), "254");
+        DEFAULT_SIZES.put(Integer.valueOf(-1), "254");
+        DEFAULT_SIZES.put(Integer.valueOf(-2), "254");
+        DEFAULT_SIZES.put(Integer.valueOf(-3), "254");
+        DEFAULT_SIZES.put(Integer.valueOf(-4), "254");
+        DEFAULT_SIZES.put(Integer.valueOf(4), "32");
+        DEFAULT_SIZES.put(Integer.valueOf(-5), "64");
+        DEFAULT_SIZES.put(Integer.valueOf(7), "7,0");
+        DEFAULT_SIZES.put(Integer.valueOf(6), "15,0");
+        DEFAULT_SIZES.put(Integer.valueOf(8), "15,0");
+        DEFAULT_SIZES.put(Integer.valueOf(3), "15,15");
+        DEFAULT_SIZES.put(Integer.valueOf(2), "15,15");
     }
 
     public static Table findTable(JdbcTemplate jdbcTemplate, final String catalogName, final String schemaName,
@@ -289,9 +289,9 @@ public class DdlUtils {
         result.add(new MetaDataColumnDescriptor("TABLE_NAME", Types.VARCHAR));
         result.add(new MetaDataColumnDescriptor("COLUMN_NAME", Types.VARCHAR));
         result.add(new MetaDataColumnDescriptor("TYPE_NAME", Types.VARCHAR));
-        result.add(new MetaDataColumnDescriptor("DATA_TYPE", Types.INTEGER, new Integer(Types.OTHER)));
-        result.add(new MetaDataColumnDescriptor("NUM_PREC_RADIX", Types.INTEGER, new Integer(10)));
-        result.add(new MetaDataColumnDescriptor("DECIMAL_DIGITS", Types.INTEGER, new Integer(0)));
+        result.add(new MetaDataColumnDescriptor("DATA_TYPE", Types.INTEGER, Integer.valueOf(Types.OTHER)));
+        result.add(new MetaDataColumnDescriptor("NUM_PREC_RADIX", Types.INTEGER, Integer.valueOf(10)));
+        result.add(new MetaDataColumnDescriptor("DECIMAL_DIGITS", Types.INTEGER, Integer.valueOf(0)));
         result.add(new MetaDataColumnDescriptor("COLUMN_SIZE", Types.VARCHAR));
         result.add(new MetaDataColumnDescriptor("IS_NULLABLE", Types.VARCHAR, "YES"));
         result.add(new MetaDataColumnDescriptor("REMARKS", Types.VARCHAR));
@@ -381,7 +381,7 @@ public class DdlUtils {
         String size = (String) values.get("COLUMN_SIZE");
 
         if (size == null) {
-            size = (String) DEFAULT_SIZES.get(new Integer(column.getTypeCode()));
+            size = (String) DEFAULT_SIZES.get(Integer.valueOf(column.getTypeCode()));
         }
 
         // we're setting the size after the precision and radix in case

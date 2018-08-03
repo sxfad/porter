@@ -218,23 +218,23 @@ public class SqlUtils {
             value = Boolean.valueOf(rs.getBoolean(index));
             wasNullCheck = true;
         } else if (byte.class.equals(requiredType) || Byte.class.equals(requiredType)) {
-            value = new Byte(rs.getByte(index));
+            value = Byte.valueOf(rs.getByte(index));
             wasNullCheck = true;
         } else if (short.class.equals(requiredType) || Short.class.equals(requiredType)) {
-            value = new Short(rs.getShort(index));
+            value = Short.valueOf(rs.getShort(index));
             wasNullCheck = true;
         } else if (int.class.equals(requiredType) || Integer.class.equals(requiredType)) {
-            value = new Long(rs.getLong(index));
+            value = Long.valueOf(rs.getLong(index));
             wasNullCheck = true;
         } else if (long.class.equals(requiredType) || Long.class.equals(requiredType)) {
             value = rs.getBigDecimal(index);
             wasNullCheck = true;
         } else if (float.class.equals(requiredType) || Float.class.equals(requiredType)) {
-            value = new Float(rs.getFloat(index));
+            value = Float.valueOf(rs.getFloat(index));
             wasNullCheck = true;
         } else if (double.class.equals(requiredType) || Double.class.equals(requiredType)
                 || Number.class.equals(requiredType)) {
-            value = new Double(rs.getDouble(index));
+            value = Double.valueOf(rs.getDouble(index));
             wasNullCheck = true;
         } else if (java.sql.Time.class.equals(requiredType)) {
             // try {

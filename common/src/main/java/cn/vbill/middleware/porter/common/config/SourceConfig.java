@@ -73,6 +73,7 @@ public abstract class SourceConfig implements SwamlaneSupport {
             return (T) this;
         } catch (Exception e) {
             e.printStackTrace();
+            LOGGER.error("%s", e);
             throw new ConfigParseException((null != properties ? properties.toString() : "{}") + "转换SourceConfig出错");
         }
     }

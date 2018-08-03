@@ -17,6 +17,9 @@
 
 package cn.vbill.middleware.porter.common.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
@@ -37,6 +40,8 @@ public class MachineUtils {
     public static final String IP_ADDRESS = localhost();
     public static final int CPU_NUMBER = Runtime.getRuntime().availableProcessors();
     private static final String LOCAL_EXCEPT_IP = "127.0.0.1,192.168.2.1,192.168.122.1";
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(MachineUtils.class);
     public static long getPID() {
         String processName = java.lang.management.ManagementFactory.getRuntimeMXBean().getName();
         if (processName != null && processName.length() > 0) {
@@ -64,6 +69,7 @@ public class MachineUtils {
             }
         }
         catch (SocketException e) {
+            LOGGER.error("%s", e);
             throw new RuntimeException("get local inet address fail", e);
         }
 
@@ -73,7 +79,7 @@ public class MachineUtils {
     public static String localhost() {
         List<String>  list = getLocalInetAddress();
         for (String i : list) {
-            if (!LOCAL_EXCEPT_IP.contains(i) && i.indexOf(":") < 0) {
+            if (!LOCAL_EXCEPT_IP.contains(i) && i.indexOf(':') < 0) {
                 return i;
             }
         }

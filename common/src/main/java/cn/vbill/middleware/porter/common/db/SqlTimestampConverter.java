@@ -20,6 +20,8 @@ package cn.vbill.middleware.porter.common.db;
 import org.apache.commons.beanutils.ConversionException;
 import org.apache.commons.beanutils.Converter;
 import org.apache.commons.lang3.time.DateFormatUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -39,6 +41,7 @@ public class SqlTimestampConverter implements Converter {
         DateFormatUtils.ISO_DATETIME_TIME_ZONE_FORMAT.getPattern(), DateFormatUtils.SMTP_DATETIME_FORMAT.getPattern(), };
 
     public static final Converter SQL_TIMESTAMP = new SqlTimestampConverter(null);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SqlTimestampConverter.class);
 
     /**
      * The default value specified to our Constructor, if any.
@@ -117,14 +120,17 @@ public class SqlTimestampConverter implements Converter {
             // 先处理Timestamp类型
             return Timestamp.valueOf(input).getTime();
         } catch (Exception nfe) {
+            LOGGER.error("%s", nfe);
             try {
                 try {
                     return parseDate(input, DATE_FORMATS, Locale.ENGLISH).getTime();
                 } catch (Exception err) {
+                    LOGGER.error("%s", err);
                     return parseDate(input, DATE_FORMATS, Locale.getDefault()).getTime();
                 }
             } catch (Exception err) {
                 // 最后处理long time的情况
+                LOGGER.error("%s", err);
                 return Long.parseLong(input);
             }
         }

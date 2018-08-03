@@ -19,23 +19,28 @@ package cn.vbill.middleware.porter.common.util.compile;
 
 
 import cn.vbill.middleware.porter.common.config.JavaFileConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.tools.JavaCompiler;
+import javax.tools.JavaFileObject;
+import javax.tools.SimpleJavaFileObject;
 import javax.tools.StandardJavaFileManager;
 import javax.tools.StandardLocation;
 import javax.tools.ToolProvider;
-import javax.tools.JavaFileObject;
-import javax.tools.SimpleJavaFileObject;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.charset.StandardCharsets;
 import java.rmi.UnexpectedException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Locale;
-import java.nio.charset.StandardCharsets;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -44,10 +49,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年03月09日 13:34
  */
-public class   JavaFileCompiler extends URLClassLoader {
+public class JavaFileCompiler extends URLClassLoader {
     private static final String PLUGIN_HOME = System.getProperty("app.home") + "/plugins";
     private final AtomicBoolean isLoadPlugin = new AtomicBoolean(false);
     private static final JavaFileCompiler COMPILER = new JavaFileCompiler(new URL[0]);
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(JavaFileCompiler.class);
 
     public JavaFileCompiler(URL[] urls) {
         super(urls);
@@ -56,15 +63,15 @@ public class   JavaFileCompiler extends URLClassLoader {
     public static JavaFileCompiler getInstance() {
         return COMPILER;
     }
+
     /**
-     *
-     * @param <T> 对象
-     * @param source java源码
+     * @param <T>         对象
+     * @param source      java源码
      * @param targetClass 目标class
      * @return
      * @throws Exception
      */
-    public  <T> T newJavaObject(JavaFileConfig source, Class targetClass) throws Exception {
+    public <T> T newJavaObject(JavaFileConfig source, Class targetClass) throws Exception {
         Class<?> sourceClass = null;
         JavaFile javaFile = null;
         //class
@@ -72,7 +79,7 @@ public class   JavaFileCompiler extends URLClassLoader {
             javaFile = new JavaClass(source);
         } else if (source.getContent().endsWith(".jar")) {
             javaFile = new JavaJarClass(source);
-        }  else if (source.getContent().endsWith(".java")) {
+        } else if (source.getContent().endsWith(".java")) {
             //读取源码文件,转换为JavaSource对象
             source.setContent(readSource(source.getContent()));
             javaFile = new JavaSource(source);
@@ -94,6 +101,7 @@ public class   JavaFileCompiler extends URLClassLoader {
                 return findExistsClass;
             }
         } catch (Throwable e) {
+            LOGGER.error("%s", e);
         }
         //java class file
         if (null != javaFile && javaFile instanceof JavaClass) {
@@ -105,7 +113,7 @@ public class   JavaFileCompiler extends URLClassLoader {
             JavaJarClass javaClass = (JavaJarClass) javaFile;
             this.addURL(javaClass.getJarFile());
             return this.loadClass(javaClass.getClassName());
-        } else  if (null != javaFile && javaFile instanceof JavaSource) {
+        } else if (null != javaFile && javaFile instanceof JavaSource) {
             JavaSource javaSource = (JavaSource) javaFile;
             JavaCompiler javaCompiler = ToolProvider.getSystemJavaCompiler();
             //临时工作目录
@@ -154,7 +162,7 @@ public class   JavaFileCompiler extends URLClassLoader {
         StringBuilder builder = new StringBuilder();
         try (BufferedReader reader = new BufferedReader(new FileReader(sourceFile))) {
             String line = null;
-            while ((line =  reader.readLine()) != null) {
+            while ((line = reader.readLine()) != null) {
                 builder.append(line);
             }
         }

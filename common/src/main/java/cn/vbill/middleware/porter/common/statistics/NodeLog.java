@@ -28,6 +28,8 @@ import cn.vbill.middleware.porter.common.alert.AlertReceiver;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 import java.util.List;
@@ -41,6 +43,8 @@ import java.util.List;
  */
 public class NodeLog extends StatisticData {
     private static final String NAME = "log";
+    private static final Logger LOGGER = LoggerFactory.getLogger(NodeLog.class);
+
     /**
      *日志类型
      *taskStopAlarm 任务停止告警日志，该日志类型不仅会在后台看到，同时会通过邮件、短信推送给监控人。
@@ -100,6 +104,7 @@ public class NodeLog extends StatisticData {
             }
         } catch (Throwable e) {
             e.printStackTrace();
+            LOGGER.error("%s", e);
         }
     }
 

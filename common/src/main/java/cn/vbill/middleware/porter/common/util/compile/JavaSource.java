@@ -40,12 +40,12 @@ public class JavaSource implements JavaFile {
     }
 
     private static String getPackage(String className) {
-        int index = className.lastIndexOf(".");
+        int index = className.lastIndexOf('.');
         return index > -1 ? className.substring(0, index) : StringUtils.EMPTY;
     }
 
     private static String getClassName(String className) {
-        int index = className.lastIndexOf(".");
+        int index = className.lastIndexOf('.');
         return index > -1 ? className.substring(index + 1) : className;
     }
 }
