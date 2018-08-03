@@ -30,6 +30,8 @@ import cn.vbill.middleware.porter.common.config.SourceConfig;
 import cn.vbill.middleware.porter.common.exception.ClientException;
 import cn.vbill.middleware.porter.common.exception.DataConsumerBuildException;
 import cn.vbill.middleware.porter.common.util.compile.JavaFileCompiler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 
 import java.util.ArrayList;
@@ -44,6 +46,7 @@ import java.util.List;
 public enum DataConsumerFactory {
     INSTANCE();
     private final List<DataConsumer> CONSUMER_TEMPLATE = SpringFactoriesLoader.loadFactories(DataConsumer.class, JavaFileCompiler.getInstance());
+    private static final Logger LOGGER = LoggerFactory.getLogger(DataConsumerFactory.class);
 
     public List<DataConsumer> getConsumer(DataConsumerConfig config) throws ClientException, ConfigParseException, DataConsumerBuildException {
         //消息转换器
@@ -70,6 +73,7 @@ public enum DataConsumerFactory {
             try {
                 processor = JavaFileCompiler.getInstance().newJavaObject(config.getEventProcessor(), EventProcessor.class);
             } catch (Exception e) {
+                LOGGER.error("%s", e);
                 throw new ConfigParseException("EventProcessor转换java对象失败:" + e.getMessage());
             }
         }
@@ -107,6 +111,7 @@ public enum DataConsumerFactory {
                     return t.getClass().newInstance();
                 } catch (Exception e) {
                     e.printStackTrace();
+                    LOGGER.error("%s", e);
                     throw new DataConsumerBuildException(e.getMessage());
                 }
             }

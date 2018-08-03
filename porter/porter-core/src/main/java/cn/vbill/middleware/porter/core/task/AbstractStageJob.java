@@ -87,6 +87,7 @@ public abstract class AbstractStageJob implements StageJob {
                 }
                 doStop();
             } catch (Throwable e) {
+                LOGGER.error("%s", e);
             } finally {
                 loopService.interrupt();
             }
