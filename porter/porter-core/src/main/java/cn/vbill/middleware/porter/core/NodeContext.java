@@ -198,7 +198,7 @@ public enum  NodeContext {
             try {
                 nodeLock.readLock().lock();
                 int nowCounter = node.getWorkUsed().get();
-                percent = new Double(nowCounter) / new Double(node.getWorkLimit());
+                percent = Double.valueOf(nowCounter) / Double.valueOf(node.getWorkLimit());
             } finally {
                 nodeLock.readLock().unlock();
             }
