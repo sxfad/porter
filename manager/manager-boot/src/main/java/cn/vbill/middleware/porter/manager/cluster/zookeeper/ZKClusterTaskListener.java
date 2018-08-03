@@ -37,6 +37,8 @@ import cn.vbill.middleware.porter.manager.core.util.ApplicationContextUtil;
 import cn.vbill.middleware.porter.manager.service.MrJobTasksScheduleService;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 任务信息监听
@@ -51,6 +53,8 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
     private static final String ZK_PATH = BASE_CATALOG + "/task";
     private static final Pattern TASK_STAT_PATTERN = Pattern.compile(ZK_PATH + "/.*/stat/.*");
     private static final Pattern TASK_ERROR_PATTERN = Pattern.compile(ZK_PATH + "/.*/error/.*");
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ZKClusterTaskListener.class);
 
     @Override
     public String listenPath() {
@@ -84,6 +88,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
                 try {
                     taskAndSwimlane = zkPath.replace(listenPath(), "").substring(1).split("/error/");
                 } catch (Throwable e) {
+                    LOGGER.error("%s", e);
                 }
 
                 if (null == taskAndSwimlane || taskAndSwimlane.length != 2)
@@ -101,6 +106,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
             }
         } catch (Throwable e) {
             e.printStackTrace();
+            LOGGER.error("%s", e);
         }
     }
 

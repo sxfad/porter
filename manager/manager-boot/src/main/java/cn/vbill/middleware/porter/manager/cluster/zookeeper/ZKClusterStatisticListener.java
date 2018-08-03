@@ -35,6 +35,8 @@ import cn.vbill.middleware.porter.common.statistics.TaskPerformance;
 import cn.vbill.middleware.porter.manager.core.util.ApplicationContextUtil;
 import cn.vbill.middleware.porter.manager.service.MrJobTasksMonitorService;
 import cn.vbill.middleware.porter.manager.service.impl.MrJobTasksMonitorServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 统计信息下载
@@ -48,6 +50,8 @@ public class ZKClusterStatisticListener extends ZookeeperClusterListener {
     private static final String ZK_PATH = BASE_CATALOG + "/statistic";
     private static final Pattern LOG_PATTERN = Pattern.compile(ZK_PATH + "/log/.*");
     private static final Pattern TASK_PATTERN = Pattern.compile(ZK_PATH + "/task/.*");
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ZKClusterStatisticListener.class);
 
     @Override
     public String listenPath() {
@@ -97,6 +101,7 @@ public class ZKClusterStatisticListener extends ZookeeperClusterListener {
                 }
             } catch (Throwable e) {
                 e.printStackTrace();
+                LOGGER.error("%s", e);
             } finally {
                 // 删除已获取的事件
                 client.delete(zkPath);

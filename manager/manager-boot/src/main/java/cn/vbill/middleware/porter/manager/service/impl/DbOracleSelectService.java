@@ -109,7 +109,7 @@ public class DbOracleSelectService implements DbSelectService {
             termSql.append(" and lower(tableName) like '%" + tableName1.toLowerCase() + "%' ");
         }
         executeSql = executeSql.replace("%term", termSql);
-        System.out.println(executeSql);
+//        System.out.println(executeSql);
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet results = null;
