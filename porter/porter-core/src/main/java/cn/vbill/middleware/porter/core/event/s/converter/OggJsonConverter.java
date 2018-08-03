@@ -41,8 +41,6 @@ import java.util.Map;
  */
 public class OggJsonConverter implements EventConverter {
 
-    private static Logger logger = LoggerFactory.getLogger(OggJsonConverter.class);
-
     private DateFormat OP_TS_F = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
     private DateFormat C_TS_F = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS");
 
@@ -73,7 +71,6 @@ public class OggJsonConverter implements EventConverter {
             String poTS = obj.getString("op_ts");
             event.setOpTs(OP_TS_F.parse(poTS.substring(0, poTS.length() - 3)));
         } catch (Exception e) {
-            logger.debug("","");
         }
 
         try {
