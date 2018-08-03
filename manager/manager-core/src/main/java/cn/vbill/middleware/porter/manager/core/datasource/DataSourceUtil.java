@@ -49,7 +49,7 @@ public class DataSourceUtil {
             conn = DriverManager.getConnection(url, username, password);
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
-            logger.info(String.valueOf(e));
+            logger.info(e.getMessage());
         }
         return conn;
     }
@@ -84,7 +84,7 @@ public class DataSourceUtil {
                 rs.close();
             } catch (SQLException e) {
                 e.printStackTrace();
-                logger.info(String.valueOf(e));
+                logger.info(e.getMessage());
             }
         }
         // 关闭数据库操作对象
@@ -93,7 +93,7 @@ public class DataSourceUtil {
                 stmt.close();
             } catch (SQLException e) {
                 e.printStackTrace();
-                logger.info(String.valueOf(e));
+                logger.info(e.getMessage());
             }
         }
         // 关闭数据库连接
@@ -102,7 +102,7 @@ public class DataSourceUtil {
                 conn.close();
             } catch (SQLException e) {
                 e.printStackTrace();
-                logger.info(String.valueOf(e));
+                logger.info(e.getMessage());
             }
         }
     }
