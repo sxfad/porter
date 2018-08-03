@@ -69,6 +69,7 @@ public class NodeBootApplication {
             JavaFileCompiler.getInstance().loadPlugin();
         } catch (MalformedURLException e) {
             e.printStackTrace();
+            LOGGER.info("%s", e);
             throw new RuntimeException("初始化插件失败:" + e.getMessage());
         }
 
@@ -81,6 +82,7 @@ public class NodeBootApplication {
             AlertProviderFactory.INSTANCE.initialize(config.getAlert());
         } catch (Exception e) {
             e.printStackTrace();
+            LOGGER.info("%s", e);
             throw new RuntimeException("告警配置初始化失败, 数据同步节点退出!error:" + e.getMessage());
         }
 
@@ -91,6 +93,7 @@ public class NodeBootApplication {
             PublicClientContext.INSTANCE.initialize(datasourceConfigBean.getConfig());
         } catch (Exception e) {
             e.printStackTrace();
+            LOGGER.info("%s", e);
             throw new RuntimeException("公用资源连接SourcesConfig初始化失败, 数据同步节点退出!error:" + e.getMessage());
         }
 
@@ -104,6 +107,7 @@ public class NodeBootApplication {
         } catch (Exception e) {
             ClusterProviderProxy.INSTANCE.stop();
             e.printStackTrace();
+            LOGGER.info("%s", e);
             throw new RuntimeException("集群配置参数ClusterConfig初始化失败, 数据同步节点退出!error:" + e.getMessage());
         }
 
@@ -113,6 +117,7 @@ public class NodeBootApplication {
             //注册节点，注册失败退出进程
             ClusterProviderProxy.INSTANCE.broadcast(new NodeRegisterCommand(config.getId(), config.getStatistic().isUpload()));
         } catch (Exception e) {
+            LOGGER.info("%s", e);
             throw  new RuntimeException(e.getMessage() + "数据同步节点退出!error:" + e.getMessage());
         }
 
