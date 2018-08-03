@@ -43,7 +43,7 @@ import java.util.List;
 public class ScanDataAlerter implements Alerter {
     private static final Logger LOGGER = LoggerFactory.getLogger(ScanDataAlerter.class);
     private static final long TIME_SPAN_OF_MINUTES = 30;
-    private static final DateFormat NOTICE_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
+    private DateFormat NOTICE_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
 
     public void check(DataConsumer consumer, DataLoader loader, DTaskStat stat, Triple<String[], String[],
             String[]> checkMeta, List<AlertReceiver> receivers) {
@@ -112,7 +112,7 @@ public class ScanDataAlerter implements Alerter {
                     .append("目标端数据变更").append(countTarget).append("条。").append("\n\r")
                     .append("数据变更条目不一致，请尽快修正").toString();
 
-            LOGGER.debug(notice.toString());
+            LOGGER.debug(notice);
 
             String title = "[" + NOTICE_DATE_FORMAT.format(new Date()) + "][" + MachineUtils.localhost() + ":" + MachineUtils.getPID() + "]数据同步告警";
             AlertProviderFactory.INSTANCE.notice(title, notice, receivers);
