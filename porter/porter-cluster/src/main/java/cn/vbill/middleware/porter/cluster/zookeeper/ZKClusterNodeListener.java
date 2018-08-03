@@ -47,6 +47,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.data.Stat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -74,6 +76,8 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener  implements 
     private final List<TaskEventListener> TASK_LISTENER = new ArrayList<>();
     private final ScheduledExecutorService heartbeatWorker =
             Executors.newSingleThreadScheduledExecutor(new DefaultNamedThreadFactory("node-heartbeat"));
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ZKClusterNodeListener.class);
 
     @Override
     public String listenPath() {
@@ -209,6 +213,7 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener  implements 
                         }
                     } catch (KeeperException e) {
                         e.printStackTrace();
+                        LOGGER.error("%s", e);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -285,6 +290,7 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener  implements 
             Stat lockStat = client.exists(lockPath, true);
             return null != lockStat;
         } catch (Exception e) {
+            LOGGER.error("%s", e);
             return false;
         }
     }
@@ -295,6 +301,7 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener  implements 
             Stat lockStat = client.exists(lockPath, false);
             return null != lockStat;
         } catch (Exception e) {
+            LOGGER.error("%s", e);
             return false;
         }
     }
