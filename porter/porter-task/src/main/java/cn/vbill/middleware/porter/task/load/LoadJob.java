@@ -32,6 +32,8 @@ import cn.vbill.middleware.porter.core.task.AbstractStageJob;
 import cn.vbill.middleware.porter.core.task.StageType;
 import cn.vbill.middleware.porter.task.worker.TaskWork;
 import org.apache.commons.lang3.tuple.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 import java.util.List;
@@ -47,6 +49,9 @@ import java.util.concurrent.TimeUnit;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月24日 11:19
  */
 public class LoadJob extends AbstractStageJob {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoadJob.class);
+
     private final DataLoader dataLoder;
     private final TaskWork work;
     //最新的消费进度差值
@@ -84,6 +89,7 @@ public class LoadJob extends AbstractStageJob {
             dataLoder.shutdown();
         } catch (Exception e) {
             e.printStackTrace();
+            LOGGER.error("%s", e);
         }
     }
 

@@ -115,12 +115,14 @@ public class TaskController implements TaskEventListener {
                 startTask(event);
             } catch (Exception e) {
                 e.printStackTrace();
+                LOGGER.error("%s", e);
             }
         } else if (event.getStatus().isStopped()) {
             try {
                 stopTask(Task.fromConfig(event));
             } catch (Exception e) {
                 e.printStackTrace();
+                LOGGER.error("%s", e);
             }
         }
     }
