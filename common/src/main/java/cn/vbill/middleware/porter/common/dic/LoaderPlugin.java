@@ -17,13 +17,12 @@
 
 package cn.vbill.middleware.porter.common.dic;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 /**
  * 载入器插件
@@ -45,21 +44,17 @@ public enum LoaderPlugin {
     KAFKA_SYNC("KAFKA_SYNC", "kafka同步"),
     KAFKA_ASYNC("KAFKA_ASYNC", "kafka异步");
 
+    public static final HashMap<String, Object> LINKMAP = new LinkedHashMap<>();
+    static {
+        LINKMAP.put("JDBC_BATCH", JDBC_BATCH.name);
+        LINKMAP.put("JDBC_SINGLE", JDBC_SINGLE.name);
+        LINKMAP.put(JDBC_SINGLE.code, KUDU_NATIVE.name);
+        LINKMAP.put(JDBC_SQL_PRINT.code, JDBC_SQL_PRINT.name);
+        LINKMAP.put(HBASE_NATIVE.code, HBASE_NATIVE.name);
+        LINKMAP.put(KAFKA_SYNC.code, KAFKA_SYNC.name);
+        LINKMAP.put(KAFKA_ASYNC.code, KAFKA_ASYNC.name);
+    }
+
     @Getter private final String code;
     @Getter private final String name;
-
-    public static final HashMap<String, Object> LINKMAP = new LinkedHashMap<String, Object>() {
-
-        private static final long serialVersionUID = 1L;
-
-        {
-            put("JDBC_BATCH", JDBC_BATCH.name);
-            put("JDBC_SINGLE", JDBC_SINGLE.name);
-            put(JDBC_SINGLE.code, KUDU_NATIVE.name);
-            put(JDBC_SQL_PRINT.code, JDBC_SQL_PRINT.name);
-            put(HBASE_NATIVE.code, HBASE_NATIVE.name);
-            put(KAFKA_SYNC.code, KAFKA_SYNC.name);
-            put(KAFKA_ASYNC.code, KAFKA_ASYNC.name);
-        }
-    };
 }

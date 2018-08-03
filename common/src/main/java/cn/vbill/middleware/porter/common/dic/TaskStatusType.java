@@ -17,17 +17,16 @@
 
 package cn.vbill.middleware.porter.common.dic;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+
 /**
  * 任务状态
- * 
+ *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年02月24日 10:32
  * @version: V1.0
@@ -39,6 +38,13 @@ import lombok.Getter;
 public enum TaskStatusType {
 
     NEW("NEW", "新建"), STOPPED("STOPPED", "已停止"), WORKING("WORKING", "工作中"), DELETED("DELETED", "已删除");
+
+    public static final HashMap<String, Object> LINKMAP = new LinkedHashMap<>();
+    static {
+        LINKMAP.put(NEW.code, NEW.name);
+        LINKMAP.put(WORKING.code, WORKING.name);
+        LINKMAP.put(STOPPED.code, STOPPED.name);
+    }
 
     @Getter
     private final String code;
@@ -57,14 +63,4 @@ public enum TaskStatusType {
         return this == DELETED;
     }
 
-    public static final HashMap<String, Object> LINKMAP = new LinkedHashMap<String, Object>() {
-
-        private static final long serialVersionUID = 1L;
-
-        {
-            put(NEW.code, NEW.name);
-            put(WORKING.code, WORKING.name);
-            put(STOPPED.code, STOPPED.name);
-        }
-    };
 }

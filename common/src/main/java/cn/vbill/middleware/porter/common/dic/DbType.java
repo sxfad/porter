@@ -39,6 +39,12 @@ public enum DbType {
 
     MYSQL("MYSQL", "MYSQL", "com.mysql.cj.jdbc.Driver"), ORACLE("ORACLE", "ORACLE", "oracle.jdbc.driver.OracleDriver");
 
+    public static final HashMap<String, Object> LINKMAP = new LinkedHashMap<>();
+    static {
+        LINKMAP.put(MYSQL.code, MYSQL.name);
+        LINKMAP.put(ORACLE.code, ORACLE.name);
+    }
+
     @Getter
     private final String code;
     @Getter
@@ -46,13 +52,4 @@ public enum DbType {
     @Getter
     private final String driverName;
 
-    public static final HashMap<String, Object> LINKMAP = new LinkedHashMap<String, Object>() {
-
-        private static final long serialVersionUID = 1L;
-
-        {
-            put(MYSQL.code, MYSQL.name);
-            put(ORACLE.code, ORACLE.name);
-        }
-    };
 }

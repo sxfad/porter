@@ -49,6 +49,7 @@ public class MachineUtils {
                 return Long.parseLong(processName.split("@")[0]);
             }
             catch (Exception e) {
+                LOGGER.error("%s", e);
                 return 0;
             }
         }
