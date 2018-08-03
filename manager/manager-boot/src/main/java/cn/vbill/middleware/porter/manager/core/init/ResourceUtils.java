@@ -17,10 +17,6 @@
 
 package cn.vbill.middleware.porter.manager.core.init;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import cn.vbill.middleware.porter.manager.core.entity.JobTasks;
 import cn.vbill.middleware.porter.manager.core.entity.Nodes;
 import cn.vbill.middleware.porter.manager.core.util.ApplicationContextUtil;
@@ -31,9 +27,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * @author guohongjian[guo_hj@suixingpay.com]
- *
  */
 public class ResourceUtils {
 
@@ -87,7 +86,7 @@ public class ResourceUtils {
     }
 
     public static String obtainJobName(String jobId) {
-        if(StringUtils.isEmpty(jobId)) {
+        if (StringUtils.isEmpty(jobId)) {
             return "任务id为空";
         }
         String name = JOBNAME_MAP.get(jobId);

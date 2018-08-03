@@ -194,9 +194,9 @@ public class JobTasksController {
         Integer number = jobTasksService.updateState(id, taskStatusType);
         if (taskStatusType == TaskStatusType.WORKING || taskStatusType == TaskStatusType.STOPPED) {
             try {
-                TaskPushCommand config = new TaskPushCommand(jobTasksService.fitJobTask(id, taskStatusType));                
+                TaskPushCommand config = new TaskPushCommand(jobTasksService.fitJobTask(id, taskStatusType));
                 ClusterProviderProxy.INSTANCE.broadcast(config);
-                log.info("zk任务Id:[{}] 状态:[{}] 详情:[{}].", id, taskStatusType,JSON.toJSONString(config));
+                log.info("zk任务Id:[{}] 状态:[{}] 详情:[{}].", id, taskStatusType, JSON.toJSONString(config));
             } catch (Exception e) {
                 log.error("zk变更任务Id[{}] 状态[{}]失败,请关注！", id, taskStatusType);
                 e.printStackTrace();
