@@ -57,7 +57,7 @@ public class JDBCUtil {
             }
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
-            logger.info(e.getMessage());
+            logger.info("%s", e);
         } finally {
             DataSourceUtil.closed(connection, preparedStatement, results);
         }
