@@ -172,7 +172,10 @@ public class KUDUClient extends AbstractClient<KuduConfig> implements LoadClient
                     case UPDATE:
                         operation = kuduTable.newUpdate();
                         break;
+                    default:
+                        throw new UnsupportedOperationException("unsupported operation:" + type);
                 }
+
                 PartialRow row = operation.getRow();
                 buildRow(r, row);
                 OperationResponse response = session.apply(operation);
