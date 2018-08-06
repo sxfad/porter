@@ -105,21 +105,18 @@ public class TaskWork {
         this.worker = worker;
         this.receivers = Collections.unmodifiableList(receivers);
         TaskWork work = this;
-        JOBS = new LinkedHashMap<StageType, StageJob>() {
-            {
-                put(StageType.SELECT, new SelectJob(work));
-                put(StageType.EXTRACT, new ExtractJob(work));
-                put(StageType.TRANSFORM, new TransformJob(work));
-                put(StageType.LOAD, new LoadJob(work, positionCheckInterval, alarmPositionCount));
+        JOBS = new LinkedHashMap<>();
 
-                /**
-                 * 源端数据源支持元数据查询
-                 */
-                if (dataConsumer.supportMetaQuery()) {
-                    put(StageType.DB_CHECK, new AlertJob(work));
-                }
-            }
-        };
+        JOBS.put(StageType.SELECT, new SelectJob(work));
+        JOBS.put(StageType.EXTRACT, new ExtractJob(work));
+        JOBS.put(StageType.TRANSFORM, new TransformJob(work));
+        JOBS.put(StageType.LOAD, new LoadJob(work, positionCheckInterval, alarmPositionCount));
+        /**
+         * 源端数据源支持元数据查询
+         */
+        if (dataConsumer.supportMetaQuery()) {
+            JOBS.put(StageType.DB_CHECK, new AlertJob(work));
+        }
 
         //从集群模块获取任务状态统计信息
         ClusterProviderProxy.INSTANCE.broadcast(new TaskStatQueryCommand(taskId, dataConsumer.getSwimlaneId(), new DCallback() {
