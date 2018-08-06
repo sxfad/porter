@@ -56,7 +56,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月02日 14:06
  */
 public abstract class AbstractClient<T extends SourceConfig> implements Client {
-    protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+    protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractClient.class);
     //插件服务配置文件
     @JSONField(serialize = false, deserialize = false)
     private static final List<PluginServiceClient> PLUGIN_SERVICE_CLIENTS =
@@ -147,6 +147,7 @@ public abstract class AbstractClient<T extends SourceConfig> implements Client {
                     try {
                         return (Client) c.getClass().getConstructor(config.getClass()).newInstance(config);
                     } catch (Throwable e) {
+                        LOGGER.error("%s", e);
                         continue;
                     }
                 }
