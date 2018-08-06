@@ -295,6 +295,7 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
             canFetch.await();
             return true;
         } catch (InterruptedException e) {
+            Thread.interrupted();
             return false;
         }
     }

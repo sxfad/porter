@@ -94,6 +94,7 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
             e.printStackTrace();
             LOGGER.error("%s", e);
         } catch (InterruptedException e) {
+            Thread.interrupted();
             e.printStackTrace();
         }
         return new ImmutablePair(new String(dataBytes), stat);
@@ -193,6 +194,7 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
                 spinnedTime += config.getSpinningPeer();
                 Thread.currentThread().sleep(config.getSpinningPeer());
             } catch (InterruptedException e) {
+                Thread.interrupted();
                 e.printStackTrace();
             }
         }

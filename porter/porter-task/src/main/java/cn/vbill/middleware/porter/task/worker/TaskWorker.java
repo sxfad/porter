@@ -81,8 +81,8 @@ public class TaskWorker {
                         try {
                             Thread.sleep(60000);
                         } catch (InterruptedException e) {
+                            Thread.interrupted();
                             e.printStackTrace();
-
                         }
                     }
                     //每1秒上传一次消费进度

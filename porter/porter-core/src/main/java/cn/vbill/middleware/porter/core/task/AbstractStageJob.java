@@ -111,6 +111,7 @@ public abstract class AbstractStageJob implements StageJob {
                     Thread.sleep(threadWaitSpan);
                 } catch (InterruptedException e) {
                     //如果线程有中断信号，退出线程
+                    Thread.interrupted();
                     break;
                 }
             }

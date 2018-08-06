@@ -225,6 +225,7 @@ public class KafkaClient extends AbstractClient<KafkaConfig> implements ConsumeC
             return true;
         } catch (InterruptedException e) {
             e.printStackTrace();
+            Thread.interrupted();
             return false;
         }
     }
