@@ -90,7 +90,7 @@ public class JavaFileCompiler extends URLClassLoader {
         if (null != sourceClass && targetClass.isAssignableFrom(sourceClass)) {
             return (T) sourceClass.newInstance();
         }
-        throw new UnexpectedException(sourceClass.getName() + "不是" + targetClass.getName() + "的子类或接口实现");
+        throw new UnexpectedException(sourceClass + "不是" + targetClass + "的子类或接口实现");
     }
 
     private Class<?> compile(JavaFile javaFile) throws IOException, ClassNotFoundException {
