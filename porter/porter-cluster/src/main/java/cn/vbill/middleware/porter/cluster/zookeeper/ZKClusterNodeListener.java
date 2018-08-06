@@ -215,6 +215,7 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener  implements 
                         e.printStackTrace();
                         LOGGER.error("%s", e);
                     } catch (InterruptedException e) {
+                        Thread.interrupted();
                         e.printStackTrace();
                     }
                 }
