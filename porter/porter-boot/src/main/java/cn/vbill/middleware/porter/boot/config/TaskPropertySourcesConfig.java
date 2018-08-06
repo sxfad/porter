@@ -17,6 +17,8 @@
 
 package cn.vbill.middleware.porter.boot.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.context.annotation.Bean;
@@ -46,8 +48,12 @@ import java.util.List;
 
 @Configuration
 public class TaskPropertySourcesConfig implements EnvironmentAware, ResourceLoaderAware {
+
     private Environment environment;
     private ResourceLoader resourceLoader;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TaskPropertySourcesConfig.class);
+
     @Bean
     public PropertySourcesPlaceholderConfigurer placeHolderConfigurer() {
         PropertySourcesPlaceholderConfigurer configurer = new PropertySourcesPlaceholderConfigurer();
@@ -91,6 +97,7 @@ public class TaskPropertySourcesConfig implements EnvironmentAware, ResourceLoad
                     }
                 });
             } catch (IOException e) {
+                LOGGER.error("%s", e);
             }
             if (null != tasks && tasks.length > 0) {
                 files.addAll(Arrays.asList(tasks));
