@@ -41,7 +41,7 @@ import java.util.List;
  */
 public abstract class AbstractDataConsumer implements DataConsumer {
     private EventProcessor eventProcessor;
-    protected EventConverter converter;
+    private EventConverter converter;
     private  volatile MetaQueryClient metaQueryClient;
     protected volatile  ConsumeClient consumeClient;
 
@@ -144,6 +144,10 @@ public abstract class AbstractDataConsumer implements DataConsumer {
     @Override
     public void setClient(ConsumeClient c) {
         this.consumeClient = c;
+    }
+
+    public EventConverter getConverter() {
+        return converter;
     }
 
     @Override
