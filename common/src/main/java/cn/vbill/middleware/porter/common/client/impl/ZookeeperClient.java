@@ -41,8 +41,8 @@ import java.util.List;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月02日 15:37
  */
 public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements ClusterClient<Stat> {
-    private ZooKeeper zk;
-    @Setter private Watcher watcher;
+    private volatile ZooKeeper zk;
+    @Setter private volatile Watcher watcher;
 
     public ZookeeperClient(ZookeeperConfig config) {
         super(config);
@@ -177,10 +177,19 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
      */
     public void clientSpinning() {
         ZookeeperConfig config = getConfig();
-        int spinnedTime = 0;
-        while (!alive() && canRestore() && spinnedTime < config.getSpinningTime()) {
+        if (!alive() && !canRestore()) {
             try {
-                spinnedTime += config.getSpinningPeer();
+                zk = new ZooKeeper(config.getUrl(), config.getSessionTimeout(), watcher);
+            } catch (IOException e) {
+                LOGGER.error("reconnection when zookeeper isn't alive.", e);
+                e.printStackTrace();
+            }
+        }
+
+        int spannedTime = 0;
+        while (!alive() && canRestore() && spannedTime < config.getSpinningTime()) {
+            try {
+                spannedTime += config.getSpinningPeer();
                 Thread.currentThread().sleep(config.getSpinningPeer());
             } catch (InterruptedException e) {
                 e.printStackTrace();

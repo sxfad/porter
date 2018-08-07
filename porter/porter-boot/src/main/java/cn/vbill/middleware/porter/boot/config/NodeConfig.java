@@ -36,11 +36,13 @@ import java.util.List;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月19日 10:14
  */
 @ConfigurationProperties(prefix = "node")
+@Setter @Getter
 @Component
 public class  NodeConfig {
-    @Setter @Getter private String id;
-    @Setter @Getter private StatisticConfig statistic = new StatisticConfig();
-    @Setter @Getter private AlertConfig alert;
-    @Setter @Getter private ClusterConfig cluster;
-    @Setter @Getter private List<TaskConfig> task = new ArrayList<>();
+    private String id;
+    private Integer workLimit = 10;
+    private StatisticConfig statistic = new StatisticConfig();
+    private AlertConfig alert;
+    private ClusterConfig cluster;
+    private List<TaskConfig> task = new ArrayList<>();
 }
