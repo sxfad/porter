@@ -110,6 +110,7 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements N
             }
         } catch (Throwable e) {
             e.printStackTrace();
+            LOGGER.error("2-DNode-Error....出错,请追寻...", e);
         }
     }
 
