@@ -18,6 +18,7 @@
 package cn.vbill.middleware.porter.boot;
 
 import cn.vbill.middleware.porter.common.client.PublicClientContext;
+import cn.vbill.middleware.porter.common.dic.AlertPlugin;
 import cn.vbill.middleware.porter.common.util.ProcessUtils;
 import cn.vbill.middleware.porter.boot.config.SourcesConfig;
 import cn.vbill.middleware.porter.core.NodeContext;
@@ -77,11 +78,13 @@ public class NodeBootApplication {
         NodeConfig config = context.getBean(NodeConfig.class);
 
         //从本地初始化告警配置
-        try {
-            AlertProviderFactory.INSTANCE.initialize(config.getAlert());
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("告警配置初始化失败, 数据同步节点退出!error:" + e.getMessage());
+        if (null != config.getAlert() && AlertPlugin.NONE != config.getAlert().getStrategy()) {
+            try {
+                AlertProviderFactory.INSTANCE.initialize(config.getAlert());
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new RuntimeException("告警配置初始化失败, 数据同步节点退出!error:" + e.getMessage());
+            }
         }
 
         //初始化默认工作任务数
