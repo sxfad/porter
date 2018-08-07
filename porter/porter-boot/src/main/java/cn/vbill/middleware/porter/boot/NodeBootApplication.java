@@ -84,6 +84,8 @@ public class NodeBootApplication {
             throw new RuntimeException("告警配置初始化失败, 数据同步节点退出!error:" + e.getMessage());
         }
 
+        //初始化默认工作任务数
+        NodeContext.INSTANCE.updateWorkLimit(config.getWorkLimit());
 
         //从本地初始化公用数据库连接池
         SourcesConfig datasourceConfigBean = context.getBean(SourcesConfig.class);

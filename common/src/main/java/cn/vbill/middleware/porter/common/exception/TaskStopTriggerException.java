@@ -69,7 +69,7 @@ public class TaskStopTriggerException extends TaskException {
         }
         if (cause instanceof CannotGetJdbcConnectionException || cause instanceof UncategorizedSQLException
                 || cause instanceof MySQLSyntaxErrorException || cause instanceof BadSqlGrammarException
-                || cause instanceof DataIntegrityViolationException|| cause instanceof CannotCreateTransactionException) {
+                || cause instanceof DataIntegrityViolationException) {
             return true;
         }
 
