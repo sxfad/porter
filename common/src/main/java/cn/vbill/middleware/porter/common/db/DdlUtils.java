@@ -36,17 +36,16 @@ import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.jdbc.support.JdbcUtils;
 import org.springframework.util.Assert;
 
-
-import java.sql.PreparedStatement;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -55,23 +54,24 @@ import java.util.Map;
  */
 public class DdlUtils {
 
-    private static final Logger LOGGER                = LoggerFactory.getLogger(DdlUtils.class);
-    private static TableType[]                SUPPORTED_TABLE_TYPES = new TableType[] {TableType.view, TableType.table};
-    private static final  Map<Integer, String> DEFAULT_SIZES = new HashMap<>();
+    private static final Logger LOGGER = LoggerFactory.getLogger(DdlUtils.class);
+    private static TableType[] SUPPORTED_TABLE_TYPES = new TableType[]{TableType.view, TableType.table};
+    private static final Map<Integer, String> DEFAULT_SIZES = new HashMap<>();
+
     static {
-        DEFAULT_SIZES.put(new Integer(1), "254");
-        DEFAULT_SIZES.put(new Integer(12), "254");
-        DEFAULT_SIZES.put(new Integer(-1), "254");
-        DEFAULT_SIZES.put(new Integer(-2), "254");
-        DEFAULT_SIZES.put(new Integer(-3), "254");
-        DEFAULT_SIZES.put(new Integer(-4), "254");
-        DEFAULT_SIZES.put(new Integer(4), "32");
-        DEFAULT_SIZES.put(new Integer(-5), "64");
-        DEFAULT_SIZES.put(new Integer(7), "7,0");
-        DEFAULT_SIZES.put(new Integer(6), "15,0");
-        DEFAULT_SIZES.put(new Integer(8), "15,0");
-        DEFAULT_SIZES.put(new Integer(3), "15,15");
-        DEFAULT_SIZES.put(new Integer(2), "15,15");
+        DEFAULT_SIZES.put(Integer.valueOf(1), "254");
+        DEFAULT_SIZES.put(Integer.valueOf(12), "254");
+        DEFAULT_SIZES.put(Integer.valueOf(-1), "254");
+        DEFAULT_SIZES.put(Integer.valueOf(-2), "254");
+        DEFAULT_SIZES.put(Integer.valueOf(-3), "254");
+        DEFAULT_SIZES.put(Integer.valueOf(-4), "254");
+        DEFAULT_SIZES.put(Integer.valueOf(4), "32");
+        DEFAULT_SIZES.put(Integer.valueOf(-5), "64");
+        DEFAULT_SIZES.put(Integer.valueOf(7), "7,0");
+        DEFAULT_SIZES.put(Integer.valueOf(6), "15,0");
+        DEFAULT_SIZES.put(Integer.valueOf(8), "15,0");
+        DEFAULT_SIZES.put(Integer.valueOf(3), "15,15");
+        DEFAULT_SIZES.put(Integer.valueOf(2), "15,15");
     }
 
     public static Table findTable(JdbcTemplate jdbcTemplate, final String catalogName, final String schemaName,
@@ -101,7 +101,7 @@ public class DdlUtils {
                     String databaseName = databaseMetaData.getDatabaseProductName();
                     String version = databaseMetaData.getDatabaseProductVersion();
                     if (StringUtils.startsWithIgnoreCase(databaseName, "mysql")
-                        && StringUtils.contains(version, "-TDDL-")) {
+                            && StringUtils.contains(version, "-TDDL-")) {
                         isDRDS = true;
                     }
 
@@ -182,6 +182,7 @@ public class DdlUtils {
 
     /**
      * 获取DRDS下表的拆分字段, 返回格式为 id,name
+     *
      * @param jdbcTemplate
      * @param catalogName
      * @param schemaName
@@ -251,10 +252,10 @@ public class DdlUtils {
                     col.setPrimaryKey(true);
                 } else {
                     throw new NullPointerException(String.format("%s pk %s is null - %s %s",
-                        tableName,
-                        key,
-                        ToStringBuilder.reflectionToString(metaData, ToStringStyle.SIMPLE_STYLE),
-                        ToStringBuilder.reflectionToString(values, ToStringStyle.SIMPLE_STYLE)));
+                            tableName,
+                            key,
+                            ToStringBuilder.reflectionToString(metaData, ToStringStyle.SIMPLE_STYLE),
+                            ToStringBuilder.reflectionToString(values, ToStringStyle.SIMPLE_STYLE)));
                 }
             }
         }
@@ -289,9 +290,9 @@ public class DdlUtils {
         result.add(new MetaDataColumnDescriptor("TABLE_NAME", Types.VARCHAR));
         result.add(new MetaDataColumnDescriptor("COLUMN_NAME", Types.VARCHAR));
         result.add(new MetaDataColumnDescriptor("TYPE_NAME", Types.VARCHAR));
-        result.add(new MetaDataColumnDescriptor("DATA_TYPE", Types.INTEGER, new Integer(Types.OTHER)));
-        result.add(new MetaDataColumnDescriptor("NUM_PREC_RADIX", Types.INTEGER, new Integer(10)));
-        result.add(new MetaDataColumnDescriptor("DECIMAL_DIGITS", Types.INTEGER, new Integer(0)));
+        result.add(new MetaDataColumnDescriptor("DATA_TYPE", Types.INTEGER, Integer.valueOf(Types.OTHER)));
+        result.add(new MetaDataColumnDescriptor("NUM_PREC_RADIX", Types.INTEGER, Integer.valueOf(10)));
+        result.add(new MetaDataColumnDescriptor("DECIMAL_DIGITS", Types.INTEGER, Integer.valueOf(0)));
         result.add(new MetaDataColumnDescriptor("COLUMN_SIZE", Types.VARCHAR));
         result.add(new MetaDataColumnDescriptor("IS_NULLABLE", Types.VARCHAR, "YES"));
         result.add(new MetaDataColumnDescriptor("REMARKS", Types.VARCHAR));
@@ -381,7 +382,7 @@ public class DdlUtils {
         String size = (String) values.get("COLUMN_SIZE");
 
         if (size == null) {
-            size = (String) DEFAULT_SIZES.get(new Integer(column.getTypeCode()));
+            size = (String) DEFAULT_SIZES.get(Integer.valueOf(column.getTypeCode()));
         }
 
         // we're setting the size after the precision and radix in case
@@ -391,10 +392,10 @@ public class DdlUtils {
         int scale = 0;
         Object decDigits = values.get("DECIMAL_DIGITS");
 
-        if (decDigits instanceof String) {
-            scale = (decDigits == null) ? 0 : NumberUtils.toInt(decDigits.toString());
-        } else if (decDigits instanceof Integer) {
-            scale = (decDigits == null) ? 0 : (Integer) decDigits;
+        if (decDigits != null && decDigits instanceof String) {
+            scale = NumberUtils.toInt(decDigits.toString());
+        } else if (decDigits != null && decDigits instanceof Integer) {
+            scale = (Integer) decDigits;
         }
 
         if (scale != 0) {
@@ -407,12 +408,12 @@ public class DdlUtils {
     }
 
     private static Map<String, Object> readColumns(ResultSet resultSet, List<MetaDataColumnDescriptor> columnDescriptors)
-                                                                                                                         throws SQLException {
+            throws SQLException {
         Map<String, Object> values = new HashMap<String, Object>();
         MetaDataColumnDescriptor descriptor;
 
         for (Iterator<MetaDataColumnDescriptor> it = columnDescriptors.iterator(); it.hasNext(); values.put(descriptor.getName(),
-            descriptor.readColumn(resultSet))) {
+                descriptor.readColumn(resultSet))) {
             descriptor = (MetaDataColumnDescriptor) it.next();
         }
 
@@ -420,7 +421,7 @@ public class DdlUtils {
     }
 
     private static Collection<String> readPrimaryKeyNames(DatabaseMetaDataWrapper metaData, String tableName)
-                                                                                                             throws SQLException {
+            throws SQLException {
         ResultSet pkData = null;
 
         try {
@@ -428,7 +429,7 @@ public class DdlUtils {
             Map<String, Object> values;
 
             for (pkData = metaData.getPrimaryKeys(tableName); pkData.next(); pks.add(readPrimaryKeyName(metaData,
-                values))) {
+                    values))) {
                 values = readColumns(pkData, initColumnsForPK());
             }
 
@@ -439,7 +440,7 @@ public class DdlUtils {
     }
 
     private static String readPrimaryKeyName(DatabaseMetaDataWrapper metaData, Map<String, Object> values)
-                                                                                                          throws SQLException {
+            throws SQLException {
         return (String) values.get("COLUMN_NAME");
     }
 }

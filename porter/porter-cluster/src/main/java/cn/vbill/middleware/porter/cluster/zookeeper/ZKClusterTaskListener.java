@@ -53,6 +53,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.data.Stat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,6 +74,8 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
     private static final Pattern TASK_DIST_PATTERN = Pattern.compile(ZK_PATH + "/.*/dist/.*");
     private static final Pattern TASK_UNLOCKED_PATTERN = Pattern.compile(ZK_PATH + "/.*/lock/.*");
     private final List<TaskEventListener> TASK_LISTENER;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ZKClusterTaskListener.class);
 
     public ZKClusterTaskListener() {
         this.TASK_LISTENER = new ArrayList<>();
@@ -181,10 +185,11 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
                 //通知对此感兴趣的Listener
                 ClusterProviderProxy.INSTANCE.broadcast(new TaskAssignedCommand(task.getTaskId(), task.getSwimlaneId()));
             } catch (KeeperException.NodeExistsException e) {
-                throw  new TaskLockException(topicPath + ",锁定资源失败。");
+                LOGGER.error("%s", e);
+                throw new TaskLockException(topicPath + ",锁定资源失败。");
             }
         } else {
-            throw  new TaskLockException(topicPath + ",锁定资源失败。");
+            throw new TaskLockException(topicPath + ",锁定资源失败。");
         }
     }
 
@@ -216,6 +221,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
                 LOGGER.debug("stat store in zookeeper:{}", JSON.toJSONString(taskStat));
             } catch (KeeperException.BadVersionException e) {
                 //进度上传失败，异常吃掉
+                LOGGER.error("%s", e);
             }
         }
     }
@@ -252,6 +258,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                LOGGER.error("%s", e);
             }
         }
         if (null != command.getCallback()) command.getCallback().callback(stats);

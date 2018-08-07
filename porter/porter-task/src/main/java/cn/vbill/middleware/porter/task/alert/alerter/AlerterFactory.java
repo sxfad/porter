@@ -25,6 +25,8 @@ import cn.vbill.middleware.porter.core.task.TableMapper;
 import cn.vbill.middleware.porter.task.worker.TaskWork;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 import org.springframework.stereotype.Component;
@@ -43,6 +45,9 @@ import java.util.concurrent.Executors;
 @Component
 @Scope("singleton")
 public class AlerterFactory {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AlerterFactory.class);
+
     private Alerter alerter;
 
     public AlerterFactory() {
@@ -77,6 +82,7 @@ public class AlerterFactory {
                                 barrier.await();
                             } catch (Exception e) {
                                 e.printStackTrace();
+                                LOGGER.error("%s", e);
                             }
                         }
                     }
@@ -87,6 +93,7 @@ public class AlerterFactory {
                 barrier.await();
             } catch (Exception e) {
                 e.printStackTrace();
+                LOGGER.error("%s", e);
             } finally {
                 service.shutdown();
             }

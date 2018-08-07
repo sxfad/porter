@@ -83,41 +83,4 @@ public class MrJobTasksScheduleController {
         List<MrJobTasksSchedule> list = mrJobTasksScheduleService.list(jobId, heartBeatBeginDate, heartBeatEndDate);
         return ok(list);
     }
-
-    /*
-     * @PostMapping
-     * 
-     * @ApiOperation(value = "新增", notes = "新增") public ResponseMessage
-     * add(@RequestBody MrJobTasksSchedule mrJobTasksSchedule) { Integer number =
-     * mrJobTasksScheduleService.insert(mrJobTasksSchedule); return ok(number); }
-     * 
-     * @PutMapping("/{id}")
-     * 
-     * @ApiOperation(value = "修改", notes = "修改") public ResponseMessage
-     * update(@PathVariable("id") Long id, @RequestBody MrJobTasksSchedule
-     * mrJobTasksSchedule) { Integer number = mrJobTasksScheduleService.update(id,
-     * mrJobTasksSchedule); return ok(number); }
-     * 
-     * @DeleteMapping("/{id}")
-     * 
-     * @ApiOperation(value = "删除", notes = "删除") public ResponseMessage
-     * delete(@PathVariable("id") Long id) { mrJobTasksScheduleService.delete(id);
-     * return ok(); }
-     * 
-     * @GetMapping("/{id}")
-     * 
-     * @ApiOperation(value = "查询明细", notes = "查询明细") public ResponseMessage
-     * info(@PathVariable("id") Long id) { MrJobTasksSchedule mrJobTasksSchedule =
-     * mrJobTasksScheduleService.selectById(id); return ok(mrJobTasksSchedule); }
-     * 
-     * @ApiOperation(value = "查询列表", notes = "查询列表")
-     * 
-     * @GetMapping public ResponseMessage list(@RequestParam(value = "pageNo",
-     * required = false) Integer pageNo,
-     * 
-     * @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-     * Page<MrJobTasksSchedule> page = mrJobTasksScheduleService.page(new
-     * Page<MrJobTasksSchedule>(pageNo, pageSize)); return ok(page); }
-     */
-
 }

@@ -36,6 +36,7 @@ public class ProcessUtils {
                     try {
                         Thread.sleep(10000);
                     } catch (InterruptedException e) {
+                        Thread.interrupted();
                         e.printStackTrace();
                     }
                 }

@@ -17,27 +17,36 @@
 
 package cn.vbill.middleware.porter.common.client.impl;
 
+import cn.vbill.middleware.porter.common.client.AbstractClient;
 import cn.vbill.middleware.porter.common.client.LoadClient;
 import cn.vbill.middleware.porter.common.client.MetaQueryClient;
 import cn.vbill.middleware.porter.common.config.source.KafkaProduceConfig;
 import cn.vbill.middleware.porter.common.db.meta.TableSchema;
 import cn.vbill.middleware.porter.common.exception.TaskStopTriggerException;
 import cn.vbill.middleware.porter.common.util.MachineUtils;
-import cn.vbill.middleware.porter.common.client.AbstractClient;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Triple;
-import org.apache.kafka.clients.producer.*;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.Producer;
+import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.serialization.StringSerializer;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 /**
- *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年02月02日 15:14
  * @version: V1.0
@@ -159,7 +168,7 @@ public class KafkaProduceClient extends AbstractClient<KafkaProduceConfig> imple
     public List<String> getPartitionKey(String schema, String table) {
 
         return partitionKeyCache.computeIfAbsent(Arrays.asList(schema, table), key -> {
-            List<String>  keyNames = new ArrayList<>();
+            List<String> keyNames = new ArrayList<>();
             Map<String, String> partitionKeyMap = getConfig().getPartitionKey();
             if (null != partitionKeyMap && !partitionKeyMap.isEmpty()) {
                 String keys = partitionKeyMap.getOrDefault(schema + "." + table, null);
@@ -173,6 +182,7 @@ public class KafkaProduceClient extends AbstractClient<KafkaProduceConfig> imple
 
     /**
      * 当没有配置group时，做默认配置
+     *
      * @return
      */
     private String getDefaultGroup() {

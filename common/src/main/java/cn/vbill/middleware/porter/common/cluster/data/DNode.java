@@ -17,14 +17,17 @@
 
 package cn.vbill.middleware.porter.common.cluster.data;
 
+import cn.vbill.middleware.porter.common.dic.NodeHealthLevel;
 import cn.vbill.middleware.porter.common.dic.NodeStatusType;
 import cn.vbill.middleware.porter.common.util.MachineUtils;
-import cn.vbill.middleware.porter.common.dic.NodeHealthLevel;
 import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.*;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.TreeSet;
 
 /**
  * 集群节点

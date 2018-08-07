@@ -32,11 +32,12 @@ import java.util.List;
 import static cn.vbill.middleware.porter.manager.web.message.ResponseMessage.ok;
 
 /**
- * All rights Reserved, Designed By Suixingpay.
+ * 角色管理
  *
- * @author: 付紫钲
- * @date: 2018/4/16
- * @copyright: ©2017 Suixingpay. All rights reserved. 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
+ * @author: fuzizheng
+ * @date: 2018年04月06日 10:09
+ * @version: V1.0
+ * @review: fuzizheng/2018年04月06日 10:09
  */
 @Api(description = "角色管理")
 @RestController

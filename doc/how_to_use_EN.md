@@ -15,7 +15,7 @@
 			table name
 			When the source targets are inconsistent, a mapping relationship is required.
 			Primary key (required)
-			pdate time field (not required, if there is no source, the number of data on the target side is checked)
+			Update time field (not required, if there is no source, the number of data on the target side is checked)
 		bin-log:
 			ROW format
 		Database connection information:
@@ -27,24 +27,24 @@
     	Target database connection information	
     	If it is mysql, it is not case sensitive (temporarily not case sensitive)
 ```
-[//]: # (todo)
-### Oracle到关系型数据库同步
+
+### Oracle to relational database synchronization
 
 ```
-	源端:
-		运维配合做OGG配置
-		表结构信息:
-			schema名
-			表名
-			源端目标端不一致时，需提供映射关系
-			主键（必须）
-			更新时间字段(非必填，如果没有将不做源端、目标端数据条数一致检查)
-		数据库连接信息:
-			非必填，如果不提供将不做源端、目标端数据条数一致检查
-    目标端:
-    	表结构信息:同源端
-    	目标端数据库连接信息
-    	如果是mysql,要求不区分大小写(暂不支持大小写敏感)
+	Source:
+		Operation and Maintenance Engineer cooperate with OGG configuration.
+		Table structure information:
+			schema name
+            table name
+			When the source targets are inconsistent, a mapping relationship is required.
+			Primary key (required)
+			Update time field (not required, if there is no source, the number of data on the target side is checked)
+		Database connection information:
+			It is not required. If it is not provided, the source and destination data will not be checked.
+    Target:
+    	Table structure information : same as Source
+    	Target database connection information	
+    	If it is mysql, it is not case sensitive (temporarily not case sensitive)
 		
 ```
 

@@ -20,6 +20,8 @@ package cn.vbill.middleware.porter.datacarrier;
 import cn.vbill.middleware.porter.common.util.compile.JavaFileCompiler;
 import cn.vbill.middleware.porter.datacarrier.simple.SimpleDataCarrier;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 import org.springframework.stereotype.Component;
@@ -38,6 +40,9 @@ import java.util.List;
 @Component
 @Scope("singleton")
 public class DataCarrierFactory {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DataCarrierFactory.class);
+
     private final Class provider;
     public DataCarrierFactory() {
         List<String> clazz = SpringFactoriesLoader.loadFactoryNames(DataCarrier.class, JavaFileCompiler.getInstance());
@@ -48,6 +53,7 @@ public class DataCarrierFactory {
                 tmpProvider = ClassUtils.forName(providerString, DataCarrierFactory.class.getClassLoader());
             } catch (ClassNotFoundException e) {
                 tmpProvider = SimpleDataCarrier.class;
+                LOGGER.error("%s", e);
             }
         }
         provider = tmpProvider;
@@ -65,6 +71,7 @@ public class DataCarrierFactory {
             ReflectionUtils.makeAccessible(constructor);
             dc = constructor.newInstance(initPrams);
         } catch (Exception e) {
+            LOGGER.error("%s", e);
         }
 
         //默认构造函数
@@ -74,6 +81,7 @@ public class DataCarrierFactory {
                 ReflectionUtils.makeAccessible(constructor);
                 dc = constructor.newInstance();
             } catch (Exception e) {
+                LOGGER.error("%s", e);
             }
         }
         return dc;

@@ -66,40 +66,4 @@ public class MrNodesScheduleController {
         return ok(page);
     }
 
-    /*
-     * @PostMapping
-     * 
-     * @ApiOperation(value = "新增", notes = "新增") public ResponseMessage
-     * add(@RequestBody MrNodesSchedule mrNodesSchedule) { Integer number =
-     * mrNodesScheduleService.insert(mrNodesSchedule); return ok(number); }
-     * 
-     * @PutMapping("/{id}")
-     * 
-     * @ApiOperation(value = "修改", notes = "修改") public ResponseMessage
-     * update(@PathVariable("id") Long id, @RequestBody MrNodesSchedule
-     * mrNodesSchedule) { Integer number = mrNodesScheduleService.update(id,
-     * mrNodesSchedule); return ok(number); }
-     * 
-     * @DeleteMapping("/{id}")
-     * 
-     * @ApiOperation(value = "删除", notes = "删除") public ResponseMessage
-     * delete(@PathVariable("id") Long id) { mrNodesScheduleService.delete(id);
-     * return ok(); }
-     * 
-     * @GetMapping("/{id}")
-     * 
-     * @ApiOperation(value = "查询明细", notes = "查询明细") public ResponseMessage
-     * info(@PathVariable("id") Long id) { MrNodesSchedule mrNodesSchedule =
-     * mrNodesScheduleService.selectById(id); return ok(mrNodesSchedule); }
-     * 
-     * @ApiOperation(value = "查询列表", notes = "查询列表")
-     * 
-     * @GetMapping public ResponseMessage list(@RequestParam(value = "pageNo",
-     * required = false) Integer pageNo,
-     * 
-     * @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-     * Page<MrNodesSchedule> page = mrNodesScheduleService.page(new
-     * Page<MrNodesSchedule>(pageNo, pageSize)); return ok(page); }
-     */
-
 }

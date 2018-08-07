@@ -41,7 +41,7 @@ import java.util.List;
  */
 public abstract class AbstractDataConsumer implements DataConsumer {
     private EventProcessor eventProcessor;
-    protected EventConverter converter;
+    private EventConverter converter;
     private  volatile MetaQueryClient metaQueryClient;
     protected volatile  ConsumeClient consumeClient;
 
@@ -49,7 +49,7 @@ public abstract class AbstractDataConsumer implements DataConsumer {
     @Getter private final List<String> includes = new ArrayList<>();
     @Getter private final List<String> excludes = new ArrayList<>();
     //空查询通知间隔,单位秒
-    @Setter @Getter private volatile long emptyFetchNoticeSpan = 30 * 60;
+    @Setter @Getter private volatile long emptyFetchNoticeSpan = 30L * 60;
 
     //空查询通知时间阀值
     @Setter @Getter private volatile long emptyFetchThreshold = -1;
@@ -144,6 +144,10 @@ public abstract class AbstractDataConsumer implements DataConsumer {
     @Override
     public void setClient(ConsumeClient c) {
         this.consumeClient = c;
+    }
+
+    public EventConverter getConverter() {
+        return converter;
     }
 
     @Override

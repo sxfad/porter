@@ -37,19 +37,17 @@ import java.util.LinkedHashMap;
 public enum NodeHealthLevel {
 
     GREEN("GREEN", "正常"), YELLOW("YELLOW", "需要关注"), RED("RED", "异常");
+
+    public static final HashMap<String, Object> LINKMAP = new LinkedHashMap<>();
+    static {
+        LINKMAP.put(GREEN.code, GREEN.name);
+        LINKMAP.put(YELLOW.code, YELLOW.name);
+        LINKMAP.put(RED.code, RED.name);
+    }
+
     @Getter
     private final String code;
     @Getter
     private final String name;
 
-    public static final HashMap<String, Object> LINKMAP = new LinkedHashMap<String, Object>() {
-
-        private static final long serialVersionUID = 1L;
-
-        {
-            put(GREEN.code, GREEN.name);
-            put(YELLOW.code, YELLOW.name);
-            put(RED.code, RED.name);
-        }
-    };
 }

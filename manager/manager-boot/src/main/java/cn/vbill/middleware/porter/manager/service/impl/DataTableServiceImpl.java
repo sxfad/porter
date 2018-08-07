@@ -88,21 +88,21 @@ public class DataTableServiceImpl implements DataTableService {
             QuerySQL query = null;
             //根据数据源id获取数据源信息
             for (DataSourcePlugin dataSourcePlugin : dataSourcePlugins) {
-                if (dataSourcePlugin.getFieldCode().toLowerCase().equals("dbtype")) {
-                    if (dataSourcePlugin.getFieldValue().toLowerCase().equals("mysql")) {
+                if (dataSourcePlugin.getFieldCode().equalsIgnoreCase("dbtype")) {
+                    if (dataSourcePlugin.getFieldValue().equalsIgnoreCase("mysql")) {
                         query = QuerySQL.MYSQL;
                     }
-                    if (dataSourcePlugin.getFieldValue().toLowerCase().equals("oracle")) {
+                    if (dataSourcePlugin.getFieldValue().equalsIgnoreCase("oracle")) {
                         query = QuerySQL.ORACLE;
                     }
                 }
-                if (dataSourcePlugin.getFieldCode().toLowerCase().equals("url")) {
+                if (dataSourcePlugin.getFieldCode().equalsIgnoreCase("url")) {
                     url = dataSourcePlugin.getFieldValue();
                 }
-                if (dataSourcePlugin.getFieldCode().toLowerCase().equals("username")) {
+                if (dataSourcePlugin.getFieldCode().equalsIgnoreCase("username")) {
                     username = dataSourcePlugin.getFieldValue();
                 }
-                if (dataSourcePlugin.getFieldCode().toLowerCase().equals("password")) {
+                if (dataSourcePlugin.getFieldCode().equalsIgnoreCase("password")) {
                     password = dataSourcePlugin.getFieldValue();
                 }
             }
@@ -128,21 +128,21 @@ public class DataTableServiceImpl implements DataTableService {
             String password = null;
             QuerySQL query = null;
             for (DataSourcePlugin dataSourcePlugin : list) {
-                if (dataSourcePlugin.getFieldCode().toLowerCase().equals("dbtype")) {
-                    if (dataSourcePlugin.getFieldValue().toLowerCase().equals("mysql")) {
+                if (dataSourcePlugin.getFieldCode().equalsIgnoreCase("dbtype")) {
+                    if (dataSourcePlugin.getFieldValue().equalsIgnoreCase("mysql")) {
                         query = QuerySQL.MYSQL;
                     }
-                    if (dataSourcePlugin.getFieldValue().toLowerCase().equals("oracle")) {
+                    if (dataSourcePlugin.getFieldValue().equalsIgnoreCase("oracle")) {
                         query = QuerySQL.ORACLE;
                     }
                 }
-                if (dataSourcePlugin.getFieldCode().toLowerCase().equals("url")) {
+                if (dataSourcePlugin.getFieldCode().equalsIgnoreCase("url")) {
                     url = dataSourcePlugin.getFieldValue();
                 }
-                if (dataSourcePlugin.getFieldCode().toLowerCase().equals("username")) {
+                if (dataSourcePlugin.getFieldCode().equalsIgnoreCase("username")) {
                     username = dataSourcePlugin.getFieldValue();
                 }
-                if (dataSourcePlugin.getFieldCode().toLowerCase().equals("password")) {
+                if (dataSourcePlugin.getFieldCode().equalsIgnoreCase("password")) {
                     password = dataSourcePlugin.getFieldValue();
                 }
             }

@@ -38,19 +38,15 @@ import lombok.Getter;
 public enum ConsumeConverterPlugin {
     CANAL_ROW("canalRow", "Canal行格式"), OGG_JSON("oggJson", "oggJson格式");
 
+    public static final HashMap<String, Object> LINKMAP = new LinkedHashMap<>();
+    static {
+        LINKMAP.put("CANAL_ROW", CANAL_ROW.name);
+        LINKMAP.put("OGG_JSON", OGG_JSON.name);
+    }
+
     @Getter
     private final String code;
     @Getter
     private final String name;
-
-    public static final HashMap<String, Object> LINKMAP = new LinkedHashMap<String, Object>() {
-
-        private static final long serialVersionUID = 1L;
-
-        {
-            put("CANAL_ROW", CANAL_ROW.name);
-            put("OGG_JSON", OGG_JSON.name);
-        }
-    };
 
 }

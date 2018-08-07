@@ -25,6 +25,8 @@ import cn.vbill.middleware.porter.common.config.source.EmailConfig;
 import cn.vbill.middleware.porter.common.exception.ClientConnectionException;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
@@ -47,6 +49,7 @@ public class EmailClient  extends AbstractClient<EmailConfig> implements AlertCl
     private final AlertFrequency frequencyStat = new AlertFrequency();
     private volatile List<AlertReceiver> globalReceiver = new ArrayList<>();
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(EmailClient.class);
 
     public EmailClient(EmailConfig config, AlertReceiver[] receiver, int frequencyOfSecond) throws ClientConnectionException {
         super(config);
@@ -70,6 +73,7 @@ public class EmailClient  extends AbstractClient<EmailConfig> implements AlertCl
             senderImpl.testConnection();
         } catch (Exception e) {
             e.printStackTrace();
+            LOGGER.error("%s", e);
             throw new ClientConnectionException("邮件客户端连接失败:" + JSONObject.toJSONString(config));
         }
         sender = senderImpl;

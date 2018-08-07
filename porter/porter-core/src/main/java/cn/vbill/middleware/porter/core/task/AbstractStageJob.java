@@ -79,7 +79,7 @@ public abstract class AbstractStageJob implements StageJob {
                     //防止消费间隙上层管道新增数据
                     while (!isPrevPoolEmpty()) {
                         LOGGER.debug("内存队列有未处理完的数据，线程休眠20耗秒.");
-                        Thread.currentThread().sleep(20);
+                        Thread.sleep(20);
                     }
                     //设置信号量的目的是防止loopLogic执行期间代码被粗暴打断
                     stopSignal.acquire();
@@ -87,6 +87,7 @@ public abstract class AbstractStageJob implements StageJob {
                 }
                 doStop();
             } catch (Throwable e) {
+                LOGGER.error("%s", e);
             } finally {
                 loopService.interrupt();
             }
@@ -110,6 +111,7 @@ public abstract class AbstractStageJob implements StageJob {
                     Thread.sleep(threadWaitSpan);
                 } catch (InterruptedException e) {
                     //如果线程有中断信号，退出线程
+                    Thread.interrupted();
                     break;
                 }
             }

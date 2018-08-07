@@ -83,7 +83,7 @@ public interface NodesMapper {
     /**
      * 根據主鍵id查找數據
      *
-     * @param id
+     * @param nodeId
      * @return
      */
     Nodes selectByNodeId(String nodeId);
@@ -126,7 +126,7 @@ public interface NodesMapper {
     /**
      * 节点状态
      *
-     * @param id
+     * @param nodeId
      * @param nodeId
      * @param state
      * @return
@@ -139,7 +139,7 @@ public interface NodesMapper {
     /**
      * 修改心跳时间并且变更节点状态
      *
-     * @param id
+     * @param nodeId
      * @param nodeId
      * @param heartBeatTime
      * @return

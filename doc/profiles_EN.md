@@ -3,10 +3,7 @@
 ```
 	compatible v0.3.2+，include v0.3.2
 ```
-<!--
-## 结构
-![配置文件结构](./img/profiles_schema.png)
--->
+
 ## Document structure
 
 - config/application.properties

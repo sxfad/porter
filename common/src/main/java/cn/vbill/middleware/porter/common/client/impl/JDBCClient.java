@@ -35,6 +35,8 @@ import lombok.SneakyThrows;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ddlutils.model.Table;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowCallbackHandler;
@@ -67,6 +69,8 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
     private JdbcTemplate jdbcTemplate;
     private TransactionTemplate transactionTemplate;
     private final boolean makePrimaryKeyWhenNo;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(JDBCClient.class);
 
     @Getter
     private SqlTemplate sqlTemplate;
@@ -192,6 +196,7 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
             }, args);
         } catch (Throwable e) {
             e.printStackTrace();
+            LOGGER.error("%s", e);
         }
         return  null == results || results.isEmpty() ? null : results.get(0);
     }
@@ -278,6 +283,7 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
             });
         } catch (Throwable e) {
             e.printStackTrace();
+            LOGGER.error("%s", e);
         }
 
         //如果仍然插入失败,改为单条插入

@@ -1,5 +1,4 @@
 # Porter | [English](./README_EN.md)
----
 
 [![GitHub release](https://img.shields.io/badge/release-2.0.2-blue.svg)](http://192.168.120.68/root/suixingpay-datas/tags)
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
@@ -7,7 +6,6 @@
 
 
 ## 概要
----
 
 Porter始于2017年，提供数据同步功能，但并不仅仅局限于数据同步，在随行付内部广泛使用。主要提供一下功能：
 
@@ -21,7 +19,6 @@ Porter始于2017年，提供数据同步功能，但并不仅仅局限于数据�
 
 
 ## 核心功能
----
 
 + 原生支持Oracle|Mysql到Jdbc关系型数据库最终一致同步
 + 插件友好化，支持自定义源端消费插件、目标端载入插件、告警插件等插件二次开发。
@@ -32,7 +29,7 @@ Porter始于2017年，提供数据同步功能，但并不仅仅局限于数据�
 + 基于Zookeeper集群插件的分布式架构。支持自定义集群插件。
 
 ## 快速开始
----
+
 ### 从源码编译
 ```
 git clone http://192.168.120.68/root/vbill-proter.git
@@ -62,25 +59,24 @@ porter-boot-版本/bin/shutdown.sh
 ```
 
 ## 文档
----
 
 + [中文文档](./doc/document.md)
 + [英文文档](./doc/document_EN.md)
 
 ## 架构设计
----
-![架构图](./doc/img/架构设计.png)
+
+![架构图](doc/img/architecture_design.png)
 ![内存结构](./doc/img/node-model.png)
 
 
 ## 快速预览
----
-![首页](./doc/img/首页.png)
+
+![首页](doc/img/Home.png)
 + [管理员手册](./doc/manager_manual.md)
 
 
 ## 联系我们
----
-* QQ群：
+
+* QQ群：835209101
 
 

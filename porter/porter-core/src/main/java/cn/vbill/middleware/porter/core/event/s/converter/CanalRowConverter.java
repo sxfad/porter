@@ -23,6 +23,8 @@ import cn.vbill.middleware.porter.core.event.s.MessageEvent;
 import cn.vbill.middleware.porter.common.dic.ConsumeConverterPlugin;
 import com.alibaba.otter.canal.protocol.CanalEntry;
 import cn.vbill.middleware.porter.common.consumer.Position;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -36,6 +38,9 @@ import java.util.List;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年01月05日 11:50
  */
 public class CanalRowConverter implements EventConverter {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CanalRowConverter.class);
+
     @Override
     public String getName() {
         return ConsumeConverterPlugin.CANAL_ROW.getCode();
@@ -53,6 +58,7 @@ public class CanalRowConverter implements EventConverter {
         try {
             rowChange = CanalEntry.RowChange.parseFrom(entry.getStoreValue());
         } catch (Exception e) {
+            LOGGER.error("%s", e);
             return null;
         }
         //query

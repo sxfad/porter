@@ -58,6 +58,8 @@ import cn.vbill.middleware.porter.common.config.ClusterConfig;
 import cn.vbill.middleware.porter.common.exception.ClientException;
 import cn.vbill.middleware.porter.common.exception.ClientMatchException;
 import cn.vbill.middleware.porter.common.util.compile.JavaFileCompiler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 
 import java.io.IOException;
@@ -80,6 +82,8 @@ public abstract class AbstractClusterProvider<C extends Client> implements Clust
     protected abstract C initClient(ClusterConfig clusterConfig) throws ConfigParseException;
     private C client;
     private ClusterMonitor monitor;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractClusterProvider.class);
 
     @Override
     public boolean matches(ClusterPlugin type) {
@@ -187,6 +191,7 @@ public abstract class AbstractClusterProvider<C extends Client> implements Clust
                         client.shutdown();
                     } catch (Exception e) {
                         e.printStackTrace();
+                        LOGGER.error("%s", e);
                     }
                 }
             }

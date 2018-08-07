@@ -48,6 +48,8 @@ public class ZKClusterConfigListener extends ZookeeperClusterListener {
     private static final String ALERT_CONFIG_PATH = ZK_PATH + "/alert";
     private static final String STATISTIC_CONFIG_PATH = ZK_PATH + "/statistic";
 
+    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(ZKClusterConfigListener.class);
+
     @Override
     public String listenPath() {
         return ZK_PATH;
@@ -74,8 +76,10 @@ public class ZKClusterConfigListener extends ZookeeperClusterListener {
                     AlertProviderFactory.INSTANCE.initialize(config);
                 } catch (ConfigParseException e) {
                     e.printStackTrace();
+                    LOGGER.error("%s", e);
                 } catch (ClientConnectionException e) {
                     e.printStackTrace();
+                    LOGGER.error("%s", e);
                 }
             }
             //统计分析

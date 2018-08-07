@@ -27,6 +27,8 @@ import cn.vbill.middleware.porter.datacarrier.DataCarrier;
 import cn.vbill.middleware.porter.datacarrier.DataCarrierFactory;
 import cn.vbill.middleware.porter.task.worker.TaskWork;
 import org.apache.commons.lang3.tuple.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -42,6 +44,9 @@ import java.util.concurrent.TimeUnit;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月24日 11:15
  */
 public class SelectJob extends AbstractStageJob {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SelectJob.class);
+
     //已无效,实际根据任务配置设置单次处理数据数量
     private static final int PULL_BATCH_SIZE = 100;
 
@@ -74,6 +79,7 @@ public class SelectJob extends AbstractStageJob {
             consumer.shutdown();
         } catch (Throwable e) {
             e.printStackTrace();
+            LOGGER.error("%s", e);
         }
     }
 
@@ -96,6 +102,7 @@ public class SelectJob extends AbstractStageJob {
             } catch (TaskStopTriggerException stopError) {
                 stopError.printStackTrace();
                 work.stopAndAlarm(stopError.getMessage());
+                LOGGER.error("%s", stopError);
             } catch (InterruptedException interrupt) {
                 throw interrupt;
             } catch (Throwable e) {
@@ -128,6 +135,7 @@ public class SelectJob extends AbstractStageJob {
             NodeContext.INSTANCE.flushConsumerIdle(taskId, swimlaneId, nofetchTime);
         } catch (Throwable e) {
             e.printStackTrace();
+            LOGGER.error("%s", e);
         }
     }
 

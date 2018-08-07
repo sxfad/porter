@@ -38,18 +38,14 @@ import lombok.Getter;
 public enum ClusterPlugin {
     ZOOKEEPER("ZOOKEEPER", "zookeeper");
 
+    public static final HashMap<String, Object> LINKMAP = new LinkedHashMap<>();
+    static {
+        LINKMAP.put(ZOOKEEPER.code, ZOOKEEPER.name);
+    }
+
     @Getter
     private final String code;
     @Getter
     private final String name;
-
-    public static final HashMap<String, Object> LINKMAP = new LinkedHashMap<String, Object>() {
-
-        private static final long serialVersionUID = 1L;
-
-        {
-            put(ZOOKEEPER.code, ZOOKEEPER.name);
-        }
-    };
 
 }

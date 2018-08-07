@@ -17,15 +17,19 @@
 
 package cn.vbill.middleware.porter.common.config.source;
 
-import com.alibaba.fastjson.annotation.JSONField;
 import cn.vbill.middleware.porter.common.config.SourceConfig;
 import cn.vbill.middleware.porter.common.dic.SourceType;
 import cn.vbill.middleware.porter.common.exception.ConfigParseException;
+import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**

@@ -27,7 +27,7 @@ import lombok.Getter;
 
 /**
  * 告警策略
- * 
+ *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年02月23日 11:42
  * @version: V1.0
@@ -42,19 +42,14 @@ public enum AlertPlugin {
 
     MOBILE("MOBILE", "手机号");
 
+    public static final Map<String, Object> LINKMAP = new LinkedHashMap<>() ;
+    static {
+        LINKMAP.put(EMAIL.code, EMAIL.name);
+    }
+
     @Getter
     private final String code;
     @Getter
     private final String name;
-
-    public static final Map<String, Object> LINKMAP = new LinkedHashMap<String, Object>() {
-
-        private static final long serialVersionUID = 1L;
-
-        {
-            put(EMAIL.code, EMAIL.name);
-            //put(MOBILE.code, MOBILE.name);
-        }
-    };
 
 }

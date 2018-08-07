@@ -81,6 +81,7 @@ public class TaskWorker {
                         try {
                             Thread.sleep(60000);
                         } catch (InterruptedException e) {
+                            Thread.interrupted();
                             e.printStackTrace();
                         }
                     }

@@ -17,11 +17,6 @@
 
 package cn.vbill.middleware.porter.manager.cluster.zookeeper;
 
-import java.util.List;
-import java.util.regex.Pattern;
-
-import cn.vbill.middleware.porter.manager.ManagerContext;
-import cn.vbill.middleware.porter.manager.service.impl.MrJobTasksScheduleServiceImpl;
 import cn.vbill.middleware.porter.common.cluster.ClusterListenerFilter;
 import cn.vbill.middleware.porter.common.cluster.command.TaskPushCommand;
 import cn.vbill.middleware.porter.common.cluster.command.broadcast.TaskPush;
@@ -33,10 +28,17 @@ import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperCluster
 import cn.vbill.middleware.porter.common.config.DataConsumerConfig;
 import cn.vbill.middleware.porter.common.config.SourceConfig;
 import cn.vbill.middleware.porter.common.config.TaskConfig;
+import cn.vbill.middleware.porter.manager.ManagerContext;
 import cn.vbill.middleware.porter.manager.core.util.ApplicationContextUtil;
 import cn.vbill.middleware.porter.manager.service.MrJobTasksScheduleService;
+import cn.vbill.middleware.porter.manager.service.impl.MrJobTasksScheduleServiceImpl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * 任务信息监听
@@ -51,6 +53,8 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
     private static final String ZK_PATH = BASE_CATALOG + "/task";
     private static final Pattern TASK_STAT_PATTERN = Pattern.compile(ZK_PATH + "/.*/stat/.*");
     private static final Pattern TASK_ERROR_PATTERN = Pattern.compile(ZK_PATH + "/.*/error/.*");
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ZKClusterTaskListener.class);
 
     @Override
     public String listenPath() {
@@ -84,10 +88,12 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
                 try {
                     taskAndSwimlane = zkPath.replace(listenPath(), "").substring(1).split("/error/");
                 } catch (Throwable e) {
+                    LOGGER.error("%s", e);
                 }
 
-                if (null == taskAndSwimlane || taskAndSwimlane.length != 2)
+                if (null == taskAndSwimlane || taskAndSwimlane.length != 2){
                     return;
+                }
 
                 if (zkEvent.isDataChanged() || zkEvent.isOnline()) {
                     ManagerContext.INSTANCE.newStoppedTask(taskAndSwimlane[0], taskAndSwimlane[1]);
@@ -101,6 +107,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
             }
         } catch (Throwable e) {
             e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 

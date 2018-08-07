@@ -17,14 +17,6 @@
 
 package cn.vbill.middleware.porter.manager.cluster.zookeeper;
 
-import java.util.regex.Pattern;
-
-import cn.vbill.middleware.porter.manager.service.MrLogMonitorService;
-import cn.vbill.middleware.porter.manager.service.MrNodesMonitorService;
-import cn.vbill.middleware.porter.manager.service.impl.MrLogMonitorServiceImpl;
-import cn.vbill.middleware.porter.manager.service.impl.MrNodesMonitorServiceImpl;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import cn.vbill.middleware.porter.common.cluster.ClusterListenerFilter;
 import cn.vbill.middleware.porter.common.cluster.event.ClusterEvent;
 import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterEvent;
@@ -34,11 +26,21 @@ import cn.vbill.middleware.porter.common.statistics.NodeLog;
 import cn.vbill.middleware.porter.common.statistics.TaskPerformance;
 import cn.vbill.middleware.porter.manager.core.util.ApplicationContextUtil;
 import cn.vbill.middleware.porter.manager.service.MrJobTasksMonitorService;
+import cn.vbill.middleware.porter.manager.service.MrLogMonitorService;
+import cn.vbill.middleware.porter.manager.service.MrNodesMonitorService;
 import cn.vbill.middleware.porter.manager.service.impl.MrJobTasksMonitorServiceImpl;
+import cn.vbill.middleware.porter.manager.service.impl.MrLogMonitorServiceImpl;
+import cn.vbill.middleware.porter.manager.service.impl.MrNodesMonitorServiceImpl;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.regex.Pattern;
 
 /**
  * 统计信息下载
- * 
+ *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月15日 10:09
  * @version: V1.0
@@ -48,6 +50,8 @@ public class ZKClusterStatisticListener extends ZookeeperClusterListener {
     private static final String ZK_PATH = BASE_CATALOG + "/statistic";
     private static final Pattern LOG_PATTERN = Pattern.compile(ZK_PATH + "/log/.*");
     private static final Pattern TASK_PATTERN = Pattern.compile(ZK_PATH + "/task/.*");
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ZKClusterStatisticListener.class);
 
     @Override
     public String listenPath() {
@@ -71,9 +75,9 @@ public class ZKClusterStatisticListener extends ZookeeperClusterListener {
                         MrLogMonitorService mrLogMonitorService = ApplicationContextUtil.getBean(MrLogMonitorServiceImpl.class);
                         mrLogMonitorService.dealNodeLog(log);
                     } catch (Exception e) {
-                        LOGGER.error("3-NodeLog-Error....出错,请追寻...",e);
+                        LOGGER.error("3-NodeLog-Error....出错,请追寻...", e);
                     }
-                    
+
                 }
 
                 // 性能指标数据
@@ -91,12 +95,13 @@ public class ZKClusterStatisticListener extends ZookeeperClusterListener {
                                 .getBean(MrNodesMonitorServiceImpl.class);
                         mrNodesMonitorService.dealTaskPerformance(performance);
                     } catch (Exception e) {
-                        LOGGER.error("3-TaskPerformance-Error....出错,请追寻...",e);
+                        LOGGER.error("3-TaskPerformance-Error....出错,请追寻...", e);
                     }
-                    
+
                 }
             } catch (Throwable e) {
                 e.printStackTrace();
+                LOGGER.error("%s", e);
             } finally {
                 // 删除已获取的事件
                 client.delete(zkPath);

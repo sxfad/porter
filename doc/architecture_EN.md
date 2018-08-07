@@ -12,10 +12,10 @@
 
 ## System architecture
 
-![Node节点内存模型](./img/架构设计.png)
+![architecture_design](img/architecture_design.png)
 
 ## Node Memory model
-![Node节点内存模型](./img/node-model.png)
+![node-model](./img/node-model.png)
 ```
 TaskController 1---* TaskWorker
 TaskWorker 1---* TaskWork
@@ -38,7 +38,7 @@ Alarms are configured according to the alarm mode configured in the configuratio
     - Different source databases spit into different MQ clusters.
     - Broker cluster storage, topic only allows unique partitions.
     - Each table individually corresponds to a topic.
-    - 消息消费节点集群分主题消费
+    - Message consumption node cluster topic consumption
     - Message consumption node only consumes messages, no complex business logic.
     - Manually control the progress of message production.
 - Data consistency problem

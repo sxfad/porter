@@ -29,7 +29,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import static cn.vbill.middleware.porter.manager.web.message.ResponseMessage.ok;
 
 /**
  * 日志监控信息表 controller控制器
@@ -67,40 +66,5 @@ public class MrLogMonitorController {
                 beginTime, endTime);
         return ResponseMessage.ok(page);
     }
-    /*
-     * @PostMapping
-     * 
-     * @ApiOperation(value = "新增", notes = "新增") public ResponseMessage
-     * add(@RequestBody MrLogMonitor mrLogMonitor) { Integer number =
-     * mrLogMonitorService.insert(mrLogMonitor); return ok(number); }
-     * 
-     * @PutMapping("/{id}")
-     * 
-     * @ApiOperation(value = "修改", notes = "修改") public ResponseMessage
-     * update(@PathVariable("id") Long id, @RequestBody MrLogMonitor mrLogMonitor) {
-     * Integer number = mrLogMonitorService.update(id, mrLogMonitor); return
-     * ok(number); }
-     * 
-     * @DeleteMapping("/{id}")
-     * 
-     * @ApiOperation(value = "删除", notes = "删除") public ResponseMessage
-     * delete(@PathVariable("id") Long id) { mrLogMonitorService.delete(id); return
-     * ok(); }
-     * 
-     * @GetMapping("/{id}")
-     * 
-     * @ApiOperation(value = "查询明细", notes = "查询明细") public ResponseMessage
-     * info(@PathVariable("id") Long id) { MrLogMonitor mrLogMonitor =
-     * mrLogMonitorService.selectById(id); return ok(mrLogMonitor); }
-     * 
-     * @ApiOperation(value = "查询列表", notes = "查询列表")
-     * 
-     * @GetMapping public ResponseMessage list(@RequestParam(value = "pageNo",
-     * required = false) Integer pageNo,
-     * 
-     * @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-     * Page<MrLogMonitor> page = mrLogMonitorService.page(new
-     * Page<MrLogMonitor>(pageNo, pageSize)); return ok(page); }
-     */
 
 }

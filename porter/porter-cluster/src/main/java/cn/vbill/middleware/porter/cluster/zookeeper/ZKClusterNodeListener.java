@@ -17,8 +17,6 @@
 
 package cn.vbill.middleware.porter.cluster.zookeeper;
 
-import cn.vbill.middleware.porter.common.util.MachineUtils;
-import com.alibaba.fastjson.JSONObject;
 import cn.vbill.middleware.porter.common.cluster.ClusterListenerFilter;
 import cn.vbill.middleware.porter.common.cluster.command.NodeRegisterCommand;
 import cn.vbill.middleware.porter.common.cluster.command.ShutdownCommand;
@@ -28,27 +26,34 @@ import cn.vbill.middleware.porter.common.cluster.command.broadcast.NodeRegister;
 import cn.vbill.middleware.porter.common.cluster.command.broadcast.Shutdown;
 import cn.vbill.middleware.porter.common.cluster.command.broadcast.TaskAssigned;
 import cn.vbill.middleware.porter.common.cluster.command.broadcast.TaskStop;
+import cn.vbill.middleware.porter.common.cluster.data.DNode;
 import cn.vbill.middleware.porter.common.cluster.event.ClusterEvent;
 import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterEvent;
 import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListener;
 import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListenerFilter;
-import cn.vbill.middleware.porter.common.cluster.data.DNode;
 import cn.vbill.middleware.porter.common.config.NodeCommandConfig;
 import cn.vbill.middleware.porter.common.config.TaskConfig;
 import cn.vbill.middleware.porter.common.dic.NodeHealthLevel;
-import cn.vbill.middleware.porter.common.node.NodeCommandType;
 import cn.vbill.middleware.porter.common.dic.NodeStatusType;
+import cn.vbill.middleware.porter.common.dic.TaskStatusType;
+import cn.vbill.middleware.porter.common.node.NodeCommandType;
 import cn.vbill.middleware.porter.common.task.TaskEventListener;
 import cn.vbill.middleware.porter.common.task.TaskEventProvider;
-import cn.vbill.middleware.porter.common.dic.TaskStatusType;
 import cn.vbill.middleware.porter.common.util.DefaultNamedThreadFactory;
+import cn.vbill.middleware.porter.common.util.MachineUtils;
 import cn.vbill.middleware.porter.core.NodeContext;
+import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.data.Stat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.TreeSet;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -71,6 +76,8 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener  implements 
     private final List<TaskEventListener> TASK_LISTENER = new ArrayList<>();
     private final ScheduledExecutorService heartbeatWorker =
             Executors.newSingleThreadScheduledExecutor(new DefaultNamedThreadFactory("node-heartbeat"));
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ZKClusterNodeListener.class);
 
     @Override
     public String listenPath() {
@@ -206,7 +213,9 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener  implements 
                         }
                     } catch (KeeperException e) {
                         e.printStackTrace();
+                        LOGGER.error("%s", e);
                     } catch (InterruptedException e) {
+                        Thread.interrupted();
                         e.printStackTrace();
                     }
                 }
@@ -282,6 +291,7 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener  implements 
             Stat lockStat = client.exists(lockPath, true);
             return null != lockStat;
         } catch (Exception e) {
+            LOGGER.error("%s", e);
             return false;
         }
     }
@@ -292,6 +302,7 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener  implements 
             Stat lockStat = client.exists(lockPath, false);
             return null != lockStat;
         } catch (Exception e) {
+            LOGGER.error("%s", e);
             return false;
         }
     }

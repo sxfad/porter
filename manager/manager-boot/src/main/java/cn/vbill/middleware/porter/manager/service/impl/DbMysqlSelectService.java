@@ -76,7 +76,7 @@ public class DbMysqlSelectService implements DbSelectService {
         }
         executeSql = executeSql.replace("%term", termSql);
 
-        System.out.println(executeSql);
+//        System.out.println(executeSql);
 
         Connection connection = null;
         PreparedStatement preparedStatement = null;
@@ -112,7 +112,7 @@ public class DbMysqlSelectService implements DbSelectService {
         }
         executeSql = executeSql.replace("%term", termSql);
 
-        System.out.println(executeSql);
+//        System.out.println(executeSql);
 
         Connection connection = null;
         PreparedStatement preparedStatement = null;

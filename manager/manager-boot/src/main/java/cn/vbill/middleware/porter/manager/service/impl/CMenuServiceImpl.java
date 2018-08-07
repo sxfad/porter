@@ -17,8 +17,8 @@
 
 package cn.vbill.middleware.porter.manager.service.impl;
 
-import cn.vbill.middleware.porter.manager.core.mapper.CMenuMapper;
 import cn.vbill.middleware.porter.manager.core.entity.CMenu;
+import cn.vbill.middleware.porter.manager.core.mapper.CMenuMapper;
 import cn.vbill.middleware.porter.manager.service.CMenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -107,7 +107,7 @@ public class CMenuServiceImpl implements CMenuService {
     //递归方法
     private List<CMenu> menus(String fatherCode, Map<String, List<CMenu>> menuMap) {
         List<CMenu> childlist = menuMap.get(fatherCode);
-        if (childlist == null || childlist.size() == 0) {
+        if (childlist == null || childlist.isEmpty()) {
             return null;
         }
         //根据父类id查询旗下子类

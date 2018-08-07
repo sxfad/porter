@@ -27,6 +27,8 @@ import cn.vbill.middleware.porter.common.config.SourceConfig;
 import cn.vbill.middleware.porter.common.exception.ClientException;
 import cn.vbill.middleware.porter.common.exception.DataLoaderBuildException;
 import cn.vbill.middleware.porter.common.util.compile.JavaFileCompiler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 
 import java.util.List;
@@ -40,6 +42,7 @@ import java.util.List;
 public enum DataLoaderFactory {
     INSTANCE();
     private final List<DataLoader> LOADER_TEMPLATE = SpringFactoriesLoader.loadFactories(DataLoader.class, JavaFileCompiler.getInstance());
+    private static final Logger LOGGER = LoggerFactory.getLogger(DataLoaderFactory.class);
 
     public DataLoader getLoader(DataLoaderConfig config) throws ConfigParseException, ClientException, DataLoaderBuildException {
         Client client = AbstractClient.getClient(SourceConfig.getConfig(config.getSource()));
@@ -65,6 +68,7 @@ public enum DataLoaderFactory {
                     return t.getClass().newInstance();
                 } catch (Exception e) {
                     e.printStackTrace();
+                    LOGGER.error("%s", e);
                     throw new DataLoaderBuildException(e.getMessage());
                 }
             }

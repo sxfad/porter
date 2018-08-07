@@ -105,21 +105,18 @@ public class TaskWork {
         this.worker = worker;
         this.receivers = Collections.unmodifiableList(receivers);
         TaskWork work = this;
-        JOBS = new LinkedHashMap<StageType, StageJob>() {
-            {
-                put(StageType.SELECT, new SelectJob(work));
-                put(StageType.EXTRACT, new ExtractJob(work));
-                put(StageType.TRANSFORM, new TransformJob(work));
-                put(StageType.LOAD, new LoadJob(work, positionCheckInterval, alarmPositionCount));
+        JOBS = new LinkedHashMap<>();
 
-                /**
-                 * 源端数据源支持元数据查询
-                 */
-                if (dataConsumer.supportMetaQuery()) {
-                    put(StageType.DB_CHECK, new AlertJob(work));
-                }
-            }
-        };
+        JOBS.put(StageType.SELECT, new SelectJob(work));
+        JOBS.put(StageType.EXTRACT, new ExtractJob(work));
+        JOBS.put(StageType.TRANSFORM, new TransformJob(work));
+        JOBS.put(StageType.LOAD, new LoadJob(work, positionCheckInterval, alarmPositionCount));
+        /**
+         * 源端数据源支持元数据查询
+         */
+        if (dataConsumer.supportMetaQuery()) {
+            JOBS.put(StageType.DB_CHECK, new AlertJob(work));
+        }
 
         //从集群模块获取任务状态统计信息
         ClusterProviderProxy.INSTANCE.broadcast(new TaskStatQueryCommand(taskId, dataConsumer.getSwimlaneId(), new DCallback() {
@@ -145,6 +142,7 @@ public class TaskWork {
                         jobs.getValue().stop();
                     } catch (Throwable e) {
                         e.printStackTrace();
+                        LOGGER.error("%s", e);
                     }
                 }
                 try {
@@ -152,12 +150,14 @@ public class TaskWork {
                     submitStat();
                 } catch (Exception e) {
                     NodeLog.upload(NodeLog.LogType.TASK_LOG, taskId, dataConsumer.getSwimlaneId(), "停止上传消费进度失败:" + e.getMessage());
+                    LOGGER.error("%s", e);
                 }
                 try {
                     //广播任务结束消息
                     ClusterProviderProxy.INSTANCE.broadcast(new TaskStopCommand(taskId, dataConsumer.getSwimlaneId()));
                 } catch (Exception e) {
                     NodeLog.upload(NodeLog.LogType.TASK_LOG, taskId, dataConsumer.getSwimlaneId(), "广播TaskStopCommand失败:" + e.getMessage());
+                    LOGGER.error("%s", e);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -247,6 +247,7 @@ public class TaskWork {
                     }));
                 } catch (Throwable e) {
                     NodeLog.upload(NodeLog.LogType.TASK_LOG, taskId, dataConsumer.getSwimlaneId(), "上传任务状态信息失败:" + e.getMessage());
+                    LOGGER.error("%s", e);
                 }
 
                 //上传统计
@@ -257,6 +258,7 @@ public class TaskWork {
                     }
                 } catch (Throwable e) {
                     NodeLog.upload(NodeLog.LogType.TASK_LOG, taskId, dataConsumer.getSwimlaneId(), "上传任务统计信息失败:" + e.getMessage());
+                    LOGGER.error("%s", e);
                 }
             }
         });
@@ -312,25 +314,28 @@ public class TaskWork {
                                 .append("目标端:").append(dataLoader.getClientInfo());
                         alarmNotice = alarmNoticeBuilder.toString();
                     } catch (Throwable e) {
-
+                        LOGGER.error("%s", e);
                     }
                     try {
                         ClusterProviderProxy.INSTANCE.broadcast(new TaskStoppedByErrorCommand(taskId, dataConsumer.getSwimlaneId(), alarmNotice));
                     } catch (Throwable e) {
                         LOGGER.error("在集群策略存储引擎标识任务因错误失败出错:{}", e.getMessage());
                         e.printStackTrace();
+                        LOGGER.error("%s", e);
                     }
                     try {
                         //停止任务
                         NodeContext.INSTANCE.getBean(TaskController.class).stopTask(taskId, dataConsumer.getSwimlaneId());
                     } catch (Throwable e) {
                         e.printStackTrace();
+                        LOGGER.error("%s", e);
                     }
                     try {
                         //调整节点健康级别
                         NodeContext.INSTANCE.markTaskError(taskId, alarmNotice);
                     } catch (Throwable e) {
                         e.printStackTrace();
+                        LOGGER.error("%s", e);
                     }
 
                     try {
@@ -343,6 +348,7 @@ public class TaskWork {
                         LOGGER.info("结束发送日志通知.....");
                     } catch (Throwable e) {
                         e.printStackTrace();
+                        LOGGER.error("%s", e);
                     }
                 }
             }.start();

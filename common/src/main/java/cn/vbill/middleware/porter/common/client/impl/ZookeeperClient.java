@@ -29,6 +29,8 @@ import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.ZooDefs;
 import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.Stat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -43,6 +45,8 @@ import java.util.List;
 public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements ClusterClient<Stat> {
     private volatile ZooKeeper zk;
     @Setter private volatile Watcher watcher;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ZookeeperClient.class);
 
     public ZookeeperClient(ZookeeperConfig config) {
         super(config);
@@ -75,6 +79,7 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
         } catch (KeeperException e) {
             e.printStackTrace();
             children = new ArrayList<>();
+            LOGGER.error("%s", e);
         }
         return children;
     }
@@ -87,7 +92,9 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
             dataBytes = zk.getData(path, true, stat);
         } catch (KeeperException e) {
             e.printStackTrace();
+            LOGGER.error("%s", e);
         } catch (InterruptedException e) {
+            Thread.interrupted();
             e.printStackTrace();
         }
         return new ImmutablePair(new String(dataBytes), stat);
@@ -115,6 +122,7 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
             return null != stat;
         } catch (Exception e) {
             e.printStackTrace();
+            LOGGER.error("%s", e);
             return false;
         }
     }
@@ -130,6 +138,7 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
             }
         } catch (Exception e) {
             e.printStackTrace();
+            LOGGER.error("%s", e);
         }
     }
 
@@ -142,6 +151,7 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
             }
         } catch (Exception e) {
             e.printStackTrace();
+            LOGGER.error("%s", e);
         }
         return stat;
     }
@@ -155,6 +165,7 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
             }
         } catch (Exception e) {
             e.printStackTrace();
+            LOGGER.error("%s", e);
         }
     }
 
@@ -192,6 +203,7 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
                 spannedTime += config.getSpinningPeer();
                 Thread.currentThread().sleep(config.getSpinningPeer());
             } catch (InterruptedException e) {
+                Thread.interrupted();
                 e.printStackTrace();
             }
         }

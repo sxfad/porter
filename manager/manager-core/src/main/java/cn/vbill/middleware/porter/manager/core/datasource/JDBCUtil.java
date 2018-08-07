@@ -17,6 +17,9 @@
 
 package cn.vbill.middleware.porter.manager.core.datasource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -26,6 +29,8 @@ import java.sql.SQLException;
  * @author guohongjian[guo_hj@suixingpay.com]
  */
 public class JDBCUtil {
+
+    private static Logger logger = LoggerFactory.getLogger(JDBCUtil.class);
 
     public static void jdbcPage() {
         // String driverName = "com.mysql.cj.jdbc.Driver";
@@ -48,10 +53,11 @@ public class JDBCUtil {
             results = preparedStatement.executeQuery();
             while (results.next()) {
                 String id = results.getString(1);
-                System.out.println(id);
+//                System.out.println(id);
             }
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
+            logger.info("%s", e);
         } finally {
             DataSourceUtil.closed(connection, preparedStatement, results);
         }

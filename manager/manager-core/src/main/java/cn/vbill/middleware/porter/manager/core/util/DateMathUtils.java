@@ -17,7 +17,6 @@
 
 package cn.vbill.middleware.porter.manager.core.util;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -93,10 +92,10 @@ public class DateMathUtils {
         return mathDate(date, Calendar.MINUTE, minute);
     }
 
-    public static void main(String[] args) {
-        Date date = DateMathUtils.dateAddDays(new Date(), -30);
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-        String newDate = sdf.format(date);
-        System.out.println(newDate);
-    }
+//    public static void main(String[] args) {
+//        Date date = DateMathUtils.dateAddDays(new Date(), -30);
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+//        String newDate = sdf.format(date);
+//        System.out.println(newDate);
+//    }
 }

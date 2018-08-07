@@ -40,10 +40,12 @@ import java.util.List;
 import static cn.vbill.middleware.porter.manager.web.message.ResponseMessage.ok;
 
 /**
- * All rights Reserved, Designed By Suixingpay.
+ * 菜单管理
  *
- * @author: 付紫钲
- * @date: 2018/4/16
+ * @author: fuzizheng
+ * @date: 2018年04月06日 10:09
+ * @version: V1.0
+ * @review: fuzizheng/2018年04月06日 10:09
  */
 @Api(description = "菜单管理")
 @RestController
@@ -143,6 +145,14 @@ public class CMenuController {
         return ok(number);
     }
 
+    /**
+     * 重新加载初始化数据
+     *
+     * @author FuZizheng
+     * @date 2018/4/16 下午4:51
+     * @param: []
+     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
+     */
     @GetMapping("/ref")
     @ApiOperation(value = "重新加载初始化数据", notes = "重新加载初始化数据")
     public ResponseMessage reflash() {

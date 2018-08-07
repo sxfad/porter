@@ -100,8 +100,8 @@ public class DataConsumerConfig {
 
 
     //空查询通知间隔,单位秒
-    @Setter @Getter private  long emptyFetchNoticeSpan = 60 * 60;
+    @Setter @Getter private  long emptyFetchNoticeSpan = 60L * 60;
 
     //空查询通知时间阀值
-    @Setter @Getter private  long emptyFetchThreshold = 60 * 60;
+    @Setter @Getter private  long emptyFetchThreshold = 60L * 60;
 }

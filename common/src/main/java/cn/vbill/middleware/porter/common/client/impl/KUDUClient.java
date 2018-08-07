@@ -27,9 +27,19 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Triple;
+import org.apache.kudu.ColumnSchema;
 import org.apache.kudu.Common;
 import org.apache.kudu.Schema;
-import org.apache.kudu.client.*;
+import org.apache.kudu.client.CreateTableOptions;
+import org.apache.kudu.client.KuduClient;
+import org.apache.kudu.client.KuduException;
+import org.apache.kudu.client.KuduSession;
+import org.apache.kudu.client.KuduTable;
+import org.apache.kudu.client.Operation;
+import org.apache.kudu.client.OperationResponse;
+import org.apache.kudu.client.PartialRow;
+import org.apache.kudu.client.SessionConfiguration;
+
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,6 +52,7 @@ import java.util.function.Function;
 
 /**
  * kudu客户端
+ *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年02月02日 15:14
  * @version: V1.0
@@ -51,7 +62,8 @@ public class KUDUClient extends AbstractClient<KuduConfig> implements LoadClient
     private final Map<List<String>, TableSchema> tables = new ConcurrentHashMap<>();
 
 
-    @Getter private KuduClient client;
+    @Getter
+    private KuduClient client;
 
 
     public KUDUClient(KuduConfig config) {
@@ -103,37 +115,37 @@ public class KUDUClient extends AbstractClient<KuduConfig> implements LoadClient
 
     @Override
     public int getDataCount(String schema, String table, String updateDateColumn, Date startTime, Date endTime) {
-        throw new  UnsupportedOperationException("kudu暂不支持条件查询");
+        throw new UnsupportedOperationException("kudu暂不支持条件查询");
     }
 
-    public int[] insert(String  schemaName, String table, List<List<Triple<String, Integer, String>>> rows) throws KuduException {
+    public int[] insert(String schemaName, String table, List<List<Triple<String, Integer, String>>> rows) throws KuduException {
         return operation(schemaName, table, rows, OperationType.INSERT);
     }
 
-    public int[] delete(String  schemaName, String table, List<List<Triple<String, Integer, String>>> rows) throws KuduException {
+    public int[] delete(String schemaName, String table, List<List<Triple<String, Integer, String>>> rows) throws KuduException {
         return operation(schemaName, table, rows, OperationType.DELETE);
     }
 
-    public int[] update(String  schemaName, String table, List<List<Triple<String, Integer, String>>> rows) throws KuduException {
+    public int[] update(String schemaName, String table, List<List<Triple<String, Integer, String>>> rows) throws KuduException {
         return operation(schemaName, table, rows, OperationType.UPDATE);
     }
 
-    public int[] truncate(String  schemaName, String finalTableName) throws KuduException {
+    public int[] truncate(String schemaName, String finalTableName) throws KuduException {
         KuduSession session = client.newSession();
         try {
             Schema schema = client.openTable(getTableName(schemaName, finalTableName)).getSchema();
             //删除表
             client.deleteTable(finalTableName);
-            //重新建表
-            client.createTable(finalTableName, schema, new CreateTableOptions().setRangePartitionColumns(new ArrayList<String>() {
-                {
-                    schema.getColumns().forEach(c -> {
-                        if (c.isKey()) {
-                            add(c.getName());
-                        }
-                    });
+
+            ArrayList<String> list = new ArrayList<>();
+            for (ColumnSchema columnSchema : schema.getColumns()) {
+                if (columnSchema.isKey()) {
+                    list.add(columnSchema.getName());
                 }
-            }));
+            }
+
+            //重新建表
+            client.createTable(finalTableName, schema, new CreateTableOptions().setRangePartitionColumns(list));
         } finally {
             if (null != session) session.close();
         }
@@ -160,11 +172,14 @@ public class KUDUClient extends AbstractClient<KuduConfig> implements LoadClient
                     case UPDATE:
                         operation = kuduTable.newUpdate();
                         break;
+                    default:
+                        throw new UnsupportedOperationException("unsupported operation:" + type);
                 }
+
                 PartialRow row = operation.getRow();
                 buildRow(r, row);
                 OperationResponse response = session.apply(operation);
-                result[i] =  response.hasRowError() ? 0 : 1;
+                result[i] = response.hasRowError() ? 0 : 1;
             }
             session.flush();
         } finally {
@@ -212,6 +227,7 @@ public class KUDUClient extends AbstractClient<KuduConfig> implements LoadClient
     private enum OperationType {
         DELETE, UPDATE, INSERT;
     }
+
     private String getTableName(String schema, String table) {
         StringBuilder nameBuilder = new StringBuilder();
         schema = StringUtils.trimToEmpty(schema);

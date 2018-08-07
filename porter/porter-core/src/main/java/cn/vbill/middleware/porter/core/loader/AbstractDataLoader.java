@@ -110,7 +110,7 @@ public abstract class AbstractDataLoader implements DataLoader {
                     DateFormatUtils.format(row.getConsumedTime(), TIME_TAKEN_FORMAT),
                     DateFormatUtils.format(System.currentTimeMillis(), TIME_TAKEN_FORMAT));
         } catch (Throwable e) {
-
+            LOGGER.error("%s", e);
         }
     }
 }
