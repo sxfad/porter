@@ -487,7 +487,11 @@ INSERT  INTO `d_data_source_plugin`(`id`,`source_type`,`field_name`,`field_code`
 (10,'CANAL','数据库','database',3,'TEXT',NULL,'','例如:paytest',1,0,NULL),
 (11,'CANAL','用户','username',4,'TEXT',NULL,'','',1,0,NULL),
 (12,'CANAL','密码','password',5,'TEXT',NULL,'','',1,0,NULL),
-(13,'CANAL','过滤器','filter',6,'TEXT',NULL,'','例如:paytest\.(aaa|aab|test_table|test_table2)',1,0,NULL);
+(13,'CANAL','过滤器','filter',6,'TEXT',NULL,'','例如:paytest\.(aaa|aab|test_table|test_table2)',1,0,NULL),
+(14,'KAFKA_PRODUCE','服务器列表','servers',1,'TEXT',NULL,'','例如:0.0.0.1:9092,0.0.0.2:9092',1,0,NULL),
+(15,'KAFKA_PRODUCE','主题','topics',2,'TEXT',NULL,'','例如:test1(只能一个主题)',1,0,NULL),
+(16,'KAFKA_PRODUCE','是否ogg-json格式','oggJson',3,'TEXT',true,'','例如:true or false',1,0,NULL),
+(17,'KAFKA_PRODUCE','分片字段名','partitionKey',4,'TEXT',NULL,'','例如:{"db.table_name":"id,name","db2.table_name":"id,gender"}(格式:schema.表名->字段名1,字段名2)',1,0,NULL);
 -- 初始化字典表
 INSERT  INTO `d_dictionary`(`id`,`code`,`name`,`parentcode`,`level`,`dictype`,`state`,`remark`) VALUES 
 (1,'Manual','手动','-1',1,'PTmaintain',1,NULL),

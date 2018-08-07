@@ -369,8 +369,11 @@ public class JobTasksServiceImpl implements JobTasksService {
             sourceMap.put(dataSourcePlugin.getFieldCode(), dataSourcePlugin.getFieldValue());
         }
         sourceMap.put(SourceConfig.SOURCE_TYPE_KEY, souDataSource.getDataType().getCode());
-        if (souDataSource.getDataType() == SourceType.KAFKA) {
-            sourceMap.put("group", "task{" + id + "}-group");
+        if (souDataSource.getDataType() == SourceType.KAFKA
+                || souDataSource.getDataType() == SourceType.KAFKA_PRODUCE) {
+            if (sourceMap.get("group") == null || "".equals(sourceMap.get("group"))) {
+                sourceMap.put("group", "task{" + id + "}-group");
+            }
         }
         return sourceMap;
     }
