@@ -44,7 +44,6 @@ public enum ManagerContext {
         this.context = context;
     }
 
-
     public void newStoppedTask(String taskId, String swimlaneId) {
         stoppedTask.computeIfAbsent(taskId, key -> new TreeList()).add(swimlaneId);
     }
