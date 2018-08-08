@@ -69,15 +69,26 @@ public class ZKClusterStatisticListener extends ZookeeperClusterListener {
                 // 日志
                 if (LOG_PATTERN.matcher(zkPath).matches()) {
                     NodeLog log = JSONObject.parseObject(zkEvent.getData(), NodeLog.class);
-                    LOGGER.info("3-NodeLog....." + JSON.toJSON(log));
-                    // do something
-                    try {
-                        MrLogMonitorService mrLogMonitorService = ApplicationContextUtil.getBean(MrLogMonitorServiceImpl.class);
-                        mrLogMonitorService.dealNodeLog(log);
-                    } catch (Exception e) {
-                        LOGGER.error("3-NodeLog-Error....出错,请追寻...", e);
+                    /*
+                     * LOGGER.info("3-NodeLog....." + JSON.toJSON(log)); // do something try {
+                     * MrLogMonitorService mrLogMonitorService =
+                     * ApplicationContextUtil.getBean(MrLogMonitorServiceImpl.class);
+                     * mrLogMonitorService.dealNodeLog(log); } catch (Exception e) {
+                     * LOGGER.error("3-NodeLog-Error....出错,请追寻...", e); }
+                     */
+                    if (log == null) {
+                        LOGGER.error("3-NodeLog....." + JSON.toJSON(log));
+                    } else {
+                        LOGGER.info("3-NodeLog....." + JSON.toJSON(log));
+                        // do something
+                        try {
+                            MrLogMonitorService mrLogMonitorService = ApplicationContextUtil
+                                    .getBean(MrLogMonitorServiceImpl.class);
+                            mrLogMonitorService.dealNodeLog(log);
+                        } catch (Exception e) {
+                            LOGGER.error("3-NodeLog-Error....出错,请追寻...", e);
+                        }
                     }
-
                 }
 
                 // 性能指标数据
@@ -101,7 +112,7 @@ public class ZKClusterStatisticListener extends ZookeeperClusterListener {
                 }
             } catch (Throwable e) {
                 e.printStackTrace();
-                LOGGER.error("%s", e);
+                LOGGER.error("3-TaskPerformance-Error....出错,请追寻...", e);
             } finally {
                 // 删除已获取的事件
                 client.delete(zkPath);
