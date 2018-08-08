@@ -70,8 +70,8 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener  implements 
         Shutdown, TaskAssigned, TaskStop {
     private static final String ZK_PATH = BASE_CATALOG + "/node";
     private static final Pattern NODE_ORDER_PATTERN = Pattern.compile(ZK_PATH + "/.*/order/.*");
-    private static final Pattern NODE_STAT_PATTERN = Pattern.compile(ZK_PATH + "/.*/stat");
-    private static final Pattern NODE_LOCK_PATTERN = Pattern.compile(ZK_PATH + "/.*/lock");
+//    private static final Pattern NODE_STAT_PATTERN = Pattern.compile(ZK_PATH + "/.*/stat");
+//    private static final Pattern NODE_LOCK_PATTERN = Pattern.compile(ZK_PATH + "/.*/lock");
 
     private final List<TaskEventListener> TASK_LISTENER = new ArrayList<>();
     private final ScheduledExecutorService heartbeatWorker =
