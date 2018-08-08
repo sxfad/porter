@@ -74,7 +74,7 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements T
 //    private static final Pattern NODE_STAT_PATTERN = Pattern.compile(ZK_PATH + "/.*/stat");
 //    private static final Pattern NODE_LOCK_PATTERN = Pattern.compile(ZK_PATH + "/.*/lock");
 
-    private final List<TaskEventListener> TASK_LISTENER = new ArrayList<>();
+    private final List<TaskEventListener> taskListener = new ArrayList<>();
     private final ScheduledExecutorService heartbeatWorker =
             Executors.newSingleThreadScheduledExecutor(new DefaultNamedThreadFactory("node-heartbeat"));
 
@@ -276,17 +276,17 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements T
      * @return: void
      */
     private void triggerTaskEvent(TaskConfig event) {
-        TASK_LISTENER.forEach(l -> l.onEvent(event));
+        taskListener.forEach(l -> l.onEvent(event));
     }
 
     @Override
     public void addTaskEventListener(TaskEventListener listener) {
-        TASK_LISTENER.add(listener);
+        taskListener.add(listener);
     }
 
     @Override
     public void removeTaskEventListener(TaskEventListener listener) {
-        TASK_LISTENER.remove(listener);
+        taskListener.remove(listener);
     }
 
     /**
