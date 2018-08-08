@@ -73,12 +73,13 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
     private static final String ZK_PATH = BASE_CATALOG + "/task";
     private static final Pattern TASK_DIST_PATTERN = Pattern.compile(ZK_PATH + "/.*/dist/.*");
     private static final Pattern TASK_UNLOCKED_PATTERN = Pattern.compile(ZK_PATH + "/.*/lock/.*");
-    private final List<TaskEventListener> TASK_LISTENER;
+    private final List<TaskEventListener> taskListener;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ZKClusterTaskListener.class);
+    private static final String LOCK_PATH = "/lock/";
 
     public ZKClusterTaskListener() {
-        this.TASK_LISTENER = new ArrayList<>();
+        this.taskListener = new ArrayList<>();
     }
 
     @Override
@@ -106,10 +107,10 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
         //任务释放
         if (TASK_UNLOCKED_PATTERN.matcher(zkEvent.getPath()).matches() && event.isOffline()
                 && NodeContext.INSTANCE.getNodeStatus().isWorking()) {
-            String stoppedErrorPath = zkEvent.getPath().replace("/lock/", "/error/");
+            String stoppedErrorPath = zkEvent.getPath().replace(LOCK_PATH, "/error/");
             //如果不是因为错误停止任务
             if (!client.isExists(stoppedErrorPath, false)) {
-                Pair<String, Stat> taskConfig = client.getData(zkEvent.getPath().replace("/lock/", "/dist/"));
+                Pair<String, Stat> taskConfig = client.getData(zkEvent.getPath().replace(LOCK_PATH, "/dist/"));
                 //获取任务配置信息
                 if (null != taskConfig && !StringUtils.isBlank(taskConfig.getLeft())) {
                     TaskConfig config = JSONObject.parseObject(taskConfig.getLeft(), TaskConfig.class);
@@ -138,16 +139,23 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
 
     @Override
     public void addTaskEventListener(TaskEventListener listener) {
-        TASK_LISTENER.add(listener);
+        taskListener.add(listener);
     }
 
     @Override
     public void removeTaskEventListener(TaskEventListener listener) {
-        TASK_LISTENER.remove(listener);
+        taskListener.remove(listener);
     }
 
+    /**
+     * 触发TaskEvent
+     *
+     * @date 2018/8/8 下午4:23
+     * @param: [event]
+     * @return: void
+     */
     private void triggerTaskEvent(TaskConfig event) {
-        TASK_LISTENER.forEach(l -> l.onEvent(event));
+        taskListener.forEach(l -> l.onEvent(event));
     }
 
     @Override
@@ -212,7 +220,9 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
             //remoteStat
             DTaskStat taskStat = DTaskStat.fromString(nodePair.getLeft(), DTaskStat.class);
             //run callback before merge data
-            if (null != command.getCallback()) command.getCallback().callback(taskStat);
+            if (null != command.getCallback()) {
+                command.getCallback().callback(taskStat);
+            }
             //merge from localStat
             taskStat.merge(dataStat);
             try {
@@ -228,7 +238,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
 
     @Override
     public void stopTask(TaskStopCommand command) throws Exception {
-        String node = listenPath() + "/" + command.getTaskId() + "/lock/" + command.getSwimlaneId();
+        String node = listenPath() + "/" + command.getTaskId() + LOCK_PATH + command.getSwimlaneId();
         if (client.isExists(node, true)) {
             Pair<String, Stat> remoteData = client.getData(node);
             DTaskLock taskLock = DTaskLock.fromString(remoteData.getLeft(), DTaskLock.class);
@@ -261,7 +271,9 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
                 LOGGER.error("%s", e);
             }
         }
-        if (null != command.getCallback()) command.getCallback().callback(stats);
+        if (null != command.getCallback()) {
+            command.getCallback().callback(stats);
+        }
     }
 
     @Override
@@ -288,6 +300,8 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
         Pair<String, Stat> positionPair = client.getData(positionPath);
         String position = null != positionPair && !StringUtils.isBlank(positionPair.getLeft())
                 ? positionPair.getLeft() : StringUtils.EMPTY;
-        if (null != command.getCallback()) command.getCallback().callback(position);
+        if (null != command.getCallback()) {
+            command.getCallback().callback(position);
+        }
     }
 }
