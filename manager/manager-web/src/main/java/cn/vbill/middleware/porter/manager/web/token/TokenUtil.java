@@ -38,9 +38,24 @@ import java.util.UUID;
  */
 public class TokenUtil {
 
-    private static Logger logger = LoggerFactory.getLogger(TokenUtil.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(TokenUtil.class);
 
+    /**
+     * EXPIRATION_TIME
+     *
+     * @date 2018/8/9 下午3:43
+     * @param:
+     * @return:
+     */
     public static Long EXPIRATION_TIME = 3600 * 1000L * 24 * 7; // 1h
+
+    /**
+     * SECRET
+     *
+     * @date 2018/8/9 下午3:43
+     * @param:
+     * @return:
+     */
     public static final String SECRET = "KeyTokenServer1";
 
     /**
@@ -96,7 +111,7 @@ public class TokenUtil {
             return true;
         } catch (Exception e) {
             // e.printStackTrace();
-            logger.info("%s", e);
+            LOGGER.info("%s", e);
             return false;
         }
     }

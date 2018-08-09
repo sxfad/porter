@@ -44,6 +44,13 @@ import java.util.List;
 @Configuration
 public class Swagger2Config {
 
+    /**
+     * createRestApi
+     *
+     * @date 2018/8/9 下午3:28
+     * @param: []
+     * @return: springfox.documentation.spring.web.plugins.Docket
+     */
     @Bean
     public Docket createRestApi() {
         ParameterBuilder tokenPar = new ParameterBuilder();
@@ -57,6 +64,13 @@ public class Swagger2Config {
                 .paths(PathSelectors.any()).build();
     }
 
+    /**
+     * apiInfo
+     *
+     * @date 2018/8/9 下午3:29
+     * @param: []
+     * @return: springfox.documentation.service.ApiInfo
+     */
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder().title("数据同步中间件接口").contact(new Contact("张科伟", "", "zhang_kw@suixingpay.com"))
                 .version("2.0").description("数据同步中间件接口描述").build();
