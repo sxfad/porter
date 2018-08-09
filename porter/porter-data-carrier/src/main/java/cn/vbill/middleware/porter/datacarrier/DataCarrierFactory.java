@@ -58,6 +58,14 @@ public class DataCarrierFactory {
         }
         provider = tmpProvider;
     }
+
+    /**
+     * newDataCarrier
+     *
+     * @date 2018/8/9 上午11:57
+     * @param: [initPrams]
+     * @return: cn.vbill.middleware.porter.datacarrier.DataCarrier<E>
+     */
     public <E> DataCarrier<E> newDataCarrier(Object... initPrams) {
         Class[] paramsTypes = new Class[initPrams.length];
         for (int i = 0; i < initPrams.length; i++) {

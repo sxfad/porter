@@ -71,6 +71,13 @@ public class SimpleDataCarrier implements DataCarrier {
         return buffer.poll();
     }
 
+    /**
+     * generateId
+     *
+     * @date 2018/8/9 上午11:59
+     * @param: []
+     * @return: java.lang.String
+     */
     private String generateId() {
         return UUID.randomUUID().toString() + System.currentTimeMillis();
     }
