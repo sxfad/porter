@@ -31,7 +31,7 @@ import java.sql.Statement;
  */
 public class DataSourceUtil {
 
-    private static Logger logger = LoggerFactory.getLogger(DataSourceUtil.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(DataSourceUtil.class);
 
     /**
      * 创建数据源
@@ -49,7 +49,7 @@ public class DataSourceUtil {
             conn = DriverManager.getConnection(url, username, password);
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
-            logger.info("%s", e);
+            LOGGER.info("%s", e);
         }
         return conn;
     }
@@ -84,7 +84,7 @@ public class DataSourceUtil {
                 rs.close();
             } catch (SQLException e) {
                 e.printStackTrace();
-                logger.info("%s", e);
+                LOGGER.info("%s", e);
             }
         }
         // 关闭数据库操作对象
@@ -93,7 +93,7 @@ public class DataSourceUtil {
                 stmt.close();
             } catch (SQLException e) {
                 e.printStackTrace();
-                logger.info("%s", e);
+                LOGGER.info("%s", e);
             }
         }
         // 关闭数据库连接
@@ -102,7 +102,7 @@ public class DataSourceUtil {
                 conn.close();
             } catch (SQLException e) {
                 e.printStackTrace();
-                logger.info("%s", e);
+                LOGGER.info("%s", e);
             }
         }
     }

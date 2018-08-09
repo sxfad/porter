@@ -33,7 +33,20 @@ import java.util.Map;
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum LogLevelEnum {
 
-    DEBUG("DEBUG", "DEBUG"), INFO("INFO", "INFO"), ERROR("ERROR", "ERROR");
+    /**
+     * DEBUG
+     */
+    DEBUG("DEBUG", "DEBUG"),
+
+    /**
+     * INFO
+     */
+    INFO("INFO", "INFO"),
+
+    /**
+     * ERROR
+     */
+    ERROR("ERROR", "ERROR");
 
     @Getter
     private final String code;
@@ -41,6 +54,9 @@ public enum LogLevelEnum {
     @Getter
     private final String name;
 
+    /**
+     * LINKMAP
+     */
     public static final Map<String, Object> LINKMAP = new LinkedHashMap<String, Object>() {
 
         private static final long serialVersionUID = 1L;

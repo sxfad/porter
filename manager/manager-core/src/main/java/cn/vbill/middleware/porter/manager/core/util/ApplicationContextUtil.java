@@ -40,21 +40,49 @@ public class ApplicationContextUtil implements ApplicationContextAware {
         ApplicationContextUtil.APPLICATIONCONTEXT = applicationContext;
     }
 
+    /**
+     * getBean
+     *
+     * @date 2018/8/9 下午4:01
+     * @param: [name]
+     * @return: T
+     */
     @SuppressWarnings("unchecked")
     public static <T> T getBean(String name) {
         checkApplicationContext();
         return (T) APPLICATIONCONTEXT.getBean(name);
     }
 
+    /**
+     * getBean
+     *
+     * @date 2018/8/9 下午4:01
+     * @param: [clazz]
+     * @return: T
+     */
     public static <T> T getBean(Class<T> clazz) {
         checkApplicationContext();
         return (T) APPLICATIONCONTEXT.getBean(clazz);
     }
 
+    /**
+     * cleanApplicationContext
+     *
+     * @date 2018/8/9 下午4:01
+     * @param: []
+     * @return: void
+     */
     public static void cleanApplicationContext() {
         APPLICATIONCONTEXT = null;
     }
 
+    /**
+     * checkApplicationContext
+     *
+     * @date 2018/8/9 下午4:01
+     * @param: []
+     * @return: void
+     */
     private static void checkApplicationContext() {
         if (APPLICATIONCONTEXT == null) {
             throw new IllegalStateException("applicaitonContext未注入");

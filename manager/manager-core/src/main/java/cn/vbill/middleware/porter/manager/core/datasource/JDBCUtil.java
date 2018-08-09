@@ -30,8 +30,11 @@ import java.sql.SQLException;
  */
 public class JDBCUtil {
 
-    private static Logger logger = LoggerFactory.getLogger(JDBCUtil.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(JDBCUtil.class);
 
+    /**
+     * jdbcPage
+     */
     public static void jdbcPage() {
         // String driverName = "com.mysql.cj.jdbc.Driver";
         // String url =
@@ -57,14 +60,14 @@ public class JDBCUtil {
             }
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
-            logger.info("%s", e);
+            LOGGER.info("%s", e);
         } finally {
             DataSourceUtil.closed(connection, preparedStatement, results);
         }
 
     }
 
-    public static void main(String[] args) {
-        JDBCUtil.jdbcPage();
-    }
+//    public static void main(String[] args) {
+//        JDBCUtil.jdbcPage();
+//    }
 }
