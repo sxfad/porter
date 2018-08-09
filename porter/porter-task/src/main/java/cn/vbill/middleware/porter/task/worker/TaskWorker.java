@@ -42,6 +42,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 工人
+ *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月21日 11:22
  * @version: V1.0
@@ -54,7 +55,6 @@ public class TaskWorker {
     private final AtomicBoolean stat = new AtomicBoolean(false);
     //负责将任务工作者的状态定时上传
     private final ScheduledExecutorService workerStatJob;
-
 
 
     /**
@@ -160,7 +160,7 @@ public class TaskWorker {
                         task.getAlarmPositionCount());
                 job.start();
                 jobs.put(c.getSwimlaneId(), job);
-            }catch (TaskLockException e){
+            } catch (TaskLockException e) {
                 LOGGER.error("Consumer JOB[{}] failed to start!", c.getSwimlaneId(), e);
                 NodeLog.upload(NodeLog.LogType.TASK_LOG, task.getTaskId(), c.getSwimlaneId(), e.getMessage());
             } catch (Throwable e) {

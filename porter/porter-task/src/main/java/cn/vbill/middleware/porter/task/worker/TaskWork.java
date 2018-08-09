@@ -67,7 +67,7 @@ import java.util.stream.Collectors;
  */
 public class TaskWork {
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskWork.class);
-    private final AtomicBoolean stat = new AtomicBoolean(false);
+    private final AtomicBoolean statAtomicBoolean = new AtomicBoolean(false);
 
     private final String taskId;
 
@@ -77,7 +77,7 @@ public class TaskWork {
     /**
      * stageType -> job
      */
-    private final Map<StageType, StageJob> jobs;
+    private final Map<StageType, StageJob> stageJobs;
     private final String basicThreadName;
 
     /**
@@ -105,17 +105,17 @@ public class TaskWork {
         this.worker = worker;
         this.receivers = Collections.unmodifiableList(receivers);
         TaskWork work = this;
-        jobs = new LinkedHashMap<>();
+        stageJobs = new LinkedHashMap<>();
 
-        jobs.put(StageType.SELECT, new SelectJob(work));
-        jobs.put(StageType.EXTRACT, new ExtractJob(work));
-        jobs.put(StageType.TRANSFORM, new TransformJob(work));
-        jobs.put(StageType.LOAD, new LoadJob(work, positionCheckInterval, alarmPositionCount));
+        stageJobs.put(StageType.SELECT, new SelectJob(work));
+        stageJobs.put(StageType.EXTRACT, new ExtractJob(work));
+        stageJobs.put(StageType.TRANSFORM, new TransformJob(work));
+        stageJobs.put(StageType.LOAD, new LoadJob(work, positionCheckInterval, alarmPositionCount));
         /**
          * 源端数据源支持元数据查询
          */
         if (dataConsumer.supportMetaQuery()) {
-            jobs.put(StageType.DB_CHECK, new AlertJob(work));
+            stageJobs.put(StageType.DB_CHECK, new AlertJob(work));
         }
 
         //从集群模块获取任务状态统计信息
@@ -138,11 +138,11 @@ public class TaskWork {
      * @return: void
      */
     protected void stop() {
-        if (stat.compareAndSet(true, false)) {
+        if (statAtomicBoolean.compareAndSet(true, false)) {
             try {
                 LOGGER.info("终止执行任务[{}-{}]", taskId, dataConsumer.getSwimlaneId());
                 //终止阶段性工作,需要
-                for (Map.Entry<StageType, StageJob> jobs : jobs.entrySet()) {
+                for (Map.Entry<StageType, StageJob> jobs : stageJobs.entrySet()) {
                     //确保每个阶段工作都被执行
                     try {
                         LOGGER.info("终止执行工作[{}-{}-{}]", taskId, dataConsumer.getSwimlaneId(), jobs.getValue().getClass().getSimpleName());
@@ -184,7 +184,7 @@ public class TaskWork {
      * @return: void
      */
     protected void start() throws Exception {
-        if (stat.compareAndSet(false, true)) {
+        if (statAtomicBoolean.compareAndSet(false, true)) {
             LOGGER.info("开始执行任务[{}-{}]", taskId, dataConsumer.getSwimlaneId());
             //申请work资源
             if (!NodeContext.INSTANCE.acquireWork()) {
@@ -195,7 +195,7 @@ public class TaskWork {
             //会抛出分布式锁任务抢占异常
             ClusterProviderProxy.INSTANCE.broadcast(new TaskRegisterCommand(taskId, dataConsumer.getSwimlaneId()));
             //开始阶段性工作
-            for (Map.Entry<StageType, StageJob> jobs : jobs.entrySet()) {
+            for (Map.Entry<StageType, StageJob> jobs : stageJobs.entrySet()) {
                 jobs.getValue().start();
             }
 
@@ -225,7 +225,7 @@ public class TaskWork {
      * @return: T
      */
     public <T> T waitEvent(StageType type) throws Exception {
-        return jobs.get(type).output();
+        return stageJobs.get(type).output();
     }
 
     /**
@@ -236,7 +236,7 @@ public class TaskWork {
      * @return: T
      */
     public <T> T waitSequence() {
-        return ((ExtractJob) jobs.get(StageType.EXTRACT)).getNextSequence();
+        return ((ExtractJob) stageJobs.get(StageType.EXTRACT)).getNextSequence();
     }
 
     /**
@@ -247,7 +247,7 @@ public class TaskWork {
      * @return: boolean
      */
     public boolean isPoolEmpty(StageType type) {
-        return jobs.get(type).isPoolEmpty();
+        return stageJobs.get(type).isPoolEmpty();
     }
 
     public String getTaskId() {
