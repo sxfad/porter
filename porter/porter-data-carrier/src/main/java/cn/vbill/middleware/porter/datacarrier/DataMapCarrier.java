@@ -19,12 +19,14 @@ package cn.vbill.middleware.porter.datacarrier;
 
 /**
  * map carrier
+ *
+ * @param <K>
+ * @param <V>
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年05月02日 10:13
  * @version: V1.0
  * @review: zkevin/2018年05月02日 10:13
  */
-
 public interface DataMapCarrier<K, V> extends DataContainer {
 
     /**

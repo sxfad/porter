@@ -41,7 +41,9 @@ public class SimpleDataCarrier implements DataCarrier {
 
     @Override
     public void push(Object item) throws InterruptedException {
-        if (null != item) buffer.put(item);
+        if (null != item) {
+            buffer.put(item);
+        }
     }
 
     /**
