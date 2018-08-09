@@ -26,6 +26,8 @@ import cn.vbill.middleware.porter.core.loader.SubmitStatObject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +39,8 @@ import java.util.List;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月04日 11:38
  */
 public class JdbcPrintSqlLoader extends BaseJdbcLoader {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(JdbcPrintSqlLoader.class);
 
     @Override
     protected String getPluginName() {
