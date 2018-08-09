@@ -63,6 +63,14 @@ public interface StageJob {
      * @return: T
      */
     <T> T output() throws Exception;
+
+    /**
+     * 停止写入接口方法
+     *
+     * @date 2018/8/9 上午11:50
+     * @param: []
+     * @return: boolean
+     */
     default boolean stopWaiting() {
         return false;
     }

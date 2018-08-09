@@ -33,7 +33,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月24日 11:04
  */
 public abstract class AbstractStageJob implements StageJob {
-    private static final Logger logger = LoggerFactory.getLogger(AbstractStageJob.class);
+    private static final Logger Logger = LoggerFactory.getLogger(AbstractStageJob.class);
     protected static final int LOGIC_THREAD_SIZE = 5;
     private AtomicBoolean stat = new AtomicBoolean(false);
     private final Thread loopService;
@@ -89,20 +89,20 @@ public abstract class AbstractStageJob implements StageJob {
             try {
                 //确保现有数据流处理结束
                 if (stopWaiting()) {
-                    logger.debug("任务退出线程等待源队列为空.");
+                    Logger.debug("任务退出线程等待源队列为空.");
                     //判断上层管道是否有未处理完的事件及数据
                     //防止消费间隙上层管道新增数据
                     while (!isPrevPoolEmpty()) {
-                        logger.debug("内存队列有未处理完的数据，线程休眠20耗秒.");
+                        Logger.debug("内存队列有未处理完的数据，线程休眠20耗秒.");
                         Thread.sleep(20);
                     }
                     //设置信号量的目的是防止loopLogic执行期间代码被粗暴打断
                     stopSignal.acquire();
-                    logger.debug("源队列为空，发送线程中断信号");
+                    Logger.debug("源队列为空，发送线程中断信号");
                 }
                 doStop();
             } catch (Throwable e) {
-                logger.error("%s", e);
+                Logger.error("%s", e);
             } finally {
                 loopService.interrupt();
             }
@@ -125,11 +125,11 @@ public abstract class AbstractStageJob implements StageJob {
             while (!Thread.currentThread().isInterrupted() && stat.get()) {
                 try {
                     stopSignal.acquire();
-                    logger.debug("源队列为空，线程恢复执行.");
+                    Logger.debug("源队列为空，线程恢复执行.");
                     loopLogic();
                     //不符合业务执行条件时，释放资源。线程沉睡10秒后继续执行
                     stopSignal.release();
-                    logger.debug("源队列为空，线程进入等待.");
+                    Logger.debug("源队列为空，线程进入等待.");
                     Thread.sleep(threadWaitSpan);
                 } catch (InterruptedException e) {
                     //如果线程有中断信号，退出线程

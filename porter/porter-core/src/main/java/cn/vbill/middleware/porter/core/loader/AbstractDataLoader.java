@@ -34,7 +34,7 @@ import java.util.Date;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月09日 15:08
  */
 public abstract class AbstractDataLoader implements DataLoader {
-    private static final Logger logger = LoggerFactory.getLogger(AbstractDataLoader.class);
+    private static final Logger Logger = LoggerFactory.getLogger(AbstractDataLoader.class);
     protected static final String TIME_TAKEN_FORMAT = "yyyy-MM-dd HH:mm:ss.S";
     private  volatile LoadClient loadClient;
     private  volatile MetaQueryClient metaQueryClient;
@@ -129,13 +129,13 @@ public abstract class AbstractDataLoader implements DataLoader {
      */
     protected void printTimeTaken(ETLRow row) {
         try {
-            logger.info("消息处理耗时->trail操作:{},存储kafka:{},kafka消费:{},数据库载入:{}",
+            Logger.info("消息处理耗时->trail操作:{},存储kafka:{},kafka消费:{},数据库载入:{}",
                     DateFormatUtils.format(row.getOpTime(), TIME_TAKEN_FORMAT),
                     DateFormatUtils.format(row.getConsumerTime(), TIME_TAKEN_FORMAT),
                     DateFormatUtils.format(row.getConsumedTime(), TIME_TAKEN_FORMAT),
                     DateFormatUtils.format(System.currentTimeMillis(), TIME_TAKEN_FORMAT));
         } catch (Throwable e) {
-            logger.error("%s", e);
+            Logger.error("%s", e);
         }
     }
 }

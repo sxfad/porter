@@ -44,7 +44,7 @@ public class OggJsonConverter implements EventConverter {
     private static final Logger LOGGER = LoggerFactory.getLogger(OggJsonConverter.class);
 
     private DateFormat opTsF = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
-    private DateFormat cTsF = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS");
+    private DateFormat ctsf = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS");
 
     @Override
     public String getName() {
@@ -80,7 +80,7 @@ public class OggJsonConverter implements EventConverter {
 
         try {
             String currentTS = obj.getString("current_ts");
-            event.setCurrentTs(cTsF.parse(currentTS.substring(0, currentTS.length() - 3)));
+            event.setCurrentTs(ctsf.parse(currentTS.substring(0, currentTS.length() - 3)));
         } catch (Exception e) {
             LOGGER.error("%s", e);
         }
