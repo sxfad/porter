@@ -24,6 +24,8 @@ import cn.vbill.middleware.porter.core.event.etl.ETLBucket;
 import cn.vbill.middleware.porter.core.event.etl.ETLRow;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +37,8 @@ import java.util.List;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月04日 11:38
  */
 public class JdbcBatchLoader extends BaseJdbcLoader {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(JdbcBatchLoader.class);
 
     @Override
     protected String getPluginName() {
