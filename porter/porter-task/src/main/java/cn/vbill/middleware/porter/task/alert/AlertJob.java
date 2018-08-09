@@ -17,13 +17,15 @@
 
 package cn.vbill.middleware.porter.task.alert;
 
-import cn.vbill.middleware.porter.core.NodeContext;
 import cn.vbill.middleware.porter.common.statistics.NodeLog;
+import cn.vbill.middleware.porter.core.NodeContext;
 import cn.vbill.middleware.porter.core.consumer.DataConsumer;
 import cn.vbill.middleware.porter.core.loader.DataLoader;
 import cn.vbill.middleware.porter.core.task.AbstractStageJob;
 import cn.vbill.middleware.porter.task.alert.alerter.AlerterFactory;
 import cn.vbill.middleware.porter.task.worker.TaskWork;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * 单线程执行，但存在多线程执行的可能性，前期单线程执行
@@ -33,6 +35,9 @@ import cn.vbill.middleware.porter.task.worker.TaskWork;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月24日 11:20
  */
 public class AlertJob extends AbstractStageJob {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AlertJob.class);
+
     private final DataConsumer dataConsumer;
     private final DataLoader dataLoader;
     private final AlerterFactory alerterFactory;
