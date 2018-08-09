@@ -45,7 +45,7 @@ public enum DataLoaderFactory {
      * instance
      */
     INSTANCE();
-    private final List<DataLoader> LOADER_TEMPLATE = SpringFactoriesLoader.loadFactories(DataLoader.class, JavaFileCompiler.getInstance());
+    private final List<DataLoader> loaderTemplate = SpringFactoriesLoader.loadFactories(DataLoader.class, JavaFileCompiler.getInstance());
     private static final Logger LOGGER = LoggerFactory.getLogger(DataLoaderFactory.class);
 
     /**
@@ -80,7 +80,7 @@ public enum DataLoaderFactory {
      * @return: cn.vbill.middleware.porter.core.loader.DataLoader
      */
     public DataLoader newLoader(String loaderName) throws DataLoaderBuildException {
-        for (DataLoader t : LOADER_TEMPLATE) {
+        for (DataLoader t : loaderTemplate) {
             if (t.isMatch(loaderName)) {
                 try {
                     return t.getClass().newInstance();

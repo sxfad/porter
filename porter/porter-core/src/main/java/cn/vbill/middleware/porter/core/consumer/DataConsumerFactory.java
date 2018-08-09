@@ -49,7 +49,7 @@ public enum DataConsumerFactory {
      * INSTANCE
      */
     INSTANCE();
-    private final List<DataConsumer> CONSUMER_TEMPLATE = SpringFactoriesLoader.loadFactories(DataConsumer.class, JavaFileCompiler.getInstance());
+    private final List<DataConsumer> consumerTemplate = SpringFactoriesLoader.loadFactories(DataConsumer.class, JavaFileCompiler.getInstance());
     private static final Logger LOGGER = LoggerFactory.getLogger(DataConsumerFactory.class);
 
     /**
@@ -125,7 +125,7 @@ public enum DataConsumerFactory {
      * @return: cn.vbill.middleware.porter.core.consumer.DataConsumer
      */
     public DataConsumer newConsumer(String consumerName) throws DataConsumerBuildException {
-        for (DataConsumer t : CONSUMER_TEMPLATE) {
+        for (DataConsumer t : consumerTemplate) {
             if (t.isMatch(consumerName)) {
                 try {
                     return t.getClass().newInstance();

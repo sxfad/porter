@@ -54,6 +54,9 @@ public enum NodeContext {
 
     private ApplicationContext context;
 
+    private double percentSeven = 0.7;
+    private double percentNine = 0.9;
+
     /**
      * 获取Bean
      *
@@ -287,15 +290,15 @@ public enum NodeContext {
                 nodeLock.readLock().unlock();
             }
             //黄色告警
-            if (percent < 0.7) {
+            if (percent < percentSeven) {
                 syncHealthLevel(NodeHealthLevel.GREEN, "");
             }
             //黄色告警
-            if (percent >= 0.7 && percent < 0.9) {
+            if (percent >= percentSeven && percent < percentNine) {
                 syncHealthLevel(NodeHealthLevel.YELLOW, "节点工作资源超70%");
             }
             //红色警报
-            if (percent >= 0.9) {
+            if (percent >= percentNine) {
                 syncHealthLevel(NodeHealthLevel.RED, "节点工作资源已饱和");
             }
         }

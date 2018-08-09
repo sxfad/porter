@@ -35,13 +35,13 @@ public enum  ConverterFactory {
      */
     INSTANCE();
 
-    private final List<EventConverter> CONVERTERS;
+    private final List<EventConverter> converters;
 
     ConverterFactory() {
         /**
          * 自定义Converter插件由JavaFileCompiler载入，故需要JavaFileCompiler作为ClassLoader
          */
-        CONVERTERS = SpringFactoriesLoader.loadFactories(EventConverter.class, JavaFileCompiler.getInstance());
+        converters = SpringFactoriesLoader.loadFactories(EventConverter.class, JavaFileCompiler.getInstance());
     }
 
     /**
@@ -52,7 +52,7 @@ public enum  ConverterFactory {
      * @return: cn.vbill.middleware.porter.core.event.s.EventConverter
      */
     public  EventConverter getConverter(String name) {
-        for (EventConverter converter : CONVERTERS) {
+        for (EventConverter converter : converters) {
             if (converter.getName().equals(name)) {
                 return converter;
             }

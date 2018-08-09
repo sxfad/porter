@@ -43,8 +43,8 @@ public class OggJsonConverter implements EventConverter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OggJsonConverter.class);
 
-    private DateFormat OP_TS_F = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
-    private DateFormat C_TS_F = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS");
+    private DateFormat opTsF = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
+    private DateFormat cTsF = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS");
 
     @Override
     public String getName() {
@@ -73,14 +73,14 @@ public class OggJsonConverter implements EventConverter {
         event.setOpType(eventType);
         try {
             String poTS = obj.getString("op_ts");
-            event.setOpTs(OP_TS_F.parse(poTS.substring(0, poTS.length() - 3)));
+            event.setOpTs(opTsF.parse(poTS.substring(0, poTS.length() - 3)));
         } catch (Exception e) {
             LOGGER.error("%s", e);
         }
 
         try {
             String currentTS = obj.getString("current_ts");
-            event.setCurrentTs(C_TS_F.parse(currentTS.substring(0, currentTS.length() - 3)));
+            event.setCurrentTs(cTsF.parse(currentTS.substring(0, currentTS.length() - 3)));
         } catch (Exception e) {
             LOGGER.error("%s", e);
         }
