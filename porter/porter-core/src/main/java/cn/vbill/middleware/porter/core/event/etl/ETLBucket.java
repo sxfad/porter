@@ -159,6 +159,13 @@ public class ETLBucket {
         return exception;
     }
 
+    /**
+     * tagException
+     *
+     * @date 2018/8/8 下午5:53
+     * @param: [e]
+     * @return: void
+     */
     public void tagException(Throwable e) {
         this.exception = e;
     }
@@ -167,6 +174,13 @@ public class ETLBucket {
         return position;
     }
 
+    /**
+     * markUnUsed
+     *
+     * @date 2018/8/8 下午5:53
+     * @param: []
+     * @return: void
+     */
     public void markUnUsed() {
         try {
             rows.forEach(r -> {

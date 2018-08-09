@@ -47,7 +47,13 @@ public enum EventType {
         this.code = code;
     }
 
-
+    /**
+     * 初始化type
+     *
+     * @date 2018/8/8 下午5:58
+     * @param: [kafkaEvent]
+     * @return: cn.vbill.middleware.porter.core.event.s.EventType
+     */
     public static EventType type(String kafkaEvent) {
         if (kafkaEvent.equals("I")) {
             return  INSERT;

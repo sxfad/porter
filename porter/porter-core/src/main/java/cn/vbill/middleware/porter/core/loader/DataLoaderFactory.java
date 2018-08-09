@@ -44,6 +44,13 @@ public enum DataLoaderFactory {
     private final List<DataLoader> LOADER_TEMPLATE = SpringFactoriesLoader.loadFactories(DataLoader.class, JavaFileCompiler.getInstance());
     private static final Logger LOGGER = LoggerFactory.getLogger(DataLoaderFactory.class);
 
+    /**
+     * 获取Loader
+     *
+     * @date 2018/8/8 下午6:03
+     * @param: [config]
+     * @return: cn.vbill.middleware.porter.core.loader.DataLoader
+     */
     public DataLoader getLoader(DataLoaderConfig config) throws ConfigParseException, ClientException, DataLoaderBuildException {
         Client client = AbstractClient.getClient(SourceConfig.getConfig(config.getSource()));
         //获取源数据查询配置
@@ -61,6 +68,13 @@ public enum DataLoaderFactory {
         return loader;
     }
 
+    /**
+     * newLoader
+     *
+     * @date 2018/8/8 下午6:03
+     * @param: [loaderName]
+     * @return: cn.vbill.middleware.porter.core.loader.DataLoader
+     */
     public DataLoader newLoader(String loaderName) throws DataLoaderBuildException {
         for (DataLoader t : LOADER_TEMPLATE) {
             if (t.isMatch(loaderName)) {

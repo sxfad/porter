@@ -26,5 +26,13 @@ import cn.vbill.middleware.porter.core.event.etl.ETLBucket;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年03月09日 11:03
  */
 public interface EventProcessor {
+
+    /**
+     * process
+     *
+     * @date 2018/8/8 下午5:58
+     * @param: [bucket]
+     * @return: void
+     */
     void process(ETLBucket bucket);
 }

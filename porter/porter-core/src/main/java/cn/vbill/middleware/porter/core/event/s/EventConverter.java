@@ -23,10 +23,34 @@ import java.util.List;
  * 消费器消息转换器
  */
 public interface EventConverter {
+
+    /**
+     * 获取名称
+     *
+     * @date 2018/8/8 下午5:57
+     * @param: []
+     * @return: java.lang.String
+     */
     String getName();
+
+    /**
+     * convert
+     *
+     * @date 2018/8/8 下午5:57
+     * @param: [params]
+     * @return: cn.vbill.middleware.porter.core.event.s.MessageEvent
+     */
     default MessageEvent convert(Object... params) {
         return null;
     }
+
+    /**
+     * convertList
+     *
+     * @date 2018/8/8 下午5:57
+     * @param: [params]
+     * @return: java.util.List<cn.vbill.middleware.porter.core.event.s.MessageEvent>
+     */
     default List<MessageEvent> convertList(Object... params) {
         return null;
     }

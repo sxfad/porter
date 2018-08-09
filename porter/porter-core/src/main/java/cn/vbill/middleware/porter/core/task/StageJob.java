@@ -25,11 +25,43 @@ package cn.vbill.middleware.porter.core.task;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月24日 11:04
  */
 public interface StageJob {
+
+    /**
+     * start接口方法
+     *
+     * @date 2018/8/9 上午9:49
+     * @param: []
+     * @return: void
+     */
     void start() throws Exception;
+
+    /**
+     * canStart接口方法
+     *
+     * @date 2018/8/9 上午9:49
+     * @param: []
+     * @return: boolean
+     */
     default boolean canStart() {
         return true;
     }
+
+    /**
+     * stop方法
+     *
+     * @date 2018/8/9 上午9:50
+     * @param: []
+     * @return: void
+     */
     void stop();
+
+    /**
+     * output接口方法
+     *
+     * @date 2018/8/9 上午9:50
+     * @param: []
+     * @return: T
+     */
     <T> T output() throws Exception;
     default boolean stopWaiting() {
         return false;

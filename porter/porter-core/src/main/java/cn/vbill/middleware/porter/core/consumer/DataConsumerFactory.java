@@ -48,6 +48,13 @@ public enum DataConsumerFactory {
     private final List<DataConsumer> CONSUMER_TEMPLATE = SpringFactoriesLoader.loadFactories(DataConsumer.class, JavaFileCompiler.getInstance());
     private static final Logger LOGGER = LoggerFactory.getLogger(DataConsumerFactory.class);
 
+    /**
+     * 获取Consumer
+     *
+     * @date 2018/8/8 下午5:52
+     * @param: [config]
+     * @return: java.util.List<cn.vbill.middleware.porter.core.consumer.DataConsumer>
+     */
     public List<DataConsumer> getConsumer(DataConsumerConfig config) throws ClientException, ConfigParseException, DataConsumerBuildException {
         //消息转换器
         EventConverter converter = ConverterFactory.INSTANCE.getConverter(config.getConverter());
@@ -104,6 +111,13 @@ public enum DataConsumerFactory {
         return consumers;
     }
 
+    /**
+     * newConsumer
+     *
+     * @date 2018/8/8 下午5:53
+     * @param: [consumerName]
+     * @return: cn.vbill.middleware.porter.core.consumer.DataConsumer
+     */
     public DataConsumer newConsumer(String consumerName) throws DataConsumerBuildException {
         for (DataConsumer t : CONSUMER_TEMPLATE) {
             if (t.isMatch(consumerName)) {

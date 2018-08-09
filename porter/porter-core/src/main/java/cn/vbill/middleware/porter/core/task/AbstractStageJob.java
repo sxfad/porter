@@ -54,8 +54,23 @@ public abstract class AbstractStageJob implements StageJob {
         threadFactory = new DefaultNamedThreadFactory(baseThreadName + "-" + this.getClass().getSimpleName());
         loopService = threadFactory.newThread(new LoopService());
     }
+
+    /**
+     * 停止
+     *
+     * @date 2018/8/8 下午6:04
+     * @param: []
+     * @return: void
+     */
     protected abstract void doStop() throws InterruptedException;
 
+    /**
+     * 开始
+     *
+     * @date 2018/8/8 下午6:04
+     * @param: []
+     * @return: void
+     */
     protected abstract void doStart() throws Exception;
 
     @Override
@@ -94,6 +109,13 @@ public abstract class AbstractStageJob implements StageJob {
         }
     }
 
+    /**
+     * loopLogic
+     *
+     * @date 2018/8/8 下午6:05
+     * @param: []
+     * @return: void
+     */
     protected abstract void loopLogic() throws InterruptedException;
 
     private  class LoopService implements Runnable {

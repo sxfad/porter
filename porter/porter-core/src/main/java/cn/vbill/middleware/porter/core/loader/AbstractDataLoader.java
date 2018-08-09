@@ -41,6 +41,13 @@ public abstract class AbstractDataLoader implements DataLoader {
     //更新转插入策略开关
     private volatile boolean insertOnUpdateError = true;
 
+    /**
+     * 获取PluginName
+     *
+     * @date 2018/8/8 下午5:59
+     * @param: []
+     * @return: java.lang.String
+     */
     protected abstract String getPluginName();
 
     @Override
@@ -48,6 +55,13 @@ public abstract class AbstractDataLoader implements DataLoader {
         this.loadClient = loadClient;
     }
 
+    /**
+     * 获取LoadClient
+     *
+     * @date 2018/8/8 下午5:59
+     * @param: []
+     * @return: T
+     */
     public <T> T getLoadClient() {
         return (T) loadClient;
     }
@@ -102,6 +116,13 @@ public abstract class AbstractDataLoader implements DataLoader {
         return clientInfo.toString();
     }
 
+    /**
+     * 输出TimeTaken
+     *
+     * @date 2018/8/8 下午6:00
+     * @param: [row]
+     * @return: void
+     */
     protected void printTimeTaken(ETLRow row) {
         try {
             LOGGER.info("消息处理耗时->trail操作:{},存储kafka:{},kafka消费:{},数据库载入:{}",

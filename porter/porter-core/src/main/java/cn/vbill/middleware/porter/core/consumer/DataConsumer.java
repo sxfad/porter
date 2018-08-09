@@ -106,22 +106,85 @@ public interface DataConsumer {
      */
     int getDataCount(String schema, String table, String updateColumnName, Date startDate, Date endDate);
 
+    /**
+     * Excludes set方法
+     *
+     * @date 2018/8/8 下午5:44
+     * @param: [excludes]
+     * @return: void
+     */
     void setExcludes(String excludes);
 
+    /**
+     * Includes set方法
+     *
+     * @date 2018/8/8 下午5:45
+     * @param: [includes]
+     * @return: void
+     */
     void setIncludes(String includes);
 
+    /**
+     * 获取Excludes
+     *
+     * @date 2018/8/8 下午5:45
+     * @param: []
+     * @return: java.util.List<java.lang.String>
+     */
     List<String> getExcludes();
 
+    /**
+     * 获取Includes
+     *
+     * @date 2018/8/8 下午5:45
+     * @param: []
+     * @return: java.util.List<java.lang.String>
+     */
     List<String> getIncludes();
 
+    /**
+     * initializePosition
+     *
+     * @date 2018/8/8 下午5:45
+     * @param: [taskId, swimlaneId, position]
+     * @return: void
+     */
     void initializePosition(String taskId, String swimlaneId, String position) throws TaskStopTriggerException;
 
+    /**
+     * commitPosition
+     *
+     * @date 2018/8/8 下午5:46
+     * @param: [position]
+     * @return: long
+     */
     long commitPosition(Position position) throws TaskStopTriggerException;
 
+    /**
+     * 是否为AutoCommitPosition
+     *
+     * @date 2018/8/8 下午5:46
+     * @param: []
+     * @return: boolean
+     */
     boolean isAutoCommitPosition();
 
+    /**
+     * 获取EventProcessor
+     *
+     * @date 2018/8/8 下午5:46
+     * @param: []
+     * @return: cn.vbill.middleware.porter.core.event.s.EventProcessor
+     */
     EventProcessor getEventProcessor();
 
+    /**
+     * EventProcessor set方法
+     *
+     * @date 2018/8/8 下午5:47
+     * @param: [eventProcessor]
+     * @return: void
+     */
     void setEventProcessor(EventProcessor eventProcessor);
 
     /**
@@ -132,12 +195,48 @@ public interface DataConsumer {
         return false;
     }
 
-
+    /**
+     * 获取ClientInfo
+     *
+     * @date 2018/8/8 下午5:47
+     * @param: []
+     * @return: java.lang.String
+     */
     String getClientInfo();
 
+    /**
+     * 获取EmptyFetchNoticeSpan
+     *
+     * @date 2018/8/8 下午5:47
+     * @param: []
+     * @return: long
+     */
     long getEmptyFetchNoticeSpan();
+
+    /**
+     * 获取EmptyFetchThreshold
+     *
+     * @date 2018/8/8 下午5:48
+     * @param: []
+     * @return: long
+     */
     long getEmptyFetchThreshold();
 
+    /**
+     * EmptyFetchNoticeSpan set方法
+     *
+     * @date 2018/8/8 下午5:48
+     * @param: [secondsValue]
+     * @return: void
+     */
     void setEmptyFetchNoticeSpan(long secondsValue);
+
+    /**
+     * EmptyFetchThreshold set方法
+     *
+     * @date 2018/8/8 下午5:48
+     * @param: [secondsValue]
+     * @return: void
+     */
     void setEmptyFetchThreshold(long secondsValue);
 }

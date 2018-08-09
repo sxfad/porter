@@ -105,6 +105,13 @@ public class ETLColumn {
         this.finalAfterMissing = this.afterMissing;
     }
 
+    /**
+     * 大写
+     *
+     * @date 2018/8/8 下午5:54
+     * @param: []
+     * @return: cn.vbill.middleware.porter.core.event.etl.ETLColumn
+     */
     public ETLColumn toUpperCase() {
         this.finalName = this.finalName.toUpperCase();
         return this;

@@ -40,6 +40,13 @@ public enum  ConverterFactory {
         CONVERTERS = SpringFactoriesLoader.loadFactories(EventConverter.class, JavaFileCompiler.getInstance());
     }
 
+    /**
+     * 获取Converter
+     *
+     * @date 2018/8/8 下午5:56
+     * @param: [name]
+     * @return: cn.vbill.middleware.porter.core.event.s.EventConverter
+     */
     public  EventConverter getConverter(String name) {
         for (EventConverter converter : CONVERTERS) {
             if (converter.getName().equals(name)) {

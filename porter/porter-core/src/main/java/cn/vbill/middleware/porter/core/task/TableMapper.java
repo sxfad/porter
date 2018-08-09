@@ -77,6 +77,13 @@ public class TableMapper {
         this.column = column;
     }
 
+    /**
+     * 获取UniqueKey
+     *
+     * @date 2018/8/9 上午9:51
+     * @param: [taskId]
+     * @return: java.lang.String
+     */
     public String getUniqueKey(String taskId) {
         StringBuffer sb = new StringBuffer();
         sb.append(taskId).append("_");
@@ -98,6 +105,13 @@ public class TableMapper {
         this.updateDate = updateDate;
     }
 
+    /**
+     * fromConfig
+     *
+     * @date 2018/8/9 上午9:53
+     * @param: [config]
+     * @return: cn.vbill.middleware.porter.core.task.TableMapper
+     */
     public static TableMapper fromConfig(TableMapperConfig config) {
         TableMapper mapper = new TableMapper();
         mapper.setColumn(config.getColumn());
@@ -109,6 +123,13 @@ public class TableMapper {
         return mapper;
     }
 
+    /**
+     * toUpperCase
+     *
+     * @date 2018/8/9 上午9:54
+     * @param: []
+     * @return: cn.vbill.middleware.porter.core.task.TableMapper
+     */
     public TableMapper toUpperCase() {
         if (null != updateDate && updateDate.length == 2) {
             updateDate[0] = updateDate[0].toUpperCase();
