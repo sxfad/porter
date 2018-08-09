@@ -26,6 +26,8 @@ import cn.vbill.middleware.porter.core.event.etl.ETLBucket;
 import cn.vbill.middleware.porter.core.task.AbstractStageJob;
 import cn.vbill.middleware.porter.datacarrier.DataMapCarrier;
 import cn.vbill.middleware.porter.task.worker.TaskWork;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -43,6 +45,9 @@ import java.util.concurrent.ThreadPoolExecutor;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月24日 11:32
  */
 public class TransformJob extends AbstractStageJob {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TransformJob.class);
+
     private final TransformFactory transformFactory;
     private final ExecutorService executorService;
     //容量为线程池容量的100倍
