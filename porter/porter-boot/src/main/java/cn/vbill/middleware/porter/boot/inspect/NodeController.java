@@ -52,23 +52,52 @@ public class NodeController {
         JMAP_CMD = StringUtils.isBlank(javaHome) ? "jmap" : javaHome + "/../bin/jmap";
     }
 
+    /**
+     * tasks
+     *
+     * @date 2018/8/9 下午3:11
+     * @param: []
+     * @return: java.lang.String
+     */
     @GetMapping("/error")
     public String tasks() {
         Map<String, String> errors = NodeContext.INSTANCE.getTaskErrorMarked();
         return null != errors && !errors.isEmpty() ? errors.toString() : StringUtils.EMPTY;
     }
 
+    /**
+     * info
+     *
+     * @date 2018/8/9 下午3:12
+     * @param: []
+     * @return: java.lang.String
+     */
     @GetMapping("/info")
     public String info() {
         return NodeContext.INSTANCE.dumpNode();
     }
 
+    /**
+     * stack
+     *
+     * @date 2018/8/9 下午3:12
+     * @param: []
+     * @return: java.lang.String
+     */
     @GetMapping("/jstack")
     public String stack() throws IOException {
         String executive = new StringBuffer(JPS_CMD).append(" ").append(MachineUtils.CURRENT_JVM_PID).toString();
         String commandValue = StreamUtils.copyToString(Runtime.getRuntime().exec(executive).getInputStream(), Charset.forName("utf-8"));
         return formatPrint(commandValue);
     }
+
+    /**
+     * stat
+     *
+     * @date 2018/8/9 下午3:12
+     * @param: []
+     * @return: java.lang.String
+     */
     @GetMapping("/jstat")
     public String stat() throws IOException {
         String executive = new StringBuffer(JSTAT_CMD).append(" -gc ").append(MachineUtils.CURRENT_JVM_PID).toString();
@@ -76,6 +105,13 @@ public class NodeController {
         return formatPrint(commandValue);
     }
 
+    /**
+     * jinfo
+     *
+     * @date 2018/8/9 下午3:12
+     * @param: []
+     * @return: java.lang.String
+     */
     @GetMapping("/jinfo")
     public String jinfo() throws IOException {
         String executive = new StringBuffer(JINFO_CMD).append(" ").append(MachineUtils.CURRENT_JVM_PID).toString();
@@ -83,6 +119,13 @@ public class NodeController {
         return formatPrint(commandValue);
     }
 
+    /**
+     * jmap
+     *
+     * @date 2018/8/9 下午3:12
+     * @param: [cmd]
+     * @return: java.lang.String
+     */
     @GetMapping("/jmap")
     public String jmap(String cmd) throws IOException {
         cmd = StringUtils.isBlank(cmd) ? "heap" : cmd;
@@ -93,6 +136,13 @@ public class NodeController {
         return formatPrint(commandValue);
     }
 
+    /**
+     * formatPrint
+     *
+     * @date 2018/8/9 下午3:13
+     * @param: [commandValue]
+     * @return: java.lang.String
+     */
     private String formatPrint(String commandValue) {
         return new StringBuilder().append("<pre>").append(commandValue).append("</pre>").toString();
     }

@@ -54,6 +54,13 @@ public class TaskPropertySourcesConfig implements EnvironmentAware, ResourceLoad
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskPropertySourcesConfig.class);
 
+    /**
+     * placeHolderConfigurer
+     *
+     * @date 2018/8/9 下午3:11
+     * @param: []
+     * @return: org.springframework.context.support.PropertySourcesPlaceholderConfigurer
+     */
     @Bean
     public PropertySourcesPlaceholderConfigurer placeHolderConfigurer() {
         PropertySourcesPlaceholderConfigurer configurer = new PropertySourcesPlaceholderConfigurer();
@@ -82,6 +89,13 @@ public class TaskPropertySourcesConfig implements EnvironmentAware, ResourceLoad
         this.resourceLoader = resourceLoader;
     }
 
+    /**
+     * configFiles
+     *
+     * @date 2018/8/9 下午3:11
+     * @param: [active]
+     * @return: java.util.List<java.io.File>
+     */
     private List<File> configFiles(String active) {
         List<File> files  = new ArrayList<>();
         String[] path = new String[]{"file:./tasks/" + active, "file:./config/tasks/" + active, "classpath:/tasks/" + active};

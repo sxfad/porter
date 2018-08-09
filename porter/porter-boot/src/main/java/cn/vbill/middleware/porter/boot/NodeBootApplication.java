@@ -56,6 +56,13 @@ public class NodeBootApplication {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NodeBootApplication.class);
 
+    /**
+     * node launcher
+     *
+     * @date 2018/8/9 下午3:10
+     * @param: [args]
+     * @return: void
+     */
     public static void main(String[] args) {
         SpringApplication app = new SpringApplication(NodeBootApplication.class);
         app.setBannerMode(Banner.Mode.OFF);

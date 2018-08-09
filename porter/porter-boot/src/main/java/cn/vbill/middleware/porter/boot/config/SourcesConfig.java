@@ -17,9 +17,9 @@
 
 package cn.vbill.middleware.porter.boot.config;
 
+import cn.vbill.middleware.porter.common.config.SourceConfig;
 import cn.vbill.middleware.porter.common.exception.ConfigParseException;
 import com.alibaba.fastjson.JSONObject;
-import cn.vbill.middleware.porter.common.config.SourceConfig;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.Map;
 
 /**
- *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月19日 13:59
  * @version: V1.0
@@ -50,12 +49,21 @@ public class SourcesConfig {
         this.source = source;
     }
 
+    /**
+     * 获取Config
+     *
+     * @date 2018/8/9 下午3:10
+     * @param: []
+     * @return: java.util.List<org.apache.commons.lang3.tuple.Pair<java.lang.String,cn.vbill.middleware.porter.common.config.SourceConfig>>
+     */
     public List<Pair<String, SourceConfig>> getConfig() throws ConfigParseException {
         List<Pair<String, SourceConfig>> configs = new ArrayList<>();
         if (null != source && !source.isEmpty()) {
             for (Map.Entry<String, Map<String, String>> p : source.entrySet()) {
                 SourceConfig config = SourceConfig.getConfig(p.getValue());
-                if (null != config) configs.add(new ImmutablePair<>(p.getKey(), config));
+                if (null != config) {
+                    configs.add(new ImmutablePair<>(p.getKey(), config));
+                }
             }
             if (source.size() != configs.size()) {
                 throw new ConfigParseException(source + "配置和解析结果不一致:" + JSONObject.toJSONString(configs));
