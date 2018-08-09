@@ -29,6 +29,10 @@ import java.util.List;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年01月05日 14:51
  */
 public enum  ConverterFactory {
+
+    /**
+     * INSTANCE
+     */
     INSTANCE();
 
     private final List<EventConverter> CONVERTERS;

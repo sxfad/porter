@@ -78,8 +78,12 @@ public abstract class AbstractDataLoader implements DataLoader {
 
     @Override
     public void shutdown() throws Exception {
-        if (!loadClient.isPublic()) loadClient.shutdown();
-        if (!metaQueryClient.isPublic()) metaQueryClient.shutdown();
+        if (!loadClient.isPublic()) {
+            loadClient.shutdown();
+        }
+        if (!metaQueryClient.isPublic()) {
+            metaQueryClient.shutdown();
+        }
     }
 
     @Override

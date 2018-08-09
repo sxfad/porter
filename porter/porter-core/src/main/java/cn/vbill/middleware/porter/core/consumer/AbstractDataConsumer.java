@@ -102,13 +102,19 @@ public abstract class AbstractDataConsumer implements DataConsumer {
     @Override
     public void startup() throws Exception {
         consumeClient.start();
-        if (null != metaQueryClient) metaQueryClient.start();
+        if (null != metaQueryClient) {
+            metaQueryClient.start();
+        }
     }
 
     @Override
     public void shutdown() throws Exception {
-        if (!consumeClient.isPublic()) consumeClient.shutdown();
-        if (null != metaQueryClient && !metaQueryClient.isPublic()) metaQueryClient.shutdown();
+        if (!consumeClient.isPublic()) {
+            consumeClient.shutdown();
+        }
+        if (null != metaQueryClient && !metaQueryClient.isPublic()) {
+            metaQueryClient.shutdown();
+        }
     }
 
     @Override

@@ -52,8 +52,10 @@ public class CanalRowConverter implements EventConverter {
         Position rowPosition = (Position) params[1];
         CanalEntry.Entry entry = (CanalEntry.Entry) params[2];
         //非row data
-        if (entry.getEntryType() != CanalEntry.EntryType.ROWDATA) return null;
+        if (entry.getEntryType() != CanalEntry.EntryType.ROWDATA) {
+            return null;
 
+        }
         CanalEntry.RowChange rowChange = null;
         try {
             rowChange = CanalEntry.RowChange.parseFrom(entry.getStoreValue());
@@ -63,7 +65,9 @@ public class CanalRowConverter implements EventConverter {
         }
         //query
         CanalEntry.EventType eventType = rowChange.getEventType();
-        if (eventType == CanalEntry.EventType.QUERY) return null;
+        if (eventType == CanalEntry.EventType.QUERY) {
+            return null;
+        }
         List<MessageEvent> events = new ArrayList<>();
 
         Date opTs = new Date(entry.getHeader().getExecuteTime());

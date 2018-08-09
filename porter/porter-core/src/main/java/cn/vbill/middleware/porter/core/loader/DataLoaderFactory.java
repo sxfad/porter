@@ -40,6 +40,10 @@ import java.util.List;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月06日 10:20
  */
 public enum DataLoaderFactory {
+
+    /**
+     * instance
+     */
     INSTANCE();
     private final List<DataLoader> LOADER_TEMPLATE = SpringFactoriesLoader.loadFactories(DataLoader.class, JavaFileCompiler.getInstance());
     private static final Logger LOGGER = LoggerFactory.getLogger(DataLoaderFactory.class);

@@ -59,7 +59,9 @@ public class OggJsonConverter implements EventConverter {
 
         EventType eventType = EventType.type(obj.getString("op_type"));
         //不能解析的事件跳过
-        if (null == eventType ||  eventType == EventType.UNKNOWN) return null;
+        if (null == eventType ||  eventType == EventType.UNKNOWN) {
+            return null;
+        }
         //body
         MessageEvent event = new MessageEvent();
         String schemaAndTable = obj.getString("table");
@@ -84,7 +86,9 @@ public class OggJsonConverter implements EventConverter {
         }
 
         JSONArray pkeys = obj.containsKey("primary_keys") ? obj.getJSONArray("primary_keys") : null;
-        if (null != pkeys) event.setPrimaryKeys(pkeys.toJavaList(String.class));
+        if (null != pkeys) {
+            event.setPrimaryKeys(pkeys.toJavaList(String.class));
+        }
         event.setBefore(obj.getObject("before", Map.class));
         event.setAfter(obj.getObject("after", Map.class));
         event.setRowPosition(position);

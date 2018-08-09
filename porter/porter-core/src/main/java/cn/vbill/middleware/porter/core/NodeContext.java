@@ -17,12 +17,12 @@
 
 package cn.vbill.middleware.porter.core;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import cn.vbill.middleware.porter.common.cluster.data.DNode;
 import cn.vbill.middleware.porter.common.dic.NodeHealthLevel;
-import cn.vbill.middleware.porter.common.node.Node;
 import cn.vbill.middleware.porter.common.dic.NodeStatusType;
+import cn.vbill.middleware.porter.common.node.Node;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.context.ApplicationContext;
@@ -39,7 +39,11 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月24日 16:03
  */
-public enum  NodeContext {
+public enum NodeContext {
+
+    /**
+     * INSTANCE
+     */
     INSTANCE();
     private final ReadWriteLock nodeLock = new ReentrantReadWriteLock();
     private final Node node = new Node();
@@ -217,6 +221,7 @@ public enum  NodeContext {
      * 粗粒度的node lock加上细粒度的workUsed乐观锁
      * 如果申请work失败，则丧失执行任务的机会
      * 最坏结果是所有运行节点都没有资源用于执行该任务
+     *
      * @return
      */
     public boolean acquireWork() {
@@ -238,6 +243,7 @@ public enum  NodeContext {
 
     /**
      * 释放work资源
+     *
      * @return
      */
     public void releaseWork() {
@@ -375,6 +381,7 @@ public enum  NodeContext {
         object.put("consumerIdle", Collections.unmodifiableMap(consumerIdle));
         return object.toJSONString();
     }
+
     public String[] getEnvironment() {
         return context.getEnvironment().getActiveProfiles();
     }

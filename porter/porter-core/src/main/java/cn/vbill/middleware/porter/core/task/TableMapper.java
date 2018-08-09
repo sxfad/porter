@@ -133,17 +133,23 @@ public class TableMapper {
     public TableMapper toUpperCase() {
         if (null != updateDate && updateDate.length == 2) {
             updateDate[0] = updateDate[0].toUpperCase();
-            if (ignoreTargetCase) updateDate[1] = updateDate[1].toUpperCase();
+            if (ignoreTargetCase) {
+                updateDate[1] = updateDate[1].toUpperCase();
+            }
         }
 
         if (null != table && table.length == 2) {
             table[0] = table[0].toUpperCase();
-            if (ignoreTargetCase) table[1] = table[1].toUpperCase();
+            if (ignoreTargetCase) {
+                table[1] = table[1].toUpperCase();
+            }
         }
 
         if (null != schema && schema.length == 2) {
             schema[0] = schema[0].toUpperCase();
-            if (ignoreTargetCase) schema[1] = schema[1].toUpperCase();
+            if (ignoreTargetCase) {
+                schema[1] = schema[1].toUpperCase();
+            }
         }
 
         if (null != column) {

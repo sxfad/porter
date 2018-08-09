@@ -44,6 +44,10 @@ import java.util.List;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月06日 10:09
  */
 public enum DataConsumerFactory {
+
+    /**
+     * INSTANCE
+     */
     INSTANCE();
     private final List<DataConsumer> CONSUMER_TEMPLATE = SpringFactoriesLoader.loadFactories(DataConsumer.class, JavaFileCompiler.getInstance());
     private static final Logger LOGGER = LoggerFactory.getLogger(DataConsumerFactory.class);
@@ -89,7 +93,9 @@ public enum DataConsumerFactory {
         List<SourceConfig> configs = SourceConfig.getConfig(config.getSource()).swamlanes();
         for (SourceConfig sourceConfig : configs) {
             Client tempClient = AbstractClient.getClient(sourceConfig);
-            if (null == tempClient || !(tempClient instanceof ConsumeClient)) throw new ClientException("ConsumeClient初始化失败:" + config.getSource());
+            if (null == tempClient || !(tempClient instanceof ConsumeClient)) {
+                throw new ClientException("ConsumeClient初始化失败:" + config.getSource());
+            }
             ConsumeClient consumeClient = (ConsumeClient) tempClient;
 
             //创建consumer对象
