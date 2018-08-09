@@ -30,6 +30,7 @@ import cn.vbill.middleware.porter.common.cluster.data.DCallback;
 import cn.vbill.middleware.porter.common.cluster.data.DObject;
 import cn.vbill.middleware.porter.common.cluster.data.DTaskStat;
 import cn.vbill.middleware.porter.common.exception.TaskStopTriggerException;
+import cn.vbill.middleware.porter.common.exception.WorkResourceAcquireException;
 import cn.vbill.middleware.porter.common.statistics.NodeLog;
 import cn.vbill.middleware.porter.common.statistics.TaskPerformance;
 import cn.vbill.middleware.porter.common.util.MachineUtils;
@@ -46,7 +47,6 @@ import cn.vbill.middleware.porter.task.load.LoadJob;
 import cn.vbill.middleware.porter.task.select.SelectJob;
 import cn.vbill.middleware.porter.task.transform.TransformJob;
 import com.alibaba.fastjson.JSON;
-import cn.vbill.middleware.porter.common.exception.WorkResourceAcquireException;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,7 +67,7 @@ import java.util.stream.Collectors;
  */
 public class TaskWork {
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskWork.class);
-    private final AtomicBoolean STAT = new AtomicBoolean(false);
+    private final AtomicBoolean stat = new AtomicBoolean(false);
 
     private final String taskId;
 
@@ -77,7 +77,7 @@ public class TaskWork {
     /**
      * stageType -> job
      */
-    private  final Map<StageType, StageJob> JOBS;
+    private final Map<StageType, StageJob> jobs;
     private final String basicThreadName;
 
     /**
@@ -105,17 +105,17 @@ public class TaskWork {
         this.worker = worker;
         this.receivers = Collections.unmodifiableList(receivers);
         TaskWork work = this;
-        JOBS = new LinkedHashMap<>();
+        jobs = new LinkedHashMap<>();
 
-        JOBS.put(StageType.SELECT, new SelectJob(work));
-        JOBS.put(StageType.EXTRACT, new ExtractJob(work));
-        JOBS.put(StageType.TRANSFORM, new TransformJob(work));
-        JOBS.put(StageType.LOAD, new LoadJob(work, positionCheckInterval, alarmPositionCount));
+        jobs.put(StageType.SELECT, new SelectJob(work));
+        jobs.put(StageType.EXTRACT, new ExtractJob(work));
+        jobs.put(StageType.TRANSFORM, new TransformJob(work));
+        jobs.put(StageType.LOAD, new LoadJob(work, positionCheckInterval, alarmPositionCount));
         /**
          * 源端数据源支持元数据查询
          */
         if (dataConsumer.supportMetaQuery()) {
-            JOBS.put(StageType.DB_CHECK, new AlertJob(work));
+            jobs.put(StageType.DB_CHECK, new AlertJob(work));
         }
 
         //从集群模块获取任务状态统计信息
@@ -130,12 +130,19 @@ public class TaskWork {
         }));
     }
 
+    /**
+     * stop
+     *
+     * @date 2018/8/9 下午2:15
+     * @param: []
+     * @return: void
+     */
     protected void stop() {
-        if (STAT.compareAndSet(true, false)) {
+        if (stat.compareAndSet(true, false)) {
             try {
                 LOGGER.info("终止执行任务[{}-{}]", taskId, dataConsumer.getSwimlaneId());
                 //终止阶段性工作,需要
-                for (Map.Entry<StageType, StageJob> jobs : JOBS.entrySet()) {
+                for (Map.Entry<StageType, StageJob> jobs : jobs.entrySet()) {
                     //确保每个阶段工作都被执行
                     try {
                         LOGGER.info("终止执行工作[{}-{}-{}]", taskId, dataConsumer.getSwimlaneId(), jobs.getValue().getClass().getSimpleName());
@@ -169,8 +176,15 @@ public class TaskWork {
         }
     }
 
+    /**
+     * start
+     *
+     * @date 2018/8/9 下午2:15
+     * @param: []
+     * @return: void
+     */
     protected void start() throws Exception {
-        if (STAT.compareAndSet(false, true)) {
+        if (stat.compareAndSet(false, true)) {
             LOGGER.info("开始执行任务[{}-{}]", taskId, dataConsumer.getSwimlaneId());
             //申请work资源
             if (!NodeContext.INSTANCE.acquireWork()) {
@@ -181,7 +195,7 @@ public class TaskWork {
             //会抛出分布式锁任务抢占异常
             ClusterProviderProxy.INSTANCE.broadcast(new TaskRegisterCommand(taskId, dataConsumer.getSwimlaneId()));
             //开始阶段性工作
-            for (Map.Entry<StageType, StageJob> jobs : JOBS.entrySet()) {
+            for (Map.Entry<StageType, StageJob> jobs : jobs.entrySet()) {
                 jobs.getValue().start();
             }
 
@@ -203,22 +217,50 @@ public class TaskWork {
         return basicThreadName;
     }
 
+    /**
+     * 等待Event
+     *
+     * @date 2018/8/9 下午2:15
+     * @param: [type]
+     * @return: T
+     */
     public <T> T waitEvent(StageType type) throws Exception {
-        return JOBS.get(type).output();
+        return jobs.get(type).output();
     }
+
+    /**
+     * 等待Sequence
+     *
+     * @date 2018/8/9 下午2:16
+     * @param: []
+     * @return: T
+     */
     public <T> T waitSequence() {
-        return ((ExtractJob) JOBS.get(StageType.EXTRACT)).getNextSequence();
+        return ((ExtractJob) jobs.get(StageType.EXTRACT)).getNextSequence();
     }
 
+    /**
+     * isPoolEmpty
+     *
+     * @date 2018/8/9 下午2:16
+     * @param: [type]
+     * @return: boolean
+     */
     public boolean isPoolEmpty(StageType type) {
-        return JOBS.get(type).isPoolEmpty();
+        return jobs.get(type).isPoolEmpty();
     }
-
 
     public String getTaskId() {
         return taskId;
     }
 
+    /**
+     * submitStat
+     *
+     * @date 2018/8/9 下午2:16
+     * @param: []
+     * @return: void
+     */
     public void submitStat() {
         stats.forEach((s, stat) -> {
             LOGGER.debug("stat before submit:{}", JSON.toJSONString(stat));
@@ -264,8 +306,13 @@ public class TaskWork {
         });
     }
 
-
-
+    /**
+     * 获取TableMapper
+     *
+     * @date 2018/8/9 下午2:17
+     * @param: [schema, table]
+     * @return: cn.vbill.middleware.porter.core.task.TableMapper
+     */
     public TableMapper getTableMapper(String schema, String table) {
         String key = schema + "." + table;
         TableMapper mapper = mappers.computeIfAbsent(key, s -> {
@@ -289,6 +336,13 @@ public class TaskWork {
         return mapper;
     }
 
+    /**
+     * 获取TaskStat
+     *
+     * @date 2018/8/9 下午2:18
+     * @param: [schema, table]
+     * @return: cn.vbill.middleware.porter.common.cluster.data.DTaskStat
+     */
     public DTaskStat getDTaskStat(String schema, String table) {
         String key = schema + "." + table;
         DTaskStat stat = stats.computeIfAbsent(key, s ->
@@ -297,10 +351,17 @@ public class TaskWork {
         return stat;
     }
 
-    public List<DTaskStat>  getStats() {
+    public List<DTaskStat> getStats() {
         return Collections.unmodifiableList(stats.values().stream().collect(Collectors.toList()));
     }
 
+    /**
+     * stopAndAlarm
+     *
+     * @date 2018/8/9 下午2:18
+     * @param: [notice]
+     * @return: void
+     */
     public void stopAndAlarm(final String notice) {
         if (stopTrigger.compareAndSet(false, true)) {
             new Thread("suixingpay-TaskStopByErrorTrigger-stopTask-" + taskId + "-" + dataConsumer.getSwimlaneId()) {

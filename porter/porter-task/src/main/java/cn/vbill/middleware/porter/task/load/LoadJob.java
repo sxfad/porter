@@ -85,7 +85,9 @@ public class LoadJob extends AbstractStageJob {
     @Override
     protected void doStop() {
         try {
-            if (null != positionCheckService) positionCheckService.shutdownNow();
+            if (null != positionCheckService) {
+                positionCheckService.shutdownNow();
+            }
             dataLoder.shutdown();
         } catch (Exception e) {
             e.printStackTrace();
@@ -104,7 +106,9 @@ public class LoadJob extends AbstractStageJob {
         ETLBucket bucket = null;
         do {
             //确保任务出错停止后不执行do{}逻辑
-            if (work.triggerStopped()) break;
+            if (work.triggerStopped()) {
+                break;
+            }
             //正常逻辑
             try {
                 bucket = work.waitEvent(StageType.TRANSFORM);
@@ -118,7 +122,9 @@ public class LoadJob extends AbstractStageJob {
                     //执行载入逻辑
                     Pair<Boolean, List<SubmitStatObject>> loadResult = dataLoder.load(bucket);
                     //逻辑执行失败
-                    if (!loadResult.getLeft()) throw new TaskStopTriggerException("批次" + bucket.getSequence() + "Load失败!");
+                    if (!loadResult.getLeft()) {
+                        throw new TaskStopTriggerException("批次" + bucket.getSequence() + "Load失败!");
+                    }
                     //提交批次消费同步点
                     if (null != bucket.getPosition()) {
                         LOGGER.debug("提交消费同步点到集群策略:{}", bucket.getPosition().render());
@@ -217,10 +223,14 @@ public class LoadJob extends AbstractStageJob {
                         stat.incrementErrorDeleteRow();
                     }
                     break;
+                default:
+                    break;
             }
 
             //更新最后执行消息事件的产生时间，用于计算从消息产生到加载如路时间、计算数据同步检查时间
-            if (null != object.getOpTime()) stat.setLastLoadedDataTime(object.getOpTime());
+            if (null != object.getOpTime()) {
+                stat.setLastLoadedDataTime(object.getOpTime());
+            }
             stat.setLastLoadedSystemTime(new Date());
             if (null != object.getPosition()) {
                 stat.setProgress(object.getPosition().render());

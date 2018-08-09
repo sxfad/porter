@@ -131,7 +131,9 @@ public class SelectJob extends AbstractStageJob {
                 NodeLog.upload(log, work.getReceivers());
                 lastNoneFetchNoticeTime = now;
             }
-            if (null == lastNoneFetchTime) lastNoneFetchTime = now;
+            if (null == lastNoneFetchTime) {
+                lastNoneFetchTime = now;
+            }
             NodeContext.INSTANCE.flushConsumerIdle(taskId, swimlaneId, nofetchTime);
         } catch (Throwable e) {
             e.printStackTrace();

@@ -36,6 +36,14 @@ import java.util.List;
 @Scope("singleton")
 public class ExtractorFactory {
     private final List<Extractor> extractors = SpringFactoriesLoader.loadFactories(Extractor.class, JavaFileCompiler.getInstance());
+
+    /**
+     * extract
+     *
+     * @date 2018/8/9 下午2:08
+     * @param: [bucket, metadata]
+     * @return: void
+     */
     public void extract(ETLBucket bucket, ExtractMetadata metadata) {
         for (Extractor extractor : extractors) {
             extractor.extract(bucket, metadata);

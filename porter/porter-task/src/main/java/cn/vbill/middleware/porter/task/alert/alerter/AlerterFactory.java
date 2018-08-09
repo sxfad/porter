@@ -59,6 +59,13 @@ public class AlerterFactory {
         }
     }
 
+    /**
+     * check
+     *
+     * @date 2018/8/9 下午2:02
+     * @param: [dataConsumer, dataLoader, work]
+     * @return: void
+     */
     public void check(DataConsumer dataConsumer, DataLoader dataLoader, TaskWork work) {
         //任务统计列表
         List<DTaskStat> stats = work.getStats();
@@ -104,7 +111,13 @@ public class AlerterFactory {
         }
     }
 
-
+    /**
+     * 获取CheckMeta
+     *
+     * @date 2018/8/9 下午2:03
+     * @param: [work, schema, table]
+     * @return: org.apache.commons.lang3.tuple.Triple<java.lang.String[],java.lang.String[],java.lang.String[]>
+     */
     private Triple<String[], String[], String[]> getCheckMeta(TaskWork work, String schema, String table) {
         TableMapper mapper = work.getTableMapper(schema, table);
         //初始化告警数据库查询信息

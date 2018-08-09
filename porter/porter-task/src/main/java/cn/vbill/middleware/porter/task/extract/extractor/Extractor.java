@@ -35,5 +35,12 @@ public interface Extractor {
         return 0;
     }
 
+    /**
+     * extract
+     *
+     * @date 2018/8/9 下午2:08
+     * @param: [bucket, metadata]
+     * @return: void
+     */
     void extract(ETLBucket bucket, ExtractMetadata metadata);
 }

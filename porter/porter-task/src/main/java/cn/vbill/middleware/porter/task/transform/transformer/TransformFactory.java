@@ -45,12 +45,26 @@ public class TransformFactory {
         sort();
     }
 
+    /**
+     * transform
+     *
+     * @date 2018/8/9 下午2:13
+     * @param: [bucket, work]
+     * @return: void
+     */
     public void transform(ETLBucket bucket, TaskWork work) throws Exception {
         for (Transformer transformer : extractors) {
             transformer.transform(bucket, work);
         }
     }
 
+    /**
+     * sort
+     *
+     * @date 2018/8/9 下午2:13
+     * @param: []
+     * @return: void
+     */
     private void sort() {
         if (isSort.compareAndSet(false, true)) {
             extractors.sort(Comparator.comparingInt(Transformer::order));
