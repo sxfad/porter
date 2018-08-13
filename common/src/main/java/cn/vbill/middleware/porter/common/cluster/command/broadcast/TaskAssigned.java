@@ -26,5 +26,11 @@ import cn.vbill.middleware.porter.common.cluster.command.TaskAssignedCommand;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月07日 15:36
  */
 public interface TaskAssigned {
+
+    /**
+     * taskAssigned
+     * @param command
+     * @throws Exception
+     */
     void taskAssigned(TaskAssignedCommand command) throws Exception;
 }

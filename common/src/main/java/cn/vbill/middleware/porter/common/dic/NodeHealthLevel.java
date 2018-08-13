@@ -26,6 +26,7 @@ import java.util.LinkedHashMap;
 
 /**
  * 节点健康级别
+ *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年04月02日 10:32
  * @version: V1.0
@@ -36,9 +37,26 @@ import java.util.LinkedHashMap;
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum NodeHealthLevel {
 
-    GREEN("GREEN", "正常"), YELLOW("YELLOW", "需要关注"), RED("RED", "异常");
+    /**
+     * 正常
+     */
+    GREEN("GREEN", "正常"),
 
+    /**
+     * 需要关注
+     */
+    YELLOW("YELLOW", "需要关注"),
+
+    /**
+     * 异常
+     */
+    RED("RED", "异常");
+
+    /**
+     * LINKMAP
+     */
     public static final HashMap<String, Object> LINKMAP = new LinkedHashMap<>();
+
     static {
         LINKMAP.put(GREEN.code, GREEN.name);
         LINKMAP.put(YELLOW.code, YELLOW.name);

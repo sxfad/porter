@@ -35,11 +35,25 @@ public class NormalAlertProvider implements  AlertProvider {
 
     }
 
+    /**
+     * notice
+     *
+     * @date 2018/8/10 下午2:47
+     * @param: [title, notice, receivers]
+     * @return: boolean
+     */
     public boolean notice(String title, String notice, List<AlertReceiver> receivers) {
         client.send(notice, title, receivers);
         return true;
     }
 
+    /**
+     * notice
+     *
+     * @date 2018/8/10 下午2:48
+     * @param: [title, notice]
+     * @return: boolean
+     */
     public boolean notice(String title, String notice) {
         return notice(title, notice, null);
     }

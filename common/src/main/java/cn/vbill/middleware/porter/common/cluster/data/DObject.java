@@ -21,22 +21,56 @@ import com.alibaba.fastjson.JSON;
 
 /**
  * 数据对象抽象
+ *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月20日 17:42
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月20日 17:42
  */
-public  abstract class DObject {
+public abstract class DObject {
+
+    /**
+     * DEFAULT_DATE_FORMAT
+     */
     public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+
+    /**
+     * toString
+     *
+     * @return
+     */
     public String toString() {
         return JSON.toJSONString(this);
     }
-    public static <T> T  fromString(String string, Class<T> clazz) {
+
+    /**
+     * fromString
+     *
+     * @param string
+     * @param clazz
+     * @param <T>
+     * @return
+     */
+    public static <T> T fromString(String string, Class<T> clazz) {
         return JSON.parseObject(string, clazz);
     }
+
+    /**
+     * merge
+     *
+     * @param data
+     * @param <T>
+     */
     public abstract <T> void merge(T data);
 
-    public  <T> T snapshot(Class<T> clazz) {
+    /**
+     * snapshot
+     *
+     * @param clazz
+     * @param <T>
+     * @return
+     */
+    public <T> T snapshot(Class<T> clazz) {
         return JSON.parseObject(JSON.toJSONString(this), clazz);
     }
 }

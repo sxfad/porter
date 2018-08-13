@@ -23,7 +23,7 @@ package cn.vbill.middleware.porter.common.db;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年03月01日 16:08
  */
-public enum  SqlErrorCode {
+public enum SqlErrorCode {
     //ORA-00904: "C3": 标识符无效
     ERROR_904(904),
     //ORA-00942: 表或视图不存在
@@ -41,6 +41,7 @@ public enum  SqlErrorCode {
     ERROR_17002(17002);
 
     public final int code;
+
     SqlErrorCode(int code) {
         this.code = code;
     }

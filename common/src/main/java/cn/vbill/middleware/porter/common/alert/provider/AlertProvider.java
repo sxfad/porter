@@ -25,7 +25,23 @@ import java.util.List;
  * 告警提供者接口定义
  */
 public interface AlertProvider {
+
+    /**
+     * notice
+     *
+     * @date 2018/8/10 下午2:47
+     * @param: [title, notice, receivers]
+     * @return: boolean
+     */
     boolean notice(String title, String notice, List<AlertReceiver> receivers);
+
+    /**
+     * notice
+     *
+     * @date 2018/8/10 下午2:47
+     * @param: [title, notice]
+     * @return: boolean
+     */
     boolean notice(String title, String notice);
 
 }

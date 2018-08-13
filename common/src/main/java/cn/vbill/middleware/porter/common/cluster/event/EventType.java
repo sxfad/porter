@@ -25,5 +25,29 @@ package cn.vbill.middleware.porter.common.cluster.event;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月18日 10:45
  */
 public enum  EventType {
-    UNKNOWN, NONE, ONLINE, OFFLINE, DATA_CHANGED;
+
+    /**
+     * UNKNOW
+     */
+    UNKNOWN,
+
+    /**
+     * NONE
+     */
+    NONE,
+
+    /**
+     * ONLINE
+     */
+    ONLINE,
+
+    /**
+     * OFFLINE
+     */
+    OFFLINE,
+
+    /**
+     * DATA_CHANGED
+     */
+    DATA_CHANGED;
 }

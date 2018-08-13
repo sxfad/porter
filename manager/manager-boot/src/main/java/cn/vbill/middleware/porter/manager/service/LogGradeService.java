@@ -30,15 +30,57 @@ import cn.vbill.middleware.porter.manager.web.page.Page;
  */
 public interface LogGradeService {
 
+    /**
+     * 新增
+     *
+     * @date 2018/8/10 上午11:54
+     * @param: [logGrade]
+     * @return: java.lang.Integer
+     */
     Integer insert(LogGrade logGrade);
 
+    /**
+     * 更新
+     *
+     * @date 2018/8/10 上午11:54
+     * @param: [id, logGrade]
+     * @return: java.lang.Integer
+     */
     Integer update(Long id, LogGrade logGrade);
 
+    /**
+     * 删除
+     *
+     * @date 2018/8/10 上午11:54
+     * @param: [id]
+     * @return: java.lang.Integer
+     */
     Integer delete(Long id);
 
+    /**
+     * 根据id查询
+     *
+     * @date 2018/8/10 上午11:54
+     * @param: [id]
+     * @return: cn.vbill.middleware.porter.manager.core.entity.LogGrade
+     */
     LogGrade selectById(Long id);
 
+    /**
+     * 分页
+     *
+     * @date 2018/8/10 上午11:54
+     * @param: [page]
+     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.entity.LogGrade>
+     */
     Page<LogGrade> page(Page<LogGrade> page);
 
+    /**
+     * select
+     *
+     * @date 2018/8/10 上午11:54
+     * @param: []
+     * @return: cn.vbill.middleware.porter.manager.core.entity.LogGrade
+     */
     LogGrade select();
 }

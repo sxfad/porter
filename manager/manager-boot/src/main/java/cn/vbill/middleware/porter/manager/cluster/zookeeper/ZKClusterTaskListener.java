@@ -91,7 +91,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
                     LOGGER.error("%s", e);
                 }
 
-                if (null == taskAndSwimlane || taskAndSwimlane.length != 2){
+                if (null == taskAndSwimlane || taskAndSwimlane.length != 2) {
                     return;
                 }
 

@@ -131,6 +131,15 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
         return getTable(schema, tableName, true);
     }
 
+    /**
+     * getTable
+     *
+     * @param schema
+     * @param tableName
+     * @param cache
+     * @return
+     * @throws Exception
+     */
     private TableSchema getTable(String schema, String tableName, boolean cache) throws Exception {
         List<String> keyList = Arrays.asList(schema, tableName);
         if (!cache) {
@@ -182,6 +191,15 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
         return uniqueValueQuery(sql, Integer.class, startTime, endTime);
     }
 
+    /**
+     * uniqueValueQuery
+     *
+     * @param sql
+     * @param returnType
+     * @param args
+     * @param <T>
+     * @return
+     */
     public  <T> T uniqueValueQuery(String sql, Class<T> returnType, Object... args) {
         //数组形式仅仅是为了处理回调代码块儿对final局部变量的要求
         List<T> results = new ArrayList<>(1);
@@ -201,7 +219,15 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
         return  null == results || results.isEmpty() ? null : results.get(0);
     }
 
-
+    /**
+     * batchUpdate
+     *
+     * @param sqlType
+     * @param sql
+     * @param batchArgs
+     * @return
+     * @throws TaskStopTriggerException
+     */
     public int[] batchUpdate(String sqlType, String sql, List<Object[]> batchArgs) throws TaskStopTriggerException {
         int[] affect = new int[]{};
         try {
@@ -213,7 +239,9 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
                 }
             });
         } catch (Throwable e) {
-            if (TaskStopTriggerException.isMatch(e)) throw new TaskStopTriggerException(e);
+            if (TaskStopTriggerException.isMatch(e)) {
+                throw new TaskStopTriggerException(e);
+            }
             e.printStackTrace();
         }
         if (null == affect || affect.length == 0) {
@@ -227,7 +255,15 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
         return affect;
     }
 
-
+    /**
+     * update
+     *
+     * @param type
+     * @param sql
+     * @param args
+     * @return
+     * @throws TaskStopTriggerException
+     */
     public int update(String type, String sql, Object... args) throws TaskStopTriggerException {
         int affect = 0;
         try {
@@ -239,7 +275,9 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
                 }
             });
         } catch (Throwable e) {
-            if (TaskStopTriggerException.isMatch(e)) throw new TaskStopTriggerException(e);
+            if (TaskStopTriggerException.isMatch(e)) {
+                throw new TaskStopTriggerException(e);
+            }
             e.printStackTrace();
         }
         if (affect < 1) {
@@ -250,17 +288,37 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
         return affect;
     }
 
+    /**
+     * query
+     *
+     * @param sql
+     * @param rch
+     * @param args
+     * @throws TaskStopTriggerException
+     */
     public void query(String sql, RowCallbackHandler rch, Object... args) throws TaskStopTriggerException {
         try {
             jdbcTemplate.query(sql, rch, args);
         } catch (DataAccessException accessException) {
             throw new TaskStopTriggerException(accessException);
         } catch (Throwable e) {
-            if (TaskStopTriggerException.isMatch(e)) throw new TaskStopTriggerException(e);
+            if (TaskStopTriggerException.isMatch(e)) {
+                throw new TaskStopTriggerException(e);
+            }
         }
     }
 
-
+    /**
+     * batchErroUpdate
+     *
+     * @param sqlType
+     * @param batchSize
+     * @param sql
+     * @param batchArgs
+     * @param from
+     * @param affect
+     * @throws TaskStopTriggerException
+     */
     private void batchErroUpdate(String sqlType, int batchSize, String sql, List<Object[]> batchArgs, int from, List<Integer> affect)
             throws TaskStopTriggerException {
         int size = batchArgs.size();
@@ -295,7 +353,9 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
             Arrays.stream(reGroupAffect).boxed().forEach(i -> affect.add(i));
         }
         //递归下次分组
-        if (batchEnd < size) batchErroUpdate(sqlType, batchSize, sql, batchArgs, from, affect);
+        if (batchEnd < size) {
+            batchErroUpdate(sqlType, batchSize, sql, batchArgs, from, affect);
+        }
     }
 
     @Override

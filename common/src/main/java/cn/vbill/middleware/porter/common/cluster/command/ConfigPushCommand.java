@@ -36,10 +36,25 @@ public abstract class ConfigPushCommand implements ClusterCommand {
     @Setter
     private ConfigPushType type;
 
+    /**
+     * render
+     *
+     * @return
+     */
     public abstract String render();
 
     public enum ConfigPushType {
-        LOG, ALERT;
+
+        /**
+         * LOG
+         */
+        LOG,
+
+        /**
+         * ALERT
+         *
+         */
+        ALERT;
 
         public boolean isLog() {
             return this == LOG;

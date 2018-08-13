@@ -21,14 +21,24 @@ import cn.vbill.middleware.porter.common.cluster.ClusterListenerFilter;
 import cn.vbill.middleware.porter.common.cluster.event.ClusterEvent;
 
 /**
- *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月20日 10:00
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月20日 10:00
  */
 public abstract class ZookeeperClusterListenerFilter implements ClusterListenerFilter {
+
+    /**
+     * 获取path
+     * @return
+     */
     protected abstract String getPath();
+
+    /**
+     * doFilter
+     * @param event
+     * @return
+     */
     protected abstract boolean doFilter(ZookeeperClusterEvent event);
 
     @Override

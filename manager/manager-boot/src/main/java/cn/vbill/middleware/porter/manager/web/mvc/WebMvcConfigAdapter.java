@@ -37,11 +37,21 @@ import java.util.List;
 @Configuration
 public class WebMvcConfigAdapter extends WebMvcConfigurerAdapter {
 
+    /**
+     * SWAGER_URL_PATTERNS
+     */
     public static final String SWAGER_URL_PATTERNS = "/swagger*/**,/v2/api-docs";
 
+    /**
+     * LOGIN_URL_PATTERNS
+     */
     public static final String LOGIN_URL_PATTERNS = "/manager/login,/manager/register";
 
+    /**
+     * ALARM_URL_PATTERNS
+     */
     public static final String ALARM_URL_PATTERNS = "/alarm/task/check,/manager/ogg/tables";
+
     @Autowired
     private XTokenInterceptor xtokenInterceptor;
 

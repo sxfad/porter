@@ -37,8 +37,19 @@ import lombok.Getter;
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum DbType {
 
-    MYSQL("MYSQL", "MYSQL", "com.mysql.cj.jdbc.Driver"), ORACLE("ORACLE", "ORACLE", "oracle.jdbc.driver.OracleDriver");
+    /**
+     * MYSQL
+     */
+    MYSQL("MYSQL", "MYSQL", "com.mysql.cj.jdbc.Driver"),
 
+    /**
+     * ORACLE
+     */
+    ORACLE("ORACLE", "ORACLE", "oracle.jdbc.driver.OracleDriver");
+
+    /**
+     * LINKMAP
+     */
     public static final HashMap<String, Object> LINKMAP = new LinkedHashMap<>();
     static {
         LINKMAP.put(MYSQL.code, MYSQL.name);

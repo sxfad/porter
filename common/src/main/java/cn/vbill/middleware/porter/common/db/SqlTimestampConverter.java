@@ -34,24 +34,29 @@ import java.util.Locale;
  *
  */
 public class SqlTimestampConverter implements Converter {
-    /** Field description */
-    public static final String[] DATE_FORMATS = new String[] {
-        "yyyy-MM-dd", "HH:mm:ss", "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd hh:mm:ss.fffffffff",
-        "EEE MMM dd HH:mm:ss zzz yyyy", DateFormatUtils.ISO_DATETIME_FORMAT.getPattern(),
-        DateFormatUtils.ISO_DATETIME_TIME_ZONE_FORMAT.getPattern(), DateFormatUtils.SMTP_DATETIME_FORMAT.getPattern(), };
+    /**
+     * Field description
+     */
+    public static final String[] DATE_FORMATS = new String[]{
+            "yyyy-MM-dd", "HH:mm:ss", "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd hh:mm:ss.fffffffff",
+            "EEE MMM dd HH:mm:ss zzz yyyy", DateFormatUtils.ISO_DATETIME_FORMAT.getPattern(),
+            DateFormatUtils.ISO_DATETIME_TIME_ZONE_FORMAT.getPattern(), DateFormatUtils.SMTP_DATETIME_FORMAT.getPattern(),};
 
+    /**
+     * SQL_TIMESTAMP
+     */
     public static final Converter SQL_TIMESTAMP = new SqlTimestampConverter(null);
     private static final Logger LOGGER = LoggerFactory.getLogger(SqlTimestampConverter.class);
 
     /**
      * The default value specified to our Constructor, if any.
      */
-    private final Object          defaultValue;
+    private final Object defaultValue;
 
     /**
      * Should we return the default value on conversion errors?
      */
-    private final boolean         useDefault;
+    private final boolean useDefault;
 
     /**
      * Create a {@link Converter} that will throw a {@link ConversionException} if a conversion error occurs.
@@ -74,9 +79,9 @@ public class SqlTimestampConverter implements Converter {
     /**
      * Convert the specified input object into an output object of the specified type.
      *
-     * @param type Data type to which this value should be converted
+     * @param type  Data type to which this value should be converted
      * @param value The input value to be converted
-     * @exception ConversionException if conversion cannot be performed successfully
+     * @throws ConversionException if conversion cannot be performed successfully
      */
     public Object convert(Class type, Object value) {
         if (value == null) {
@@ -111,6 +116,12 @@ public class SqlTimestampConverter implements Converter {
 
     }
 
+    /**
+     * convertTimestamp2TimeMillis
+     *
+     * @param input
+     * @return
+     */
     private Long convertTimestamp2TimeMillis(String input) {
         if (input == null) {
             return null;
@@ -136,6 +147,15 @@ public class SqlTimestampConverter implements Converter {
         }
     }
 
+    /**
+     * parseDate
+     *
+     * @param str
+     * @param parsePatterns
+     * @param locale
+     * @return
+     * @throws ParseException
+     */
     private Date parseDate(String str, String[] parsePatterns, Locale locale) throws ParseException {
         if ((str == null) || (parsePatterns == null)) {
             throw new IllegalArgumentException("Date and Patterns must not be null");

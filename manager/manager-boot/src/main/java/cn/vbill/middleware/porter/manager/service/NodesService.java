@@ -34,38 +34,150 @@ import cn.vbill.middleware.porter.manager.web.page.Page;
  */
 public interface NodesService {
 
+    /**
+     * 新增
+     *
+     * @date 2018/8/10 下午2:07
+     * @param: [nodes]
+     * @return: java.lang.Integer
+     */
     Integer insert(Nodes nodes);
 
+    /**
+     * 更新
+     *
+     * @date 2018/8/10 下午2:11
+     * @param: [id, nodes]
+     * @return: java.lang.Integer
+     */
     Integer update(Long id, Nodes nodes);
 
+    /**
+     * 删除
+     *
+     * @date 2018/8/10 下午2:11
+     * @param: [id]
+     * @return: java.lang.Integer
+     */
     Integer delete(Long id);
 
+    /**
+     * canel
+     *
+     * @date 2018/8/10 下午2:11
+     * @param: [id]
+     * @return: java.lang.Integer
+     */
     Integer cancel(Long id);
 
+    /**
+     * taskPushState
+     *
+     * @date 2018/8/10 下午2:11
+     * @param: [id, taskPushState]
+     * @return: java.lang.Integer
+     */
     Integer taskPushState(Long id, NodeStatusType taskPushState);
 
+    /**
+     * 根据id查询
+     *
+     * @date 2018/8/10 下午2:11
+     * @param: [id]
+     * @return: cn.vbill.middleware.porter.manager.core.entity.Nodes
+     */
     Nodes selectById(Long id);
 
+    /**
+     * 根据nodeid查询
+     *
+     * @date 2018/8/10 下午2:12
+     * @param: [nodeId]
+     * @return: cn.vbill.middleware.porter.manager.core.entity.Nodes
+     */
     Nodes selectByNodeId(String nodeId);
 
+    /**
+     * 分页
+     *
+     * @date 2018/8/10 下午2:12
+     * @param: [page, ipAddress, state, machineName]
+     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.entity.Nodes>
+     */
     Page<Nodes> page(Page<Nodes> page, String ipAddress, Integer state, String machineName);
 
+    /**
+     * insertState
+     *
+     * @date 2018/8/10 下午2:12
+     * @param: [node, heartBeatTime, state]
+     * @return: java.lang.Integer
+     */
     Integer insertState(DNode node, String heartBeatTime, Integer state);
 
+    /**
+     * updateState
+     *
+     * @date 2018/8/10 下午2:12
+     * @param: [node, heartBeatTime, state]
+     * @return: java.lang.Integer
+     */
     Integer updateState(DNode node, String heartBeatTime, Integer state);
 
+    /**
+     * 更新心跳时间
+     *
+     * @date 2018/8/10 下午2:13
+     * @param: [node, heartBeatTime]
+     * @return: java.lang.Integer
+     */
     Integer updateHeartBeatTime(DNode node, String heartBeatTime);
 
+    /**
+     * insertState
+     *
+     * @date 2018/8/10 下午2:13
+     * @param: [nodeId, machineName, ipAddress, pidNumber, taskPushState, heartBeatTime, state]
+     * @return: java.lang.Integer
+     */
     Integer insertState(String nodeId, String machineName, String ipAddress, String pidNumber,
             NodeStatusType taskPushState, String heartBeatTime, Integer state);
 
+    /**
+     * updateState
+     *
+     * @date 2018/8/10 下午2:13
+     * @param: [nodeId, machineName, ipAddress, pidNumber, taskPushState, heartBeatTime, state]
+     * @return: java.lang.Integer
+     */
     Integer updateState(String nodeId, String machineName, String ipAddress, String pidNumber,
             NodeStatusType taskPushState, String heartBeatTime, Integer state);
 
+    /**
+     * 更新心跳时间
+     *
+     * @date 2018/8/10 下午2:13
+     * @param: [nodeId, machineName, ipAddress, pidNumber, taskPushState, heartBeatTime]
+     * @return: java.lang.Integer
+     */
     Integer updateHeartBeatTime(String nodeId, String machineName, String ipAddress, String pidNumber,
             NodeStatusType taskPushState, String heartBeatTime);
 
+    /**
+     * testNodeId
+     *
+     * @date 2018/8/10 下午2:14
+     * @param: [nodeId]
+     * @return: boolean
+     */
     boolean testNodeId(String nodeId);
 
+    /**
+     * selectList
+     *
+     * @date 2018/8/10 下午2:14
+     * @param: []
+     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.entity.Nodes>
+     */
     List<Nodes> selectList();
 }

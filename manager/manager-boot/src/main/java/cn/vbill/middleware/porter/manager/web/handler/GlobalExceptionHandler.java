@@ -39,6 +39,13 @@ public class GlobalExceptionHandler {
 
     private Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
+    /**
+     * inspector
+     * @param exception
+     * @param request
+     * @param response
+     * @return
+     */
     @ExceptionHandler(Exception.class)
     @ResponseBody
     public ResponseMessage inspector(Exception exception, HttpServletRequest request, HttpServletResponse response) {

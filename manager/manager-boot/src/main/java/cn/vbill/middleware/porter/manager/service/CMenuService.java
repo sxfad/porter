@@ -31,17 +31,66 @@ import java.util.List;
  */
 public interface CMenuService {
 
+    /**
+     * 生
+     *
+     * @date 2018/8/10 上午10:17
+     * @param: [roleCode]
+     * @return: cn.vbill.middleware.porter.manager.core.entity.CMenu
+     */
     CMenu menuTree(String roleCode);
 
+    /**
+     * 查询全部
+     *
+     * @date 2018/8/10 上午10:28
+     * @param: []
+     * @return: cn.vbill.middleware.porter.manager.core.entity.CMenu
+     */
     CMenu findAll();
 
+    /**
+     * 新增
+     *
+     * @date 2018/8/10 上午10:28
+     * @param: [cMenu]
+     * @return: java.lang.Integer
+     */
     Integer insert(CMenu cMenu);
 
+    /**
+     * 根据父节点查询
+     *
+     * @date 2018/8/10 上午10:28
+     * @param: [fatherCode]
+     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.entity.CMenu>
+     */
     List<CMenu> findByFatherCode(String fatherCode);
 
+    /**
+     * 更新
+     *
+     * @date 2018/8/10 上午10:33
+     * @param: [id, cMenu]
+     * @return: java.lang.Integer
+     */
     Integer update(Long id, CMenu cMenu);
 
+    /**
+     * 根据id查询
+     *
+     * @date 2018/8/10 上午10:33
+     * @param: [id]
+     * @return: cn.vbill.middleware.porter.manager.core.entity.CMenu
+     */
     CMenu findById(Long id);
 
+    /**
+     * 删除
+     *
+     * @date 2018/8/10 上午10:34
+     * @param: [id]
+     * @return: java.lang.Integer
+     */
     Integer delete(Long id);
 }

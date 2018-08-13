@@ -99,7 +99,7 @@ public class DbOracleSelectService implements DbSelectService {
 
     @Override
     public List<Object> page(DataSource dataSource, JDBCVo jvo, Page<Object> page, String sql, String prefix,
-            String tableName1) {
+                             String tableName1) {
         int begin = (page.getPageNo() - 1) * page.getPageSize();
         int end = page.getPageNo() * page.getPageSize();
         List<Object> list = new ArrayList<Object>();
@@ -128,7 +128,7 @@ public class DbOracleSelectService implements DbSelectService {
                 String prefixName = results.getString("prefixName");
                 String tableName = results.getString("tableName");
                 String tableAllName = results.getString("tableAllName");
-                String[] str = { prefixName, tableName, tableAllName };
+                String[] str = {prefixName, tableName, tableAllName};
                 list.add(str);
             }
         } catch (SQLException | ClassNotFoundException e) {

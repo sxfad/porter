@@ -45,6 +45,11 @@ public class ManagerBootApplication {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ManagerBootApplication.class);
 
+    /**
+     * 入口
+     * @param args
+     * @throws Exception
+     */
     public static void main(String[] args) throws Exception {
         SpringApplication app = new SpringApplication(ManagerBootApplication.class);
         app.setBannerMode(Banner.Mode.OFF);
@@ -64,6 +69,10 @@ public class ManagerBootApplication {
         }
     }
 
+    /**
+     * hehe
+     * @return
+     */
     private static String print() {
         StringBuffer sb = new StringBuffer();
         sb.append("                        \n");

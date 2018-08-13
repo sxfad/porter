@@ -31,7 +31,21 @@ import java.util.List;
  */
 public interface CRoleMapper {
 
+    /**
+     * 查询所有
+     *
+     * @date 2018/8/9 下午6:14
+     * @param: []
+     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.entity.CRole>
+     */
     List<CRole> findAll();
 
+    /**
+     * 查询类表
+     *
+     * @date 2018/8/9 下午6:15
+     * @param: []
+     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.entity.CRole>
+     */
     List<CRole> findList();
 }

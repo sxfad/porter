@@ -31,6 +31,14 @@ import java.util.Map;
  */
 public class BeanUtils {
 
+    /**
+     * copyProperties
+     * @param source
+     * @param target
+     * @param ignoreProperties
+     * @throws InvocationTargetException
+     * @throws IllegalAccessException
+     */
     public static void copyProperties(Map<String, String> source, Object target, String... ignoreProperties)
             throws InvocationTargetException, IllegalAccessException {
         PropertyDescriptor[] targetPds = org.springframework.beans.BeanUtils.getPropertyDescriptors(target.getClass());

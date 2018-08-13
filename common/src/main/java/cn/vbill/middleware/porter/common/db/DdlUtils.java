@@ -74,11 +74,34 @@ public class DdlUtils {
         DEFAULT_SIZES.put(Integer.valueOf(2), "15,15");
     }
 
+    /**
+     * findTable
+     *
+     * @param jdbcTemplate
+     * @param catalogName
+     * @param schemaName
+     * @param tableName
+     * @param makePrimaryKeyWhenNo
+     * @return
+     * @throws DataAccessException
+     */
     public static Table findTable(JdbcTemplate jdbcTemplate, final String catalogName, final String schemaName,
                                   final String tableName, boolean makePrimaryKeyWhenNo) throws DataAccessException {
         return findTable(jdbcTemplate, catalogName, schemaName, tableName, null, makePrimaryKeyWhenNo);
     }
 
+    /**
+     * findTable
+     *
+     * @param jdbcTemplate
+     * @param catalogName
+     * @param schemaName
+     * @param tableName
+     * @param filter
+     * @param makePrimaryKeyWhenNo
+     * @return
+     * @throws DataAccessException
+     */
     private static Table findTable(final JdbcTemplate jdbcTemplate, final String catalogName, final String schemaName,
                                    final String tableName, final DdlUtilsFilter filter, boolean makePrimaryKeyWhenNo) throws DataAccessException {
         return (Table) jdbcTemplate.execute(new ConnectionCallback() {
@@ -141,7 +164,9 @@ public class DdlUtils {
                     LOGGER.error(e.getMessage(), e);
                 }
 
-                if (makePrimaryKeyWhenNo) makeAllColumnsPrimaryKeysIfNoPrimaryKeysFound(table);
+                if (makePrimaryKeyWhenNo) {
+                    makeAllColumnsPrimaryKeysIfNoPrimaryKeysFound(table);
+                }
                 if (isDRDS) {
                     makeDRDSShardColumnsAsPrimaryKeys(table, jdbcTemplate, catalogName, schemaName, tableName);
                 }
@@ -163,6 +188,15 @@ public class DdlUtils {
         }
     }
 
+    /**
+     * makeDRDSShardColumnsAsPrimaryKeys
+     *
+     * @param table
+     * @param jdbcTemplate
+     * @param catalogName
+     * @param schemaName
+     * @param tableName
+     */
     private static void makeDRDSShardColumnsAsPrimaryKeys(Table table, final JdbcTemplate jdbcTemplate,
                                                           final String catalogName, final String schemaName,
                                                           final String tableName) {
@@ -230,6 +264,14 @@ public class DdlUtils {
         }
     }
 
+    /**
+     * readTable
+     *
+     * @param metaData
+     * @param values
+     * @return
+     * @throws SQLException
+     */
     private static Table readTable(DatabaseMetaDataWrapper metaData, Map<String, Object> values) throws SQLException {
         String tableName = (String) values.get("TABLE_NAME");
         Table table = null;
@@ -263,6 +305,11 @@ public class DdlUtils {
         return table;
     }
 
+    /**
+     * initColumnsForTable
+     *
+     * @return
+     */
     private static List<MetaDataColumnDescriptor> initColumnsForTable() {
         List<MetaDataColumnDescriptor> result = new ArrayList<MetaDataColumnDescriptor>();
 
@@ -275,6 +322,11 @@ public class DdlUtils {
         return result;
     }
 
+    /**
+     * initColumnsForColumn
+     *
+     * @return
+     */
     private static List<MetaDataColumnDescriptor> initColumnsForColumn() {
         List<MetaDataColumnDescriptor> result = new ArrayList<MetaDataColumnDescriptor>();
 
@@ -300,6 +352,11 @@ public class DdlUtils {
         return result;
     }
 
+    /**
+     * initColumnsForPK
+     *
+     * @return
+     */
     private static List<MetaDataColumnDescriptor> initColumnsForPK() {
         List<MetaDataColumnDescriptor> result = new ArrayList<MetaDataColumnDescriptor>();
 
@@ -316,6 +373,14 @@ public class DdlUtils {
         return result;
     }
 
+    /**
+     * readColumns
+     *
+     * @param metaData
+     * @param tableName
+     * @return
+     * @throws SQLException
+     */
     private static List<Column> readColumns(DatabaseMetaDataWrapper metaData, String tableName) throws SQLException {
         ResultSet columnData = null;
 
@@ -339,6 +404,14 @@ public class DdlUtils {
         }
     }
 
+    /**
+     * readColumn
+     *
+     * @param metaData
+     * @param values
+     * @return
+     * @throws SQLException
+     */
     private static Column readColumn(DatabaseMetaDataWrapper metaData, Map<String, Object> values) throws SQLException {
         Column column = new Column();
 
@@ -407,6 +480,14 @@ public class DdlUtils {
         return column;
     }
 
+    /**
+     * readColumns
+     *
+     * @param resultSet
+     * @param columnDescriptors
+     * @return
+     * @throws SQLException
+     */
     private static Map<String, Object> readColumns(ResultSet resultSet, List<MetaDataColumnDescriptor> columnDescriptors)
             throws SQLException {
         Map<String, Object> values = new HashMap<String, Object>();
@@ -420,6 +501,14 @@ public class DdlUtils {
         return values;
     }
 
+    /**
+     * readPrimaryKeyNames
+     *
+     * @param metaData
+     * @param tableName
+     * @return
+     * @throws SQLException
+     */
     private static Collection<String> readPrimaryKeyNames(DatabaseMetaDataWrapper metaData, String tableName)
             throws SQLException {
         ResultSet pkData = null;
@@ -439,6 +528,14 @@ public class DdlUtils {
         }
     }
 
+    /**
+     * readPrimaryKeyName
+     *
+     * @param metaData
+     * @param values
+     * @return
+     * @throws SQLException
+     */
     private static String readPrimaryKeyName(DatabaseMetaDataWrapper metaData, Map<String, Object> values)
             throws SQLException {
         return (String) values.get("COLUMN_NAME");

@@ -32,16 +32,58 @@ import cn.vbill.middleware.porter.manager.web.page.Page;
  */
 public interface JobTaskNodesService {
 
+    /**
+     * 新增
+     *
+     * @date 2018/8/10 上午11:39
+     * @param: [jobTaskNodes]
+     * @return: java.lang.Integer
+     */
     Integer insert(JobTaskNodes jobTaskNodes);
 
+    /**
+     * 新增列表
+     *
+     * @date 2018/8/10 上午11:40
+     * @param: [jobTasks]
+     * @return: void
+     */
     void insertList(JobTasks jobTasks);
 
+    /**
+     * 更新
+     *
+     * @date 2018/8/10 上午11:40
+     * @param: [id, jobTaskNodes]
+     * @return: java.lang.Integer
+     */
     Integer update(Long id, JobTaskNodes jobTaskNodes);
 
+    /**
+     * 删除
+     *
+     * @date 2018/8/10 上午11:40
+     * @param: [jobTaskId]
+     * @return: java.lang.Integer
+     */
     Integer delete(Long jobTaskId);
 
+    /**
+     * 根据id查找
+     *
+     * @date 2018/8/10 上午11:40
+     * @param: [jobTaskId]
+     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.entity.JobTaskNodes>
+     */
     List<JobTaskNodes> selectById(Long jobTaskId);
 
+    /**
+     * 分页
+     *
+     * @date 2018/8/10 上午11:40
+     * @param: [page]
+     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.entity.JobTaskNodes>
+     */
     Page<JobTaskNodes> page(Page<JobTaskNodes> page);
 
 }

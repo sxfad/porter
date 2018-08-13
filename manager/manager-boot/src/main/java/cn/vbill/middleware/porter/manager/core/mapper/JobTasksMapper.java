@@ -97,7 +97,22 @@ public interface JobTasksMapper {
      */
     Integer updateState(@Param("id") Long id, @Param("code") String code);
 
+    /**
+     * selectList
+     *
+     * @date 2018/8/9 下午6:15
+     * @param: []
+     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.entity.JobTasks>
+     */
     List<JobTasks> selectList();
 
+    /**
+     * selectJobNameList
+     *
+     * @author FuZizheng
+     * @date 2018/8/9 下午6:15
+     * @param: []
+     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.entity.JobTasks>
+     */
     List<JobTasks> selectJobNameList();
 }

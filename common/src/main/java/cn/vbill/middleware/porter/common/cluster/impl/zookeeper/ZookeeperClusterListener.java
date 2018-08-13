@@ -17,9 +17,9 @@
 
 package cn.vbill.middleware.porter.common.cluster.impl.zookeeper;
 
+import cn.vbill.middleware.porter.common.client.Client;
 import cn.vbill.middleware.porter.common.client.impl.ZookeeperClient;
 import cn.vbill.middleware.porter.common.cluster.ClusterListener;
-import cn.vbill.middleware.porter.common.client.Client;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,15 +30,23 @@ import org.slf4j.LoggerFactory;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月19日 16:24
  */
 public abstract class ZookeeperClusterListener implements ClusterListener {
-    protected static final  String PREFIX_ATALOG = "/suixingpay";
-    protected static final  String BASE_CATALOG = PREFIX_ATALOG + "/datas";
+    protected static final String PREFIX_ATALOG = "/suixingpay";
+    protected static final String BASE_CATALOG = PREFIX_ATALOG + "/datas";
     protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
     protected ZookeeperClient client;
+
+    /**
+     * listenPath
+     *
+     * @return
+     */
     public abstract String listenPath();
+
     @Override
     public String getName() {
         return listenPath();
     }
+
     @Override
     public void setClient(Client client) {
         this.client = (ZookeeperClient) client;
@@ -46,6 +54,7 @@ public abstract class ZookeeperClusterListener implements ClusterListener {
 
     /**
      * 是否监听listenPath
+     *
      * @return
      */
     public boolean watchListenPath() {

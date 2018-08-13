@@ -37,10 +37,23 @@ public class OggUtils {
 
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    /**
+     * OGG_TABLE
+     */
     public static Map<String, Long> OGG_TABLE = new HashMap<>();
 
+    /**
+     * INSTANCE
+     */
     public static OggUtils INSTANCE;
 
+    /**
+     * getInstance
+     *
+     * @date 2018/8/9 下午5:04
+     * @param: []
+     * @return: cn.vbill.middleware.porter.manager.core.init.OggUtils
+     */
     public static OggUtils getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new OggUtils();
@@ -48,11 +61,21 @@ public class OggUtils {
         return INSTANCE;
     }
 
+    /**
+     * init
+     */
     public void init() {
         logger.info("OggUtils init");
         this.loadOggTables();
     }
 
+    /**
+     * loadOggTables
+     *
+     * @date 2018/8/9 下午5:07
+     * @param: []
+     * @return: void
+     */
     private void loadOggTables() {
         OggTablesService oggTablesService = ApplicationContextUtil.getBean(OggTablesServiceImpl.class);
         List<OggTables> list = oggTablesService.ipTables(null, null);
@@ -62,6 +85,13 @@ public class OggUtils {
         }
     }
 
+    /**
+     * existOggTables
+     *
+     * @date 2018/8/9 下午5:08
+     * @param: [ip, table]
+     * @return: java.lang.Boolean
+     */
     public static Boolean existOggTables(String ip, String table) {
         String key = ip.toLowerCase() + "-" + table.toLowerCase();
         Boolean rekey = OGG_TABLE.containsKey(key);
@@ -78,6 +108,13 @@ public class OggUtils {
         return rekey;
     }
 
+    /**
+     * getOggTableId
+     *
+     * @date 2018/8/9 下午5:09
+     * @param: [ip, table]
+     * @return: java.lang.Long
+     */
     public static Long getOggTableId(String ip, String table) {
         String key = ip.toLowerCase() + "-" + table.toLowerCase();
         return OGG_TABLE.get(key);

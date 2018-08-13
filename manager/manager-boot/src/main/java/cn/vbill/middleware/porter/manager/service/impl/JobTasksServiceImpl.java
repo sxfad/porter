@@ -203,7 +203,7 @@ public class JobTasksServiceImpl implements JobTasksService {
 
     @Override
     public Page<JobTasks> page(Page<JobTasks> page, String jobName, String beginTime, String endTime,
-            TaskStatusType jobState, Integer jobType) {
+                               TaskStatusType jobState, Integer jobType) {
         String code = "";
         if (null != jobState) {
             code = jobState.getCode();
@@ -325,6 +325,12 @@ public class JobTasksServiceImpl implements JobTasksService {
         return taskConfig;
     }
 
+    /**
+     * receiver
+     *
+     * @param cusers
+     * @return
+     */
     private AlertReceiver[] receiver(List<CUser> cusers) {
         AlertReceiver[] alertReceivers = new AlertReceiver[cusers.size()];
         for (int i = 0; i < cusers.size(); i++) {
@@ -334,14 +340,20 @@ public class JobTasksServiceImpl implements JobTasksService {
         return alertReceivers;
     }
 
+    /**
+     * tableMapperList
+     *
+     * @param tables
+     * @return
+     */
     private List<TableMapperConfig> tableMapperList(List<JobTasksTable> tables) {
         List<TableMapperConfig> tableList = new ArrayList<>();
         TableMapperConfig tableMapperConfig = null;
         for (JobTasksTable jobTasksTable : tables) {
-            String[] schema = { jobTasksTable.getSourceTableName().split("[.]")[0],
-                    jobTasksTable.getTargetTableName().split("[.]")[0] };
-            String[] table = { jobTasksTable.getSourceTableName().split("[.]")[1],
-                    jobTasksTable.getTargetTableName().split("[.]")[1] };
+            String[] schema = {jobTasksTable.getSourceTableName().split("[.]")[0],
+                    jobTasksTable.getTargetTableName().split("[.]")[0]};
+            String[] table = {jobTasksTable.getSourceTableName().split("[.]")[1],
+                    jobTasksTable.getTargetTableName().split("[.]")[1]};
             Map<String, String> column = null;
             if (!jobTasksTable.isDirectMapTable()) {
                 column = fieldsMap(jobTasksTable.getFields());
@@ -354,6 +366,12 @@ public class JobTasksServiceImpl implements JobTasksService {
         return tableList;
     }
 
+    /**
+     * fieldsMap
+     *
+     * @param fields
+     * @return
+     */
     private Map<String, String> fieldsMap(List<JobTasksField> fields) {
         Map<String, String> map = new HashMap<>();
         for (JobTasksField jobTasksField : fields) {
@@ -362,6 +380,13 @@ public class JobTasksServiceImpl implements JobTasksService {
         return map;
     }
 
+    /**
+     * dataSourceMap
+     *
+     * @param id
+     * @param souDataSource
+     * @return
+     */
     private Map<String, String> dataSourceMap(Long id, DataSource souDataSource) {
         Map<String, String> sourceMap = new HashMap<>();
         List<DataSourcePlugin> plugins = souDataSource.getPlugins();

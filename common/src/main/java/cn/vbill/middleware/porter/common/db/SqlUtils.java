@@ -158,6 +158,14 @@ public class SqlUtils {
         }
     }
 
+    /**
+     * encoding
+     * @param source
+     * @param sqlType
+     * @param sourceEncoding
+     * @param targetEncoding
+     * @return
+     */
     public static String encoding(String source, int sqlType, String sourceEncoding, String targetEncoding) {
         switch (sqlType) {
             case Types.CHAR:
@@ -181,6 +189,8 @@ public class SqlUtils {
                     }
                     // }
                 }
+            default:
+                break;
         }
 
         return source;
@@ -328,6 +338,11 @@ public class SqlUtils {
                 || (Types.TINYINT == sqlType);
     }
 
+    /**
+     * isTextType
+     * @param sqlType
+     * @return
+     */
     public static boolean isTextType(int sqlType) {
         return sqlType == Types.CHAR || sqlType == Types.VARCHAR || sqlType == Types.CLOB || sqlType == Types.LONGVARCHAR
                 || sqlType == Types.NCHAR || sqlType == Types.NVARCHAR || sqlType == Types.NCLOB

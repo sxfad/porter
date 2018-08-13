@@ -79,7 +79,14 @@ public class CMenuServiceImpl implements CMenuService {
         return cmenuMapper.delete(id);
     }
 
-    //菜单树
+    /**
+     * 菜单树
+     *
+     * @author FuZizheng
+     * @date 2018/8/10 下午2:15
+     * @param: [menulist]
+     * @return: cn.vbill.middleware.porter.manager.core.entity.CMenu
+     */
     private CMenu parentMenu(List<CMenu> menulist) {
 
         CMenu parentMenu = new CMenu(0);
@@ -88,7 +95,14 @@ public class CMenuServiceImpl implements CMenuService {
         return parentMenu;
     }
 
-    //组装map
+    /**
+     * 组装map
+     *
+     * @author FuZizheng
+     * @date 2018/8/10 下午2:15
+     * @param: [menulist]
+     * @return: java.util.Map<java.lang.String,java.util.List<cn.vbill.middleware.porter.manager.core.entity.CMenu>>
+     */
     private Map<String, List<CMenu>> listtomap(List<CMenu> menulist) {
         Map<String, List<CMenu>> menuMap = new HashMap<>();
 
@@ -104,7 +118,14 @@ public class CMenuServiceImpl implements CMenuService {
         return menuMap;
     }
 
-    //递归方法
+    /**
+     * 递归方法
+     *
+     * @author FuZizheng
+     * @date 2018/8/10 下午2:16
+     * @param: [fatherCode, menuMap]
+     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.entity.CMenu>
+     */
     private List<CMenu> menus(String fatherCode, Map<String, List<CMenu>> menuMap) {
         List<CMenu> childlist = menuMap.get(fatherCode);
         if (childlist == null || childlist.isEmpty()) {
@@ -118,7 +139,6 @@ public class CMenuServiceImpl implements CMenuService {
             cMenu.setMenus(menus(cMenu.getCode(), menuMap));
         }
         return childlist;
-
     }
 
 }

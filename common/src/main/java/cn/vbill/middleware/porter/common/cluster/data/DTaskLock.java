@@ -50,10 +50,18 @@ public class DTaskLock extends DObject {
     public <T> void merge(T data) {
         DTaskLock lock = (DTaskLock) data;
         if (taskId.equals(lock.getTaskId()) && lock.getSwimlaneId().equals(swimlaneId)) {
-            if (!StringUtils.isBlank(lock.nodeId)) this.nodeId = lock.nodeId;
-            if (!StringUtils.isBlank(lock.address)) this.address = lock.address;
-            if (!StringUtils.isBlank(lock.hostName)) this.hostName = lock.hostName;
-            if (!StringUtils.isBlank(lock.processId)) this.processId = lock.processId;
+            if (!StringUtils.isBlank(lock.nodeId)) {
+                this.nodeId = lock.nodeId;
+            }
+            if (!StringUtils.isBlank(lock.address)) {
+                this.address = lock.address;
+            }
+            if (!StringUtils.isBlank(lock.hostName)) {
+                this.hostName = lock.hostName;
+            }
+            if (!StringUtils.isBlank(lock.processId)) {
+                this.processId = lock.processId;
+            }
         }
     }
 }

@@ -32,15 +32,57 @@ import java.util.Map;
  */
 public interface DictionaryService {
 
+    /**
+     * 新增
+     *
+     * @date 2018/8/10 上午11:37
+     * @param: [dictionary]
+     * @return: java.lang.Integer
+     */
     Integer insert(Dictionary dictionary);
 
+    /**
+     * 更新
+     *
+     * @date 2018/8/10 上午11:37
+     * @param: [id, dictionary]
+     * @return: java.lang.Integer
+     */
     Integer update(Long id, Dictionary dictionary);
 
+    /**
+     * 删除
+     *
+     * @date 2018/8/10 上午11:37
+     * @param: [id]
+     * @return: java.lang.Integer
+     */
     Integer delete(Long id);
 
+    /**
+     * 根据id查找
+     *
+     * @date 2018/8/10 上午11:37
+     * @param: [id]
+     * @return: cn.vbill.middleware.porter.manager.core.entity.Dictionary
+     */
     Dictionary selectById(Long id);
 
+    /**
+     * 分页
+     *
+     * @date 2018/8/10 上午11:37
+     * @param: [page]
+     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.entity.Dictionary>
+     */
     Page<Dictionary> page(Page<Dictionary> page);
 
+    /**
+     * selectMap
+     *
+     * @date 2018/8/10 上午11:37
+     * @param: []
+     * @return: java.util.Map<java.lang.String,java.util.Map<java.lang.String,java.lang.Object>>
+     */
     Map<String, Map<String, Object>> selectMap();
 }

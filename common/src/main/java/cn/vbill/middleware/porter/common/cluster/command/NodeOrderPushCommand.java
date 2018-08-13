@@ -44,6 +44,11 @@ public class NodeOrderPushCommand implements ClusterCommand {
     @Setter
     private NodeCommandConfig config;
 
+    /**
+     * render
+     *
+     * @return
+     */
     public String render() {
         return JSONObject.toJSONString(config);
     }

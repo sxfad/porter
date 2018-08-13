@@ -26,17 +26,23 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 公共客户端资源容器
+ *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月14日 10:37
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月14日 10:37
  */
 public enum PublicClientContext {
+
+    /**
+     * INSTANCE
+     */
     INSTANCE();
     private final Map<String, Client> allSources = new ConcurrentHashMap<>();
 
     /**
      * 初始化公用DataSource
+     *
      * @param configs
      */
     public void initialize(List<Pair<String, SourceConfig>> configs) throws Exception {
@@ -48,6 +54,13 @@ public enum PublicClientContext {
         }
     }
 
+    /**
+     * 获取Source
+     *
+     * @date 2018/8/10 下午2:59
+     * @param: [sourceName]
+     * @return: cn.vbill.middleware.porter.common.client.Client
+     */
     public Client getSource(String sourceName) {
         return allSources.getOrDefault(sourceName, null);
     }

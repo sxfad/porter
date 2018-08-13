@@ -26,6 +26,14 @@ import cn.vbill.middleware.porter.manager.core.icon.HomeBlockResult;
  */
 public interface HomeService {
 
+    /**
+     * bolck
+     *
+     * @author FuZizheng
+     * @date 2018/8/10 上午11:38
+     * @param: []
+     * @return: cn.vbill.middleware.porter.manager.core.icon.HomeBlockResult
+     */
     HomeBlockResult bolck();
 
 }

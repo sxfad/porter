@@ -38,8 +38,19 @@ import lombok.Getter;
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum NodeStatusType {
 
-    WORKING("WORKING", "工作中"), SUSPEND("SUSPEND", "已暂停");
+    /**
+     * 工作中
+     */
+    WORKING("WORKING", "工作中"),
 
+    /**
+     * 已暂停
+     */
+    SUSPEND("SUSPEND", "已暂停");
+
+    /**
+     * LINKMAP
+     */
     public static final HashMap<String, Object> LINKMAP = new LinkedHashMap<>();
     static {
         LINKMAP.put(WORKING.code, WORKING.name);

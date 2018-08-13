@@ -36,13 +36,25 @@ import java.util.stream.Collectors;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月06日 16:07
  */
 public class TableSchema {
-    @Setter @Getter private boolean noPrimaryKey = false;
-    @Setter @Getter private String schemaName;
-    @Setter @Getter private String tableName;
+    @Setter
+    @Getter
+    private boolean noPrimaryKey = false;
+    @Setter
+    @Getter
+    private String schemaName;
+    @Setter
+    @Getter
+    private String tableName;
     private final Map<String, TableColumn> columns = new ConcurrentHashMap<>();
     private final AtomicBoolean isUpperCased = new AtomicBoolean(false);
     //定义门栓,仅控制toUpperCase多线程访问逻辑
-    private final CountDownLatch  upperCased = new CountDownLatch(1);
+    private final CountDownLatch upperCased = new CountDownLatch(1);
+
+    /**
+     * findColumn
+     * @param columnsName
+     * @return
+     */
     public TableColumn findColumn(String columnsName) {
         return columns.getOrDefault(columnsName, null);
     }
@@ -52,11 +64,19 @@ public class TableSchema {
         return Collections.unmodifiableList(columns.values().stream().collect(Collectors.toList()));
     }
 
+    /**
+     * addColumn
+     * @param column
+     */
     public void addColumn(TableColumn column) {
         columns.put(column.getName(), column);
     }
 
-
+    /**
+     * toUpperCase
+     * @return
+     * @throws InterruptedException
+     */
     public final TableSchema toUpperCase() throws InterruptedException {
         //在if逻辑里打开门闩
         if (!isUpperCased.get() && isUpperCased.compareAndSet(false, true)) {

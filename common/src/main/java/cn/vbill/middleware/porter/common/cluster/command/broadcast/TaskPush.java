@@ -26,5 +26,11 @@ import cn.vbill.middleware.porter.common.cluster.command.TaskPushCommand;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月07日 15:43
  */
 public interface TaskPush {
+
+    /**
+     * push
+     * @param command
+     * @throws Exception
+     */
     void push(TaskPushCommand command) throws Exception;
 }

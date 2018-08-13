@@ -26,5 +26,12 @@ import cn.vbill.middleware.porter.common.cluster.command.TaskStopCommand;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月07日 15:43
  */
 public interface TaskStop {
+
+    /**
+     * stopTask
+     *
+     * @param command
+     * @throws Exception
+     */
     void stopTask(TaskStopCommand command) throws Exception;
 }

@@ -33,15 +33,57 @@ import java.util.List;
  */
 public interface JobTasksTableService {
 
+    /**
+     * 新增
+     *
+     * @date 2018/8/10 上午11:49
+     * @param: [jobTasksTable]
+     * @return: java.lang.Integer
+     */
     Integer insert(JobTasksTable jobTasksTable);
 
+    /**
+     * 更新
+     *
+     * @date 2018/8/10 上午11:50
+     * @param: [id, jobTasksTable]
+     * @return: java.lang.Integer
+     */
     Integer update(Long id, JobTasksTable jobTasksTable);
 
+    /**
+     * 删除
+     *
+     * @date 2018/8/10 上午11:50
+     * @param: [id]
+     * @return: java.lang.Integer
+     */
     Integer delete(Long id);
 
+    /**
+     * 根据id查询
+     *
+     * @date 2018/8/10 上午11:50
+     * @param: [id]
+     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.entity.JobTasksTable>
+     */
     List<JobTasksTable> selectById(Long id);
 
+    /**
+     * 分页
+     *
+     * @date 2018/8/10 上午11:51
+     * @param: [page]
+     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.entity.JobTasksTable>
+     */
     Page<JobTasksTable> page(Page<JobTasksTable> page);
 
+    /**
+     * insertList
+     *
+     * @date 2018/8/10 上午11:51
+     * @param: [jobTasks]
+     * @return: void
+     */
     void insertList(JobTasks jobTasks);
 }

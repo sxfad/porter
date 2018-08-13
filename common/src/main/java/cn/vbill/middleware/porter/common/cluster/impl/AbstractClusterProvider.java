@@ -17,6 +17,11 @@
 
 package cn.vbill.middleware.porter.common.cluster.impl;
 
+import cn.vbill.middleware.porter.common.client.Client;
+import cn.vbill.middleware.porter.common.client.ClusterClient;
+import cn.vbill.middleware.porter.common.cluster.ClusterListener;
+import cn.vbill.middleware.porter.common.cluster.ClusterMonitor;
+import cn.vbill.middleware.porter.common.cluster.ClusterProvider;
 import cn.vbill.middleware.porter.common.cluster.command.ClusterCommand;
 import cn.vbill.middleware.porter.common.cluster.command.ConfigPushCommand;
 import cn.vbill.middleware.porter.common.cluster.command.NodeOrderPushCommand;
@@ -45,18 +50,13 @@ import cn.vbill.middleware.porter.common.cluster.command.broadcast.TaskStatQuery
 import cn.vbill.middleware.porter.common.cluster.command.broadcast.TaskStatUpload;
 import cn.vbill.middleware.porter.common.cluster.command.broadcast.TaskStop;
 import cn.vbill.middleware.porter.common.cluster.command.broadcast.TaskStoppedByError;
+import cn.vbill.middleware.porter.common.config.ClusterConfig;
+import cn.vbill.middleware.porter.common.dic.ClusterPlugin;
+import cn.vbill.middleware.porter.common.exception.ClientException;
+import cn.vbill.middleware.porter.common.exception.ClientMatchException;
 import cn.vbill.middleware.porter.common.exception.ConfigParseException;
 import cn.vbill.middleware.porter.common.task.TaskEventListener;
 import cn.vbill.middleware.porter.common.task.TaskEventProvider;
-import cn.vbill.middleware.porter.common.client.Client;
-import cn.vbill.middleware.porter.common.client.ClusterClient;
-import cn.vbill.middleware.porter.common.cluster.ClusterListener;
-import cn.vbill.middleware.porter.common.cluster.ClusterMonitor;
-import cn.vbill.middleware.porter.common.cluster.ClusterProvider;
-import cn.vbill.middleware.porter.common.dic.ClusterPlugin;
-import cn.vbill.middleware.porter.common.config.ClusterConfig;
-import cn.vbill.middleware.porter.common.exception.ClientException;
-import cn.vbill.middleware.porter.common.exception.ClientMatchException;
 import cn.vbill.middleware.porter.common.util.compile.JavaFileCompiler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,6 +68,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * 集群提供者
+ *
  * @param <C>
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月14日 16:32
@@ -76,10 +77,33 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 public abstract class AbstractClusterProvider<C extends Client> implements ClusterProvider {
     private final AtomicBoolean status = new AtomicBoolean(false);
+
+    /**
+     * getMatchType
+     * @return
+     */
     protected abstract ClusterPlugin getMatchType();
+
+    /**
+     * newMonitor
+     * @return
+     */
     protected abstract ClusterMonitor newMonitor();
+
+    /**
+     * getClusterListenerClass
+     * @return
+     */
     protected abstract Class getClusterListenerClass();
+
+    /**
+     * initClient
+     * @param clusterConfig
+     * @return
+     * @throws ConfigParseException
+     */
     protected abstract C initClient(ClusterConfig clusterConfig) throws ConfigParseException;
+
     private C client;
     private ClusterMonitor monitor;
 
@@ -198,7 +222,14 @@ public abstract class AbstractClusterProvider<C extends Client> implements Clust
         }
     }
 
-
+    /**
+     * initialize
+     *
+     * @param config
+     * @throws ClientException
+     * @throws IOException
+     * @throws ConfigParseException
+     */
     private void initialize(ClusterConfig config) throws ClientException, IOException, ConfigParseException {
         client = initClient(config);
         if (null == client || !(client instanceof ClusterClient)) {

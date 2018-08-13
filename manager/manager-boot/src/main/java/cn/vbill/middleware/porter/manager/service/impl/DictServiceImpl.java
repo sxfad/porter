@@ -42,6 +42,9 @@ import java.util.Map;
 @Service
 public class DictServiceImpl implements DictService {
 
+    /**
+     * dictionaryService
+     */
     @Autowired
     public DictionaryService dictionaryService;
 

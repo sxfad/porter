@@ -132,6 +132,13 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements N
         };
     }
 
+    /**
+     * getDNode
+     *
+     * @date 2018/8/9 下午4:17
+     * @param: [nodePath]
+     * @return: cn.vbill.middleware.porter.common.cluster.data.DNode
+     */
     private DNode getDNode(String nodePath) {
         Pair<String, Stat> dataPair = client.getData(nodePath);
         return DNode.fromString(dataPair.getLeft(), DNode.class);

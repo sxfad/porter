@@ -45,6 +45,13 @@ public class TaskStopedController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskStopedController.class);
 
+    /**
+     * info
+     *
+     * @date 2018/8/9 下午4:27
+     * @param: [response]
+     * @return: void
+     */
     @GetMapping("/check")
     public void info(HttpServletResponse response) {
         Map<String, List<String>> tasks = ManagerContext.INSTANCE.getStoppedTasks();

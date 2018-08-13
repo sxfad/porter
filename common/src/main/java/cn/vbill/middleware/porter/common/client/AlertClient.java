@@ -28,5 +28,13 @@ import java.util.List;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月09日 15:46
  */
 public interface AlertClient extends Client {
+
+    /**
+     * send
+     *
+     * @date 2018/8/10 下午2:51
+     * @param: [notice, title, receivers]
+     * @return: void
+     */
     void send(String notice, String title, List<AlertReceiver> receivers);
 }

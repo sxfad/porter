@@ -60,7 +60,9 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
 
     @Override
     protected void doShutdown() throws InterruptedException {
-        if (null != zk) zk.close();
+        if (null != zk) {
+            zk.close();
+        }
     }
 
     @Override
@@ -116,6 +118,13 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
         return zk.exists(path, watch);
     }
 
+    /**
+     * isExists
+     *
+     * @param path
+     * @param watch
+     * @return
+     */
     public boolean isExists(String path, boolean watch) {
         try {
             Stat stat = zk.exists(path, watch);
@@ -127,7 +136,14 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
         }
     }
 
-
+    /**
+     * changeData
+     *
+     * @param path
+     * @param isTemp
+     * @param watch
+     * @param data
+     */
     public void  changeData(String path, boolean isTemp, boolean watch,  String data) {
         try {
             Stat stat = exists(path, watch);
@@ -142,6 +158,15 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
         }
     }
 
+    /**
+     * createWhenNotExists
+     *
+     * @param path
+     * @param isTemp
+     * @param watch
+     * @param data
+     * @return
+     */
     public Stat  createWhenNotExists(String path, boolean isTemp, boolean watch,  String data) {
         Stat stat = null;
         try {
@@ -178,6 +203,11 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
         return null != zk && null != zk.getState() && zk.getState().isConnected();
     }
 
+    /**
+     * canRestore
+     *
+     * @return
+     */
     private boolean canRestore() {
         return null != zk && zk.getState().isAlive();
     }

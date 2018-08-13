@@ -98,7 +98,9 @@ public class EmailClient  extends AbstractClient<EmailConfig> implements AlertCl
         LOGGER.info("开始发送邮件通知.....");
         String checkContent = new StringBuffer(StringUtils.trimToEmpty(notice)).append(StringUtils.trimToEmpty(title))
                 .toString();
-        if (!frequencyStat.canSend(checkContent)) return;
+        if (!frequencyStat.canSend(checkContent)) {
+            return;
+        }
         LOGGER.info("判断可以发送邮件通知.....");
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(getConfig().getUsername());

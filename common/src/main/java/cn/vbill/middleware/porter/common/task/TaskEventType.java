@@ -26,7 +26,16 @@ package cn.vbill.middleware.porter.common.task;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月19日 10:12
  */
 public  enum TaskEventType {
-    CREATE, DELETE;
+
+    /**
+     * CREATE
+     */
+    CREATE,
+
+    /**
+     * DELETE
+     */
+    DELETE;
     public boolean isCreate() {
         return this == TaskEventType.CREATE;
     }

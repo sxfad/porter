@@ -27,21 +27,21 @@ public class ProcessUtils {
     /**
      * 保持线程不退出
      */
-    public static void keepRunning() {
-        //默认不是守护进程
-        Thread keepingThread = new DefaultNamedThreadFactory("ProcessKeepRunning").newThread(new Runnable() {
-            @Override
-            public void run() {
-                while (true) {
-                    try {
-                        Thread.sleep(10000);
-                    } catch (InterruptedException e) {
-                        Thread.interrupted();
-                        e.printStackTrace();
-                    }
-                }
-            }
-        });
-        keepingThread.start();
-    }
+//    public static void keepRunning() {
+//        //默认不是守护进程
+//        Thread keepingThread = new DefaultNamedThreadFactory("ProcessKeepRunning").newThread(new Runnable() {
+//            @Override
+//            public void run() {
+//                while (true) {
+//                    try {
+//                        Thread.sleep(10000);
+//                    } catch (InterruptedException e) {
+//                        Thread.interrupted();
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//        });
+//        keepingThread.start();
+//    }
 }

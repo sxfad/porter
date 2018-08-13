@@ -125,6 +125,11 @@ public class ZookeeperClusterMonitor extends AbstractClusterMonitor implements W
         }
     }
 
+    /**
+     * triggerTreeEvent
+     *
+     * @param path
+     */
     private void triggerTreeEvent(String path) {
         //构造子节点集合
         List<String> localChildren = nodeChildren.computeIfAbsent(path, s -> new ArrayList<>());

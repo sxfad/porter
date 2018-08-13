@@ -40,10 +40,23 @@ public class ResourceUtils {
 
     private static ResourceUtils INSTANCE;
 
+    /**
+     * NODEIDNAME_MAP
+     */
     public static Map<String, String> NODEIDNAME_MAP = new HashMap<>();
 
+    /**
+     * JOBNAME_MAP
+     */
     public static Map<String, String> JOBNAME_MAP = new HashMap<>();
 
+    /**
+     * getInstance
+     *
+     * @date 2018/8/9 下午5:22
+     * @param: []
+     * @return: cn.vbill.middleware.porter.manager.core.init.ResourceUtils
+     */
     public static ResourceUtils getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new ResourceUtils();
@@ -51,6 +64,13 @@ public class ResourceUtils {
         return INSTANCE;
     }
 
+    /**
+     * init
+     *
+     * @date 2018/8/9 下午5:22
+     * @param: []
+     * @return: void
+     */
     public void init() {
         logger.info("ResourceUtils init");
         loadJobNameMap();
@@ -58,6 +78,13 @@ public class ResourceUtils {
 
     }
 
+    /**
+     * loadIpNameMap
+     *
+     * @date 2018/8/9 下午5:23
+     * @param: []
+     * @return: void
+     */
     private void loadIpNameMap() {
         NodesService nodesService = ApplicationContextUtil.getBean(NodesServiceImpl.class);
         List<Nodes> nodesList = nodesService.selectList();
@@ -66,6 +93,13 @@ public class ResourceUtils {
         }
     }
 
+    /**
+     * loadJobNameMap
+     *
+     * @date 2018/8/9 下午5:23
+     * @param: []
+     * @return: void
+     */
     private void loadJobNameMap() {
         JobTasksService jobTasksService = ApplicationContextUtil.getBean(JobTasksService.class);
         List<JobTasks> jobTasksList = jobTasksService.selectJobNameList();
@@ -74,6 +108,13 @@ public class ResourceUtils {
         }
     }
 
+    /**
+     * obtainNodeIp
+     *
+     * @date 2018/8/9 下午5:24
+     * @param: [nodeId]
+     * @return: java.lang.String
+     */
     public static String obtainNodeIp(String nodeId) {
         String name = NODEIDNAME_MAP.get(nodeId);
         if (name == null) {
@@ -85,6 +126,13 @@ public class ResourceUtils {
         return name;
     }
 
+    /**
+     * obtainJobName
+     *
+     * @date 2018/8/9 下午5:24
+     * @param: [jobId]
+     * @return: java.lang.String
+     */
     public static String obtainJobName(String jobId) {
         if (StringUtils.isEmpty(jobId)) {
             return "任务id为空";
@@ -107,6 +155,13 @@ public class ResourceUtils {
         return name;
     }
 
+    /**
+     * existJob
+     *
+     * @date 2018/8/9 下午5:24
+     * @param: [jobId]
+     * @return: java.lang.Boolean
+     */
     public static Boolean existJob(String jobId) {
         Boolean key = false;
         key = JOBNAME_MAP.containsKey(jobId);

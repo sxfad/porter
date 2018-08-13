@@ -36,8 +36,19 @@ import java.util.LinkedHashMap;
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum ConsumerPlugin {
 
-    CANAL("CanalFetch", "Canal"), KAFKA("KafkaFetch", "Kafka");
+    /**
+     * CANAL
+     */
+    CANAL("CanalFetch", "Canal"),
 
+    /**
+     * KAFKA
+     */
+    KAFKA("KafkaFetch", "Kafka");
+
+    /**
+     * LINKMAP
+     */
     public static final HashMap<String, Object> LINKMAP = new LinkedHashMap<>();
     static {
         LINKMAP.put("CANAL", CANAL.name);

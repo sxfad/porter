@@ -98,6 +98,11 @@ public class MrNodesScheduleServiceImpl implements MrNodesScheduleService {
         }
     }
 
+    /**
+     * dealDNodeSync
+     * @param nodeId
+     * @param mrNodesSchedule
+     */
     private void dealDNodeSync(String nodeId, MrNodesSchedule mrNodesSchedule) {
         MrNodesSchedule old = mrNodesScheduleMapper.selectByNodeId(nodeId);
         if (old == null || old.getId() == null) {

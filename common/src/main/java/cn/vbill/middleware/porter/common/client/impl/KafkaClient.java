@@ -249,6 +249,13 @@ public class KafkaClient extends AbstractClient<KafkaConfig> implements ConsumeC
             this.checksum = !StringUtils.isBlank(topic) && offset > -1 && partition > -1;
         }
 
+        /**
+         * getPosition
+         *
+         * @param position
+         * @return
+         * @throws TaskStopTriggerException
+         */
         private static KafkaPosition getPosition(String position) throws TaskStopTriggerException {
             try {
                 JSONObject object = JSONObject.parseObject(position);
@@ -271,6 +278,9 @@ public class KafkaClient extends AbstractClient<KafkaConfig> implements ConsumeC
         }
     }
 
+    /**
+     * commitLazyPosition
+     */
     private void commitLazyPosition() {
         //每次查询数据前都要提交
         lazyCommitOffsetMap.forEach((s, position) -> {

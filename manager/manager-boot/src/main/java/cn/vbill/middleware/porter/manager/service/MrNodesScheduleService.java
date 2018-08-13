@@ -31,14 +31,53 @@ import cn.vbill.middleware.porter.manager.web.page.Page;
  */
 public interface MrNodesScheduleService {
 
+    /**
+     * 新增
+     *
+     * @author FuZizheng
+     * @date 2018/8/10 下午2:06
+     * @param: [mrNodesSchedule]
+     * @return: java.lang.Integer
+     */
     Integer insert(MrNodesSchedule mrNodesSchedule);
 
+    /**
+     * 更新
+     *
+     * @author FuZizheng
+     * @date 2018/8/10 下午2:06
+     * @param: [id, mrNodesSchedule]
+     * @return: java.lang.Integer
+     */
     Integer update(Long id, MrNodesSchedule mrNodesSchedule);
 
+    /**
+     * 删除
+     *
+     * @author FuZizheng
+     * @date 2018/8/10 下午2:06
+     * @param: [id]
+     * @return: java.lang.Integer
+     */
     Integer delete(Long id);
 
+    /**
+     * 根据id查询
+     *
+     * @author FuZizheng
+     * @date 2018/8/10 下午2:06
+     * @param: [id]
+     * @return: cn.vbill.middleware.porter.manager.core.entity.MrNodesSchedule
+     */
     MrNodesSchedule selectById(Long id);
 
+    /**
+     * 分页
+     *
+     * @date 2018/8/10 下午2:06
+     * @param: [page, ipAddress, computerName]
+     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.entity.MrNodesSchedule>
+     */
     Page<MrNodesSchedule> page(Page<MrNodesSchedule> page, String ipAddress, String computerName);
 
     /** 节点监听. */

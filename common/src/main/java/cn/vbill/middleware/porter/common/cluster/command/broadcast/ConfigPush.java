@@ -26,5 +26,12 @@ import cn.vbill.middleware.porter.common.cluster.command.ConfigPushCommand;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月07日 15:43
  */
 public interface ConfigPush {
+
+    /**
+     * push
+     *
+     * @param command
+     * @throws Exception
+     */
     void push(ConfigPushCommand command) throws Exception;
 }

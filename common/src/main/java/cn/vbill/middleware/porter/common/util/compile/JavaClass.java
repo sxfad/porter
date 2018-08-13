@@ -34,10 +34,14 @@ import java.net.URLConnection;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年03月09日 14:47
  */
 
-public class JavaClass  implements JavaFile {
-    @Getter private final String filePath;
-    @Getter private final String className;
-    @Getter private final byte[] classData;
+public class JavaClass implements JavaFile {
+    @Getter
+    private final String filePath;
+    @Getter
+    private final String className;
+    @Getter
+    private final byte[] classData;
+
 
     public JavaClass(JavaFileConfig config) throws IOException {
         this.filePath = config.getContent();
@@ -45,6 +49,12 @@ public class JavaClass  implements JavaFile {
         classData = readClassData(filePath);
     }
 
+    /**
+     * readClassData
+     * @param filePath
+     * @return
+     * @throws IOException
+     */
     private byte[] readClassData(String filePath) throws IOException {
         URL myUrl = new File(filePath).toURI().toURL();
         URLConnection connection = myUrl.openConnection();

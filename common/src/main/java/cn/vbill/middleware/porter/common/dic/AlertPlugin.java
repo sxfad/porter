@@ -17,13 +17,12 @@
 
 package cn.vbill.middleware.porter.common.dic;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * 告警策略
@@ -38,11 +37,26 @@ import lombok.Getter;
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum AlertPlugin {
 
+    /**
+     * NONE
+     */
+    NONE("NONE", "无"),
+
+    /**
+     * EMAIL
+     */
     EMAIL("EMAIL", "邮件"),
 
+    /**
+     * MOBILE
+     */
     MOBILE("MOBILE", "手机号");
 
-    public static final Map<String, Object> LINKMAP = new LinkedHashMap<>() ;
+    /**
+     * LINKMAP
+     */
+    public static final Map<String, Object> LINKMAP = new LinkedHashMap<>();
+
     static {
         LINKMAP.put(EMAIL.code, EMAIL.name);
     }

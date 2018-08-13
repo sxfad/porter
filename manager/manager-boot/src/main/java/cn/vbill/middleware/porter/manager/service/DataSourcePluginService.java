@@ -33,17 +33,66 @@ import java.util.List;
  */
 public interface DataSourcePluginService {
 
+    /**
+     * 新增
+     *
+     * @date 2018/8/10 上午11:11
+     * @param: [dataSourcePlugin]
+     * @return: java.lang.Integer
+     */
     Integer insert(DataSourcePlugin dataSourcePlugin);
 
+    /**
+     * 更新
+     *
+     * @date 2018/8/10 上午11:11
+     * @param: [id, dataSourcePlugin]
+     * @return: java.lang.Integer
+     */
     Integer update(Long id, DataSourcePlugin dataSourcePlugin);
 
+    /**
+     * 删除
+     *
+     * @date 2018/8/10 上午11:11
+     * @param: [id]
+     * @return: java.lang.Integer
+     */
     Integer delete(Long id);
 
+    /**
+     * 根据id查询
+     *
+     * @date 2018/8/10 上午11:11
+     * @param: [id]
+     * @return: cn.vbill.middleware.porter.manager.core.entity.DataSourcePlugin
+     */
     DataSourcePlugin selectById(Long id);
 
+    /**
+     * 分页
+     *
+     * @date 2018/8/10 上午11:11
+     * @param: [page]
+     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.entity.DataSourcePlugin>
+     */
     Page<DataSourcePlugin> page(Page<DataSourcePlugin> page);
 
+    /**
+     * 条件查询
+     *
+     * @date 2018/8/10 上午11:11
+     * @param: [dataSource]
+     * @return: void
+     */
     void insertSelective(DataSource dataSource);
 
+    /**
+     * findListBySourceID
+     *
+     * @date 2018/8/10 上午11:11
+     * @param: [sourceId]
+     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.entity.DataSourcePlugin>
+     */
     List<DataSourcePlugin> findListBySourceID(Long sourceId);
 }

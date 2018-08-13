@@ -40,6 +40,9 @@ public abstract class AbstractClusterMonitor implements ClusterMonitor {
     protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
     protected final Map<String, ClusterListener> listeners = new LinkedHashMap<>();
 
+    /**
+     * doStart
+     */
     protected abstract void doStart();
 
     @Override
@@ -49,10 +52,14 @@ public abstract class AbstractClusterMonitor implements ClusterMonitor {
 
     @Override
     public void onEvent(ClusterEvent e) {
-        if (null == e || null == listeners || listeners.isEmpty()) return;
+        if (null == e || null == listeners || listeners.isEmpty()) {
+            return;
+        }
         for (ClusterListener listener : listeners.values()) {
             ClusterListenerFilter filter = listener.filter();
-            if (null == filter || filter.onFilter(e)) listener.onEvent(e);
+            if (null == filter || filter.onFilter(e)) {
+                listener.onEvent(e);
+            }
         }
     }
 

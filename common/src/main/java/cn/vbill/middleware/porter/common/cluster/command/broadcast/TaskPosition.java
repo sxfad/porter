@@ -28,6 +28,18 @@ import cn.vbill.middleware.porter.common.cluster.command.TaskPositionUploadComma
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月07日 15:43
  */
 public interface TaskPosition {
+
+    /**
+     * upload
+     * @param command
+     * @throws Exception
+     */
     void upload(TaskPositionUploadCommand command) throws Exception;
+
+    /**
+     * query
+     * @param command
+     * @throws Exception
+     */
     void query(TaskPositionQueryCommand command) throws Exception;
 }

@@ -117,6 +117,13 @@ public class MrJobTasksScheduleServiceImpl implements MrJobTasksScheduleService 
         return mrJobTasksScheduleMapper.list(jobId, heartBeatBeginDate, heartBeatEndDate);
     }
 
+    /**
+     * dealDTaskStatSync
+     *
+     * @date 2018/8/10 下午2:18
+     * @param: [jobId, swimlaneId, schemaTable, mrJobTasksSchedule]
+     * @return: void
+     */
     private void dealDTaskStatSync(String jobId, String swimlaneId, String schemaTable,
             MrJobTasksSchedule mrJobTasksSchedule) {
         MrJobTasksSchedule old = mrJobTasksScheduleMapper.selectByJobIdAndSwimlaneId(jobId, swimlaneId, schemaTable);

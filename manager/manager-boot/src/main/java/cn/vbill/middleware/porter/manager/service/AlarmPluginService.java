@@ -33,22 +33,85 @@ import java.util.List;
  */
 public interface AlarmPluginService {
 
+    /**
+     * 新增Alarm
+     *
+     * @date 2018/8/10 上午10:01
+     * @param: [alarm]
+     * @return: void
+     */
     void insert(Alarm alarm);
 
+    /**
+     * 新增AlarmPlugin
+     *
+     * @date 2018/8/10 上午10:01
+     * @param: [alarmPlugin]
+     * @return: java.lang.Integer
+     */
     Integer insert(AlarmPlugin alarmPlugin);
 
+    /**
+     * 更新
+     *
+     * @date 2018/8/10 上午10:01
+     * @param: [id, alarmPlugin]
+     * @return: java.lang.Integer
+     */
     Integer update(Long id, AlarmPlugin alarmPlugin);
 
+    /**
+     * 删除
+     *
+     * @date 2018/8/10 上午10:01
+     * @param: [id]
+     * @return: java.lang.Integer
+     */
     Integer delete(Long id);
 
+    /**
+     * 根据AlarmId删除
+     *
+     * @date 2018/8/10 上午10:02
+     * @param: [alarmId]
+     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.entity.AlarmPlugin>
+     */
     List<AlarmPlugin> selectByAlarmId(Long alarmId);
 
+    /**
+     * 根据id查询
+     *
+     * @date 2018/8/10 上午10:02
+     * @param: [id]
+     * @return: cn.vbill.middleware.porter.manager.core.entity.AlarmPlugin
+     */
     AlarmPlugin selectById(Long id);
 
+    /**
+     * 分页
+     *
+     * @date 2018/8/10 上午10:02
+     * @param: [page]
+     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.entity.AlarmPlugin>
+     */
     Page<AlarmPlugin> page(Page<AlarmPlugin> page);
 
+    /**
+     * 条件新增
+     *
+     * @date 2018/8/10 上午10:02
+     * @param: [alarmPlugin]
+     * @return: java.lang.Integer
+     */
     Integer insertSelective(AlarmPlugin alarmPlugin);
 
+    /**
+     * 条件修改
+     *
+     * @date 2018/8/10 上午10:02
+     * @param: [id, alarmPlugin]
+     * @return: java.lang.Integer
+     */
     Integer updateSelective(Long id, AlarmPlugin alarmPlugin);
 
 }

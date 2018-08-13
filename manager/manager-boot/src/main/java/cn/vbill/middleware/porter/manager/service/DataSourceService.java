@@ -30,15 +30,57 @@ import cn.vbill.middleware.porter.manager.web.page.Page;
  */
 public interface DataSourceService {
 
+    /**
+     * 新增
+     *
+     * @date 2018/8/10 上午11:14
+     * @param: [dataSource]
+     * @return: java.lang.Integer
+     */
     Integer insert(DataSource dataSource);
 
+    /**
+     * 更新
+     *
+     * @date 2018/8/10 上午11:14
+     * @param: [id, dataSource]
+     * @return: java.lang.Integer
+     */
     Integer update(Long id, DataSource dataSource);
 
+    /**
+     * 删除
+     *
+     * @date 2018/8/10 上午11:14
+     * @param: [id]
+     * @return: java.lang.Integer
+     */
     Integer delete(Long id);
 
+    /**
+     * 根据id查询
+     *
+     * @date 2018/8/10 上午11:14
+     * @param: [id]
+     * @return: cn.vbill.middleware.porter.manager.core.entity.DataSource
+     */
     DataSource selectById(Long id);
 
+    /**
+     * 分页
+     *
+     * @date 2018/8/10 上午11:15
+     * @param: [page, name, beginTime, endTime, dataType]
+     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.entity.DataSource>
+     */
     Page<DataSource> page(Page<DataSource> page, String name, String beginTime, String endTime, String dataType);
 
+    /**
+     * findByTypePage
+     *
+     * @date 2018/8/10 上午11:15
+     * @param: [page]
+     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.entity.DataSource>
+     */
     Page<DataSource> findByTypePage(Page<DataSource> page);
 }

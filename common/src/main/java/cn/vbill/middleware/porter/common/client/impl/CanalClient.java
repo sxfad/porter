@@ -17,10 +17,11 @@
 
 package cn.vbill.middleware.porter.common.client.impl;
 
-import cn.vbill.middleware.porter.common.exception.TaskStopTriggerException;
 import cn.vbill.middleware.porter.common.client.AbstractClient;
 import cn.vbill.middleware.porter.common.config.source.CanalConfig;
 import cn.vbill.middleware.porter.common.consumer.ConsumeClient;
+import cn.vbill.middleware.porter.common.consumer.Position;
+import cn.vbill.middleware.porter.common.exception.TaskStopTriggerException;
 import cn.vbill.middleware.porter.common.statistics.NodeLog;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.otter.canal.common.alarm.CanalAlarmHandler;
@@ -34,7 +35,6 @@ import com.alibaba.otter.canal.protocol.ClientIdentity;
 import com.alibaba.otter.canal.protocol.Message;
 import com.alibaba.otter.canal.server.embedded.CanalServerWithEmbedded;
 import com.alibaba.otter.canal.server.exception.CanalServerException;
-import cn.vbill.middleware.porter.common.consumer.Position;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
@@ -49,9 +49,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- *
  * mysql slave 默认最新位点消费
  * 数据一致性通过上传位点到zookeeper保证
+ *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年02月02日 15:14
  * @version: V1.0
@@ -110,8 +110,9 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
         hasBroken = new AtomicBoolean(false);
         brokenError = null;
     }
+
     @Override
-    public void  initializePosition(String taskId, String swimlaneId, String position) throws TaskStopTriggerException {
+    public void initializePosition(String taskId, String swimlaneId, String position) throws TaskStopTriggerException {
         CanalConfig config = getConfig();
         /**
          * 这里的批次提交和后续的处理批次不一致，会导致这里的一个批次被分配到不同的数据库事务执行。
@@ -162,13 +163,13 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
                 }
 
                 CanalInstanceWithManager instance = new CanalInstanceWithManager(canal, clientId.getFilter());
-                instance.setAlarmHandler(new CanalAlarmHandler()  {
+                instance.setAlarmHandler(new CanalAlarmHandler() {
                     private volatile boolean isRun = false;
 
                     @Override
                     public void sendAlarm(String destination, String msg) {
                         //过滤密码
-                        msg = StringUtils.trimToEmpty(msg).replaceAll("password=[^,]*," , "");
+                        msg = StringUtils.trimToEmpty(msg).replaceAll("password=[^,]*,", "");
                         //master连接不上
                         if (msg.contains("CanalParseException: java.io.IOException")
                                 || msg.contains("java.io.IOException: Received error packet: errno")) {
@@ -213,9 +214,9 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
         canalServer.subscribe(clientId);
         canFetch.countDown();
     }
-    
+
     @Override
-    public <F, O>  List<F> fetch(FetchCallback<F, O> callback) throws TaskStopTriggerException, InterruptedException {
+    public <F, O> List<F> fetch(FetchCallback<F, O> callback) throws TaskStopTriggerException, InterruptedException {
         if (hasBroken.get()) {
             throw null != brokenError ? new TaskStopTriggerException(brokenError) : new TaskStopTriggerException("canal.server因异常中断");
         }
@@ -236,11 +237,11 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
                 }
             }
             /**
-            if (isAutoCommitPosition()) {
-                msg = canalServer.get(clientId, perPullSize, 5L, TimeUnit.SECONDS);
-            } else {
-                msg = canalServer.getWithoutAck(clientId, perPullSize, 5L, TimeUnit.SECONDS);
-            }
+             if (isAutoCommitPosition()) {
+             msg = canalServer.get(clientId, perPullSize, 5L, TimeUnit.SECONDS);
+             } else {
+             msg = canalServer.getWithoutAck(clientId, perPullSize, 5L, TimeUnit.SECONDS);
+             }
              **/
             if (null != msg && msg.getId() != -1) {
                 try {
@@ -255,9 +256,9 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
 
                 //没有要处理的数据时需要直接ack
                 /**
-                if (!isAutoCommitPosition() && msgList.isEmpty()) {
-                    canalServer.ack(clientId, msg.getId());
-                }**/
+                 if (!isAutoCommitPosition() && msgList.isEmpty()) {
+                 canalServer.ack(clientId, msg.getId());
+                 }**/
             }
         }
         return msgList;
@@ -274,17 +275,17 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
     }
 
     @Override
-    public  long commitPosition(Position position) throws TaskStopTriggerException {
+    public long commitPosition(Position position) throws TaskStopTriggerException {
         //如果提交方式为手动提交
         /**
-        if (!isAutoCommitPosition() && isStarted()) {
-            try {
-                CanalPosition canalPosition = (CanalPosition) position;
-                canalServer.ack(clientId, canalPosition.batchId);
-            } catch (Throwable e) {
-                throw new TaskStopTriggerException(e);
-            }
-        }
+         if (!isAutoCommitPosition() && isStarted()) {
+         try {
+         CanalPosition canalPosition = (CanalPosition) position;
+         canalServer.ack(clientId, canalPosition.batchId);
+         } catch (Throwable e) {
+         throw new TaskStopTriggerException(e);
+         }
+         }
          **/
         return 0;
     }
@@ -304,19 +305,32 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
      * canal位点信息
      */
     public static class CanalPosition extends Position {
-        @Getter private final long batchId;
-        @Getter private final long offset;
-        @Getter private final String logfileName;
+        @Getter
+        private final long batchId;
+        @Getter
+        private final long offset;
+        @Getter
+        private final String logfileName;
         private final boolean checksum;
+
         public CanalPosition(long batchId, long offset, String logfileName) {
             this.batchId = batchId;
             this.offset = offset;
             this.logfileName = logfileName;
             this.checksum = !StringUtils.isBlank(logfileName) && offset > -1 && batchId > -1;
         }
+
         public CanalPosition(long batchId) {
             this(batchId, -1, "");
         }
+
+        /**
+         * 获取位置
+         *
+         * @date 2018/8/10 下午2:59
+         * @param: [position]
+         * @return: cn.vbill.middleware.porter.common.client.impl.CanalClient.CanalPosition
+         */
         private static CanalPosition getPosition(String position) throws TaskStopTriggerException {
             try {
                 JSONObject object = JSONObject.parseObject(position);

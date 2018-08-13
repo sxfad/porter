@@ -50,6 +50,13 @@ public class OggController {
     @Autowired
     protected OggTablesService oggTablesService;
 
+    /**
+     * 接收数据接口
+     *
+     * @date 2018/8/9 下午4:26
+     * @param: [heartbeat, address, tables]
+     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
+     */
     @PostMapping("/tables")
     @ApiOperation(value = "接收数据接口", notes = "接收数据接口")
     public ResponseMessage accept(@RequestParam(value = "heartbeat", required = true) String heartbeat,
@@ -60,6 +67,13 @@ public class OggController {
         return ResponseMessage.ok();
     }
 
+    /**
+     * 分页
+     *
+     * @date 2018/8/9 下午4:26
+     * @param: [pageNo, pageSize, ipAddress, tableValue]
+     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
+     */
     @GetMapping("/tablespage")
     @ApiOperation(value = "查询分页", notes = "查询分页")
     public ResponseMessage page(@RequestParam(value = "pageNo", required = true) Integer pageNo,

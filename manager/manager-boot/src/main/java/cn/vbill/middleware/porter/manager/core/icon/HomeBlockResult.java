@@ -42,7 +42,7 @@ public class HomeBlockResult {
     /**
      * 工作中任务计数
      */
-    private Integer TasksWorkingCount;
+    private Integer tasksWorkingCount;
 
     /**在线节点.*/
     private Integer nodeNum1 = 0;
@@ -105,14 +105,14 @@ public class HomeBlockResult {
      * 工作中任务计数 get方法
      */
     public Integer getTasksWorkingCount() {
-        return TasksWorkingCount;
+        return tasksWorkingCount;
     }
 
     /**
      * 工作中任务计数 set方法
      */
     public void setTasksWorkingCount(Integer tasksWorkingCount) {
-        TasksWorkingCount = tasksWorkingCount;
+        tasksWorkingCount = tasksWorkingCount;
     }
 
     public Integer getNodeNum1() {

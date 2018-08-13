@@ -24,6 +24,7 @@ import java.util.List;
 
 /**
  * 消费源客户端
+ *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年02月04日 13:13
  * @version: V1.0
@@ -32,12 +33,14 @@ import java.util.List;
 public interface ConsumeClient extends Client {
     /**
      * 是否自动提交消费同步点
+     *
      * @return
      */
     boolean isAutoCommitPosition();
 
     /**
      * 提交消费同步点，只有是手动提交时才会更新消费器客户端
+     *
      * @param position
      * @return 与生产进度差额
      * @throws TaskStopTriggerException
@@ -49,35 +52,56 @@ public interface ConsumeClient extends Client {
      *
      * @param taskId
      * @param swimlaneId
-     *@param position  @throws TaskStopTriggerException
+     * @param position   @throws TaskStopTriggerException
      */
     void initializePosition(String taskId, String swimlaneId, String position) throws TaskStopTriggerException;
 
     /**
      * 获取消费泳道编号
+     *
      * @return
      */
     String getSwimlaneId();
 
     /**
      * 提取数据
+     *
      * @param callback
-     * @param <F>  同步中间件统一对象模型
-     * @param <O>  消费客户端数据结构
+     * @param <F>      同步中间件统一对象模型
+     * @param <O>      消费客户端数据结构
      * @return 同步中间件统一对象模型列表
      */
     <F, O> List<F> fetch(FetchCallback<F, O> callback) throws TaskStopTriggerException, InterruptedException;
 
     /**
      * 回调函数
+     *
      * @param <F>
      * @param <O>
      */
     interface FetchCallback<F, O> {
-        default <F, O> F  accept(O o) {
+        /**
+         * accept
+         *
+         * @param o
+         * @param <F>
+         * @param <O>
+         * @return
+         */
+        default <F, O> F accept(O o) {
             return null;
         }
-        default <F, O> List<F>  acceptAll(O o) throws Exception {
+
+        /**
+         * acceptAll
+         *
+         * @param o
+         * @param <F>
+         * @param <O>
+         * @return
+         * @throws Exception
+         */
+        default <F, O> List<F> acceptAll(O o) throws Exception {
             return null;
         }
     }

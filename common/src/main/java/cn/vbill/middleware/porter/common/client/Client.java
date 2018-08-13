@@ -27,16 +27,63 @@ import cn.vbill.middleware.porter.common.exception.ClientConnectionException;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月14日 17:00
  */
 public interface Client {
+    
+    /**
+     * start
+     *
+     * @date 2018/8/10 下午2:52
+     * @param: []
+     * @return: void
+     */
     void start() throws Exception;
+    
+    /**
+     * shutdown
+     *
+     * @date 2018/8/10 下午2:52
+     * @param: []
+     * @return: void
+     */
     void shutdown() throws Exception;
+    
+    /**
+     * isStarted
+     *
+     * @date 2018/8/10 下午2:52
+     * @param: []
+     * @return: boolean
+     */
     boolean isStarted();
+
+    /**
+     * getConfig
+     *
+     * @date 2018/8/10 下午2:54
+     * @param: []
+     * @return: T
+     */
     <T> T getConfig();
 
+    /**
+     * setPublic
+     *
+     * @date 2018/8/10 下午2:54
+     * @param: [isPublic]
+     * @return: void
+     */
     void setPublic(boolean isPublic);
+
     default boolean isPublic() {
         return false;
     }
 
+    /**
+     * testConnection
+     *
+     * @date 2018/8/10 下午2:54
+     * @param: []
+     * @return: void
+     */
     default void testConnection() throws ClientConnectionException {
 
     }
@@ -45,5 +92,12 @@ public interface Client {
         return true;
     }
 
+    /**
+     * getClientInfo
+     *
+     * @date 2018/8/10 下午2:55
+     * @param: []
+     * @return: java.lang.String
+     */
     String getClientInfo();
 }

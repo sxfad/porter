@@ -27,6 +27,14 @@ public class SqlTemplateImpl implements SqlTemplate {
 
     private static final String DOT = ".";
 
+    /**
+     * 获取SelectSql
+     * @param schemaName
+     * @param tableName
+     * @param pkNames
+     * @param columnNames
+     * @return
+     */
     public String getSelectSql(String schemaName, String tableName, String[] pkNames, String[] columnNames) {
         StringBuilder sql = new StringBuilder("select ");
         int size = columnNames.length;
@@ -41,6 +49,14 @@ public class SqlTemplateImpl implements SqlTemplate {
         return sql.toString().intern();
     }
 
+    /**
+     * 获取UpdateSql
+     * @param schemaName
+     * @param tableName
+     * @param pkNames
+     * @param columnNames
+     * @return
+     */
     public String getUpdateSql(String schemaName, String tableName, String[] pkNames, String[] columnNames) {
         StringBuilder sql = new StringBuilder("update " + getFullName(schemaName, tableName) + " set ");
         appendColumnEquals(sql, columnNames, ",");
@@ -51,11 +67,24 @@ public class SqlTemplateImpl implements SqlTemplate {
         return sql.toString().intern();
     }
 
+    /**
+     * getUpdateSql
+     * @param schemaName
+     * @param tableName
+     * @param columns
+     * @return
+     */
     public String getUpdateSql(String schemaName, String tableName, String[] columns) {
         return getUpdateSql(schemaName, tableName, columns, columns);
     }
 
-
+    /**
+     * getInsertSql
+     * @param schemaName
+     * @param tableName
+     * @param allColumns
+     * @return
+     */
     public String getInsertSql(String schemaName, String tableName, String[] allColumns) {
         StringBuilder sql = new StringBuilder("insert into " + getFullName(schemaName, tableName) + "(");
         int size = allColumns.length;
@@ -70,6 +99,13 @@ public class SqlTemplateImpl implements SqlTemplate {
         return sql.toString().intern();
     }
 
+    /**
+     * getDeleteSql
+     * @param schemaName
+     * @param tableName
+     * @param pkNames
+     * @return
+     */
     public String getDeleteSql(String schemaName, String tableName, String[] pkNames) {
         StringBuilder sql = new StringBuilder("delete from " + getFullName(schemaName, tableName) + " where ");
         appendColumnEquals(sql, pkNames, "and");
@@ -77,6 +113,12 @@ public class SqlTemplateImpl implements SqlTemplate {
         return sql.toString().intern();
     }
 
+    /**
+     * getFullName
+     * @param schemaName
+     * @param tableName
+     * @return
+     */
     protected String getFullName(String schemaName, String tableName) {
         StringBuilder sb = new StringBuilder();
         if (schemaName != null) {
@@ -101,10 +143,20 @@ public class SqlTemplateImpl implements SqlTemplate {
 
     // ================ helper method ============
 
+    /**
+     * appendEscape
+     * @param columnName
+     * @return
+     */
     protected String appendEscape(String columnName) {
         return columnName;
     }
 
+    /**
+     * appendColumnQuestions
+     * @param sql
+     * @param columns
+     */
     protected void appendColumnQuestions(StringBuilder sql, String[] columns) {
         int size = columns.length;
         for (int i = 0; i < size; i++) {
@@ -112,6 +164,12 @@ public class SqlTemplateImpl implements SqlTemplate {
         }
     }
 
+    /**
+     * appendColumnEquals
+     * @param sql
+     * @param columns
+     * @param separator
+     */
     protected void appendColumnEquals(StringBuilder sql, String[] columns, String separator) {
         int size = columns.length;
         for (int i = 0; i < size; i++) {

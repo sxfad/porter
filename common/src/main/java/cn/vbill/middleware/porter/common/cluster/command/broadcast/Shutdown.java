@@ -26,5 +26,12 @@ import cn.vbill.middleware.porter.common.cluster.command.ShutdownCommand;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月07日 15:31
  */
 public interface Shutdown {
+
+    /**
+     * shutdown
+     *
+     * @param command
+     * @throws Exception
+     */
     void shutdown(ShutdownCommand command) throws Exception;
 }

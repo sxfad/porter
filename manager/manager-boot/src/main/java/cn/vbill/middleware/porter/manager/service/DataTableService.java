@@ -32,17 +32,66 @@ import java.util.List;
  */
 public interface DataTableService {
 
+    /**
+     * 新增
+     *
+     * @date 2018/8/10 上午11:16
+     * @param: [dataTable]
+     * @return: java.lang.Integer
+     */
     Integer insert(DataTable dataTable);
 
+    /**
+     * 删除
+     *
+     * @date 2018/8/10 上午11:18
+     * @param: [id]
+     * @return: java.lang.Integer
+     */
     Integer delete(Long id);
 
+    /**
+     * 根据id查询
+     *
+     * @date 2018/8/10 上午11:18
+     * @param: [id]
+     * @return: cn.vbill.middleware.porter.manager.core.entity.DataTable
+     */
     DataTable selectById(Long id);
 
+    /**
+     * 分页
+     *
+     * @date 2018/8/10 上午11:19
+     * @param: [page, bankName, beginTime, endTime]
+     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.entity.DataTable>
+     */
     Page<DataTable> page(Page<DataTable> page, String bankName, String beginTime, String endTime);
 
+    /**
+     * prefixList
+     *
+     * @date 2018/8/10 上午11:19
+     * @param: [sourceId]
+     * @return: java.util.List<java.lang.String>
+     */
     List<String> prefixList(Long sourceId);
 
+    /**
+     * tableList
+     *
+     * @date 2018/8/10 上午11:24
+     * @param: [page, sourceId, prefix, tableName]
+     * @return: cn.vbill.middleware.porter.manager.web.page.Page<java.lang.Object>
+     */
     Page<Object> tableList(Page<Object> page, Long sourceId, String prefix, String tableName);
 
+    /**
+     * dataTableList
+     *
+     * @date 2018/8/10 上午11:24
+     * @param: [dataTablePage]
+     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.entity.DataTable>
+     */
     Page<DataTable> dataTableList(Page<DataTable> dataTablePage);
 }

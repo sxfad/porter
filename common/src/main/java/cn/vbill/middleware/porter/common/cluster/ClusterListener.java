@@ -28,7 +28,14 @@ import cn.vbill.middleware.porter.common.cluster.event.ClusterEvent;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月14日 16:35
  */
 public interface ClusterListener {
+
+    /**
+     * getName
+     *
+     * @return
+     */
     String getName();
+
     /**
      * 监听方法通知
      * @param event
@@ -47,6 +54,9 @@ public interface ClusterListener {
      */
     void setClient(Client client);
 
+    /**
+     * start
+     */
     default void start() {
 
     }

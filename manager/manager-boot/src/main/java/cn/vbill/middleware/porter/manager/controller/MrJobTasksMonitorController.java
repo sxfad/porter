@@ -46,6 +46,13 @@ public class MrJobTasksMonitorController {
     @Autowired
     protected MrJobTasksMonitorService mrJobTasksMonitorService;
 
+    /**
+     * 任务泳道实时数据
+     *
+     * @date 2018/8/9 下午4:25
+     * @param: [jobId, swimlaneId, schemaTable, intervalTime, intervalCount]
+     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
+     */
     @ApiOperation(value = "任务泳道实时数据(按分)", notes = "任务泳道实时数据(按分)")
     @GetMapping("/jobmonitor")
     public ResponseMessage jobMonitor(@RequestParam(value = "jobId", required = true) String jobId,

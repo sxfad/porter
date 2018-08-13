@@ -32,15 +32,57 @@ import java.util.List;
  */
 public interface DicDataSourcePluginService {
 
+    /**
+     * 新增
+     *
+     * @date 2018/8/10 上午11:30
+     * @param: [dicDataSourcePlugin]
+     * @return: java.lang.Integer
+     */
     Integer insert(DicDataSourcePlugin dicDataSourcePlugin);
 
+    /**
+     * 更新
+     *
+     * @date 2018/8/10 上午11:30
+     * @param: [id, dicDataSourcePlugin]
+     * @return: java.lang.Integer
+     */
     Integer update(Long id, DicDataSourcePlugin dicDataSourcePlugin);
 
+    /**
+     * 删除
+     *
+     * @date 2018/8/10 上午11:30
+     * @param: [id]
+     * @return: java.lang.Integer
+     */
     Integer delete(Long id);
 
+    /**
+     * 根据id查询
+     *
+     * @date 2018/8/10 上午11:30
+     * @param: [id]
+     * @return: cn.vbill.middleware.porter.manager.core.entity.DicDataSourcePlugin
+     */
     DicDataSourcePlugin selectById(Long id);
 
+    /**
+     * 分页
+     *
+     * @date 2018/8/10 上午11:30
+     * @param: [page]
+     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.entity.DicDataSourcePlugin>
+     */
     Page<DicDataSourcePlugin> page(Page<DicDataSourcePlugin> page);
 
+    /**
+     * 根据类型查询
+     *
+     * @date 2018/8/10 上午11:30
+     * @param: [sourceType]
+     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.entity.DicDataSourcePlugin>
+     */
     List<DicDataSourcePlugin> findByType(String sourceType);
 }

@@ -56,18 +56,41 @@ public abstract class SourceConfig implements SwamlaneSupport {
 
     @JSONField(serialize = false, deserialize = false)
     protected static final Logger LOGGER = LoggerFactory.getLogger(SourceConfig.class);
+
+    /**
+     * SOURCE_TYPE_KEY
+     */
     @JSONField(serialize = false, deserialize = false)
     public static final String SOURCE_TYPE_KEY = "sourceType";
+
+    /**
+     * NAME_SOURCE_KEY
+     */
     @JSONField(serialize = false, deserialize = false)
     public static final String NAME_SOURCE_KEY = "sourceName";
     @Getter
     protected SourceType sourceType;
     private Map<String, String> properties;
 
+    /**
+     * childStuff
+     */
     protected abstract void childStuff();
 
+    /**
+     * childStuffColumns
+     *
+     * @return
+     */
     protected abstract String[] childStuffColumns();
 
+    /**
+     * stuff
+     *
+     * @param <T>
+     * @return
+     * @throws ConfigParseException
+     */
     public <T extends SourceConfig> T stuff() throws ConfigParseException {
         try {
             BeanUtils.copyProperties(properties, this, ArrayUtils.addAll(childStuffColumns(), SOURCE_TYPE_KEY));
@@ -80,7 +103,14 @@ public abstract class SourceConfig implements SwamlaneSupport {
         }
     }
 
-
+    /**
+     * 获取config
+     *
+     * @param properties
+     * @param <T>
+     * @return
+     * @throws ConfigParseException
+     */
     public static <T extends SourceConfig> T getConfig(Map<String, String> properties) throws ConfigParseException {
         T config = null;
         try {
@@ -112,6 +142,8 @@ public abstract class SourceConfig implements SwamlaneSupport {
                     case KAFKA_PRODUCE:
                         config = (T) new KafkaProduceConfig();
                         break;
+                    default:
+                        break;
                 }
             }
             if (null == config && properties.containsKey(NAME_SOURCE_KEY)) {
@@ -131,7 +163,9 @@ public abstract class SourceConfig implements SwamlaneSupport {
             if (null != config) {
                 config.setProperties(properties);
                 config.stuff();
-                if (!config.check()) throw new ConfigParseException("参数格式不正确:" + properties);
+                if (!config.check()) {
+                    throw new ConfigParseException("参数格式不正确:" + properties);
+                }
             }
 
         } catch (Exception e) {
@@ -163,5 +197,10 @@ public abstract class SourceConfig implements SwamlaneSupport {
         return doCheck();
     }
 
+    /**
+     * doCheck
+     *
+     * @return
+     */
     protected abstract boolean doCheck();
 }

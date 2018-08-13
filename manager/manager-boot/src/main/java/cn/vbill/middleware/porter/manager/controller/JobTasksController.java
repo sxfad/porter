@@ -102,6 +102,14 @@ public class JobTasksController {
         return ok(page);
     }
 
+    /**
+     * 分页
+     *
+     * @author FuZizheng
+     * @date 2018/8/9 下午4:23
+     * @param: [pageNo, pageSize, jobName, beginTime, endTime, jobState, jobType]
+     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
+     */
     @GetMapping("/page")
     @ApiOperation(value = "查询分页", notes = "查询分页")
     public ResponseMessage page(@RequestParam(value = "pageNo", required = true) Integer pageNo,

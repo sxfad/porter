@@ -118,18 +118,53 @@ public class KUDUClient extends AbstractClient<KuduConfig> implements LoadClient
         throw new UnsupportedOperationException("kudu暂不支持条件查询");
     }
 
+    /**
+     * insert
+     *
+     * @param schemaName
+     * @param table
+     * @param rows
+     * @return
+     * @throws KuduException
+     */
     public int[] insert(String schemaName, String table, List<List<Triple<String, Integer, String>>> rows) throws KuduException {
         return operation(schemaName, table, rows, OperationType.INSERT);
     }
 
+    /**
+     * delete
+     *
+     * @param schemaName
+     * @param table
+     * @param rows
+     * @return
+     * @throws KuduException
+     */
     public int[] delete(String schemaName, String table, List<List<Triple<String, Integer, String>>> rows) throws KuduException {
         return operation(schemaName, table, rows, OperationType.DELETE);
     }
 
+    /**
+     * update
+     *
+     * @param schemaName
+     * @param table
+     * @param rows
+     * @return
+     * @throws KuduException
+     */
     public int[] update(String schemaName, String table, List<List<Triple<String, Integer, String>>> rows) throws KuduException {
         return operation(schemaName, table, rows, OperationType.UPDATE);
     }
 
+    /**
+     * truncate
+     *
+     * @param schemaName
+     * @param finalTableName
+     * @return
+     * @throws KuduException
+     */
     public int[] truncate(String schemaName, String finalTableName) throws KuduException {
         KuduSession session = client.newSession();
         try {
@@ -147,11 +182,23 @@ public class KUDUClient extends AbstractClient<KuduConfig> implements LoadClient
             //重新建表
             client.createTable(finalTableName, schema, new CreateTableOptions().setRangePartitionColumns(list));
         } finally {
-            if (null != session) session.close();
+            if (null != session) {
+                session.close();
+            }
         }
         return new int[]{1};
     }
 
+    /**
+     * operation
+     *
+     * @param schema
+     * @param table
+     * @param rows
+     * @param type
+     * @return
+     * @throws KuduException
+     */
     public int[] operation(String schema, String table, List<List<Triple<String, Integer, String>>> rows, OperationType type) throws KuduException {
         int[] result = new int[rows.size()];
         KuduSession session = client.newSession();
@@ -183,11 +230,19 @@ public class KUDUClient extends AbstractClient<KuduConfig> implements LoadClient
             }
             session.flush();
         } finally {
-            if (null != session) session.close();
+            if (null != session) {
+                session.close();
+            }
         }
         return result;
     }
 
+    /**
+     * buildRow
+     *
+     * @param row
+     * @param partialRow
+     */
     private void buildRow(List<Triple<String, Integer, String>> row, PartialRow partialRow) {
         row.forEach(c -> {
             switch (c.getMiddle()) {
@@ -228,6 +283,13 @@ public class KUDUClient extends AbstractClient<KuduConfig> implements LoadClient
         DELETE, UPDATE, INSERT;
     }
 
+    /**
+     * getTableName
+     *
+     * @param schema
+     * @param table
+     * @return
+     */
     private String getTableName(String schema, String table) {
         StringBuilder nameBuilder = new StringBuilder();
         schema = StringUtils.trimToEmpty(schema);

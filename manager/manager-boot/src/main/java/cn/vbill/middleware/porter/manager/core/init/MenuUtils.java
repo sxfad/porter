@@ -38,12 +38,25 @@ public class MenuUtils {
 
     protected Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    /**
+     * ROLE_MENU
+     */
     public static Map<String, CMenu> ROLE_MENU = new HashMap<>();
 
+    /**
+     * ROLE_MENU_URL
+     */
     public static Map<String, Map<String, Object>> ROLE_MENU_URL = new HashMap<>();
 
+    /**
+     * INSTANCE
+     */
     public static MenuUtils INSTANCE;
 
+    /**
+     * 初始化菜单
+     * @return
+     */
     public static MenuUtils getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new MenuUtils();
@@ -51,11 +64,27 @@ public class MenuUtils {
         return INSTANCE;
     }
 
+    /**
+     * init
+     *
+     * @author FuZizheng
+     * @date 2018/8/9 下午4:51
+     * @param: []
+     * @return: void
+     */
     public void init() {
         logger.info("MenuUtils init");
         loadRoleMenu();
     }
 
+    /**
+     * 生成菜单树
+     *
+     * @author FuZizheng
+     * @date 2018/8/9 下午4:51
+     * @param: []
+     * @return: void
+     */
     private void loadRoleMenu() {
         CMenuService cMenuService = ApplicationContextUtil.getBean(CMenuServiceImpl.class);
         CRoleService cRoleService = ApplicationContextUtil.getBean(CRoleServiceImpl.class);

@@ -21,13 +21,68 @@ package cn.vbill.middleware.porter.common.db;
  *
  */
 public interface SqlTemplate {
+
+    /**
+     * getSelectSql
+     * @param schemaName
+     * @param tableName
+     * @param pkNames
+     * @param columnNames
+     * @return
+     */
     String getSelectSql(String schemaName, String tableName, String[] pkNames, String[] columnNames);
+
+    /**
+     * getUpdateSql
+     * @param schemaName
+     * @param tableName
+     * @param pkNames
+     * @param columnNames
+     * @return
+     */
     String getUpdateSql(String schemaName, String tableName, String[] pkNames, String[] columnNames);
+
+    /**
+     * getUpdateSql
+     * @param schemaName
+     * @param tableName
+     * @param allColumnNames
+     * @return
+     */
     String getUpdateSql(String schemaName, String tableName, String[] allColumnNames);
+
+    /**
+     * getDeleteSql
+     * @param schemaName
+     * @param tableName
+     * @param pkNames
+     * @return
+     */
     String getDeleteSql(String schemaName, String tableName, String[] pkNames);
 
+    /**
+     * getInsertSql
+     * @param schemaName
+     * @param tableName
+     * @param columns
+     * @return
+     */
     String getInsertSql(String schemaName, String tableName, String[] columns);
+
+    /**
+     * getTruncateSql
+     * @param schemaName
+     * @param tableName
+     * @return
+     */
     String getTruncateSql(String schemaName, String tableName);
 
+    /**
+     * getDataChangedCountSql
+     * @param schemaName
+     * @param tableName
+     * @param autoUpdateColumn
+     * @return
+     */
     String getDataChangedCountSql(String schemaName, String tableName, String autoUpdateColumn);
 }

@@ -89,7 +89,22 @@ public abstract class AbstractClient<T extends SourceConfig> implements Client {
         }
     }
 
+    /**
+     * doStart
+     *
+     * @date 2018/8/10 下午2:49
+     * @param: []
+     * @return: void
+     */
     protected abstract void doStart() throws Exception;
+
+    /**
+     * doShutdown
+     *
+     * @date 2018/8/10 下午2:49
+     * @param: []
+     * @return: void
+     */
     protected abstract void doShutdown() throws Exception;
 
     @Override
@@ -112,6 +127,13 @@ public abstract class AbstractClient<T extends SourceConfig> implements Client {
         return true;
     }
 
+    /**
+     * getClient
+     *
+     * @date 2018/8/10 下午2:51
+     * @param: [config]
+     * @return: cn.vbill.middleware.porter.common.client.Client
+     */
     public static Client getClient(SourceConfig config) throws ClientException {
         if (config instanceof NameSourceConfig) {
             return PublicClientContext.INSTANCE.getSource(((NameSourceConfig) config).getSourceName());

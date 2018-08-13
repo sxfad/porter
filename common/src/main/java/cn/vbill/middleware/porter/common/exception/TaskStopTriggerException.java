@@ -17,19 +17,18 @@
 
 package cn.vbill.middleware.porter.common.exception;
 
+import cn.vbill.middleware.porter.common.db.SqlErrorCode;
 import com.alibaba.druid.pool.DataSourceClosedException;
 import com.alibaba.druid.pool.DataSourceDisableException;
 import com.alibaba.druid.pool.DataSourceNotAvailableException;
 import com.alibaba.druid.pool.GetConnectionTimeoutException;
 import com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException;
-import cn.vbill.middleware.porter.common.db.SqlErrorCode;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.jdbc.UncategorizedSQLException;
-import org.springframework.transaction.CannotCreateTransactionException;
 
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
@@ -51,6 +50,12 @@ public class TaskStopTriggerException extends TaskException {
         super(cause);
     }
 
+    /**
+     * isMatch
+     * @param cause
+     * @param sqlType
+     * @return
+     */
     public static boolean isMatch(Throwable cause, String sqlType) {
         boolean match = false;
 
@@ -84,6 +89,12 @@ public class TaskStopTriggerException extends TaskException {
         }
         return match;
     }
+
+    /**
+     * isMatch
+     * @param cause
+     * @return
+     */
     public static boolean isMatch(Throwable cause) {
         return isMatch(cause, null);
     }

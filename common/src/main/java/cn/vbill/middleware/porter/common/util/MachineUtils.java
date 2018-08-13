@@ -35,13 +35,33 @@ import java.util.List;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月20日 13:50
  */
 public class MachineUtils {
+    /**
+     * HOST_NAME
+     */
     public static final String HOST_NAME = System.getProperty("user.name");
+    /**
+     * CURRENT_JVM_PID
+     */
     public static final long CURRENT_JVM_PID = getPID();
+    /**
+     * IP_ADDRESS
+     */
     public static final String IP_ADDRESS = localhost();
+    /**
+     * CPU_NUMBER
+     */
     public static final int CPU_NUMBER = Runtime.getRuntime().availableProcessors();
+    /**
+     * LOCAL_EXCEPT_IP
+     */
     private static final String LOCAL_EXCEPT_IP = "127.0.0.1,192.168.2.1,192.168.122.1";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MachineUtils.class);
+
+    /**
+     * getPID
+     * @return
+     */
     public static long getPID() {
         String processName = java.lang.management.ManagementFactory.getRuntimeMXBean().getName();
         if (processName != null && processName.length() > 0) {
@@ -55,6 +75,11 @@ public class MachineUtils {
         }
         return 0;
     }
+
+    /**
+     * getLocalInetAddress
+     * @return
+     */
     private static List<String> getLocalInetAddress() {
         List<String> inetAddressList = new ArrayList<String>();
         try {
@@ -77,6 +102,10 @@ public class MachineUtils {
         return inetAddressList;
     }
 
+    /**
+     * localhost
+     * @return
+     */
     public static String localhost() {
         List<String>  list = getLocalInetAddress();
         for (String i : list) {

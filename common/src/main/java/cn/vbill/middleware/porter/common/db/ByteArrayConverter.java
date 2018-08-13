@@ -27,11 +27,14 @@ import org.apache.commons.beanutils.converters.ByteConverter;
  */
 public class ByteArrayConverter implements Converter {
 
-    public static final Converter  SQL_BYTES = new ByteArrayConverter(null);
+    /**
+     * SQL_BYTES
+     */
+    public static final Converter SQL_BYTES = new ByteArrayConverter(null);
     private static final Converter CONVERTER = new ArrayConverter(byte[].class, new ByteConverter());
 
-    protected final Object         defaultValue;
-    protected final boolean        useDefault;
+    protected final Object defaultValue;
+    protected final boolean useDefault;
 
     public ByteArrayConverter() {
         this.defaultValue = null;
@@ -43,6 +46,12 @@ public class ByteArrayConverter implements Converter {
         this.useDefault = true;
     }
 
+    /**
+     * convert
+     * @param type
+     * @param value
+     * @return
+     */
     public Object convert(Class type, Object value) {
         if (value == null) {
             if (useDefault) {

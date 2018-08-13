@@ -55,6 +55,13 @@ public class AlarmController {
     @Autowired
     protected AlarmService alarmService;
 
+    /**
+     * 新增
+     *
+     * @date 2018/8/9 下午4:18
+     * @param: [alarm]
+     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
+     */
     @PostMapping
     @ApiOperation(value = "新增", notes = "新增")
     public ResponseMessage add(@RequestBody Alarm alarm) throws Exception {
@@ -69,6 +76,13 @@ public class AlarmController {
         return ResponseMessage.ok(number);
     }
 
+    /**
+     * info
+     *
+     * @date 2018/8/9 下午4:19
+     * @param: []
+     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
+     */
     @GetMapping("/info")
     @ApiOperation(value = "查询明细", notes = "查询明细")
     public ResponseMessage info() {
@@ -76,6 +90,13 @@ public class AlarmController {
         return ResponseMessage.ok(alarm);
     }
 
+    /**
+     * receiver
+     *
+     * @date 2018/8/9 下午4:19
+     * @param: [cusers]
+     * @return: cn.vbill.middleware.porter.common.alert.AlertReceiver[]
+     */
     private AlertReceiver[] receiver(List<CUser> cusers) {
         AlertReceiver[] alertReceivers = new AlertReceiver[cusers.size()];
         for (int i = 0; i < cusers.size(); i++) {
@@ -85,6 +106,13 @@ public class AlarmController {
         return alertReceivers;
     }
 
+    /**
+     * fieldsMap
+     *
+     * @date 2018/8/9 下午4:19
+     * @param: [alarmPlugins]
+     * @return: java.util.Map<java.lang.String,java.lang.String>
+     */
     private Map<String, String> fieldsMap(List<AlarmPlugin> alarmPlugins) {
         Map<String, String> map = new HashMap<>();
         for (AlarmPlugin alarmPlugin : alarmPlugins) {

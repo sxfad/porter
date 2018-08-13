@@ -37,8 +37,29 @@ import java.util.LinkedHashMap;
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum TaskStatusType {
 
-    NEW("NEW", "新建"), STOPPED("STOPPED", "已停止"), WORKING("WORKING", "工作中"), DELETED("DELETED", "已删除");
+    /**
+     * 新建
+     */
+    NEW("NEW", "新建"),
 
+    /**
+     * 已停止
+     */
+    STOPPED("STOPPED", "已停止"),
+
+    /**
+     * 工作中
+     */
+    WORKING("WORKING", "工作中"),
+
+    /**
+     * 已删除
+     */
+    DELETED("DELETED", "已删除");
+
+    /**
+     * LINKMAP
+     */
     public static final HashMap<String, Object> LINKMAP = new LinkedHashMap<>();
     static {
         LINKMAP.put(NEW.code, NEW.name);

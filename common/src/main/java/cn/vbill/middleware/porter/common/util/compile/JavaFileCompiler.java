@@ -93,6 +93,14 @@ public class JavaFileCompiler extends URLClassLoader {
         throw new UnexpectedException(sourceClass + "不是" + targetClass + "的子类或接口实现");
     }
 
+    /**
+     * compile
+     *
+     * @param javaFile
+     * @return
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
     private Class<?> compile(JavaFile javaFile) throws IOException, ClassNotFoundException {
         //判断当前类是否已被jvm加载
         try {
@@ -141,10 +149,21 @@ public class JavaFileCompiler extends URLClassLoader {
         return null;
     }
 
+    /**
+     * loadPlugin
+     *
+     * @throws MalformedURLException
+     */
     public void loadPlugin() throws MalformedURLException {
         loadPlugin(PLUGIN_HOME);
     }
 
+    /**
+     * loadPlugin
+     *
+     * @param filePath
+     * @throws MalformedURLException
+     */
     public void loadPlugin(String filePath) throws MalformedURLException {
         if (isLoadPlugin.compareAndSet(false, true)) {
             File[] jars = new File(filePath).listFiles(pathname -> pathname.getName().endsWith(".jar"));
@@ -157,7 +176,13 @@ public class JavaFileCompiler extends URLClassLoader {
 
     }
 
-
+    /**
+     * readSource
+     *
+     * @param sourceFile
+     * @return
+     * @throws IOException
+     */
     private String readSource(String sourceFile) throws IOException {
         StringBuilder builder = new StringBuilder();
         try (BufferedReader reader = new BufferedReader(new FileReader(sourceFile))) {

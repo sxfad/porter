@@ -33,10 +33,20 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月07日 11:25
  */
 public enum ClusterProviderProxy {
+
+    /**
+     * INSTANCE
+     */
     INSTANCE();
     private final AtomicBoolean isConfig = new AtomicBoolean(false);
     private volatile ClusterProvider provider;
 
+    /**
+     * initialize
+     *
+     * @param config
+     * @throws Exception
+     */
     public void initialize(ClusterConfig config) throws Exception {
         if (isConfig.compareAndSet(false, true)) {
             List<ClusterProvider> providers = SpringFactoriesLoader.loadFactories(ClusterProvider.class, JavaFileCompiler.getInstance());
@@ -51,15 +61,28 @@ public enum ClusterProviderProxy {
         }
     }
 
-
+    /**
+     * broadcast
+     *
+     * @param command
+     * @throws Exception
+     */
     public void broadcast(ClusterCommand command) throws Exception {
         provider.broadcastCommand(command);
     }
 
+    /**
+     * stop
+     */
     public void stop() {
         provider.stop();
     }
 
+    /**
+     * addTaskListener
+     *
+     * @param listener
+     */
     public void addTaskListener(TaskEventListener listener) {
         provider.addTaskEventListener(listener);
     }

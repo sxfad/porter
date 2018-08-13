@@ -34,30 +34,121 @@ import cn.vbill.middleware.porter.manager.web.page.Page;
  */
 public interface JobTasksService {
 
+    /**
+     * 新增
+     *
+     * @date 2018/8/10 上午11:43
+     * @param: [jobTasks]
+     * @return: java.lang.Integer
+     */
     Integer insert(JobTasks jobTasks);
 
+    /**
+     * 新增Capture
+     *
+     * @date 2018/8/10 上午11:43
+     * @param: [jobTasks]
+     * @return: java.lang.Integer
+     */
     Integer insertCapture(JobTasks jobTasks);
 
+    /**
+     * 更新
+     *
+     * @date 2018/8/10 上午11:43
+     * @param: [jobTasks]
+     * @return: java.lang.Integer
+     */
     Integer update(JobTasks jobTasks);
 
+    /**
+     * 删除
+     *
+     * @date 2018/8/10 上午11:44
+     * @param: [id]
+     * @return: java.lang.Integer
+     */
     Integer delete(Long id);
 
+    /**
+     * 根据id查询
+     *
+     * @date 2018/8/10 上午11:44
+     * @param: [id]
+     * @return: cn.vbill.middleware.porter.manager.core.entity.JobTasks
+     */
     JobTasks selectById(Long id);
 
+    /**
+     * 根据id查询实体
+     *
+     * @date 2018/8/10 上午11:44
+     * @param: [id]
+     * @return: cn.vbill.middleware.porter.manager.core.entity.JobTasks
+     */
     JobTasks selectEntityById(Long id);
 
+    /**
+     * 分页
+     *
+     * @date 2018/8/10 上午11:44
+     * @param: [page, jobName, beginTime, endTime, jobState, jobType]
+     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.entity.JobTasks>
+     */
     Page<JobTasks> page(Page<JobTasks> page, String jobName, String beginTime, String endTime, TaskStatusType jobState,
             Integer jobType);
 
+    /**
+     * tableNames
+     *
+     * @date 2018/8/10 上午11:44
+     * @param: [tablesId]
+     * @return: java.lang.Object
+     */
     Object tableNames(Long tablesId);
 
+    /**
+     * fields
+     *
+     * @date 2018/8/10 上午11:44
+     * @param: [sourceId, tablesId, tableAllName]
+     * @return: java.util.List<java.lang.String>
+     */
     List<String> fields(Long sourceId, Long tablesId, String tableAllName);
 
+    /**
+     * updateState
+     *
+     * @date 2018/8/10 上午11:45
+     * @param: [id, taskStatusType]
+     * @return: java.lang.Integer
+     */
     Integer updateState(Long id, TaskStatusType taskStatusType);
 
+    /**
+     * fitJobTask
+     *
+     * @date 2018/8/10 上午11:45
+     * @param: [id, status]
+     * @return: cn.vbill.middleware.porter.common.config.TaskConfig
+     */
     TaskConfig fitJobTask(Long id, TaskStatusType status);
 
+    /**
+     * selectList
+     *
+     * @date 2018/8/10 上午11:45
+     * @param: []
+     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.entity.JobTasks>
+     */
     List<JobTasks> selectList();
 
+    /**
+     * selectJobNameList
+     *
+     * @date 2018/8/10 上午11:45
+     * @param: []
+     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.entity.JobTasks>
+     */
     List<JobTasks> selectJobNameList();
 }

@@ -85,7 +85,9 @@ public class KafkaProduceClient extends AbstractClient<KafkaProduceConfig> imple
         props.put(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, "1");
         producer = new KafkaProducer<>(props);
         partitionInfoList.addAll(producer.partitionsFor(topic));
-        if (transaction) producer.initTransactions();
+        if (transaction) {
+            producer.initTransactions();
+        }
         canProduce.countDown();
     }
 
@@ -98,6 +100,13 @@ public class KafkaProduceClient extends AbstractClient<KafkaProduceConfig> imple
         canProduce = new CountDownLatch(1);
     }
 
+    /**
+     * send
+     *
+     * @param records
+     * @param sync
+     * @throws TaskStopTriggerException
+     */
     public void send(List<Triple<String, String, Integer>> records, boolean sync) throws TaskStopTriggerException {
         List<ProducerRecord<String, String>> producerRecords = new ArrayList<>();
         records.forEach(t -> {
@@ -112,6 +121,15 @@ public class KafkaProduceClient extends AbstractClient<KafkaProduceConfig> imple
         sendTo(producerRecords, sync);
     }
 
+    /**
+     * send
+     *
+     * @param value
+     * @param partition
+     * @param key
+     * @param sync
+     * @throws TaskStopTriggerException
+     */
     public void send(String value, Integer partition, String key, boolean sync) throws TaskStopTriggerException {
         ProducerRecord<String, String> record = null;
         if (partition != null && partition > -1) {
@@ -122,10 +140,24 @@ public class KafkaProduceClient extends AbstractClient<KafkaProduceConfig> imple
         sendTo(Arrays.asList(record), sync);
     }
 
+    /**
+     * send
+     *
+     * @param value
+     * @param sync
+     * @throws TaskStopTriggerException
+     */
     public void send(String value, boolean sync) throws TaskStopTriggerException {
         send(value, null, null, sync);
     }
 
+    /**
+     * sendTo
+     *
+     * @param msgList
+     * @param sync
+     * @throws TaskStopTriggerException
+     */
     private void sendTo(List<ProducerRecord<String, String>> msgList, boolean sync) throws TaskStopTriggerException {
         try {
             canProduce.await();
@@ -134,7 +166,9 @@ public class KafkaProduceClient extends AbstractClient<KafkaProduceConfig> imple
             }
             List<Future<RecordMetadata>> futures = new ArrayList<>();
             for (ProducerRecord<String, String> record : msgList) {
-                if (sync) futures.add(producer.send(record));
+                if (sync) {
+                    futures.add(producer.send(record));
+                }
             }
             //等待结果
             for (Future<RecordMetadata> f : futures) {
@@ -164,7 +198,13 @@ public class KafkaProduceClient extends AbstractClient<KafkaProduceConfig> imple
         return Collections.unmodifiableList(partitionInfoList);
     }
 
-
+    /**
+     * sendTo
+     *
+     * @param schema
+     * @param table
+     * @return
+     */
     public List<String> getPartitionKey(String schema, String table) {
 
         return partitionKeyCache.computeIfAbsent(Arrays.asList(schema, table), key -> {
@@ -189,7 +229,11 @@ public class KafkaProduceClient extends AbstractClient<KafkaProduceConfig> imple
         return MachineUtils.IP_ADDRESS + "_" + MachineUtils.HOST_NAME + "_" + MachineUtils.CURRENT_JVM_PID;
     }
 
-
+    /**
+     * sendTo
+     *
+     * @return
+     */
     public boolean renderOggJson() {
         return oggJson;
     }

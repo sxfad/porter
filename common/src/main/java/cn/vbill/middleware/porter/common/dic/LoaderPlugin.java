@@ -36,14 +36,44 @@ import java.util.LinkedHashMap;
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum LoaderPlugin {
 
+    /**
+     * JDBC批量
+     */
     JDBC_BATCH("JdbcBatch", "JDBC批量"),
+
+    /**
+     * JDBC单行
+     */
     JDBC_SINGLE("JdbcSingle", "JDBC单行"),
+
+    /**
+     * kudu单行
+     */
     KUDU_NATIVE("KUDU_NATIVE", "kudu单行"),
+
+    /**
+     * SQL打印测试
+     */
     JDBC_SQL_PRINT("JDBC_SQL_PRINT", "SQL打印测试"),
+
+    /**
+     * HBase原生
+     */
     HBASE_NATIVE("HBASE_NATIVE", "HBase原生"),
+
+    /**
+     * kafka同步
+     */
     KAFKA_SYNC("KAFKA_SYNC", "kafka同步"),
+
+    /**
+     * kafka异步
+     */
     KAFKA_ASYNC("KAFKA_ASYNC", "kafka异步");
 
+    /**
+     * LINKMAP
+     */
     public static final HashMap<String, Object> LINKMAP = new LinkedHashMap<>();
     static {
         LINKMAP.put("JDBC_BATCH", JDBC_BATCH.name);

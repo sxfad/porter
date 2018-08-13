@@ -27,5 +27,12 @@ import cn.vbill.middleware.porter.common.cluster.event.ClusterEvent;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月14日 16:35
  */
 public interface ClusterListenerFilter {
+
+    /**
+     * onFilter
+     * 
+     * @param event
+     * @return
+     */
     boolean onFilter(ClusterEvent event);
 }
