@@ -33,6 +33,7 @@ public class BeanUtils {
 
     /**
      * copyProperties
+     *
      * @param source
      * @param target
      * @param ignoreProperties

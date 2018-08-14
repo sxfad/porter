@@ -27,7 +27,7 @@ import lombok.Getter;
 
 /**
  * 关系数据库类型
- * 
+ *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年02月02日 16:27
  * @version: V1.0
@@ -51,6 +51,7 @@ public enum DbType {
      * LINKMAP
      */
     public static final HashMap<String, Object> LINKMAP = new LinkedHashMap<>();
+
     static {
         LINKMAP.put(MYSQL.code, MYSQL.name);
         LINKMAP.put(ORACLE.code, ORACLE.name);

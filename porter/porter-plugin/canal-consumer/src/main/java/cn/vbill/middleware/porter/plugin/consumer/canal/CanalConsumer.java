@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
 
 /**
  * canal row消费端
+ *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年03月06日 11:27
  * @version: V2.0

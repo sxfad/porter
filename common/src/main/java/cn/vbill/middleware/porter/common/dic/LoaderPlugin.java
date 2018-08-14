@@ -26,7 +26,7 @@ import java.util.LinkedHashMap;
 
 /**
  * 载入器插件
- * 
+ *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年03月07日 10:00
  * @version: V1.0
@@ -75,6 +75,7 @@ public enum LoaderPlugin {
      * LINKMAP
      */
     public static final HashMap<String, Object> LINKMAP = new LinkedHashMap<>();
+
     static {
         LINKMAP.put("JDBC_BATCH", JDBC_BATCH.name);
         LINKMAP.put("JDBC_SINGLE", JDBC_SINGLE.name);
@@ -85,6 +86,8 @@ public enum LoaderPlugin {
         LINKMAP.put(KAFKA_ASYNC.code, KAFKA_ASYNC.name);
     }
 
-    @Getter private final String code;
-    @Getter private final String name;
+    @Getter
+    private final String code;
+    @Getter
+    private final String name;
 }

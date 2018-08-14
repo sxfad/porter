@@ -72,8 +72,7 @@ public class EmailClient  extends AbstractClient<EmailConfig> implements AlertCl
         try {
             senderImpl.testConnection();
         } catch (Exception e) {
-            e.printStackTrace();
-            LOGGER.error("%s", e);
+            LOGGER.error("邮件客户端连接失败:%s", e);
             throw new ClientConnectionException("邮件客户端连接失败:" + JSONObject.toJSONString(config));
         }
         sender = senderImpl;

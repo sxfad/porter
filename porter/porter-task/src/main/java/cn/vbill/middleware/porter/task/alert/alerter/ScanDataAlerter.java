@@ -55,7 +55,7 @@ public class ScanDataAlerter implements Alerter {
     public void check(DataConsumer consumer, DataLoader loader, DTaskStat stat, Triple<String[], String[],
             String[]> checkMeta, List<AlertReceiver> receivers) {
         LOGGER.debug("trying scan data");
-        if (null == stat ||  !stat.getUpdateStat().get() || null == stat.getLastLoadedDataTime() || null == checkMeta.getRight()) {
+        if (null == stat || !stat.getUpdateStat().get() || null == stat.getLastLoadedDataTime() || null == checkMeta.getRight()) {
             LOGGER.debug("null == stat ||  !stat.getUpdateStat().get() || null == stat.getLastLoadedTime() || null == checkMeta.getRight()");
             return;
         }

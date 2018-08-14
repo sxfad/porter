@@ -17,13 +17,13 @@
 
 package cn.vbill.middleware.porter.task.load;
 
+import cn.vbill.middleware.porter.common.cluster.ClusterProviderProxy;
 import cn.vbill.middleware.porter.common.cluster.command.TaskPositionUploadCommand;
 import cn.vbill.middleware.porter.common.cluster.data.DTaskStat;
 import cn.vbill.middleware.porter.common.exception.TaskStopTriggerException;
+import cn.vbill.middleware.porter.common.statistics.NodeLog;
 import cn.vbill.middleware.porter.common.util.DefaultNamedThreadFactory;
 import cn.vbill.middleware.porter.core.NodeContext;
-import cn.vbill.middleware.porter.common.cluster.ClusterProviderProxy;
-import cn.vbill.middleware.porter.common.statistics.NodeLog;
 import cn.vbill.middleware.porter.core.event.etl.ETLBucket;
 import cn.vbill.middleware.porter.core.event.s.EventType;
 import cn.vbill.middleware.porter.core.loader.DataLoader;
@@ -43,6 +43,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 完成SQL事件的最终执行，单线程执行,通过interrupt终止线程
+ *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月24日 11:19
  * @version: V1.0
@@ -158,11 +159,12 @@ public class LoadJob extends AbstractStageJob {
             } catch (Throwable e) {
                 e.printStackTrace();
                 NodeLog.upload(NodeLog.LogType.TASK_LOG, work.getTaskId(), work.getDataConsumer().getSwimlaneId(),
-                        "Load ETLRow error"  + e.getMessage());
+                        "Load ETLRow error" + e.getMessage());
                 LOGGER.error("Load ETLRow error!", e);
             }
         } while (null != bucket && !work.triggerStopped()); //数据不为空并且当前任务没有触发停止告警
     }
+
     @Override
     public ETLBucket output() throws Exception {
         throw new Exception("unsupported Method");
@@ -181,10 +183,11 @@ public class LoadJob extends AbstractStageJob {
 
     /**
      * 更新任务状态
-     *  For a prepared statement batch, it is not possible to know the number of rows affected in the database
-     *  by each individual statement in the batch.Therefore, all array elements have a value of -2.
-     *  According to the JDBC 2.0 specification, a value of -2 indicates that the operation was successful
-     *  but the number of rows affected is unknown.
+     * For a prepared statement batch, it is not possible to know the number of rows affected in the database
+     * by each individual statement in the batch.Therefore, all array elements have a value of -2.
+     * According to the JDBC 2.0 specification, a value of -2 indicates that the operation was successful
+     * but the number of rows affected is unknown.
+     *
      * @param object
      */
     private void updateStat(SubmitStatObject object) {

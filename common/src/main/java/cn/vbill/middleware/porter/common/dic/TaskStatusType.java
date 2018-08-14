@@ -61,6 +61,7 @@ public enum TaskStatusType {
      * LINKMAP
      */
     public static final HashMap<String, Object> LINKMAP = new LinkedHashMap<>();
+
     static {
         LINKMAP.put(NEW.code, NEW.name);
         LINKMAP.put(WORKING.code, WORKING.name);

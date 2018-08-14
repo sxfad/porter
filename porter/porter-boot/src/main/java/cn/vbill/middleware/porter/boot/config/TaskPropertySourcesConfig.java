@@ -38,8 +38,8 @@ import java.util.List;
 
 
 /**
- *
  * 采用实现XXXXAware接口的方式是因为@Autowired时机晚于PropertySourcesPlaceholderConfigurer对象构造
+ *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月27日 14:07
  * @version: V1.0
@@ -97,7 +97,7 @@ public class TaskPropertySourcesConfig implements EnvironmentAware, ResourceLoad
      * @return: java.util.List<java.io.File>
      */
     private List<File> configFiles(String active) {
-        List<File> files  = new ArrayList<>();
+        List<File> files = new ArrayList<>();
         String[] path = new String[]{"file:./tasks/" + active, "file:./config/tasks/" + active, "classpath:/tasks/" + active};
         for (String p : path) {
             Resource resource = resourceLoader.getResource(p);

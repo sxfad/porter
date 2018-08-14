@@ -176,7 +176,7 @@ public class ETLRowTransformer implements Transformer {
         }
 
         //反向查找
-        List<String> inColumnNames = row.getColumns().stream().map(p  -> p.getFinalName()).collect(Collectors.toList());
+        List<String> inColumnNames = row.getColumns().stream().map(p -> p.getFinalName()).collect(Collectors.toList());
 
         /**
          * 如果目标库表中有新增必填的字段的话需要补充上去
@@ -206,7 +206,7 @@ public class ETLRowTransformer implements Transformer {
             throws TaskStopTriggerException {
         TableSchema table = null;
         try {
-            table  = loader.findTable(finalSchema, finalTable);
+            table = loader.findTable(finalSchema, finalTable);
         } catch (Throwable e) {
             String error = "查询不到目标仓库表结构" + finalSchema + ". " + finalTable;
             //e.printStackTrace();

@@ -17,20 +17,31 @@
 
 package cn.vbill.middleware.porter.cluster.zookeeper;
 
+import cn.vbill.middleware.porter.common.cluster.ClusterListenerFilter;
 import cn.vbill.middleware.porter.common.cluster.ClusterProviderProxy;
+import cn.vbill.middleware.porter.common.cluster.command.TaskAssignedCommand;
 import cn.vbill.middleware.porter.common.cluster.command.TaskPositionQueryCommand;
 import cn.vbill.middleware.porter.common.cluster.command.TaskPositionUploadCommand;
 import cn.vbill.middleware.porter.common.cluster.command.TaskRegisterCommand;
+import cn.vbill.middleware.porter.common.cluster.command.TaskStatCommand;
+import cn.vbill.middleware.porter.common.cluster.command.TaskStatQueryCommand;
+import cn.vbill.middleware.porter.common.cluster.command.TaskStopCommand;
 import cn.vbill.middleware.porter.common.cluster.command.TaskStoppedByErrorCommand;
 import cn.vbill.middleware.porter.common.cluster.command.broadcast.TaskPosition;
 import cn.vbill.middleware.porter.common.cluster.command.broadcast.TaskRegister;
 import cn.vbill.middleware.porter.common.cluster.command.broadcast.TaskStatQuery;
+import cn.vbill.middleware.porter.common.cluster.command.broadcast.TaskStatUpload;
 import cn.vbill.middleware.porter.common.cluster.command.broadcast.TaskStop;
 import cn.vbill.middleware.porter.common.cluster.command.broadcast.TaskStoppedByError;
 import cn.vbill.middleware.porter.common.cluster.data.DObject;
 import cn.vbill.middleware.porter.common.cluster.data.DTaskLock;
 import cn.vbill.middleware.porter.common.cluster.data.DTaskStat;
+import cn.vbill.middleware.porter.common.cluster.event.ClusterEvent;
 import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterEvent;
+import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListener;
+import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListenerFilter;
+import cn.vbill.middleware.porter.common.config.TaskConfig;
+import cn.vbill.middleware.porter.common.exception.TaskLockException;
 import cn.vbill.middleware.porter.common.exception.TaskStopTriggerException;
 import cn.vbill.middleware.porter.common.task.TaskEventListener;
 import cn.vbill.middleware.porter.common.task.TaskEventProvider;
@@ -38,17 +49,6 @@ import cn.vbill.middleware.porter.common.util.MachineUtils;
 import cn.vbill.middleware.porter.core.NodeContext;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import cn.vbill.middleware.porter.common.cluster.ClusterListenerFilter;
-import cn.vbill.middleware.porter.common.cluster.command.TaskAssignedCommand;
-import cn.vbill.middleware.porter.common.cluster.command.TaskStatCommand;
-import cn.vbill.middleware.porter.common.cluster.command.TaskStopCommand;
-import cn.vbill.middleware.porter.common.cluster.command.TaskStatQueryCommand;
-import cn.vbill.middleware.porter.common.cluster.command.broadcast.TaskStatUpload;
-import cn.vbill.middleware.porter.common.cluster.event.ClusterEvent;
-import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListener;
-import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListenerFilter;
-import cn.vbill.middleware.porter.common.config.TaskConfig;
-import cn.vbill.middleware.porter.common.exception.TaskLockException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.zookeeper.KeeperException;
@@ -63,6 +63,7 @@ import java.util.regex.Pattern;
 
 /**
  * 任务信息监听,一期配置文件配置
+ *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月15日 10:09
  * @version: V1.0
@@ -239,6 +240,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
     @Override
     public void stopTask(TaskStopCommand command) throws Exception {
         String node = listenPath() + "/" + command.getTaskId() + LOCK_PATH + command.getSwimlaneId();
+
         if (client.isExists(node, true)) {
             Pair<String, Stat> remoteData = client.getData(node);
             DTaskLock taskLock = DTaskLock.fromString(remoteData.getLeft(), DTaskLock.class);

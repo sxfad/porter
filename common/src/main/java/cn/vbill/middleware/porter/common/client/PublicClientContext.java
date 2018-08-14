@@ -26,6 +26,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 公共客户端资源容器
+ * <p>
  *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月14日 10:37

@@ -133,12 +133,12 @@ public class AlerterFactory {
         if (null != mapper && null != mapper.getSchema() && mapper.getSchema().length == 2) {
             schemas = mapper.getSchema();
         } else {
-            schemas = new String[] {schema, schema};
+            schemas = new String[]{schema, schema};
         }
         if (null != mapper && null != mapper.getTable() && mapper.getTable().length == 2) {
             tables = mapper.getTable();
         } else {
-            tables = new String[] {table, table};
+            tables = new String[]{table, table};
         }
         return new ImmutableTriple<>(schemas, tables, updateTime);
     }

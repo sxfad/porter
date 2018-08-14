@@ -7,18 +7,18 @@
 	数据准备: 
 		来源数据信息:
 			mysql数据源
-				url：jdbc:mysql://172.16.60.247:3306/data_test?useUnicode=true&characterEncoding=utf8
-				用户名：fd
+				url：jdbc:mysql://127.0.0.1:3306/data_test?useUnicode=true&characterEncoding=utf8
+				用户名：user
 				密码：123456
 			同步数据来源(canal)
-				地址：172.16.60.247:3306
+				地址：127.0.0.1:3306
 				数据库：data_test
-				用户：fd
+				用户：user
 				密码：123456	
 				过滤器：data_test\.(c_role|c_department)
 		目标数据信息
 			oracle数据源
-				url：jdbc:oracle:thin:@172.16.134.250:1521:test  
+				url：jdbc:oracle:thin:@127.0.0.1:1521:test  
 				用户名：test234  
 				密码：123456
 	自定义代码:
@@ -149,18 +149,18 @@
 	数据准备: 
 		来源数据信息:
 			oracle数据源
-				url：jdbc:oracle:thin:@172.16.134.250:1521:test
+				url：jdbc:oracle:thin:@127.0.0.1:1521:test
 				用户名：test234
 				密码：123456
 			同步数据来源(kafka)
-				服务器列表：172.16.154.5:9092,172.16.154.7:9092
+				服务器列表：127.0.0.2:9092,127.0.0.1:9092
 				主题：test234
 				查询超时时间：5000
 				单次查询数量：1000
 		目标数据信息
 			mysql数据源
-				url：jdbc:mysql://172.16.60.247:3306/data_test?useUnicode=true&characterEncoding=utf8
-				用户名：fd
+				url：jdbc:mysql://127.0.0.1:3306/data_test?useUnicode=true&characterEncoding=utf8
+				用户名：user
 				密码：123456
 ```
 

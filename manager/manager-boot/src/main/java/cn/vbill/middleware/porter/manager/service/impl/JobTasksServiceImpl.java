@@ -123,7 +123,6 @@ public class JobTasksServiceImpl implements JobTasksService {
             logger.info("抓取任务id[{}]插入数据库Success.", jobTasks.getId());
         } catch (Exception e) {
             logger.warn("抓取任务id[{}]插入数据库Error.", jobTasks.getId());
-            throw new RuntimeException(e);
         }
         return number;
     }
@@ -354,6 +353,7 @@ public class JobTasksServiceImpl implements JobTasksService {
                     jobTasksTable.getTargetTableName().split("[.]")[0]};
             String[] table = {jobTasksTable.getSourceTableName().split("[.]")[1],
                     jobTasksTable.getTargetTableName().split("[.]")[1]};
+
             Map<String, String> column = null;
             if (!jobTasksTable.isDirectMapTable()) {
                 column = fieldsMap(jobTasksTable.getFields());

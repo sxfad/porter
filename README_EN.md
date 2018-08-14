@@ -1,6 +1,6 @@
 # Porter | [中文](./README.md)
 
-[![GitHub release](https://img.shields.io/badge/release-2.0.2-blue.svg)](http://192.168.120.68/root/suixingpay-datas/tags)
+[![GitHub release](https://img.shields.io/badge/release-2.0.2-blue.svg)](https://github.com/sxfad/porter)
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
 
@@ -32,7 +32,7 @@ Porter began in 2017 and provides data synchronization, but it's not just limite
 
 ### Compile from source
 ```
-git clone http://192.168.120.68/root/vbill-proter.git
+git clone https://github.com/sxfad/porter.git
 cd vbill-proter
 git checkout version
 gradle build

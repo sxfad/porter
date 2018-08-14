@@ -36,8 +36,8 @@ import java.util.Date;
 public abstract class AbstractDataLoader implements DataLoader {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractDataLoader.class);
     protected static final String TIME_TAKEN_FORMAT = "yyyy-MM-dd HH:mm:ss.S";
-    private  volatile LoadClient loadClient;
-    private  volatile MetaQueryClient metaQueryClient;
+    private volatile LoadClient loadClient;
+    private volatile MetaQueryClient metaQueryClient;
     //更新转插入策略开关
     private volatile boolean insertOnUpdateError = true;
 

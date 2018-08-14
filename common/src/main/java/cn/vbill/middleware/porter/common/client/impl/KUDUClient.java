@@ -40,7 +40,6 @@ import org.apache.kudu.client.OperationResponse;
 import org.apache.kudu.client.PartialRow;
 import org.apache.kudu.client.SessionConfiguration;
 
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -61,10 +60,8 @@ import java.util.function.Function;
 public class KUDUClient extends AbstractClient<KuduConfig> implements LoadClient, MetaQueryClient {
     private final Map<List<String>, TableSchema> tables = new ConcurrentHashMap<>();
 
-
     @Getter
     private KuduClient client;
-
 
     public KUDUClient(KuduConfig config) {
         super(config);

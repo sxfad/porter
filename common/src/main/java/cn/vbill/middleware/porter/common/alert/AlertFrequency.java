@@ -34,7 +34,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class AlertFrequency {
     private final ReadWriteLock nodeLock = new ReentrantReadWriteLock();
     private final FrequencyStat stat = new FrequencyStat();
-    @Setter private volatile int frequencyOfSecond = 60;
+    @Setter
+    private volatile int frequencyOfSecond = 60;
 
     /**
      * updateFrequency
@@ -73,7 +74,9 @@ public class AlertFrequency {
     }
 
     private class FrequencyStat {
-        @Setter private Date prevDate;
-        @Setter private String prevContent;
+        @Setter
+        private Date prevDate;
+        @Setter
+        private String prevContent;
     }
 }

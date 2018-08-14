@@ -342,6 +342,7 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
         } catch (Throwable e) {
             e.printStackTrace();
             LOGGER.error("%s", e);
+
         }
 
         //如果仍然插入失败,改为单条插入

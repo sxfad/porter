@@ -39,6 +39,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * 多线程执行,完成字段、表的映射转化。
+ *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月24日 11:32
  * @version: V1.0
@@ -124,7 +125,7 @@ public class TransformJob extends AbstractStageJob {
                 LOGGER.debug("waiting sequence Future:{}", sequence);
                 //等待超过5分钟，释放任务
                 if (waitTime > 1000 * 60 * 5) {
-                    String msg  = "等待批次" + sequence + "SET完成超时(5m)，任务退出。";
+                    String msg = "等待批次" + sequence + "SET完成超时(5m)，任务退出。";
                     LOGGER.error(msg);
                     work.stopAndAlarm(msg);
                     break;

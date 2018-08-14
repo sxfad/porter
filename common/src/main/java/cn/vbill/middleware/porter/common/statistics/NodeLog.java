@@ -111,6 +111,7 @@ public class NodeLog extends StatisticData {
 
     /**
      * upload
+     *
      * @param type
      * @param taskId
      * @param swimlaneId
@@ -123,6 +124,7 @@ public class NodeLog extends StatisticData {
 
     /**
      * upload
+     *
      * @param log
      * @param receivers
      */
@@ -142,6 +144,7 @@ public class NodeLog extends StatisticData {
 
     /**
      * upload
+     *
      * @param type
      * @param taskId
      * @param swimlaneId
@@ -153,6 +156,7 @@ public class NodeLog extends StatisticData {
 
     /**
      * upload
+     *
      * @param taskId
      * @param type
      * @param error
@@ -163,6 +167,7 @@ public class NodeLog extends StatisticData {
 
     /**
      * upload
+     *
      * @param type
      * @param error
      */

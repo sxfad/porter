@@ -107,7 +107,6 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
             }
         } catch (Throwable e) {
             e.printStackTrace();
-            throw new RuntimeException(e);
         }
     }
 

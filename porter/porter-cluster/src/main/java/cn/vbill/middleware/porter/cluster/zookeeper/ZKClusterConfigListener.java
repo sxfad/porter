@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * 节点监听
+ *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月15日 10:09
  * @version: V1.0
@@ -97,6 +98,7 @@ public class ZKClusterConfigListener extends ZookeeperClusterListener {
             protected String getPath() {
                 return listenPath();
             }
+
             @Override
             protected boolean doFilter(ZookeeperClusterEvent event) {
                 //应用自身，跳过

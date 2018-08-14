@@ -29,6 +29,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * 单线程执行，但存在多线程执行的可能性，前期单线程执行
+ *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月24日 11:20
  * @version: V1.0
@@ -42,6 +43,7 @@ public class AlertJob extends AbstractStageJob {
     private final DataLoader dataLoader;
     private final AlerterFactory alerterFactory;
     private final TaskWork work;
+
     public AlertJob(TaskWork work) {
         super(work.getBasicThreadName(), 1000 * 60 * 5L);
         this.dataConsumer = work.getDataConsumer();

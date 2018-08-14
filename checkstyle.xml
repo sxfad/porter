@@ -264,7 +264,7 @@
        -->
         <!--  方法的参数个数不超过5个。 并且不对构造方法进行检查 -->
         <module name="ParameterNumber">
-            <property name="max" value="5"/>
+            <property name="max" value="10"/>
             <!--
            <property name="ignoreOverriddenMethods" value="true"/>
            -->
@@ -272,7 +272,7 @@
         </module>
         <!--  每行字符数  -->
         <module name="LineLength">
-            <property name="max" value="150"/>
+            <property name="max" value="200"/>
         </module>
         <!--
         Checks for long methods and constructors. max default 150行. max=300 设置长度300
@@ -298,7 +298,7 @@
         </module>
         <!--  返回个数  -->
         <module name="ReturnCount">
-            <property name="max" value="5"/>
+            <property name="max" value="10"/>
             <property name="format" value="^$"/>
         </module>
         <!--  类设计检查  -->

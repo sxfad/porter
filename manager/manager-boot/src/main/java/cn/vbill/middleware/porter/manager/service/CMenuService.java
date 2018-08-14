@@ -32,7 +32,7 @@ import java.util.List;
 public interface CMenuService {
 
     /**
-     * 生
+     * 生成菜单树
      *
      * @date 2018/8/10 上午10:17
      * @param: [roleCode]

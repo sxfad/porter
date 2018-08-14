@@ -56,7 +56,9 @@ public class JdbcSingleLoader extends BaseJdbcLoader {
             affectRow.add(new SubmitStatObject(row.getFinalSchema(), row.getFinalTable(), row.getFinalOpType(),
                     affect, row.getPosition(), row.getOpTime()));
         }
-        if (null != bucket && null != bucket.getRows() && !bucket.getRows().isEmpty()) printTimeTaken(bucket.getRows().get(0));
+        if (null != bucket && null != bucket.getRows() && !bucket.getRows().isEmpty()) {
+            printTimeTaken(bucket.getRows().get(0));
+        }
         return new ImmutablePair(Boolean.TRUE, affectRow);
     }
 }

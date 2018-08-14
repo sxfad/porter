@@ -59,7 +59,9 @@ public class KuduLoader extends AbstractDataLoader {
             @Override
             @SneakyThrows(TaskStopTriggerException.class)
             public void accept(List<ETLRow> l) {
-                if (l.isEmpty()) return;
+                if (l.isEmpty()) {
+                    return;
+                }
                 //批次操作类型
                 EventType type = l.get(0).getFinalOpType();
                 String tableName = l.get(0).getFinalTable();
@@ -158,22 +160,48 @@ public class KuduLoader extends AbstractDataLoader {
         private  static String COLUMN_FIELD = "kuduColumn";
         private  static String IS_KEY_CHANGED_FIELD = "kuduKeyChanged";
 
+        /**
+         * getKeys
+         * @param row
+         * @return
+         */
         protected static List<Triple<String, Integer, String>> getKeys(ETLRow row) {
             return (List<Triple<String, Integer, String>>) row.getExtendsField().computeIfAbsent(KEY_FIELD, k -> new ArrayList<>());
         }
 
+        /**
+         * getOldKeys
+         * @param row
+         * @return
+         */
         protected static List<Triple<String, Integer, String>> getOldKeys(ETLRow row) {
             return (List<Triple<String, Integer, String>>) row.getExtendsField().computeIfAbsent(OLD_KEY_FIELD, k -> new ArrayList<>());
         }
 
+        /**
+         * getColumns
+         * @param row
+         * @return
+         */
         protected static List<Triple<String, Integer, String>> getColumns(ETLRow row) {
             return (List<Triple<String, Integer, String>>) row.getExtendsField().computeIfAbsent(COLUMN_FIELD, k -> new ArrayList<>());
         }
 
+        /**
+         * isKeyChanged
+         * @param row
+         * @return
+         */
         protected static Boolean isKeyChanged(ETLRow row) {
             return (Boolean) row.getExtendsField().computeIfAbsent(IS_KEY_CHANGED_FIELD, k -> Boolean.FALSE);
         }
 
+        /**
+         * setKeyChanged
+         * @param row
+         * @param isChanged
+         * @return
+         */
         protected static Boolean setKeyChanged(ETLRow row, Boolean isChanged) {
             return (Boolean) row.getExtendsField().put(IS_KEY_CHANGED_FIELD, isChanged);
         }

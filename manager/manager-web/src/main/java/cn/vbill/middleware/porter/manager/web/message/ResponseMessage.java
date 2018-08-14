@@ -17,8 +17,8 @@
 
 package cn.vbill.middleware.porter.manager.web.message;
 
-import com.alibaba.fastjson.JSON;
 import cn.vbill.middleware.porter.manager.core.util.DateFormatUtils;
+import com.alibaba.fastjson.JSON;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -216,7 +216,6 @@ public class ResponseMessage implements Serializable {
         } else {
             return this;
         }
-
         exclude(type, fields);
         return this;
     }

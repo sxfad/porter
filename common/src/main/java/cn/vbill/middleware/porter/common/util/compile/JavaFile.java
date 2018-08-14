@@ -29,6 +29,7 @@ public interface JavaFile {
 
     /**
      * getClassName
+     *
      * @return
      */
     String getClassName();

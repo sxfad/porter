@@ -24,6 +24,7 @@ public interface DdlSchemaFilter {
 
     /**
      * accept
+     *
      * @param schemaName
      * @return
      */

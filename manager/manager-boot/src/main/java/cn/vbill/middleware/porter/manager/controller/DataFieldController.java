@@ -17,10 +17,12 @@
 
 package cn.vbill.middleware.porter.manager.controller;
 
-import static cn.vbill.middleware.porter.manager.web.message.ResponseMessage.ok;
-
-import cn.vbill.middleware.porter.manager.service.DataFieldService;
 import cn.vbill.middleware.porter.manager.core.entity.DataField;
+import cn.vbill.middleware.porter.manager.service.DataFieldService;
+import cn.vbill.middleware.porter.manager.web.message.ResponseMessage;
+import cn.vbill.middleware.porter.manager.web.page.Page;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,11 +34,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import cn.vbill.middleware.porter.manager.web.message.ResponseMessage;
-import cn.vbill.middleware.porter.manager.web.page.Page;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import static cn.vbill.middleware.porter.manager.web.message.ResponseMessage.ok;
 
 /**
  * 数据字段对应表 controller控制器

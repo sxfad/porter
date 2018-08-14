@@ -1,6 +1,6 @@
 # Porter | [English](./README_EN.md)
 
-[![GitHub release](https://img.shields.io/badge/release-2.0.2-blue.svg)](http://192.168.120.68/root/suixingpay-datas/tags)
+[![GitHub release](https://img.shields.io/badge/release-2.0.2-blue.svg)](https://github.com/sxfad/porter)
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
 
@@ -32,7 +32,7 @@ Porter始于2017年，提供数据同步功能，但并不仅仅局限于数据�
 
 ### 从源码编译
 ```
-git clone http://192.168.120.68/root/vbill-proter.git
+git clone https://github.com/sxfad/porter.git
 cd vbill-proter
 git checkout 版本
 gradle build

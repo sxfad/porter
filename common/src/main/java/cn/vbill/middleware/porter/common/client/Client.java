@@ -27,7 +27,7 @@ import cn.vbill.middleware.porter.common.exception.ClientConnectionException;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月14日 17:00
  */
 public interface Client {
-    
+
     /**
      * start
      *
@@ -36,7 +36,7 @@ public interface Client {
      * @return: void
      */
     void start() throws Exception;
-    
+
     /**
      * shutdown
      *
@@ -45,7 +45,7 @@ public interface Client {
      * @return: void
      */
     void shutdown() throws Exception;
-    
+
     /**
      * isStarted
      *

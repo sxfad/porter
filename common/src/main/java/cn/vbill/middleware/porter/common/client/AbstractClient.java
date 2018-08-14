@@ -49,26 +49,31 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @param <T>
+ * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年02月02日 14:06
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月02日 14:06
  */
 public abstract class AbstractClient<T extends SourceConfig> implements Client {
+
     protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractClient.class);
+
     //插件服务配置文件
     @JSONField(serialize = false, deserialize = false)
     private static final List<PluginServiceClient> PLUGIN_SERVICE_CLIENTS =
             SpringFactoriesLoader.loadFactories(PluginServiceClient.class, JavaFileCompiler.getInstance());
 
     private final AtomicBoolean status = new AtomicBoolean(false);
-    @Getter @Setter private boolean isPublic = false;
+    @Getter
+    @Setter
+    private boolean isPublic = false;
     private final T config;
 
     public AbstractClient(T config) {
         this.config = config;
     }
+
     @Override
     public void start() throws Exception {
         if (status.compareAndSet(false, true)) {
@@ -113,7 +118,6 @@ public abstract class AbstractClient<T extends SourceConfig> implements Client {
     }
 
 
-
     @Override
     public T getConfig() {
         return config;
@@ -121,6 +125,7 @@ public abstract class AbstractClient<T extends SourceConfig> implements Client {
 
     /**
      * 默认为准备好的。如果客户端连接初始化费时，需在客户端实现中设置
+     *
      * @return
      */
     protected boolean isAlready() {
@@ -162,7 +167,7 @@ public abstract class AbstractClient<T extends SourceConfig> implements Client {
 
         //自定义插件配置文件
         if (config instanceof PluginServiceConfig) {
-            PluginServiceConfig  pluginConfig = (PluginServiceConfig) config;
+            PluginServiceConfig pluginConfig = (PluginServiceConfig) config;
             //如果仍不能匹配客户端，尝试从插件服务SPI加载
             for (PluginServiceClient c : PLUGIN_SERVICE_CLIENTS) {
                 if (c.isMatch(pluginConfig.getTargetName())) {
@@ -175,7 +180,7 @@ public abstract class AbstractClient<T extends SourceConfig> implements Client {
                 }
             }
         }
-        throw  new ClientMatchException();
+        throw new ClientMatchException();
     }
 
     @Override

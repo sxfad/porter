@@ -28,7 +28,6 @@ import java.util.Enumeration;
 import java.util.List;
 
 /**
- *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月20日 13:50
  * @version: V1.0
@@ -60,6 +59,7 @@ public class MachineUtils {
 
     /**
      * getPID
+     *
      * @return
      */
     public static long getPID() {
@@ -67,8 +67,7 @@ public class MachineUtils {
         if (processName != null && processName.length() > 0) {
             try {
                 return Long.parseLong(processName.split("@")[0]);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 LOGGER.error("%s", e);
                 return 0;
             }
@@ -78,6 +77,7 @@ public class MachineUtils {
 
     /**
      * getLocalInetAddress
+     *
      * @return
      */
     private static List<String> getLocalInetAddress() {
@@ -93,8 +93,7 @@ public class MachineUtils {
                     inetAddressList.add(addrs.nextElement().getHostAddress());
                 }
             }
-        }
-        catch (SocketException e) {
+        } catch (SocketException e) {
             LOGGER.error("%s", e);
             throw new RuntimeException("get local inet address fail", e);
         }
@@ -104,10 +103,11 @@ public class MachineUtils {
 
     /**
      * localhost
+     *
      * @return
      */
     public static String localhost() {
-        List<String>  list = getLocalInetAddress();
+        List<String> list = getLocalInetAddress();
         for (String i : list) {
             if (!LOCAL_EXCEPT_IP.contains(i) && i.indexOf(':') < 0) {
                 return i;

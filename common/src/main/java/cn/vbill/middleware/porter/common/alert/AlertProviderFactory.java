@@ -17,21 +17,26 @@
 
 package cn.vbill.middleware.porter.common.alert;
 
+import cn.vbill.middleware.porter.common.alert.provider.AlertProvider;
 import cn.vbill.middleware.porter.common.alert.provider.NormalAlertProvider;
 import cn.vbill.middleware.porter.common.client.AlertClient;
 import cn.vbill.middleware.porter.common.client.impl.EmailClient;
 import cn.vbill.middleware.porter.common.config.AlertConfig;
-import cn.vbill.middleware.porter.common.dic.AlertPlugin;
-import cn.vbill.middleware.porter.common.exception.ConfigParseException;
-import cn.vbill.middleware.porter.common.alert.provider.AlertProvider;
 import cn.vbill.middleware.porter.common.config.source.EmailConfig;
+import cn.vbill.middleware.porter.common.dic.AlertPlugin;
 import cn.vbill.middleware.porter.common.exception.ClientConnectionException;
+import cn.vbill.middleware.porter.common.exception.ConfigParseException;
 
 import java.util.List;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
+ * <<<<<<< HEAD
+ * =======
+ * <p>
+ * >>>>>>> gmaster
+ *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年01月01日 20:14
  * @version: V1.0
@@ -88,6 +93,7 @@ public enum AlertProviderFactory {
         if (null != alert) {
             alert.notice(title, msg, receiverList);
         }
+
         initializedLock.readLock().unlock();
     }
 }

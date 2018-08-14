@@ -33,7 +33,6 @@ import java.net.URLConnection;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年03月09日 14:47
  */
-
 public class JavaClass implements JavaFile {
     @Getter
     private final String filePath;
@@ -41,7 +40,6 @@ public class JavaClass implements JavaFile {
     private final String className;
     @Getter
     private final byte[] classData;
-
 
     public JavaClass(JavaFileConfig config) throws IOException {
         this.filePath = config.getContent();
@@ -51,6 +49,7 @@ public class JavaClass implements JavaFile {
 
     /**
      * readClassData
+     *
      * @param filePath
      * @return
      * @throws IOException

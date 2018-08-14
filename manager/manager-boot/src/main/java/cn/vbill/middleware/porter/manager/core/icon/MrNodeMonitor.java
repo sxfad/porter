@@ -77,10 +77,18 @@ public class MrNodeMonitor {
      */
     private Long[] tps;
 
+    /**
+     * getxAxisData
+     * @return
+     */
     public Date[] getxAxisData() {
         return xAxisData;
     }
 
+    /**
+     * setxAxisData
+     * @param xAxisData
+     */
     public void setxAxisData(Date[] xAxisData) {
         this.xAxisData = xAxisData;
     }

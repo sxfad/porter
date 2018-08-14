@@ -39,6 +39,5 @@ public class CommonController {
         if (obj == null) {
             throw new NotFoundException(msg);
         }
-
     }
 }
