@@ -33,20 +33,69 @@ import java.util.List;
  */
 public interface MrJobTasksScheduleService {
 
+    /**
+     * 新增
+     *
+     * @date 2018/8/10 下午1:58
+     * @param: [mrJobTasksSchedule]
+     * @return: java.lang.Integer
+     */
     Integer insert(MrJobTasksSchedule mrJobTasksSchedule);
 
+    /**
+     * 更新
+     *
+     * @date 2018/8/10 下午1:58
+     * @param: [id, mrJobTasksSchedule]
+     * @return: java.lang.Integer
+     */
     Integer update(Long id, MrJobTasksSchedule mrJobTasksSchedule);
 
+    /**
+     * 删除
+     *
+     * @date 2018/8/10 下午1:59
+     * @param: [id]
+     * @return: java.lang.Integer
+     */
     Integer delete(Long id);
 
+    /**
+     * 根据id查询
+     *
+     * @date 2018/8/10 下午1:59
+     * @param: [id]
+     * @return: cn.vbill.middleware.porter.manager.core.entity.MrJobTasksSchedule
+     */
     MrJobTasksSchedule selectById(Long id);
 
+    /**
+     * 分页
+     *
+     * @date 2018/8/10 下午1:59
+     * @param: [page]
+     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.entity.MrJobTasksSchedule>
+     */
     Page<MrJobTasksSchedule> page(Page<MrJobTasksSchedule> page);
 
     /** 解析处理 任务进度状态汇总. */
     void dealDTaskStat(DTaskStat stat);
 
+    /**
+     * 根据JobId查询
+     *
+     * @date 2018/8/10 下午2:00
+     * @param: [jobId]
+     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.entity.MrJobTasksSchedule>
+     */
     List<MrJobTasksSchedule> selectSwimlaneByJobId(String jobId);
 
+    /**
+     * 列表
+     *
+     * @date 2018/8/10 下午2:01
+     * @param: [jobId, heartBeatBeginDate, heartBeatEndDate]
+     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.entity.MrJobTasksSchedule>
+     */
     List<MrJobTasksSchedule> list(String jobId, String heartBeatBeginDate, String heartBeatEndDate);
 }

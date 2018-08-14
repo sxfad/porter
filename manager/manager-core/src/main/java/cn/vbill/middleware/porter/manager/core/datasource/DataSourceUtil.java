@@ -17,6 +17,8 @@
 
 package cn.vbill.middleware.porter.manager.core.datasource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -27,6 +29,8 @@ import java.sql.Statement;
  * @author guohongjian[guo_hj@suixingpay.com]
  */
 public class DataSourceUtil {
+
+    private static Logger LOGGER = LoggerFactory.getLogger(DataSourceUtil.class);
 
     /**
      * 创建数据源
@@ -44,6 +48,7 @@ public class DataSourceUtil {
             conn = DriverManager.getConnection(url, username, password);
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
+            LOGGER.info("%s", e);
         }
         return conn;
     }
@@ -78,6 +83,7 @@ public class DataSourceUtil {
                 rs.close();
             } catch (SQLException e) {
                 e.printStackTrace();
+                LOGGER.info("%s", e);
             }
         }
         // 关闭数据库操作对象
@@ -86,6 +92,7 @@ public class DataSourceUtil {
                 stmt.close();
             } catch (SQLException e) {
                 e.printStackTrace();
+                LOGGER.info("%s", e);
             }
         }
         // 关闭数据库连接
@@ -94,6 +101,7 @@ public class DataSourceUtil {
                 conn.close();
             } catch (SQLException e) {
                 e.printStackTrace();
+                LOGGER.info("%s", e);
             }
         }
     }

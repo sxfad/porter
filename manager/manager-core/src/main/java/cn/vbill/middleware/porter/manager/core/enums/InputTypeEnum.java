@@ -33,13 +33,24 @@ import java.util.Map;
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum InputTypeEnum {
 
-    TEXT("TEXT", "文本框"), RADIO("RADIO", "单选框");
+    /**
+     * 文本框
+     */
+    TEXT("TEXT", "文本框"),
+
+    /**
+     * 单选框
+     */
+    RADIO("RADIO", "单选框");
 
     @Getter
     private final String code;
     @Getter
     private final String name;
 
+    /**
+     * LINKMAP
+     */
     public static final Map<String, Object> LINKMAP = new LinkedHashMap<String, Object>() {
 
         private static final long serialVersionUID = 1L;

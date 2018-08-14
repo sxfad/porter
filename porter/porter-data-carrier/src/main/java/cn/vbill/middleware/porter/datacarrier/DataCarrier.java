@@ -30,7 +30,31 @@ import org.apache.commons.lang3.tuple.Pair;
  */
 
 public interface DataCarrier<E>  extends DataContainer {
+
+    /**
+     * push
+     *
+     * @date 2018/8/9 上午11:56
+     * @param: [item]
+     * @return: void
+     */
     void push(E item) throws InterruptedException;
+
+    /**
+     * pullByOrder
+     *
+     * @date 2018/8/9 上午11:56
+     * @param: []
+     * @return: org.apache.commons.lang3.tuple.Pair<java.lang.String,E>
+     */
     Pair<String, E> pullByOrder();
+
+    /**
+     * pull
+     *
+     * @date 2018/8/9 上午11:56
+     * @param: []
+     * @return: E
+     */
     <E> E pull();
 }

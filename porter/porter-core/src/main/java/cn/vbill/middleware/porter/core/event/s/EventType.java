@@ -25,21 +25,73 @@ package cn.vbill.middleware.porter.core.event.s;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月06日 11:53
  */
 public enum EventType {
+
+    /**
+     * insert
+     */
     INSERT(0, "INSERT", "I"),
+
+    /**
+     * update
+     */
     UPDATE(1, "UPDATE", "U"),
+
+    /**
+     * delete
+     */
     DELETE(2, "DELETE", "D"),
+
+    /**
+     * transaction begin
+     */
     TRANSACTION_BEGIN(3, "BEGIN", ""),
+
+    /**
+     * transaction end
+     */
     TRANSACTION_END(4, "END", "END"),
+
+    /**
+     * truncate
+     */
     TRUNCATE(5, "TRUNCATE", "T"),
+
+    /**
+     * unknown
+     */
     UNKNOWN(-1, "UNKNOWN", "UNKNOWN");
     private int index;
     private String value;
     private String code;
+
+    /**
+     * insert index
+     */
     public static final int INSERT_INDEX = 0;
+
+    /**
+     * update index
+     */
     public static final int UPDATE_INDEX = 1;
+
+    /**
+     * delete index
+     */
     public static final int DELETE_INDEX = 2;
+
+    /**
+     * begin index
+     */
     public static final int BEGIN_INDEX = 3;
+
+    /**
+     * end index
+     */
     public static final int END_INDEX = 4;
+
+    /**
+     * truncate index
+     */
     public static final int TRUNCATE_INDEX = 5;
     EventType(int index, String value, String code) {
         this.index =  index;
@@ -47,7 +99,13 @@ public enum EventType {
         this.code = code;
     }
 
-
+    /**
+     * 初始化type
+     *
+     * @date 2018/8/8 下午5:58
+     * @param: [kafkaEvent]
+     * @return: cn.vbill.middleware.porter.core.event.s.EventType
+     */
     public static EventType type(String kafkaEvent) {
         if (kafkaEvent.equals("I")) {
             return  INSERT;

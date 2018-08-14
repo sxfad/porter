@@ -27,9 +27,9 @@ import cn.vbill.middleware.porter.common.config.source.NameSourceConfig;
 import cn.vbill.middleware.porter.common.config.source.ZookeeperConfig;
 import cn.vbill.middleware.porter.common.dic.SourceType;
 import cn.vbill.middleware.porter.common.exception.ConfigParseException;
+import cn.vbill.middleware.porter.common.util.BeanUtils;
 import cn.vbill.middleware.porter.common.util.compile.JavaFileCompiler;
 import com.alibaba.fastjson.annotation.JSONField;
-import cn.vbill.middleware.porter.common.util.BeanUtils;
 import lombok.Getter;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -56,29 +56,62 @@ public abstract class SourceConfig implements SwamlaneSupport {
 
     @JSONField(serialize = false, deserialize = false)
     protected static final Logger LOGGER = LoggerFactory.getLogger(SourceConfig.class);
+
+    /**
+     * SOURCE_TYPE_KEY
+     */
     @JSONField(serialize = false, deserialize = false)
     public static final String SOURCE_TYPE_KEY = "sourceType";
+
+    /**
+     * NAME_SOURCE_KEY
+     */
     @JSONField(serialize = false, deserialize = false)
     public static final String NAME_SOURCE_KEY = "sourceName";
-    @Getter protected SourceType sourceType;
+    @Getter
+    protected SourceType sourceType;
     private Map<String, String> properties;
 
+    /**
+     * childStuff
+     */
     protected abstract void childStuff();
+
+    /**
+     * childStuffColumns
+     *
+     * @return
+     */
     protected abstract String[] childStuffColumns();
 
-    public  <T extends SourceConfig> T stuff() throws ConfigParseException {
+    /**
+     * stuff
+     *
+     * @param <T>
+     * @return
+     * @throws ConfigParseException
+     */
+    public <T extends SourceConfig> T stuff() throws ConfigParseException {
         try {
             BeanUtils.copyProperties(properties, this, ArrayUtils.addAll(childStuffColumns(), SOURCE_TYPE_KEY));
             childStuff();
             return (T) this;
         } catch (Exception e) {
             e.printStackTrace();
+            LOGGER.error("%s", e);
             throw new ConfigParseException((null != properties ? properties.toString() : "{}") + "转换SourceConfig出错");
         }
     }
 
-
-    public static  <T extends SourceConfig> T getConfig(Map<String, String>  properties) throws ConfigParseException {
+    /**
+     * 获取config
+     *
+     * @param properties
+     * @param <T>
+     * @return
+     * @throws ConfigParseException
+     */
+    public static <T extends SourceConfig> T getConfig(Map<String, String> properties) throws ConfigParseException {
         T config = null;
         try {
             String sourceTypeStr = properties.getOrDefault(SOURCE_TYPE_KEY, "");
@@ -109,13 +142,16 @@ public abstract class SourceConfig implements SwamlaneSupport {
                     case KAFKA_PRODUCE:
                         config = (T) new KafkaProduceConfig();
                         break;
+                    default:
+                        break;
                 }
-            } else if (properties.containsKey(NAME_SOURCE_KEY)) {
+            }
+            if (null == config && properties.containsKey(NAME_SOURCE_KEY)) {
                 config = (T) new NameSourceConfig();
             }
 
             //如果配置文件对象仍不存在，尝试从插件服务SPI加载
-            if (null == config) {
+            if (null == config && null != sourceType) {
                 for (PluginServiceConfig c : PLUGIN_SERVICE_CONFIGS) {
                     if (c instanceof SourceConfig && c.isMatch(sourceType.getCode())) {
                         config = (T) c.getClass().newInstance();
@@ -127,7 +163,9 @@ public abstract class SourceConfig implements SwamlaneSupport {
             if (null != config) {
                 config.setProperties(properties);
                 config.stuff();
-                if (!config.check()) throw new ConfigParseException("参数格式不正确:" + properties);
+                if (!config.check()) {
+                    throw new ConfigParseException("参数格式不正确:" + properties);
+                }
             }
 
         } catch (Exception e) {
@@ -140,6 +178,7 @@ public abstract class SourceConfig implements SwamlaneSupport {
     public final Map<String, String> getProperties() {
         return Collections.unmodifiableMap(properties);
     }
+
     protected void setProperties(Map<String, String> properties) {
         this.properties = properties;
     }
@@ -151,11 +190,17 @@ public abstract class SourceConfig implements SwamlaneSupport {
 
     /**
      * 格式校验
+     *
      * @return
      */
     protected boolean check() {
         return doCheck();
     }
 
+    /**
+     * doCheck
+     *
+     * @return
+     */
     protected abstract boolean doCheck();
 }

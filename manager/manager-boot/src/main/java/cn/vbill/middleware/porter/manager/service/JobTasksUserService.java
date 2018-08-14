@@ -31,15 +31,57 @@ import cn.vbill.middleware.porter.manager.web.page.Page;
  */
 public interface JobTasksUserService {
 
+    /**
+     * 新增
+     *
+     * @date 2018/8/10 上午11:52
+     * @param: [jobTasksUser]
+     * @return: java.lang.Integer
+     */
     Integer insert(JobTasksUser jobTasksUser);
 
+    /**
+     * 更新
+     *
+     * @date 2018/8/10 上午11:52
+     * @param: [id, jobTasksUser]
+     * @return: java.lang.Integer
+     */
     Integer update(Long id, JobTasksUser jobTasksUser);
 
+    /**
+     * 删除
+     *
+     * @date 2018/8/10 上午11:53
+     * @param: [id]
+     * @return: java.lang.Integer
+     */
     Integer delete(Long id);
 
+    /**
+     * 根据id查询
+     *
+     * @date 2018/8/10 上午11:53
+     * @param: [id]
+     * @return: cn.vbill.middleware.porter.manager.core.entity.JobTasksUser
+     */
     JobTasksUser selectById(Long id);
 
+    /**
+     * 分页
+     *
+     * @date 2018/8/10 上午11:53
+     * @param: [page]
+     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.entity.JobTasksUser>
+     */
     Page<JobTasksUser> page(Page<JobTasksUser> page);
 
+    /**
+     * insertList
+     *
+     * @date 2018/8/10 上午11:53
+     * @param: [jobTasks]
+     * @return: void
+     */
     void insertList(JobTasks jobTasks);
 }

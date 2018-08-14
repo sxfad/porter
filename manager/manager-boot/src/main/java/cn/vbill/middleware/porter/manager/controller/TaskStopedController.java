@@ -20,6 +20,8 @@ package cn.vbill.middleware.porter.manager.controller;
 
 import cn.vbill.middleware.porter.manager.ManagerContext;
 import io.swagger.annotations.Api;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,6 +43,15 @@ import java.util.Map;
 @RequestMapping("/alarm/task")
 public class TaskStopedController {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(TaskStopedController.class);
+
+    /**
+     * info
+     *
+     * @date 2018/8/9 下午4:27
+     * @param: [response]
+     * @return: void
+     */
     @GetMapping("/check")
     public void info(HttpServletResponse response) {
         Map<String, List<String>> tasks = ManagerContext.INSTANCE.getStoppedTasks();
@@ -49,6 +60,7 @@ public class TaskStopedController {
                 response.getWriter().write(tasks.toString());
                 response.getWriter().flush();
             } catch (Throwable e) {
+                LOGGER.error("%s", e);
             }
         }
         //return null != tasks && !tasks.isEmpty() ? tasks.toString() : "";

@@ -17,17 +17,16 @@
 
 package cn.vbill.middleware.porter.common.dic;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  * 告警策略
- * 
+ *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年02月23日 11:42
  * @version: V1.0
@@ -37,24 +36,34 @@ import lombok.Getter;
 @AllArgsConstructor
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum AlertPlugin {
+
+    /**
+     * NONE
+     */
     NONE("NONE", "无"),
+
+    /**
+     * EMAIL
+     */
     EMAIL("EMAIL", "邮件"),
 
+    /**
+     * MOBILE
+     */
     MOBILE("MOBILE", "手机号");
+
+    /**
+     * LINKMAP
+     */
+    public static final Map<String, Object> LINKMAP = new LinkedHashMap<>();
+
+    static {
+        LINKMAP.put(EMAIL.code, EMAIL.name);
+    }
 
     @Getter
     private final String code;
     @Getter
     private final String name;
-
-    public static final Map<String, Object> LINKMAP = new LinkedHashMap<String, Object>() {
-
-        private static final long serialVersionUID = 1L;
-
-        {
-            put(EMAIL.code, EMAIL.name);
-            //put(MOBILE.code, MOBILE.name);
-        }
-    };
 
 }

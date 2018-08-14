@@ -27,8 +27,24 @@ import cn.vbill.middleware.porter.task.worker.TaskWork;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月26日 15:59
  */
 public interface Transformer {
+
+    /**
+     * order
+     *
+     * @date 2018/8/9 下午2:14
+     * @param: []
+     * @return: int
+     */
     default int order() {
         return 0;
     }
+
+    /**
+     * transform
+     *
+     * @date 2018/8/9 下午2:14
+     * @param: [bucket, work]
+     * @return: void
+     */
     void transform(ETLBucket bucket, TaskWork work) throws Exception;
 }

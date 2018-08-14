@@ -34,8 +34,16 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class AlertFrequency {
     private final ReadWriteLock nodeLock = new ReentrantReadWriteLock();
     private final FrequencyStat stat = new FrequencyStat();
-    @Setter private volatile int frequencyOfSecond = 60;
+    @Setter
+    private volatile int frequencyOfSecond = 60;
 
+    /**
+     * updateFrequency
+     *
+     * @date 2018/8/10 下午2:45
+     * @param: [prevContent]
+     * @return: void
+     */
     public void updateFrequency(String prevContent) {
         try {
             nodeLock.writeLock().lock();
@@ -45,6 +53,15 @@ public class AlertFrequency {
             nodeLock.writeLock().unlock();
         }
     }
+
+    /**
+     * canSend
+     *
+     * @author FuZizheng
+     * @date 2018/8/10 下午2:45
+     * @param: [content]
+     * @return: boolean
+     */
     public boolean canSend(String content) {
         try {
             nodeLock.readLock().lock();
@@ -57,7 +74,9 @@ public class AlertFrequency {
     }
 
     private class FrequencyStat {
-        @Setter private Date prevDate;
-        @Setter private String prevContent;
+        @Setter
+        private Date prevDate;
+        @Setter
+        private String prevContent;
     }
 }

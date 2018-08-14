@@ -27,6 +27,8 @@ import cn.vbill.middleware.porter.common.config.SourceConfig;
 import cn.vbill.middleware.porter.common.exception.ClientException;
 import cn.vbill.middleware.porter.common.exception.DataLoaderBuildException;
 import cn.vbill.middleware.porter.common.util.compile.JavaFileCompiler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 
 import java.util.List;
@@ -38,9 +40,21 @@ import java.util.List;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月06日 10:20
  */
 public enum DataLoaderFactory {
-    INSTANCE();
-    private final List<DataLoader> LOADER_TEMPLATE = SpringFactoriesLoader.loadFactories(DataLoader.class, JavaFileCompiler.getInstance());
 
+    /**
+     * instance
+     */
+    INSTANCE();
+    private final List<DataLoader> loaderTemplate = SpringFactoriesLoader.loadFactories(DataLoader.class, JavaFileCompiler.getInstance());
+    private static final Logger LOGGER = LoggerFactory.getLogger(DataLoaderFactory.class);
+
+    /**
+     * 获取Loader
+     *
+     * @date 2018/8/8 下午6:03
+     * @param: [config]
+     * @return: cn.vbill.middleware.porter.core.loader.DataLoader
+     */
     public DataLoader getLoader(DataLoaderConfig config) throws ConfigParseException, ClientException, DataLoaderBuildException {
         Client client = AbstractClient.getClient(SourceConfig.getConfig(config.getSource()));
         //获取源数据查询配置
@@ -58,13 +72,21 @@ public enum DataLoaderFactory {
         return loader;
     }
 
+    /**
+     * newLoader
+     *
+     * @date 2018/8/8 下午6:03
+     * @param: [loaderName]
+     * @return: cn.vbill.middleware.porter.core.loader.DataLoader
+     */
     public DataLoader newLoader(String loaderName) throws DataLoaderBuildException {
-        for (DataLoader t : LOADER_TEMPLATE) {
+        for (DataLoader t : loaderTemplate) {
             if (t.isMatch(loaderName)) {
                 try {
                     return t.getClass().newInstance();
                 } catch (Exception e) {
                     e.printStackTrace();
+                    LOGGER.error("%s", e);
                     throw new DataLoaderBuildException(e.getMessage());
                 }
             }

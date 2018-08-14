@@ -26,6 +26,8 @@ import cn.vbill.middleware.porter.core.event.etl.ETLBucket;
 import cn.vbill.middleware.porter.core.task.AbstractStageJob;
 import cn.vbill.middleware.porter.datacarrier.DataMapCarrier;
 import cn.vbill.middleware.porter.task.worker.TaskWork;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -37,12 +39,16 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * 多线程执行,完成字段、表的映射转化。
+ *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月24日 11:32
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月24日 11:32
  */
 public class TransformJob extends AbstractStageJob {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TransformJob.class);
+
     private final TransformFactory transformFactory;
     private final ExecutorService executorService;
     //容量为线程池容量的100倍
@@ -119,7 +125,7 @@ public class TransformJob extends AbstractStageJob {
                 LOGGER.debug("waiting sequence Future:{}", sequence);
                 //等待超过5分钟，释放任务
                 if (waitTime > 1000 * 60 * 5) {
-                    String msg  = "等待批次" + sequence + "SET完成超时(5m)，任务退出。";
+                    String msg = "等待批次" + sequence + "SET完成超时(5m)，任务退出。";
                     LOGGER.error(msg);
                     work.stopAndAlarm(msg);
                     break;
@@ -128,6 +134,7 @@ public class TransformJob extends AbstractStageJob {
                     waitTime += peerWaitTime;
                     Thread.sleep(peerWaitTime);
                 } catch (InterruptedException e) {
+                    Thread.interrupted();
                 }
             }
             LOGGER.debug("got sequence:{}, Future: {}", sequence, carrier.containsKey(sequence));

@@ -44,6 +44,13 @@ public class HomeController {
     @Autowired
     private HomeService homeService;
 
+    /**
+     * 首页事项
+     *
+     * @date 2018/8/9 下午4:23
+     * @param: []
+     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
+     */
     @GetMapping("/blocks")
     @ApiOperation(value = "首页事项", notes = "首页事项")
     public ResponseMessage blocks() {

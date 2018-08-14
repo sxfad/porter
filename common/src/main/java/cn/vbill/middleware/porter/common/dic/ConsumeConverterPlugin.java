@@ -17,17 +17,16 @@
 
 package cn.vbill.middleware.porter.common.dic;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+
 /**
  * 转换器插件
- * 
+ *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年03月07日 10:00
  * @version: V1.0
@@ -36,21 +35,30 @@ import lombok.Getter;
 @AllArgsConstructor
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum ConsumeConverterPlugin {
-    CANAL_ROW("canalRow", "Canal行格式"), OGG_JSON("oggJson", "oggJson格式");
+
+    /**
+     * CANAL_ROW
+     */
+    CANAL_ROW("canalRow", "Canal行格式"),
+
+    /**
+     * oggJson
+     */
+    OGG_JSON("oggJson", "oggJson格式");
+
+    /**
+     * LINKMAP
+     */
+    public static final HashMap<String, Object> LINKMAP = new LinkedHashMap<>();
+
+    static {
+        LINKMAP.put("CANAL_ROW", CANAL_ROW.name);
+        LINKMAP.put("OGG_JSON", OGG_JSON.name);
+    }
 
     @Getter
     private final String code;
     @Getter
     private final String name;
-
-    public static final HashMap<String, Object> LINKMAP = new LinkedHashMap<String, Object>() {
-
-        private static final long serialVersionUID = 1L;
-
-        {
-            put("CANAL_ROW", CANAL_ROW.name);
-            put("OGG_JSON", OGG_JSON.name);
-        }
-    };
 
 }

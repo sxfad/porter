@@ -71,7 +71,22 @@ public interface DataLoader {
      */
     Pair<Boolean, List<SubmitStatObject>> load(ETLBucket bucket) throws TaskStopTriggerException;
 
+    /**
+     * setLoadClient接口方法
+     *
+     * @date 2018/8/8 下午6:00
+     * @param: [c]
+     * @return: void
+     */
     void setLoadClient(LoadClient c);
+
+    /**
+     * setMetaQueryClient接口方法
+     *
+     * @date 2018/8/8 下午6:01
+     * @param: [c]
+     * @return: void
+     */
     void setMetaQueryClient(MetaQueryClient c);
 
     /**
@@ -99,9 +114,30 @@ public interface DataLoader {
      */
     void mouldRow(ETLRow row) throws TaskDataException;
 
+    /**
+     * 判断InsertOnUpdateError
+     *
+     * @date 2018/8/8 下午6:01
+     * @param: []
+     * @return: boolean
+     */
     boolean isInsertOnUpdateError();
 
+    /**
+     * setInsertOnUpdateError接口方法
+     *
+     * @date 2018/8/8 下午6:02
+     * @param: [insertOnUpdateError]
+     * @return: void
+     */
     void setInsertOnUpdateError(boolean insertOnUpdateError);
 
+    /**
+     * 获取ClientInfo接口方法
+     *
+     * @date 2018/8/8 下午6:02
+     * @param: []
+     * @return: java.lang.String
+     */
     String getClientInfo();
 }

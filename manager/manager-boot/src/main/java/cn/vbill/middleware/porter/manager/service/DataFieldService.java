@@ -30,13 +30,48 @@ import cn.vbill.middleware.porter.manager.web.page.Page;
  */
 public interface DataFieldService {
 
+    /**
+     * 新增
+     *
+     * @date 2018/8/10 上午11:06
+     * @param: [dataField]
+     * @return: java.lang.Integer
+     */
     Integer insert(DataField dataField);
 
+    /**
+     * 修改
+     *
+     * @date 2018/8/10 上午11:06
+     * @param: [id, dataField]
+     * @return: java.lang.Integer
+     */
     Integer update(Long id, DataField dataField);
 
+    /**
+     * 删除
+     *
+     * @date 2018/8/10 上午11:09
+     * @param: [id]
+     * @return: java.lang.Integer
+     */
     Integer delete(Long id);
 
+    /**
+     * 根据di查询
+     *
+     * @date 2018/8/10 上午11:09
+     * @param: [id]
+     * @return: cn.vbill.middleware.porter.manager.core.entity.DataField
+     */
     DataField selectById(Long id);
 
+    /**
+     * 分页
+     *
+     * @date 2018/8/10 上午11:09
+     * @param: [page]
+     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.entity.DataField>
+     */
     Page<DataField> page(Page<DataField> page);
 }

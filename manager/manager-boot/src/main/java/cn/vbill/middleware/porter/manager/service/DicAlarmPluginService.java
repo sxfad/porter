@@ -33,16 +33,59 @@ import java.util.List;
 
 public interface DicAlarmPluginService {
 
+    /**
+     * 新增
+     *
+     * @date 2018/8/10 上午11:28
+     * @param: [dicAlarmPlugin]
+     * @return: java.lang.Integer
+     */
     Integer insert(DicAlarmPlugin dicAlarmPlugin);
 
+    /**
+     * 更新
+     *
+     * @date 2018/8/10 上午11:28
+     * @param: [id, dicAlarmPlugin]
+     * @return: java.lang.Integer
+     */
     Integer update(Long id, DicAlarmPlugin dicAlarmPlugin);
 
+    /**
+     * 删除
+     *
+     * @date 2018/8/10 上午11:28
+     * @param: [id]
+     * @return: java.lang.Integer
+     */
     Integer delete(Long id);
 
+    /**
+     * 根据id查询
+     *
+     * @date 2018/8/10 上午11:28
+     * @param: [id]
+     * @return: cn.vbill.middleware.porter.manager.core.entity.DicAlarmPlugin
+     */
     DicAlarmPlugin selectById(Long id);
 
+    /**
+     * 分页
+     *
+     * @date 2018/8/10 上午11:28
+     * @param: [page]
+     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.entity.DicAlarmPlugin>
+     */
     Page<DicAlarmPlugin> page(Page<DicAlarmPlugin> page);
 
+    /**
+     * 根据AlertType查询
+     *
+     * @author FuZizheng
+     * @date 2018/8/10 上午11:28
+     * @param: [alertType]
+     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.entity.DicAlarmPlugin>
+     */
     List<DicAlarmPlugin> findByAlertType(String alertType);
 
 }

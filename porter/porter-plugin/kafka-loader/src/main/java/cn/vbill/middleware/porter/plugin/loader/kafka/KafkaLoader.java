@@ -33,6 +33,8 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.commons.lang3.tuple.Triple;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -46,6 +48,9 @@ import java.util.stream.Stream;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月02日 11:53
  */
 public class KafkaLoader extends AbstractDataLoader {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(KafkaLoader.class);
+
     private static final DateFormat OP_TS_F = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
     private static final DateFormat C_TS_F = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS000");
     @Override

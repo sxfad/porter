@@ -17,8 +17,6 @@
 
 package cn.vbill.middleware.porter.cluster.zookeeper;
 
-import cn.vbill.middleware.porter.common.util.MachineUtils;
-import com.alibaba.fastjson.JSONObject;
 import cn.vbill.middleware.porter.common.cluster.ClusterListenerFilter;
 import cn.vbill.middleware.porter.common.cluster.command.NodeRegisterCommand;
 import cn.vbill.middleware.porter.common.cluster.command.ShutdownCommand;
@@ -28,27 +26,34 @@ import cn.vbill.middleware.porter.common.cluster.command.broadcast.NodeRegister;
 import cn.vbill.middleware.porter.common.cluster.command.broadcast.Shutdown;
 import cn.vbill.middleware.porter.common.cluster.command.broadcast.TaskAssigned;
 import cn.vbill.middleware.porter.common.cluster.command.broadcast.TaskStop;
+import cn.vbill.middleware.porter.common.cluster.data.DNode;
 import cn.vbill.middleware.porter.common.cluster.event.ClusterEvent;
 import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterEvent;
 import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListener;
 import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListenerFilter;
-import cn.vbill.middleware.porter.common.cluster.data.DNode;
 import cn.vbill.middleware.porter.common.config.NodeCommandConfig;
 import cn.vbill.middleware.porter.common.config.TaskConfig;
 import cn.vbill.middleware.porter.common.dic.NodeHealthLevel;
-import cn.vbill.middleware.porter.common.node.NodeCommandType;
 import cn.vbill.middleware.porter.common.dic.NodeStatusType;
+import cn.vbill.middleware.porter.common.dic.TaskStatusType;
+import cn.vbill.middleware.porter.common.node.NodeCommandType;
 import cn.vbill.middleware.porter.common.task.TaskEventListener;
 import cn.vbill.middleware.porter.common.task.TaskEventProvider;
-import cn.vbill.middleware.porter.common.dic.TaskStatusType;
 import cn.vbill.middleware.porter.common.util.DefaultNamedThreadFactory;
+import cn.vbill.middleware.porter.common.util.MachineUtils;
 import cn.vbill.middleware.porter.core.NodeContext;
+import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.data.Stat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.TreeSet;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -56,21 +61,26 @@ import java.util.regex.Pattern;
 
 /**
  * 节点监听
+ *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月15日 10:09
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月15日 10:09
  */
-public class ZKClusterNodeListener extends ZookeeperClusterListener  implements TaskEventProvider, NodeRegister,
+public class ZKClusterNodeListener extends ZookeeperClusterListener implements TaskEventProvider, NodeRegister,
         Shutdown, TaskAssigned, TaskStop {
     private static final String ZK_PATH = BASE_CATALOG + "/node";
     private static final Pattern NODE_ORDER_PATTERN = Pattern.compile(ZK_PATH + "/.*/order/.*");
-    private static final Pattern NODE_STAT_PATTERN = Pattern.compile(ZK_PATH + "/.*/stat");
-    private static final Pattern NODE_LOCK_PATTERN = Pattern.compile(ZK_PATH + "/.*/lock");
+//    private static final Pattern NODE_STAT_PATTERN = Pattern.compile(ZK_PATH + "/.*/stat");
+//    private static final Pattern NODE_LOCK_PATTERN = Pattern.compile(ZK_PATH + "/.*/lock");
 
-    private final List<TaskEventListener> TASK_LISTENER = new ArrayList<>();
+    private final List<TaskEventListener> taskListener = new ArrayList<>();
     private final ScheduledExecutorService heartbeatWorker =
             Executors.newSingleThreadScheduledExecutor(new DefaultNamedThreadFactory("node-heartbeat"));
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ZKClusterNodeListener.class);
+    private static final String STAT_PATH = "/stat";
+    private static final String TASK_PATH = "/task/";
 
     @Override
     public String listenPath() {
@@ -87,7 +97,7 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener  implements 
             //释放当前节点正在执行的任务
             if (commandConfig.getCommand() == NodeCommandType.RELEASE_WORK) {
                 //查询出来当前节点正在执行的任务
-                DNode nodeData = getDNode(listenPath() + "/" + NodeContext.INSTANCE.getNodeId() + "/stat");
+                DNode nodeData = getDNode(listenPath() + "/" + NodeContext.INSTANCE.getNodeId() + STAT_PATH);
                 if (null != nodeData) {
                     //遍历节点任务
                     nodeData.getTasks().forEach((taskId, swimlaneId) -> {
@@ -146,6 +156,7 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener  implements 
             protected String getPath() {
                 return listenPath();
             }
+
             @Override
             protected boolean doFilter(ZookeeperClusterEvent event) {
                 boolean access = false;
@@ -167,7 +178,7 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener  implements 
         NodeContext.INSTANCE.resetHealthLevel();
         String nodePath = listenPath() + "/" + nrCommend.getId();
         String lockPath = nodePath + "/lock";
-        String statPath = nodePath + "/stat";
+        String statPath = nodePath + STAT_PATH;
 
         client.createWhenNotExists(nodePath, false, false, null);
 
@@ -206,13 +217,15 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener  implements 
                         }
                     } catch (KeeperException e) {
                         e.printStackTrace();
+                        LOGGER.error("%s", e);
                     } catch (InterruptedException e) {
+                        Thread.interrupted();
                         e.printStackTrace();
                     }
                 }
             }, 10, 30, TimeUnit.SECONDS);
         } else {
-            throw  new Exception(lockPath + ",节点已注册");
+            throw new Exception(lockPath + ",节点已注册");
         }
     }
 
@@ -225,7 +238,7 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener  implements 
 
     @Override
     public void taskAssigned(TaskAssignedCommand command) throws Exception {
-        String path = listenPath() + "/" + NodeContext.INSTANCE.getNodeId() + "/stat";
+        String path = listenPath() + "/" + NodeContext.INSTANCE.getNodeId() + STAT_PATH;
         synchronized (path.intern()) {
             DNode nodeData = getDNode(path);
             TreeSet<String> resources = nodeData.getTasks().getOrDefault(command.getTaskId(), new TreeSet<>());
@@ -238,35 +251,53 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener  implements 
 
     @Override
     public void stopTask(TaskStopCommand command) throws Exception {
-        String path = listenPath() + "/" + NodeContext.INSTANCE.getNodeId() + "/stat";
+        String path = listenPath() + "/" + NodeContext.INSTANCE.getNodeId() + STAT_PATH;
         synchronized (path.intern()) {
             DNode nodeData = getDNode(path);
             if (null != nodeData.getTasks() && !nodeData.getTasks().isEmpty()) {
                 TreeSet<String> swimlaneIdList = nodeData.getTasks().getOrDefault(command.getTaskId(), new TreeSet<>());
-                if (swimlaneIdList.contains(command.getSwimlaneId())) swimlaneIdList.remove(command.getSwimlaneId());
-                if (swimlaneIdList.isEmpty()) nodeData.getTasks().remove(command.getTaskId());
+                if (swimlaneIdList.contains(command.getSwimlaneId())) {
+                    swimlaneIdList.remove(command.getSwimlaneId());
+                }
+                if (swimlaneIdList.isEmpty()) {
+                    nodeData.getTasks().remove(command.getTaskId());
+                }
             }
             Stat nowStat = client.exists(path, true);
             client.setData(path, nodeData.toString(), nowStat.getVersion());
         }
     }
 
+    /**
+     * 触发TaskEvent
+     *
+     * @date 2018/8/8 下午4:15
+     * @param: [event]
+     * @return: void
+     */
     private void triggerTaskEvent(TaskConfig event) {
-        TASK_LISTENER.forEach(l -> l.onEvent(event));
+        taskListener.forEach(l -> l.onEvent(event));
     }
 
     @Override
     public void addTaskEventListener(TaskEventListener listener) {
-        TASK_LISTENER.add(listener);
+        taskListener.add(listener);
     }
 
     @Override
     public void removeTaskEventListener(TaskEventListener listener) {
-        TASK_LISTENER.remove(listener);
+        taskListener.remove(listener);
     }
 
+    /**
+     * 获取TaskConfig
+     *
+     * @date 2018/8/8 下午4:20
+     * @param: [taskId, swimlaneId]
+     * @return: cn.vbill.middleware.porter.common.config.TaskConfig
+     */
     private TaskConfig getTaskConfig(String taskId, String swimlaneId) {
-        String swimPath = BASE_CATALOG + "/task/" + taskId + "/dist/" + swimlaneId;
+        String swimPath = BASE_CATALOG + TASK_PATH + taskId + "/dist/" + swimlaneId;
         TaskConfig config = null;
         Pair<String, Stat> taskConfigPair = client.getData(swimPath);
         if (null != taskConfigPair && !StringUtils.isBlank(taskConfigPair.getLeft())) {
@@ -276,26 +307,49 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener  implements 
         return config;
     }
 
+    /**
+     * 是否为TaskLocked
+     *
+     * @date 2018/8/8 下午4:21
+     * @param: [taskId, swimlaneId]
+     * @return: boolean
+     */
     private boolean isTaskLocked(String taskId, String swimlaneId) {
-        String lockPath = BASE_CATALOG + "/task/" + taskId + "/lock/" + swimlaneId;
+        String lockPath = BASE_CATALOG + TASK_PATH + taskId + "/lock/" + swimlaneId;
         try {
             Stat lockStat = client.exists(lockPath, true);
             return null != lockStat;
         } catch (Exception e) {
+            LOGGER.error("%s", e);
             return false;
         }
     }
 
+    /**
+     * 任务是否停止ByError
+     *
+     * @date 2018/8/8 下午4:22
+     * @param: [taskId, swimlaneId]
+     * @return: boolean
+     */
     private boolean isTaskStoppedByError(String taskId, String swimlaneId) {
-        String lockPath = BASE_CATALOG + "/task/" + taskId + "/error/" + swimlaneId;
+        String lockPath = BASE_CATALOG + TASK_PATH + taskId + "/error/" + swimlaneId;
         try {
             Stat lockStat = client.exists(lockPath, false);
             return null != lockStat;
         } catch (Exception e) {
+            LOGGER.error("%s", e);
             return false;
         }
     }
 
+    /**
+     * 获取Node
+     *
+     * @date 2018/8/8 下午4:22
+     * @param: [nodePath]
+     * @return: cn.vbill.middleware.porter.common.cluster.data.DNode
+     */
     private DNode getDNode(String nodePath) {
         Pair<String, Stat> dataPair = client.getData(nodePath);
         return DNode.fromString(dataPair.getLeft(), DNode.class);

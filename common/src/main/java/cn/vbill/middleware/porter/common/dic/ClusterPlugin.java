@@ -27,7 +27,7 @@ import lombok.Getter;
 
 /**
  * 集群方案
- * 
+ *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年02月23日 11:42
  * @version: V1.0
@@ -36,20 +36,24 @@ import lombok.Getter;
 @AllArgsConstructor
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum ClusterPlugin {
+
+    /**
+     * ZOOKEEPER
+     */
     ZOOKEEPER("ZOOKEEPER", "zookeeper");
+
+    /**
+     * LINKMAP
+     */
+    public static final HashMap<String, Object> LINKMAP = new LinkedHashMap<>();
+
+    static {
+        LINKMAP.put(ZOOKEEPER.code, ZOOKEEPER.name);
+    }
 
     @Getter
     private final String code;
     @Getter
     private final String name;
-
-    public static final HashMap<String, Object> LINKMAP = new LinkedHashMap<String, Object>() {
-
-        private static final long serialVersionUID = 1L;
-
-        {
-            put(ZOOKEEPER.code, ZOOKEEPER.name);
-        }
-    };
 
 }

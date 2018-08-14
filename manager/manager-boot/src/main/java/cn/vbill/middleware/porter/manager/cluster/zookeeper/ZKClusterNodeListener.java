@@ -17,18 +17,6 @@
 
 package cn.vbill.middleware.porter.manager.cluster.zookeeper;
 
-import java.util.UUID;
-import java.util.regex.Pattern;
-
-import cn.vbill.middleware.porter.manager.core.util.ApplicationContextUtil;
-import cn.vbill.middleware.porter.manager.service.impl.NodesServiceImpl;
-import cn.vbill.middleware.porter.manager.service.MrNodesScheduleService;
-import cn.vbill.middleware.porter.manager.service.NodesService;
-import cn.vbill.middleware.porter.manager.service.impl.MrNodesScheduleServiceImpl;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.zookeeper.data.Stat;
-
-import com.alibaba.fastjson.JSON;
 import cn.vbill.middleware.porter.common.cluster.ClusterListenerFilter;
 import cn.vbill.middleware.porter.common.cluster.command.NodeOrderPushCommand;
 import cn.vbill.middleware.porter.common.cluster.command.broadcast.NodeOrderPush;
@@ -37,7 +25,20 @@ import cn.vbill.middleware.porter.common.cluster.event.ClusterEvent;
 import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterEvent;
 import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListener;
 import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListenerFilter;
+import cn.vbill.middleware.porter.manager.core.util.ApplicationContextUtil;
 import cn.vbill.middleware.porter.manager.core.util.DateFormatUtils;
+import cn.vbill.middleware.porter.manager.service.MrNodesScheduleService;
+import cn.vbill.middleware.porter.manager.service.NodesService;
+import cn.vbill.middleware.porter.manager.service.impl.MrNodesScheduleServiceImpl;
+import cn.vbill.middleware.porter.manager.service.impl.NodesServiceImpl;
+import com.alibaba.fastjson.JSON;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.zookeeper.data.Stat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.UUID;
+import java.util.regex.Pattern;
 
 /**
  * 节点监听
@@ -53,6 +54,8 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements N
     // "/.*/order/.*");
     private static final Pattern NODE_STAT_PATTERN = Pattern.compile(ZK_PATH + "/.*/stat");
     private static final Pattern NODE_LOCK_PATTERN = Pattern.compile(ZK_PATH + "/.*/lock");
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ZKClusterNodeListener.class);
 
     @Override
     public String listenPath() {
@@ -129,6 +132,13 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements N
         };
     }
 
+    /**
+     * getDNode
+     *
+     * @date 2018/8/9 下午4:17
+     * @param: [nodePath]
+     * @return: cn.vbill.middleware.porter.common.cluster.data.DNode
+     */
     private DNode getDNode(String nodePath) {
         Pair<String, Stat> dataPair = client.getData(nodePath);
         return DNode.fromString(dataPair.getLeft(), DNode.class);

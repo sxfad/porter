@@ -42,6 +42,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * 工人
+ *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月21日 11:22
  * @version: V1.0
@@ -51,41 +52,48 @@ public class TaskWorker {
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskWorker.class);
     private static final AtomicInteger SEQUENCE = new AtomicInteger(0);
     private final int workerSequence;
-    private final AtomicBoolean STAT = new AtomicBoolean(false);
+    private final AtomicBoolean stat = new AtomicBoolean(false);
     //负责将任务工作者的状态定时上传
-    private final ScheduledExecutorService WORKER_STAT_JOB;
-
+    private final ScheduledExecutorService workerStatJob;
 
 
     /**
      * consumeSourceId -> work
      */
-    private final Map<String, TaskWork> JOBS;
-    private final Map<String, TableMapper> TABLE_MAPPERS;
+    private final Map<String, TaskWork> jobs;
+    private final Map<String, TableMapper> tableMappers;
 
     public TaskWorker() {
-        WORKER_STAT_JOB = Executors.newSingleThreadScheduledExecutor(new DefaultNamedThreadFactory("TaskStat"));
-        JOBS = new ConcurrentHashMap<>();
+        workerStatJob = Executors.newSingleThreadScheduledExecutor(new DefaultNamedThreadFactory("TaskStat"));
+        jobs = new ConcurrentHashMap<>();
         workerSequence = SEQUENCE.incrementAndGet();
-        TABLE_MAPPERS = new ConcurrentHashMap<>();
+        tableMappers = new ConcurrentHashMap<>();
     }
 
+    /**
+     * start
+     *
+     * @date 2018/8/9 下午2:19
+     * @param: []
+     * @return: void
+     */
     public void start() {
-        if (STAT.compareAndSet(false, true)) {
+        if (stat.compareAndSet(false, true)) {
             LOGGER.info("工人上线.......");
-            WORKER_STAT_JOB.scheduleAtFixedRate(new Runnable() {
+            workerStatJob.scheduleAtFixedRate(new Runnable() {
                 @Override
                 public void run() {
                     //如果没有JOB，让线程睡眠1分钟.
-                    if (JOBS.isEmpty()) {
+                    if (jobs.isEmpty()) {
                         try {
                             Thread.sleep(60000);
                         } catch (InterruptedException e) {
+                            Thread.interrupted();
                             e.printStackTrace();
                         }
                     }
                     //每1秒上传一次消费进度
-                    for (TaskWork job : JOBS.values()) {
+                    for (TaskWork job : jobs.values()) {
                         job.submitStat();
                     }
                 }
@@ -95,11 +103,18 @@ public class TaskWorker {
         }
     }
 
+    /**
+     * stop
+     *
+     * @date 2018/8/9 下午2:19
+     * @param: []
+     * @return: void
+     */
     public void stop() {
-        if (STAT.compareAndSet(true, false)) {
+        if (stat.compareAndSet(true, false)) {
             LOGGER.info("工人下线.......");
-            WORKER_STAT_JOB.shutdown();
-            for (TaskWork job : JOBS.values()) {
+            workerStatJob.shutdown();
+            for (TaskWork job : jobs.values()) {
                 job.stop();
             }
         } else {
@@ -107,20 +122,34 @@ public class TaskWorker {
         }
     }
 
+    /**
+     * stopJob
+     *
+     * @date 2018/8/9 下午2:20
+     * @param: [swimlaneId]
+     * @return: void
+     */
     public void stopJob(String... swimlaneId) {
         Arrays.stream(swimlaneId).forEach(c -> {
-            if (JOBS.containsKey(c)) {
-                JOBS.get(c).stop();
-                JOBS.remove(c);
+            if (jobs.containsKey(c)) {
+                jobs.get(c).stop();
+                jobs.remove(c);
             }
         });
     }
 
+    /**
+     * alloc
+     *
+     * @date 2018/8/9 下午2:20
+     * @param: [taskConfig]
+     * @return: void
+     */
     public void alloc(TaskConfig taskConfig) throws DataConsumerBuildException, DataLoaderBuildException, ConfigParseException, ClientException {
         //抛出从TaskConfig构建Task的异常
         Task task = Task.fromConfig(taskConfig);
         task.getMappers().forEach(m -> {
-            TABLE_MAPPERS.putIfAbsent(m.getUniqueKey(task.getTaskId()), m);
+            tableMappers.putIfAbsent(m.getUniqueKey(task.getTaskId()), m);
         });
         //根据DataConsumer所使用ConsumeClient的消费拆分细则拆分consumer
         task.getConsumers().forEach(c -> {
@@ -128,27 +157,27 @@ public class TaskWorker {
             try {
                 //启动JOB
                 job = new TaskWork(c, task.getLoader(), task.getTaskId(), task.getReceivers(), this, task.getPositionCheckInterval(),
-                task.getAlarmPositionCount());
+                        task.getAlarmPositionCount());
                 job.start();
-                JOBS.put(c.getSwimlaneId(), job);
+                jobs.put(c.getSwimlaneId(), job);
+            } catch (TaskLockException e) {
+                LOGGER.error("Consumer JOB[{}] failed to start!", c.getSwimlaneId(), e);
+                NodeLog.upload(NodeLog.LogType.TASK_LOG, task.getTaskId(), c.getSwimlaneId(), e.getMessage());
             } catch (Throwable e) {
-                if (null != job) job.stop();
-                //任务抢占异常不属于报错范畴
-                if (!(e instanceof TaskLockException)) {
-                    LOGGER.error("Consumer JOB[{}] failed to start!", c.getSwimlaneId(), e);
-                    NodeLog.upload(NodeLog.LogType.TASK_LOG, task.getTaskId(), c.getSwimlaneId(), e.getMessage());
-                } else {
-                    e.printStackTrace();
+                e.printStackTrace();
+            } finally {
+                if (null != job) {
+                    job.stop();
                 }
             }
         });
     }
 
     public Map<String, TableMapper> getTableMapper() {
-        return Collections.unmodifiableMap(TABLE_MAPPERS);
+        return Collections.unmodifiableMap(tableMappers);
     }
 
     public boolean isNoWork() {
-        return JOBS.isEmpty();
+        return jobs.isEmpty();
     }
 }

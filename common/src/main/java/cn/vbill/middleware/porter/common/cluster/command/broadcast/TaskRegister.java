@@ -25,5 +25,12 @@ import cn.vbill.middleware.porter.common.cluster.command.TaskRegisterCommand;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月07日 15:29
  */
 public interface TaskRegister {
+
+    /**
+     * taskRegister
+     *
+     * @param command
+     * @throws Exception
+     */
     void taskRegister(TaskRegisterCommand command) throws Exception;
 }

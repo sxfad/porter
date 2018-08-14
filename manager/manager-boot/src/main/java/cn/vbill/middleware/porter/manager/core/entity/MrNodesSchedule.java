@@ -68,6 +68,11 @@ public class MrNodesSchedule implements java.io.Serializable {
         this.updateTime = new Date();
     }
 
+    /**
+     * jobNameJson
+     * @param tasks
+     * @return
+     */
     private String jobNameJson(Map<String, TreeSet<String>> tasks) {
         Map<String, TreeSet<String>> taskmap = new HashMap<String, TreeSet<String>>();
         for (Map.Entry<String, TreeSet<String>> entry : tasks.entrySet()) {

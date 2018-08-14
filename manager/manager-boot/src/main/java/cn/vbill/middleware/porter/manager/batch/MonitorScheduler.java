@@ -37,7 +37,14 @@ public class MonitorScheduler {
     @Autowired
     private MonitorScheduledService monitorScheduledService;
 
-    //每天凌晨2点启动定时器，删除前天以前的数据
+    /**
+     * 每天凌晨2点启动定时器，删除前天以前的数据
+     *
+     * @author FuZizheng
+     * @date 2018/8/9 下午4:15
+     * @param: []
+     * @return: void
+     */
     @Scheduled(cron = "0 0 2 * * ? ")
     @Transactional
     public void transferDataScheduler() {
@@ -45,7 +52,14 @@ public class MonitorScheduler {
         monitorScheduledService.transferDataTask();
     }
 
-    //每天凌晨3点启动定时器，删除存在30天以前的表
+    /**
+     * 每天凌晨3点启动定时器，删除存在30天以前的表
+     *
+     * @author FuZizheng
+     * @date 2018/8/9 下午4:16
+     * @param: []
+     * @return: void
+     */
     @Scheduled(cron = "0 0 3 * * ? ")
     public void dropTableScheduler() {
         logger.info("启动定时器，删除存在30天的表");

@@ -32,19 +32,63 @@ import cn.vbill.middleware.porter.manager.web.page.Page;
  */
 public interface MrNodesMonitorService {
 
+    /**
+     * 新增
+     *
+     * @date 2018/8/10 下午2:04
+     * @param: [mrNodesMonitor]
+     * @return: java.lang.Integer
+     */
     Integer insert(MrNodesMonitor mrNodesMonitor);
 
+    /**
+     * 更新
+     *
+     * @date 2018/8/10 下午2:05
+     * @param: [id, mrNodesMonitor]
+     * @return: java.lang.Integer
+     */
     Integer update(Long id, MrNodesMonitor mrNodesMonitor);
 
+    /**
+     * 删除
+     *
+     * @date 2018/8/10 下午2:05
+     * @param: [id]
+     * @return: java.lang.Integer
+     */
     Integer delete(Long id);
 
+    /**
+     * 根据id查询
+     *
+     * @date 2018/8/10 下午2:05
+     * @param: [id]
+     * @return: cn.vbill.middleware.porter.manager.core.entity.MrNodesMonitor
+     */
     MrNodesMonitor selectById(Long id);
 
+    /**
+     * 分页
+     *
+     * @date 2018/8/10 下午2:05
+     * @param: [page]
+     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.entity.MrNodesMonitor>
+     */
     Page<MrNodesMonitor> page(Page<MrNodesMonitor> page);
 
-    /** 节点区间数据统计. */
+    /**
+     * 节点区间数据统计.
+     */
     void dealTaskPerformance(TaskPerformance performance);
 
+    /**
+     * obNodeMonitor
+     *
+     * @date 2018/8/10 下午2:05
+     * @param: [nodeId, intervalTime, intervalCount]
+     * @return: cn.vbill.middleware.porter.manager.core.icon.MrNodeMonitor
+     */
     MrNodeMonitor obNodeMonitor(String nodeId, Long intervalTime, Long intervalCount);
 
 }

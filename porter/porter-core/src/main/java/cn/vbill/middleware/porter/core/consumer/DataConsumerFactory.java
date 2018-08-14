@@ -30,6 +30,8 @@ import cn.vbill.middleware.porter.common.config.SourceConfig;
 import cn.vbill.middleware.porter.common.exception.ClientException;
 import cn.vbill.middleware.porter.common.exception.DataConsumerBuildException;
 import cn.vbill.middleware.porter.common.util.compile.JavaFileCompiler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 
 import java.util.ArrayList;
@@ -42,9 +44,21 @@ import java.util.List;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月06日 10:09
  */
 public enum DataConsumerFactory {
-    INSTANCE();
-    private final List<DataConsumer> CONSUMER_TEMPLATE = SpringFactoriesLoader.loadFactories(DataConsumer.class, JavaFileCompiler.getInstance());
 
+    /**
+     * INSTANCE
+     */
+    INSTANCE();
+    private final List<DataConsumer> consumerTemplate = SpringFactoriesLoader.loadFactories(DataConsumer.class, JavaFileCompiler.getInstance());
+    private static final Logger LOGGER = LoggerFactory.getLogger(DataConsumerFactory.class);
+
+    /**
+     * 获取Consumer
+     *
+     * @date 2018/8/8 下午5:52
+     * @param: [config]
+     * @return: java.util.List<cn.vbill.middleware.porter.core.consumer.DataConsumer>
+     */
     public List<DataConsumer> getConsumer(DataConsumerConfig config) throws ClientException, ConfigParseException, DataConsumerBuildException {
         //消息转换器
         EventConverter converter = ConverterFactory.INSTANCE.getConverter(config.getConverter());
@@ -70,6 +84,7 @@ public enum DataConsumerFactory {
             try {
                 processor = JavaFileCompiler.getInstance().newJavaObject(config.getEventProcessor(), EventProcessor.class);
             } catch (Exception e) {
+                LOGGER.error("%s", e);
                 throw new ConfigParseException("EventProcessor转换java对象失败:" + e.getMessage());
             }
         }
@@ -78,7 +93,9 @@ public enum DataConsumerFactory {
         List<SourceConfig> configs = SourceConfig.getConfig(config.getSource()).swamlanes();
         for (SourceConfig sourceConfig : configs) {
             Client tempClient = AbstractClient.getClient(sourceConfig);
-            if (null == tempClient || !(tempClient instanceof ConsumeClient)) throw new ClientException("ConsumeClient初始化失败:" + config.getSource());
+            if (null == tempClient || !(tempClient instanceof ConsumeClient)) {
+                throw new ClientException("ConsumeClient初始化失败:" + config.getSource());
+            }
             ConsumeClient consumeClient = (ConsumeClient) tempClient;
 
             //创建consumer对象
@@ -100,13 +117,21 @@ public enum DataConsumerFactory {
         return consumers;
     }
 
+    /**
+     * newConsumer
+     *
+     * @date 2018/8/8 下午5:53
+     * @param: [consumerName]
+     * @return: cn.vbill.middleware.porter.core.consumer.DataConsumer
+     */
     public DataConsumer newConsumer(String consumerName) throws DataConsumerBuildException {
-        for (DataConsumer t : CONSUMER_TEMPLATE) {
+        for (DataConsumer t : consumerTemplate) {
             if (t.isMatch(consumerName)) {
                 try {
                     return t.getClass().newInstance();
                 } catch (Exception e) {
                     e.printStackTrace();
+                    LOGGER.error("%s", e);
                     throw new DataConsumerBuildException(e.getMessage());
                 }
             }

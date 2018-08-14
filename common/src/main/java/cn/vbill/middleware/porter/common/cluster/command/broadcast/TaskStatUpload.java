@@ -26,5 +26,12 @@ import cn.vbill.middleware.porter.common.cluster.command.TaskStatCommand;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月07日 15:39
  */
 public interface TaskStatUpload {
+
+    /**
+     * uploadStat
+     *
+     * @param command
+     * @throws Exception
+     */
     void uploadStat(TaskStatCommand command) throws Exception;
 }

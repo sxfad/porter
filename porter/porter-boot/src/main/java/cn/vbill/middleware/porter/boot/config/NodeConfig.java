@@ -17,8 +17,8 @@
 
 package cn.vbill.middleware.porter.boot.config;
 
-import cn.vbill.middleware.porter.common.config.ClusterConfig;
 import cn.vbill.middleware.porter.common.config.AlertConfig;
+import cn.vbill.middleware.porter.common.config.ClusterConfig;
 import cn.vbill.middleware.porter.common.config.StatisticConfig;
 import cn.vbill.middleware.porter.common.config.TaskConfig;
 import lombok.Getter;
@@ -36,9 +36,10 @@ import java.util.List;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月19日 10:14
  */
 @ConfigurationProperties(prefix = "node")
-@Setter @Getter
+@Setter
+@Getter
 @Component
-public class  NodeConfig {
+public class NodeConfig {
     private String id;
     private Integer workLimit = 10;
     private StatisticConfig statistic = new StatisticConfig();
@@ -46,3 +47,4 @@ public class  NodeConfig {
     private ClusterConfig cluster;
     private List<TaskConfig> task = new ArrayList<>();
 }
+

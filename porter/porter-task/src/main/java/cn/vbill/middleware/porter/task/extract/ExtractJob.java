@@ -28,6 +28,9 @@ import cn.vbill.middleware.porter.datacarrier.DataCarrier;
 import cn.vbill.middleware.porter.datacarrier.DataCarrierFactory;
 import cn.vbill.middleware.porter.task.worker.TaskWork;
 import org.apache.commons.lang3.tuple.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -43,6 +46,8 @@ import java.util.concurrent.TimeUnit;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月24日 11:20
  */
 public class ExtractJob extends AbstractStageJob {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ExtractJob.class);
     //工作线程数量
     private static final int JOB_THREAD_SIZE = 2;
 
@@ -119,6 +124,14 @@ public class ExtractJob extends AbstractStageJob {
     public ETLBucket output() {
         return carrier.pull();
     }
+
+    /**
+     * 获取NextSequence
+     *
+     * @date 2018/8/9 下午2:07
+     * @param: []
+     * @return: T
+     */
     public <T> T getNextSequence() {
         return orderedBucket.pull();
     }

@@ -28,10 +28,15 @@ import org.apache.commons.lang.StringUtils;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年03月09日 14:47
  */
 public class JavaSource implements JavaFile {
-    @Getter private final String packageName;
-    @Getter private final String className;
-    @Getter private final String simpleClassName;
-    @Getter private final String source;
+    @Getter
+    private final String packageName;
+    @Getter
+    private final String className;
+    @Getter
+    private final String simpleClassName;
+    @Getter
+    private final String source;
+
     public JavaSource(JavaFileConfig config) {
         this.source = config.getContent();
         this.className = config.getClassName();
@@ -39,13 +44,23 @@ public class JavaSource implements JavaFile {
         this.simpleClassName = getClassName(config.getClassName());
     }
 
+    /**
+     * getPackage
+     * @param className
+     * @return
+     */
     private static String getPackage(String className) {
-        int index = className.lastIndexOf(".");
+        int index = className.lastIndexOf('.');
         return index > -1 ? className.substring(0, index) : StringUtils.EMPTY;
     }
 
+    /**
+     * getClassName
+     * @param className
+     * @return
+     */
     private static String getClassName(String className) {
-        int index = className.lastIndexOf(".");
+        int index = className.lastIndexOf('.');
         return index > -1 ? className.substring(index + 1) : className;
     }
 }

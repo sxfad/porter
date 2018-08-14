@@ -26,5 +26,12 @@ import cn.vbill.middleware.porter.common.cluster.command.NodeOrderPushCommand;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月07日 15:43
  */
 public interface NodeOrderPush {
+
+    /**
+     * push
+     *
+     * @param command
+     * @throws Exception
+     */
     void push(NodeOrderPushCommand command) throws Exception;
 }

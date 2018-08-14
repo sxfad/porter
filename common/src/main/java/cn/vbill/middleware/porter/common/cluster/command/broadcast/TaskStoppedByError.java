@@ -26,5 +26,12 @@ import cn.vbill.middleware.porter.common.cluster.command.TaskStoppedByErrorComma
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月07日 15:43
  */
 public interface TaskStoppedByError {
+
+    /**
+     * tagError
+     *
+     * @param command
+     * @throws Exception
+     */
     void tagError(TaskStoppedByErrorCommand command) throws Exception;
 }

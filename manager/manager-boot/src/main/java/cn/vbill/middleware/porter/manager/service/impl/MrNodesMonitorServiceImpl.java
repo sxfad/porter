@@ -109,6 +109,12 @@ public class MrNodesMonitorServiceImpl implements MrNodesMonitorService {
         return new MrNodeMonitor(list);
     }
 
+    /**
+     * dealTaskPerformanceSync
+     * @param nodeId
+     * @param dataTimes
+     * @param mrNodesMonitor
+     */
     private void dealTaskPerformanceSync(String nodeId, String dataTimes, MrNodesMonitor mrNodesMonitor) {
         MrNodesMonitor old = mrNodesMonitorMapper.selectByNodeIdAndTime(nodeId, dataTimes);
         if (old == null || old.getId() == null) {

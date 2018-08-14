@@ -60,7 +60,9 @@ public class ETLRowTransformer implements Transformer {
             mappingRowData(tableMapper, row);
             //目标端表结构元数据
             TableSchema table = findTable(work.getDataLoader(), row.getFinalSchema(), row.getFinalTable());
-            if (null != tableMapper && tableMapper.isIgnoreTargetCase() && null != table) table.toUpperCase();
+            if (null != tableMapper && tableMapper.isIgnoreTargetCase() && null != table) {
+                table.toUpperCase();
+            }
 
             /**
              * 数据库元数据正反向映射
@@ -104,11 +106,22 @@ public class ETLRowTransformer implements Transformer {
         }
     }
 
+    /**
+     * mappingRowData
+     *
+     * @date 2018/8/9 下午2:12
+     * @param: [mapper, row]
+     * @return: void
+     */
     private void mappingRowData(TableMapper mapper, ETLRow row) {
         if (null != mapper) {
             //替换schema和表名
-            if (null != mapper.getSchema() && mapper.getSchema().length == 2) row.setFinalSchema(mapper.getSchema()[1]);
-            if (null != mapper.getTable() && mapper.getTable().length == 2) row.setFinalTable(mapper.getTable()[1]);
+            if (null != mapper.getSchema() && mapper.getSchema().length == 2) {
+                row.setFinalSchema(mapper.getSchema()[1]);
+            }
+            if (null != mapper.getTable() && mapper.getTable().length == 2) {
+                row.setFinalTable(mapper.getTable()[1]);
+            }
             if (null != row.getColumns() && null != mapper.getColumn()) {
                 for (ETLColumn c : row.getColumns()) {
                     //替换字段名
@@ -118,6 +131,13 @@ public class ETLRowTransformer implements Transformer {
         }
     }
 
+    /**
+     * remedyColumns
+     *
+     * @date 2018/8/9 下午2:12
+     * @param: [table, row]
+     * @return: boolean
+     */
     private boolean remedyColumns(TableSchema table, ETLRow row) {
         List<ETLColumn> removeables = new ArrayList<>();
         //正向查找
@@ -156,7 +176,7 @@ public class ETLRowTransformer implements Transformer {
         }
 
         //反向查找
-        List<String> inColumnNames = row.getColumns().stream().map(p  -> p.getFinalName()).collect(Collectors.toList());
+        List<String> inColumnNames = row.getColumns().stream().map(p -> p.getFinalName()).collect(Collectors.toList());
 
         /**
          * 如果目标库表中有新增必填的字段的话需要补充上去
@@ -175,11 +195,18 @@ public class ETLRowTransformer implements Transformer {
         return !removeables.isEmpty();
     }
 
+    /**
+     * findTable
+     *
+     * @date 2018/8/9 下午2:13
+     * @param: [loader, finalSchema, finalTable]
+     * @return: cn.vbill.middleware.porter.common.db.meta.TableSchema
+     */
     private TableSchema findTable(DataLoader loader, String finalSchema, String finalTable)
             throws TaskStopTriggerException {
         TableSchema table = null;
         try {
-            table  = loader.findTable(finalSchema, finalTable);
+            table = loader.findTable(finalSchema, finalTable);
         } catch (Throwable e) {
             String error = "查询不到目标仓库表结构" + finalSchema + ". " + finalTable;
             //e.printStackTrace();

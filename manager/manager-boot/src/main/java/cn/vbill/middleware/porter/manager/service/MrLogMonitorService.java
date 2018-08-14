@@ -31,14 +31,49 @@ import cn.vbill.middleware.porter.manager.web.page.Page;
  */
 public interface MrLogMonitorService {
 
+    /**
+     * 新增
+     *
+     * @date 2018/8/10 下午2:02
+     * @param: [mrLogMonitor]
+     * @return: java.lang.Integer
+     */
     Integer insert(MrLogMonitor mrLogMonitor);
 
+    /**
+     * 更新
+     *
+     * @date 2018/8/10 下午2:02
+     * @param: [id, mrLogMonitor]
+     * @return: java.lang.Integer
+     */
     Integer update(Long id, MrLogMonitor mrLogMonitor);
 
+    /**
+     * 删除
+     *
+     * @date 2018/8/10 下午2:02
+     * @param: [id]
+     * @return: java.lang.Integer
+     */
     Integer delete(Long id);
 
+    /**
+     * 根据id查询
+     *
+     * @date 2018/8/10 下午2:02
+     * @param: [id]
+     * @return: cn.vbill.middleware.porter.manager.core.entity.MrLogMonitor
+     */
     MrLogMonitor selectById(Long id);
 
+    /**
+     * 分页
+     *
+     * @date 2018/8/10 下午2:04
+     * @param: [page, ipAddress, state, beginTime, endTime]
+     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.entity.MrLogMonitor>
+     */
     Page<MrLogMonitor> page(Page<MrLogMonitor> page, String ipAddress, Integer state, String beginTime, String endTime);
 
     /** 解析任务日志. */

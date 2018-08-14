@@ -32,14 +32,49 @@ import cn.vbill.middleware.porter.manager.web.page.Page;
  */
 public interface MrJobTasksMonitorService {
 
+    /**
+     * 新增
+     *
+     * @date 2018/8/10 下午1:49
+     * @param: [mrJobTasksMonitor]
+     * @return: java.lang.Integer
+     */
     Integer insert(MrJobTasksMonitor mrJobTasksMonitor);
 
+    /**
+     * 修改
+     *
+     * @date 2018/8/10 下午1:49
+     * @param: [id, mrJobTasksMonitor]
+     * @return: java.lang.Integer
+     */
     Integer update(Long id, MrJobTasksMonitor mrJobTasksMonitor);
 
+    /**
+     * 修改
+     *
+     * @date 2018/8/10 下午1:49
+     * @param: [id]
+     * @return: java.lang.Integer
+     */
     Integer delete(Long id);
 
+    /**
+     * 根据Id查询
+     *
+     * @date 2018/8/10 下午1:49
+     * @param: [id]
+     * @return: cn.vbill.middleware.porter.manager.core.entity.MrJobTasksMonitor
+     */
     MrJobTasksMonitor selectById(Long id);
 
+    /**
+     * 分页
+     *
+     * @date 2018/8/10 下午1:49
+     * @param: [page]
+     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.entity.MrJobTasksMonitor>
+     */
     Page<MrJobTasksMonitor> page(Page<MrJobTasksMonitor> page);
 
     /** 解析任务每秒统计信息. */

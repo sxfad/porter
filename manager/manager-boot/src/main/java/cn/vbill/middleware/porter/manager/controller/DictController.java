@@ -40,6 +40,13 @@ public class DictController {
     @Autowired
     private DictService dictService;
 
+    /**
+     * dict
+     *
+     * @date 2018/8/9 下午4:22
+     * @param: []
+     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
+     */
     @GetMapping("/all")
     @ApiOperation(value = "全部字典", notes = "全部字典")
     public ResponseMessage dict() {
@@ -47,6 +54,13 @@ public class DictController {
         return ResponseMessage.ok(map);
     }
 
+    /**
+     * dictType
+     *
+     * @date 2018/8/9 下午4:22
+     * @param: [type]
+     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
+     */
     @GetMapping("/{type}")
     @ApiOperation(value = "标识字典", notes = "标识字典")
     public ResponseMessage dictType(@PathVariable("type") String type) {

@@ -17,23 +17,41 @@
 
 package cn.vbill.middleware.porter.manager.service.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import cn.vbill.middleware.porter.manager.core.dto.JDBCVo;
+import cn.vbill.middleware.porter.common.alert.AlertReceiver;
+import cn.vbill.middleware.porter.common.config.DataConsumerConfig;
+import cn.vbill.middleware.porter.common.config.DataLoaderConfig;
+import cn.vbill.middleware.porter.common.config.JavaFileConfig;
+import cn.vbill.middleware.porter.common.config.SourceConfig;
 import cn.vbill.middleware.porter.common.config.TableMapperConfig;
+import cn.vbill.middleware.porter.common.config.TaskConfig;
 import cn.vbill.middleware.porter.common.dic.ConsumeConverterPlugin;
 import cn.vbill.middleware.porter.common.dic.ConsumerPlugin;
+import cn.vbill.middleware.porter.common.dic.LoaderPlugin;
+import cn.vbill.middleware.porter.common.dic.SourceType;
 import cn.vbill.middleware.porter.common.dic.TaskStatusType;
+import cn.vbill.middleware.porter.manager.core.dto.JDBCVo;
+import cn.vbill.middleware.porter.manager.core.entity.CUser;
 import cn.vbill.middleware.porter.manager.core.entity.DataSource;
+import cn.vbill.middleware.porter.manager.core.entity.DataSourcePlugin;
+import cn.vbill.middleware.porter.manager.core.entity.DataTable;
+import cn.vbill.middleware.porter.manager.core.entity.JobTaskNodes;
 import cn.vbill.middleware.porter.manager.core.entity.JobTasks;
 import cn.vbill.middleware.porter.manager.core.entity.JobTasksField;
+import cn.vbill.middleware.porter.manager.core.entity.JobTasksTable;
+import cn.vbill.middleware.porter.manager.core.enums.QuerySQL;
+import cn.vbill.middleware.porter.manager.core.mapper.JobTasksMapper;
 import cn.vbill.middleware.porter.manager.core.util.ApplicationContextUtil;
 import cn.vbill.middleware.porter.manager.service.CUserService;
 import cn.vbill.middleware.porter.manager.service.DataSourceService;
+import cn.vbill.middleware.porter.manager.service.DataTableService;
+import cn.vbill.middleware.porter.manager.service.DbSelectService;
+import cn.vbill.middleware.porter.manager.service.JobTaskNodesService;
+import cn.vbill.middleware.porter.manager.service.JobTasksFieldService;
 import cn.vbill.middleware.porter.manager.service.JobTasksService;
+import cn.vbill.middleware.porter.manager.service.JobTasksTableService;
+import cn.vbill.middleware.porter.manager.service.JobTasksUserService;
+import cn.vbill.middleware.porter.manager.web.page.Page;
+import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,29 +59,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.alibaba.fastjson.JSON;
-import cn.vbill.middleware.porter.common.alert.AlertReceiver;
-import cn.vbill.middleware.porter.common.config.DataConsumerConfig;
-import cn.vbill.middleware.porter.common.config.DataLoaderConfig;
-import cn.vbill.middleware.porter.common.config.JavaFileConfig;
-import cn.vbill.middleware.porter.common.config.SourceConfig;
-import cn.vbill.middleware.porter.common.config.TaskConfig;
-import cn.vbill.middleware.porter.common.dic.LoaderPlugin;
-import cn.vbill.middleware.porter.common.dic.SourceType;
-import cn.vbill.middleware.porter.manager.core.entity.CUser;
-import cn.vbill.middleware.porter.manager.core.entity.DataSourcePlugin;
-import cn.vbill.middleware.porter.manager.core.entity.DataTable;
-import cn.vbill.middleware.porter.manager.core.entity.JobTaskNodes;
-import cn.vbill.middleware.porter.manager.core.entity.JobTasksTable;
-import cn.vbill.middleware.porter.manager.core.enums.QuerySQL;
-import cn.vbill.middleware.porter.manager.core.mapper.JobTasksMapper;
-import cn.vbill.middleware.porter.manager.service.DataTableService;
-import cn.vbill.middleware.porter.manager.service.DbSelectService;
-import cn.vbill.middleware.porter.manager.service.JobTaskNodesService;
-import cn.vbill.middleware.porter.manager.service.JobTasksFieldService;
-import cn.vbill.middleware.porter.manager.service.JobTasksTableService;
-import cn.vbill.middleware.porter.manager.service.JobTasksUserService;
-import cn.vbill.middleware.porter.manager.web.page.Page;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 同步任务表 服务实现类
@@ -173,12 +172,12 @@ public class JobTasksServiceImpl implements JobTasksService {
         }
         // 根据 JobTasksId 查询 JobTasksTable 详情
         List<JobTasksTable> tables = jobTasksTableService.selectById(id);
-        if (tables != null && tables.size() > 0) {
+        if (tables != null && !tables.isEmpty()) {
             jobTasks.setTables(tables);
         }
         // 根据 JobTasksId 查询 CUser 详情
         List<CUser> cusers = cUserService.selectByJobTasksId(id);
-        if (cusers != null && cusers.size() > 0) {
+        if (cusers != null && !cusers.isEmpty()) {
             jobTasks.setUsers(cusers);
             // 获取 CUser 主键集合
             List<Long> userIds = new ArrayList<>();
@@ -189,7 +188,7 @@ public class JobTasksServiceImpl implements JobTasksService {
         }
         // 查询jobtasknodeid 详情
         List<JobTaskNodes> nodes = jobTaskNodesService.selectById(id);
-        if (nodes != null && nodes.size() > 0) {
+        if (nodes != null && !nodes.isEmpty()) {
             jobTasks.setNodes(nodes);
         }
         return jobTasks;
@@ -236,21 +235,21 @@ public class JobTasksServiceImpl implements JobTasksService {
             String password = null;
             QuerySQL query = null;
             for (DataSourcePlugin dataSourcePlugin : list) {
-                if (dataSourcePlugin.getFieldCode().toLowerCase().equals("dbtype")) {
-                    if (dataSourcePlugin.getFieldValue().toLowerCase().equals("mysql")) {
+                if (dataSourcePlugin.getFieldCode().equalsIgnoreCase("dbtype")) {
+                    if (dataSourcePlugin.getFieldValue().equalsIgnoreCase("mysql")) {
                         query = QuerySQL.MYSQL;
                     }
-                    if (dataSourcePlugin.getFieldValue().toLowerCase().equals("oracle")) {
+                    if (dataSourcePlugin.getFieldValue().equalsIgnoreCase("oracle")) {
                         query = QuerySQL.ORACLE;
                     }
                 }
-                if (dataSourcePlugin.getFieldCode().toLowerCase().equals("url")) {
+                if (dataSourcePlugin.getFieldCode().equalsIgnoreCase("url")) {
                     url = dataSourcePlugin.getFieldValue();
                 }
-                if (dataSourcePlugin.getFieldCode().toLowerCase().equals("username")) {
+                if (dataSourcePlugin.getFieldCode().equalsIgnoreCase("username")) {
                     username = dataSourcePlugin.getFieldValue();
                 }
-                if (dataSourcePlugin.getFieldCode().toLowerCase().equals("password")) {
+                if (dataSourcePlugin.getFieldCode().equalsIgnoreCase("password")) {
                     password = dataSourcePlugin.getFieldValue();
                 }
             }
@@ -325,6 +324,12 @@ public class JobTasksServiceImpl implements JobTasksService {
         return taskConfig;
     }
 
+    /**
+     * receiver
+     *
+     * @param cusers
+     * @return
+     */
     private AlertReceiver[] receiver(List<CUser> cusers) {
         AlertReceiver[] alertReceivers = new AlertReceiver[cusers.size()];
         for (int i = 0; i < cusers.size(); i++) {
@@ -334,14 +339,21 @@ public class JobTasksServiceImpl implements JobTasksService {
         return alertReceivers;
     }
 
+    /**
+     * tableMapperList
+     *
+     * @param tables
+     * @return
+     */
     private List<TableMapperConfig> tableMapperList(List<JobTasksTable> tables) {
         List<TableMapperConfig> tableList = new ArrayList<>();
         TableMapperConfig tableMapperConfig = null;
         for (JobTasksTable jobTasksTable : tables) {
-            String[] schema = { jobTasksTable.getSourceTableName().split("[.]")[0],
-                    jobTasksTable.getTargetTableName().split("[.]")[0] };
-            String[] table = { jobTasksTable.getSourceTableName().split("[.]")[1],
-                    jobTasksTable.getTargetTableName().split("[.]")[1] };
+            String[] schema = {jobTasksTable.getSourceTableName().split("[.]")[0],
+                    jobTasksTable.getTargetTableName().split("[.]")[0]};
+            String[] table = {jobTasksTable.getSourceTableName().split("[.]")[1],
+                    jobTasksTable.getTargetTableName().split("[.]")[1]};
+
             Map<String, String> column = null;
             if (!jobTasksTable.isDirectMapTable()) {
                 column = fieldsMap(jobTasksTable.getFields());
@@ -354,6 +366,12 @@ public class JobTasksServiceImpl implements JobTasksService {
         return tableList;
     }
 
+    /**
+     * fieldsMap
+     *
+     * @param fields
+     * @return
+     */
     private Map<String, String> fieldsMap(List<JobTasksField> fields) {
         Map<String, String> map = new HashMap<>();
         for (JobTasksField jobTasksField : fields) {
@@ -362,6 +380,13 @@ public class JobTasksServiceImpl implements JobTasksService {
         return map;
     }
 
+    /**
+     * dataSourceMap
+     *
+     * @param id
+     * @param souDataSource
+     * @return
+     */
     private Map<String, String> dataSourceMap(Long id, DataSource souDataSource) {
         Map<String, String> sourceMap = new HashMap<>();
         List<DataSourcePlugin> plugins = souDataSource.getPlugins();

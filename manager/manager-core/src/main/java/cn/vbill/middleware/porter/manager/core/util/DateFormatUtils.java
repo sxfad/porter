@@ -32,13 +32,22 @@ public abstract class DateFormatUtils {
      * 以T分隔日期和时间，并带时区信息，符合ISO8601规范
      */
     public static final String PATTERN_ISO = "yyyy-MM-dd'T'HH:mm:ss.SSSZZ";
+    /**
+     * PATTERN_ISO_ON_SECOND
+     */
     public static final String PATTERN_ISO_ON_SECOND = "yyyy-MM-dd'T'HH:mm:ssZZ";
+    /**
+     * PATTERN_ISO_ON_DATE
+     */
     public static final String PATTERN_ISO_ON_DATE = "yyyy-MM-dd";
 
     /**
      * 以空格分隔日期和时间，不带时区信息
      */
     public static final String PATTERN_DEFAULT = "yyyy-MM-dd HH:mm:ss.SSS";
+    /**
+     * PATTERN_DEFAULT_ON_SECOND
+     */
     public static final String PATTERN_DEFAULT_ON_SECOND = "yyyy-MM-dd HH:mm:ss";
 
     // 使用工厂方法FastDateFormat.getInstance(), 从缓存中获取实例
@@ -47,13 +56,22 @@ public abstract class DateFormatUtils {
      * 以T分隔日期和时间，并带时区信息，符合ISO8601规范
      */
     public static final FastDateFormat ISO_FORMAT = FastDateFormat.getInstance(PATTERN_ISO);
+    /**
+     * ISO_ON_SECOND_FORMAT
+     */
     public static final FastDateFormat ISO_ON_SECOND_FORMAT = FastDateFormat.getInstance(PATTERN_ISO_ON_SECOND);
+    /**
+     * ISO_ON_DATE_FORMAT
+     */
     public static final FastDateFormat ISO_ON_DATE_FORMAT = FastDateFormat.getInstance(PATTERN_ISO_ON_DATE);
 
     /**
      * 以空格分隔日期和时间，不带时区信息
      */
     public static final FastDateFormat DEFAULT_FORMAT = FastDateFormat.getInstance(PATTERN_DEFAULT);
+    /**
+     * DEFAULT_ON_SECOND_FORMAT
+     */
     public static final FastDateFormat DEFAULT_ON_SECOND_FORMAT = FastDateFormat.getInstance(PATTERN_DEFAULT_ON_SECOND);
 
     /**

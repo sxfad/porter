@@ -38,7 +38,24 @@ import lombok.Getter;
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum NodeStatusType {
 
-    WORKING("WORKING", "工作中"), SUSPEND("SUSPEND", "已暂停");
+    /**
+     * 工作中
+     */
+    WORKING("WORKING", "工作中"),
+
+    /**
+     * 已暂停
+     */
+    SUSPEND("SUSPEND", "已暂停");
+
+    /**
+     * LINKMAP
+     */
+    public static final HashMap<String, Object> LINKMAP = new LinkedHashMap<>();
+    static {
+        LINKMAP.put(WORKING.code, WORKING.name);
+        LINKMAP.put(SUSPEND.code, SUSPEND.name);
+    }
 
     @Getter
     private final String code;
@@ -53,13 +70,4 @@ public enum NodeStatusType {
         return this == WORKING;
     }
 
-    public static final HashMap<String, Object> LINKMAP = new LinkedHashMap<String, Object>() {
-
-        private static final long serialVersionUID = 1L;
-
-        {
-            put(WORKING.code, WORKING.name);
-            put(SUSPEND.code, SUSPEND.name);
-        }
-    };
 }

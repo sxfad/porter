@@ -17,10 +17,12 @@
 
 package cn.vbill.middleware.porter.manager.controller;
 
-import static cn.vbill.middleware.porter.manager.web.message.ResponseMessage.ok;
-
-import cn.vbill.middleware.porter.manager.service.DataFieldService;
 import cn.vbill.middleware.porter.manager.core.entity.DataField;
+import cn.vbill.middleware.porter.manager.service.DataFieldService;
+import cn.vbill.middleware.porter.manager.web.message.ResponseMessage;
+import cn.vbill.middleware.porter.manager.web.page.Page;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,11 +34,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import cn.vbill.middleware.porter.manager.web.message.ResponseMessage;
-import cn.vbill.middleware.porter.manager.web.page.Page;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import static cn.vbill.middleware.porter.manager.web.message.ResponseMessage.ok;
 
 /**
  * 数据字段对应表 controller控制器
@@ -54,6 +52,13 @@ public class DataFieldController {
     @Autowired
     protected DataFieldService dataFieldService;
 
+    /**
+     * add
+     *
+     * @date 2018/8/9 下午4:20
+     * @param: [dataField]
+     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
+     */
     @PostMapping
     @ApiOperation(value = "新增", notes = "新增")
     public ResponseMessage add(@RequestBody DataField dataField) {
@@ -61,6 +66,13 @@ public class DataFieldController {
         return ok(number);
     }
 
+    /**
+     * 修改
+     *
+     * @date 2018/8/9 下午4:20
+     * @param: [id, dataField]
+     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
+     */
     @PutMapping("/{id}")
     @ApiOperation(value = "修改", notes = "修改")
     public ResponseMessage update(@PathVariable("id") Long id, @RequestBody DataField dataField) {
@@ -68,6 +80,13 @@ public class DataFieldController {
         return ok(number);
     }
 
+    /**
+     * 删除
+     *
+     * @date 2018/8/9 下午4:20
+     * @param: [id]
+     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
+     */
     @DeleteMapping("/{id}")
     @ApiOperation(value = "删除", notes = "删除")
     public ResponseMessage delete(@PathVariable("id") Long id) {
@@ -75,6 +94,13 @@ public class DataFieldController {
         return ok();
     }
 
+    /**
+     * 查询明细
+     *
+     * @date 2018/8/9 下午4:20
+     * @param: [id]
+     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
+     */
     @GetMapping("/{id}")
     @ApiOperation(value = "查询明细", notes = "查询明细")
     public ResponseMessage info(@PathVariable("id") Long id) {
@@ -82,6 +108,13 @@ public class DataFieldController {
         return ok(dataField);
     }
 
+    /**
+     * 查询列表
+     *
+     * @date 2018/8/9 下午4:20
+     * @param: [pageNo, pageSize]
+     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
+     */
     @ApiOperation(value = "查询列表", notes = "查询列表")
     @GetMapping
     public ResponseMessage list(@RequestParam(value = "pageNo", required = false) Integer pageNo,

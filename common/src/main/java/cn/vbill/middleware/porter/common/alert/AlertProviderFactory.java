@@ -17,21 +17,25 @@
 
 package cn.vbill.middleware.porter.common.alert;
 
+import cn.vbill.middleware.porter.common.alert.provider.AlertProvider;
 import cn.vbill.middleware.porter.common.alert.provider.NormalAlertProvider;
 import cn.vbill.middleware.porter.common.client.AlertClient;
 import cn.vbill.middleware.porter.common.client.impl.EmailClient;
 import cn.vbill.middleware.porter.common.config.AlertConfig;
-import cn.vbill.middleware.porter.common.dic.AlertPlugin;
-import cn.vbill.middleware.porter.common.exception.ConfigParseException;
-import cn.vbill.middleware.porter.common.alert.provider.AlertProvider;
 import cn.vbill.middleware.porter.common.config.source.EmailConfig;
+import cn.vbill.middleware.porter.common.dic.AlertPlugin;
 import cn.vbill.middleware.porter.common.exception.ClientConnectionException;
+import cn.vbill.middleware.porter.common.exception.ConfigParseException;
 
 import java.util.List;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
+ * <<<<<<< HEAD
+ * =======
+ * <p>
+ * >>>>>>> gmaster
  *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年01月01日 20:14
@@ -39,9 +43,25 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年01月01日 20:14
  */
 public enum AlertProviderFactory {
+
+    /**
+     * INSTANCE
+     *
+     * @date 2018/8/10 下午2:46
+     * @param:
+     * @return:
+     */
     INSTANCE();
     private final ReadWriteLock initializedLock = new ReentrantReadWriteLock();
     private AlertProvider alert;
+
+    /**
+     * initialize
+     *
+     * @date 2018/8/10 下午2:46
+     * @param: [config]
+     * @return: void
+     */
     public void initialize(AlertConfig config) throws ConfigParseException, ClientConnectionException {
         //校验配置文件参数
         if (null == config || null == config.getStrategy() || null == config.getClient()
@@ -61,9 +81,19 @@ public enum AlertProviderFactory {
         }
     }
 
+    /**
+     * notice
+     *
+     * @date 2018/8/10 下午2:46
+     * @param: [title, msg, receiverList]
+     * @return: void
+     */
     public void notice(String title, String msg, List<AlertReceiver> receiverList) {
         initializedLock.readLock().lock();
-        if (null != alert) alert.notice(title, msg, receiverList);
+        if (null != alert) {
+            alert.notice(title, msg, receiverList);
+        }
+
         initializedLock.readLock().unlock();
     }
 }

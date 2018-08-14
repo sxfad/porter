@@ -17,27 +17,36 @@
 
 package cn.vbill.middleware.porter.common.client.impl;
 
+import cn.vbill.middleware.porter.common.client.AbstractClient;
 import cn.vbill.middleware.porter.common.client.LoadClient;
 import cn.vbill.middleware.porter.common.client.MetaQueryClient;
 import cn.vbill.middleware.porter.common.config.source.KafkaProduceConfig;
 import cn.vbill.middleware.porter.common.db.meta.TableSchema;
 import cn.vbill.middleware.porter.common.exception.TaskStopTriggerException;
 import cn.vbill.middleware.porter.common.util.MachineUtils;
-import cn.vbill.middleware.porter.common.client.AbstractClient;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Triple;
-import org.apache.kafka.clients.producer.*;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.Producer;
+import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.serialization.StringSerializer;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 /**
- *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年02月02日 15:14
  * @version: V1.0
@@ -76,7 +85,9 @@ public class KafkaProduceClient extends AbstractClient<KafkaProduceConfig> imple
         props.put(ProducerConfig.MAX_IN_FLIGHT_REQUESTS_PER_CONNECTION, "1");
         producer = new KafkaProducer<>(props);
         partitionInfoList.addAll(producer.partitionsFor(topic));
-        if (transaction) producer.initTransactions();
+        if (transaction) {
+            producer.initTransactions();
+        }
         canProduce.countDown();
     }
 
@@ -89,6 +100,13 @@ public class KafkaProduceClient extends AbstractClient<KafkaProduceConfig> imple
         canProduce = new CountDownLatch(1);
     }
 
+    /**
+     * send
+     *
+     * @param records
+     * @param sync
+     * @throws TaskStopTriggerException
+     */
     public void send(List<Triple<String, String, Integer>> records, boolean sync) throws TaskStopTriggerException {
         List<ProducerRecord<String, String>> producerRecords = new ArrayList<>();
         records.forEach(t -> {
@@ -103,6 +121,15 @@ public class KafkaProduceClient extends AbstractClient<KafkaProduceConfig> imple
         sendTo(producerRecords, sync);
     }
 
+    /**
+     * send
+     *
+     * @param value
+     * @param partition
+     * @param key
+     * @param sync
+     * @throws TaskStopTriggerException
+     */
     public void send(String value, Integer partition, String key, boolean sync) throws TaskStopTriggerException {
         ProducerRecord<String, String> record = null;
         if (partition != null && partition > -1) {
@@ -113,10 +140,24 @@ public class KafkaProduceClient extends AbstractClient<KafkaProduceConfig> imple
         sendTo(Arrays.asList(record), sync);
     }
 
+    /**
+     * send
+     *
+     * @param value
+     * @param sync
+     * @throws TaskStopTriggerException
+     */
     public void send(String value, boolean sync) throws TaskStopTriggerException {
         send(value, null, null, sync);
     }
 
+    /**
+     * sendTo
+     *
+     * @param msgList
+     * @param sync
+     * @throws TaskStopTriggerException
+     */
     private void sendTo(List<ProducerRecord<String, String>> msgList, boolean sync) throws TaskStopTriggerException {
         try {
             canProduce.await();
@@ -125,7 +166,9 @@ public class KafkaProduceClient extends AbstractClient<KafkaProduceConfig> imple
             }
             List<Future<RecordMetadata>> futures = new ArrayList<>();
             for (ProducerRecord<String, String> record : msgList) {
-                if (sync) futures.add(producer.send(record));
+                if (sync) {
+                    futures.add(producer.send(record));
+                }
             }
             //等待结果
             for (Future<RecordMetadata> f : futures) {
@@ -155,11 +198,17 @@ public class KafkaProduceClient extends AbstractClient<KafkaProduceConfig> imple
         return Collections.unmodifiableList(partitionInfoList);
     }
 
-
+    /**
+     * sendTo
+     *
+     * @param schema
+     * @param table
+     * @return
+     */
     public List<String> getPartitionKey(String schema, String table) {
 
         return partitionKeyCache.computeIfAbsent(Arrays.asList(schema, table), key -> {
-            List<String>  keyNames = new ArrayList<>();
+            List<String> keyNames = new ArrayList<>();
             Map<String, String> partitionKeyMap = getConfig().getPartitionKey();
             if (null != partitionKeyMap && !partitionKeyMap.isEmpty()) {
                 String keys = partitionKeyMap.getOrDefault(schema + "." + table, null);
@@ -173,13 +222,18 @@ public class KafkaProduceClient extends AbstractClient<KafkaProduceConfig> imple
 
     /**
      * 当没有配置group时，做默认配置
+     *
      * @return
      */
     private String getDefaultGroup() {
         return MachineUtils.IP_ADDRESS + "_" + MachineUtils.HOST_NAME + "_" + MachineUtils.CURRENT_JVM_PID;
     }
 
-
+    /**
+     * sendTo
+     *
+     * @return
+     */
     public boolean renderOggJson() {
         return oggJson;
     }

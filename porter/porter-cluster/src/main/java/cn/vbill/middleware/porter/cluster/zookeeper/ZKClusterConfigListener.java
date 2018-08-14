@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * 节点监听
+ *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月15日 10:09
  * @version: V1.0
@@ -47,6 +48,8 @@ public class ZKClusterConfigListener extends ZookeeperClusterListener {
     private static final String LOG_CONFIG_PATH = ZK_PATH + "/log";
     private static final String ALERT_CONFIG_PATH = ZK_PATH + "/alert";
     private static final String STATISTIC_CONFIG_PATH = ZK_PATH + "/statistic";
+
+    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(ZKClusterConfigListener.class);
 
     @Override
     public String listenPath() {
@@ -74,8 +77,10 @@ public class ZKClusterConfigListener extends ZookeeperClusterListener {
                     AlertProviderFactory.INSTANCE.initialize(config);
                 } catch (ConfigParseException e) {
                     e.printStackTrace();
+                    LOGGER.error("%s", e);
                 } catch (ClientConnectionException e) {
                     e.printStackTrace();
+                    LOGGER.error("%s", e);
                 }
             }
             //统计分析
@@ -93,6 +98,7 @@ public class ZKClusterConfigListener extends ZookeeperClusterListener {
             protected String getPath() {
                 return listenPath();
             }
+
             @Override
             protected boolean doFilter(ZookeeperClusterEvent event) {
                 //应用自身，跳过

@@ -84,9 +84,15 @@ public class ETLBucket {
         for (MessageEvent event : events.getRight()) {
             LOGGER.debug(JSON.toJSONString(event));
             List<ETLColumn> columns = new ArrayList<>();
-            if (null == event.getBefore()) event.setBefore(new HashMap<>());
-            if (null == event.getAfter()) event.setAfter(new HashMap<>());
-            if (null == event.getPrimaryKeys()) event.setPrimaryKeys(new ArrayList<>());
+            if (null == event.getBefore()) {
+                event.setBefore(new HashMap<>());
+            }
+            if (null == event.getAfter()) {
+                event.setAfter(new HashMap<>());
+            }
+            if (null == event.getPrimaryKeys()) {
+                event.setPrimaryKeys(new ArrayList<>());
+            }
 
             Boolean loopAfter = !event.getAfter().isEmpty();
             for (Map.Entry<String, Object> entity : loopAfter ? event.getAfter().entrySet() : event.getBefore().entrySet()) {
@@ -159,6 +165,13 @@ public class ETLBucket {
         return exception;
     }
 
+    /**
+     * tagException
+     *
+     * @date 2018/8/8 下午5:53
+     * @param: [e]
+     * @return: void
+     */
     public void tagException(Throwable e) {
         this.exception = e;
     }
@@ -167,6 +180,13 @@ public class ETLBucket {
         return position;
     }
 
+    /**
+     * markUnUsed
+     *
+     * @date 2018/8/8 下午5:53
+     * @param: []
+     * @return: void
+     */
     public void markUnUsed() {
         try {
             rows.forEach(r -> {
@@ -177,7 +197,7 @@ public class ETLBucket {
             rows.clear();
             batchRows.clear();
         } catch (Throwable e) {
-
+            LOGGER.error("%s", e);
         }
     }
 }

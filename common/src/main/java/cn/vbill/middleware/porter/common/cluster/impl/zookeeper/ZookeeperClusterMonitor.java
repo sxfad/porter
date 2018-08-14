@@ -25,6 +25,8 @@ import cn.vbill.middleware.porter.common.cluster.ClusterListener;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.data.Stat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,6 +46,8 @@ public class ZookeeperClusterMonitor extends AbstractClusterMonitor implements W
     private final Map<String, List<String>> nodeChildren = new ConcurrentHashMap<>();
 
     private final CountDownLatch ready = new CountDownLatch(1);
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ZookeeperClusterMonitor.class);
 
     @Override
     public void setClient(Client client) {
@@ -77,10 +81,12 @@ public class ZookeeperClusterMonitor extends AbstractClusterMonitor implements W
                     }
                 } catch (Throwable e) {
                     e.printStackTrace();
+                    LOGGER.error("%s", e);
                 }
             }
         } catch (Throwable e) {
             e.printStackTrace();
+            LOGGER.error("%s", e);
         }
     }
 
@@ -115,9 +121,15 @@ public class ZookeeperClusterMonitor extends AbstractClusterMonitor implements W
         } catch (Exception e) {
             //do something
             e.printStackTrace();
+            LOGGER.error("%s", e);
         }
     }
 
+    /**
+     * triggerTreeEvent
+     *
+     * @param path
+     */
     private void triggerTreeEvent(String path) {
         //构造子节点集合
         List<String> localChildren = nodeChildren.computeIfAbsent(path, s -> new ArrayList<>());

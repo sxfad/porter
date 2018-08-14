@@ -48,6 +48,13 @@ public class DicAlarmPluginController {
     @Autowired
     protected DicAlarmPluginService dicAlarmPluginService;
 
+    /**
+     * 查询明细
+     *
+     * @date 2018/8/9 下午4:21
+     * @param: [alertType]
+     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
+     */
     @GetMapping("/{alerttype}")
     @ApiOperation(value = "查询明细", notes = "查询明细")
     public ResponseMessage findByAlertType(@PathVariable("alerttype") String alertType) {

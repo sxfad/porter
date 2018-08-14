@@ -19,7 +19,10 @@ package cn.vbill.middleware.porter.common.config;
 
 import cn.vbill.middleware.porter.common.dic.NodeStatusType;
 import cn.vbill.middleware.porter.common.node.NodeCommandType;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * 1、节点任务状态推送（运行中 or 暂停 ）WORKING("WORKING", "工作中"

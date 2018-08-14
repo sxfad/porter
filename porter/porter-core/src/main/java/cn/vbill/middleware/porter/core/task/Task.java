@@ -17,14 +17,14 @@
 
 package cn.vbill.middleware.porter.core.task;
 
-import cn.vbill.middleware.porter.core.consumer.DataConsumerFactory;
-import cn.vbill.middleware.porter.common.exception.ConfigParseException;
 import cn.vbill.middleware.porter.common.alert.AlertReceiver;
 import cn.vbill.middleware.porter.common.config.TaskConfig;
 import cn.vbill.middleware.porter.common.exception.ClientException;
+import cn.vbill.middleware.porter.common.exception.ConfigParseException;
 import cn.vbill.middleware.porter.common.exception.DataConsumerBuildException;
 import cn.vbill.middleware.porter.common.exception.DataLoaderBuildException;
 import cn.vbill.middleware.porter.core.consumer.DataConsumer;
+import cn.vbill.middleware.porter.core.consumer.DataConsumerFactory;
 import cn.vbill.middleware.porter.core.loader.DataLoader;
 import cn.vbill.middleware.porter.core.loader.DataLoaderFactory;
 import lombok.Getter;
@@ -97,7 +97,14 @@ public class Task {
         this.receivers = receivers;
     }
 
-    public static Task  fromConfig(TaskConfig config) throws ConfigParseException, ClientException, DataLoaderBuildException,
+    /**
+     * fromConfig
+     *
+     * @date 2018/8/9 上午9:54
+     * @param: [config]
+     * @return: cn.vbill.middleware.porter.core.task.Task
+     */
+    public static Task fromConfig(TaskConfig config) throws ConfigParseException, ClientException, DataLoaderBuildException,
             DataConsumerBuildException {
         Task task = new Task();
         task.setTaskId(config.getTaskId());

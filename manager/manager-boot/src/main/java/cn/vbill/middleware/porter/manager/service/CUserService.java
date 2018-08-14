@@ -32,25 +32,102 @@ import java.util.List;
  */
 public interface CUserService {
 
+    /**
+     * 新增
+     *
+     * @date 2018/8/10 上午11:02
+     * @param: [cuser]
+     * @return: java.lang.Integer
+     */
     Integer insert(CUser cuser);
 
+    /**
+     * 修改
+     *
+     * @date 2018/8/10 上午11:02
+     * @param: [id, cuser]
+     * @return: java.lang.Integer
+     */
     Integer update(Long id, CUser cuser);
 
+    /**
+     * 删除
+     *
+     * @date 2018/8/10 上午11:02
+     * @param: [id]
+     * @return: java.lang.Integer
+     */
     Integer delete(Long id);
 
+    /**
+     * 根据id查询
+     *
+     * @date 2018/8/10 上午11:02
+     * @param: [id]
+     * @return: cn.vbill.middleware.porter.manager.core.entity.CUser
+     */
     CUser selectById(Long id);
 
+    /**
+     * selectByNameAndpasswd
+     *
+     * @date 2018/8/10 上午11:03
+     * @param: [loginName, passwd]
+     * @return: cn.vbill.middleware.porter.manager.core.entity.CUser
+     */
     CUser selectByNameAndpasswd(String loginName, String passwd);
 
+    /**
+     * 分页
+     *
+     * @date 2018/8/10 上午11:03
+     * @param: [page]
+     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.entity.CUser>
+     */
     Page<CUser> page(Page<CUser> page);
 
+    /**
+     * 列表
+     *
+     * @date 2018/8/10 上午11:03
+     * @param: []
+     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.entity.CUser>
+     */
     List<CUser> list();
 
+    /**
+     * selectByJobTasksId
+     *
+     * @date 2018/8/10 上午11:03
+     * @param: [jobTasksId]
+     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.entity.CUser>
+     */
     List<CUser> selectByJobTasksId(Long jobTasksId);
 
+    /**
+     * selectByAlarmId
+     *
+     * @date 2018/8/10 上午11:04
+     * @param: [alarmId]
+     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.entity.CUser>
+     */
     List<CUser> selectByAlarmId(Long alarmId);
 
+    /**
+     * findByNameOrEmail
+     *
+     * @date 2018/8/10 上午11:04
+     * @param: [loginname, email]
+     * @return: boolean
+     */
     boolean findByNameOrEmail(String loginname, String email);
 
+    /**
+     * updateState
+     *
+     * @date 2018/8/10 上午11:04
+     * @param: [id, state]
+     * @return: java.lang.Integer
+     */
     Integer updateState(Long id, Integer state);
 }

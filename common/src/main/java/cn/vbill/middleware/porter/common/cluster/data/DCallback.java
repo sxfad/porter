@@ -26,12 +26,27 @@ import java.util.List;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年01月02日 15:24
  */
 public interface DCallback {
+
+    /**
+     * callback
+     * @param object
+     */
     default void callback(DObject object) {
         return;
     }
+
+    /**
+     * callback
+     * @param data
+     */
     default void callback(String data) {
         return;
     }
+
+    /**
+     * callback
+     * @param objects
+     */
     default void callback(List<DObject> objects) {
         return;
     }

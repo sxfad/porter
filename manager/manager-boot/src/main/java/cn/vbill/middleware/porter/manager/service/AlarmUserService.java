@@ -33,17 +33,66 @@ import java.util.List;
  */
 public interface AlarmUserService {
 
+    /**
+     * 新增
+     *
+     * @date 2018/8/10 上午10:15
+     * @param: [alarm]
+     * @return: void
+     */
     void insert(Alarm alarm);
 
+    /**
+     * 新增
+     *
+     * @date 2018/8/10 上午10:15
+     * @param: [alarmUser]
+     * @return: java.lang.Integer
+     */
     Integer insert(AlarmUser alarmUser);
 
+    /**
+     * 修改
+     *
+     * @date 2018/8/10 上午10:16
+     * @param: [id, alarmUser]
+     * @return: java.lang.Integer
+     */
     Integer update(Long id, AlarmUser alarmUser);
 
+    /**
+     * 删除
+     *
+     * @date 2018/8/10 上午10:16
+     * @param: [id]
+     * @return: java.lang.Integer
+     */
     Integer delete(Long id);
 
+    /**
+     * 根据id查询
+     *
+     * @date 2018/8/10 上午10:16
+     * @param: [id]
+     * @return: cn.vbill.middleware.porter.manager.core.entity.AlarmUser
+     */
     AlarmUser selectById(Long id);
 
+    /**
+     * 分页
+     *
+     * @date 2018/8/10 上午10:16
+     * @param: [page]
+     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.entity.AlarmUser>
+     */
     Page<AlarmUser> page(Page<AlarmUser> page);
 
+    /**
+     * 根据Alarmid查询
+     *
+     * @date 2018/8/10 上午10:16
+     * @param: [alarmId]
+     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.entity.AlarmUser>
+     */
     List<AlarmUser> selectByAlarmId(Long alarmId);
 }

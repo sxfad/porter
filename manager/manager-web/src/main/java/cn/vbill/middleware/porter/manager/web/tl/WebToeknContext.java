@@ -27,6 +27,13 @@ public class WebToeknContext {
 
     private static ThreadLocal<String> TOKENHODLER = new ThreadLocal<String>();
 
+    /**
+     * initToken
+     *
+     * @date 2018/8/9 下午3:37
+     * @param: [tokenId]
+     * @return: void
+     */
     public static void initToken(String tokenId) {
         TOKENHODLER.set(tokenId);
     }
@@ -39,6 +46,13 @@ public class WebToeknContext {
         WebToeknContext.TOKENHODLER = tokenHodler;
     }
 
+    /**
+     * getToken
+     *
+     * @date 2018/8/9 下午3:37
+     * @param: [classT]
+     * @return: T
+     */
     public static <T extends Token> T getToken(Class<T> classT) throws Exception {
         return TokenUtil.unsign(TOKENHODLER.get(), classT);
     }

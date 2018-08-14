@@ -41,7 +41,9 @@ public class SimpleDataCarrier implements DataCarrier {
 
     @Override
     public void push(Object item) throws InterruptedException {
-        if (null != item) buffer.put(item);
+        if (null != item) {
+            buffer.put(item);
+        }
     }
 
     /**
@@ -71,6 +73,13 @@ public class SimpleDataCarrier implements DataCarrier {
         return buffer.poll();
     }
 
+    /**
+     * generateId
+     *
+     * @date 2018/8/9 上午11:59
+     * @param: []
+     * @return: java.lang.String
+     */
     private String generateId() {
         return UUID.randomUUID().toString() + System.currentTimeMillis();
     }

@@ -107,5 +107,12 @@ public interface OggTablesMapper {
      */
     Integer delete(Long id);
 
+    /**
+     * relatedTask
+     *
+     * @date 2018/8/10 上午10:00
+     * @param: [tableName]
+     * @return: java.lang.String
+     */
     String relatedTask(@Param("tableName") String tableName);
 }

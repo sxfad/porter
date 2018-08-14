@@ -33,6 +33,13 @@ import java.util.List;
  */
 public interface AlarmMapper {
 
+    /**
+     * selectFinallyOne
+     *
+     * @date 2018/8/9 下午5:30
+     * @param: []
+     * @return: cn.vbill.middleware.porter.manager.core.entity.Alarm
+     */
     Alarm selectFinallyOne();
 
     /**

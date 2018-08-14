@@ -17,6 +17,8 @@
 
 package cn.vbill.middleware.porter.boot.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.EnvironmentAware;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.context.annotation.Bean;
@@ -36,8 +38,8 @@ import java.util.List;
 
 
 /**
- *
  * 采用实现XXXXAware接口的方式是因为@Autowired时机晚于PropertySourcesPlaceholderConfigurer对象构造
+ *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月27日 14:07
  * @version: V1.0
@@ -46,8 +48,19 @@ import java.util.List;
 
 @Configuration
 public class TaskPropertySourcesConfig implements EnvironmentAware, ResourceLoaderAware {
+
     private Environment environment;
     private ResourceLoader resourceLoader;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(TaskPropertySourcesConfig.class);
+
+    /**
+     * placeHolderConfigurer
+     *
+     * @date 2018/8/9 下午3:11
+     * @param: []
+     * @return: org.springframework.context.support.PropertySourcesPlaceholderConfigurer
+     */
     @Bean
     public PropertySourcesPlaceholderConfigurer placeHolderConfigurer() {
         PropertySourcesPlaceholderConfigurer configurer = new PropertySourcesPlaceholderConfigurer();
@@ -76,8 +89,15 @@ public class TaskPropertySourcesConfig implements EnvironmentAware, ResourceLoad
         this.resourceLoader = resourceLoader;
     }
 
+    /**
+     * configFiles
+     *
+     * @date 2018/8/9 下午3:11
+     * @param: [active]
+     * @return: java.util.List<java.io.File>
+     */
     private List<File> configFiles(String active) {
-        List<File> files  = new ArrayList<>();
+        List<File> files = new ArrayList<>();
         String[] path = new String[]{"file:./tasks/" + active, "file:./config/tasks/" + active, "classpath:/tasks/" + active};
         for (String p : path) {
             Resource resource = resourceLoader.getResource(p);
@@ -91,6 +111,7 @@ public class TaskPropertySourcesConfig implements EnvironmentAware, ResourceLoad
                     }
                 });
             } catch (IOException e) {
+                LOGGER.error("%s", e);
             }
             if (null != tasks && tasks.length > 0) {
                 files.addAll(Arrays.asList(tasks));

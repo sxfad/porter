@@ -32,10 +32,21 @@ import java.util.concurrent.ConcurrentHashMap;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月24日 16:03
  */
 public enum ManagerContext {
+
+    /**
+     * INSTANCE
+     */
     INSTANCE();
     private ApplicationContext context;
     private final Map<String, List<String>> stoppedTask = new ConcurrentHashMap<>();
 
+    /**
+     * 获取Bean
+     *
+     * @date 2018/8/9 下午4:14
+     * @param: [clazz]
+     * @return: T
+     */
     public <T> T getBean(Class<T> clazz) {
         return null != context ? context.getBean(clazz) : null;
     }
@@ -44,11 +55,24 @@ public enum ManagerContext {
         this.context = context;
     }
 
-
+    /**
+     * newStoppedTask
+     *
+     * @date 2018/8/9 下午4:15
+     * @param: [taskId, swimlaneId]
+     * @return: void
+     */
     public void newStoppedTask(String taskId, String swimlaneId) {
         stoppedTask.computeIfAbsent(taskId, key -> new TreeList()).add(swimlaneId);
     }
 
+    /**
+     * removeStoppedTask
+     *
+     * @date 2018/8/9 下午4:15
+     * @param: [taskId, swimlaneId]
+     * @return: void
+     */
     public void removeStoppedTask(String taskId, String swimlaneId) {
         List<String> swimlanes = stoppedTask.computeIfAbsent(taskId, key -> new TreeList());
         swimlanes.remove(swimlaneId);

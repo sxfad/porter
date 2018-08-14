@@ -29,6 +29,14 @@ import java.util.List;
  * 告警接口
  */
 public interface Alerter {
+
+    /**
+     * check
+     *
+     * @date 2018/8/9 下午2:02
+     * @param: [consumer, loader, stat, checkMeta, receivers]
+     * @return: void
+     */
     void check(DataConsumer consumer, DataLoader loader, DTaskStat stat, Triple<String[], String[], String[]> checkMeta,
                List<AlertReceiver> receivers);
 }

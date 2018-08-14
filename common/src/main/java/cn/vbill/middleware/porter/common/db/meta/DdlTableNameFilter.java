@@ -22,5 +22,12 @@ package cn.vbill.middleware.porter.common.db.meta;
  */
 public interface DdlTableNameFilter {
 
+    /**
+     * accept
+     * @param catalogName
+     * @param schemaName
+     * @param tableName
+     * @return
+     */
     boolean accept(String catalogName, String schemaName, String tableName);
 }

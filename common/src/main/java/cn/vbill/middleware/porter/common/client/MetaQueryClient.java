@@ -29,6 +29,22 @@ import java.util.Date;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月06日 14:42
  */
 public interface MetaQueryClient extends Client {
+
+    /**
+     * getTable
+     *
+     * @date 2018/8/10 下午2:58
+     * @param: [schema, tableName]
+     * @return: cn.vbill.middleware.porter.common.db.meta.TableSchema
+     */
     TableSchema getTable(String schema, String tableName) throws Exception;
+
+    /**
+     * getDataCount
+     *
+     * @date 2018/8/10 下午2:58
+     * @param: [schema, table, updateDateColumn, startTime, endTime]
+     * @return: int
+     */
     int getDataCount(String schema, String table, String updateDateColumn, Date startTime, Date endTime);
 }

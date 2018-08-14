@@ -20,10 +20,10 @@ package cn.vbill.middleware.porter.plugin.consumer.kafka;
 
 import cn.vbill.middleware.porter.common.client.impl.KafkaClient;
 import cn.vbill.middleware.porter.common.consumer.ConsumeClient;
+import cn.vbill.middleware.porter.common.consumer.Position;
 import cn.vbill.middleware.porter.common.dic.ConsumerPlugin;
 import cn.vbill.middleware.porter.common.exception.TaskStopTriggerException;
 import cn.vbill.middleware.porter.core.consumer.AbstractDataConsumer;
-import cn.vbill.middleware.porter.common.consumer.Position;
 import cn.vbill.middleware.porter.core.event.s.MessageEvent;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
@@ -43,7 +43,7 @@ public class KafkaConsumer extends AbstractDataConsumer {
             public <F, O> F accept(O o) {
                 ConsumerRecord<String, String> record = (ConsumerRecord<String, String>) o;
                 Position position = new KafkaClient.KafkaPosition(record.topic(), record.offset(), record.partition());
-                return (F) converter.convert(record.timestamp(), position, record.value());
+                return (F) getConverter().convert(record.timestamp(), position, record.value());
             }
         });
     }

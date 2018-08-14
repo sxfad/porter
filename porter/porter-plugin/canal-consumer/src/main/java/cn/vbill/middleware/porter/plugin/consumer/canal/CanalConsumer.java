@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
 
 /**
  * canal row消费端
+ *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年03月06日 11:27
  * @version: V2.0
@@ -64,7 +65,7 @@ public class CanalConsumer extends AbstractDataConsumer {
                     CanalClient.CanalPosition rowHeader = new CanalClient.CanalPosition(msg.getId(), entry.getHeader().getLogfileOffset(),
                             entry.getHeader().getLogfileName());
 
-                    List<MessageEvent> convertedObj = converter.convertList(bucketHeader, rowHeader, entry);
+                    List<MessageEvent> convertedObj = getConverter().convertList(bucketHeader, rowHeader, entry);
                     if (null != convertedObj && !convertedObj.isEmpty()) {
                         events.addAll(convertedObj);
                     }

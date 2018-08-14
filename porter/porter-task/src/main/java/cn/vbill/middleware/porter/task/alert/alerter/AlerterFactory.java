@@ -25,6 +25,8 @@ import cn.vbill.middleware.porter.core.task.TableMapper;
 import cn.vbill.middleware.porter.task.worker.TaskWork;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 import org.springframework.stereotype.Component;
@@ -43,6 +45,9 @@ import java.util.concurrent.Executors;
 @Component
 @Scope("singleton")
 public class AlerterFactory {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AlerterFactory.class);
+
     private Alerter alerter;
 
     public AlerterFactory() {
@@ -54,6 +59,13 @@ public class AlerterFactory {
         }
     }
 
+    /**
+     * check
+     *
+     * @date 2018/8/9 下午2:02
+     * @param: [dataConsumer, dataLoader, work]
+     * @return: void
+     */
     public void check(DataConsumer dataConsumer, DataLoader dataLoader, TaskWork work) {
         //任务统计列表
         List<DTaskStat> stats = work.getStats();
@@ -77,6 +89,7 @@ public class AlerterFactory {
                                 barrier.await();
                             } catch (Exception e) {
                                 e.printStackTrace();
+                                LOGGER.error("%s", e);
                             }
                         }
                     }
@@ -87,6 +100,7 @@ public class AlerterFactory {
                 barrier.await();
             } catch (Exception e) {
                 e.printStackTrace();
+                LOGGER.error("%s", e);
             } finally {
                 service.shutdown();
             }
@@ -97,7 +111,13 @@ public class AlerterFactory {
         }
     }
 
-
+    /**
+     * 获取CheckMeta
+     *
+     * @date 2018/8/9 下午2:03
+     * @param: [work, schema, table]
+     * @return: org.apache.commons.lang3.tuple.Triple<java.lang.String[],java.lang.String[],java.lang.String[]>
+     */
     private Triple<String[], String[], String[]> getCheckMeta(TaskWork work, String schema, String table) {
         TableMapper mapper = work.getTableMapper(schema, table);
         //初始化告警数据库查询信息
@@ -113,12 +133,12 @@ public class AlerterFactory {
         if (null != mapper && null != mapper.getSchema() && mapper.getSchema().length == 2) {
             schemas = mapper.getSchema();
         } else {
-            schemas = new String[] {schema, schema};
+            schemas = new String[]{schema, schema};
         }
         if (null != mapper && null != mapper.getTable() && mapper.getTable().length == 2) {
             tables = mapper.getTable();
         } else {
-            tables = new String[] {table, table};
+            tables = new String[]{table, table};
         }
         return new ImmutableTriple<>(schemas, tables, updateTime);
     }

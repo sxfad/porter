@@ -60,12 +60,26 @@ public class TaskController implements TaskEventListener {
     /**
      * taskId -> worker
      */
-    private final Map<String, TaskWorker> WORKER_MAP = new ConcurrentHashMap<>();
+    private final Map<String, TaskWorker> workerMap = new ConcurrentHashMap<>();
 
+    /**
+     * start
+     *
+     * @date 2018/8/9 下午1:59
+     * @param: []
+     * @return: void
+     */
     public void start() throws IllegalAccessException, ClientException, InstantiationException {
         start(null);
     }
 
+    /**
+     * start
+     *
+     * @date 2018/8/9 下午2:00
+     * @param: [initTasks]
+     * @return: void
+     */
     public void start(List<TaskConfig> initTasks) {
         try {
             if (stat.compareAndSet(false, true)) {
@@ -115,20 +129,28 @@ public class TaskController implements TaskEventListener {
                 startTask(event);
             } catch (Exception e) {
                 e.printStackTrace();
+                LOGGER.error("%s", e);
             }
         } else if (event.getStatus().isStopped()) {
             try {
                 stopTask(Task.fromConfig(event));
             } catch (Exception e) {
                 e.printStackTrace();
+                LOGGER.error("%s", e);
             }
         }
     }
 
-
+    /**
+     * 停止任务
+     *
+     * @date 2018/8/9 下午2:00
+     * @param: [taskId, swimlaneId]
+     * @return: void
+     */
     public void stopTask(String taskId, String... swimlaneId) {
-        if (WORKER_MAP.containsKey(taskId)) {
-            TaskWorker worker = WORKER_MAP.get(taskId);
+        if (workerMap.containsKey(taskId)) {
+            TaskWorker worker = workerMap.get(taskId);
             //停止worker的某个work
             worker.stopJob(swimlaneId);
             //如果worker没有work可做就解雇worker
@@ -136,8 +158,15 @@ public class TaskController implements TaskEventListener {
         }
     }
 
+    /**
+     * 开启任务
+     *
+     * @date 2018/8/9 下午2:00
+     * @param: [task]
+     * @return: void
+     */
     private void startTask(TaskConfig task) {
-        TaskWorker worker = WORKER_MAP.computeIfAbsent(task.getTaskId(), s -> new TaskWorker());
+        TaskWorker worker = workerMap.computeIfAbsent(task.getTaskId(), s -> new TaskWorker());
         //尝试通过ClusterProvider的分布式锁功能锁定资源。
         try {
             worker.alloc(task);
@@ -151,13 +180,22 @@ public class TaskController implements TaskEventListener {
         stopWorkerWhenNoWork(worker, task.getTaskId());
     }
 
+    /**
+     * stop
+     *
+     * @date 2018/8/9 下午2:00
+     * @param: []
+     * @return: boolean
+     */
     private boolean stop() {
         if (stat.compareAndSet(true, false)) {
             LOGGER.info("监工下线.......");
-            WORKER_MAP.keySet().stream().collect(Collectors.toList()).forEach(k -> {
-                TaskWorker worker = WORKER_MAP.getOrDefault(k, null);
-                if (null != worker) worker.stop();
-                WORKER_MAP.remove(k);
+            workerMap.keySet().stream().collect(Collectors.toList()).forEach(k -> {
+                TaskWorker worker = workerMap.getOrDefault(k, null);
+                if (null != worker) {
+                    worker.stop();
+                }
+                workerMap.remove(k);
             });
             return true;
         } else {
@@ -166,24 +204,43 @@ public class TaskController implements TaskEventListener {
         }
     }
 
+    /**
+     * 停止任务
+     *
+     * @date 2018/8/9 下午2:01
+     * @param: [task]
+     * @return: void
+     */
     private void stopTask(Task task) {
         List<String> swimlaneIdList = task.getConsumers().stream().map(DataConsumer::getSwimlaneId).collect(Collectors.toList());
         stopTask(task.getTaskId(), swimlaneIdList.toArray(new String[0]));
     }
 
+    /**
+     * 没有任务停止工人
+     *
+     * @date 2018/8/9 下午2:01
+     * @param: [worker, taskId]
+     * @return: void
+     */
     private void stopWorkerWhenNoWork(TaskWorker worker, String taskId) {
         if (worker.isNoWork()) {
-            synchronized (WORKER_MAP) {
+            synchronized (workerMap) {
                 if (worker.isNoWork()) {
                     worker.stop();
-                    WORKER_MAP.remove(taskId);
+                    workerMap.remove(taskId);
                 }
             }
         }
     }
 
-
-
+    /**
+     * shutdownHook
+     *
+     * @date 2018/8/9 下午2:01
+     * @param: [exit]
+     * @return: void
+     */
     private void shutdownHook(boolean exit) {
         //先将节点设置为暂停,避免停止任务后再度消费
         NodeContext.INSTANCE.syncNodeStatus(NodeStatusType.SUSPEND);

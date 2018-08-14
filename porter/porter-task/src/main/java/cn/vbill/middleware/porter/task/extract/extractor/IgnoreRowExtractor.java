@@ -18,10 +18,10 @@
 package cn.vbill.middleware.porter.task.extract.extractor;
 
 import cn.vbill.middleware.porter.core.event.etl.ETLBucket;
+import cn.vbill.middleware.porter.core.event.etl.ETLRow;
 import cn.vbill.middleware.porter.core.event.s.EventType;
 import cn.vbill.middleware.porter.task.extract.ExtractMetadata;
 import com.alibaba.fastjson.JSON;
-import cn.vbill.middleware.porter.core.event.etl.ETLRow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,13 +30,14 @@ import java.util.List;
 
 /**
  * 包含所有的忽略规则
+ *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月27日 10:59
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月27日 10:59
  */
 public class IgnoreRowExtractor implements Extractor {
-    private  static final Logger LOGGER = LoggerFactory.getLogger(IgnoreRowExtractor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(IgnoreRowExtractor.class);
 
     @Override
     public void extract(ETLBucket bucket, ExtractMetadata metadata) {
@@ -50,13 +51,17 @@ public class IgnoreRowExtractor implements Extractor {
                 String strSeg = new StringBuffer().append(row.getFinalSchema()).append(".")
                         .append(row.getFinalTable()).toString().intern();
 
-                if (!metadata.getIncludeTables().contains(strSeg)) removals.add(row);
+                if (!metadata.getIncludeTables().contains(strSeg)) {
+                    removals.add(row);
+                }
 
             } else if (metadata.getIncludeTables().isEmpty() && !metadata.getExcludeTables().isEmpty()) { //不包含表
                 String strSeg = new StringBuffer().append(row.getFinalSchema()).append(".")
                         .append(row.getFinalTable()).toString().intern();
 
-                if (metadata.getExcludeTables().contains(strSeg)) removals.add(row);
+                if (metadata.getExcludeTables().contains(strSeg)) {
+                    removals.add(row);
+                }
             }
 
             //当前仅支持插入、更新、删除、截断表

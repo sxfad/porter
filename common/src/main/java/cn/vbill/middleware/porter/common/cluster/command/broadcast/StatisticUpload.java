@@ -26,5 +26,11 @@ import cn.vbill.middleware.porter.common.cluster.command.StatisticUploadCommand;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月23日 16:41
  */
 public interface StatisticUpload {
+
+    /**
+     * upload
+     * @param command
+     * @throws Exception
+     */
     void upload(StatisticUploadCommand command) throws Exception;
 }

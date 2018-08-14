@@ -23,7 +23,21 @@ package cn.vbill.middleware.porter.manager.service;
  */
 public interface MonitorScheduledService {
 
+    /**
+     * 备份源表数据
+     *
+     * @date 2018/8/10 上午11:56
+     * @param: []
+     * @return: void
+     */
     void transferDataTask();
 
+    /**
+     * 删除存在30天的表
+     *
+     * @date 2018/8/10 上午11:56
+     * @param: []
+     * @return: void
+     */
     void dropTableTask();
 }

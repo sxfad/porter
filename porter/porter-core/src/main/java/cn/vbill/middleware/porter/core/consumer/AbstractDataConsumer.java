@@ -41,7 +41,7 @@ import java.util.List;
  */
 public abstract class AbstractDataConsumer implements DataConsumer {
     private EventProcessor eventProcessor;
-    protected EventConverter converter;
+    private EventConverter converter;
     private  volatile MetaQueryClient metaQueryClient;
     protected volatile  ConsumeClient consumeClient;
 
@@ -49,12 +49,27 @@ public abstract class AbstractDataConsumer implements DataConsumer {
     @Getter private final List<String> includes = new ArrayList<>();
     @Getter private final List<String> excludes = new ArrayList<>();
     //空查询通知间隔,单位秒
-    @Setter @Getter private volatile long emptyFetchNoticeSpan = 30 * 60;
+    @Setter @Getter private volatile long emptyFetchNoticeSpan = 30L * 60;
 
     //空查询通知时间阀值
     @Setter @Getter private volatile long emptyFetchThreshold = -1;
 
+    /**
+     * 获取PluginName
+     *
+     * @date 2018/8/8 下午5:42
+     * @param: []
+     * @return: java.lang.String
+     */
     protected abstract String getPluginName();
+
+    /**
+     * doFetch
+     *
+     * @date 2018/8/8 下午5:42
+     * @param: []
+     * @return: java.util.List<cn.vbill.middleware.porter.core.event.s.MessageEvent>
+     */
     protected abstract List<MessageEvent> doFetch() throws TaskStopTriggerException, InterruptedException;
 
     @Override
@@ -87,13 +102,19 @@ public abstract class AbstractDataConsumer implements DataConsumer {
     @Override
     public void startup() throws Exception {
         consumeClient.start();
-        if (null != metaQueryClient) metaQueryClient.start();
+        if (null != metaQueryClient) {
+            metaQueryClient.start();
+        }
     }
 
     @Override
     public void shutdown() throws Exception {
-        if (!consumeClient.isPublic()) consumeClient.shutdown();
-        if (null != metaQueryClient && !metaQueryClient.isPublic()) metaQueryClient.shutdown();
+        if (!consumeClient.isPublic()) {
+            consumeClient.shutdown();
+        }
+        if (null != metaQueryClient && !metaQueryClient.isPublic()) {
+            metaQueryClient.shutdown();
+        }
     }
 
     @Override
@@ -101,7 +122,13 @@ public abstract class AbstractDataConsumer implements DataConsumer {
         consumeClient.initializePosition(taskId, swimlaneId, position);
     }
 
-
+    /**
+     * fetch
+     *
+     * @date 2018/8/8 下午5:43
+     * @param: []
+     * @return: java.util.List<cn.vbill.middleware.porter.core.event.s.MessageEvent>
+     */
     public List<MessageEvent> fetch() throws TaskStopTriggerException, InterruptedException {
         return doFetch();
     }
@@ -144,6 +171,10 @@ public abstract class AbstractDataConsumer implements DataConsumer {
     @Override
     public void setClient(ConsumeClient c) {
         this.consumeClient = c;
+    }
+
+    public EventConverter getConverter() {
+        return converter;
     }
 
     @Override

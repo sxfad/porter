@@ -24,7 +24,23 @@ import java.util.Map;
  */
 public interface DictService {
 
+    /**
+     * dictAll
+     *
+     * @author FuZizheng
+     * @date 2018/8/10 上午11:35
+     * @param: []
+     * @return: java.util.Map<java.lang.String,java.util.Map<java.lang.String,java.lang.Object>>
+     */
     Map<String, Map<String, Object>> dictAll();
 
+    /**
+     * dictByType
+     *
+     * @author FuZizheng
+     * @date 2018/8/10 上午11:36
+     * @param: [type]
+     * @return: java.util.Map<java.lang.String,java.lang.Object>
+     */
     Map<String, Object> dictByType(String type);
 }

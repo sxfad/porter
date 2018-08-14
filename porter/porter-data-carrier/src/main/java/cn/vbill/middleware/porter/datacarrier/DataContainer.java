@@ -25,5 +25,13 @@ package cn.vbill.middleware.porter.datacarrier;
  * @review: zkevin/2018年05月02日 10:11
  */
 public interface DataContainer {
+
+    /**
+     * size
+     *
+     * @date 2018/8/9 上午11:57
+     * @param: []
+     * @return: long
+     */
     long size();
 }

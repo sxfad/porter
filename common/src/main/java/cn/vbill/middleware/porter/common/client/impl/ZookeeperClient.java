@@ -29,6 +29,8 @@ import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.ZooDefs;
 import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.Stat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -44,6 +46,8 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
     private volatile ZooKeeper zk;
     @Setter private volatile Watcher watcher;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(ZookeeperClient.class);
+
     public ZookeeperClient(ZookeeperConfig config) {
         super(config);
     }
@@ -56,7 +60,9 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
 
     @Override
     protected void doShutdown() throws InterruptedException {
-        if (null != zk) zk.close();
+        if (null != zk) {
+            zk.close();
+        }
     }
 
     @Override
@@ -75,6 +81,7 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
         } catch (KeeperException e) {
             e.printStackTrace();
             children = new ArrayList<>();
+            LOGGER.error("%s", e);
         }
         return children;
     }
@@ -87,7 +94,9 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
             dataBytes = zk.getData(path, true, stat);
         } catch (KeeperException e) {
             e.printStackTrace();
+            LOGGER.error("%s", e);
         } catch (InterruptedException e) {
+            Thread.interrupted();
             e.printStackTrace();
         }
         return new ImmutablePair(new String(dataBytes), stat);
@@ -109,17 +118,32 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
         return zk.exists(path, watch);
     }
 
+    /**
+     * isExists
+     *
+     * @param path
+     * @param watch
+     * @return
+     */
     public boolean isExists(String path, boolean watch) {
         try {
             Stat stat = zk.exists(path, watch);
             return null != stat;
         } catch (Exception e) {
             e.printStackTrace();
+            LOGGER.error("%s", e);
             return false;
         }
     }
 
-
+    /**
+     * changeData
+     *
+     * @param path
+     * @param isTemp
+     * @param watch
+     * @param data
+     */
     public void  changeData(String path, boolean isTemp, boolean watch,  String data) {
         try {
             Stat stat = exists(path, watch);
@@ -130,9 +154,19 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
             }
         } catch (Exception e) {
             e.printStackTrace();
+            LOGGER.error("%s", e);
         }
     }
 
+    /**
+     * createWhenNotExists
+     *
+     * @param path
+     * @param isTemp
+     * @param watch
+     * @param data
+     * @return
+     */
     public Stat  createWhenNotExists(String path, boolean isTemp, boolean watch,  String data) {
         Stat stat = null;
         try {
@@ -142,6 +176,7 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
             }
         } catch (Exception e) {
             e.printStackTrace();
+            LOGGER.error("%s", e);
         }
         return stat;
     }
@@ -155,6 +190,7 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
             }
         } catch (Exception e) {
             e.printStackTrace();
+            LOGGER.error("%s", e);
         }
     }
 
@@ -167,6 +203,11 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
         return null != zk && null != zk.getState() && zk.getState().isConnected();
     }
 
+    /**
+     * canRestore
+     *
+     * @return
+     */
     private boolean canRestore() {
         return null != zk && zk.getState().isAlive();
     }
@@ -192,6 +233,7 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
                 spannedTime += config.getSpinningPeer();
                 Thread.currentThread().sleep(config.getSpinningPeer());
             } catch (InterruptedException e) {
+                Thread.interrupted();
                 e.printStackTrace();
             }
         }

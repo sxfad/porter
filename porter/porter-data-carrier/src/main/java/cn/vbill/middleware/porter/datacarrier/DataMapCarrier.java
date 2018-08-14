@@ -19,16 +19,58 @@ package cn.vbill.middleware.porter.datacarrier;
 
 /**
  * map carrier
+ *
+ * @param <K>
+ * @param <V>
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年05月02日 10:13
  * @version: V1.0
  * @review: zkevin/2018年05月02日 10:13
  */
-
 public interface DataMapCarrier<K, V> extends DataContainer {
+
+    /**
+     * push
+     *
+     * @date 2018/8/9 上午11:58
+     * @param: [key, v]
+     * @return: boolean
+     */
     boolean push(K key, V v) throws InterruptedException;
+
+    /**
+     * pull
+     *
+     * @date 2018/8/9 上午11:58
+     * @param: [key]
+     * @return: V
+     */
     V pull(K key);
+
+    /**
+     * containsKey
+     *
+     * @date 2018/8/9 上午11:58
+     * @param: [key]
+     * @return: boolean
+     */
     boolean containsKey(K key);
+
+    /**
+     * printState
+     *
+     * @date 2018/8/9 上午11:58
+     * @param: []
+     * @return: void
+     */
     void printState();
+
+    /**
+     * print
+     *
+     * @date 2018/8/9 上午11:58
+     * @param: []
+     * @return: void
+     */
     void print();
 }

@@ -17,17 +17,16 @@
 
 package cn.vbill.middleware.porter.common.dic;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+
 /**
  * 消费器插件
- * 
+ *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年03月07日 10:00
  * @version: V1.0
@@ -37,20 +36,28 @@ import lombok.Getter;
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum ConsumerPlugin {
 
-    CANAL("CanalFetch", "Canal"), KAFKA("KafkaFetch", "Kafka");
+    /**
+     * CANAL
+     */
+    CANAL("CanalFetch", "Canal"),
+
+    /**
+     * KAFKA
+     */
+    KAFKA("KafkaFetch", "Kafka");
+
+    /**
+     * LINKMAP
+     */
+    public static final HashMap<String, Object> LINKMAP = new LinkedHashMap<>();
+    static {
+        LINKMAP.put("CANAL", CANAL.name);
+        LINKMAP.put("KAFKA", KAFKA.name);
+    }
 
     @Getter
     private final String code;
     @Getter
     private final String name;
 
-    public static final HashMap<String, Object> LINKMAP = new LinkedHashMap<String, Object>() {
-
-        private static final long serialVersionUID = 1L;
-
-        {
-            put("CANAL", CANAL.name);
-            put("KAFKA", KAFKA.name);
-        }
-    };
 }

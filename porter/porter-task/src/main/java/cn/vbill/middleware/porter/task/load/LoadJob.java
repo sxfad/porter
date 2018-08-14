@@ -17,13 +17,13 @@
 
 package cn.vbill.middleware.porter.task.load;
 
+import cn.vbill.middleware.porter.common.cluster.ClusterProviderProxy;
 import cn.vbill.middleware.porter.common.cluster.command.TaskPositionUploadCommand;
 import cn.vbill.middleware.porter.common.cluster.data.DTaskStat;
 import cn.vbill.middleware.porter.common.exception.TaskStopTriggerException;
+import cn.vbill.middleware.porter.common.statistics.NodeLog;
 import cn.vbill.middleware.porter.common.util.DefaultNamedThreadFactory;
 import cn.vbill.middleware.porter.core.NodeContext;
-import cn.vbill.middleware.porter.common.cluster.ClusterProviderProxy;
-import cn.vbill.middleware.porter.common.statistics.NodeLog;
 import cn.vbill.middleware.porter.core.event.etl.ETLBucket;
 import cn.vbill.middleware.porter.core.event.s.EventType;
 import cn.vbill.middleware.porter.core.loader.DataLoader;
@@ -32,6 +32,8 @@ import cn.vbill.middleware.porter.core.task.AbstractStageJob;
 import cn.vbill.middleware.porter.core.task.StageType;
 import cn.vbill.middleware.porter.task.worker.TaskWork;
 import org.apache.commons.lang3.tuple.Pair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 import java.util.List;
@@ -41,12 +43,16 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * 完成SQL事件的最终执行，单线程执行,通过interrupt终止线程
+ *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月24日 11:19
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月24日 11:19
  */
 public class LoadJob extends AbstractStageJob {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(LoadJob.class);
+
     private final DataLoader dataLoder;
     private final TaskWork work;
     //最新的消费进度差值
@@ -80,10 +86,13 @@ public class LoadJob extends AbstractStageJob {
     @Override
     protected void doStop() {
         try {
-            if (null != positionCheckService) positionCheckService.shutdownNow();
+            if (null != positionCheckService) {
+                positionCheckService.shutdownNow();
+            }
             dataLoder.shutdown();
         } catch (Exception e) {
             e.printStackTrace();
+            LOGGER.error("%s", e);
         }
     }
 
@@ -98,7 +107,9 @@ public class LoadJob extends AbstractStageJob {
         ETLBucket bucket = null;
         do {
             //确保任务出错停止后不执行do{}逻辑
-            if (work.triggerStopped()) break;
+            if (work.triggerStopped()) {
+                break;
+            }
             //正常逻辑
             try {
                 bucket = work.waitEvent(StageType.TRANSFORM);
@@ -112,7 +123,9 @@ public class LoadJob extends AbstractStageJob {
                     //执行载入逻辑
                     Pair<Boolean, List<SubmitStatObject>> loadResult = dataLoder.load(bucket);
                     //逻辑执行失败
-                    if (!loadResult.getLeft()) throw new TaskStopTriggerException("批次" + bucket.getSequence() + "Load失败!");
+                    if (!loadResult.getLeft()) {
+                        throw new TaskStopTriggerException("批次" + bucket.getSequence() + "Load失败!");
+                    }
                     //提交批次消费同步点
                     if (null != bucket.getPosition()) {
                         LOGGER.debug("提交消费同步点到集群策略:{}", bucket.getPosition().render());
@@ -146,11 +159,12 @@ public class LoadJob extends AbstractStageJob {
             } catch (Throwable e) {
                 e.printStackTrace();
                 NodeLog.upload(NodeLog.LogType.TASK_LOG, work.getTaskId(), work.getDataConsumer().getSwimlaneId(),
-                        "Load ETLRow error"  + e.getMessage());
+                        "Load ETLRow error" + e.getMessage());
                 LOGGER.error("Load ETLRow error!", e);
             }
         } while (null != bucket && !work.triggerStopped()); //数据不为空并且当前任务没有触发停止告警
     }
+
     @Override
     public ETLBucket output() throws Exception {
         throw new Exception("unsupported Method");
@@ -169,10 +183,11 @@ public class LoadJob extends AbstractStageJob {
 
     /**
      * 更新任务状态
-     *  For a prepared statement batch, it is not possible to know the number of rows affected in the database
-     *  by each individual statement in the batch.Therefore, all array elements have a value of -2.
-     *  According to the JDBC 2.0 specification, a value of -2 indicates that the operation was successful
-     *  but the number of rows affected is unknown.
+     * For a prepared statement batch, it is not possible to know the number of rows affected in the database
+     * by each individual statement in the batch.Therefore, all array elements have a value of -2.
+     * According to the JDBC 2.0 specification, a value of -2 indicates that the operation was successful
+     * but the number of rows affected is unknown.
+     *
      * @param object
      */
     private void updateStat(SubmitStatObject object) {
@@ -211,10 +226,14 @@ public class LoadJob extends AbstractStageJob {
                         stat.incrementErrorDeleteRow();
                     }
                     break;
+                default:
+                    break;
             }
 
             //更新最后执行消息事件的产生时间，用于计算从消息产生到加载如路时间、计算数据同步检查时间
-            if (null != object.getOpTime()) stat.setLastLoadedDataTime(object.getOpTime());
+            if (null != object.getOpTime()) {
+                stat.setLastLoadedDataTime(object.getOpTime());
+            }
             stat.setLastLoadedSystemTime(new Date());
             if (null != object.getPosition()) {
                 stat.setProgress(object.getPosition().render());

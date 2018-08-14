@@ -43,6 +43,13 @@ public class BatchPrePareTransformer implements Transformer {
         groupRows(bucket, 0);
     }
 
+    /**
+     * groupRows
+     *
+     * @date 2018/8/9 下午2:11
+     * @param: [bucket, from]
+     * @return: void
+     */
     private void groupRows(ETLBucket bucket, int from) {
         List<ETLRow> groupOne = new ArrayList<>();
         int size = bucket.getRows().size();
@@ -51,7 +58,9 @@ public class BatchPrePareTransformer implements Transformer {
             groupOne.add(row);
             from++;
             ETLRow nextRow = null;
-            if (from < size) nextRow = bucket.getRows().get(from);
+            if (from < size) {
+                nextRow = bucket.getRows().get(from);
+            }
             //下个操作类型和该类型相同
             if (null != nextRow && nextRow.getFinalOpType() == row.getFinalOpType() && nextRow.getFinalSchema().equals(row.getFinalSchema())
                     && nextRow.getFinalTable().equals(row.getFinalTable())) {
@@ -60,7 +69,11 @@ public class BatchPrePareTransformer implements Transformer {
                 break;
             }
         }
-        if (!groupOne.isEmpty()) bucket.getBatchRows().add(groupOne);
-        if (from < size) groupRows(bucket, from);
+        if (!groupOne.isEmpty()) {
+            bucket.getBatchRows().add(groupOne);
+        }
+        if (from < size) {
+            groupRows(bucket, from);
+        }
     }
 }

@@ -58,6 +58,10 @@ public class CanalConfig extends SourceConfig {
     protected void childStuff() {
     }
 
+    /**
+     * getSocketAddress
+     * @return
+     */
     public InetSocketAddress getSocketAddress() {
         String[] addressArray = address.split(ADDRESS_SPLIT_CHARACTER);
         if (null != addressArray && addressArray.length == 2) {

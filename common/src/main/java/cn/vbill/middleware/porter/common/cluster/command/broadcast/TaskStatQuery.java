@@ -26,5 +26,12 @@ import cn.vbill.middleware.porter.common.cluster.command.TaskStatQueryCommand;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月07日 15:45
  */
 public interface TaskStatQuery {
+
+    /**
+     * queryTaskStat
+     *
+     * @param command
+     * @throws Exception
+     */
     void queryTaskStat(TaskStatQueryCommand command) throws Exception;
 }

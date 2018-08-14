@@ -43,12 +43,19 @@ import java.util.List;
 public class ScanDataAlerter implements Alerter {
     private static final Logger LOGGER = LoggerFactory.getLogger(ScanDataAlerter.class);
     private static final long TIME_SPAN_OF_MINUTES = 30;
-    private static final DateFormat NOTICE_DATE_FORMAT = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
+    private DateFormat noticeDateFormat = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
 
+    /**
+     * check
+     *
+     * @date 2018/8/9 下午2:03
+     * @param: [consumer, loader, stat, checkMeta, receivers]
+     * @return: void
+     */
     public void check(DataConsumer consumer, DataLoader loader, DTaskStat stat, Triple<String[], String[],
             String[]> checkMeta, List<AlertReceiver> receivers) {
         LOGGER.debug("trying scan data");
-        if (null == stat ||  !stat.getUpdateStat().get() || null == stat.getLastLoadedDataTime() || null == checkMeta.getRight()) {
+        if (null == stat || !stat.getUpdateStat().get() || null == stat.getLastLoadedDataTime() || null == checkMeta.getRight()) {
             LOGGER.debug("null == stat ||  !stat.getUpdateStat().get() || null == stat.getLastLoadedTime() || null == checkMeta.getRight()");
             return;
         }
@@ -58,13 +65,13 @@ public class ScanDataAlerter implements Alerter {
         lastCheckedTime = null == lastCheckedTime ? stat.getRegisteredTime() : lastCheckedTime;
         lastCheckedTime = DateUtils.setSeconds(lastCheckedTime, 0);
 
-        LOGGER.debug("获得同步检查时间点:{}", NOTICE_DATE_FORMAT.format(lastCheckedTime));
+        LOGGER.debug("获得同步检查时间点:{}", noticeDateFormat.format(lastCheckedTime));
 
         //计算与最同步时间间隔并推前5分钟,单位分钟
         long timeDiff = (DateUtils.addMinutes(stat.getLastLoadedDataTime(), 5).getTime()
                 - lastCheckedTime.getTime()) / 1000 / 60;
 
-        LOGGER.debug("计算与最新表记录操作时间间隔并推前5分钟:{},时间差:{}分钟", NOTICE_DATE_FORMAT.format(stat.getLastLoadedDataTime()), timeDiff);
+        LOGGER.debug("计算与最新表记录操作时间间隔并推前5分钟:{},时间差:{}分钟", noticeDateFormat.format(stat.getLastLoadedDataTime()), timeDiff);
 
         //分割时间段
         int splitTimes = timeDiff > 0 ? (int) (timeDiff / TIME_SPAN_OF_MINUTES) : 0;
@@ -83,7 +90,7 @@ public class ScanDataAlerter implements Alerter {
                 Date endDate = DateUtils.addMinutes(lastCheckedTime, endMinute);
                 endDate = DateUtils.setSeconds(endDate, 59);
 
-                LOGGER.debug("执行同步检查逻辑,执行时间段:{}-{}", NOTICE_DATE_FORMAT.format(startDate), NOTICE_DATE_FORMAT.format(endDate));
+                LOGGER.debug("执行同步检查逻辑,执行时间段:{}-{}", noticeDateFormat.format(startDate), noticeDateFormat.format(endDate));
 
                 //执行同步检查逻辑，暂时为单线程模式执行
                 checkLogic(stat, consumer, loader, startDate, endDate, checkMeta, receivers);
@@ -94,6 +101,13 @@ public class ScanDataAlerter implements Alerter {
         LOGGER.debug("stat after scan data:{}", JSON.toJSONString(stat));
     }
 
+    /**
+     * checkLogic
+     *
+     * @date 2018/8/9 下午2:03
+     * @param: [stat, consumer, loader, startDate, endDate, checkMeta, receivers]
+     * @return: void
+     */
     private void checkLogic(DTaskStat stat, DataConsumer consumer, DataLoader loader, Date startDate, Date endDate,
                             Triple<String[], String[], String[]> checkMeta, List<AlertReceiver> receivers) {
         //更新对比时间
@@ -101,20 +115,20 @@ public class ScanDataAlerter implements Alerter {
         int countTarget = loader.getDataCount(checkMeta.getLeft()[1], checkMeta.getMiddle()[1], checkMeta.getRight()[1], startDate, endDate);
 
 
-        LOGGER.debug("执行同步检查逻辑,执行时间段:{}-{}, 结果:{}-{}", NOTICE_DATE_FORMAT.format(startDate), NOTICE_DATE_FORMAT.format(endDate),
+        LOGGER.debug("执行同步检查逻辑,执行时间段:{}-{}, 结果:{}-{}", noticeDateFormat.format(startDate), noticeDateFormat.format(endDate),
                 countSource, countTarget);
 
         //数据不一致时发送告警
         if (countTarget != countSource) {
-            String notice = new StringBuffer().append(NOTICE_DATE_FORMAT.format(startDate)).append("至").append(NOTICE_DATE_FORMAT.format(endDate))
+            String notice = new StringBuffer().append(noticeDateFormat.format(startDate)).append("至").append(noticeDateFormat.format(endDate))
                     .append("\n\r")
                     .append("源端数据变更").append(countSource).append("条,").append("\n\r")
                     .append("目标端数据变更").append(countTarget).append("条。").append("\n\r")
                     .append("数据变更条目不一致，请尽快修正").toString();
 
-            LOGGER.debug(notice.toString());
+            LOGGER.debug(notice);
 
-            String title = "[" + NOTICE_DATE_FORMAT.format(new Date()) + "][" + MachineUtils.localhost() + ":" + MachineUtils.getPID() + "]数据同步告警";
+            String title = "[" + noticeDateFormat.format(new Date()) + "][" + MachineUtils.localhost() + ":" + MachineUtils.getPID() + "]数据同步告警";
             AlertProviderFactory.INSTANCE.notice(title, notice, receivers);
             //更新同步检查次数
             stat.incrementAlertedTimes();

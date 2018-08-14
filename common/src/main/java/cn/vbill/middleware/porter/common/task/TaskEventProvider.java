@@ -24,7 +24,16 @@ package cn.vbill.middleware.porter.common.task;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月21日 17:52
  */
 public interface TaskEventProvider {
+
+    /**
+     * addTaskEventListener
+     * @param listener
+     */
     void addTaskEventListener(TaskEventListener listener);
 
+    /**
+     * removeTaskEventListener
+     * @param listener
+     */
     void removeTaskEventListener(TaskEventListener listener);
 }

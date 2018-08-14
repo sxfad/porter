@@ -22,5 +22,11 @@ package cn.vbill.middleware.porter.common.db.meta;
  */
 public interface DdlSchemaFilter {
 
+    /**
+     * accept
+     *
+     * @param schemaName
+     * @return
+     */
     boolean accept(String schemaName);
 }

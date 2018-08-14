@@ -148,8 +148,12 @@ public class DTaskStat extends DObject {
         DTaskStat stat = (DTaskStat) data;
         if (taskId.equals(stat.getTaskId()) && stat.getSwimlaneId().equals(swimlaneId) && table.equals(stat.table)
                 && schema.equals(stat.schema)) {
-            if (!StringUtils.isBlank(stat.nodeId)) this.nodeId = stat.nodeId;
-            if (!StringUtils.isBlank(stat.progress)) this.progress = stat.progress;
+            if (!StringUtils.isBlank(stat.nodeId)) {
+                this.nodeId = stat.nodeId;
+            }
+            if (!StringUtils.isBlank(stat.progress)) {
+                this.progress = stat.progress;
+            }
             this.deleteRow.addAndGet(stat.deleteRow.longValue());
             this.insertRow.addAndGet(stat.insertRow.longValue());
             this.updateRow.addAndGet(stat.updateRow.longValue());
@@ -157,12 +161,22 @@ public class DTaskStat extends DObject {
             this.errorInsertRow.addAndGet(stat.errorInsertRow.longValue());
             this.errorUpdateRow.addAndGet(stat.errorUpdateRow.longValue());
             this.alertedTimes.addAndGet(stat.alertedTimes.longValue());
-            if (null != stat.lastLoadedSystemTime) this.lastLoadedSystemTime = stat.lastLoadedSystemTime;
-            if (null != stat.lastCheckedTime) this.lastCheckedTime = stat.lastCheckedTime;
-            if (null != stat.lastLoadedSystemTime) this.lastLoadedSystemTime = stat.lastLoadedSystemTime;
+            if (null != stat.lastLoadedSystemTime) {
+                this.lastLoadedSystemTime = stat.lastLoadedSystemTime;
+            }
+            if (null != stat.lastCheckedTime) {
+                this.lastCheckedTime = stat.lastCheckedTime;
+            }
+            if (null != stat.lastLoadedSystemTime) {
+                this.lastLoadedSystemTime = stat.lastLoadedSystemTime;
+            }
             this.heartbeatTime = new Date();
         }
     }
+
+    /**
+     * reset
+     */
     public void reset() {
         this.deleteRow.set(0);
         this.insertRow.set(0);
@@ -186,29 +200,44 @@ public class DTaskStat extends DObject {
         this.progress = progress;
     }
 
-
+    /**
+     * incrementInsertRow
+     */
     public synchronized void incrementInsertRow() {
         insertRow.incrementAndGet();
     }
 
-
+    /**
+     * incrementUpdateRow
+     */
     public synchronized void incrementUpdateRow() {
         updateRow.incrementAndGet();
     }
 
-
+    /**
+     * incrementDeleteRow
+     */
     public synchronized void incrementDeleteRow() {
         deleteRow.incrementAndGet();
     }
 
+    /**
+     * incrementErrorUpdateRow
+     */
     public synchronized void incrementErrorUpdateRow() {
         errorUpdateRow.incrementAndGet();
     }
 
+    /**
+     * incrementErrorInsertRow
+     */
     public synchronized void incrementErrorInsertRow() {
         errorInsertRow.incrementAndGet();
     }
 
+    /**
+     * incrementErrorDeleteRow
+     */
     public synchronized void incrementErrorDeleteRow() {
         errorDeleteRow.incrementAndGet();
     }
@@ -284,6 +313,9 @@ public class DTaskStat extends DObject {
         this.lastLoadedSystemTime = lastLoadedSystemTime;
     }
 
+    /**
+     * incrementAlertedTimes
+     */
     public synchronized void incrementAlertedTimes() {
         alertedTimes.incrementAndGet();
     }

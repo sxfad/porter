@@ -19,13 +19,38 @@ package cn.vbill.middleware.porter.core.task;
 
 /**
  * 工作的阶段
+ *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月24日 10:56
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月24日 10:56
  */
-public enum  StageType {
-    SELECT, EXTRACT, TRANSFORM, LOAD, DB_CHECK;
+public enum StageType {
+
+    /**
+     * select
+     */
+    SELECT,
+
+    /**
+     * extract
+     */
+    EXTRACT,
+
+    /**
+     * transform
+     */
+    TRANSFORM,
+
+    /**
+     * load
+     */
+    LOAD,
+
+    /**
+     * db check
+     */
+    DB_CHECK;
 
     public boolean isSelect() {
         return this.equals(StageType.SELECT);

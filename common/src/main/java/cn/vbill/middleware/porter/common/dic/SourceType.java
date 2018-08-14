@@ -36,9 +36,94 @@ import java.util.LinkedHashMap;
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum SourceType {
 
-    ZOOKEEPER("ZOOKEEPER", "zookeeper", -1), KAFKA("KAFKA", "kafka", 1), JDBC("JDBC", "jdbc", 1),
-    EMAIL("EMAIL", "email", -1), NAME_SOURCE("NAME_SOURCE", "nameSource", -1), KUDU("KUDU", "kudu", -1),
-    CANAL("CANAL", "canal", 1), HBASE("HBASE", "hbase", -1), KAFKA_PRODUCE("KAFKA_PRODUCE", "kafkaProduce", 1);
+    /**
+     * zookeeper
+     */
+    ZOOKEEPER("ZOOKEEPER", "zookeeper", -1),
+
+    /**
+     * kafka
+     */
+    KAFKA("KAFKA", "kafka", 1),
+
+    /**
+     * jdbc
+     */
+    JDBC("JDBC", "jdbc", 1),
+
+    /**
+     * email
+     */
+    EMAIL("EMAIL", "email", -1),
+
+    /**
+     * nameSource
+     */
+    NAME_SOURCE("NAME_SOURCE", "nameSource", -1),
+
+    /**
+     * kudu
+     */
+    KUDU("KUDU", "kudu", -1),
+
+    /**
+     * canal
+     */
+    CANAL("CANAL", "canal", 1),
+
+    /**
+     * hbase
+     */
+    HBASE("HBASE", "hbase", -1),
+
+    /**
+     * kafkaProduce
+     */
+    KAFKA_PRODUCE("KAFKA_PRODUCE", "kafkaProduce", 1);
+
+    /**
+     * LINKMAP
+     */
+    public static final HashMap<String, Object> LINKMAP = new LinkedHashMap<>();
+
+    static {
+        if (ZOOKEEPER.state == 1) {
+            LINKMAP.put(ZOOKEEPER.code, ZOOKEEPER.name);
+        }
+
+        if (KAFKA.state == 1) {
+            LINKMAP.put(KAFKA.code, KAFKA.name);
+        }
+
+        if (JDBC.state == 1) {
+            LINKMAP.put(JDBC.code, JDBC.name);
+        }
+
+        if (EMAIL.state == 1) {
+            LINKMAP.put(EMAIL.code, EMAIL.name);
+        }
+
+        if (CANAL.state == 1) {
+            LINKMAP.put(CANAL.code, CANAL.name);
+        }
+
+        if (KUDU.state == 1) {
+            LINKMAP.put(KUDU.code, KUDU.name);
+        }
+
+        if (NAME_SOURCE.state == 1) {
+            LINKMAP.put(NAME_SOURCE.code, NAME_SOURCE.name);
+        }
+
+        if (HBASE.state == 1) {
+            LINKMAP.put(HBASE.code, HBASE.name);
+        }
+
+        if (KAFKA_PRODUCE.state == 1) {
+            LINKMAP.put(KAFKA_PRODUCE.code, KAFKA_PRODUCE.name);
+        }
+
+    }
 
     @Getter
     private final String code;
@@ -47,30 +132,4 @@ public enum SourceType {
     @Getter
     private final int state;
 
-    public static final HashMap<String, Object> LINKMAP = new LinkedHashMap<String, Object>() {
-
-        private static final long serialVersionUID = 1L;
-
-        {
-            if (ZOOKEEPER.state == 1)
-                put(ZOOKEEPER.code, ZOOKEEPER.name);
-            if (KAFKA.state == 1)
-                put(KAFKA.code, KAFKA.name);
-            if (JDBC.state == 1)
-                put(JDBC.code, JDBC.name);
-            if (EMAIL.state == 1)
-                put(EMAIL.code, EMAIL.name);
-            if (CANAL.state == 1)
-                put(CANAL.code, CANAL.name);
-            if (KUDU.state == 1)
-                put(KUDU.code, KUDU.name);
-            if (NAME_SOURCE.state == 1)
-                put(NAME_SOURCE.code, NAME_SOURCE.name);
-            if (HBASE.state == 1)
-                put(HBASE.code, HBASE.name);
-            if (KAFKA_PRODUCE.state == 1)
-                put(KAFKA_PRODUCE.code, KAFKA_PRODUCE.name);
-
-        }
-    };
 }

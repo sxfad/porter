@@ -33,14 +33,15 @@ import java.util.Map;
 
 /**
  * 完成字符串到java.sql.*格式的转换
+ *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月27日 15:31
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月27日 15:31
  */
 public class SqlUtils {
-    private static final Map<Integer, Class<?>> SQL_TYPE_TO_JAVA_TYPE_MAP           = new HashMap<Integer, Class<?>>();
-    private static final ConvertUtilsBean CONVERT_UTILS_BEAN               = new ConvertUtilsBean();
+    private static final Map<Integer, Class<?>> SQL_TYPE_TO_JAVA_TYPE_MAP = new HashMap<Integer, Class<?>>();
+    private static final ConvertUtilsBean CONVERT_UTILS_BEAN = new ConvertUtilsBean();
 
     static {
         // regist Converter
@@ -158,6 +159,15 @@ public class SqlUtils {
         }
     }
 
+    /**
+     * encoding
+     *
+     * @param source
+     * @param sqlType
+     * @param sourceEncoding
+     * @param targetEncoding
+     * @return
+     */
     public static String encoding(String source, int sqlType, String sourceEncoding, String targetEncoding) {
         switch (sqlType) {
             case Types.CHAR:
@@ -181,6 +191,8 @@ public class SqlUtils {
                     }
                     // }
                 }
+            default:
+                break;
         }
 
         return source;
@@ -197,8 +209,8 @@ public class SqlUtils {
      * required type, in case of an unknown type. Calling code needs to deal
      * with this case appropriately, e.g. throwing a corresponding exception.
      *
-     * @param rs is the ResultSet holding the data
-     * @param index is the column index
+     * @param rs           is the ResultSet holding the data
+     * @param index        is the column index
      * @param requiredType the required value type (may be <code>null</code>)
      * @return the value object
      * @throws SQLException if thrown by the JDBC API
@@ -218,23 +230,23 @@ public class SqlUtils {
             value = Boolean.valueOf(rs.getBoolean(index));
             wasNullCheck = true;
         } else if (byte.class.equals(requiredType) || Byte.class.equals(requiredType)) {
-            value = new Byte(rs.getByte(index));
+            value = Byte.valueOf(rs.getByte(index));
             wasNullCheck = true;
         } else if (short.class.equals(requiredType) || Short.class.equals(requiredType)) {
-            value = new Short(rs.getShort(index));
+            value = Short.valueOf(rs.getShort(index));
             wasNullCheck = true;
         } else if (int.class.equals(requiredType) || Integer.class.equals(requiredType)) {
-            value = new Long(rs.getLong(index));
+            value = Long.valueOf(rs.getLong(index));
             wasNullCheck = true;
         } else if (long.class.equals(requiredType) || Long.class.equals(requiredType)) {
             value = rs.getBigDecimal(index);
             wasNullCheck = true;
         } else if (float.class.equals(requiredType) || Float.class.equals(requiredType)) {
-            value = new Float(rs.getFloat(index));
+            value = Float.valueOf(rs.getFloat(index));
             wasNullCheck = true;
         } else if (double.class.equals(requiredType) || Double.class.equals(requiredType)
                 || Number.class.equals(requiredType)) {
-            value = new Double(rs.getDouble(index));
+            value = Double.valueOf(rs.getDouble(index));
             wasNullCheck = true;
         } else if (java.sql.Time.class.equals(requiredType)) {
             // try {
@@ -305,7 +317,7 @@ public class SqlUtils {
      * leaving out the time portion: These columns will explicitly be extracted
      * as standard <code>java.sql.Timestamp</code> object.
      *
-     * @param rs is the ResultSet holding the data
+     * @param rs    is the ResultSet holding the data
      * @param index is the column index
      * @return the value object
      * @throws SQLException if thrown by the JDBC API
@@ -328,6 +340,11 @@ public class SqlUtils {
                 || (Types.TINYINT == sqlType);
     }
 
+    /**
+     * isTextType
+     * @param sqlType
+     * @return
+     */
     public static boolean isTextType(int sqlType) {
         return sqlType == Types.CHAR || sqlType == Types.VARCHAR || sqlType == Types.CLOB || sqlType == Types.LONGVARCHAR
                 || sqlType == Types.NCHAR || sqlType == Types.NVARCHAR || sqlType == Types.NCLOB

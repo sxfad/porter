@@ -23,4 +23,4 @@ application.properties
 *.cache
 *.log
 .factorypath
-datas.iml
+*sonar*

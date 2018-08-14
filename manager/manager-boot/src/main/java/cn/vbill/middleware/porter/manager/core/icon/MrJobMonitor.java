@@ -150,10 +150,18 @@ public class MrJobMonitor {
      */
     private Long[] alarmNumber;
 
+    /**
+     * AxisData get方法
+     * @return
+     */
     public Date[] getxAxisData() {
         return xAxisData;
     }
 
+    /**
+     * AxisData set方法
+     * @param xAxisData
+     */
     public void setxAxisData(Date[] xAxisData) {
         this.xAxisData = xAxisData;
     }

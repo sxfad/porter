@@ -63,6 +63,13 @@ public class Page<T> {
         this.pageSize = pageSize;
     }
 
+    /**
+     * getTotalItems
+     *
+     * @date 2018/8/9 下午3:37
+     * @param: []
+     * @return: long
+     */
     public long getTotalItems() {
         if (totalItems < 0) {
             return -1;
@@ -82,6 +89,13 @@ public class Page<T> {
         this.result = result;
     }
 
+    /**
+     * getTotalPages
+     *
+     * @date 2018/8/9 下午3:37
+     * @param: []
+     * @return: long
+     */
     public long getTotalPages() {
         long count = totalItems / pageSize;
         if (totalItems % pageSize > 0) {

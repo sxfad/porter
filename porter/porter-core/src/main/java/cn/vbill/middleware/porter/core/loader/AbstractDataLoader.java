@@ -34,13 +34,20 @@ import java.util.Date;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月09日 15:08
  */
 public abstract class AbstractDataLoader implements DataLoader {
-    protected  final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractDataLoader.class);
     protected static final String TIME_TAKEN_FORMAT = "yyyy-MM-dd HH:mm:ss.S";
-    private  volatile LoadClient loadClient;
-    private  volatile MetaQueryClient metaQueryClient;
+    private volatile LoadClient loadClient;
+    private volatile MetaQueryClient metaQueryClient;
     //更新转插入策略开关
     private volatile boolean insertOnUpdateError = true;
 
+    /**
+     * 获取PluginName
+     *
+     * @date 2018/8/8 下午5:59
+     * @param: []
+     * @return: java.lang.String
+     */
     protected abstract String getPluginName();
 
     @Override
@@ -48,6 +55,13 @@ public abstract class AbstractDataLoader implements DataLoader {
         this.loadClient = loadClient;
     }
 
+    /**
+     * 获取LoadClient
+     *
+     * @date 2018/8/8 下午5:59
+     * @param: []
+     * @return: T
+     */
     public <T> T getLoadClient() {
         return (T) loadClient;
     }
@@ -64,8 +78,12 @@ public abstract class AbstractDataLoader implements DataLoader {
 
     @Override
     public void shutdown() throws Exception {
-        if (!loadClient.isPublic()) loadClient.shutdown();
-        if (!metaQueryClient.isPublic()) metaQueryClient.shutdown();
+        if (!loadClient.isPublic()) {
+            loadClient.shutdown();
+        }
+        if (!metaQueryClient.isPublic()) {
+            metaQueryClient.shutdown();
+        }
     }
 
     @Override
@@ -102,6 +120,13 @@ public abstract class AbstractDataLoader implements DataLoader {
         return clientInfo.toString();
     }
 
+    /**
+     * 输出TimeTaken
+     *
+     * @date 2018/8/8 下午6:00
+     * @param: [row]
+     * @return: void
+     */
     protected void printTimeTaken(ETLRow row) {
         try {
             LOGGER.info("消息处理耗时->trail操作:{},存储kafka:{},kafka消费:{},数据库载入:{}",
@@ -110,7 +135,7 @@ public abstract class AbstractDataLoader implements DataLoader {
                     DateFormatUtils.format(row.getConsumedTime(), TIME_TAKEN_FORMAT),
                     DateFormatUtils.format(System.currentTimeMillis(), TIME_TAKEN_FORMAT));
         } catch (Throwable e) {
-
+            LOGGER.error("%s", e);
         }
     }
 }

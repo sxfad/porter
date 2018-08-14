@@ -33,7 +33,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月24日 11:04
  */
 public abstract class AbstractStageJob implements StageJob {
-    protected  final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractStageJob.class);
     protected static final int LOGIC_THREAD_SIZE = 5;
     private AtomicBoolean stat = new AtomicBoolean(false);
     private final Thread loopService;
@@ -54,8 +54,23 @@ public abstract class AbstractStageJob implements StageJob {
         threadFactory = new DefaultNamedThreadFactory(baseThreadName + "-" + this.getClass().getSimpleName());
         loopService = threadFactory.newThread(new LoopService());
     }
+
+    /**
+     * 停止
+     *
+     * @date 2018/8/8 下午6:04
+     * @param: []
+     * @return: void
+     */
     protected abstract void doStop() throws InterruptedException;
 
+    /**
+     * 开始
+     *
+     * @date 2018/8/8 下午6:04
+     * @param: []
+     * @return: void
+     */
     protected abstract void doStart() throws Exception;
 
     @Override
@@ -79,7 +94,7 @@ public abstract class AbstractStageJob implements StageJob {
                     //防止消费间隙上层管道新增数据
                     while (!isPrevPoolEmpty()) {
                         LOGGER.debug("内存队列有未处理完的数据，线程休眠20耗秒.");
-                        Thread.currentThread().sleep(20);
+                        Thread.sleep(20);
                     }
                     //设置信号量的目的是防止loopLogic执行期间代码被粗暴打断
                     stopSignal.acquire();
@@ -87,12 +102,20 @@ public abstract class AbstractStageJob implements StageJob {
                 }
                 doStop();
             } catch (Throwable e) {
+                LOGGER.error("%s", e);
             } finally {
                 loopService.interrupt();
             }
         }
     }
 
+    /**
+     * loopLogic
+     *
+     * @date 2018/8/8 下午6:05
+     * @param: []
+     * @return: void
+     */
     protected abstract void loopLogic() throws InterruptedException;
 
     private  class LoopService implements Runnable {
@@ -110,6 +133,7 @@ public abstract class AbstractStageJob implements StageJob {
                     Thread.sleep(threadWaitSpan);
                 } catch (InterruptedException e) {
                     //如果线程有中断信号，退出线程
+                    Thread.interrupted();
                     break;
                 }
             }

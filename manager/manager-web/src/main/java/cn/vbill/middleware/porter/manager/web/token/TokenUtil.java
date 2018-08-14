@@ -21,6 +21,8 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -36,8 +38,25 @@ import java.util.UUID;
  */
 public class TokenUtil {
 
+    private static Logger LOGGER = LoggerFactory.getLogger(TokenUtil.class);
+
+    /**
+     * EXPIRATION_TIME
+     *
+     * @date 2018/8/9 下午3:43
+     * @param:
+     * @return:
+     */
     public static Long EXPIRATION_TIME = 3600 * 1000L * 24 * 7; // 1h
-    public static String SECRET = "KeyTokenServer1";
+
+    /**
+     * SECRET
+     *
+     * @date 2018/8/9 下午3:43
+     * @param:
+     * @return:
+     */
+    public static final String SECRET = "KeyTokenServer1";
 
     /**
      * 生成token
@@ -92,6 +111,7 @@ public class TokenUtil {
             return true;
         } catch (Exception e) {
             // e.printStackTrace();
+            LOGGER.info("%s", e);
             return false;
         }
     }

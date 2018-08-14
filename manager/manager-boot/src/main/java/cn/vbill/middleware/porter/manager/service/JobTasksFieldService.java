@@ -32,17 +32,66 @@ import java.util.List;
  */
 public interface JobTasksFieldService {
 
+    /**
+     * 新增
+     *
+     * @date 2018/8/10 上午11:41
+     * @param: [jobTasksField]
+     * @return: java.lang.Integer
+     */
     Integer insert(JobTasksField jobTasksField);
 
+    /**
+     * 更新
+     *
+     * @date 2018/8/10 上午11:41
+     * @param: [id, jobTasksField]
+     * @return: java.lang.Integer
+     */
     Integer update(Long id, JobTasksField jobTasksField);
 
+    /**
+     * 删除
+     *
+     * @date 2018/8/10 上午11:41
+     * @param: [jobTaskId]
+     * @return: java.lang.Integer
+     */
     Integer delete(Long jobTaskId);
 
+    /**
+     * 根据id查询
+     *
+     * @date 2018/8/10 上午11:41
+     * @param: [id]
+     * @return: cn.vbill.middleware.porter.manager.core.entity.JobTasksField
+     */
     JobTasksField selectById(Long id);
 
+    /**
+     * 分页
+     *
+     * @date 2018/8/10 上午11:42
+     * @param: [page]
+     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.entity.JobTasksField>
+     */
     Page<JobTasksField> page(Page<JobTasksField> page);
 
+    /**
+     * insertList
+     *
+     * @date 2018/8/10 上午11:42
+     * @param: [jobTasks]
+     * @return: void
+     */
     void insertList(JobTasks jobTasks);
 
+    /**
+     * selectInfo
+     *
+     * @date 2018/8/10 上午11:42
+     * @param: [id, jobTasksTableId]
+     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.entity.JobTasksField>
+     */
     List<JobTasksField> selectInfo(Long id, Long jobTasksTableId);
 }

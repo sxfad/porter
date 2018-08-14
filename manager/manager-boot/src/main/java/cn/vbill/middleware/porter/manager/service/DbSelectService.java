@@ -29,11 +29,39 @@ import java.util.Map;
  */
 public interface DbSelectService {
 
+    /**
+     * List
+     *
+     * @date 2018/8/10 上午11:25
+     * @param: [dataSource, jvo, sql, map]
+     * @return: java.util.List<java.lang.String>
+     */
     List<String> list(DataSource dataSource, JDBCVo jvo, String sql, Map<String, Object> map);
 
+    /**
+     * pageTotal
+     *
+     * @date 2018/8/10 上午11:26
+     * @param: [dataSource, jvo, sql, prefix, tableName]
+     * @return: java.lang.Long
+     */
     Long pageTotal(DataSource dataSource, JDBCVo jvo, String sql, String prefix, String tableName);
 
+    /**
+     * page
+     *
+     * @date 2018/8/10 上午11:26
+     * @param: [dataSource, jvo, page, sql, prefix, tableName]
+     * @return: java.util.List<java.lang.Object>
+     */
     List<Object> page(DataSource dataSource, JDBCVo jvo, Page<Object> page, String sql, String prefix, String tableName);
 
+    /**
+     * fieldList
+     *
+     * @date 2018/8/10 上午11:26
+     * @param: [dataSource, jvo, sql, tableAllName]
+     * @return: java.util.List<java.lang.String>
+     */
     List<String> fieldList(DataSource dataSource, JDBCVo jvo, String sql, String tableAllName);
 }

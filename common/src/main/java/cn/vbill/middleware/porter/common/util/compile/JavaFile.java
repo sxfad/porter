@@ -19,11 +19,18 @@ package cn.vbill.middleware.porter.common.util.compile;
 
 /**
  * java文件对象
+ *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年03月19日 14:03
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年03月19日 14:03
  */
 public interface JavaFile {
+
+    /**
+     * getClassName
+     *
+     * @return
+     */
     String getClassName();
 }

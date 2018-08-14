@@ -510,6 +510,10 @@ public class JobTasks implements java.io.Serializable {
         return tables;
     }
 
+    /**
+     * setTables
+     * @param tables
+     */
     public void setTables(List<JobTasksTable> tables) {
 
         StringBuffer linkSource = new StringBuffer();
@@ -614,6 +618,10 @@ public class JobTasks implements java.io.Serializable {
         return nodes;
     }
 
+    /**
+     * setNodes
+     * @param nodes
+     */
     public void setNodes(List<JobTaskNodes> nodes) {
         List<String> nodesIds = new ArrayList<>();
         StringBuffer nodesString = new StringBuffer();

@@ -29,6 +29,7 @@ import java.util.Date;
 
 /**
  * 统计信息
+ *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年02月23日 16:37
  * @version: V1.0
@@ -39,26 +40,47 @@ public abstract class StatisticData {
     @JSONField(serialize = false, deserialize = false)
     protected static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(StatisticData.class);
     @JSONField(serialize = false, deserialize = false)
-    private final DateFormat ID_DATE_FORMAT = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+    private final DateFormat idDateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSS");
     //节点ID
-    @Setter @Getter private String nodeId;
+    @Setter
+    @Getter
+    private String nodeId;
 
+    /**
+     * getCategory
+     * @return
+     */
     @JSONField(serialize = false, deserialize = false)
     public abstract String getCategory();
 
+    /**
+     * getSubId
+     * @return
+     */
     @JSONField(serialize = false, deserialize = false)
     protected abstract String getSubId();
 
+    /**
+     * StringBuilder
+     * @return
+     */
     @JSONField(serialize = false, deserialize = false)
     public String getId() {
-        return new StringBuilder(nodeId).append("-").append(getSubId()).append("-").append(ID_DATE_FORMAT.format(new Date())).toString();
+        return new StringBuilder(nodeId).append("-").append(getSubId()).append("-").append(idDateFormat.format(new Date())).toString();
     }
 
-
+    /**
+     * toString
+     * @return
+     */
     public String toString() {
         return JSONObject.toJSONString(this);
     }
 
+    /**
+     * toPrintln
+     * @return
+     */
     public String toPrintln() {
         JSONObject jsonObject = JSONObject.parseObject(toString());
         StringBuilder sb = new StringBuilder();

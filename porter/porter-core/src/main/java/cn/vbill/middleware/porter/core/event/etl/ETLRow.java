@@ -90,6 +90,13 @@ public class ETLRow {
         this.position = position;
     }
 
+    /**
+     * 大写
+     *
+     * @date 2018/8/8 下午5:55
+     * @param: []
+     * @return: cn.vbill.middleware.porter.core.event.etl.ETLRow
+     */
     public ETLRow toUpperCase() {
         this.finalSchema = finalSchema.toUpperCase();
         this.finalTable = finalTable.toUpperCase();

@@ -48,9 +48,19 @@ public class LoginController {
 
     private Logger log = LoggerFactory.getLogger(LoginController.class);
 
+    /**
+     * cuserService
+     */
     @Autowired
     public CUserService cuserService;
 
+    /**
+     * 用户登录
+     *
+     * @date 2018/8/9 下午4:24
+     * @param: [loginName, passwd]
+     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
+     */
     @RequestMapping(value = "/login", method = RequestMethod.POST)
     @ApiOperation(value = "用户登录", notes = "用户登录")
     public ResponseMessage login(@RequestParam(required = true) String loginName,
@@ -75,6 +85,13 @@ public class LoginController {
         }
     }
 
+    /**
+     * 获取用户信息
+     *
+     * @date 2018/8/9 下午4:24
+     * @param: []
+     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
+     */
     @RequestMapping(value = "/getuserinfo", method = RequestMethod.GET)
     @ApiOperation(value = "当前登录用户信息", notes = "当前登录用户信息")
     public ResponseMessage getCurrentUserInfo() throws Exception {

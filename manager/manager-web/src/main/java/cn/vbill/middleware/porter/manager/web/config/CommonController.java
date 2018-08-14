@@ -36,7 +36,8 @@ public class CommonController {
      * @throws NotFoundException
      */
     protected void assertFound(Object obj, String msg) throws NotFoundException {
-        if (obj == null)
+        if (obj == null) {
             throw new NotFoundException(msg);
+        }
     }
 }

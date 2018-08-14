@@ -29,8 +29,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import static cn.vbill.middleware.porter.manager.web.message.ResponseMessage.ok;
-
 /**
  * 日志监控信息表 controller控制器
  *

@@ -17,20 +17,31 @@
 
 package cn.vbill.middleware.porter.cluster.zookeeper;
 
+import cn.vbill.middleware.porter.common.cluster.ClusterListenerFilter;
 import cn.vbill.middleware.porter.common.cluster.ClusterProviderProxy;
+import cn.vbill.middleware.porter.common.cluster.command.TaskAssignedCommand;
 import cn.vbill.middleware.porter.common.cluster.command.TaskPositionQueryCommand;
 import cn.vbill.middleware.porter.common.cluster.command.TaskPositionUploadCommand;
 import cn.vbill.middleware.porter.common.cluster.command.TaskRegisterCommand;
+import cn.vbill.middleware.porter.common.cluster.command.TaskStatCommand;
+import cn.vbill.middleware.porter.common.cluster.command.TaskStatQueryCommand;
+import cn.vbill.middleware.porter.common.cluster.command.TaskStopCommand;
 import cn.vbill.middleware.porter.common.cluster.command.TaskStoppedByErrorCommand;
 import cn.vbill.middleware.porter.common.cluster.command.broadcast.TaskPosition;
 import cn.vbill.middleware.porter.common.cluster.command.broadcast.TaskRegister;
 import cn.vbill.middleware.porter.common.cluster.command.broadcast.TaskStatQuery;
+import cn.vbill.middleware.porter.common.cluster.command.broadcast.TaskStatUpload;
 import cn.vbill.middleware.porter.common.cluster.command.broadcast.TaskStop;
 import cn.vbill.middleware.porter.common.cluster.command.broadcast.TaskStoppedByError;
 import cn.vbill.middleware.porter.common.cluster.data.DObject;
 import cn.vbill.middleware.porter.common.cluster.data.DTaskLock;
 import cn.vbill.middleware.porter.common.cluster.data.DTaskStat;
+import cn.vbill.middleware.porter.common.cluster.event.ClusterEvent;
 import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterEvent;
+import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListener;
+import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListenerFilter;
+import cn.vbill.middleware.porter.common.config.TaskConfig;
+import cn.vbill.middleware.porter.common.exception.TaskLockException;
 import cn.vbill.middleware.porter.common.exception.TaskStopTriggerException;
 import cn.vbill.middleware.porter.common.task.TaskEventListener;
 import cn.vbill.middleware.porter.common.task.TaskEventProvider;
@@ -38,21 +49,12 @@ import cn.vbill.middleware.porter.common.util.MachineUtils;
 import cn.vbill.middleware.porter.core.NodeContext;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import cn.vbill.middleware.porter.common.cluster.ClusterListenerFilter;
-import cn.vbill.middleware.porter.common.cluster.command.TaskAssignedCommand;
-import cn.vbill.middleware.porter.common.cluster.command.TaskStatCommand;
-import cn.vbill.middleware.porter.common.cluster.command.TaskStopCommand;
-import cn.vbill.middleware.porter.common.cluster.command.TaskStatQueryCommand;
-import cn.vbill.middleware.porter.common.cluster.command.broadcast.TaskStatUpload;
-import cn.vbill.middleware.porter.common.cluster.event.ClusterEvent;
-import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListener;
-import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListenerFilter;
-import cn.vbill.middleware.porter.common.config.TaskConfig;
-import cn.vbill.middleware.porter.common.exception.TaskLockException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.data.Stat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,6 +63,7 @@ import java.util.regex.Pattern;
 
 /**
  * 任务信息监听,一期配置文件配置
+ *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月15日 10:09
  * @version: V1.0
@@ -71,10 +74,13 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
     private static final String ZK_PATH = BASE_CATALOG + "/task";
     private static final Pattern TASK_DIST_PATTERN = Pattern.compile(ZK_PATH + "/.*/dist/.*");
     private static final Pattern TASK_UNLOCKED_PATTERN = Pattern.compile(ZK_PATH + "/.*/lock/.*");
-    private final List<TaskEventListener> TASK_LISTENER;
+    private final List<TaskEventListener> taskListener;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ZKClusterTaskListener.class);
+    private static final String LOCK_PATH = "/lock/";
 
     public ZKClusterTaskListener() {
-        this.TASK_LISTENER = new ArrayList<>();
+        this.taskListener = new ArrayList<>();
     }
 
     @Override
@@ -102,10 +108,10 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
         //任务释放
         if (TASK_UNLOCKED_PATTERN.matcher(zkEvent.getPath()).matches() && event.isOffline()
                 && NodeContext.INSTANCE.getNodeStatus().isWorking()) {
-            String stoppedErrorPath = zkEvent.getPath().replace("/lock/", "/error/");
+            String stoppedErrorPath = zkEvent.getPath().replace(LOCK_PATH, "/error/");
             //如果不是因为错误停止任务
             if (!client.isExists(stoppedErrorPath, false)) {
-                Pair<String, Stat> taskConfig = client.getData(zkEvent.getPath().replace("/lock/", "/dist/"));
+                Pair<String, Stat> taskConfig = client.getData(zkEvent.getPath().replace(LOCK_PATH, "/dist/"));
                 //获取任务配置信息
                 if (null != taskConfig && !StringUtils.isBlank(taskConfig.getLeft())) {
                     TaskConfig config = JSONObject.parseObject(taskConfig.getLeft(), TaskConfig.class);
@@ -134,16 +140,23 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
 
     @Override
     public void addTaskEventListener(TaskEventListener listener) {
-        TASK_LISTENER.add(listener);
+        taskListener.add(listener);
     }
 
     @Override
     public void removeTaskEventListener(TaskEventListener listener) {
-        TASK_LISTENER.remove(listener);
+        taskListener.remove(listener);
     }
 
+    /**
+     * 触发TaskEvent
+     *
+     * @date 2018/8/8 下午4:23
+     * @param: [event]
+     * @return: void
+     */
     private void triggerTaskEvent(TaskConfig event) {
-        TASK_LISTENER.forEach(l -> l.onEvent(event));
+        taskListener.forEach(l -> l.onEvent(event));
     }
 
     @Override
@@ -181,10 +194,11 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
                 //通知对此感兴趣的Listener
                 ClusterProviderProxy.INSTANCE.broadcast(new TaskAssignedCommand(task.getTaskId(), task.getSwimlaneId()));
             } catch (KeeperException.NodeExistsException e) {
-                throw  new TaskLockException(topicPath + ",锁定资源失败。");
+                LOGGER.error("%s", e);
+                throw new TaskLockException(topicPath + ",锁定资源失败。");
             }
         } else {
-            throw  new TaskLockException(topicPath + ",锁定资源失败。");
+            throw new TaskLockException(topicPath + ",锁定资源失败。");
         }
     }
 
@@ -207,7 +221,9 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
             //remoteStat
             DTaskStat taskStat = DTaskStat.fromString(nodePair.getLeft(), DTaskStat.class);
             //run callback before merge data
-            if (null != command.getCallback()) command.getCallback().callback(taskStat);
+            if (null != command.getCallback()) {
+                command.getCallback().callback(taskStat);
+            }
             //merge from localStat
             taskStat.merge(dataStat);
             try {
@@ -216,13 +232,15 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
                 LOGGER.debug("stat store in zookeeper:{}", JSON.toJSONString(taskStat));
             } catch (KeeperException.BadVersionException e) {
                 //进度上传失败，异常吃掉
+                LOGGER.error("%s", e);
             }
         }
     }
 
     @Override
     public void stopTask(TaskStopCommand command) throws Exception {
-        String node = listenPath() + "/" + command.getTaskId() + "/lock/" + command.getSwimlaneId();
+        String node = listenPath() + "/" + command.getTaskId() + LOCK_PATH + command.getSwimlaneId();
+
         if (client.isExists(node, true)) {
             Pair<String, Stat> remoteData = client.getData(node);
             DTaskLock taskLock = DTaskLock.fromString(remoteData.getLeft(), DTaskLock.class);
@@ -252,9 +270,12 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+                LOGGER.error("%s", e);
             }
         }
-        if (null != command.getCallback()) command.getCallback().callback(stats);
+        if (null != command.getCallback()) {
+            command.getCallback().callback(stats);
+        }
     }
 
     @Override
@@ -281,6 +302,8 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
         Pair<String, Stat> positionPair = client.getData(positionPath);
         String position = null != positionPair && !StringUtils.isBlank(positionPair.getLeft())
                 ? positionPair.getLeft() : StringUtils.EMPTY;
-        if (null != command.getCallback()) command.getCallback().callback(position);
+        if (null != command.getCallback()) {
+            command.getCallback().callback(position);
+        }
     }
 }
