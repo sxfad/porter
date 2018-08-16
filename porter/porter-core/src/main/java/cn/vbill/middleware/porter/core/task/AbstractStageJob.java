@@ -100,11 +100,17 @@ public abstract class AbstractStageJob implements StageJob {
                     stopSignal.acquire();
                     LOGGER.debug("源队列为空，发送线程中断信号");
                 }
-                doStop();
-            } catch (Throwable e) {
-                LOGGER.error("%s", e);
-            } finally {
+                //先停止任务线程
                 loopService.interrupt();
+            } catch (Throwable e) {
+                LOGGER.error("停止任务失败异常:%s", e);
+            } finally {
+                //清理任务相关数据源连接
+                try {
+                    doStop();
+                } catch (InterruptedException e) {
+                    LOGGER.error("任务停止，捕获异常", e);
+                }
             }
         }
     }
