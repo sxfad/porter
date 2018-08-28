@@ -5,7 +5,7 @@
 
 PRG="$0"
 PRGDIR=`dirname "$PRG"`
-EXECUTABLE=node-boot
+EXECUTABLE=porter-boot
 
 if [ "$1" = "debug" ]; then
     if [ -z "$2" ]; then
