@@ -39,6 +39,17 @@ gradle build
 从build/distributions目录查找安装包
 ```
 
+### 配置
+[配置文档](https://github.com/sxfad/porter/blob/master/doc/profiles.md)
+
+```
+	node.id=节点编号，在集群中唯一
+	#集群配置
+	node.cluster.strategy=ZOOKEEPER
+	node.cluster.client.url=127.0.0.1:2181
+	node.cluster.client.sessionTimeout=100000	
+```
+
 ### 运行
 ```
 tar zxvf build/distributions/porter-boot-版本.tar
