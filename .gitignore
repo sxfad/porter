@@ -19,7 +19,7 @@ gradle
 /gradlew
 gradlew*
 .springBeans
-application.properties
+#application.properties
 *.cache
 *.log
 .factorypath
