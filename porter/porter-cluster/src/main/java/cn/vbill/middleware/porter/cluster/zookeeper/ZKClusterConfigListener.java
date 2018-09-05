@@ -49,8 +49,6 @@ public class ZKClusterConfigListener extends ZookeeperClusterListener {
     private static final String ALERT_CONFIG_PATH = ZK_PATH + "/alert";
     private static final String STATISTIC_CONFIG_PATH = ZK_PATH + "/statistic";
 
-    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(ZKClusterConfigListener.class);
-
     @Override
     public String listenPath() {
         return ZK_PATH;
@@ -59,7 +57,7 @@ public class ZKClusterConfigListener extends ZookeeperClusterListener {
     @Override
     public void onEvent(ClusterEvent event) {
         ZookeeperClusterEvent zkEvent = (ZookeeperClusterEvent) event;
-        LOGGER.info("集群配置参数监听:{},{},{}", zkEvent.getPath(), zkEvent.getData(), zkEvent.getEventType());
+        logger.info("集群配置参数监听:{},{},{}", zkEvent.getPath(), zkEvent.getData(), zkEvent.getEventType());
         if (zkEvent.isDataChanged() || zkEvent.isOnline()) {
             //日志
             if (zkEvent.getPath().equals(LOG_CONFIG_PATH)) {
@@ -77,10 +75,10 @@ public class ZKClusterConfigListener extends ZookeeperClusterListener {
                     AlertProviderFactory.INSTANCE.initialize(config);
                 } catch (ConfigParseException e) {
                     e.printStackTrace();
-                    LOGGER.error("%s", e);
+                    logger.error("%s", e);
                 } catch (ClientConnectionException e) {
                     e.printStackTrace();
-                    LOGGER.error("%s", e);
+                    logger.error("%s", e);
                 }
             }
             //统计分析

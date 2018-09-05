@@ -70,15 +70,13 @@ porter-boot-版本/bin/shutdown.sh
 ```
 
 ## 文档
-
++ [部署教程@code-hipster](./doc/tutorial.md)
 + [中文文档](./doc/document.md)
 + [英文文档](./doc/document_EN.md)
 
 ## 架构设计
 
-![架构图](doc/img/architecture_design.png)
-![内存结构](./doc/img/node-model.png)
-
+![架构图](doc/img/archetecture.png)
 
 ## 快速预览
 

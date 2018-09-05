@@ -22,6 +22,7 @@ import java.util.concurrent.CountDownLatch;
  * @version: V1.0
  * @review: zkevin/2018年05月02日 11:01
  */
+@SuppressWarnings("unchecked")
 public class FixedCapacityCarrierTest {
     private final DataMapCarrier<String, String> carrier = new FixedCapacityCarrier(3);
 

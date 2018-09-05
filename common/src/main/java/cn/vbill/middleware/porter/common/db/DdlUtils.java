@@ -165,7 +165,7 @@ public class DdlUtils {
                 }
 
                 if (makePrimaryKeyWhenNo) {
-                    makeAllColumnsPrimaryKeysIfNoPrimaryKeysFound(table);
+                    makePrimaryKeysIfNoPrimaryKeys(table);
                 }
                 if (isDRDS) {
                     makeDRDSShardColumnsAsPrimaryKeys(table, jdbcTemplate, catalogName, schemaName, tableName);
@@ -175,10 +175,7 @@ public class DdlUtils {
         });
     }
 
-    /**
-     * Treat tables with no primary keys as a table with all primary keys.
-     */
-    private static void makeAllColumnsPrimaryKeysIfNoPrimaryKeysFound(Table table) {
+    private static void makePrimaryKeysIfNoPrimaryKeys(Table table) {
         if ((table != null) && (table.getPrimaryKeyColumns() != null) && (table.getPrimaryKeyColumns().length == 0)) {
             Column[] allCoumns = table.getColumns();
 

@@ -70,14 +70,13 @@ porter-boot-version/bin/shutdown.sh
 ```
 
 ## Document
-
-+ [中文文档](./doc/document.md)
++ [tutoria @code-hipster](./doc/tutorial.md)
++ [Chinese document](./doc/document.md)
 + [English document](./doc/document_EN.md)
 
 ## Architecture
 
-![architecture_design](doc/img/architecture_design.png)
-![node-model](./doc/img/node-model.png)
+![architecture_design](doc/img/archetecture.png)
 
 
 ## Screenshot

@@ -35,7 +35,7 @@ import java.util.List;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月19日 10:14
  */
-@ConfigurationProperties(prefix = "node")
+@ConfigurationProperties(prefix = "porter")
 @Setter
 @Getter
 @Component

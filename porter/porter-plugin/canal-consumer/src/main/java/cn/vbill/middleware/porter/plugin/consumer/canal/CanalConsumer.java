@@ -39,6 +39,7 @@ import java.util.stream.Collectors;
  * @version: V2.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年03月06日 11:27
  */
+@SuppressWarnings("unchecked")
 public class CanalConsumer extends AbstractDataConsumer {
     public List<MessageEvent> doFetch() throws TaskStopTriggerException, InterruptedException {
         return consumeClient.fetch(new ConsumeClient.FetchCallback<MessageEvent, Object>() {
