@@ -1,4 +1,4 @@
-use datas_manager;
+use ds_data;
 -- 登陆用户表
 DROP TABLE IF EXISTS `c_user`;
 CREATE TABLE `c_user` (
@@ -406,7 +406,7 @@ CREATE TABLE `ogg_tables` (
   `remark` varchar(500) DEFAULT NULL COMMENT '备注',
   `related_task_info` varchar(500) DEFAULT NULL COMMENT '关联任务信息',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='ogg表数据信息'
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='ogg表数据信息'; 
 
 -- 初始用户
 INSERT  INTO `c_user`(`id`,`loginname`,`loginpw`,`nickname`,`email`,`mobile`,`depart_ment`,`role_code`,`state`,`remark`) VALUES 

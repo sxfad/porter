@@ -17,10 +17,9 @@
     <module name="Translation"> </module>
     <module name="TreeWalker">
         <!--  Checks for imports     -->
-        <!--  必须导入类的完整路径，即不能使用*导入所需的类  -->
+        <!--  必须导入类的完整路径，即不能使用*导入所需的类
         <module name="AvoidStarImport"/>
-        <!--  检查是否从非法的包中导入了类 illegalPkgs: 定义非法的包名称 -->
-        <module name="IllegalImport"/>
+	-->
         <!--  defaults to sun.* packages  -->
         <!--  检查是否导入了不必显示导入的类 -->
         <module name="RedundantImport"/>
@@ -63,7 +62,6 @@
                        allowMissingParamTags: 是否忽略对参数注释的检查
                        allowMissingThrowsTags: 是否忽略对throws注释的检查
                        allowMissingReturnTag: 是否忽略对return注释的检查
-       -->
         <module name="JavadocMethod">
             <property name="scope" value="private"/>
             <property name="allowMissingParamTags" value="true"/>
@@ -72,9 +70,9 @@
             <property name="tokens" value="METHOD_DEF"/>
             <property name="allowUndeclaredRTE" value="true"/>
             <property name="allowThrowsTagsForSubclasses" value="true"/>
-            <!-- 允许get set 方法没有注释 -->
             <property name="allowMissingPropertyJavadoc" value="true"/>
         </module>
+	-->
         <!--  检查javadoc的格式  -->
         <module name="JavadocStyle">
             <property name="checkFirstSentence" value="false"/>
@@ -82,11 +80,9 @@
         <!--
         检查类变量的注释
                        scope: 检查变量的范围，例如：public只能检查public修饰的变量，private可以检查所有的变量
-       -->
         <module name="JavadocVariable">
             <property name="scope" value="public"/>
         </module>
-        <!--
        option: 定义左大括号'{'显示位置，eol在同一行显示，nl在下一行显示
                  maxLineLength: 大括号'{'所在行行最多容纳的字符数
                  tokens: 该属性适用的类型，例：CLASS_DEF,INTERFACE_DEF,METHOD_DEF,CTOR_DEF
@@ -97,8 +93,8 @@
         <!--
         NeedBraces 检查是否应该使用括号的地方没有加括号
                  tokens: 定义检查的类型
-       -->
         <module name="NeedBraces"/>
+       -->
         <!--
         Checks the placement of right curly braces ('}') for  else, try, and catch tokens. The policy to verify is specified using property  option.
                  option: 右大括号是否单独一行显示
@@ -148,7 +144,7 @@
         </module>
         <!--  non-static fields  -->
         <module name="MemberName">
-            <property name="format" value="(^[a-z][a-z0-9][a-zA-Z0-9]{0,40}$)"/>
+            <property name="format" value="(^[a-z][a-zA-Z0-9]{0,40}$)"/>
         </module>
         <!--  parameters  -->
         <module name="ParameterName">
@@ -167,7 +163,6 @@
                    <property name="logLoadErrors" value="true"/>
                    <property name="suppressLoadErrors" value="true"/>
                </module>
-
        -->
         <!--
          Checks for overly complicated boolean expressions. Currently finds code like  if (b == true), b || true, !false, etc.
@@ -206,15 +201,14 @@
                      }
                  }
               <module name="HideUtilityClassConstructor"/>
-
        -->
         <!--
          Checks visibility of class members. Only static final members may be public; other class members must be private unless property protectedAllowed or packageAllowed is set.
                  检查class成员属性可见性。只有static final 修饰的成员是可以public的。其他的成员属性必需是private的，除非属性protectedAllowed或者packageAllowed设置了true.
                   Public members are not flagged if the name matches the public member regular expression (contains "^serialVersionUID$" by default). Note: Checkstyle 2 used to include "^f[A-Z][a-zA-Z0-9]*$" in the default pattern to allow CMP for EJB 1.1 with the default settings. With EJB 2.0 it is not longer necessary to have public access for persistent fields, hence the default has been changed.
                   Rationale: Enforce encapsulation. 强制封装
-       -->
         <module name="VisibilityModifier"/>
+       -->
         <!--  每一行只能定义一个变量  -->
         <module name="MultipleVariableDeclarations"> </module>
         <!--
@@ -225,20 +219,16 @@
         <!--
         Checks that there are no "magic numbers", where a magic number is a numeric literal that is not defined as a constant. By default, -1, 0, 1, and 2 are not considered to be magic numbers.
        -->
-        <!--  检查是否有"魔术"数字  -->
+        <!--  检查是否有"魔术"数字
         <module name="MagicNumber">
             <property name="ignoreNumbers" value="0, 1"/>
             <property name="ignoreAnnotation" value="true"/>
             <property name="ignoreHashCodeMethod" value="true"/>
-            <!--
             <property name="ignoreFieldDeclaration" value="true"/>
-           -->
             <property name="tokens" value="NUM_DOUBLE, NUM_FLOAT, NUM_LONG"/>
         </module>
-        <!--
         A check for TODO: comments. Actually it is a generic regular expression matcher on Java comments. To check for other patterns in Java comments, set property format.
                   检查是否存在TODO（待处理） TODO是javaIDE自动生成的。一般代码写完后要去掉。
-
        -->
         <module name="TodoComment"/>
         <!--

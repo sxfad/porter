@@ -35,6 +35,7 @@ import java.util.List;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月02日 11:53
  */
+@SuppressWarnings("unchecked")
 public class KafkaConsumer extends AbstractDataConsumer {
 
     public List<MessageEvent> doFetch() throws TaskStopTriggerException, InterruptedException {

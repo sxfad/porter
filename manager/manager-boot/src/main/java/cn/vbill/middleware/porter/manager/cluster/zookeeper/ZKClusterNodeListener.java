@@ -50,8 +50,6 @@ import java.util.regex.Pattern;
  */
 public class ZKClusterNodeListener extends ZookeeperClusterListener implements NodeOrderPush {
     private static final String ZK_PATH = BASE_CATALOG + "/node";
-    // private static final Pattern NODE_ORDER_PATTERN = Pattern.compile(ZK_PATH +
-    // "/.*/order/.*");
     private static final Pattern NODE_STAT_PATTERN = Pattern.compile(ZK_PATH + "/.*/stat");
     private static final Pattern NODE_LOCK_PATTERN = Pattern.compile(ZK_PATH + "/.*/lock");
 
@@ -68,7 +66,6 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements N
         LOGGER.debug("NodeListener:{},{},{}", zkEvent.getPath(), zkEvent.getData(), zkEvent.getEventType());
         try {
             // 当前时间
-            //String heartBeatTime = DateFormatUtils.formatDate(DateFormatUtils.PATTERN_DEFAULT, new Date());
             NodesService nodesService = ApplicationContextUtil.getBean(NodesServiceImpl.class);
             // 节点上下线
             if (NODE_LOCK_PATTERN.matcher(zkEvent.getPath()).matches()) {
