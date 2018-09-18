@@ -89,16 +89,16 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
                     LOGGER.error("zk任务错误消息解析失败！", e);
                 }
                 if (null == taskAndSwimlane || taskAndSwimlane.length != 2) {
-                    LOGGER.error("zk任务错误消息未解析出合规的内容 [{}]",JSON.toJSONString(taskAndSwimlane));
+                    LOGGER.error("zk任务错误消息未解析出合规的内容 [{}]", JSON.toJSONString(taskAndSwimlane));
                     return;
                 }
                 if (zkEvent.isDataChanged() || zkEvent.isOnline()) {
                     ManagerContext.INSTANCE.newStoppedTask(taskAndSwimlane[0], taskAndSwimlane[1]);
-                    LOGGER.info("zk任务错误消息DataChanged or Online,内容:[{}]",JSON.toJSONString(taskAndSwimlane));
+                    LOGGER.info("zk任务错误消息DataChanged or Online,内容:[{}]", JSON.toJSONString(taskAndSwimlane));
                     return;
                 }
                 if (zkEvent.isOffline()) {
-                    LOGGER.info("zk任务错误消息Offline,内容:[{}]",JSON.toJSONString(taskAndSwimlane));
+                    LOGGER.info("zk任务错误消息Offline,内容:[{}]", JSON.toJSONString(taskAndSwimlane));
                     ManagerContext.INSTANCE.removeStoppedTask(taskAndSwimlane[0], taskAndSwimlane[1]);
                     return;
                 }
