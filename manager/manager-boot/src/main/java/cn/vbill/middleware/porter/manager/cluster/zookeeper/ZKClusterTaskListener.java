@@ -79,34 +79,32 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
                 } catch (Exception e) {
                     LOGGER.error("4-DTaskStat-Error....出错,请追寻...", e);
                 }
-
             }
-
             // 任务错误
             if (TASK_ERROR_PATTERN.matcher(zkEvent.getPath()).matches()) {
                 String[] taskAndSwimlane = null;
                 try {
                     taskAndSwimlane = zkPath.replace(listenPath(), "").substring(1).split("/error/");
                 } catch (Throwable e) {
-                    LOGGER.error("%s", e);
+                    LOGGER.error("zk任务错误消息解析失败！", e);
                 }
-
                 if (null == taskAndSwimlane || taskAndSwimlane.length != 2) {
+                    LOGGER.error("zk任务错误消息未解析出合规的内容 [{}]",JSON.toJSONString(taskAndSwimlane));
                     return;
                 }
-
                 if (zkEvent.isDataChanged() || zkEvent.isOnline()) {
                     ManagerContext.INSTANCE.newStoppedTask(taskAndSwimlane[0], taskAndSwimlane[1]);
+                    LOGGER.info("zk任务错误消息DataChanged or Online,内容:[{}]",JSON.toJSONString(taskAndSwimlane));
                     return;
                 }
-
                 if (zkEvent.isOffline()) {
+                    LOGGER.info("zk任务错误消息Offline,内容:[{}]",JSON.toJSONString(taskAndSwimlane));
                     ManagerContext.INSTANCE.removeStoppedTask(taskAndSwimlane[0], taskAndSwimlane[1]);
                     return;
                 }
             }
         } catch (Throwable e) {
-            e.printStackTrace();
+            LOGGER.error("4-DTaskStat-Throwable....出错,请追寻...", e);
         }
     }
 
