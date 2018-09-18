@@ -47,7 +47,7 @@ public class ZKClusterConfigListener extends ZookeeperClusterListener implements
 
     @Override
     public void onEvent(ClusterEvent event) {
-        LOGGER.info("1-ZKClusterConfigListener....." + JSON.toJSONString(event));
+        logger.info("1-ZKClusterConfigListener....." + JSON.toJSONString(event));
     }
 
     @Override

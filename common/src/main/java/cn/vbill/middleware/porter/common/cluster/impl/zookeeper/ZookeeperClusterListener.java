@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 public abstract class ZookeeperClusterListener implements ClusterListener {
     protected static final String PREFIX_ATALOG = "/suixingpay";
     protected static final String BASE_CATALOG = PREFIX_ATALOG + "/datas";
-    protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     protected ZookeeperClient client;
 
     /**

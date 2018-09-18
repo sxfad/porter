@@ -48,6 +48,7 @@ import java.util.regex.Pattern;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月15日 10:09
  */
+@SuppressWarnings("unchecked")
 public class ZKClusterTaskListener extends ZookeeperClusterListener implements TaskPush {
 
     private static final String ZK_PATH = BASE_CATALOG + "/task";

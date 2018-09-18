@@ -31,6 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月24日 16:03
  */
+@SuppressWarnings("unchecked")
 public enum ManagerContext {
 
     /**

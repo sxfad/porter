@@ -39,6 +39,17 @@ gradle build
 Find the installation package from the build/distributions list
 ```
 
+### Configuration
+[configuration document](https://github.com/sxfad/porter/blob/master/doc/profiles.md)
+
+```
+	node.id=unique id
+	#cluser
+	node.cluster.strategy=ZOOKEEPER
+	node.cluster.client.url=127.0.0.1:2181
+	node.cluster.client.sessionTimeout=100000	
+```
+
 ### Run
 ```
 tar zxvf build/distributions/porter-boot-version.tar
@@ -59,14 +70,13 @@ porter-boot-version/bin/shutdown.sh
 ```
 
 ## Document
-
-+ [中文文档](./doc/document.md)
++ [tutoria @code-hipster](./doc/tutorial.md)
++ [Chinese document](./doc/document.md)
 + [English document](./doc/document_EN.md)
 
 ## Architecture
 
-![architecture_design](doc/img/architecture_design.png)
-![node-model](./doc/img/node-model.png)
+![architecture_design](doc/img/archetecture.png)
 
 
 ## Screenshot

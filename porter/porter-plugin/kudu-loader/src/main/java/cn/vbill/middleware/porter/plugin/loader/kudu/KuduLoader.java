@@ -44,6 +44,7 @@ import java.util.function.Consumer;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月04日 11:57
  */
+@SuppressWarnings("unchecked")
 public class KuduLoader extends AbstractDataLoader {
 
     @Override

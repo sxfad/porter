@@ -39,6 +39,17 @@ gradle build
 从build/distributions目录查找安装包
 ```
 
+### 配置
+[配置文档](https://github.com/sxfad/porter/blob/master/doc/profiles.md)
+
+```
+	node.id=节点编号，在集群中唯一
+	#集群配置
+	node.cluster.strategy=ZOOKEEPER
+	node.cluster.client.url=127.0.0.1:2181
+	node.cluster.client.sessionTimeout=100000	
+```
+
 ### 运行
 ```
 tar zxvf build/distributions/porter-boot-版本.tar
@@ -59,15 +70,13 @@ porter-boot-版本/bin/shutdown.sh
 ```
 
 ## 文档
-
++ [部署教程@code-hipster](./doc/tutorial.md)
 + [中文文档](./doc/document.md)
 + [英文文档](./doc/document_EN.md)
 
 ## 架构设计
 
-![架构图](doc/img/architecture_design.png)
-![内存结构](./doc/img/node-model.png)
-
+![架构图](doc/img/archetecture.png)
 
 ## 快速预览
 
