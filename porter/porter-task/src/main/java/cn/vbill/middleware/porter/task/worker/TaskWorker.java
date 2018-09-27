@@ -83,15 +83,6 @@ public class TaskWorker {
             workerStatJob.scheduleAtFixedRate(new Runnable() {
                 @Override
                 public void run() {
-                    //如果没有JOB，让线程睡眠1分钟.
-                    if (jobs.isEmpty()) {
-                        try {
-                            Thread.sleep(60000);
-                        } catch (InterruptedException e) {
-                            Thread.interrupted();
-                            e.printStackTrace();
-                        }
-                    }
                     //每1秒上传一次消费进度
                     for (TaskWork job : jobs.values()) {
                         job.submitStat();
