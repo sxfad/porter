@@ -42,6 +42,8 @@ public class KafkaProduceConfig extends SourceConfig {
     @Setter @Getter private boolean transaction = true;
     //是否格式化为ogg json格式
     @Setter @Getter private boolean oggJson = true;
+    //重试次数
+    @Setter @Getter private int retries = 3;
     //分片字段名
     //schema.表名->字段名1,字段名2
     @Setter @Getter private Map<String, String> partitionKey = new HashMap<>();
