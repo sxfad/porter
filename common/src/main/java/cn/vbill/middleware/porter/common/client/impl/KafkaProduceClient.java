@@ -43,6 +43,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
@@ -57,6 +58,7 @@ public class KafkaProduceClient extends AbstractClient<KafkaProduceConfig> imple
     private final String topic;
     private final boolean transaction;
     private final boolean oggJson;
+    private final int retries;
     private final List<PartitionInfo> partitionInfoList = new ArrayList<>();
     private final Map<List<String>, List<String>> partitionKeyCache = new ConcurrentHashMap<>();
     private volatile CountDownLatch canProduce = new CountDownLatch(1);
@@ -66,6 +68,7 @@ public class KafkaProduceClient extends AbstractClient<KafkaProduceConfig> imple
         this.topic = config.getTopic();
         this.transaction = config.isTransaction();
         this.oggJson = config.isOggJson();
+        this.retries = config.getRetries();
     }
 
     @Override
@@ -94,7 +97,11 @@ public class KafkaProduceClient extends AbstractClient<KafkaProduceConfig> imple
     @Override
     protected void doShutdown() {
         if (null != producer) {
-            producer.close();
+            try {
+                producer.close();
+            } catch (Throwable e) {
+                LOGGER.error("fail to close kafka producer,{}", topic, e);
+            }
             producer = null;
         }
         canProduce = new CountDownLatch(1);
@@ -151,6 +158,36 @@ public class KafkaProduceClient extends AbstractClient<KafkaProduceConfig> imple
         send(value, null, null, sync);
     }
 
+    private void sendTo(List<ProducerRecord<String, String>> msgList, boolean sync) throws TaskStopTriggerException {
+        boolean sendResult = false;
+        //做retries-1次尝试
+        for (int i = 0; i < retries - 1; i++) {
+            try {
+                nativeSendTo(msgList, sync);
+                sendResult = true;
+                break;
+            } catch (Throwable e) {
+                LOGGER.error("fail to send message to kafka,times:{}", i, e);
+                try {
+                    Thread.sleep(500L);
+                } catch (Throwable sleepException) {
+                }
+                //kafka异常，重置客户端
+                if (e.getMessage().contains("org.apache.kafka.common.errors")) {
+                    reconnection();
+                }
+            }
+        }
+        //做最后一次尝试，否则抛出异常
+        if (!sendResult) {
+            try {
+                nativeSendTo(msgList, sync);
+            } catch (Throwable e) {
+                throw new TaskStopTriggerException(e);
+            }
+        }
+    }
+
     /**
      * sendTo
      *
@@ -158,29 +195,25 @@ public class KafkaProduceClient extends AbstractClient<KafkaProduceConfig> imple
      * @param sync
      * @throws TaskStopTriggerException
      */
-    private void sendTo(List<ProducerRecord<String, String>> msgList, boolean sync) throws TaskStopTriggerException {
-        try {
-            canProduce.await();
-            if (transaction) {
-                producer.beginTransaction();
+    private void nativeSendTo(List<ProducerRecord<String, String>> msgList, boolean sync) throws InterruptedException, ExecutionException {
+        canProduce.await();
+        if (transaction) {
+            producer.beginTransaction();
+        }
+        List<Future<RecordMetadata>> futures = new ArrayList<>();
+        for (ProducerRecord<String, String> record : msgList) {
+            if (sync) {
+                futures.add(producer.send(record));
             }
-            List<Future<RecordMetadata>> futures = new ArrayList<>();
-            for (ProducerRecord<String, String> record : msgList) {
-                if (sync) {
-                    futures.add(producer.send(record));
-                }
-            }
-            //等待结果
-            for (Future<RecordMetadata> f : futures) {
-                f.get();
-            }
-            if (transaction) {
-                producer.commitTransaction();
-            } else {
-                producer.flush();
-            }
-        } catch (Throwable e) {
-            throw new TaskStopTriggerException(e);
+        }
+        //等待结果
+        for (Future<RecordMetadata> f : futures) {
+            f.get();
+        }
+        if (transaction) {
+            producer.commitTransaction();
+        } else {
+            producer.flush();
         }
     }
 
@@ -236,5 +269,10 @@ public class KafkaProduceClient extends AbstractClient<KafkaProduceConfig> imple
      */
     public boolean renderOggJson() {
         return oggJson;
+    }
+
+    private synchronized void reconnection() {
+        doShutdown();
+        doStart();
     }
 }
