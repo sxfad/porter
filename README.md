@@ -77,6 +77,7 @@ porter-boot-版本/bin/shutdown.sh
 ## 架构设计
 
 ![架构图](doc/img/archetecture.png)
+![数据流](doc/img/workflow.png)
 
 ## 快速预览
 
