@@ -17,27 +17,23 @@
 
 package cn.vbill.middleware.porter.manager.cluster.zookeeper;
 
+import cn.vbill.middleware.porter.common.client.impl.ZookeeperClient;
 import cn.vbill.middleware.porter.common.cluster.ClusterListenerFilter;
 import cn.vbill.middleware.porter.common.cluster.command.TaskPushCommand;
-import cn.vbill.middleware.porter.common.cluster.command.broadcast.TaskPush;
 import cn.vbill.middleware.porter.common.cluster.data.DTaskStat;
 import cn.vbill.middleware.porter.common.cluster.event.ClusterEvent;
 import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterEvent;
 import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListener;
 import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListenerFilter;
-import cn.vbill.middleware.porter.common.config.DataConsumerConfig;
-import cn.vbill.middleware.porter.common.config.SourceConfig;
-import cn.vbill.middleware.porter.common.config.TaskConfig;
+import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.broadcast.ZKTaskPush;
 import cn.vbill.middleware.porter.manager.ManagerContext;
 import cn.vbill.middleware.porter.manager.core.util.ApplicationContextUtil;
 import cn.vbill.middleware.porter.manager.service.MrJobTasksScheduleService;
 import cn.vbill.middleware.porter.manager.service.impl.MrJobTasksScheduleServiceImpl;
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
 import java.util.regex.Pattern;
 
 /**
@@ -48,7 +44,7 @@ import java.util.regex.Pattern;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月15日 10:09
  */
-public class ZKClusterTaskListener extends ZookeeperClusterListener implements TaskPush {
+public class ZKClusterTaskListener extends ZookeeperClusterListener implements ZKTaskPush {
 
     private static final String ZK_PATH = BASE_CATALOG + "/task";
     private static final Pattern TASK_STAT_PATTERN = Pattern.compile(ZK_PATH + "/.*/stat/.*");
@@ -126,27 +122,16 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
 
     @Override
     public void push(TaskPushCommand command) throws Exception {
-        TaskConfig config = command.getConfig();
-        DataConsumerConfig consumerConfig = config.getConsumer();
-        // 创建任务根节点
-        String taskPath = ZK_PATH + "/" + config.getTaskId();
-        String distPath = taskPath + "/dist";
-        client.createWhenNotExists(taskPath, false, false, null);
-        client.createWhenNotExists(distPath, false, false, null);
-        // 拆分同步数据来源泳道
-        List<SourceConfig> sourceConfigs = SourceConfig.getConfig(consumerConfig.getSource()).swamlanes();
-        // 遍历泳道
-        for (SourceConfig sc : sourceConfigs) {
-            String pushPath = distPath + "/" + sc.getSwimlaneId();
-            String errorPath = taskPath + "/error/" + sc.getSwimlaneId();
-            if (!config.getStatus().isDeleted()) {
-                // 为每个泳道填充参数
-                config.getConsumer().setSource(sc.getProperties());
-                client.changeData(pushPath, false, false, JSONObject.toJSONString(config));
-            } else {
-                client.delete(pushPath);
-            }
-            client.delete(errorPath);
-        }
+        push(command, true, true);
+    }
+
+    @Override
+    public ZookeeperClient getZKClient() {
+        return client;
+    }
+
+    @Override
+    public String zkTaskPath() {
+        return ZK_PATH;
     }
 }

@@ -111,7 +111,6 @@ public class TaskPropertySourcesConfig implements EnvironmentAware, ResourceLoad
                     }
                 });
             } catch (IOException e) {
-                LOGGER.error("%s", e);
             }
             if (null != tasks && tasks.length > 0) {
                 files.addAll(Arrays.asList(tasks));

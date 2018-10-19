@@ -17,6 +17,8 @@
 
 package cn.vbill.middleware.porter.task.worker;
 
+import cn.vbill.middleware.porter.common.cluster.ClusterProviderProxy;
+import cn.vbill.middleware.porter.common.cluster.command.TaskPushCommand;
 import cn.vbill.middleware.porter.common.exception.ClientException;
 import cn.vbill.middleware.porter.common.exception.ConfigParseException;
 import cn.vbill.middleware.porter.common.exception.DataConsumerBuildException;
@@ -151,14 +153,15 @@ public class TaskWorker {
                         task.getAlarmPositionCount());
                 job.start();
                 jobs.put(c.getSwimlaneId(), job);
-            } catch (TaskLockException e) {
-                LOGGER.error("Consumer JOB[{}] failed to start!", c.getSwimlaneId(), e);
-                NodeLog.upload(NodeLog.LogType.TASK_LOG, task.getTaskId(), c.getSwimlaneId(), e.getMessage());
+
             } catch (Throwable e) {
-                e.printStackTrace();
-            } finally {
-                if (null != job) {
-                    job.stop();
+                if (null != job) job.stop();
+                //任务抢占异常不属于报错范畴
+                if (!(e instanceof TaskLockException)) {
+                    LOGGER.error("Consumer JOB[{}] failed to start!", c.getSwimlaneId(), e);
+                    NodeLog.upload(NodeLog.LogType.TASK_LOG, task.getTaskId(), c.getSwimlaneId(), e.getMessage());
+                } else {
+                    e.printStackTrace();
                 }
             }
         });
@@ -170,5 +173,15 @@ public class TaskWorker {
 
     public boolean isNoWork() {
         return jobs.isEmpty();
+    }
+
+    private void registerLocalTask(TaskConfig taskConfig) {
+        try {
+            if (taskConfig.isLocalTask()) {
+                ClusterProviderProxy.INSTANCE.broadcast(new TaskPushCommand(taskConfig));
+            }
+        } catch (Throwable e) {
+            LOGGER.warn("注册本地任务到集群失败:{}", taskConfig.getTaskId(), e);
+        }
     }
 }

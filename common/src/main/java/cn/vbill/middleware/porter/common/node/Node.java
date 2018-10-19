@@ -18,6 +18,7 @@
 package cn.vbill.middleware.porter.common.node;
 
 import cn.vbill.middleware.porter.common.cluster.data.DNode;
+import cn.vbill.middleware.porter.common.dic.ClusterPlugin;
 import cn.vbill.middleware.porter.common.dic.NodeStatusType;
 import cn.vbill.middleware.porter.common.dic.NodeHealthLevel;
 import lombok.Getter;
@@ -47,4 +48,7 @@ public class Node {
     //工作指标用量
     @Getter @Setter private AtomicInteger workUsed = new AtomicInteger(0);
     @Getter @Setter private volatile DNode dnodeSnapshot = new DNode();
+
+    //工作模式
+    @Getter @Setter private ClusterPlugin workMode = ClusterPlugin.STANDALONE;
 }

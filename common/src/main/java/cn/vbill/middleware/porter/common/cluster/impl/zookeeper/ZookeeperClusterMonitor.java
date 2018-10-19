@@ -68,8 +68,9 @@ public class ZookeeperClusterMonitor extends AbstractClusterMonitor implements W
                 client.create(ZookeeperClusterListener.BASE_CATALOG, false, "{}");
             }
             for (ClusterListener listener : listeners.values()) {
+                ZookeeperClusterListener zkListener = null;
                 try {
-                    ZookeeperClusterListener zkListener = (ZookeeperClusterListener) listener;
+                    zkListener = (ZookeeperClusterListener) listener;
                     LOGGER.info("init:{},watch:{}", zkListener.listenPath(), zkListener.watchListenPath());
                     client.createWhenNotExists(zkListener.listenPath(), false, false, "{}");
                     LOGGER.info("attempted create node:{}", zkListener.listenPath());
@@ -80,13 +81,11 @@ public class ZookeeperClusterMonitor extends AbstractClusterMonitor implements W
                         triggerTreeEvent(zkListener.listenPath());
                     }
                 } catch (Throwable e) {
-                    e.printStackTrace();
-                    LOGGER.error("%s", e);
+                    LOGGER.warn("初始化zookeeper节点{}监听失败", (null != zkListener ? zkListener.listenPath() : "---"), e);
                 }
             }
         } catch (Throwable e) {
-            e.printStackTrace();
-            LOGGER.error("%s", e);
+            LOGGER.error("启动ZookeeperClusterMonitor异常", e);
         }
     }
 
@@ -119,9 +118,7 @@ public class ZookeeperClusterMonitor extends AbstractClusterMonitor implements W
                 triggerTreeEvent(path);
             }
         } catch (Exception e) {
-            //do something
-            e.printStackTrace();
-            LOGGER.error("%s", e);
+            LOGGER.warn("zookeeper watcher process", e);
         }
     }
 

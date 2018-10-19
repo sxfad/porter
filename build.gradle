@@ -44,7 +44,6 @@ subprojects {
         compile (
                 'com.alibaba:fastjson:1.2.28',
                 'com.alibaba:druid:1.1.9',
-                'commons-dbcp:commons-dbcp:1.4',
                 'org.apache.commons:commons-lang3:3.7',
                 "org.springframework.boot:spring-boot-starter:${springVersion}",
                 "org.springframework.boot:spring-boot-starter-jdbc:${springVersion}",

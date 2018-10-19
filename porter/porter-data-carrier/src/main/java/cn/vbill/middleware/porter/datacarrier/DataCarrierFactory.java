@@ -53,7 +53,6 @@ public class DataCarrierFactory {
                 tmpProvider = ClassUtils.forName(providerString, DataCarrierFactory.class.getClassLoader());
             } catch (ClassNotFoundException e) {
                 tmpProvider = SimpleDataCarrier.class;
-                LOGGER.error("%s", e);
             }
         }
         provider = tmpProvider;
@@ -79,7 +78,6 @@ public class DataCarrierFactory {
             ReflectionUtils.makeAccessible(constructor);
             dc = constructor.newInstance(initPrams);
         } catch (Exception e) {
-            LOGGER.error("%s", e);
         }
 
         //默认构造函数
@@ -89,7 +87,6 @@ public class DataCarrierFactory {
                 ReflectionUtils.makeAccessible(constructor);
                 dc = constructor.newInstance();
             } catch (Exception e) {
-                LOGGER.error("%s", e);
             }
         }
         return dc;

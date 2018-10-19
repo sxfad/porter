@@ -18,6 +18,7 @@
 package cn.vbill.middleware.porter.common.exception;
 
 import cn.vbill.middleware.porter.common.db.SqlErrorCode;
+import com.alibaba.druid.TransactionTimeoutException;
 import com.alibaba.druid.pool.DataSourceClosedException;
 import com.alibaba.druid.pool.DataSourceDisableException;
 import com.alibaba.druid.pool.DataSourceNotAvailableException;
@@ -30,9 +31,7 @@ import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.jdbc.UncategorizedSQLException;
 
-import java.sql.SQLException;
-import java.sql.SQLIntegrityConstraintViolationException;
-import java.sql.SQLRecoverableException;
+import java.sql.*;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -69,7 +68,7 @@ public class TaskStopTriggerException extends TaskException {
          */
         if (cause instanceof DataSourceClosedException || cause instanceof DataSourceDisableException
                 || cause instanceof DataSourceNotAvailableException || cause instanceof GetConnectionTimeoutException
-                || cause instanceof SQLRecoverableException) {
+                || cause instanceof SQLRecoverableException || cause instanceof SQLRecoverableException || cause instanceof TransactionTimeoutException) {
             return true;
         }
         if (cause instanceof CannotGetJdbcConnectionException || cause instanceof UncategorizedSQLException
@@ -78,6 +77,9 @@ public class TaskStopTriggerException extends TaskException {
             return true;
         }
 
+        if ((cause instanceof BatchUpdateException && cause.getMessage().contains("No more data to read")) || cause instanceof SQLTimeoutException) {
+            return true;
+        }
         if (cause instanceof SQLException) {
             SQLException sqlError = (SQLException) cause;
             return sqlError.getErrorCode() == SqlErrorCode.ERROR_904.code || sqlError.getErrorCode() == SqlErrorCode.ERROR_942.code

@@ -75,14 +75,14 @@ public class OggJsonConverter implements EventConverter {
             String poTS = obj.getString("op_ts");
             event.setOpTs(opTsF.parse(poTS.substring(0, poTS.length() - 3)));
         } catch (Exception e) {
-            LOGGER.error("%s", e);
+            LOGGER.error("op_ts", e);
         }
 
         try {
             String currentTS = obj.getString("current_ts");
             event.setCurrentTs(ctsf.parse(currentTS.substring(0, currentTS.length() - 3)));
         } catch (Exception e) {
-            LOGGER.error("%s", e);
+            LOGGER.error("解析current_ts出错", e);
         }
 
         JSONArray pkeys = obj.containsKey("primary_keys") ? obj.getJSONArray("primary_keys") : null;

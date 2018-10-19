@@ -214,8 +214,7 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements T
                             }
                         }
                     } catch (KeeperException e) {
-                        e.printStackTrace();
-                        LOGGER.error("%s", e);
+                        LOGGER.warn("上传节点心跳失败", e);
                     } catch (InterruptedException e) {
                         Thread.interrupted();
                         e.printStackTrace();
@@ -318,7 +317,7 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements T
             Stat lockStat = client.exists(lockPath, true);
             return null != lockStat;
         } catch (Exception e) {
-            LOGGER.error("%s", e);
+            LOGGER.warn("判断任务是否注册失败", e);
             return false;
         }
     }
@@ -336,7 +335,7 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements T
             Stat lockStat = client.exists(lockPath, false);
             return null != lockStat;
         } catch (Exception e) {
-            LOGGER.error("%s", e);
+            LOGGER.warn("判断任务是否异常停止", e);
             return false;
         }
     }

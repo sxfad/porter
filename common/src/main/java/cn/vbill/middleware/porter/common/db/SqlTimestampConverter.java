@@ -131,17 +131,14 @@ public class SqlTimestampConverter implements Converter {
             // 先处理Timestamp类型
             return Timestamp.valueOf(input).getTime();
         } catch (Exception nfe) {
-            LOGGER.error("%s", nfe);
             try {
                 try {
                     return parseDate(input, DATE_FORMATS, Locale.ENGLISH).getTime();
                 } catch (Exception err) {
-                    LOGGER.error("%s", err);
                     return parseDate(input, DATE_FORMATS, Locale.getDefault()).getTime();
                 }
             } catch (Exception err) {
                 // 最后处理long time的情况
-                LOGGER.error("%s", err);
                 return Long.parseLong(input);
             }
         }

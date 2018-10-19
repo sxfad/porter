@@ -46,5 +46,6 @@ public class NodeConfig {
     private AlertConfig alert;
     private ClusterConfig cluster;
     private List<TaskConfig> task = new ArrayList<>();
+
 }
 

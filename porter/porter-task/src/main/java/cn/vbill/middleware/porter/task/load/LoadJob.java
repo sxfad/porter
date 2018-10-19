@@ -92,7 +92,7 @@ public class LoadJob extends AbstractStageJob {
             dataLoder.shutdown();
         } catch (Exception e) {
             e.printStackTrace();
-            LOGGER.error("%s", e);
+            LOGGER.warn("关闭LoadJob失败", e);
         }
     }
 
