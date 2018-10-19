@@ -25,5 +25,5 @@ package cn.vbill.middleware.porter.common.client;
  * @review: zkevin/2018年10月19日 11:16
  */
 public interface StatisticClient {
-    void uploadStatistic(String target, String data);
+    void uploadStatistic(String target, String key, String data);
 }

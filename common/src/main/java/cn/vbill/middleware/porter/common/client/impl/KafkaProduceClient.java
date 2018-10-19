@@ -159,6 +159,17 @@ public class KafkaProduceClient extends AbstractClient<KafkaProduceConfig> imple
         send(value, null, null, sync);
     }
 
+    /**
+     * send
+     *
+     * @param value
+     * @param key
+     * @throws TaskStopTriggerException
+     */
+    public void send(String value, String key, boolean sync) throws TaskStopTriggerException {
+        send(value, null, key, sync);
+    }
+
     private void sendTo(List<ProducerRecord<String, String>> msgList, boolean sync) throws TaskStopTriggerException {
         boolean sendResult = false;
         //做retries-1次尝试
@@ -278,9 +289,9 @@ public class KafkaProduceClient extends AbstractClient<KafkaProduceConfig> imple
     }
 
     @Override
-    public void uploadStatistic(String target, String data) {
+    public void uploadStatistic(String target, String key, String data) {
         try {
-            send(data, false);
+            send(data, key, true);
         } catch (Throwable e) {
             LOGGER.warn("上传统计信息失败,忽略异常", e);
         }

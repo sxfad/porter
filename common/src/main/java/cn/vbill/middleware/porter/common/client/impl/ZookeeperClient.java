@@ -239,9 +239,9 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
     }
 
     @Override
-    public void uploadStatistic(String target, String data) {
+    public void uploadStatistic(String target, String key, String data) {
         if (null != statisticClient && statisticClient != this) {
-            statisticClient.uploadStatistic(target, data);
+            statisticClient.uploadStatistic(target, key, data);
         } else {
             try {
                 create(target, true, data);
