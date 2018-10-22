@@ -76,7 +76,8 @@ porter-boot-version/bin/shutdown.sh
 
 ## Architecture
 
-![architecture_design](doc/img/archetecture.png)
+![architecture_design](doc/img/architecture.png)
+![dataflow](doc/img/workflow.png)
 
 
 ## Screenshot

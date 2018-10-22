@@ -96,13 +96,12 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
         } catch (Throwable e) {
             //https://github.com/alibaba/canal/issues/413
             //导致任务停止终止，无法销毁相关资源
-            LOGGER.error("%s", e);
+            LOGGER.warn("关闭canal客户端失败", e);
         } finally {
             if (null != canalServer) {
                 try {
                     canalServer.stop();
                 } catch (Throwable e) {
-                    LOGGER.error("%s", e);
                 }
             }
         }
@@ -187,7 +186,7 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
                             NodeLog.upload(NodeLog.LogType.TASK_LOG, getClientInfo() + ", error:" + msg);
                         } catch (Throwable e) {
                             e.printStackTrace();
-                            LOGGER.error("%s", e);
+                            LOGGER.error("上传canal异常日志失败", e);
                         }
                     }
 
@@ -251,8 +250,6 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
                         msgList.addAll(f);
                     }
                 } catch (Throwable e) {
-                    e.printStackTrace();
-                    LOGGER.error("%s", e);
                 }
 
                 //没有要处理的数据时需要直接ack

@@ -34,4 +34,8 @@ public class ZookeeperClusterEvent extends ClusterEvent {
         super(eventType, data);
         this.path = path;
     }
+
+    public static void main(String[] arg) {
+
+    }
 }

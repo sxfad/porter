@@ -84,7 +84,6 @@ public enum DataConsumerFactory {
             try {
                 processor = JavaFileCompiler.getInstance().newJavaObject(config.getEventProcessor(), EventProcessor.class);
             } catch (Exception e) {
-                LOGGER.error("%s", e);
                 throw new ConfigParseException("EventProcessor转换java对象失败:" + e.getMessage());
             }
         }
@@ -131,7 +130,6 @@ public enum DataConsumerFactory {
                     return t.getClass().newInstance();
                 } catch (Exception e) {
                     e.printStackTrace();
-                    LOGGER.error("%s", e);
                     throw new DataConsumerBuildException(e.getMessage());
                 }
             }

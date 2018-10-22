@@ -148,8 +148,7 @@ public class TaskWork {
                         LOGGER.info("终止执行工作[{}-{}-{}]", taskId, dataConsumer.getSwimlaneId(), jobs.getValue().getClass().getSimpleName());
                         jobs.getValue().stop();
                     } catch (Throwable e) {
-                        e.printStackTrace();
-                        LOGGER.error("%s", e);
+                        LOGGER.error("终止执行工作[{}-{}-{}]失败", taskId, dataConsumer.getSwimlaneId(), jobs.getValue().getClass().getSimpleName(), e);
                     }
                 }
                 try {
@@ -157,14 +156,12 @@ public class TaskWork {
                     submitStat();
                 } catch (Exception e) {
                     NodeLog.upload(NodeLog.LogType.TASK_LOG, taskId, dataConsumer.getSwimlaneId(), "停止上传消费进度失败:" + e.getMessage());
-                    LOGGER.error("%s", e);
                 }
                 try {
                     //广播任务结束消息
                     ClusterProviderProxy.INSTANCE.broadcast(new TaskStopCommand(taskId, dataConsumer.getSwimlaneId()));
                 } catch (Exception e) {
                     NodeLog.upload(NodeLog.LogType.TASK_LOG, taskId, dataConsumer.getSwimlaneId(), "广播TaskStopCommand失败:" + e.getMessage());
-                    LOGGER.error("%s", e);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -289,7 +286,6 @@ public class TaskWork {
                     }));
                 } catch (Throwable e) {
                     NodeLog.upload(NodeLog.LogType.TASK_LOG, taskId, dataConsumer.getSwimlaneId(), "上传任务状态信息失败:" + e.getMessage());
-                    LOGGER.error("%s", e);
                 }
 
                 //上传统计
@@ -300,7 +296,6 @@ public class TaskWork {
                     }
                 } catch (Throwable e) {
                     NodeLog.upload(NodeLog.LogType.TASK_LOG, taskId, dataConsumer.getSwimlaneId(), "上传任务统计信息失败:" + e.getMessage());
-                    LOGGER.error("%s", e);
                 }
             }
         });
@@ -375,28 +370,24 @@ public class TaskWork {
                                 .append("目标端:").append(dataLoader.getClientInfo());
                         alarmNotice = alarmNoticeBuilder.toString();
                     } catch (Throwable e) {
-                        LOGGER.error("%s", e);
+                        LOGGER.error("拼接任务异常停止告警信息出错", e);
                     }
                     try {
                         ClusterProviderProxy.INSTANCE.broadcast(new TaskStoppedByErrorCommand(taskId, dataConsumer.getSwimlaneId(), alarmNotice));
                     } catch (Throwable e) {
                         LOGGER.error("在集群策略存储引擎标识任务因错误失败出错:{}", e.getMessage());
-                        e.printStackTrace();
-                        LOGGER.error("%s", e);
                     }
                     try {
                         //停止任务
                         NodeContext.INSTANCE.getBean(TaskController.class).stopTask(taskId, dataConsumer.getSwimlaneId());
                     } catch (Throwable e) {
-                        e.printStackTrace();
-                        LOGGER.error("%s", e);
+                        LOGGER.error("停止任务失败", e);
                     }
                     try {
                         //调整节点健康级别
                         NodeContext.INSTANCE.markTaskError(taskId, alarmNotice);
                     } catch (Throwable e) {
-                        e.printStackTrace();
-                        LOGGER.error("%s", e);
+                        LOGGER.warn("调整节点健康级别失败", e);
                     }
 
                     try {
@@ -408,8 +399,8 @@ public class TaskWork {
                         NodeLog.upload(log, getReceivers());
                         LOGGER.info("结束发送日志通知.....");
                     } catch (Throwable e) {
-                        e.printStackTrace();
-                        LOGGER.error("%s", e);
+                        LOGGER.warn("停止告警发送失败", e);
+
                     }
                 }
             }.start();

@@ -109,7 +109,7 @@ public class JavaFileCompiler extends URLClassLoader {
                 return findExistsClass;
             }
         } catch (Throwable e) {
-            LOGGER.error("%s", e);
+            LOGGER.warn("编译java文件失败", e);
         }
         //java class file
         if (null != javaFile && javaFile instanceof JavaClass) {

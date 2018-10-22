@@ -18,6 +18,7 @@
 package cn.vbill.middleware.porter.core;
 
 import cn.vbill.middleware.porter.common.cluster.data.DNode;
+import cn.vbill.middleware.porter.common.dic.ClusterPlugin;
 import cn.vbill.middleware.porter.common.dic.NodeHealthLevel;
 import cn.vbill.middleware.porter.common.dic.NodeStatusType;
 import cn.vbill.middleware.porter.common.node.Node;
@@ -385,5 +386,23 @@ public enum NodeContext {
 
     public String[] getEnvironment() {
         return context.getEnvironment().getActiveProfiles();
+    }
+
+    public void workMode(ClusterPlugin mode) {
+        try {
+            nodeLock.writeLock().lock();
+            node.setWorkMode(mode);
+        } finally {
+            nodeLock.writeLock().unlock();
+        }
+    }
+
+    public ClusterPlugin getWorkMode() {
+        try {
+            nodeLock.readLock().lock();
+            return node.getWorkMode();
+        } finally {
+            nodeLock.readLock().unlock();
+        }
     }
 }

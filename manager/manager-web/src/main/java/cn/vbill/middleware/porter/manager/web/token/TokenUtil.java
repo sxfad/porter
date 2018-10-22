@@ -110,8 +110,6 @@ public class TokenUtil {
             Jwts.parser().setSigningKey(SECRET).parseClaimsJws(token.trim());
             return true;
         } catch (Exception e) {
-            // e.printStackTrace();
-            LOGGER.info("%s", e);
             return false;
         }
     }

@@ -102,7 +102,7 @@ public abstract class AbstractClusterProvider<C extends Client> implements Clust
      * @return
      * @throws ConfigParseException
      */
-    protected abstract C initClient(ClusterConfig clusterConfig) throws ConfigParseException;
+    protected abstract C initClient(ClusterConfig clusterConfig) throws ConfigParseException, ClientException;
 
     private C client;
     private ClusterMonitor monitor;
@@ -111,7 +111,7 @@ public abstract class AbstractClusterProvider<C extends Client> implements Clust
 
     @Override
     public boolean matches(ClusterPlugin type) {
-        return ClusterPlugin.ZOOKEEPER == getMatchType();
+        return type == getMatchType();
     }
 
     @Override
@@ -214,8 +214,7 @@ public abstract class AbstractClusterProvider<C extends Client> implements Clust
                     try {
                         client.shutdown();
                     } catch (Exception e) {
-                        e.printStackTrace();
-                        LOGGER.error("%s", e);
+                        LOGGER.warn("停止集群Provider", e);
                     }
                 }
             }

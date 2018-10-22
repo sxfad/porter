@@ -174,7 +174,6 @@ public abstract class AbstractClient<T extends SourceConfig> implements Client {
                     try {
                         return (Client) c.getClass().getConstructor(config.getClass()).newInstance(config);
                     } catch (Throwable e) {
-                        LOGGER.error("%s", e);
                         continue;
                     }
                 }

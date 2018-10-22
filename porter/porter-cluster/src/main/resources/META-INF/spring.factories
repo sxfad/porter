@@ -3,3 +3,8 @@ cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListene
   cn.vbill.middleware.porter.cluster.zookeeper.ZKClusterNodeListener,\
   cn.vbill.middleware.porter.cluster.zookeeper.ZKClusterStatisticListener,\
   cn.vbill.middleware.porter.cluster.zookeeper.ZKClusterConfigListener
+
+
+cn.vbill.middleware.porter.common.cluster.impl.standalone.StandaloneListener=\
+  cn.vbill.middleware.porter.cluster.standalone.StandaloneClusterTaskListener,\
+  cn.vbill.middleware.porter.cluster.standalone.StandaloneClusterNodeListener

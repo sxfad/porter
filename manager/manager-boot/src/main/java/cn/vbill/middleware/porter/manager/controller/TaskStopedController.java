@@ -60,9 +60,8 @@ public class TaskStopedController {
                 response.getWriter().write(tasks.toString());
                 response.getWriter().flush();
             } catch (Throwable e) {
-                LOGGER.error("%s", e);
+                LOGGER.error("任务异常检查信息输出失败", e);
             }
         }
-        //return null != tasks && !tasks.isEmpty() ? tasks.toString() : "";
     }
 }

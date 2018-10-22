@@ -28,11 +28,11 @@ import cn.vbill.middleware.porter.common.client.AbstractClient;
 import cn.vbill.middleware.porter.common.db.DdlUtils;
 import cn.vbill.middleware.porter.common.db.SqlTemplate;
 import cn.vbill.middleware.porter.common.db.SqlTemplateImpl;
+import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import lombok.Getter;
 import lombok.SneakyThrows;
-import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ddlutils.model.Table;
 import org.slf4j.Logger;
@@ -54,6 +54,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Function;
 
 /**
@@ -63,66 +65,32 @@ import java.util.function.Function;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月02日 15:14
  */
 public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient, MetaQueryClient {
+    private static final Logger LOGGER = LoggerFactory.getLogger(JDBCClient.class);
     private final Map<List<String>, TableSchema> tables = new ConcurrentHashMap<>();
 
-    private BasicDataSource dataSource;
-    private JdbcTemplate jdbcTemplate;
-    private TransactionTemplate transactionTemplate;
     private final boolean makePrimaryKeyWhenNo;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(JDBCClient.class);
-
     @Getter
     private SqlTemplate sqlTemplate;
+    private final JdbcWapper jdbcProxy;
 
 
     public JDBCClient(JDBCConfig config) {
         super(config);
         this.makePrimaryKeyWhenNo = config.isMakePrimaryKeyWhenNo();
         sqlTemplate = new SqlTemplateImpl();
+        jdbcProxy = new JdbcWapper();
     }
 
     @Override
     protected void doStart() {
-        JDBCConfig config = getConfig();
-        dataSource = new BasicDataSource();
-        dataSource.setDriverClassName(config.getDriverClassName());
-        dataSource.setUrl(config.getUrl());
-        dataSource.setUsername(config.getUserName());
-        dataSource.setPassword(config.getPassword());
-        dataSource.setMaxWait(config.getMaxWait());
-        dataSource.setMaxActive(config.getMaxPoolSize());
-        dataSource.setMaxIdle(config.getInitialPoolSize());
-        //连接错误重试时间间隔
-        dataSource.setValidationQueryTimeout(config.getValidationQueryTimeout());
-        //数据库重启等因素导致连接池状态异常
-        dataSource.setTestOnBorrow(config.isTestOnBorrow());
-        dataSource.setTestOnReturn(config.isTestOnReturn());
-        dataSource.setTestWhileIdle(true);
-        dataSource.setNumTestsPerEvictionRun(config.getMaxPoolSize());
-        dataSource.setTimeBetweenEvictionRunsMillis(60000);
-        if (config.getDbType() == DbType.MYSQL) {
-            dataSource.setValidationQuery("select 1");
-            dataSource.setConnectionProperties("autoReconnect=true;maxReconnects=10;failOverReadOnly=false");
-        } else if (config.getDbType() == DbType.ORACLE) {
-            dataSource.setValidationQuery("select 1 from dual");
-            dataSource.addConnectionProperty("restrictGetTables", "true");
-            // 将0000-00-00的时间类型返回null
-            dataSource.addConnectionProperty("zeroDateTimeBehavior", "convertToNull");
-            // 直接返回字符串，不做year转换date处理
-            dataSource.addConnectionProperty("yearIsDateType", "false");
-        }
-        jdbcTemplate = new JdbcTemplate(dataSource);
-        transactionTemplate = new TransactionTemplate();
-        transactionTemplate.setTransactionManager(new DataSourceTransactionManager(jdbcTemplate.getDataSource()));
-        transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+        jdbcProxy.start();
     }
 
 
     @Override
     protected void doShutdown() throws SQLException {
-        if (dataSource != null) {
-            dataSource.close();
+        if (jdbcProxy != null) {
+            jdbcProxy.close();
         }
     }
 
@@ -157,13 +125,12 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
 
     /**
      * schema大写
-     *
      * @param schema
      * @param tableName
      * @return
      */
     private TableSchema getTableSchema(String schema, String tableName) {
-        Table dbTable = DdlUtils.findTable(jdbcTemplate, schema, schema, tableName, makePrimaryKeyWhenNo);
+        Table dbTable = jdbcProxy.findTable(schema, schema, tableName, makePrimaryKeyWhenNo);
         TableSchema tableSchema = new TableSchema();
         //mysql特殊场景下(例如大小写敏感)，schema字段为空
         tableSchema.setSchemaName(StringUtils.isBlank(dbTable.getSchema()) ? schema : dbTable.getSchema());
@@ -213,8 +180,7 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
                 }
             }, args);
         } catch (Throwable e) {
-            e.printStackTrace();
-            LOGGER.error("%s", e);
+            LOGGER.error("sql执行出错:{}", sql, e);
         }
         return  null == results || results.isEmpty() ? null : results.get(0);
     }
@@ -229,21 +195,8 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
      * @throws TaskStopTriggerException
      */
     public int[] batchUpdate(String sqlType, String sql, List<Object[]> batchArgs) throws TaskStopTriggerException {
-        int[] affect = new int[]{};
-        try {
-            affect = transactionTemplate.execute(new TransactionCallback<int[]>() {
-                @Override
-                @SneakyThrows(Throwable.class)
-                public int[] doInTransaction(TransactionStatus status) {
-                    return jdbcTemplate.batchUpdate(sql, batchArgs);
-                }
-            });
-        } catch (Throwable e) {
-            if (TaskStopTriggerException.isMatch(e)) {
-                throw new TaskStopTriggerException(e);
-            }
-            e.printStackTrace();
-        }
+        int[] affect = jdbcProxy.batchUpdate(sql, batchArgs);
+
         if (null == affect || affect.length == 0) {
             List<Integer> affectList = new ArrayList<>();
             //分组执行
@@ -265,21 +218,7 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
      * @throws TaskStopTriggerException
      */
     public int update(String type, String sql, Object... args) throws TaskStopTriggerException {
-        int affect = 0;
-        try {
-            affect = transactionTemplate.execute(new TransactionCallback<Integer>() {
-                @Override
-                @SneakyThrows(Throwable.class)
-                public Integer doInTransaction(TransactionStatus status) {
-                    return jdbcTemplate.update(sql, args);
-                }
-            });
-        } catch (Throwable e) {
-            if (TaskStopTriggerException.isMatch(e)) {
-                throw new TaskStopTriggerException(e);
-            }
-            e.printStackTrace();
-        }
+        int affect = jdbcProxy.update(sql, args);
         if (affect < 1) {
             LOGGER.error("sql:{},params:{},affect:{}", sql, JSON.toJSONString(Arrays.asList(args)), affect);
         } else {
@@ -298,7 +237,7 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
      */
     public void query(String sql, RowCallbackHandler rch, Object... args) throws TaskStopTriggerException {
         try {
-            jdbcTemplate.query(sql, rch, args);
+            jdbcProxy.query(sql, rch, args);
         } catch (DataAccessException accessException) {
             throw new TaskStopTriggerException(accessException);
         } catch (Throwable e) {
@@ -331,19 +270,7 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
         }
 
         //根据当前分组批量插入
-        int[] reGroupAffect = null;
-        try {
-            reGroupAffect = transactionTemplate.execute(new TransactionCallback<int[]>() {
-                @SneakyThrows(Throwable.class)
-                public int[] doInTransaction(TransactionStatus status) {
-                    return jdbcTemplate.batchUpdate(sql, subArgs);
-                }
-            });
-        } catch (Throwable e) {
-            e.printStackTrace();
-            LOGGER.error("%s", e);
-
-        }
+        int[] reGroupAffect = jdbcProxy.batchUpdate(sql, subArgs, true);
 
         //如果仍然插入失败,改为单条插入
         if (null == reGroupAffect || reGroupAffect.length == 0) {
@@ -359,10 +286,171 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
         }
     }
 
+
+
+
+
     @Override
     public String getClientInfo() {
         JDBCConfig config = getConfig();
         return new StringBuilder().append("数据库地址->").append(config.getUrl()).append(",用户->").append(config.getUserName())
                 .toString();
+    }
+
+    private final class JdbcWapper {
+        private volatile DruidDataSource dataSource;
+        private volatile JdbcTemplate jdbcTemplate;
+        private volatile TransactionTemplate transactionTemplate;
+        private final ReadWriteLock connLock = new ReentrantReadWriteLock();
+        private JdbcWapper() {
+
+        }
+
+        private JdbcWapper start() {
+            connLock.writeLock().lock();
+            try {
+                JDBCConfig config = getConfig();
+                dataSource = new DruidDataSource();
+                dataSource.setDriverClassName(config.getDriverClassName());
+                dataSource.setUrl(config.getUrl());
+                dataSource.setUsername(config.getUserName());
+                dataSource.setPassword(config.getPassword());
+                dataSource.setMaxWait(config.getMaxWait());
+                //连接错误重试次数
+                dataSource.setConnectionErrorRetryAttempts(config.getConnectionErrorRetryAttempts());
+                //连接错误重试时间间隔
+                //dataSource.setTimeBetweenConnectErrorMillis(1000);
+                dataSource.setValidationQueryTimeout(config.getValidationQueryTimeout());
+                //超出错误连接次数后是否退出尝试连接
+                dataSource.setBreakAfterAcquireFailure(true);
+                //数据库重启等因素导致连接池状态异常
+                dataSource.setTestOnBorrow(config.isTestOnBorrow());
+                dataSource.setTestOnReturn(config.isTestOnReturn());
+                dataSource.setTestWhileIdle(true);
+                if (config.getDbType() == DbType.MYSQL) {
+                    dataSource.setValidationQuery("select 1");
+                } else if (config.getDbType() == DbType.ORACLE) {
+                    dataSource.setValidationQuery("select 1 from dual");
+                    dataSource.addConnectionProperty("restrictGetTables", "true");
+                    // 将0000-00-00的时间类型返回null
+                    dataSource.addConnectionProperty("zeroDateTimeBehavior", "convertToNull");
+                    // 直接返回字符串，不做year转换date处理
+                    dataSource.addConnectionProperty("yearIsDateType", "false");
+                }
+                jdbcTemplate = new JdbcTemplate(dataSource);
+                transactionTemplate = new TransactionTemplate();
+                transactionTemplate.setTransactionManager(new DataSourceTransactionManager(jdbcTemplate.getDataSource()));
+                transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+
+                return this;
+            } finally {
+                connLock.writeLock().unlock();
+            }
+        }
+
+        private void close() {
+            connLock.writeLock().lock();
+            try {
+                dataSource.close();
+            } catch (Throwable e) {
+                LOGGER.warn("关闭jdbc datasource", e);
+            } finally {
+                connLock.writeLock().unlock();
+            }
+        }
+
+        private Table findTable(String catalogName, String schema, String tableName, boolean makePrimaryKeyWhenNo) {
+            connLock.readLock().lock();
+            try {
+                Table table = DdlUtils.findTable(jdbcTemplate, catalogName, schema, tableName, makePrimaryKeyWhenNo);
+                return table;
+            } finally {
+                connLock.readLock().unlock();
+            }
+        }
+
+        private void query(String sql, RowCallbackHandler rch, Object[] args) {
+            connLock.readLock().lock();
+            try {
+                jdbcTemplate.query(sql, rch, args);
+            } finally {
+                connLock.readLock().unlock();
+            }
+        }
+
+        private int[] batchUpdate(String sql, List<Object[]> batchArgs) throws TaskStopTriggerException {
+            return batchUpdate(sql, batchArgs, false);
+        }
+
+        private int[] batchUpdate(String sql, List<Object[]> batchArgs, boolean capture) throws TaskStopTriggerException {
+            return atomicExecute(new TransactionCallback<int[]>() {
+                @Override
+                @SneakyThrows(Throwable.class)
+                public int[] doInTransaction(TransactionStatus status) {
+                    return jdbcTemplate.batchUpdate(sql, batchArgs);
+                }
+            }, capture);
+        }
+
+        private int update(String sql, Object... args) throws TaskStopTriggerException {
+            return update(sql, false, args);
+        }
+
+        private int update(String sql, boolean capture, Object... args) throws TaskStopTriggerException {
+            return atomicExecute(new TransactionCallback<Integer>() {
+                @Override
+                @SneakyThrows(Throwable.class)
+                public Integer doInTransaction(TransactionStatus status) {
+                    return jdbcTemplate.update(sql, args);
+                }
+            }, capture);
+        }
+
+        private <T> T atomicExecute(TransactionCallback<T> action, boolean capture) throws TaskStopTriggerException {
+            boolean sendResult = false;
+            T result = null;
+            int retries = getConfig().getRetries();
+            //做retries-1次尝试
+            for (int i = 0; i < retries - 1; i++) {
+                try {
+                    result = nativeAtomicExecute(action, capture);
+                    sendResult = true;
+                    break;
+                } catch (TaskStopTriggerException e) {
+                    LOGGER.warn("got error by execute sql,times:{}", i, e);
+                    try {
+                        Thread.sleep(1000L * 60 * 1);
+                    } catch (Throwable sleepException) {
+                    }
+                    reconnection();
+                }
+            }
+            //做最后一次尝试，否则抛出异常
+            if (!sendResult) {
+                result = nativeAtomicExecute(action, capture);
+            }
+            return result;
+        }
+
+        private <T> T nativeAtomicExecute(TransactionCallback<T> action, boolean capture) throws TaskStopTriggerException {
+            connLock.readLock().lock();
+            try {
+                return transactionTemplate.execute(action);
+            } catch (Throwable e) {
+                if (!capture && TaskStopTriggerException.isMatch(e)) {
+                    throw new TaskStopTriggerException(e);
+                }
+                LOGGER.warn("got error by execute sql,but ignored.");
+                e.printStackTrace();
+                return null;
+            } finally {
+                connLock.readLock().unlock();
+            }
+        }
+
+        synchronized void reconnection() {
+            close();
+            start();
+        }
     }
 }

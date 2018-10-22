@@ -31,6 +31,9 @@ import java.util.Map;
  */
 public class ClusterConfig {
     @Getter @Setter private ClusterPlugin strategy;
-    //告警客户端
+    //集群客户端
     @Getter @Setter private Map<String, String> client;
+
+    //统计上传客户端
+    @Getter @Setter private Map<String, String> statistic;
 }

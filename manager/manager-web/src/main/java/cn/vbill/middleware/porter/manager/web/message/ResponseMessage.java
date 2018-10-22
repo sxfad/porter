@@ -155,7 +155,6 @@ public class ResponseMessage implements Serializable {
                         include(field1.getType(), tmp[1]);
                     }
                 } catch (Throwable e) {
-                    logger.info("%s", e);
                 }
             } else {
                 getStringListFormMap(includes, type).add(field);
@@ -187,7 +186,6 @@ public class ResponseMessage implements Serializable {
                         exclude(field1.getType(), tmp[1]);
                     }
                 } catch (Throwable e) {
-                    logger.info("%s", e);
                 }
             } else {
                 getStringListFormMap(excludes, type).add(field);

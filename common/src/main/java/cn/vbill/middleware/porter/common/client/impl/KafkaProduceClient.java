@@ -20,6 +20,7 @@ package cn.vbill.middleware.porter.common.client.impl;
 import cn.vbill.middleware.porter.common.client.AbstractClient;
 import cn.vbill.middleware.porter.common.client.LoadClient;
 import cn.vbill.middleware.porter.common.client.MetaQueryClient;
+import cn.vbill.middleware.porter.common.client.StatisticClient;
 import cn.vbill.middleware.porter.common.config.source.KafkaProduceConfig;
 import cn.vbill.middleware.porter.common.db.meta.TableSchema;
 import cn.vbill.middleware.porter.common.exception.TaskStopTriggerException;
@@ -53,7 +54,7 @@ import java.util.stream.Collectors;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月02日 15:14
  */
-public class KafkaProduceClient extends AbstractClient<KafkaProduceConfig> implements LoadClient, MetaQueryClient {
+public class KafkaProduceClient extends AbstractClient<KafkaProduceConfig> implements LoadClient, MetaQueryClient, StatisticClient {
     private volatile Producer<String, String> producer;
     private final String topic;
     private final boolean transaction;
@@ -156,6 +157,17 @@ public class KafkaProduceClient extends AbstractClient<KafkaProduceConfig> imple
      */
     public void send(String value, boolean sync) throws TaskStopTriggerException {
         send(value, null, null, sync);
+    }
+
+    /**
+     * send
+     *
+     * @param value
+     * @param key
+     * @throws TaskStopTriggerException
+     */
+    public void send(String value, String key, boolean sync) throws TaskStopTriggerException {
+        send(value, null, key, sync);
     }
 
     private void sendTo(List<ProducerRecord<String, String>> msgList, boolean sync) throws TaskStopTriggerException {
@@ -274,5 +286,14 @@ public class KafkaProduceClient extends AbstractClient<KafkaProduceConfig> imple
     private synchronized void reconnection() {
         doShutdown();
         doStart();
+    }
+
+    @Override
+    public void uploadStatistic(String target, String key, String data) {
+        try {
+            send(data, key, true);
+        } catch (Throwable e) {
+            LOGGER.warn("上传统计信息失败,忽略异常", e);
+        }
     }
 }

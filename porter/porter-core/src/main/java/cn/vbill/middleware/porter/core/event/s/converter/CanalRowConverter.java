@@ -60,7 +60,6 @@ public class CanalRowConverter implements EventConverter {
         try {
             rowChange = CanalEntry.RowChange.parseFrom(entry.getStoreValue());
         } catch (Exception e) {
-            LOGGER.error("%s", e);
             return null;
         }
         //query

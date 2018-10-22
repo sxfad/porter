@@ -1,1 +1,3 @@
-cn.vbill.middleware.porter.common.cluster.ClusterProvider=cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterProvider
+cn.vbill.middleware.porter.common.cluster.ClusterProvider=\
+  cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterProvider,\
+  cn.vbill.middleware.porter.common.cluster.impl.standalone.StandaloneProvider

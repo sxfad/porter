@@ -19,6 +19,7 @@ package cn.vbill.middleware.porter.common.client.impl;
 
 import cn.vbill.middleware.porter.common.client.AbstractClient;
 import cn.vbill.middleware.porter.common.client.ClusterClient;
+import cn.vbill.middleware.porter.common.client.StatisticClient;
 import cn.vbill.middleware.porter.common.config.source.ZookeeperConfig;
 import lombok.Setter;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -42,9 +43,10 @@ import java.util.List;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月02日 15:37
  */
-public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements ClusterClient<Stat> {
+public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements ClusterClient<Stat>, StatisticClient {
     private volatile ZooKeeper zk;
     @Setter private volatile Watcher watcher;
+    private volatile StatisticClient statisticClient;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ZookeeperClient.class);
 
@@ -79,9 +81,7 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
             e.printStackTrace();
             children = new ArrayList<>();
         } catch (KeeperException e) {
-            e.printStackTrace();
             children = new ArrayList<>();
-            LOGGER.error("%s", e);
         }
         return children;
     }
@@ -94,7 +94,6 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
             dataBytes = zk.getData(path, true, stat);
         } catch (KeeperException e) {
             e.printStackTrace();
-            LOGGER.error("%s", e);
         } catch (InterruptedException e) {
             Thread.interrupted();
             e.printStackTrace();
@@ -130,8 +129,6 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
             Stat stat = zk.exists(path, watch);
             return null != stat;
         } catch (Exception e) {
-            e.printStackTrace();
-            LOGGER.error("%s", e);
             return false;
         }
     }
@@ -152,9 +149,8 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
             } else {
                 setData(path, data, stat.getVersion());
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            LOGGER.error("%s", e);
+        } catch (Throwable e) {
+            LOGGER.warn("改变zookeeper节点出错", e);
         }
     }
 
@@ -174,9 +170,8 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
             if (null == stat) {
                 create(path, isTemp, data);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            LOGGER.error("%s", e);
+        } catch (Throwable e) {
+            LOGGER.warn("创建zookeeper节点", e);
         }
         return stat;
     }
@@ -188,9 +183,8 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
             if (null != stat) {
                 zk.delete(path, stat.getVersion());
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            LOGGER.error("%s", e);
+        } catch (Throwable e) {
+            LOGGER.error("zookeeper delete error", e);
         }
     }
 
@@ -235,6 +229,24 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
             } catch (InterruptedException e) {
                 Thread.interrupted();
                 e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public void setStatisticClient(StatisticClient client) {
+        statisticClient = client;
+    }
+
+    @Override
+    public void uploadStatistic(String target, String key, String data) {
+        if (null != statisticClient && statisticClient != this) {
+            statisticClient.uploadStatistic(target, key, data);
+        } else {
+            try {
+                create(target, true, data);
+            } catch (Throwable e) {
+                LOGGER.warn("上传统计信息失败,忽略异常", e);
             }
         }
     }

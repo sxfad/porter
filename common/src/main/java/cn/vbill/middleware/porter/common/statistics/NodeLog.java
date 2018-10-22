@@ -137,8 +137,7 @@ public class NodeLog extends StatisticData {
                 AlertProviderFactory.INSTANCE.notice(StringUtils.isBlank(log.type.title) ? log.type.title : log.title, log.toPrintln(), receivers);
             }
         } catch (Throwable e) {
-            e.printStackTrace();
-            LOGGER.error("%s", e);
+            LOGGER.warn("发送邮件通知", e);
         }
     }
 

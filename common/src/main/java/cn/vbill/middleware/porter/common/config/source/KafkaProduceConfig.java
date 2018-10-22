@@ -39,7 +39,7 @@ public class KafkaProduceConfig extends SourceConfig {
     //主题 只能一个
     @Setter @Getter private String topic;
     //不输入
-    @Setter @Getter private boolean transaction = true;
+    @Setter @Getter private boolean transaction = false;
     //是否格式化为ogg json格式
     @Setter @Getter private boolean oggJson = true;
     //重试次数

@@ -79,7 +79,6 @@ public class SelectJob extends AbstractStageJob {
             consumer.shutdown();
         } catch (Throwable e) {
             e.printStackTrace();
-            LOGGER.error("%s", e);
         }
     }
 
@@ -102,7 +101,6 @@ public class SelectJob extends AbstractStageJob {
             } catch (TaskStopTriggerException stopError) {
                 stopError.printStackTrace();
                 work.stopAndAlarm(stopError.getMessage());
-                LOGGER.error("%s", stopError);
             } catch (InterruptedException interrupt) {
                 throw interrupt;
             } catch (Throwable e) {
@@ -137,7 +135,6 @@ public class SelectJob extends AbstractStageJob {
             NodeContext.INSTANCE.flushConsumerIdle(taskId, swimlaneId, nofetchTime);
         } catch (Throwable e) {
             e.printStackTrace();
-            LOGGER.error("%s", e);
         }
     }
 

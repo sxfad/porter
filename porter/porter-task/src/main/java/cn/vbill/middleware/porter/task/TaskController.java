@@ -17,6 +17,8 @@
 
 package cn.vbill.middleware.porter.task;
 
+import cn.vbill.middleware.porter.common.cluster.command.TaskPushCommand;
+import cn.vbill.middleware.porter.common.dic.ClusterPlugin;
 import cn.vbill.middleware.porter.common.task.TaskEventListener;
 import cn.vbill.middleware.porter.common.util.MachineUtils;
 import cn.vbill.middleware.porter.core.NodeContext;
@@ -25,7 +27,6 @@ import com.alibaba.fastjson.JSONObject;
 import cn.vbill.middleware.porter.common.cluster.ClusterProviderProxy;
 import cn.vbill.middleware.porter.common.config.TaskConfig;
 import cn.vbill.middleware.porter.common.dic.NodeStatusType;
-import cn.vbill.middleware.porter.common.exception.ClientException;
 import cn.vbill.middleware.porter.common.statistics.NodeLog;
 import cn.vbill.middleware.porter.core.consumer.DataConsumer;
 import cn.vbill.middleware.porter.task.worker.TaskWorker;
@@ -69,7 +70,7 @@ public class TaskController implements TaskEventListener {
      * @param: []
      * @return: void
      */
-    public void start() throws IllegalAccessException, ClientException, InstantiationException {
+    public void start() {
         start(null);
     }
 
@@ -83,14 +84,26 @@ public class TaskController implements TaskEventListener {
     public void start(List<TaskConfig> initTasks) {
         try {
             if (stat.compareAndSet(false, true)) {
-                if (null != initTasks && !initTasks.isEmpty()) {
-                    for (TaskConfig t : initTasks) {
-                        startTask(t);
-                    }
-                }
-
                 //从配置中心监听任务变更事件，进行任务创建关闭等操作
                 ClusterProviderProxy.INSTANCE.addTaskListener(this);
+                //初始化本地任务
+                if (null != initTasks && !initTasks.isEmpty()) {
+                    for (TaskConfig t : initTasks) {
+                        //初始化配置文件任务为本地任务
+                        t.setLocalTask(true);
+                        t.setNodeId(NodeContext.INSTANCE.getNodeId());
+                        /**
+                         * 2018-10-19 12:00:00
+                         * 除了单机模式外(standalone)，本地任务只上传不启动
+                         *
+                         */
+                        if (NodeContext.INSTANCE.getWorkMode() == ClusterPlugin.STANDALONE) {
+                            startTask(t);
+                        } else {
+                            registerLocalTask(t);
+                        }
+                    }
+                }
             } else {
                 LOGGER.warn("Task controller has started already");
             }
@@ -128,15 +141,13 @@ public class TaskController implements TaskEventListener {
             try {
                 startTask(event);
             } catch (Exception e) {
-                e.printStackTrace();
-                LOGGER.error("%s", e);
+                LOGGER.error("启动任务出错!", e);
             }
         } else if (event.getStatus().isStopped()) {
             try {
                 stopTask(Task.fromConfig(event));
             } catch (Exception e) {
-                e.printStackTrace();
-                LOGGER.error("%s", e);
+                LOGGER.error("停止任务出错!", e);
             }
         }
     }
@@ -251,6 +262,16 @@ public class TaskController implements TaskEventListener {
             if (exit) {
                 System.exit(-1);
             }
+        }
+    }
+
+    private void registerLocalTask(TaskConfig taskConfig) {
+        try {
+            if (taskConfig.isLocalTask()) {
+                ClusterProviderProxy.INSTANCE.broadcast(new TaskPushCommand(taskConfig));
+            }
+        } catch (Throwable e) {
+            LOGGER.warn("注册本地任务到集群失败:{}", taskConfig.getTaskId(), e);
         }
     }
 }

@@ -73,8 +73,7 @@ public abstract class AbstractClusterMonitor implements ClusterMonitor {
             //最后的清除任务
             ClusterProviderProxy.INSTANCE.broadcast(new ShutdownCommand());
         } catch (Exception e) {
-            e.printStackTrace();
-            logger.error("%s", e);
+            logger.warn("停止集群监听失败", e);
         }
     }
 
@@ -86,8 +85,7 @@ public abstract class AbstractClusterMonitor implements ClusterMonitor {
             try {
                 v.start();
             } catch (Exception e) {
-                e.printStackTrace();
-                logger.error("%s", e);
+                logger.warn("集群监听器启动失败", e);
             }
         });
     }
