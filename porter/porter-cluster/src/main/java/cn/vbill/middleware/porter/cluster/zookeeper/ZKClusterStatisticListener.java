@@ -77,4 +77,11 @@ public class ZKClusterStatisticListener extends ZookeeperClusterListener impleme
         String dataNode = statisticPath + "/" + data.getId();
         client.uploadStatistic(dataNode, data.getKey(), data.toString());
     }
+
+    @Override
+    public void start() {
+        client.createWhenNotExists(listenPath(), false, false, null);
+        client.createWhenNotExists(listenPath() + "/task", false, false, "{}");
+        client.createWhenNotExists(listenPath() + "/log", false, false, "{}");
+    }
 }

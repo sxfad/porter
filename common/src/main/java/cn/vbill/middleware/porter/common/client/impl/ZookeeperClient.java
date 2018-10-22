@@ -170,7 +170,7 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
             if (null == stat) {
                 create(path, isTemp, data);
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             LOGGER.warn("创建zookeeper节点", e);
         }
         return stat;
@@ -183,7 +183,7 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
             if (null != stat) {
                 zk.delete(path, stat.getVersion());
             }
-        } catch (Exception e) {
+        } catch (Throwable e) {
             LOGGER.error("zookeeper delete error", e);
         }
     }

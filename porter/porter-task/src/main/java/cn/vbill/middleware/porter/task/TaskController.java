@@ -17,6 +17,7 @@
 
 package cn.vbill.middleware.porter.task;
 
+import cn.vbill.middleware.porter.common.cluster.command.TaskPushCommand;
 import cn.vbill.middleware.porter.common.dic.ClusterPlugin;
 import cn.vbill.middleware.porter.common.task.TaskEventListener;
 import cn.vbill.middleware.porter.common.util.MachineUtils;
@@ -83,6 +84,9 @@ public class TaskController implements TaskEventListener {
     public void start(List<TaskConfig> initTasks) {
         try {
             if (stat.compareAndSet(false, true)) {
+                //从配置中心监听任务变更事件，进行任务创建关闭等操作
+                ClusterProviderProxy.INSTANCE.addTaskListener(this);
+                //初始化本地任务
                 if (null != initTasks && !initTasks.isEmpty()) {
                     for (TaskConfig t : initTasks) {
                         //初始化配置文件任务为本地任务
@@ -95,11 +99,11 @@ public class TaskController implements TaskEventListener {
                          */
                         if (NodeContext.INSTANCE.getWorkMode() == ClusterPlugin.STANDALONE) {
                             startTask(t);
+                        } else {
+                            registerLocalTask(t);
                         }
                     }
                 }
-                //从配置中心监听任务变更事件，进行任务创建关闭等操作
-                ClusterProviderProxy.INSTANCE.addTaskListener(this);
             } else {
                 LOGGER.warn("Task controller has started already");
             }
@@ -258,6 +262,16 @@ public class TaskController implements TaskEventListener {
             if (exit) {
                 System.exit(-1);
             }
+        }
+    }
+
+    private void registerLocalTask(TaskConfig taskConfig) {
+        try {
+            if (taskConfig.isLocalTask()) {
+                ClusterProviderProxy.INSTANCE.broadcast(new TaskPushCommand(taskConfig));
+            }
+        } catch (Throwable e) {
+            LOGGER.warn("注册本地任务到集群失败:{}", taskConfig.getTaskId(), e);
         }
     }
 }
