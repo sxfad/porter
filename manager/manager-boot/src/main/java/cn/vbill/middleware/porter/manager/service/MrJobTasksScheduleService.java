@@ -19,6 +19,7 @@ package cn.vbill.middleware.porter.manager.service;
 
 import cn.vbill.middleware.porter.manager.core.entity.MrJobTasksSchedule;
 import cn.vbill.middleware.porter.common.cluster.data.DTaskStat;
+import cn.vbill.middleware.porter.common.dic.TaskStatusType;
 import cn.vbill.middleware.porter.manager.web.page.Page;
 
 import java.util.List;
@@ -46,7 +47,8 @@ public interface MrJobTasksScheduleService {
      * 更新
      *
      * @date 2018/8/10 下午1:58
-     * @param: [id, mrJobTasksSchedule]
+     * @param: [id,
+     *             mrJobTasksSchedule]
      * @return: java.lang.Integer
      */
     Integer update(Long id, MrJobTasksSchedule mrJobTasksSchedule);
@@ -68,6 +70,15 @@ public interface MrJobTasksScheduleService {
      * @return: cn.vbill.middleware.porter.manager.core.entity.MrJobTasksSchedule
      */
     MrJobTasksSchedule selectById(Long id);
+
+    /**
+     * 变更任务状态
+     * 
+     * @param id
+     * @param taskStatusType
+     * @return
+     */
+    Integer updateState(Long id, TaskStatusType taskStatusType);
 
     /**
      * 分页
@@ -94,7 +105,8 @@ public interface MrJobTasksScheduleService {
      * 列表
      *
      * @date 2018/8/10 下午2:01
-     * @param: [jobId, heartBeatBeginDate, heartBeatEndDate]
+     * @param: [jobId,
+     *             heartBeatBeginDate, heartBeatEndDate]
      * @return: java.util.List<cn.vbill.middleware.porter.manager.core.entity.MrJobTasksSchedule>
      */
     List<MrJobTasksSchedule> list(String jobId, String heartBeatBeginDate, String heartBeatEndDate);

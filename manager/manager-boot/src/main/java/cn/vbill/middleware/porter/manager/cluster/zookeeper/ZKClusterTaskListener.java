@@ -17,6 +17,13 @@
 
 package cn.vbill.middleware.porter.manager.cluster.zookeeper;
 
+import java.util.regex.Pattern;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.alibaba.fastjson.JSON;
+
 import cn.vbill.middleware.porter.common.client.impl.ZookeeperClient;
 import cn.vbill.middleware.porter.common.cluster.ClusterListenerFilter;
 import cn.vbill.middleware.porter.common.cluster.command.TaskPushCommand;
@@ -26,15 +33,12 @@ import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperCluster
 import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListener;
 import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListenerFilter;
 import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.broadcast.ZKTaskPush;
+import cn.vbill.middleware.porter.common.dic.TaskStatusType;
 import cn.vbill.middleware.porter.manager.ManagerContext;
 import cn.vbill.middleware.porter.manager.core.util.ApplicationContextUtil;
+import cn.vbill.middleware.porter.manager.core.util.DealStrCutUtils;
 import cn.vbill.middleware.porter.manager.service.MrJobTasksScheduleService;
 import cn.vbill.middleware.porter.manager.service.impl.MrJobTasksScheduleServiceImpl;
-import com.alibaba.fastjson.JSON;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.regex.Pattern;
 
 /**
  * 任务信息监听
@@ -100,9 +104,18 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements Z
                     return;
                 }
             }
-            //监控任务下线
+            // 监控任务下线
             if (TASK_LOCK_PATTERN.matcher(zkEvent.getPath()).matches() && event.isOffline()) {
-                System.out.println("zkPath:" + zkPath);
+                try {
+                    String taskId = DealStrCutUtils.getSubUtilSimple(zkPath, "task/(.*?)/lock");
+                    MrJobTasksScheduleService mrJobTasksScheduleService = ApplicationContextUtil
+                            .getBean(MrJobTasksScheduleServiceImpl.class);
+                    mrJobTasksScheduleService.updateState(taskId == null ? 0 : Long.valueOf(taskId),
+                            TaskStatusType.STOPPED);
+                    LOGGER.info("4-DTaskStat-[{}]任务停止.", taskId);
+                } catch (Exception e) {
+                    LOGGER.error("4-DTaskStat-Error-lock....任务停止出错,请追寻...", e);
+                }
             }
         } catch (Throwable e) {
             LOGGER.error("4-DTaskStat-Throwable....出错,请追寻...", e);

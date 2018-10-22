@@ -22,6 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import cn.vbill.middleware.porter.manager.core.entity.MrJobTasksSchedule;
 import cn.vbill.middleware.porter.common.cluster.data.DTaskStat;
+import cn.vbill.middleware.porter.common.dic.TaskStatusType;
 import cn.vbill.middleware.porter.manager.core.entity.JobTasks;
 import cn.vbill.middleware.porter.manager.core.mapper.MrJobTasksScheduleMapper;
 import cn.vbill.middleware.porter.manager.service.JobTasksService;
@@ -69,6 +70,11 @@ public class MrJobTasksScheduleServiceImpl implements MrJobTasksScheduleService 
     @Override
     public MrJobTasksSchedule selectById(Long id) {
         return mrJobTasksScheduleMapper.selectById(id);
+    }
+
+    @Override
+    public Integer updateState(Long id, TaskStatusType taskStatusType) {
+        return jobTasksService.updateState(id, taskStatusType);
     }
 
     @Override
@@ -121,7 +127,8 @@ public class MrJobTasksScheduleServiceImpl implements MrJobTasksScheduleService 
      * dealDTaskStatSync
      *
      * @date 2018/8/10 下午2:18
-     * @param: [jobId, swimlaneId, schemaTable, mrJobTasksSchedule]
+     * @param: [jobId,
+     *             swimlaneId, schemaTable, mrJobTasksSchedule]
      * @return: void
      */
     private void dealDTaskStatSync(String jobId, String swimlaneId, String schemaTable,
