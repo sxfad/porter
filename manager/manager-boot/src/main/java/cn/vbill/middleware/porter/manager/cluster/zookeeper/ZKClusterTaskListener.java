@@ -53,6 +53,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
     private static final String ZK_PATH = BASE_CATALOG + "/task";
     private static final Pattern TASK_STAT_PATTERN = Pattern.compile(ZK_PATH + "/.*/stat/.*");
     private static final Pattern TASK_ERROR_PATTERN = Pattern.compile(ZK_PATH + "/.*/error/.*");
+    private static final Pattern TASK_LOCK_PATTERN = Pattern.compile(ZK_PATH + "/.*/lock/.*");
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ZKClusterTaskListener.class);
 
@@ -102,6 +103,10 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
                     ManagerContext.INSTANCE.removeStoppedTask(taskAndSwimlane[0], taskAndSwimlane[1]);
                     return;
                 }
+            }
+            //监控任务下线
+            if (TASK_LOCK_PATTERN.matcher(zkEvent.getPath()).matches() && event.isOffline()) {
+                System.out.println("zkPath:" + zkPath);
             }
         } catch (Throwable e) {
             LOGGER.error("4-DTaskStat-Throwable....出错,请追寻...", e);
