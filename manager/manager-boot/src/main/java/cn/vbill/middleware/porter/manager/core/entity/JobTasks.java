@@ -17,6 +17,7 @@
 
 package cn.vbill.middleware.porter.manager.core.entity;
 
+import cn.vbill.middleware.porter.common.config.TaskConfig;
 import cn.vbill.middleware.porter.common.dic.ConsumeConverterPlugin;
 import cn.vbill.middleware.porter.common.dic.ConsumerPlugin;
 import cn.vbill.middleware.porter.common.dic.LoaderPlugin;
@@ -46,6 +47,12 @@ public class JobTasks implements java.io.Serializable {
         this.id = Long.valueOf(jobId);
     }
 
+    public JobTasks(TaskConfig task, String taskConfigJson) {
+        this.id = Long.valueOf(task.getTaskId());
+        this.jobName = "本地任务:"+task.getTaskId();
+        this.jobJsonText = taskConfigJson;
+    }
+
     /**
      * 主键.
      */
@@ -61,6 +68,12 @@ public class JobTasks implements java.io.Serializable {
 
     /** 自定义处理类文件路径. */
     private String javaClassContent;
+
+    /** xml配置文档. */
+    private String jobXmlText;
+
+    /** josn配置文档. */
+    private String jobJsonText;
 
     /**
      * 任务状态.
@@ -512,6 +525,7 @@ public class JobTasks implements java.io.Serializable {
 
     /**
      * setTables
+     * 
      * @param tables
      */
     public void setTables(List<JobTasksTable> tables) {
@@ -620,6 +634,7 @@ public class JobTasks implements java.io.Serializable {
 
     /**
      * setNodes
+     * 
      * @param nodes
      */
     public void setNodes(List<JobTaskNodes> nodes) {
@@ -693,4 +708,21 @@ public class JobTasks implements java.io.Serializable {
     public void setType(Integer type) {
         this.type = type;
     }
+
+    public String getJobXmlText() {
+        return jobXmlText;
+    }
+
+    public void setJobXmlText(String jobXmlText) {
+        this.jobXmlText = jobXmlText;
+    }
+
+    public String getJobJsonText() {
+        return jobJsonText;
+    }
+
+    public void setJobJsonText(String jobJsonText) {
+        this.jobJsonText = jobJsonText;
+    }
+
 }

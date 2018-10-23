@@ -116,6 +116,11 @@ public class JobTasksServiceImpl implements JobTasksService {
     }
 
     @Override
+    public Integer insertZKCapture(JobTasks jobTasks) {
+        return jobTasksMapper.insertZKCapture(jobTasks);
+    }
+
+    @Override
     public Integer insertCapture(JobTasks jobTasks) {
         Integer number = 0;
         try {
@@ -195,6 +200,16 @@ public class JobTasksServiceImpl implements JobTasksService {
     }
 
     @Override
+    public JobTasks selectByIdOne(Long id) {
+        return jobTasksMapper.selectById(id);
+    }
+
+    @Override
+    public Integer updateZKCapture(JobTasks jobTasks) {
+        return jobTasksMapper.updateZKCapture(jobTasks);
+    }
+
+    @Override
     public JobTasks selectEntityById(Long id) {
         JobTasks jobTasks = jobTasksMapper.selectById(id);
         return jobTasks;
@@ -202,7 +217,7 @@ public class JobTasksServiceImpl implements JobTasksService {
 
     @Override
     public Page<JobTasks> page(Page<JobTasks> page, String jobName, String beginTime, String endTime,
-                               TaskStatusType jobState, Integer jobType) {
+            TaskStatusType jobState, Integer jobType) {
         String code = "";
         if (null != jobState) {
             code = jobState.getCode();
@@ -349,10 +364,10 @@ public class JobTasksServiceImpl implements JobTasksService {
         List<TableMapperConfig> tableList = new ArrayList<>();
         TableMapperConfig tableMapperConfig = null;
         for (JobTasksTable jobTasksTable : tables) {
-            String[] schema = {jobTasksTable.getSourceTableName().split("[.]")[0],
-                    jobTasksTable.getTargetTableName().split("[.]")[0]};
-            String[] table = {jobTasksTable.getSourceTableName().split("[.]")[1],
-                    jobTasksTable.getTargetTableName().split("[.]")[1]};
+            String[] schema = { jobTasksTable.getSourceTableName().split("[.]")[0],
+                    jobTasksTable.getTargetTableName().split("[.]")[0] };
+            String[] table = { jobTasksTable.getSourceTableName().split("[.]")[1],
+                    jobTasksTable.getTargetTableName().split("[.]")[1] };
 
             Map<String, String> column = null;
             if (!jobTasksTable.isDirectMapTable()) {

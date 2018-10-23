@@ -18,6 +18,8 @@
         <result column="target_load_adt" property="targetLoadAdt" />
         <result column="target_data_tables_id" property="targetDataTablesId" />
         <result column="target_data_tables_name" property="targetDataTablesName" />
+        <result column="job_xml_text" property="jobXmlText" />
+        <result column="job_json_text" property="jobJsonText" />
         <result column="creater" property="creater" />
         <result column="create_time" property="createTime" />
         <result column="state" property="state" />
@@ -40,6 +42,7 @@
         source_data_tables_id AS sourceDataTablesId, source_data_tables_name AS sourceDataTablesName, 
         source_data_id AS sourceDataId, source_data_name AS sourceDataName, target_load_adt AS targetLoadAdt, 
         target_data_tables_id AS targetDataTablesId, target_data_tables_name AS targetDataTablesName, 
+        job_xml_text as jobXmlText,job_json_text as jobJsonText,
         creater, create_time AS createTime, state, iscancel, remark from job_tasks
         where iscancel = 0
     </select>
@@ -124,6 +127,49 @@
             '2'
         )
     </insert>
+    
+    <!-- 新增 -->
+    <insert id="insertZKCapture" useGeneratedKeys="true" keyProperty="id">
+        insert into job_tasks(
+            id,
+            job_name,
+            job_state,
+            job_type,
+            source_consume_adt,
+            source_convert_adt,
+            source_data_tables_id,
+            source_data_source_id,
+            source_data_tables_name,
+            source_data_id,
+            source_data_name,
+            target_load_adt,
+            target_data_tables_id,
+            target_data_source_id,
+            target_data_tables_name,
+            job_xml_text,
+            job_json_text,
+            type
+        ) values (
+            #{id},
+            #{jobName},
+            'WORKING',
+            '2',
+            'CANAL',
+            'CANAL_ROW',
+            '0',
+            '0',
+            '0',
+            '0',
+            '0',
+            'JDBC_BATCH',
+            '0',
+            '0',
+            '0',
+            #{jobXmlText},
+            #{jobJsonText},
+            '2'
+        )
+    </insert>
 
     <!-- 修改任务状态 -->
     <update id="updateState">
@@ -152,6 +198,20 @@
             target_data_tables_id = #{jobTasks.targetDataTablesId},
             target_data_source_id = #{jobTasks.targetDataSourceId},
             target_data_tables_name = #{jobTasks.targetDataTablesName}
+        where id = #{jobTasks.id}
+    </update>
+
+    <!-- 修改 -->
+    <update id="updateZKCapture">
+        update job_tasks
+        <set>
+            <if test="jobTasks.jobXmlText != null">
+                job_xml_text = #{jobTasks.jobXmlText},
+            </if>
+            <if test="jobTasks.jobJsonText != null">
+                job_json_text = #{jobTasks.jobJsonText},
+            </if>
+        </set>
         where id = #{jobTasks.id}
     </update>
 
@@ -205,7 +265,9 @@
         id, job_name AS jobName, java_class_name as javaClassName, java_class_content as javaClassContent, 
         job_state AS jobState, job_type as jobType,
         source_consume_adt AS sourceConsumeAdt, source_convert_adt AS sourceConvertAdt,
-        target_load_adt AS targetLoadAdt, create_time AS createTime
+        target_load_adt AS targetLoadAdt, 
+        job_xml_text as jobXmlText,job_json_text as jobJsonText, 
+        create_time AS createTime
         from job_tasks
         <where>
             iscancel = 0

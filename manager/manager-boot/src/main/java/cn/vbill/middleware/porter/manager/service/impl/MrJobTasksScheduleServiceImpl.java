@@ -20,17 +20,18 @@ package cn.vbill.middleware.porter.manager.service.impl;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-import cn.vbill.middleware.porter.manager.core.entity.MrJobTasksSchedule;
-import cn.vbill.middleware.porter.common.cluster.data.DTaskStat;
-import cn.vbill.middleware.porter.common.dic.TaskStatusType;
-import cn.vbill.middleware.porter.manager.core.entity.JobTasks;
-import cn.vbill.middleware.porter.manager.core.mapper.MrJobTasksScheduleMapper;
-import cn.vbill.middleware.porter.manager.service.JobTasksService;
-import cn.vbill.middleware.porter.manager.service.MrJobTasksScheduleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import cn.vbill.middleware.porter.common.cluster.data.DTaskStat;
+import cn.vbill.middleware.porter.common.config.TaskConfig;
+import cn.vbill.middleware.porter.common.dic.TaskStatusType;
+import cn.vbill.middleware.porter.manager.core.entity.JobTasks;
+import cn.vbill.middleware.porter.manager.core.entity.MrJobTasksSchedule;
 import cn.vbill.middleware.porter.manager.core.init.ResourceUtils;
+import cn.vbill.middleware.porter.manager.core.mapper.MrJobTasksScheduleMapper;
+import cn.vbill.middleware.porter.manager.service.JobTasksService;
+import cn.vbill.middleware.porter.manager.service.MrJobTasksScheduleService;
 import cn.vbill.middleware.porter.manager.web.page.Page;
 
 /**
@@ -114,6 +115,29 @@ public class MrJobTasksScheduleServiceImpl implements MrJobTasksScheduleService 
     }
 
     @Override
+    public void dealJobJsonText(TaskConfig task, String taskConfigJson) {
+        String jobId = task.getTaskId();
+        String key = jobId;
+        Object lock = map.get(key);
+        if (null == lock) {
+            Object tmp = new Object();
+            Object old = map.putIfAbsent(key, tmp);
+            if (null != old) {
+                lock = old;
+            } else {
+                lock = tmp;
+            }
+        }
+        try {
+            synchronized (lock) {
+                dealJobJsonTextSysn(task, taskConfigJson);
+            }
+        } finally {
+            map.remove(key);
+        }
+    }
+
+    @Override
     public List<MrJobTasksSchedule> selectSwimlaneByJobId(String jobId) {
         return mrJobTasksScheduleMapper.selectSwimlaneByJobId(jobId);
     }
@@ -141,10 +165,21 @@ public class MrJobTasksScheduleServiceImpl implements MrJobTasksScheduleService 
             mrJobTasksScheduleMapper.updateSelective(old.getId(), mrJobTasksSchedule);
         }
 
+        // 考虑
         Boolean key = ResourceUtils.existJob(jobId);
         if (!key) {
             jobTasksService.insertCapture(new JobTasks(jobId));
         }
+    }
 
+    private void dealJobJsonTextSysn(TaskConfig task, String taskConfigJson) {
+        JobTasks jobTasks = new JobTasks(task, taskConfigJson);
+        JobTasks old = jobTasksService.selectByIdOne(jobTasks.getId());
+        if (old == null || old.getId() == null) {
+            jobTasksService.insertZKCapture(jobTasks);
+        } else {
+            jobTasks.setId(old.getId());
+            jobTasksService.updateZKCapture(jobTasks);
+        }
     }
 }
