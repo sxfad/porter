@@ -49,11 +49,25 @@ public interface JobTasksMapper {
     Integer insertCapture(JobTasks jobTasks);
 
     /**
+     * 新增
+     *
+     * @param jobTasks
+     */
+    Integer insertZKCapture(JobTasks jobTasks);
+
+    /**
      * 修改
      *
      * @param jobTasks
      */
     Integer update(@Param("jobTasks") JobTasks jobTasks);
+
+    /**
+     * 修改
+     *
+     * @param jobTasks
+     */
+    Integer updateZKCapture(@Param("jobTasks") JobTasks jobTasks);
 
     /**
      * 逻辑刪除
