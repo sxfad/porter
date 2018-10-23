@@ -265,13 +265,15 @@ public class TaskWork {
             DTaskStat newStat = null;
             synchronized (stat) {
                 newStat = stat.snapshot(DTaskStat.class);
-                LOGGER.debug("stat snapshot:{}", JSON.toJSONString(newStat));
                 stat.reset();
-                try {
-                    ClusterProviderProxy.INSTANCE.broadcast(new TaskStatCommand(newStat, new DCallback() {
-                        @Override
-                        public void callback(DObject object) {
-                            DTaskStat remoteData = (DTaskStat) object;
+            }
+            LOGGER.debug("stat snapshot:{}", JSON.toJSONString(newStat));
+            try {
+                ClusterProviderProxy.INSTANCE.broadcast(new TaskStatCommand(newStat, new DCallback() {
+                    @Override
+                    public void callback(DObject object) {
+                        DTaskStat remoteData = (DTaskStat) object;
+                        synchronized (stat) {
                             if (stat.getUpdateStat().compareAndSet(false, true)) {
                                 //最后检查点
                                 if (null == stat.getLastCheckedTime()) {
@@ -283,20 +285,20 @@ public class TaskWork {
                                 }
                             }
                         }
-                    }));
-                } catch (Throwable e) {
-                    NodeLog.upload(NodeLog.LogType.TASK_LOG, taskId, dataConsumer.getSwimlaneId(), "上传任务状态信息失败:" + e.getMessage());
-                }
-
-                //上传统计
-                try {
-                    //TaskPerformance
-                    if (NodeContext.INSTANCE.isUploadStatistic()) {
-                        ClusterProviderProxy.INSTANCE.broadcast(new StatisticUploadCommand(new TaskPerformance(newStat)));
                     }
-                } catch (Throwable e) {
-                    NodeLog.upload(NodeLog.LogType.TASK_LOG, taskId, dataConsumer.getSwimlaneId(), "上传任务统计信息失败:" + e.getMessage());
+                }));
+            } catch (Throwable e) {
+                NodeLog.upload(NodeLog.LogType.TASK_LOG, taskId, dataConsumer.getSwimlaneId(), "上传任务状态信息失败:" + e.getMessage());
+            }
+
+            //上传统计
+            try {
+                //TaskPerformance
+                if (NodeContext.INSTANCE.isUploadStatistic()) {
+                    ClusterProviderProxy.INSTANCE.broadcast(new StatisticUploadCommand(new TaskPerformance(newStat)));
                 }
+            } catch (Throwable e) {
+                NodeLog.upload(NodeLog.LogType.TASK_LOG, taskId, dataConsumer.getSwimlaneId(), "上传任务统计信息失败:" + e.getMessage());
             }
         });
     }

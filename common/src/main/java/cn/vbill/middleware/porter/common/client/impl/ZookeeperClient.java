@@ -58,12 +58,22 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
     protected void doStart() throws IOException {
         ZookeeperConfig config = getConfig();
         zk = new ZooKeeper(config.getUrl(), config.getSessionTimeout(), watcher);
+        try {
+            statisticClient.start();
+        } catch (Throwable e) {
+            LOGGER.warn("启动StatisticClient出错", e);
+        }
     }
 
     @Override
     protected void doShutdown() throws InterruptedException {
         if (null != zk) {
             zk.close();
+        }
+        try {
+            statisticClient.shutdown();
+        } catch (Throwable e) {
+            LOGGER.warn("关闭StatisticClient出错", e);
         }
     }
 
