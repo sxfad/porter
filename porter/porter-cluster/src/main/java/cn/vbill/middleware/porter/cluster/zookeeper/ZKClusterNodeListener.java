@@ -90,10 +90,10 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements T
         ZookeeperClusterEvent zkEvent = (ZookeeperClusterEvent) event;
         LOGGER.debug("集群节点监听->{},{},{}", zkEvent.getPath(), zkEvent.getData(), zkEvent.getEventType());
         //下发命令
-        if (NODE_ORDER_PATTERN.matcher(zkEvent.getPath()).matches()) {
+        if (NODE_ORDER_PATTERN.matcher(zkEvent.getPath()).matches() && (event.isOnline() || event.isDataChanged())) {
             NodeCommandConfig commandConfig = JSONObject.parseObject(zkEvent.getData(), NodeCommandConfig.class);
             //释放当前节点正在执行的任务
-            if (commandConfig.getCommand() == NodeCommandType.RELEASE_WORK) {
+            if (null !=commandConfig && commandConfig.getCommand() == NodeCommandType.RELEASE_WORK) {
                 //查询出来当前节点正在执行的任务
                 DNode nodeData = getDNode(listenPath() + "/" + NodeContext.INSTANCE.getNodeId() + STAT_PATH);
                 if (null != nodeData) {
@@ -114,7 +114,7 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements T
             }
 
             //节点状态变更
-            if (commandConfig.getCommand() == NodeCommandType.CHANGE_STATUS) {
+            if (null !=commandConfig && commandConfig.getCommand() == NodeCommandType.CHANGE_STATUS) {
                 NodeStatusType oldStat = NodeContext.INSTANCE.getNodeStatus();
                 NodeContext.INSTANCE.syncNodeStatus(commandConfig.getStatus());
                 //节点开始接收新任务
@@ -136,7 +136,7 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements T
             }
 
             //调整节点可执行工作数量
-            if (commandConfig.getCommand() == NodeCommandType.WORK_LIMIT
+            if (null !=commandConfig && commandConfig.getCommand() == NodeCommandType.WORK_LIMIT
                     && null != commandConfig.getWorkLimit() && commandConfig.getWorkLimit() > -1) {
                 NodeContext.INSTANCE.updateWorkLimit(commandConfig.getWorkLimit());
             }
