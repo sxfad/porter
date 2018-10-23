@@ -18,8 +18,10 @@
 package cn.vbill.middleware.porter.common.cluster.impl.zookeeper;
 
 import cn.vbill.middleware.porter.common.client.AbstractClient;
+import cn.vbill.middleware.porter.common.client.Client;
 import cn.vbill.middleware.porter.common.client.StatisticClient;
 import cn.vbill.middleware.porter.common.client.impl.ZookeeperClient;
+import cn.vbill.middleware.porter.common.cluster.ClusterMonitor;
 import cn.vbill.middleware.porter.common.cluster.impl.AbstractClusterProvider;
 import cn.vbill.middleware.porter.common.config.ClusterConfig;
 import cn.vbill.middleware.porter.common.config.SourceConfig;
@@ -27,11 +29,10 @@ import cn.vbill.middleware.porter.common.config.source.ZookeeperConfig;
 import cn.vbill.middleware.porter.common.dic.ClusterPlugin;
 import cn.vbill.middleware.porter.common.exception.ClientException;
 import cn.vbill.middleware.porter.common.exception.ConfigParseException;
-import cn.vbill.middleware.porter.common.client.Client;
-import cn.vbill.middleware.porter.common.cluster.ClusterMonitor;
 
 /**
  * zookeeper集群提供者
+ *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月14日 18:15
  * @version: V1.0
@@ -62,10 +63,14 @@ public class ZookeeperClusterProvider extends AbstractClusterProvider {
         if (null != clusterConfig.getStatistic()
                 && !clusterConfig.getStatistic().isEmpty()) {
             SourceConfig sourceConfig = SourceConfig.getConfig(clusterConfig.getStatistic());
-            if (null == sourceConfig) throw new ConfigParseException("unreadable StatisticConfig");
+            if (null == sourceConfig) {
+                throw new ConfigParseException("unreadable StatisticConfig");
+            }
             sourceConfig.stuff();
             Client statisticClient = AbstractClient.getClient(sourceConfig);
-            if (!(statisticClient instanceof  StatisticClient)) throw new ClientException("isn't ClientException");
+            if (!(statisticClient instanceof StatisticClient)) {
+                throw new ClientException("isn't ClientException");
+            }
             zookeeperClient.setStatisticClient((StatisticClient) statisticClient);
         }
         return zookeeperClient;
