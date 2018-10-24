@@ -230,7 +230,9 @@
             source_consume_adt AS sourceConsumeAdt, source_convert_adt AS sourceConvertAdt,
             source_data_tables_id AS sourceDataTablesId, source_data_source_id AS sourceDataSourceId, source_data_tables_name AS sourceDataTablesName,
             source_data_id AS sourceDataId, source_data_name AS sourceDataName, target_load_adt AS targetLoadAdt,
-            target_data_tables_id AS targetDataTablesId, target_data_source_id AS targetDataSourceId, target_data_tables_name AS targetDataTablesName, creater,
+            target_data_tables_id AS targetDataTablesId, target_data_source_id AS targetDataSourceId, target_data_tables_name AS targetDataTablesName, 
+            job_xml_text as jobXmlText,job_json_text as jobJsonText,
+            creater,
             create_time AS createTime, iscancel
         from job_tasks
         where id = #{id}

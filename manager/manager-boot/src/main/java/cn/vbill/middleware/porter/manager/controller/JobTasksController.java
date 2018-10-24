@@ -107,7 +107,8 @@ public class JobTasksController {
      *
      * @author FuZizheng
      * @date 2018/8/9 下午4:23
-     * @param: [pageNo, pageSize, jobName, beginTime, endTime, jobState, jobType]
+     * @param: [pageNo,
+     *             pageSize, jobName, beginTime, endTime, jobState, jobType]
      * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
      */
     @GetMapping("/page")
@@ -184,6 +185,45 @@ public class JobTasksController {
     public ResponseMessage update(@RequestBody JobTasks jobTasks) {
         Integer number = jobTasksService.update(jobTasks);
         return ok(number);
+    }
+
+    /**
+     * 新增特殊任务
+     * 
+     * @param jobTasks
+     * @return
+     */
+    @PostMapping("/addspecial")
+    @ApiOperation(value = "新增特殊任务", notes = "新增特殊任务")
+    public ResponseMessage addSpecial(@RequestBody JobTasks jobTasks) {
+        Integer number = jobTasksService.insertZKCapture(jobTasks);
+        return ok(number);
+    }
+
+    /**
+     * 修改特殊任务
+     * 
+     * @param jobTasks
+     * @return
+     */
+    @PutMapping("/updatespecial")
+    @ApiOperation(value = "修改特殊任务", notes = "修改特殊任务")
+    public ResponseMessage updateSpecial(@RequestBody JobTasks jobTasks) {
+        Integer number = jobTasksService.updateZKCapture(jobTasks);
+        return ok(number);
+    }
+
+    /**
+     * 解析特殊配置
+     * 
+     * @param jobTasks
+     * @return
+     */
+    @PostMapping("/dealspecialjson")
+    @ApiOperation(value = "解析字符串", notes = "解析字符串")
+    public ResponseMessage dealSpecialJson(@RequestBody String jobXmlText) {
+        String jobJosnText = jobTasksService.dealSpecialJson(jobXmlText);
+        return ok(jobJosnText);
     }
 
     /**

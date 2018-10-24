@@ -52,6 +52,8 @@ import cn.vbill.middleware.porter.manager.service.JobTasksTableService;
 import cn.vbill.middleware.porter.manager.service.JobTasksUserService;
 import cn.vbill.middleware.porter.manager.web.page.Page;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,10 +61,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  * 同步任务表 服务实现类
@@ -291,6 +296,10 @@ public class JobTasksServiceImpl implements JobTasksService {
     @Override
     public TaskConfig fitJobTask(Long id, TaskStatusType status) {
         JobTasks jobTasks = this.selectById(id);
+        if (jobTasks.getJobType() == 2) {
+            TaskConfig task = JSONObject.parseObject(jobTasks.getJobJsonText(), TaskConfig.class);
+            return task;
+        }
         // 来源数据-消费插件.
         ConsumerPlugin sourceConsumeAdt = jobTasks.getSourceConsumeAdt();
         // 来源数据-消费转换插件.
@@ -428,4 +437,16 @@ public class JobTasksServiceImpl implements JobTasksService {
         return jobTasksMapper.selectJobNameList();
     }
 
+    @Override
+    public String dealSpecialJson(String jobXmlText) {
+        String jobJsonText = null;
+        try {
+            Properties pt = new Properties();
+            pt.load(new ByteArrayInputStream(jobXmlText.getBytes()));
+
+        } catch (IOException e) {
+            logger.error("解析jobXmlText失败，请注意！！", e);
+        }
+        return jobJsonText;
+    }
 }

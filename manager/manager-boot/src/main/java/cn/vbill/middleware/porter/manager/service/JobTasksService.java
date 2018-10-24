@@ -182,4 +182,11 @@ public interface JobTasksService {
      * @return: java.util.List<cn.vbill.middleware.porter.manager.core.entity.JobTasks>
      */
     List<JobTasks> selectJobNameList();
+    
+    /**
+     * 解析配置任务
+     * @param jobXmlText
+     * @return
+     */
+    String dealSpecialJson(String jobXmlText);
 }
