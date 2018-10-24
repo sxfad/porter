@@ -28,11 +28,6 @@ import java.util.Map;
 
 /**
  * 完成字符串到java.sql.*格式的转换
- *
- * @author: zhangkewei[zhang_kw@suixingpay.com]
- * @date: 2017年12月27日 15:31
- * @version: V1.0
- * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月27日 15:31
  */
 public class SqlUtils {
     private static final Map<Integer, Class<?>> SQL_TYPE_TO_JAVA_TYPE_MAP = new HashMap<Integer, Class<?>>();

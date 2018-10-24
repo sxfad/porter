@@ -18,7 +18,6 @@
 package cn.vbill.middleware.porter.common.db;
 
 import cn.vbill.middleware.porter.common.db.meta.DdlUtilsFilter;
-import cn.vbill.middleware.porter.common.db.meta.TableType;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.apache.commons.lang.math.NumberUtils;
@@ -49,13 +48,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-/**
- *
- */
 public class DdlUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DdlUtils.class);
-    private static TableType[] SUPPORTED_TABLE_TYPES = new TableType[]{TableType.view, TableType.table};
+    private static final String[] SUPPORTED_TYPES = new String[] {"TABLE", "VIEW"};
     private static final Map<Integer, String> DEFAULT_SIZES = new HashMap<>();
 
     static {
@@ -129,7 +125,7 @@ public class DdlUtils {
                     }
 
                     metaData.setMetaData(databaseMetaData);
-                    metaData.setTableTypes(TableType.toStrings(SUPPORTED_TABLE_TYPES));
+                    metaData.setTableTypes(SUPPORTED_TYPES);
                     metaData.setCatalog(catalogName);
                     metaData.setSchemaPattern(schemaName);
 
