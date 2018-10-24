@@ -178,6 +178,8 @@ CREATE TABLE `job_tasks` (
   `target_data_source_id` BIGINT(20) NOT NULL COMMENT '目标数据-数据源id',
   `target_data_tables_id` BIGINT(20) NOT NULL COMMENT '目标数据-载入数据表分组id',
   `target_data_tables_name` VARCHAR(800) DEFAULT NULL COMMENT '目标数据-载入数据表分组名称',
+  `job_xml_text` text DEFAULT NULL COMMENT '任务-xml文本',
+  `job_json_text` text DEFAULT NULL COMMENT '任务-json文本',
   `creater` BIGINT(20) NOT NULL DEFAULT '-1' COMMENT '创建人',
   `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `state` INT(5) NOT NULL DEFAULT '1' COMMENT '状态',

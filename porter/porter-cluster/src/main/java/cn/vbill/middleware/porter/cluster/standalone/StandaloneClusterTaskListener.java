@@ -19,8 +19,16 @@ package cn.vbill.middleware.porter.cluster.standalone;
 
 import cn.vbill.middleware.porter.common.cluster.ClusterListenerFilter;
 import cn.vbill.middleware.porter.common.cluster.ClusterProviderProxy;
-import cn.vbill.middleware.porter.common.cluster.command.*;
-import cn.vbill.middleware.porter.common.cluster.command.broadcast.*;
+import cn.vbill.middleware.porter.common.cluster.command.TaskAssignedCommand;
+import cn.vbill.middleware.porter.common.cluster.command.TaskPositionQueryCommand;
+import cn.vbill.middleware.porter.common.cluster.command.TaskPositionUploadCommand;
+import cn.vbill.middleware.porter.common.cluster.command.TaskRegisterCommand;
+import cn.vbill.middleware.porter.common.cluster.command.TaskStopCommand;
+import cn.vbill.middleware.porter.common.cluster.command.TaskStoppedByErrorCommand;
+import cn.vbill.middleware.porter.common.cluster.command.broadcast.TaskPosition;
+import cn.vbill.middleware.porter.common.cluster.command.broadcast.TaskRegister;
+import cn.vbill.middleware.porter.common.cluster.command.broadcast.TaskStop;
+import cn.vbill.middleware.porter.common.cluster.command.broadcast.TaskStoppedByError;
 import cn.vbill.middleware.porter.common.cluster.data.DTaskLock;
 import cn.vbill.middleware.porter.common.cluster.event.ClusterEvent;
 import cn.vbill.middleware.porter.common.cluster.impl.standalone.StandaloneListener;
@@ -39,7 +47,7 @@ import org.slf4j.LoggerFactory;
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  */
 public class StandaloneClusterTaskListener extends StandaloneListener implements
-        TaskRegister,  TaskStop, TaskStoppedByError, TaskPosition {
+        TaskRegister, TaskStop, TaskStoppedByError, TaskPosition {
     private static final String ZK_PATH = BASE_CATALOG + "/task";
     private static final Logger LOGGER = LoggerFactory.getLogger(StandaloneClusterTaskListener.class);
 
@@ -63,7 +71,6 @@ public class StandaloneClusterTaskListener extends StandaloneListener implements
             }
         };
     }
-
 
 
     @Override

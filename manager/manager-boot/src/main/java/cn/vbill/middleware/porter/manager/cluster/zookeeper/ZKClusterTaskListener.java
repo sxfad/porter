@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 
 import cn.vbill.middleware.porter.common.client.impl.ZookeeperClient;
 import cn.vbill.middleware.porter.common.cluster.ClusterListenerFilter;
@@ -33,6 +34,7 @@ import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperCluster
 import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListener;
 import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListenerFilter;
 import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.broadcast.ZKTaskPush;
+import cn.vbill.middleware.porter.common.config.TaskConfig;
 import cn.vbill.middleware.porter.common.dic.TaskStatusType;
 import cn.vbill.middleware.porter.manager.ManagerContext;
 import cn.vbill.middleware.porter.manager.core.util.ApplicationContextUtil;
@@ -54,6 +56,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements Z
     private static final Pattern TASK_STAT_PATTERN = Pattern.compile(ZK_PATH + "/.*/stat/.*");
     private static final Pattern TASK_ERROR_PATTERN = Pattern.compile(ZK_PATH + "/.*/error/.*");
     private static final Pattern TASK_LOCK_PATTERN = Pattern.compile(ZK_PATH + "/.*/lock/.*");
+    private static final Pattern TASK_DIST_PATTERN = Pattern.compile(ZK_PATH + "/.*/dist/.*");
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ZKClusterTaskListener.class);
 
@@ -104,6 +107,19 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements Z
                     return;
                 }
             }
+            // 监控任务上线
+            if (TASK_LOCK_PATTERN.matcher(zkEvent.getPath()).matches() && event.isOnline()) {
+                try {
+                    String taskId = DealStrCutUtils.getSubUtilSimple(zkPath, "task/(.*?)/lock");
+                    MrJobTasksScheduleService mrJobTasksScheduleService = ApplicationContextUtil
+                            .getBean(MrJobTasksScheduleServiceImpl.class);
+                    mrJobTasksScheduleService.updateState(taskId == null ? 0 : Long.valueOf(taskId),
+                            TaskStatusType.WORKING);
+                    LOGGER.info("4-DTaskStat-[{}]任务启动.", taskId);
+                } catch (Exception e) {
+                    LOGGER.error("4-DTaskStat-Error-lock....任务启动出错,请追寻...", e);
+                }
+            }
             // 监控任务下线
             if (TASK_LOCK_PATTERN.matcher(zkEvent.getPath()).matches() && event.isOffline()) {
                 try {
@@ -115,6 +131,20 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements Z
                     LOGGER.info("4-DTaskStat-[{}]任务停止.", taskId);
                 } catch (Exception e) {
                     LOGGER.error("4-DTaskStat-Error-lock....任务停止出错,请追寻...", e);
+                }
+            }
+            // 抓取任务配置信息
+            if (TASK_DIST_PATTERN.matcher(zkEvent.getPath()).matches() && event.isOnline()) {
+                try {
+                    TaskConfig task = JSONObject.parseObject(zkEvent.getData(), TaskConfig.class);
+                    if (task.isLocalTask()) {
+                        MrJobTasksScheduleService mrJobTasksScheduleService = ApplicationContextUtil
+                                .getBean(MrJobTasksScheduleServiceImpl.class);
+                        mrJobTasksScheduleService.dealJobJsonText(task, zkEvent.getData());
+                        LOGGER.info("4-DTaskStat-dist-本地任务配置抓取-[{}]", zkEvent.getData());
+                    }
+                } catch (Exception e) {
+                    LOGGER.error("4-DTaskStat-Error-dist....本地任务配置抓取出错,请追寻...", e);
                 }
             }
         } catch (Throwable e) {

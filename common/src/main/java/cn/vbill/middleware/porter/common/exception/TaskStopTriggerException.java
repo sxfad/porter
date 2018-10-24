@@ -31,7 +31,11 @@ import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.jdbc.UncategorizedSQLException;
 
-import java.sql.*;
+import java.sql.BatchUpdateException;
+import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
+import java.sql.SQLRecoverableException;
+import java.sql.SQLTimeoutException;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -51,6 +55,7 @@ public class TaskStopTriggerException extends TaskException {
 
     /**
      * isMatch
+     *
      * @param cause
      * @param sqlType
      * @return
@@ -94,6 +99,7 @@ public class TaskStopTriggerException extends TaskException {
 
     /**
      * isMatch
+     *
      * @param cause
      * @return
      */

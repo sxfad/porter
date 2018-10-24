@@ -17,7 +17,15 @@
 
 package cn.vbill.middleware.porter.common.config;
 
-import cn.vbill.middleware.porter.common.config.source.*;
+import cn.vbill.middleware.porter.common.config.source.CanalConfig;
+import cn.vbill.middleware.porter.common.config.source.EmailConfig;
+import cn.vbill.middleware.porter.common.config.source.FileOperationConfig;
+import cn.vbill.middleware.porter.common.config.source.JDBCConfig;
+import cn.vbill.middleware.porter.common.config.source.KafkaConfig;
+import cn.vbill.middleware.porter.common.config.source.KafkaProduceConfig;
+import cn.vbill.middleware.porter.common.config.source.KuduConfig;
+import cn.vbill.middleware.porter.common.config.source.NameSourceConfig;
+import cn.vbill.middleware.porter.common.config.source.ZookeeperConfig;
 import cn.vbill.middleware.porter.common.dic.SourceType;
 import cn.vbill.middleware.porter.common.exception.ConfigParseException;
 import cn.vbill.middleware.porter.common.util.BeanUtils;

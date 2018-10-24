@@ -44,6 +44,15 @@ public interface JobTasksService {
     Integer insert(JobTasks jobTasks);
 
     /**
+     * 新增
+     *
+     * @date 2018/8/10 上午11:43
+     * @param: [jobTasks]
+     * @return: java.lang.Integer
+     */
+    Integer insertZKCapture(JobTasks jobTasks);
+
+    /**
      * 新增Capture
      *
      * @date 2018/8/10 上午11:43
@@ -60,6 +69,15 @@ public interface JobTasksService {
      * @return: java.lang.Integer
      */
     Integer update(JobTasks jobTasks);
+
+    /**
+     * 更新
+     *
+     * @date 2018/8/10 上午11:43
+     * @param: [jobTasks]
+     * @return: java.lang.Integer
+     */
+    Integer updateZKCapture(JobTasks jobTasks);
 
     /**
      * 删除
@@ -80,6 +98,15 @@ public interface JobTasksService {
     JobTasks selectById(Long id);
 
     /**
+     * 根据id查询
+     *
+     * @date 2018/8/10 上午11:44
+     * @param: [id]
+     * @return: cn.vbill.middleware.porter.manager.core.entity.JobTasks
+     */
+    JobTasks selectByIdOne(Long id);
+
+    /**
      * 根据id查询实体
      *
      * @date 2018/8/10 上午11:44
@@ -92,7 +119,8 @@ public interface JobTasksService {
      * 分页
      *
      * @date 2018/8/10 上午11:44
-     * @param: [page, jobName, beginTime, endTime, jobState, jobType]
+     * @param: [page,
+     *             jobName, beginTime, endTime, jobState, jobType]
      * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.entity.JobTasks>
      */
     Page<JobTasks> page(Page<JobTasks> page, String jobName, String beginTime, String endTime, TaskStatusType jobState,
@@ -111,7 +139,8 @@ public interface JobTasksService {
      * fields
      *
      * @date 2018/8/10 上午11:44
-     * @param: [sourceId, tablesId, tableAllName]
+     * @param: [sourceId,
+     *             tablesId, tableAllName]
      * @return: java.util.List<java.lang.String>
      */
     List<String> fields(Long sourceId, Long tablesId, String tableAllName);
@@ -120,7 +149,8 @@ public interface JobTasksService {
      * updateState
      *
      * @date 2018/8/10 上午11:45
-     * @param: [id, taskStatusType]
+     * @param: [id,
+     *             taskStatusType]
      * @return: java.lang.Integer
      */
     Integer updateState(Long id, TaskStatusType taskStatusType);
@@ -129,7 +159,8 @@ public interface JobTasksService {
      * fitJobTask
      *
      * @date 2018/8/10 上午11:45
-     * @param: [id, status]
+     * @param: [id,
+     *             status]
      * @return: cn.vbill.middleware.porter.common.config.TaskConfig
      */
     TaskConfig fitJobTask(Long id, TaskStatusType status);

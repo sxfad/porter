@@ -19,6 +19,7 @@ package cn.vbill.middleware.porter.manager.service;
 
 import cn.vbill.middleware.porter.manager.core.entity.MrJobTasksSchedule;
 import cn.vbill.middleware.porter.common.cluster.data.DTaskStat;
+import cn.vbill.middleware.porter.common.config.TaskConfig;
 import cn.vbill.middleware.porter.common.dic.TaskStatusType;
 import cn.vbill.middleware.porter.manager.web.page.Page;
 
@@ -91,6 +92,14 @@ public interface MrJobTasksScheduleService {
 
     /** 解析处理 任务进度状态汇总. */
     void dealDTaskStat(DTaskStat stat);
+
+    /**
+     * 接收任务
+     * 
+     * @param task
+     * @param taskConfigJson
+     */
+    void dealJobJsonText(TaskConfig task, String taskConfigJson);
 
     /**
      * 根据JobId查询

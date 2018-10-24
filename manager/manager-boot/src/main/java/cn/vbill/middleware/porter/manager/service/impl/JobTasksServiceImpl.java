@@ -116,6 +116,11 @@ public class JobTasksServiceImpl implements JobTasksService {
     }
 
     @Override
+    public Integer insertZKCapture(JobTasks jobTasks) {
+        return jobTasksMapper.insertZKCapture(jobTasks);
+    }
+
+    @Override
     public Integer insertCapture(JobTasks jobTasks) {
         Integer number = 0;
         try {
@@ -192,6 +197,16 @@ public class JobTasksServiceImpl implements JobTasksService {
             jobTasks.setNodes(nodes);
         }
         return jobTasks;
+    }
+
+    @Override
+    public JobTasks selectByIdOne(Long id) {
+        return jobTasksMapper.selectById(id);
+    }
+
+    @Override
+    public Integer updateZKCapture(JobTasks jobTasks) {
+        return jobTasksMapper.updateZKCapture(jobTasks);
     }
 
     @Override

@@ -17,6 +17,7 @@
 
 package cn.vbill.middleware.porter.manager.core.entity;
 
+import cn.vbill.middleware.porter.common.config.TaskConfig;
 import cn.vbill.middleware.porter.common.dic.ConsumeConverterPlugin;
 import cn.vbill.middleware.porter.common.dic.ConsumerPlugin;
 import cn.vbill.middleware.porter.common.dic.LoaderPlugin;
@@ -46,6 +47,12 @@ public class JobTasks implements java.io.Serializable {
         this.id = Long.valueOf(jobId);
     }
 
+    public JobTasks(TaskConfig task, String taskConfigJson) {
+        this.id = Long.valueOf(task.getTaskId());
+        this.jobName = "本地任务:" + task.getTaskId();
+        this.jobJsonText = taskConfigJson;
+    }
+
     /**
      * 主键.
      */
@@ -56,11 +63,25 @@ public class JobTasks implements java.io.Serializable {
      */
     private String jobName;
 
-    /** 自定义处理类包路径和类名 . */
+    /**
+     * 自定义处理类包路径和类名 .
+     */
     private String javaClassName;
 
-    /** 自定义处理类文件路径. */
+    /**
+     * 自定义处理类文件路径.
+     */
     private String javaClassContent;
+
+    /**
+     * xml配置文档.
+     */
+    private String jobXmlText;
+
+    /**
+     * josn配置文档.
+     */
+    private String jobJsonText;
 
     /**
      * 任务状态.
@@ -77,7 +98,9 @@ public class JobTasks implements java.io.Serializable {
      */
     private ConsumerPlugin sourceConsumeAdt;
 
-    /** 来源数据-消费插件.页面展示 */
+    /**
+     * 来源数据-消费插件.页面展示
+     */
     private String sourceConsumeAdtName;
 
     /**
@@ -85,7 +108,9 @@ public class JobTasks implements java.io.Serializable {
      */
     private ConsumeConverterPlugin sourceConvertAdt;
 
-    /** 来源数据-消费转换插件.页面展示 */
+    /**
+     * 来源数据-消费转换插件.页面展示
+     */
     private String sourceConvertAdtName;
 
     /**
@@ -123,7 +148,9 @@ public class JobTasks implements java.io.Serializable {
      */
     private String sourceDataName;
 
-    /** 目标数据-载入插件. 页面显示 */
+    /**
+     * 目标数据-载入插件. 页面显示
+     */
     private String targetLoadAdtName;
 
     /**
@@ -512,6 +539,7 @@ public class JobTasks implements java.io.Serializable {
 
     /**
      * setTables
+     *
      * @param tables
      */
     public void setTables(List<JobTasksTable> tables) {
@@ -620,6 +648,7 @@ public class JobTasks implements java.io.Serializable {
 
     /**
      * setNodes
+     *
      * @param nodes
      */
     public void setNodes(List<JobTaskNodes> nodes) {
@@ -693,4 +722,21 @@ public class JobTasks implements java.io.Serializable {
     public void setType(Integer type) {
         this.type = type;
     }
+
+    public String getJobXmlText() {
+        return jobXmlText;
+    }
+
+    public void setJobXmlText(String jobXmlText) {
+        this.jobXmlText = jobXmlText;
+    }
+
+    public String getJobJsonText() {
+        return jobJsonText;
+    }
+
+    public void setJobJsonText(String jobJsonText) {
+        this.jobJsonText = jobJsonText;
+    }
+
 }
