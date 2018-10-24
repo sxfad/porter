@@ -168,8 +168,12 @@ public class StandaloneClusterNodeListener extends StandaloneListener implements
             DNode nodeData = getDNode(path);
             if (null != nodeData.getTasks() && !nodeData.getTasks().isEmpty()) {
                 TreeSet<String> swimlaneIdList = nodeData.getTasks().getOrDefault(command.getTaskId(), new TreeSet<>());
-                if (swimlaneIdList.contains(command.getSwimlaneId())) swimlaneIdList.remove(command.getSwimlaneId());
-                if (swimlaneIdList.isEmpty()) nodeData.getTasks().remove(command.getTaskId());
+                if (swimlaneIdList.contains(command.getSwimlaneId())) {
+                    swimlaneIdList.remove(command.getSwimlaneId());
+                }
+                if (swimlaneIdList.isEmpty()) {
+                    nodeData.getTasks().remove(command.getTaskId());
+                }
             }
             client.setData(path, nodeData.toString(), -1);
         }
