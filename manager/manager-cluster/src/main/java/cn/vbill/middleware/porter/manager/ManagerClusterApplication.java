@@ -17,12 +17,11 @@
 
 package cn.vbill.middleware.porter.manager;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -32,7 +31,7 @@ import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
  */
 
 @SpringBootApplication
-@EnableAutoConfiguration(exclude={DataSourceAutoConfiguration.class})
+@MapperScan("cn.vbill.middleware.porter.manager.core.mapper")
 public class ManagerClusterApplication {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ManagerClusterApplication.class);

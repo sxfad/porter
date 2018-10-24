@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.vbill.middleware.porter.manager.core.mapper.MonitorScheduledMapper">
+
+    <!-- 备份前天数据到新表，并删除源表数据 -->
+    <update id="transferData">
+        create table ${newTableName} like ${oldTableName};
+        insert into ${newTableName} select * from ${oldTableName} where ${date} &lt; #{newDate};
+        delete from ${oldTableName} where ${date} &lt; #{newDate};
+    </update>
+
+    <!-- 删除存在30天的表 -->
+    <update id="dropTable">
+        DROP TABLE IF EXISTS ${newTableName};
+    </update>
+</mapper>

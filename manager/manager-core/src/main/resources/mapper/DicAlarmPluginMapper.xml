@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.vbill.middleware.porter.manager.core.mapper.DicAlarmPluginMapper">
+    <!-- 通用查询映射结果 
+    <resultMap id="BaseResultMap" type="DicAlarmPlugin">
+        <result column="id" property="id" />
+        <result column="alert_type" property="alertType" />
+        <result column="field_name" property="fieldName" />
+        <result column="field_code" property="fieldCode" />
+        <result column="field_order" property="fieldOrder" />
+        <result column="state" property="state" />
+        <result column="iscancel" property="iscancel" />
+        <result column="remark" property="remark" />
+    </resultMap>-->
+
+    <!-- 通用查询结果列
+    <sql id="Base_Column_List">
+        select id, alert_type AS alertType, field_name AS fieldName, field_code AS fieldCode, field_order AS fieldOrder, state, iscancel, remark from d_alarm_plugin
+    </sql>-->
+
+    <!-- 新增 -->
+    <insert id="insert">
+        insert into d_alarm_plugin(
+        id,
+        alert_type,
+        field_name,
+        field_code,
+        field_order,
+        state,
+        iscancel,
+        remark,
+        ) values (
+        #{id},
+        #{alertType},
+        #{fieldName},
+        #{fieldCode},
+        #{fieldOrder},
+        #{state},
+        #{iscancel},
+        #{remark},
+        )
+    </insert>
+
+    <!-- 修改 -->
+    <update id="update">
+        update d_alarm_plugin
+        set
+        id = #{dicAlarmPlugin.id},
+        alert_type = #{dicAlarmPlugin.alertType},
+        field_name = #{dicAlarmPlugin.fieldName},
+        field_code = #{dicAlarmPlugin.fieldCode},
+        field_order = #{dicAlarmPlugin.fieldOrder},
+        state = #{dicAlarmPlugin.state},
+        iscancel = #{dicAlarmPlugin.iscancel},
+        remark = #{dicAlarmPlugin.remark},
+        where id = #{id}
+    </update>
+
+    <!-- 刪除 -->
+    <delete id="delete">
+        delete from d_alarm_plugin where id = #{id}
+    </delete>
+
+    <!-- 根据主鍵查找 -->
+    <select id="selectById" resultType="cn.vbill.middleware.porter.manager.core.entity.DicAlarmPlugin">
+        select id, alert_type AS alertType, field_name AS fieldName, field_code AS fieldCode, field_order AS fieldOrder, state, iscancel, remark from d_alarm_plugin
+        where id = #{id}
+    </select>
+
+    <!-- 分页All -->
+    <select id="pageAll" resultType="java.lang.Integer">
+        select count(id) from d_alarm_plugin
+        where 1=1
+    </select>
+
+    <!-- 分页 -->
+    <select id="page" resultType="cn.vbill.middleware.porter.manager.core.entity.DicAlarmPlugin">
+        select id, alert_type AS alertType, field_name AS fieldName, field_code AS fieldCode, field_order AS fieldOrder, state, iscancel, remark from d_alarm_plugin
+        where 1=1 limit #{page.offset},#{page.pageSize}
+    </select>
+
+    <!-- 验证新增 -->
+    <insert id="insertSelective">
+        insert into d_alarm_plugin
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="alertType != null">
+                alert_type,
+            </if>
+            <if test="fieldName != null">
+                field_name,
+            </if>
+            <if test="fieldCode != null">
+                field_code,
+            </if>
+            <if test="fieldOrder != null">
+                field_order,
+            </if>
+            <if test="state != null">
+                state,
+            </if>
+            <if test="iscancel != null">
+                iscancel,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="alertType != null">
+                #{alertType,jdbcType=VARCHAR},
+            </if>
+            <if test="fieldName != null">
+                #{fieldName,jdbcType=VARCHAR},
+            </if>
+            <if test="fieldCode != null">
+                #{fieldCode,jdbcType=VARCHAR},
+            </if>
+            <if test="fieldOrder != null">
+                #{fieldOrder,jdbcType=INTEGER},
+            </if>
+            <if test="state != null">
+                #{state,jdbcType=INTEGER},
+            </if>
+            <if test="iscancel != null">
+                #{iscancel,jdbcType=INTEGER},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 验证修改 -->
+    <update id="updateSelective">
+        update d_alarm_plugin
+        <set>
+            <if test="dicAlarmPlugin.id != null">
+                id = #{dicAlarmPlugin.id,jdbcType=BIGINT},
+            </if>
+            <if test="dicAlarmPlugin.alertType != null">
+                alert_type = #{dicAlarmPlugin.alertType,jdbcType=VARCHAR},
+            </if>
+            <if test="dicAlarmPlugin.fieldName != null">
+                field_name = #{dicAlarmPlugin.fieldName,jdbcType=VARCHAR},
+            </if>
+            <if test="dicAlarmPlugin.fieldCode != null">
+                field_code = #{dicAlarmPlugin.fieldCode,jdbcType=VARCHAR},
+            </if>
+            <if test="dicAlarmPlugin.fieldOrder != null">
+                field_order = #{dicAlarmPlugin.fieldOrder,jdbcType=INTEGER},
+            </if>
+            <if test="dicAlarmPlugin.state != null">
+                state = #{dicAlarmPlugin.state,jdbcType=INTEGER},
+            </if>
+            <if test="dicAlarmPlugin.iscancel != null">
+                iscancel = #{dicAlarmPlugin.iscancel,jdbcType=INTEGER},
+            </if>
+            <if test="dicAlarmPlugin.remark != null">
+                remark = #{dicAlarmPlugin.remark,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <select id="findByAlertType" resultType="cn.vbill.middleware.porter.manager.core.entity.DicAlarmPlugin">
+        select id, alert_type AS alertType, field_name AS fieldName, field_code AS fieldCode, field_order AS fieldOrder,field_type as fieldType, field_type_key as fieldTypeKey, state, iscancel, remark from d_alarm_plugin
+        where alert_type = #{alertType} and iscancel =0 order by field_order
+    </select>
+</mapper>

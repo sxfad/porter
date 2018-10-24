@@ -21,10 +21,6 @@ import static cn.vbill.middleware.porter.manager.web.message.ResponseMessage.ok;
 
 import java.util.List;
 
-import cn.vbill.middleware.porter.common.cluster.ClusterProviderProxy;
-import cn.vbill.middleware.porter.common.dic.TaskStatusType;
-import cn.vbill.middleware.porter.manager.core.entity.JobTasks;
-import cn.vbill.middleware.porter.manager.service.JobTasksService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,10 +35,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSON;
+
+import cn.vbill.middleware.porter.common.cluster.ClusterProviderProxy;
 import cn.vbill.middleware.porter.common.cluster.command.TaskPushCommand;
+import cn.vbill.middleware.porter.common.dic.TaskStatusType;
+import cn.vbill.middleware.porter.manager.core.entity.JobTasks;
+import cn.vbill.middleware.porter.manager.service.JobTasksService;
 import cn.vbill.middleware.porter.manager.web.message.ResponseMessage;
 import cn.vbill.middleware.porter.manager.web.page.Page;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -276,4 +276,14 @@ public class JobTasksController {
         }
         return ok(number);
     }
+    
+    /**
+     * 
+     * @return
+     
+    @PostMapping("/addtaskconifg")
+    @ApiOperation(value = "任务", notes = "任务")
+    public ResponseMessage addTaskConifg(@RequestBody TaskConfig taskConfig) {
+        return ok(null);
+    }*/
 }

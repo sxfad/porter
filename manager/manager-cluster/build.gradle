@@ -48,6 +48,7 @@ distributions {
 
 
 dependencies {
+    compile project(':manager:manager-core')
     compile "org.springframework.boot:spring-boot-starter-web:${springVersion}"
     testCompile "org.springframework.boot:spring-boot-starter-actuator:${springVersion}"
     testCompile "org.springframework.boot:spring-boot-starter-test:${springVersion}"

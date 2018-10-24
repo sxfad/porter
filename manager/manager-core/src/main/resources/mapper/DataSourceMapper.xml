@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.vbill.middleware.porter.manager.core.mapper.DataSourceMapper">
+    <!-- 通用查询映射结果 -->
+    <!--<resultMap id="BaseResultMap" type="DataSource">-->
+        <!--<id column="id" property="id" />-->
+        <!--<result column="name" property="name" />-->
+        <!--<result column="data_type" property="dataType" />-->
+        <!--<result column="creater" property="creater" />-->
+        <!--<result column="create_time" property="createTime" />-->
+        <!--<result column="state" property="state" />-->
+        <!--<result column="iscancel" property="iscancel" />-->
+        <!--<result column="remark" property="remark" />-->
+        <!--<collection property="plugins" column="id" ofType="DataSourcePlugin">-->
+            <!--<result column="source_id" property="sourceId"/>-->
+            <!--<result column="field_name" property="fieldName"/>-->
+            <!--<result column="field_code" property="fieldCode"/>-->
+            <!--<result column="field_value" property="fieldValue"/>-->
+        <!--</collection>-->
+    <!--</resultMap>-->
+
+    <!-- 通用查询结果列 
+    <sql id="Base_Column_List">
+        select id, name, data_type AS dataType, creater, create_time AS createTime, state, iscancel, remark from b_data_source
+    </sql>-->
+
+    <!-- 新增 -->
+    <insert id="insert">
+        insert into b_data_source(
+        name,
+        data_type,
+        creater,
+        create_time,
+        state,
+        iscancel,
+        remark
+        ) values (
+        #{name},
+        #{dataType},
+        #{creater},
+        #{createTime},
+        #{state},
+        #{iscancel},
+        #{remark}
+        )
+    </insert>
+
+    <!-- 修改 -->
+    <update id="update">
+        update b_data_source
+        set
+        name = #{dataSource.name},
+        data_type = #{dataSource.dataType},
+        creater = #{dataSource.creater},
+        create_time = #{dataSource.createTime},
+        state = #{dataSource.state},
+        iscancel = #{dataSource.iscancel},
+        remark = #{dataSource.remark}
+        where id = #{id}
+    </update>
+
+    <!-- 刪除 -->
+    <update id="delete">
+        update b_data_source
+        SET
+        iscancel = 1
+        where id = #{id}
+    </update>
+
+    <!-- 根据主鍵查找 -->
+    <select id="selectById" resultType="cn.vbill.middleware.porter.manager.core.entity.DataSource">
+        select
+        id, name, data_type AS dataType, creater AS creater, create_time AS createTime
+        from b_data_source
+        where id = #{id}
+    </select>
+
+    <!-- 分页All -->
+    <select id="pageAll" resultType="java.lang.Integer">
+        select count(id) from b_data_source
+        <where>
+            iscancel = 0
+            <if test="name != null and name != ''">
+                and name LIKE CONCAT('%', #{name},'%')
+            </if>
+            <if test="beginTime != null and beginTime != ''">
+                and create_time &gt; #{beginTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                and create_time &lt; #{endTime}
+            </if>
+            <if test="dataType != null and dataType != ''">
+                and data_type = #{dataType}
+            </if>
+        </where>
+    </select>
+
+    <!-- 分页 -->
+    <select id="page" resultType="cn.vbill.middleware.porter.manager.core.entity.DataSource">
+        select id, name, data_type AS dataType, create_time AS createTime
+        from b_data_source
+        <where>
+            1 = 1
+            <if test="name != null and name != ''">
+                and name LIKE CONCAT('%', #{name},'%')
+            </if>
+            <if test="beginTime != null and beginTime != ''">
+                and create_time &gt; #{beginTime}
+            </if>
+            <if test="endTime != null and endTime != ''">
+                and create_time &lt; #{endTime}
+            </if>
+            <if test="dataType != null and dataType != ''">
+                and data_type = #{dataType}
+            </if>
+            and iscancel = 0
+        </where>
+        order by create_time desc
+        limit #{page.offset},#{page.pageSize}
+    </select>
+
+    <!-- 消费数据来源分页All -->
+    <select id="findByTypePageAll" resultType="java.lang.Integer">
+        SELECT count(id) from b_data_source
+        WHERE iscancel = 0 and (data_type = 'KAFKA' or data_type = 'CANAL')
+    </select>
+
+    <!-- 消费数据来源分页 -->
+    <select id="findByTypePage" resultType="cn.vbill.middleware.porter.manager.core.entity.DataSource">
+        SELECT id, name, data_type AS dataType, create_time AS createTime
+        FROM b_data_source
+        WHERE iscancel = 0 and (data_type = 'KAFKA' or data_type = 'CANAL')
+        order by create_time desc
+        limit #{page.offset},#{page.pageSize}
+    </select>
+
+    <!-- 验证新增 -->
+    <insert id="insertSelective" useGeneratedKeys="true" keyProperty="id">
+        insert into b_data_source
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">
+                name,
+            </if>
+            <if test="dataType != null">
+                data_type,
+            </if>
+            <if test="creater != null">
+                creater,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="state != null">
+                state,
+            </if>
+            <if test="iscancel != null">
+                iscancel,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
+            <if test="dataType != null">
+                #{dataType,jdbcType=VARCHAR},
+            </if>
+            <if test="creater != null">
+                #{creater,jdbcType=BIGINT},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="state != null">
+                #{state,jdbcType=INTEGER},
+            </if>
+            <if test="iscancel != null">
+                #{iscancel,jdbcType=INTEGER},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 验证修改 -->
+    <update id="updateSelective">
+        update b_data_source
+        <set>
+            <if test="dataSource.name != null">
+                name = #{dataSource.name,jdbcType=VARCHAR},
+            </if>
+            <if test="dataSource.dataType != null">
+                data_type = #{dataSource.dataType,jdbcType=VARCHAR},
+            </if>
+            <if test="dataSource.creater != null">
+                creater = #{dataSource.creater,jdbcType=BIGINT},
+            </if>
+            <if test="dataSource.createTime != null">
+                create_time = #{dataSource.createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="dataSource.state != null">
+                state = #{dataSource.state,jdbcType=INTEGER},
+            </if>
+            <if test="dataSource.iscancel != null">
+                iscancel = #{dataSource.iscancel,jdbcType=INGETER},
+            </if>
+            <if test="dataSource.remark != null">
+                remark = #{dataSource.remark,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+</mapper>

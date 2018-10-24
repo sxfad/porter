@@ -1,4 +1,4 @@
-use datas_manager;
+use ds_data;
 -- 登陆用户表
 DROP TABLE IF EXISTS `c_user`;
 CREATE TABLE `c_user` (
@@ -408,11 +408,11 @@ CREATE TABLE `ogg_tables` (
   `remark` varchar(500) DEFAULT NULL COMMENT '备注',
   `related_task_info` varchar(500) DEFAULT NULL COMMENT '关联任务信息',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='ogg表数据信息'
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='ogg表数据信息'; 
 
 -- 初始用户
 INSERT  INTO `c_user`(`id`,`loginname`,`loginpw`,`nickname`,`email`,`mobile`,`depart_ment`,`role_code`,`state`,`remark`) VALUES 
-(1,'admin','21232f297a57a5a743894a0e4a801fc3','超级管理员','zhang_kw@suixingpay.com','13844836009','CTO','A0001',1,'');
+(1,'admin','21232f297a57a5a743894a0e4a801fc3','超级管理员','admin@qq.com','13800138000','CTO','A0001',1,'');
 -- 初始化角色
 INSERT  INTO `c_role`(`id`,`role_code`,`role_name`,`sort`,`iscancel`,`type`,`state`,`remark`) VALUES 
 (1,'A0001','超级管理员',0,0,1,1,'超级管理员'),
@@ -489,7 +489,7 @@ INSERT  INTO `d_data_source_plugin`(`id`,`source_type`,`field_name`,`field_code`
 (10,'CANAL','数据库','database',3,'TEXT',NULL,'','例如:paytest',1,0,NULL),
 (11,'CANAL','用户','username',4,'TEXT',NULL,'','',1,0,NULL),
 (12,'CANAL','密码','password',5,'TEXT',NULL,'','',1,0,NULL),
-(13,'CANAL','过滤器','filter',6,'TEXT',NULL,'','例如:paytest\.(aaa|aab|test_table|test_table2)',1,0,NULL);
+(13,'CANAL','过滤器','filter',6,'TEXT',NULL,'','例如:paytest\.(aaa|aab|test_table|test_table2)',1,0,NULL),
 (14,'KAFKA_PRODUCE','服务器列表','servers',1,'TEXT',NULL,'','例如:0.0.0.1:9092,0.0.0.2:9092',1,0,NULL),
 (15,'KAFKA_PRODUCE','主题','topics',2,'TEXT',NULL,'','例如:test1(只能一个主题)',1,0,NULL),
 (16,'KAFKA_PRODUCE','是否ogg-json格式','oggJson',3,'TEXT',true,'','例如:true or false',1,0,NULL),
@@ -502,6 +502,9 @@ INSERT  INTO `d_dictionary`(`id`,`code`,`name`,`parentcode`,`level`,`dictype`,`s
 insert  into `s_alarm`(`id`,`alarm_type`,`create_user_id`,`update_user_id`,`create_time`,`update_time`,`state`,`iscancel`,`remark`) values (1,'EMAIL',-1,-1,'2018-04-19 15:15:21','2018-04-19 15:15:21',1,0,NULL);
 insert  into `s_alarm_plugin`(`id`,`alarm_id`,`alarm_type`,`plugin_code`,`plugin_name`,`plugin_value`) values 
 (1,1,'EMAIL','host','邮件服务器','smtp.163.com'),
-(2,1,'EMAIL','username','邮件账户','datas_test@163.com'),
-(3,1,'EMAIL','password','邮箱密码','datas123456');
+(2,1,'EMAIL','username','邮件账户','1@163.com'),
+(3,1,'EMAIL','password','邮箱密码','account');
 insert  into `s_alarm_user`(`id`,`alarm_id`,`user_id`) values (1,1,1);
+-- 2018-10-23新增
+ALTER TABLE job_tasks ADD job_xml_text TEXT DEFAULT NULL COMMENT '任务-xml文本';
+ALTER TABLE job_tasks ADD job_json_text TEXT DEFAULT NULL COMMENT '任务-json文本';
