@@ -206,7 +206,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
     }
 
     @Override
-    public void uploadStat(TaskStatCommand command) throws Exception {
+    public void uploadStat(TaskStatCommand command) {
         DTaskStat dataStat = command.getStat();
         //.intern()保证全局唯一字符串对象
         String node = (listenPath() + "/" + dataStat.getTaskId() + "/stat/" + dataStat.getSwimlaneId()

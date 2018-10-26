@@ -17,8 +17,17 @@
 
 package cn.vbill.middleware.porter.manager.cluster.zookeeper;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
+import cn.vbill.middleware.porter.common.config.SourceConfig;
+import cn.vbill.middleware.porter.common.statistics.NodeLog;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,7 +68,8 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements Z
     private static final Pattern TASK_DIST_PATTERN = Pattern.compile(ZK_PATH + "/.*/dist/.*");
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ZKClusterTaskListener.class);
-
+    //未分配任务定时检查
+    private final ScheduledExecutorService taskUnsignedListener = Executors.newSingleThreadScheduledExecutor();
     @Override
     public String listenPath() {
         return ZK_PATH;
@@ -182,4 +192,71 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements Z
     public String zkTaskPath() {
         return ZK_PATH;
     }
+
+    @Override
+    public void start() {
+        //在cluster模块初始化30分钟后每10分钟检查一次未被节点消费的任务
+        taskUnsignedListener.scheduleAtFixedRate(() -> {
+            String msg = unsignedTaskMsg();
+            if (null != msg && !msg.trim().isEmpty()) {
+                NodeLog log = new NodeLog();
+                log.setError(msg);
+                log.setTitle("【管理员告警】已发布节点未分配任务列表");
+                log.setType(NodeLog.LogType.TASK_WARNING);
+                NodeLog.upload(log, null);
+            }
+        }, 30, 10 , TimeUnit.MINUTES);
+    }
+
+    /**
+     * 查询所有发布的任务
+     * @return
+     */
+    private List<TaskConfig> deployedTasks() {
+        List<TaskConfig> taskConfigs = new ArrayList<>();
+        List<String> taskIds = client.getChildren(ZK_PATH);
+        for (String id : taskIds) {
+            String dist = ZK_PATH + "/" + id + "/dist";
+            try {
+                Stat stat = client.exists(dist, true);
+                if (null != stat) {
+                    List<String> canals = client.getChildren(dist);
+                    for (String canal:canals) {
+                        Pair<String, Stat> taskContent = client.getData(dist + "/" + canal);
+                        if (null != taskContent.getLeft() && !taskContent.getLeft().isEmpty())
+                            taskConfigs.add(JSONObject.parseObject(taskContent.getLeft(), TaskConfig.class));
+                    }
+                }
+            } catch (Throwable e) {
+                LOGGER.warn("list deployed task error", e);
+            }
+        }
+        return taskConfigs;
+    }
+
+    /**
+     * 查询所有已发布但没有被分配的任务
+     * @return
+     */
+    private String unsignedTaskMsg() {
+        StringBuffer messages = new StringBuffer();
+        List<TaskConfig> taskConfigs = deployedTasks();
+        for (TaskConfig config : taskConfigs) {
+            try {
+                List<SourceConfig> sourceConfigs = SourceConfig.getConfig(config.getConsumer().getSource()).swamlanes();
+                for (SourceConfig source:sourceConfigs) {
+                    String swimlaneLock = ZK_PATH + "/" + config.getTaskId()  + "/lock/" + source.getSwimlaneId();
+                    if (config.getStatus() == TaskStatusType.WORKING
+                            && null == client.exists(swimlaneLock, true)) {
+                        messages.append("预分配节点:").append(config.getNodeId()).append(",任务Id:").append(config.getTaskId())
+                                .append(",泳道Id:").append(source.getSwimlaneId()).append(System.lineSeparator());
+                    }
+                }
+            } catch (Throwable e) {
+                LOGGER.warn("list unsigned swimlane error", e);
+            }
+        }
+        return messages.toString();
+    }
+
 }
