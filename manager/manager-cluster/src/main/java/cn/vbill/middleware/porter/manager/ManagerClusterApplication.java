@@ -20,8 +20,13 @@ package cn.vbill.middleware.porter.manager;
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ConfigurableApplicationContext;
+
+import cn.vbill.middleware.porter.common.cluster.ClusterProviderProxy;
+import cn.vbill.middleware.porter.manager.config.ManagerConfig;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -37,7 +42,20 @@ public class ManagerClusterApplication {
     private static final Logger LOGGER = LoggerFactory.getLogger(ManagerClusterApplication.class);
 
     public static void main(String[] args) throws Exception {
-        SpringApplication.run(ManagerClusterApplication.class, args);
+        SpringApplication app = new SpringApplication(ManagerClusterApplication.class);
+        app.setBannerMode(Banner.Mode.OFF);
+        ConfigurableApplicationContext context = app.run(args);
         LOGGER.info("ManagerClusterApplication is success!");
+        // 注入spring工具类
+        ManagerContext.INSTANCE.setApplicationContext(context);
+        // 获取配置
+        ManagerConfig config = context.getBean(ManagerConfig.class);
+        try {
+            ClusterProviderProxy.INSTANCE.initialize(config.getCluster());
+        } catch (Exception e) {
+            ClusterProviderProxy.INSTANCE.stop();
+            LOGGER.error("集群模块初始化失败, 数据收集退出!error:" + e.getMessage());
+            throw new RuntimeException("集群模块初始化失败, 数据收集退出!error:" + e.getMessage());
+        }
     }
 }
