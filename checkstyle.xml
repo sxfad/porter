@@ -280,11 +280,11 @@
         <module name="StringLiteralEquality"> </module>
         <!--  if-else嵌套语句个数 最多3层  -->
         <module name="NestedIfDepth">
-            <property name="max" value="3"/>
+            <property name="max" value="10"/>
         </module>
         <!--  try-catch 嵌套语句个数 最多2层  -->
         <module name="NestedTryDepth">
-            <property name="max" value="2"/>
+            <property name="max" value="5"/>
         </module>
         <!--  返回个数  -->
         <module name="ReturnCount">

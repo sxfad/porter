@@ -68,8 +68,9 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements Z
     private static final Pattern TASK_DIST_PATTERN = Pattern.compile(ZK_PATH + "/.*/dist/.*");
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ZKClusterTaskListener.class);
-    //未分配任务定时检查
+    // 未分配任务定时检查
     private final ScheduledExecutorService taskUnsignedListener = Executors.newSingleThreadScheduledExecutor();
+
     @Override
     public String listenPath() {
         return ZK_PATH;
@@ -195,7 +196,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements Z
 
     @Override
     public void start() {
-        //在cluster模块初始化30分钟后每10分钟检查一次未被节点消费的任务
+        // 在cluster模块初始化30分钟后每10分钟检查一次未被节点消费的任务
         taskUnsignedListener.scheduleAtFixedRate(() -> {
             String msg = unsignedTaskMsg();
             if (null != msg && !msg.trim().isEmpty()) {
@@ -205,11 +206,12 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements Z
                 log.setType(NodeLog.LogType.TASK_WARNING);
                 NodeLog.upload(log, null);
             }
-        }, 30, 10 , TimeUnit.MINUTES);
+        }, 30, 10, TimeUnit.MINUTES);
     }
 
     /**
      * 查询所有发布的任务
+     * 
      * @return
      */
     private List<TaskConfig> deployedTasks() {
@@ -221,7 +223,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements Z
                 Stat stat = client.exists(dist, true);
                 if (null != stat) {
                     List<String> canals = client.getChildren(dist);
-                    for (String canal:canals) {
+                    for (String canal : canals) {
                         Pair<String, Stat> taskContent = client.getData(dist + "/" + canal);
                         if (null != taskContent.getLeft() && !taskContent.getLeft().isEmpty())
                             taskConfigs.add(JSONObject.parseObject(taskContent.getLeft(), TaskConfig.class));
@@ -236,6 +238,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements Z
 
     /**
      * 查询所有已发布但没有被分配的任务
+     * 
      * @return
      */
     private String unsignedTaskMsg() {
@@ -244,10 +247,9 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements Z
         for (TaskConfig config : taskConfigs) {
             try {
                 List<SourceConfig> sourceConfigs = SourceConfig.getConfig(config.getConsumer().getSource()).swamlanes();
-                for (SourceConfig source:sourceConfigs) {
-                    String swimlaneLock = ZK_PATH + "/" + config.getTaskId()  + "/lock/" + source.getSwimlaneId();
-                    if (config.getStatus() == TaskStatusType.WORKING
-                            && null == client.exists(swimlaneLock, true)) {
+                for (SourceConfig source : sourceConfigs) {
+                    String swimlaneLock = ZK_PATH + "/" + config.getTaskId() + "/lock/" + source.getSwimlaneId();
+                    if (config.getStatus() == TaskStatusType.WORKING && null == client.exists(swimlaneLock, true)) {
                         messages.append("预分配节点:").append(config.getNodeId()).append(",任务Id:").append(config.getTaskId())
                                 .append(",泳道Id:").append(source.getSwimlaneId()).append(System.lineSeparator());
                     }

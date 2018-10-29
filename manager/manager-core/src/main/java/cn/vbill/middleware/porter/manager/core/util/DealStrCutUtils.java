@@ -35,7 +35,8 @@ public class DealStrCutUtils {
      */
     public static List<String> getSubUtil(String soap, String rgex) {
         List<String> list = new ArrayList<String>();
-        Pattern pattern = Pattern.compile(rgex);// 匹配的模式
+        // 匹配的模式
+        Pattern pattern = Pattern.compile(rgex);
         Matcher m = pattern.matcher(soap);
         while (m.find()) {
             int i = 1;
@@ -53,7 +54,8 @@ public class DealStrCutUtils {
      * @return
      */
     public static String getSubUtilSimple(String soap, String rgex) {
-        Pattern pattern = Pattern.compile(rgex);// 匹配的模式
+        // 匹配的模式
+        Pattern pattern = Pattern.compile(rgex);
         Matcher m = pattern.matcher(soap);
         while (m.find()) {
             return m.group(1);

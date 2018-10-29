@@ -219,11 +219,13 @@ public class JobTasksController {
      * @param jobTasks
      * @return
      */
-    @PostMapping("/dealspecialjson")
+    @PostMapping(value = "/dealspecialjson")
     @ApiOperation(value = "解析字符串", notes = "解析字符串")
-    public ResponseMessage dealSpecialJson(@RequestBody String jobXmlText) {
-        String jobJosnText = jobTasksService.dealSpecialJson(jobXmlText);
-        return ok(jobJosnText);
+    public ResponseMessage dealSpecialJson(String jobXmlText) {
+        System.out.println(jobXmlText);
+        //java.net.URLEncoder.encode(name,"UTF-8");
+        //String jobJosnText = jobTasksService.dealSpecialJson(jobTasks.getJobXmlText());
+        return ok(null);
     }
 
     /**

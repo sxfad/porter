@@ -17,6 +17,29 @@
 
 package cn.vbill.middleware.porter.manager.service.impl;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.UUID;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.bind.PropertiesConfigurationFactory;
+import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.env.PropertiesPropertySource;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindException;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+
 import cn.vbill.middleware.porter.common.alert.AlertReceiver;
 import cn.vbill.middleware.porter.common.config.DataConsumerConfig;
 import cn.vbill.middleware.porter.common.config.DataLoaderConfig;
@@ -51,23 +74,6 @@ import cn.vbill.middleware.porter.manager.service.JobTasksService;
 import cn.vbill.middleware.porter.manager.service.JobTasksTableService;
 import cn.vbill.middleware.porter.manager.service.JobTasksUserService;
 import cn.vbill.middleware.porter.manager.web.page.Page;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
 
 /**
  * 同步任务表 服务实现类
@@ -440,11 +446,21 @@ public class JobTasksServiceImpl implements JobTasksService {
     @Override
     public String dealSpecialJson(String jobXmlText) {
         String jobJsonText = null;
+        TaskConfig config = new TaskConfig();
         try {
-            Properties pt = new Properties();
-            pt.load(new ByteArrayInputStream(jobXmlText.getBytes()));
-
+            Properties properties = new Properties();
+            properties.load(new ByteArrayInputStream(jobXmlText.getBytes()));
+            PropertiesConfigurationFactory<TaskConfig> factory = new PropertiesConfigurationFactory<>(config);
+            MutablePropertySources sources = new MutablePropertySources();
+            sources.addFirst(new PropertiesPropertySource(UUID.randomUUID().toString(), properties));
+            factory.setPropertySources(sources);
+            factory.setTargetName("porter.task[0]");
+            factory.bindPropertiesToTarget();
+            jobJsonText = JSONObject.toJSONString(config);
+            System.out.println(jobJsonText);
         } catch (IOException e) {
+            logger.error("解析jobXmlText失败，请注意！！", e);
+        } catch (BindException e) {
             logger.error("解析jobXmlText失败，请注意！！", e);
         }
         return jobJsonText;
