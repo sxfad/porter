@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import cn.vbill.middleware.porter.common.cluster.ClusterListenerFilter;
 import cn.vbill.middleware.porter.common.cluster.event.ClusterEvent;
+import cn.vbill.middleware.porter.common.cluster.event.EventType;
 import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterEvent;
 import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListener;
 import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListenerFilter;
@@ -48,7 +49,10 @@ public class ZKClusterLockServiceImpl extends ZookeeperClusterListener implement
         String zkPath = zkEvent.getPath();
         LOGGER.debug("TaskListener:{},{},{}", zkEvent.getPath(), zkEvent.getData(), zkEvent.getEventType());
         if (NODE_LOCK_PATTERN.matcher(zkPath).matches()) {
-            System.out.println(zkPath);
+            System.out.println(zkPath + "-" + zkEvent.getEventType());
+            if (zkEvent.getEventType() == EventType.OFFLINE) {
+                this.countDownLatch.countDown();
+            }
         }
     }
 
