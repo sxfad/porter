@@ -30,6 +30,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+/**
+ * 
+ * @author guohongjian[guo_hj@suixingpay.com]
+ *
+ */
 public class SqlTimestampConverter implements Converter {
     /**
      * Field description

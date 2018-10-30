@@ -48,6 +48,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 
+ * @author guohongjian[guo_hj@suixingpay.com]
+ *
+ */
 public class DdlUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DdlUtils.class);
