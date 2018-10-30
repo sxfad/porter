@@ -17,6 +17,7 @@
 
 package cn.vbill.middleware.porter.common.cluster;
 
+import cn.vbill.middleware.porter.common.client.DistributedLock;
 import cn.vbill.middleware.porter.common.config.ClusterConfig;
 import cn.vbill.middleware.porter.common.task.TaskEventListener;
 import cn.vbill.middleware.porter.common.cluster.command.ClusterCommand;
@@ -85,5 +86,13 @@ public enum ClusterProviderProxy {
      */
     public void addTaskListener(TaskEventListener listener) {
         provider.addTaskEventListener(listener);
+    }
+
+    /**
+     * 分布式锁功能实现
+     * @return
+     */
+    public DistributedLock getLock() {
+        return provider.getLock();
     }
 }

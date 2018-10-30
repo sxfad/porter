@@ -11,21 +11,24 @@ package cn.vbill.middleware.porter.common.client.impl;
 
 import cn.vbill.middleware.porter.common.client.DistributedLock;
 import cn.vbill.middleware.porter.common.cluster.ClusterListenerFilter;
+import cn.vbill.middleware.porter.common.cluster.ClusterProviderProxy;
 import cn.vbill.middleware.porter.common.cluster.event.ClusterEvent;
 import cn.vbill.middleware.porter.common.cluster.event.EventType;
 import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterEvent;
 import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListener;
 import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListenerFilter;
+import cn.vbill.middleware.porter.common.config.ClusterConfig;
+import cn.vbill.middleware.porter.common.dic.ClusterPlugin;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.BiFunction;
 import java.util.regex.Pattern;
 
 /**
@@ -132,24 +135,16 @@ public class ZookeeperDistributedLock extends ZookeeperClusterListener implement
         }
     }
 
+    @SneakyThrows(InterruptedException.class)
     private void lock(String resource, boolean interruptibly) {
         if (!getSignal(resource)) {
-            LATCH.computeIfAbsent(resource, key -> {
-                return new CountDownLatch(1);
-            });
-            LATCH.computeIfPresent(resource, new BiFunction<String, CountDownLatch, CountDownLatch>() {
-                @Override
-                @SneakyThrows(InterruptedException.class)
-                public CountDownLatch apply(String s, CountDownLatch latch) {
-                    try {
-                        latch.await();
-                    } catch (InterruptedException e) {
-                        if (interruptibly) throw e;
-                    }
-                    lock(resource, interruptibly);
-                    return latch;
-                }
-            });
+            LATCH.computeIfAbsent(resource, key -> new CountDownLatch(1));
+            try {
+                LATCH.get(resource).await();
+            } catch (InterruptedException e) {
+                if (interruptibly) throw e;
+            }
+            lock(resource, interruptibly);
         }
     }
 
@@ -178,11 +173,28 @@ public class ZookeeperDistributedLock extends ZookeeperClusterListener implement
         String resourcePath = LOCK_ROOT + resource;
         boolean locked = false;
         try {
-            locked = !client.isExists(resourcePath, true) && null != client.create(resourcePath, true,
-                    Thread.currentThread().getId() + "");
+            locked = (!client.isExists(resourcePath, false) && null != client.create(resourcePath, true,
+                    Thread.currentThread().getId() + "")) ||
+                    (client.isExists(resourcePath, false) &&
+                            client.getData(resourcePath).getLeft().equals(Thread.currentThread().getId() + ""));
         } catch (Throwable e) {
             locked = false;
         }
         return locked;
+    }
+
+
+    public static void main(String[] args) throws Exception {
+        Map<String, String> source = new HashMap<>();
+        source.put("url", "172.16.154.5:2181,172.16.154.6:2181,172.16.154.7:2181");
+        ClusterConfig clusterConfig = new ClusterConfig();
+        clusterConfig.setClient(source);
+        clusterConfig.setStrategy(ClusterPlugin.ZOOKEEPER);
+        ClusterProviderProxy.INSTANCE.initialize(clusterConfig);
+        ClusterProviderProxy.INSTANCE.getLock().lock("1");
+        //重入锁
+        ClusterProviderProxy.INSTANCE.getLock().lock("1");
+        System.out.println("------------------locked--------------");
+        ClusterProviderProxy.INSTANCE.getLock().unlock("1");
     }
 }
