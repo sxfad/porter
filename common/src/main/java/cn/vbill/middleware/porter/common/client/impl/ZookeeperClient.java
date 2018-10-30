@@ -20,6 +20,7 @@ package cn.vbill.middleware.porter.common.client.impl;
 import cn.vbill.middleware.porter.common.client.AbstractClient;
 import cn.vbill.middleware.porter.common.client.ClusterClient;
 import cn.vbill.middleware.porter.common.client.StatisticClient;
+import cn.vbill.middleware.porter.common.client.SupportDistributedLock;
 import cn.vbill.middleware.porter.common.config.source.ZookeeperConfig;
 import lombok.Setter;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -43,7 +44,7 @@ import java.util.List;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月02日 15:37
  */
-public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements ClusterClient<Stat>, StatisticClient {
+public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements ClusterClient<Stat>, StatisticClient, SupportDistributedLock {
     private volatile ZooKeeper zk;
     @Setter private volatile Watcher watcher;
     private volatile StatisticClient statisticClient;
@@ -58,10 +59,12 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
     protected void doStart() throws IOException {
         ZookeeperConfig config = getConfig();
         zk = new ZooKeeper(config.getUrl(), config.getSessionTimeout(), watcher);
-        try {
-            statisticClient.start();
-        } catch (Throwable e) {
-            LOGGER.warn("启动StatisticClient出错", e);
+        if (null != statisticClient) {
+            try {
+                statisticClient.start();
+            } catch (Throwable e) {
+                LOGGER.warn("启动StatisticClient出错", e);
+            }
         }
     }
 
@@ -70,10 +73,12 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
         if (null != zk) {
             zk.close();
         }
-        try {
-            statisticClient.shutdown();
-        } catch (Throwable e) {
-            LOGGER.warn("关闭StatisticClient出错", e);
+        if (null != statisticClient) {
+            try {
+                statisticClient.shutdown();
+            } catch (Throwable e) {
+                LOGGER.warn("关闭StatisticClient出错", e);
+            }
         }
     }
 

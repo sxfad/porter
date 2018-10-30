@@ -18,6 +18,8 @@
 package cn.vbill.middleware.porter.common.cluster.impl.standalone;
 
 import cn.vbill.middleware.porter.common.client.Client;
+import cn.vbill.middleware.porter.common.client.ClusterClient;
+import cn.vbill.middleware.porter.common.client.DistributedLock;
 import cn.vbill.middleware.porter.common.client.impl.FileClient;
 import cn.vbill.middleware.porter.common.cluster.ClusterMonitor;
 import cn.vbill.middleware.porter.common.cluster.impl.AbstractClusterProvider;
@@ -52,5 +54,10 @@ public class StandaloneProvider extends AbstractClusterProvider {
     @Override
     protected Client initClient(ClusterConfig clusterConfig) throws ConfigParseException {
         return new FileClient(new FileOperationConfig(clusterConfig.getClient()).stuff());
+    }
+
+    @Override
+    protected DistributedLock initiateLock(ClusterClient client) {
+        throw new UnsupportedOperationException();
     }
 }

@@ -19,6 +19,7 @@ package cn.vbill.middleware.porter.common.cluster.impl;
 
 import cn.vbill.middleware.porter.common.client.Client;
 import cn.vbill.middleware.porter.common.client.ClusterClient;
+import cn.vbill.middleware.porter.common.client.DistributedLock;
 import cn.vbill.middleware.porter.common.cluster.ClusterListener;
 import cn.vbill.middleware.porter.common.cluster.ClusterMonitor;
 import cn.vbill.middleware.porter.common.cluster.ClusterProvider;
@@ -106,6 +107,7 @@ public abstract class AbstractClusterProvider<C extends Client> implements Clust
 
     private C client;
     private ClusterMonitor monitor;
+    private DistributedLock lock;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractClusterProvider.class);
 
@@ -243,10 +245,23 @@ public abstract class AbstractClusterProvider<C extends Client> implements Clust
             listener.setClient(client);
             monitor.addListener(listener);
         });
+        //初始化集群分布式锁功能
+        lock = initiateLock((ClusterClient) client);
+        if (null != lock && lock instanceof ClusterListener) {
+            monitor.addListener((ClusterListener) lock);
+        }
     }
+
+    protected abstract DistributedLock initiateLock(ClusterClient client);
 
     @Override
     public boolean available() {
         return null != client && client.isAlive();
+    }
+
+    @Override
+    public DistributedLock getLock() {
+        if (null == lock) new UnsupportedOperationException("分布式锁功能未提供");
+        return lock;
     }
 }
