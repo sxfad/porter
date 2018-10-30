@@ -40,8 +40,8 @@ public class ZookeeperDistributedLock extends ZookeeperClusterListener implement
     private static final String LOCK_ROOT = ZK_PATH + "/";
     private static final Pattern NODE_LOCK_PATTERN = Pattern.compile(LOCK_ROOT + ".*");
 
-    private static final Map<String, CountDownLatch> LATCH =new ConcurrentHashMap<>();
-    private static final Map<String, AtomicLong> LATCH_WAIT_COUNT =new ConcurrentHashMap<>();
+    private static final Map<String, CountDownLatch> LATCH = new ConcurrentHashMap<>();
+    private static final Map<String, AtomicLong> LATCH_WAIT_COUNT = new ConcurrentHashMap<>();
 
     private final ZookeeperClient client;
 
