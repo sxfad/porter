@@ -17,6 +17,8 @@
 
 package cn.vbill.middleware.porter.common.client;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年10月30日 11:15
@@ -24,4 +26,9 @@ package cn.vbill.middleware.porter.common.client;
  * @review: zkevin/2018年10月30日 11:15
  */
 public interface DistributedLock {
+    void lock(String resource);
+    void lockInterruptibly(String resource) throws InterruptedException;
+    boolean tryLock(String resource);
+    boolean tryLock(String resource, long time, TimeUnit unit) throws InterruptedException;
+    void unlock(String resource);
 }
