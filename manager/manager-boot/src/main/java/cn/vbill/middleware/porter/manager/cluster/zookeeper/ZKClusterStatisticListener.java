@@ -99,8 +99,8 @@ public class ZKClusterStatisticListener extends ZookeeperClusterListener {
                     } else {
                         LOGGER.info("3-TaskPerformance....." + JSON.toJSON(performance));
                         // do something
-                        // 任务泳道实时监控表 服务接口类
                         try {
+                            // 任务泳道实时监控表 服务接口类
                             MrJobTasksMonitorService mrJobTasksMonitorService = ApplicationContextUtil
                                     .getBean(MrJobTasksMonitorServiceImpl.class);
                             mrJobTasksMonitorService.dealTaskPerformance(performance);

@@ -17,6 +17,11 @@
 
 package cn.vbill.middleware.porter.common.db;
 
+/**
+ * 
+ * @author guohongjian[guo_hj@suixingpay.com]
+ *
+ */
 public class SqlTemplateImpl implements SqlTemplate {
 
     private static final String DOT = ".";
