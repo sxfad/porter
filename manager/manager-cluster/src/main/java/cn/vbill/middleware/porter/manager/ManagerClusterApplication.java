@@ -24,6 +24,8 @@ import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.kafka.annotation.EnableKafka;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import cn.vbill.middleware.porter.common.cluster.ClusterProviderProxy;
 import cn.vbill.middleware.porter.manager.config.ManagerConfig;
@@ -35,6 +37,8 @@ import cn.vbill.middleware.porter.manager.config.ManagerConfig;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月15日 14:09
  */
 
+@EnableScheduling
+@EnableKafka
 @SpringBootApplication
 @MapperScan("cn.vbill.middleware.porter.manager.core.mapper")
 public class ManagerClusterApplication {
