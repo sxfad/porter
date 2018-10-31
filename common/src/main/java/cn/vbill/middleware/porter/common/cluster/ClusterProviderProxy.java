@@ -17,14 +17,16 @@
 
 package cn.vbill.middleware.porter.common.cluster;
 
-import cn.vbill.middleware.porter.common.config.ClusterConfig;
-import cn.vbill.middleware.porter.common.task.TaskEventListener;
-import cn.vbill.middleware.porter.common.cluster.command.ClusterCommand;
-import cn.vbill.middleware.porter.common.util.compile.JavaFileCompiler;
-import org.springframework.core.io.support.SpringFactoriesLoader;
-
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import org.springframework.core.io.support.SpringFactoriesLoader;
+
+import cn.vbill.middleware.porter.common.client.DistributedLock;
+import cn.vbill.middleware.porter.common.cluster.command.ClusterCommand;
+import cn.vbill.middleware.porter.common.config.ClusterConfig;
+import cn.vbill.middleware.porter.common.task.TaskEventListener;
+import cn.vbill.middleware.porter.common.util.compile.JavaFileCompiler;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -49,7 +51,8 @@ public enum ClusterProviderProxy {
      */
     public void initialize(ClusterConfig config) throws Exception {
         if (isConfig.compareAndSet(false, true)) {
-            List<ClusterProvider> providers = SpringFactoriesLoader.loadFactories(ClusterProvider.class, JavaFileCompiler.getInstance());
+            List<ClusterProvider> providers = SpringFactoriesLoader.loadFactories(ClusterProvider.class,
+                    JavaFileCompiler.getInstance());
 
             for (ClusterProvider tmp : providers) {
                 if (tmp.matches(config.getStrategy())) {
@@ -85,5 +88,9 @@ public enum ClusterProviderProxy {
      */
     public void addTaskListener(TaskEventListener listener) {
         provider.addTaskEventListener(listener);
+    }
+
+    public DistributedLock getLock() {
+        return provider.getLock();
     }
 }

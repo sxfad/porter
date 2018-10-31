@@ -22,6 +22,7 @@ import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSONObject;
 
+import cn.vbill.middleware.porter.common.cluster.ClusterProviderProxy;
 import cn.vbill.middleware.porter.common.statistics.TaskPerformance;
 import cn.vbill.middleware.porter.manager.service.MrJobTasksMonitorService;
 import cn.vbill.middleware.porter.manager.service.MrNodesMonitorService;
@@ -41,7 +42,6 @@ public class TaskPerKafkaListener {
 
     @KafkaListener(topics = "${spring.kafka.consumer.topics}")
     public void processMessage(String content) {
-
         TaskPerformance performance = JSONObject.parseObject(content, TaskPerformance.class);
         // 任务泳道实时监控表 服务接口类
         mrJobTasksMonitorService.dealTaskPerformance(performance);
