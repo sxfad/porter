@@ -56,7 +56,7 @@ public class ZookeeperDistributedLock extends ZookeeperClusterListener implement
         LOGGER.info("TaskListener:{},{},{}", zkEvent.getPath(), zkEvent.getData(), zkEvent.getEventType());
         if (NODE_LOCK_PATTERN.matcher(zkPath).matches()) {
             if (zkEvent.getEventType() == EventType.OFFLINE) {
-                // 获取锁资源
+                //获取锁资源
                 String resource = zkPath.replace(LOCK_ROOT, "");
                 LATCH.computeIfPresent(resource, (key, latch) -> {
                     latch.countDown();
@@ -73,7 +73,6 @@ public class ZookeeperDistributedLock extends ZookeeperClusterListener implement
             protected String getPath() {
                 return listenPath();
             }
-
             @Override
             protected boolean doFilter(ZookeeperClusterEvent event) {
                 return true;
@@ -81,10 +80,13 @@ public class ZookeeperDistributedLock extends ZookeeperClusterListener implement
         };
     }
 
+
+
     @Override
     public String listenPath() {
         return ZK_PATH;
     }
+
 
     public void lock(String resource) {
         tagResource(resource);
@@ -94,6 +96,7 @@ public class ZookeeperDistributedLock extends ZookeeperClusterListener implement
             clearResourceTag(resource);
         }
     }
+
 
     public void lockInterruptibly(String resource) throws InterruptedException {
         tagResource(resource);
@@ -122,9 +125,9 @@ public class ZookeeperDistributedLock extends ZookeeperClusterListener implement
 
     public void unlock(String resource) {
         String resourcePath = LOCK_ROOT + resource;
-        // 判断是否存在锁，并且为当前线程所占
-        if (client.isExists(resourcePath, true)
-                && client.getData(resourcePath).getLeft().equals(Thread.currentThread().getId() + "")) {
+        //判断是否存在锁，并且为当前线程所占
+        if (client.isExists(resourcePath, true) &&
+                client.getData(resourcePath).getLeft().equals(Thread.currentThread().getId() + "")) {
             client.delete(resourcePath);
         }
     }
@@ -141,8 +144,7 @@ public class ZookeeperDistributedLock extends ZookeeperClusterListener implement
                     try {
                         latch.await();
                     } catch (InterruptedException e) {
-                        if (interruptibly)
-                            throw e;
+                        if (interruptibly) throw e;
                     }
                     lock(resource, interruptibly);
                     return latch;
@@ -158,7 +160,6 @@ public class ZookeeperDistributedLock extends ZookeeperClusterListener implement
             return value;
         });
     }
-
     private void clearResourceTag(String resource) {
         LATCH_WAIT_COUNT.computeIfPresent(resource, (key, value) -> {
             value.decrementAndGet();
@@ -177,8 +178,8 @@ public class ZookeeperDistributedLock extends ZookeeperClusterListener implement
         String resourcePath = LOCK_ROOT + resource;
         boolean locked = false;
         try {
-            locked = !client.isExists(resourcePath, true)
-                    && null != client.create(resourcePath, true, Thread.currentThread().getId() + "");
+            locked = !client.isExists(resourcePath, true) && null != client.create(resourcePath, true,
+                    Thread.currentThread().getId() + "");
         } catch (Throwable e) {
             locked = false;
         }
