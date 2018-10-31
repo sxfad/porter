@@ -40,7 +40,7 @@ public class SqlTimestampConverter implements Converter {
      * Field description
      */
     public static final String[] DATE_FORMATS = new String[] {"yyyy-MM-dd", "HH:mm:ss", "yyyy-MM-dd HH:mm:ss",
-        "yyyy-MM-dd hh:mm:ss.fffffffff", "EEE MMM dd HH:mm:ss zzz yyyy",
+        "yyyy-MM-dd:HH:mm:ss", "EEE MMM dd HH:mm:ss zzz yyyy",
         DateFormatUtils.ISO_DATETIME_FORMAT.getPattern(), DateFormatUtils.ISO_DATETIME_TIME_ZONE_FORMAT.getPattern(),
         DateFormatUtils.SMTP_DATETIME_FORMAT.getPattern()};
 
