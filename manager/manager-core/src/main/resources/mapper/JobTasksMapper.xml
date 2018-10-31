@@ -177,7 +177,7 @@
         SET
         job_state = #{code}
         where
-        id = #{id}
+        id = #{id} AND job_state != #{code}
     </update>
 
     <!-- 修改 -->
