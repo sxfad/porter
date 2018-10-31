@@ -41,7 +41,6 @@ public class TaskPerKafkaListener {
 
     @KafkaListener(topics = "${spring.kafka.consumer.topics}")
     public void processMessage(String content) {
-
         TaskPerformance performance = JSONObject.parseObject(content, TaskPerformance.class);
         // 任务泳道实时监控表 服务接口类
         mrJobTasksMonitorService.dealTaskPerformance(performance);
