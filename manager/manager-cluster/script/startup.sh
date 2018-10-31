@@ -1,8 +1,5 @@
 #!/usr/bin/env sh
 
-# zhangkewei
-# 后台启动脚本
-
 PRG="$0"
 PRGDIR=`dirname "$PRG"`
 EXECUTABLE=manager-cluster
