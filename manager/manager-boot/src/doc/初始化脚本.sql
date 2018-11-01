@@ -438,6 +438,8 @@ INSERT INTO `c_menu` VALUES (15, 'C001001', 'C001', '用户管理', '/user', 'fa
     -- ogg管理模块新增
 INSERT INTO `c_menu` VALUES (18, 'O001', '-1', 'OGG管理', '#', 'fa-legal', 1, 6, 0, 0, 1, 1, NULL);
 INSERT INTO `c_menu` VALUES (19, 'O001001', 'O001', '表名查询', '/oggTables', 'fa-table', 2, 1, 1, 0, 1, 1, NULL);
+    -- 新增本地任务抓取
+INSERT INTO `c_menu` VALUES (20, 'J001002', 'J001', '本地任务', '/specialTask', 'fa-tasks', 2, 2, 1, 0, 1, 1, NULL);
 -- 初始化菜单权限
 INSERT INTO `c_role_menu` VALUES (1, 'A0002', 'F001');
 INSERT INTO `c_role_menu` VALUES (2, 'A0002', 'J001');
@@ -468,7 +470,8 @@ INSERT INTO `c_role_menu` VALUES (25, 'B0001', 'O001');
 INSERT INTO `c_role_menu` VALUES (26, 'B0001', 'O001001');
 INSERT INTO `c_role_menu` VALUES (27, 'C0001', 'O001');
 INSERT INTO `c_role_menu` VALUES (28, 'C0001', 'O001001');
-
+    -- 新增本地任务
+INSERT INTO `c_role_menu` VALUES (29, 'A0002', 'J001002');
 -- 初始化告警数据字典
 INSERT  INTO `d_alarm_plugin`(`id`,`alert_type`,`field_name`,`field_code`,`field_order`,`field_type`,`field_type_key`,`state`,`iscancel`,`remark`) VALUES
 (1,'EMAIL','邮件服务器','host',2,'TEXT',NULL,1,0,NULL),
