@@ -71,6 +71,7 @@
 
 ```
 	指定分布式集群的实现策略 
+	候选项:ZOOKEEPER、STANDALONE
 	eg.
 		porter.cluster.strategy=ZOOKEEPER
 ```
@@ -79,6 +80,7 @@
 
 ```
 	集群连接参数
+	ZOOKEEPER模式参数
 	eg.
 		porter.cluster.client.url=127.0.0.1:2181
 ```
@@ -87,8 +89,18 @@
 
 ```
 	集群连接超时时间
+	ZOOKEEPER模式参数
 	eg.
 		porter.cluster.client.sessionTimeout=超时时间，单位为毫秒。
+```
+
+- porter.cluster.client.home
+
+```
+	元信息存储目录
+	STANDALONE模式参数
+	eg.
+		porter.cluster.client.home=路径
 ```
 
 ## 告警
@@ -102,6 +114,7 @@
 
 ```
 	指定告警方式
+	候选项:EMAIL、NONE
 	eg.
 		porter.alert.strategy=EMAIL
 ```
@@ -277,6 +290,7 @@
 	porter.task[0].consumer.source.topics=主题
 	porter.task[0].consumer.source.group=消费分组
 	porter.task[0].consumer.source.autoCommit=true|false
+	porter.task[0].consumer.source.partition=分区,默认0(3.0新增)
 	
 ```
 
@@ -406,4 +420,3 @@
 	字段映射,可不配置。
 	porter.task[index].mapper[下标].column.源端字段名=目标端字段名
 ```
-	

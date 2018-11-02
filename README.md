@@ -33,7 +33,7 @@ Porter始于2017年，提供数据同步功能，但并不仅仅局限于数据�
 ### 从源码编译
 ```
 git clone https://github.com/sxfad/porter.git
-cd vbill-proter
+cd proter
 git checkout 版本
 gradle build
 从build/distributions目录查找安装包
@@ -43,11 +43,16 @@ gradle build
 [配置文档](https://github.com/sxfad/porter/blob/master/doc/profiles.md)
 
 ```
-	node.id=节点编号，在集群中唯一
-	#集群配置
-	node.cluster.strategy=ZOOKEEPER
-	node.cluster.client.url=127.0.0.1:2181
-	node.cluster.client.sessionTimeout=100000	
+porter.id=节点编号，在集群中唯一
+
+#集群配置
+porter.cluster.strategy=ZOOKEEPER
+porter.cluster.client.url=127.0.0.1:2181
+porter.cluster.client.sessionTimeout=100000
+
+#单机配置
+porter.cluster.strategy=STANDALONE
+porter.cluster.client.home=./.porter
 ```
 
 ### 运行
@@ -75,7 +80,6 @@ porter-boot-版本/bin/shutdown.sh
 + [英文文档](./doc/document_EN.md)
 
 ## 架构设计
-
 ![架构设计](doc/img/architecture.png)
 ![数据流](doc/img/workflow.png)
 
@@ -88,5 +92,3 @@ porter-boot-版本/bin/shutdown.sh
 ## 联系我们
 
 * QQ群：835209101
-
-

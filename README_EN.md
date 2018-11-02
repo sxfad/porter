@@ -33,7 +33,7 @@ Porter began in 2017 and provides data synchronization, but it's not just limite
 ### Compile from source
 ```
 git clone https://github.com/sxfad/porter.git
-cd vbill-proter
+cd proter
 git checkout version
 gradle build
 Find the installation package from the build/distributions list
@@ -43,11 +43,15 @@ Find the installation package from the build/distributions list
 [configuration document](https://github.com/sxfad/porter/blob/master/doc/profiles.md)
 
 ```
-	node.id=unique id
-	#cluser
-	node.cluster.strategy=ZOOKEEPER
-	node.cluster.client.url=127.0.0.1:2181
-	node.cluster.client.sessionTimeout=100000	
+porter.id=unique id
+#cluser
+porter.cluster.strategy=ZOOKEEPER
+porter.cluster.client.url=127.0.0.1:2181
+porter.cluster.client.sessionTimeout=100000
+
+#standalone
+porter.cluster.strategy=STANDALONE
+porter.cluster.client.home=./.porter
 ```
 
 ### Run
@@ -75,7 +79,6 @@ porter-boot-version/bin/shutdown.sh
 + [English document](./doc/document_EN.md)
 
 ## Architecture
-
 ![architecture_design](doc/img/architecture.png)
 ![dataflow](doc/img/workflow.png)
 
@@ -89,5 +92,3 @@ porter-boot-version/bin/shutdown.sh
 ## Contact Us
 
 * QQ group：835209101
-
-
