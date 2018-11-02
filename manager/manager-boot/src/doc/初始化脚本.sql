@@ -439,7 +439,7 @@ INSERT INTO `c_menu` VALUES (15, 'C001001', 'C001', '用户管理', '/user', 'fa
 INSERT INTO `c_menu` VALUES (18, 'O001', '-1', 'OGG管理', '#', 'fa-legal', 1, 6, 0, 0, 1, 1, NULL);
 INSERT INTO `c_menu` VALUES (19, 'O001001', 'O001', '表名查询', '/oggTables', 'fa-table', 2, 1, 1, 0, 1, 1, NULL);
     -- 新增本地任务抓取
-INSERT INTO `c_menu` VALUES (20, 'J001002', 'J001', '本地任务', '/specialTask', 'fa-tasks', 2, 2, 1, 0, 1, 1, NULL);
+INSERT INTO `c_menu` VALUES (20, 'J001002', 'J001', '本地任务', '/specialTask', 'fa-tags', 2, 2, 1, 0, 1, 1, NULL);
 -- 初始化菜单权限
 INSERT INTO `c_role_menu` VALUES (1, 'A0002', 'F001');
 INSERT INTO `c_role_menu` VALUES (2, 'A0002', 'J001');
