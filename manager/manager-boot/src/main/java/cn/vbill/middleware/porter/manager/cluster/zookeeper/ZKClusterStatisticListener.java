@@ -94,21 +94,24 @@ public class ZKClusterStatisticListener extends ZookeeperClusterListener {
                 // 性能指标数据
                 if (TASK_PATTERN.matcher(zkPath).matches()) {
                     TaskPerformance performance = JSONObject.parseObject(zkEvent.getData(), TaskPerformance.class);
-                    LOGGER.info("3-TaskPerformance....." + JSON.toJSON(performance));
-                    // do something
-                    // 任务泳道实时监控表 服务接口类
-                    try {
-                        MrJobTasksMonitorService mrJobTasksMonitorService = ApplicationContextUtil
-                                .getBean(MrJobTasksMonitorServiceImpl.class);
-                        mrJobTasksMonitorService.dealTaskPerformance(performance);
-                        // 节点任务实时监控表
-                        MrNodesMonitorService mrNodesMonitorService = ApplicationContextUtil
-                                .getBean(MrNodesMonitorServiceImpl.class);
-                        mrNodesMonitorService.dealTaskPerformance(performance);
-                    } catch (Exception e) {
-                        LOGGER.error("3-TaskPerformance-Error....出错,请追寻...", e);
+                    if (performance == null) {
+                        LOGGER.error("3-TaskPerformance....." + JSON.toJSON(performance));
+                    } else {
+                        LOGGER.info("3-TaskPerformance....." + JSON.toJSON(performance));
+                        // do something
+                        try {
+                            // 任务泳道实时监控表 服务接口类
+                            MrJobTasksMonitorService mrJobTasksMonitorService = ApplicationContextUtil
+                                    .getBean(MrJobTasksMonitorServiceImpl.class);
+                            mrJobTasksMonitorService.dealTaskPerformance(performance);
+                            // 节点任务实时监控表
+                            MrNodesMonitorService mrNodesMonitorService = ApplicationContextUtil
+                                    .getBean(MrNodesMonitorServiceImpl.class);
+                            mrNodesMonitorService.dealTaskPerformance(performance);
+                        } catch (Exception e) {
+                            LOGGER.error("3-TaskPerformance-Error....出错,请追寻...", e);
+                        }
                     }
-
                 }
             } catch (Throwable e) {
                 e.printStackTrace();
@@ -137,6 +140,7 @@ public class ZKClusterStatisticListener extends ZookeeperClusterListener {
 
     @Override
     public void start() {
+        client.createWhenNotExists(ZK_PATH, false, true, null);
         client.createWhenNotExists(ZK_PATH + "/log", false, true, null);
         client.createWhenNotExists(ZK_PATH + "/task", false, true, null);
     }

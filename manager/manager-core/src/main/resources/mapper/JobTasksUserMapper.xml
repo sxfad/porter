@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.vbill.middleware.porter.manager.core.mapper.JobTasksUserMapper">
+    <!-- 通用查询映射结果 
+    <resultMap id="BaseResultMap" type="JobTasksUser">
+        <result column="id" property="id" />
+        <result column="job_task_id" property="jobTaskId" />
+        <result column="user_id" property="userId" />
+    </resultMap>-->
+
+    <!-- 通用查询结果列 
+    <sql id="Base_Column_List">
+        select id, job_task_id AS jobTaskId, user_id AS userId from job_tasks_user
+    </sql>-->
+
+    <!-- 新增 -->
+    <insert id="insert">
+        insert into job_tasks_user(
+        job_task_id,
+        user_id
+        ) values (
+        #{jobTaskId},
+        #{userId}
+        )
+    </insert>
+
+    <!-- 批量新增告警人信息 -->
+    <insert id="insertList">
+        insert into job_tasks_user (
+        job_task_id,
+        user_id
+        ) values
+        <foreach collection="userIds" index="index" item="userId" separator=",">
+            (
+            #{jobTaskId},
+            #{userId}
+            )
+        </foreach>
+    </insert>
+
+    <!-- 修改 -->
+    <update id="update">
+        update job_tasks_user
+        set
+        job_task_id = #{jobTasksUser.jobTaskId},
+        user_id = #{jobTasksUser.userId}
+        where id = #{id}
+    </update>
+
+    <!-- 刪除 -->
+    <delete id="delete">
+        delete from job_tasks_user where job_task_id = #{jobTaskId}
+    </delete>
+
+    <!-- 根据主鍵查找 -->
+    <select id="selectById" resultType="cn.vbill.middleware.porter.manager.core.entity.JobTasksUser">
+        select id, job_task_id AS jobTaskId, user_id AS userId from job_tasks_user
+        where id = #{id}
+    </select>
+
+    <!-- 分页All -->
+    <select id="pageAll" resultType="java.lang.Integer">
+        select count(id) from job_tasks_user
+        where 1=1
+    </select>
+
+    <!-- 分页 -->
+    <select id="page" resultType="cn.vbill.middleware.porter.manager.core.entity.JobTasksUser">
+        select id, job_task_id AS jobTaskId, user_id AS userId from job_tasks_user
+        where 1=1 limit #{page.offset},#{page.pageSize}
+    </select>
+
+    <!-- 验证新增 -->
+    <insert id="insertSelective">
+        insert into job_tasks_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="jobTaskId != null">
+                job_task_id,
+            </if>
+            <if test="userId != null">
+                user_id,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="jobTaskId != null">
+                #{jobTaskId,jdbcType=BIGINT},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=BIGINT},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 验证修改 -->
+    <update id="updateSelective">
+        update job_tasks_user
+        <set>
+            <if test="jobTasksUser.jobTaskId != null">
+                job_task_id = #{jobTasksUser.jobTaskId,jdbcType=BIGINT},
+            </if>
+            <if test="jobTasksUser.userId != null">
+                user_id = #{jobTasksUser.userId,jdbcType=BIGINT},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+</mapper>

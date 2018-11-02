@@ -72,7 +72,7 @@ public class Swagger2Config {
      * @return: springfox.documentation.service.ApiInfo
      */
     private ApiInfo apiInfo() {
-        return new ApiInfoBuilder().title("数据同步中间件接口").contact(new Contact("张科伟", "", "zhang_kw@suixingpay.com"))
-                .version("2.0").description("数据同步中间件接口描述").build();
+        return new ApiInfoBuilder().title("数据同步中间件接口").contact(new Contact("fzz", "", "fu_zz@suixingpay.com"))
+                .version("3.0").description("数据同步中间件接口描述").build();
     }
 }

@@ -21,10 +21,6 @@ import static cn.vbill.middleware.porter.manager.web.message.ResponseMessage.ok;
 
 import java.util.List;
 
-import cn.vbill.middleware.porter.common.cluster.ClusterProviderProxy;
-import cn.vbill.middleware.porter.common.dic.TaskStatusType;
-import cn.vbill.middleware.porter.manager.core.entity.JobTasks;
-import cn.vbill.middleware.porter.manager.service.JobTasksService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,10 +35,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSON;
+
+import cn.vbill.middleware.porter.common.cluster.ClusterProviderProxy;
 import cn.vbill.middleware.porter.common.cluster.command.TaskPushCommand;
+import cn.vbill.middleware.porter.common.dic.TaskStatusType;
+import cn.vbill.middleware.porter.manager.core.entity.JobTasks;
+import cn.vbill.middleware.porter.manager.service.JobTasksService;
 import cn.vbill.middleware.porter.manager.web.message.ResponseMessage;
 import cn.vbill.middleware.porter.manager.web.page.Page;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -107,7 +107,8 @@ public class JobTasksController {
      *
      * @author FuZizheng
      * @date 2018/8/9 下午4:23
-     * @param: [pageNo, pageSize, jobName, beginTime, endTime, jobState, jobType]
+     * @param: [pageNo,
+     *             pageSize, jobName, beginTime, endTime, jobState, jobType]
      * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
      */
     @GetMapping("/page")
@@ -187,6 +188,47 @@ public class JobTasksController {
     }
 
     /**
+     * 新增特殊任务
+     * 
+     * @param jobTasks
+     * @return
+     */
+    @PostMapping("/addspecial")
+    @ApiOperation(value = "新增特殊任务", notes = "新增特殊任务")
+    public ResponseMessage addSpecial(@RequestBody JobTasks jobTasks) {
+        Integer number = jobTasksService.insertZKCapture(jobTasks);
+        return ok(number);
+    }
+
+    /**
+     * 修改特殊任务
+     * 
+     * @param jobTasks
+     * @return
+     */
+    @PutMapping("/updatespecial")
+    @ApiOperation(value = "修改特殊任务", notes = "修改特殊任务")
+    public ResponseMessage updateSpecial(@RequestBody JobTasks jobTasks) {
+        Integer number = jobTasksService.updateZKCapture(jobTasks);
+        return ok(number);
+    }
+
+    /**
+     * 解析特殊配置
+     * 
+     * @param jobTasks
+     * @return
+     */
+    @PostMapping(value = "/dealspecialjson")
+    @ApiOperation(value = "解析字符串", notes = "解析字符串")
+    public ResponseMessage dealSpecialJson(String jobXmlText) {
+        System.out.println(jobXmlText);
+        //java.net.URLEncoder.encode(name,"UTF-8");
+        //String jobJosnText = jobTasksService.dealSpecialJson(jobTasks.getJobXmlText());
+        return ok(null);
+    }
+
+    /**
      * 修改任务状态
      *
      * @throws Exception
@@ -236,4 +278,14 @@ public class JobTasksController {
         }
         return ok(number);
     }
+    
+    /**
+     * 
+     * @return
+     
+    @PostMapping("/addtaskconifg")
+    @ApiOperation(value = "任务", notes = "任务")
+    public ResponseMessage addTaskConifg(@RequestBody TaskConfig taskConfig) {
+        return ok(null);
+    }*/
 }

@@ -17,14 +17,16 @@
 
 package cn.vbill.middleware.porter.manager.cluster.zookeeper;
 
+import cn.vbill.middleware.porter.common.alert.AlertProviderFactory;
 import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterEvent;
-import com.alibaba.fastjson.JSON;
+import cn.vbill.middleware.porter.common.config.AlertConfig;
 import cn.vbill.middleware.porter.common.cluster.ClusterListenerFilter;
 import cn.vbill.middleware.porter.common.cluster.command.ConfigPushCommand;
 import cn.vbill.middleware.porter.common.cluster.command.broadcast.ConfigPush;
 import cn.vbill.middleware.porter.common.cluster.event.ClusterEvent;
 import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListener;
 import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListenerFilter;
+import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -47,7 +49,18 @@ public class ZKClusterConfigListener extends ZookeeperClusterListener implements
 
     @Override
     public void onEvent(ClusterEvent event) {
-        logger.info("1-ZKClusterConfigListener....." + JSON.toJSONString(event));
+        ZookeeperClusterEvent zkEvent = (ZookeeperClusterEvent) event;
+        logger.info("集群配置参数监听:{},{},{}", zkEvent.getPath(), zkEvent.getData(), zkEvent.getEventType());
+        if (zkEvent.isDataChanged() || zkEvent.isOnline()) {
+            if (zkEvent.getPath().equals(ALERT_CONFIG_PATH)) {
+                AlertConfig config = JSONObject.parseObject(event.getData(), AlertConfig.class);
+                try {
+                    AlertProviderFactory.INSTANCE.initialize(config);
+                } catch (Throwable e) {
+                    logger.warn("告警客户端初始化失败", e);
+                }
+            }
+        }
     }
 
     @Override

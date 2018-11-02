@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.vbill.middleware.porter.manager.core.mapper.AlarmMapper">
+    <!-- 通用查询映射结果 
+    <resultMap id="BaseResultMap" type="Alarm">
+        <result column="id" property="id" />
+        <result column="alarm_type" property="alarmType" />
+        <result column="create_user_id" property="createUserId" />
+        <result column="update_user_id" property="updateUserId" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="state" property="state" />
+        <result column="iscancel" property="iscancel" />
+        <result column="remark" property="remark" />
+    </resultMap>-->
+
+    <!-- 通用查询结果列
+    <sql id="Base_Column_List">
+        select id, alarm_type AS alarmType, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, remark from s_alarm
+    </sql> -->
+    <!-- 新增 -->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        insert into s_alarm (alarm_type) values (#{alarmType})
+    </insert>
+    <!-- 修改 -->
+    <update id="update">
+        update s_alarm
+        set alarm_type = #{alarm.alarmType},
+           create_user_id = #{alarm.createUserId},
+           update_user_id = #{alarm.updateUserId},
+           create_time = #{alarm.createTime},
+           update_time = #{alarm.updateTime},
+           state = #{alarm.state},
+           iscancel = #{alarm.iscancel},
+           remark = #{alarm.remark}
+         where id = #{id}
+    </update>
+    <!-- 刪除 -->
+    <delete id="delete">
+        delete from s_alarm where id = #{id}
+    </delete>
+    <!-- 根究主鍵查找 -->
+    <select id="selectById" resultType="cn.vbill.middleware.porter.manager.core.entity.Alarm">
+        select id, alarm_type AS alarmType, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, remark from s_alarm
+        where id = #{id}
+    </select>
+    <select id="pageAll" resultType="java.lang.Integer">
+        select count(id) from s_alarm
+        where 1=1
+    </select>
+    <select id="page" resultType="cn.vbill.middleware.porter.manager.core.entity.Alarm">
+        select id, alarm_type AS alarmType, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, remark from s_alarm
+        where 1=1 limit #{page.offset},#{page.pageSize}
+    </select>
+
+    <!-- 验证新增 -->
+    <insert id="insertSelective">
+        insert into s_alarm
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="alarmType != null">
+                alarm_type,
+            </if>
+            <if test="createUserId != null">
+                create_user_id,
+            </if>
+            <if test="updateUserId != null">
+                update_user_id,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+            <if test="state != null">
+                state,
+            </if>
+            <if test="iscancel != null">
+                iscancel,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="alarmType != null">
+                #{alarmType,jdbcType=VARCHAR},
+            </if>
+            <if test="createUserId != null">
+                #{createUserId,jdbcType=BIGINT},
+            </if>
+            <if test="updateUserId != null">
+                #{updateUserId,jdbcType=BIGINT},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="state != null">
+                #{state,jdbcType=INTEGER},
+            </if>
+            <if test="iscancel != null">
+                #{iscancel,jdbcType=INTEGER},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 验证修改 -->
+    <update id="updateSelective">
+        update s_alarm
+        <set>
+            <if test="alarm.alarmType != null">
+                alarm_type = #{alarm.alarmType,jdbcType=VARCHAR},
+            </if>
+            <if test="alarm.createUserId != null">
+                create_user_id = #{alarm.createUserId,jdbcType=BIGINT},
+            </if>
+            <if test="alarm.updateUserId != null">
+                update_user_id = #{alarm.updateUserId,jdbcType=BIGINT},
+            </if>
+            <if test="alarm.createTime != null">
+                create_time = #{alarm.createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="alarm.updateTime != null">
+                update_time = #{alarm.updateTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="alarm.state != null">
+                state = #{alarm.state,jdbcType=INTEGER},
+            </if>
+            <if test="alarm.iscancel != null">
+                iscancel = #{alarm.iscancel,jdbcType=INTEGER},
+            </if>
+            <if test="alarm.remark != null">
+                remark = #{alarm.remark,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+        
+    <select id="selectFinallyOne" resultType="cn.vbill.middleware.porter.manager.core.entity.Alarm">
+        select id, alarm_type AS alarmType, create_user_id AS createUserId, update_user_id AS updateUserId, create_time AS createTime, update_time AS updateTime, state, iscancel, remark from s_alarm
+            where iscancel = 0 ORDER BY id DESC LIMIT 1
+    </select>
+</mapper>

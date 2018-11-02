@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.vbill.middleware.porter.manager.core.mapper.CUserMapper">
+    <!-- 通用查询映射结果 --> 
+    <resultMap id="BaseResultMap" type="cn.vbill.middleware.porter.manager.core.entity.CUser">
+        <id column="id" property="id" />
+        <result column="loginname" property="loginname" />
+        <result column="loginpw" property="loginpw" />
+        <result column="nickname" property="nickname" />
+        <result column="email" property="email" />
+        <result column="mobile" property="mobile" />
+        <result column="depart_ment" property="departMent"/>
+        <result column="role_code" property="roleCode"/>
+        <result column="state" property="state" />
+        <result column="remark" property="remark" />
+        <association property="cRole" javaType="cn.vbill.middleware.porter.manager.core.entity.CRole">
+            <result column="role_code" property="roleCode"/>
+            <result column="role_name" property="roleName"/>
+        </association>
+    </resultMap>
+
+    <!-- 通用查询结果列 
+    <sql id="Base_Column_List">
+        select id, loginname, loginpw, nickname, email, mobile, state, remark from c_user
+    </sql>-->
+
+    <!-- 新增 -->
+    <insert id="insert">
+        insert into c_user(
+        loginname,
+        loginpw,
+        nickname,
+        email,
+        mobile,
+        depart_ment,
+        role_code
+        ) values (
+        #{loginname},
+        #{loginpw},
+        #{nickname},
+        #{email},
+        #{mobile},
+        #{departMent},
+        #{roleCode}
+        )
+    </insert>
+
+    <!-- 验证修改 -->
+    <update id="updateState">
+        update c_user
+        SET
+          state = #{state}
+        where id = #{id}
+    </update>
+
+    <!-- 修改 -->
+    <update id="update">
+        update c_user
+        set
+        loginname = #{cuser.loginname},
+        loginpw = #{cuser.loginpw},
+        nickname = #{cuser.nickname},
+        email = #{cuser.email},
+        mobile = #{cuser.mobile},
+        depart_ment = #{cuser.departMent},
+        role_code = #{cuser.roleCode}
+        where id = #{id}
+    </update>
+
+    <!-- 刪除 -->
+    <update id="delete">
+        update c_user
+        set
+        state = -1
+        where id = #{id}
+    </update>
+
+    <!-- 根据主鍵查找 -->
+    <select id="selectById" resultType="cn.vbill.middleware.porter.manager.core.entity.CUser">
+        select id, loginname, loginpw, nickname, email, mobile, state, remark, role_code AS roleCode, depart_ment AS departMent  from c_user
+        where id = #{id}
+    </select>
+
+    <!-- 根据 jobTasksId 查询告警人信息 -->
+    <select id="selectByJobTasksId" resultType="cn.vbill.middleware.porter.manager.core.entity.CUser">
+        SELECT id, loginname, loginpw, nickname, email, mobile, state, remark
+        from c_user
+        WHERE id
+        in (SELECT user_id FROM job_tasks_user WHERE job_task_id = #{jobTasksId})
+    </select>
+
+    <!-- 根据 alarmId 查询告警通知人信息 -->
+    <select id="selectByAlarmId" resultType="cn.vbill.middleware.porter.manager.core.entity.CUser">
+        SELECT id, loginname, loginpw, nickname, email, mobile, state, remark
+        from c_user
+        WHERE id
+        in (SELECT user_id FROM s_alarm_user WHERE alarm_id  = #{alarmId})
+    </select>
+
+    <!-- 根据主鍵查找 -->
+    <select id="selectByNameAndpasswd" resultType="cn.vbill.middleware.porter.manager.core.entity.CUser">
+        select id, loginname, loginpw, nickname, email, mobile, state, remark, role_code AS roleCode, depart_ment AS departMent from c_user
+        where loginname = #{loginname} and loginpw = #{loginpw} and state &gt;= 0
+    </select>
+
+    <!-- 分页All -->
+    <select id="pageAll" resultType="java.lang.Integer">
+        select count(id) from c_user
+        where state &gt;= 0
+    </select>
+
+    <!-- 分页 -->
+    <select id="page" resultMap="BaseResultMap">
+        select
+        u.id, u.loginname, u.loginpw, u.nickname, u.email,
+        u.mobile, u.state, u.remark, u.role_code, u.depart_ment, r.role_name
+        from c_user u, c_role r
+        where u.state &gt;= 0 and u.role_code = r.role_code
+        order by u.state desc,r.role_code asc
+        limit #{page.offset},#{page.pageSize}
+    </select>
+
+    <!-- 验证邮箱或登录名是否重复 -->
+    <select id="findByNameOrEmail" resultType="cn.vbill.middleware.porter.manager.core.entity.CUser">
+        select id, loginname, email from c_user
+        <where>
+            state &gt;= 0
+            <if test="email != null and email != ''">
+                AND email = #{email}
+            </if>
+            <if test="loginname != null and loginname != ''">
+                AND loginname = #{loginname}
+            </if>
+        </where>
+    </select>
+
+    <!-- 验证新增 -->
+    <insert id="insertSelective">
+        insert into c_user
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="loginname != null">
+                loginname,
+            </if>
+            <if test="loginpw != null">
+                loginpw,
+            </if>
+            <if test="nickname != null">
+                nickname,
+            </if>
+            <if test="email != null">
+                email,
+            </if>
+            <if test="mobile != null">
+                mobile,
+            </if>
+            <if test="state != null">
+                state,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="loginname != null">
+                #{loginname,jdbcType=VARCHAR},
+            </if>
+            <if test="loginpw != null">
+                #{loginpw,jdbcType=VARCHAR},
+            </if>
+            <if test="nickname != null">
+                #{nickname,jdbcType=VARCHAR},
+            </if>
+            <if test="email != null">
+                #{email,jdbcType=VARCHAR},
+            </if>
+            <if test="mobile != null">
+                #{mobile,jdbcType=VARCHAR},
+            </if>
+            <if test="state != null">
+                #{state,jdbcType=INTEGER},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=VARCHAR},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 验证修改 -->
+    <update id="updateSelective">
+        update c_user
+        <set>
+            <if test="cuser.loginname != null">
+                loginname = #{cuser.loginname,jdbcType=VARCHAR},
+            </if>
+            <if test="cuser.loginpw != null">
+                loginpw = #{cuser.loginpw,jdbcType=VARCHAR},
+            </if>
+            <if test="cuser.nickname != null">
+                nickname = #{cuser.nickname,jdbcType=VARCHAR},
+            </if>
+            <if test="cuser.email != null">
+                email = #{cuser.email,jdbcType=VARCHAR},
+            </if>
+            <if test="cuser.mobile != null">
+                mobile = #{cuser.mobile,jdbcType=VARCHAR},
+            </if>
+            <if test="cuser.departMent != null">
+                depart_ment = #{cuser.departMent,jdbcType=VARCHAR},
+            </if>
+            <if test="cuser.roleCode != null">
+                role_code = #{cuser.roleCode,jdbcType=VARCHAR},
+            </if>
+        </set>
+        where id = #{id,jdbcType=BIGINT}
+    </update>
+
+    <select id="list" resultType="cn.vbill.middleware.porter.manager.core.entity.CUser">
+        select id, loginname, loginpw, nickname, email, mobile, state, remark, role_code AS roleCode from c_user
+        where state=1
+    </select>
+
+
+</mapper>
+
