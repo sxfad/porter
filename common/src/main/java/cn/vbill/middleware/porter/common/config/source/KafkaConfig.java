@@ -53,6 +53,10 @@ public class KafkaConfig  extends SourceConfig {
     @Setter @Getter private String firstConsumeFrom = "earliest";
     @Setter @Getter private boolean autoCommit = Boolean.FALSE;
 
+    //消费分区 2018.10.16 zhangkewei
+    @Setter @Getter private int partition = 0;
+
+
     public   KafkaConfig() {
         sourceType = SourceType.KAFKA;
     }
@@ -91,6 +95,6 @@ public class KafkaConfig  extends SourceConfig {
 
     @Override
     protected boolean doCheck() {
-        return !topics.isEmpty();
+        return !topics.isEmpty() && (partition == 0 || (partition > 0 && topics.size() == 1));
     }
 }

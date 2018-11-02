@@ -125,7 +125,7 @@ public class KafkaClient extends AbstractClient<KafkaConfig> implements ConsumeC
                     }
                 } else {
                     //默认消费分区0,该消费组上次
-                    consumer.assign(Arrays.asList(new TopicPartition(swimlaneId, 0)));
+                    consumer.assign(Arrays.asList(new TopicPartition(swimlaneId, getConfig().getPartition())));
                 }
                 canFetch.countDown();
             }
@@ -225,7 +225,6 @@ public class KafkaClient extends AbstractClient<KafkaConfig> implements ConsumeC
             return true;
         } catch (InterruptedException e) {
             e.printStackTrace();
-            Thread.interrupted();
             return false;
         }
     }

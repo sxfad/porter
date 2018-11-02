@@ -89,4 +89,11 @@ public class TaskConfig {
     @Setter
     private long alarmPositionCount = 10000;
 
+
+    /**
+     * 是否本地任务文件
+     */
+    @Getter
+    @Setter
+    private boolean localTask = false;
 }

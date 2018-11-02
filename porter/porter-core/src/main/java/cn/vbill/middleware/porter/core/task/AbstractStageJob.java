@@ -103,7 +103,7 @@ public abstract class AbstractStageJob implements StageJob {
                 //先停止任务线程
                 loopService.interrupt();
             } catch (Throwable e) {
-                LOGGER.error("停止任务线程逻辑:%s", e);
+                LOGGER.error("停止任务线程逻辑失败", e);
             } finally {
                 //清理任务相关数据源连接
                 try {
@@ -139,7 +139,6 @@ public abstract class AbstractStageJob implements StageJob {
                     Thread.sleep(threadWaitSpan);
                 } catch (InterruptedException e) {
                     //如果线程有中断信号，退出线程
-                    Thread.interrupted();
                     break;
                 }
             }

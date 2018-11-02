@@ -163,7 +163,6 @@
                    <property name="logLoadErrors" value="true"/>
                    <property name="suppressLoadErrors" value="true"/>
                </module>
-
        -->
         <!--
          Checks for overly complicated boolean expressions. Currently finds code like  if (b == true), b || true, !false, etc.
@@ -202,7 +201,6 @@
                      }
                  }
               <module name="HideUtilityClassConstructor"/>
-
        -->
         <!--
          Checks visibility of class members. Only static final members may be public; other class members must be private unless property protectedAllowed or packageAllowed is set.
@@ -221,7 +219,7 @@
         <!--
         Checks that there are no "magic numbers", where a magic number is a numeric literal that is not defined as a constant. By default, -1, 0, 1, and 2 are not considered to be magic numbers.
        -->
-        <!--  检查是否有"魔术"数字  
+        <!--  检查是否有"魔术"数字
         <module name="MagicNumber">
             <property name="ignoreNumbers" value="0, 1"/>
             <property name="ignoreAnnotation" value="true"/>
@@ -231,7 +229,6 @@
         </module>
         A check for TODO: comments. Actually it is a generic regular expression matcher on Java comments. To check for other patterns in Java comments, set property format.
                   检查是否存在TODO（待处理） TODO是javaIDE自动生成的。一般代码写完后要去掉。
-
        -->
         <module name="TodoComment"/>
         <!--
@@ -283,11 +280,11 @@
         <module name="StringLiteralEquality"> </module>
         <!--  if-else嵌套语句个数 最多3层  -->
         <module name="NestedIfDepth">
-            <property name="max" value="3"/>
+            <property name="max" value="10"/>
         </module>
         <!--  try-catch 嵌套语句个数 最多2层  -->
         <module name="NestedTryDepth">
-            <property name="max" value="2"/>
+            <property name="max" value="5"/>
         </module>
         <!--  返回个数  -->
         <module name="ReturnCount">

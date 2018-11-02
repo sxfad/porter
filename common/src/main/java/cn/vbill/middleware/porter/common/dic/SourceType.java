@@ -79,7 +79,8 @@ public enum SourceType {
     /**
      * kafkaProduce
      */
-    KAFKA_PRODUCE("KAFKA_PRODUCE", "kafkaProduce", 1);
+    KAFKA_PRODUCE("KAFKA_PRODUCE", "kafkaProduce", 1),
+    FILE("FILE", "file", 1);
 
     /**
      * LINKMAP
@@ -122,7 +123,9 @@ public enum SourceType {
         if (KAFKA_PRODUCE.state == 1) {
             LINKMAP.put(KAFKA_PRODUCE.code, KAFKA_PRODUCE.name);
         }
-
+        if (FILE.state == 1) {
+            LINKMAP.put(FILE.code, FILE.name);
+        }
     }
 
     @Getter

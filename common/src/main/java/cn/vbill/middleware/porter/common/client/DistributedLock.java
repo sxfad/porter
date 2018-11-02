@@ -15,25 +15,20 @@
  * </p>
  */
 
-package cn.vbill.middleware.porter.common.config;
+package cn.vbill.middleware.porter.common.client;
 
-import cn.vbill.middleware.porter.common.dic.ClusterPlugin;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
- * @date: 2018年02月23日 14:22
+ * @date: 2018年10月30日 11:15
  * @version: V1.0
- * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月23日 14:22
+ * @review: zkevin/2018年10月30日 11:15
  */
-public class ClusterConfig {
-    @Getter @Setter private ClusterPlugin strategy;
-    //集群客户端
-    @Getter @Setter private Map<String, String> client;
-
-    //统计上传客户端
-    @Getter @Setter private Map<String, String> statistic;
+public interface DistributedLock {
+    void lock(String resource);
+    void lockInterruptibly(String resource) throws InterruptedException;
+    boolean tryLock(String resource);
+    boolean tryLock(String resource, long time, TimeUnit unit) throws InterruptedException;
+    void unlock(String resource);
 }

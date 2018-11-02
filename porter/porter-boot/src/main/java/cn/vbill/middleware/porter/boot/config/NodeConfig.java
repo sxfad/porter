@@ -28,6 +28,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -40,7 +41,7 @@ import java.util.List;
 @Getter
 @Component
 public class NodeConfig {
-    private String id;
+    private String id = UUID.randomUUID().toString();
     private Integer workLimit = 10;
     private StatisticConfig statistic = new StatisticConfig();
     private AlertConfig alert;

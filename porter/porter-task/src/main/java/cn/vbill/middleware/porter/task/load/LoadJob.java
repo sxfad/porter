@@ -92,7 +92,7 @@ public class LoadJob extends AbstractStageJob {
             dataLoder.shutdown();
         } catch (Exception e) {
             e.printStackTrace();
-            LOGGER.error("%s", e);
+            LOGGER.warn("关闭LoadJob失败", e);
         }
     }
 
@@ -191,58 +191,57 @@ public class LoadJob extends AbstractStageJob {
      * @param object
      */
     private void updateStat(SubmitStatObject object) {
+        int affect = object.getAffect();
+        boolean hit = affect > 0 || affect == -2;
+        EventType eventType = object.getType();
         //虽然每个状态值的变更都有stat对象锁，但在最外层加对象锁避免了多次请求的问题（锁可重入），同时保证状态各字段变更一致性
         DTaskStat stat = work.getDTaskStat(object.getSchema(), object.getTable());
-        synchronized (stat) {
-            int affect = object.getAffect();
-            boolean hit = affect > 0 || affect == -2;
-            EventType eventType = object.getType();
-            switch (eventType.getIndex()) {
-                case EventType.DELETE_INDEX:
-                    if (hit) {
-                        stat.incrementDeleteRow();
-                    } else {
-                        stat.incrementErrorDeleteRow();
-                    }
-                    break;
-                case EventType.UPDATE_INDEX:
-                    if (hit) {
-                        stat.incrementUpdateRow();
-                    } else {
-                        stat.incrementErrorUpdateRow();
-                    }
-                    break;
-                case EventType.INSERT_INDEX:
-                    if (hit) {
-                        stat.incrementInsertRow();
-                    } else {
-                        stat.incrementErrorInsertRow();
-                    }
-                    break;
-                case EventType.TRUNCATE_INDEX:
-                    if (hit) {
-                        stat.incrementDeleteRow();
-                    } else {
-                        stat.incrementErrorDeleteRow();
-                    }
-                    break;
-                default:
-                    break;
-            }
+        switch (eventType.getIndex()) {
+            case EventType.DELETE_INDEX:
+                if (hit) {
+                    stat.incrementDeleteRow();
+                } else {
+                    stat.incrementErrorDeleteRow();
+                }
+                break;
+            case EventType.UPDATE_INDEX:
+                if (hit) {
+                    stat.incrementUpdateRow();
+                } else {
+                    stat.incrementErrorUpdateRow();
+                }
+                break;
+            case EventType.INSERT_INDEX:
+                if (hit) {
+                    stat.incrementInsertRow();
+                } else {
+                    stat.incrementErrorInsertRow();
+                }
+                break;
+            case EventType.TRUNCATE_INDEX:
+                if (hit) {
+                    stat.incrementDeleteRow();
+                } else {
+                    stat.incrementErrorDeleteRow();
+                }
+                break;
+            default:
+                break;
+        }
 
-            //更新最后执行消息事件的产生时间，用于计算从消息产生到加载如路时间、计算数据同步检查时间
-            if (null != object.getOpTime()) {
-                stat.setLastLoadedDataTime(object.getOpTime());
-            }
-            stat.setLastLoadedSystemTime(new Date());
-            if (null != object.getPosition()) {
-                stat.setProgress(object.getPosition().render());
-            }
+        //更新最后执行消息事件的产生时间，用于计算从消息产生到加载如路时间、计算数据同步检查时间
+        if (null != object.getOpTime()) {
+            stat.setLastLoadedDataTime(object.getOpTime());
+        }
 
-            //打印当前消息所在点位，方便问题查找
-            if (!hit) {
-                LOGGER.error("{}.{} {} {}", object.getSchema(), object.getTable(), object.getType().getCode(), object.getPosition().render());
-            }
+        stat.setLastLoadedSystemTime(new Date());
+        if (null != object.getPosition()) {
+            stat.setProgress(object.getPosition().render());
+        }
+
+        //打印当前消息所在点位，方便问题查找
+        if (!hit) {
+            LOGGER.error("{}.{} {} {}", object.getSchema(), object.getTable(), object.getType().getCode(), object.getPosition().render());
         }
     }
 }

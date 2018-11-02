@@ -74,11 +74,9 @@ public class ZKClusterConfigListener extends ZookeeperClusterListener {
                 try {
                     AlertProviderFactory.INSTANCE.initialize(config);
                 } catch (ConfigParseException e) {
-                    e.printStackTrace();
-                    logger.error("%s", e);
+                    logger.warn("解析告警任务配置失败", e);
                 } catch (ClientConnectionException e) {
-                    e.printStackTrace();
-                    logger.error("%s", e);
+                    logger.warn("告警客户端连接失败", e);
                 }
             }
             //统计分析

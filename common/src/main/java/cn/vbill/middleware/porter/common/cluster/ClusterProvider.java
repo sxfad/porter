@@ -17,6 +17,7 @@
 
 package cn.vbill.middleware.porter.common.cluster;
 
+import cn.vbill.middleware.porter.common.client.DistributedLock;
 import cn.vbill.middleware.porter.common.config.ClusterConfig;
 import cn.vbill.middleware.porter.common.task.TaskEventListener;
 import cn.vbill.middleware.porter.common.cluster.command.ClusterCommand;
@@ -73,4 +74,10 @@ public interface ClusterProvider {
      * 集群插件是否有效
      */
     boolean available();
+
+    /**
+     * 分布式锁功能实现
+     * @return
+     */
+    DistributedLock getLock();
 }

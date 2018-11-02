@@ -40,7 +40,12 @@ public enum ClusterPlugin {
     /**
      * ZOOKEEPER
      */
-    ZOOKEEPER("ZOOKEEPER", "zookeeper");
+    ZOOKEEPER("ZOOKEEPER", "zookeeper"),
+
+    /**
+     * STANDALONE
+     */
+    STANDALONE("STANDALONE", "standalone");
 
     /**
      * LINKMAP
@@ -49,6 +54,7 @@ public enum ClusterPlugin {
 
     static {
         LINKMAP.put(ZOOKEEPER.code, ZOOKEEPER.name);
+        LINKMAP.put(STANDALONE.code, STANDALONE.name);
     }
 
     @Getter

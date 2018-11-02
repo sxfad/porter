@@ -27,5 +27,5 @@ import lombok.Setter;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月24日 13:20
  */
 public class StatisticConfig {
-    @Getter @Setter private boolean upload = true;
+    @Getter @Setter private boolean upload = false;
 }

@@ -161,7 +161,9 @@ public class TaskWorker {
                 job.start();
                 jobs.put(c.getSwimlaneId(), job);
             } catch (Throwable e) {
-                if (null != job) job.stop();
+                if (null != job) {
+                    job.stop();
+                }
                 //任务抢占异常不属于报错范畴
                 if (!(e instanceof TaskLockException)) {
                     LOGGER.error("Consumer JOB[{}] failed to start!", c.getSwimlaneId(), e);

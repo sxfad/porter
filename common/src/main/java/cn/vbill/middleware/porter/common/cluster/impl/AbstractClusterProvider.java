@@ -19,6 +19,8 @@ package cn.vbill.middleware.porter.common.cluster.impl;
 
 import cn.vbill.middleware.porter.common.client.Client;
 import cn.vbill.middleware.porter.common.client.ClusterClient;
+import cn.vbill.middleware.porter.common.client.DistributedLock;
+import cn.vbill.middleware.porter.common.client.SupportDistributedLock;
 import cn.vbill.middleware.porter.common.cluster.ClusterListener;
 import cn.vbill.middleware.porter.common.cluster.ClusterMonitor;
 import cn.vbill.middleware.porter.common.cluster.ClusterProvider;
@@ -76,6 +78,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月14日 16:32
  */
 public abstract class AbstractClusterProvider<C extends Client> implements ClusterProvider {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractClusterProvider.class);
     private final AtomicBoolean status = new AtomicBoolean(false);
 
     /**
@@ -102,16 +105,17 @@ public abstract class AbstractClusterProvider<C extends Client> implements Clust
      * @return
      * @throws ConfigParseException
      */
-    protected abstract C initClient(ClusterConfig clusterConfig) throws ConfigParseException;
+    protected abstract C initClient(ClusterConfig clusterConfig) throws ConfigParseException, ClientException;
 
     private C client;
     private ClusterMonitor monitor;
+    private DistributedLock lock;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractClusterProvider.class);
+
 
     @Override
     public boolean matches(ClusterPlugin type) {
-        return ClusterPlugin.ZOOKEEPER == getMatchType();
+        return type == getMatchType();
     }
 
     @Override
@@ -214,8 +218,7 @@ public abstract class AbstractClusterProvider<C extends Client> implements Clust
                     try {
                         client.shutdown();
                     } catch (Exception e) {
-                        e.printStackTrace();
-                        LOGGER.error("%s", e);
+                        LOGGER.warn("停止集群Provider", e);
                     }
                 }
             }
@@ -244,10 +247,25 @@ public abstract class AbstractClusterProvider<C extends Client> implements Clust
             listener.setClient(client);
             monitor.addListener(listener);
         });
+        //初始化集群分布式锁功能
+        if (lock instanceof SupportDistributedLock) {
+            lock = initiateLock((ClusterClient) client);
+        }
+        if (null != lock && lock instanceof ClusterListener) {
+            monitor.addListener((ClusterListener) lock);
+        }
     }
+
+    protected abstract DistributedLock initiateLock(ClusterClient client);
 
     @Override
     public boolean available() {
         return null != client && client.isAlive();
+    }
+
+    @Override
+    public DistributedLock getLock() {
+        if (null == lock) new UnsupportedOperationException("分布式锁功能未提供");
+        return lock;
     }
 }

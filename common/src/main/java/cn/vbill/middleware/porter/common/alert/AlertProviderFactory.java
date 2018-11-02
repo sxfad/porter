@@ -32,11 +32,6 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
- * <<<<<<< HEAD
- * =======
- * <p>
- * >>>>>>> gmaster
- *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年01月01日 20:14
  * @version: V1.0

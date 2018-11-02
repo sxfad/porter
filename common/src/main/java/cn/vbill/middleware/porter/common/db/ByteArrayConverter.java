@@ -36,11 +36,6 @@ public class ByteArrayConverter implements Converter {
     protected final Object defaultValue;
     protected final boolean useDefault;
 
-    public ByteArrayConverter() {
-        this.defaultValue = null;
-        this.useDefault = false;
-    }
-
     public ByteArrayConverter(Object defaultValue) {
         this.defaultValue = defaultValue;
         this.useDefault = true;
@@ -55,17 +50,15 @@ public class ByteArrayConverter implements Converter {
     public Object convert(Class type, Object value) {
         if (value == null) {
             if (useDefault) {
-                return (defaultValue);
+                return defaultValue;
             } else {
                 throw new ConversionException("No value specified");
             }
         }
 
         if (value instanceof byte[]) {
-            return (value);
+            return value;
         }
-
-        // BLOB类型，canal直接存储为String("ISO-8859-1")
         if (value instanceof String) {
             try {
                 return ((String) value).getBytes("ISO-8859-1");
@@ -74,6 +67,6 @@ public class ByteArrayConverter implements Converter {
             }
         }
 
-        return CONVERTER.convert(type, value); // byteConvertor进行转化
+        return CONVERTER.convert(type, value);
     }
 }

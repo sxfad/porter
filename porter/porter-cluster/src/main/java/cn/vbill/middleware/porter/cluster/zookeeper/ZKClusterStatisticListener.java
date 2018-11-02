@@ -71,10 +71,14 @@ public class ZKClusterStatisticListener extends ZookeeperClusterListener impleme
     public void upload(StatisticUploadCommand command) throws Exception {
         StatisticData data = command.getStatisticData();
         data.setNodeId(NodeContext.INSTANCE.getNodeId());
-        String statisticPath = listenPath() + "/" + data.getCategory();
-        client.createWhenNotExists(statisticPath, false, false, "{}");
+        String dataNode = listenPath() + "/" + data.getCategory() + "/" + data.getId();
+        client.uploadStatistic(dataNode, data.getKey(), data.toString());
+    }
 
-        String dataNode = statisticPath + "/" + data.getId();
-        client.create(dataNode, true, data.toString());
+    @Override
+    public void start() {
+        client.createWhenNotExists(listenPath(), false, false, null);
+        client.createWhenNotExists(listenPath() + "/task", false, false, "{}");
+        client.createWhenNotExists(listenPath() + "/log", false, false, "{}");
     }
 }

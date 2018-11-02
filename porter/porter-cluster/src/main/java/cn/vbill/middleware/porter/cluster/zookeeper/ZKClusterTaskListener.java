@@ -17,11 +17,13 @@
 
 package cn.vbill.middleware.porter.cluster.zookeeper;
 
+import cn.vbill.middleware.porter.common.client.impl.ZookeeperClient;
 import cn.vbill.middleware.porter.common.cluster.ClusterListenerFilter;
 import cn.vbill.middleware.porter.common.cluster.ClusterProviderProxy;
 import cn.vbill.middleware.porter.common.cluster.command.TaskAssignedCommand;
 import cn.vbill.middleware.porter.common.cluster.command.TaskPositionQueryCommand;
 import cn.vbill.middleware.porter.common.cluster.command.TaskPositionUploadCommand;
+import cn.vbill.middleware.porter.common.cluster.command.TaskPushCommand;
 import cn.vbill.middleware.porter.common.cluster.command.TaskRegisterCommand;
 import cn.vbill.middleware.porter.common.cluster.command.TaskStatCommand;
 import cn.vbill.middleware.porter.common.cluster.command.TaskStatQueryCommand;
@@ -40,6 +42,7 @@ import cn.vbill.middleware.porter.common.cluster.event.ClusterEvent;
 import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterEvent;
 import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListener;
 import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListenerFilter;
+import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.broadcast.ZKTaskPush;
 import cn.vbill.middleware.porter.common.config.TaskConfig;
 import cn.vbill.middleware.porter.common.exception.TaskLockException;
 import cn.vbill.middleware.porter.common.exception.TaskStopTriggerException;
@@ -70,7 +73,7 @@ import java.util.regex.Pattern;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月15日 10:09
  */
 public class ZKClusterTaskListener extends ZookeeperClusterListener implements TaskEventProvider,
-        TaskRegister, TaskStatUpload, TaskStop, TaskStatQuery, TaskStoppedByError, TaskPosition {
+        TaskRegister, TaskStatUpload, TaskStop, TaskStatQuery, TaskStoppedByError, TaskPosition, ZKTaskPush {
     private static final String ZK_PATH = BASE_CATALOG + "/task";
     private static final Pattern TASK_DIST_PATTERN = Pattern.compile(ZK_PATH + "/.*/dist/.*");
     private static final Pattern TASK_UNLOCKED_PATTERN = Pattern.compile(ZK_PATH + "/.*/lock/.*");
@@ -193,8 +196,8 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
                         task.getSwimlaneId()).toString());
                 //通知对此感兴趣的Listener
                 ClusterProviderProxy.INSTANCE.broadcast(new TaskAssignedCommand(task.getTaskId(), task.getSwimlaneId()));
+                client.delete(errorPath + "/" + task.getSwimlaneId());
             } catch (KeeperException.NodeExistsException e) {
-                LOGGER.error("%s", e);
                 throw new TaskLockException(topicPath + ",锁定资源失败。");
             }
         } else {
@@ -203,7 +206,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
     }
 
     @Override
-    public void uploadStat(TaskStatCommand command) throws Exception {
+    public void uploadStat(TaskStatCommand command) {
         DTaskStat dataStat = command.getStat();
         //.intern()保证全局唯一字符串对象
         String node = (listenPath() + "/" + dataStat.getTaskId() + "/stat/" + dataStat.getSwimlaneId()
@@ -230,9 +233,8 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
                 //upload stat
                 client.setData(node, taskStat.toString(), nodePair.getRight().getVersion());
                 LOGGER.debug("stat store in zookeeper:{}", JSON.toJSONString(taskStat));
-            } catch (KeeperException.BadVersionException e) {
-                //进度上传失败，异常吃掉
-                LOGGER.error("%s", e);
+            } catch (Throwable e) {
+                logger.warn("任务进度状态上传失败", e);
             }
         }
     }
@@ -269,8 +271,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
                     stats.add(taskStat);
                 }
             } catch (Exception e) {
-                e.printStackTrace();
-                LOGGER.error("%s", e);
+                logger.warn("查询任务进度状态失败", e);
             }
         }
         if (null != command.getCallback()) {
@@ -305,5 +306,20 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
         if (null != command.getCallback()) {
             command.getCallback().callback(position);
         }
+    }
+
+    @Override
+    public void push(TaskPushCommand command) throws Exception {
+        push(command, false, true);
+    }
+
+    @Override
+    public ZookeeperClient getZKClient() {
+        return client;
+    }
+
+    @Override
+    public String zkTaskPath() {
+        return listenPath();
     }
 }

@@ -66,9 +66,13 @@ public abstract class StatisticData {
      */
     @JSONField(serialize = false, deserialize = false)
     public String getId() {
-        return new StringBuilder(nodeId).append("-").append(getSubId()).append("-").append(idDateFormat.format(new Date())).toString();
+        return new StringBuilder(getKey()).append("-").append(idDateFormat.format(new Date())).toString();
     }
 
+    @JSONField(serialize = false, deserialize = false)
+    public String getKey() {
+        return new StringBuilder(nodeId).append("-").append(getSubId()).toString();
+    }
     /**
      * toString
      * @return

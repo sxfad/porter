@@ -68,7 +68,6 @@ public class MachineUtils {
             try {
                 return Long.parseLong(processName.split("@")[0]);
             } catch (Exception e) {
-                LOGGER.error("%s", e);
                 return 0;
             }
         }
@@ -94,7 +93,6 @@ public class MachineUtils {
                 }
             }
         } catch (SocketException e) {
-            LOGGER.error("%s", e);
             throw new RuntimeException("get local inet address fail", e);
         }
 

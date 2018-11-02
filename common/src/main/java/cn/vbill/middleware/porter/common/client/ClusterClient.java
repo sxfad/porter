@@ -104,4 +104,6 @@ public interface ClusterClient<S> {
     default void clientSpinning() {
 
     }
+
+    void setStatisticClient(StatisticClient client) throws Exception;
 }

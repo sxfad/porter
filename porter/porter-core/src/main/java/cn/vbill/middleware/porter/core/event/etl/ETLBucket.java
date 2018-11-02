@@ -197,7 +197,7 @@ public class ETLBucket {
             rows.clear();
             batchRows.clear();
         } catch (Throwable e) {
-            LOGGER.error("%s", e);
+            LOGGER.warn("标记批次数据不可用出错", e);
         }
     }
 }

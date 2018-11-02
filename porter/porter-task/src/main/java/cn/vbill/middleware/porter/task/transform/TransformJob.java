@@ -134,7 +134,6 @@ public class TransformJob extends AbstractStageJob {
                     waitTime += peerWaitTime;
                     Thread.sleep(peerWaitTime);
                 } catch (InterruptedException e) {
-                    Thread.interrupted();
                 }
             }
             LOGGER.debug("got sequence:{}, Future: {}", sequence, carrier.containsKey(sequence));

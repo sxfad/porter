@@ -20,6 +20,7 @@ package cn.vbill.middleware.porter.common.client.impl;
 import cn.vbill.middleware.porter.common.client.AbstractClient;
 import cn.vbill.middleware.porter.common.client.LoadClient;
 import cn.vbill.middleware.porter.common.client.MetaQueryClient;
+import cn.vbill.middleware.porter.common.client.StatisticClient;
 import cn.vbill.middleware.porter.common.config.source.KafkaProduceConfig;
 import cn.vbill.middleware.porter.common.db.meta.TableSchema;
 import cn.vbill.middleware.porter.common.exception.TaskStopTriggerException;
@@ -53,7 +54,7 @@ import java.util.stream.Collectors;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月02日 15:14
  */
-public class KafkaProduceClient extends AbstractClient<KafkaProduceConfig> implements LoadClient, MetaQueryClient {
+public class KafkaProduceClient extends AbstractClient<KafkaProduceConfig> implements LoadClient, MetaQueryClient, StatisticClient {
     private volatile Producer<String, String> producer;
     private final String topic;
     private final boolean transaction;
@@ -97,7 +98,11 @@ public class KafkaProduceClient extends AbstractClient<KafkaProduceConfig> imple
     @Override
     protected void doShutdown() {
         if (null != producer) {
-            producer.close();
+            try {
+                producer.close();
+            } catch (Throwable e) {
+                LOGGER.error("fail to close kafka producer,{}", topic, e);
+            }
             producer = null;
         }
         canProduce = new CountDownLatch(1);
@@ -154,6 +159,17 @@ public class KafkaProduceClient extends AbstractClient<KafkaProduceConfig> imple
         send(value, null, null, sync);
     }
 
+    /**
+     * send
+     *
+     * @param value
+     * @param key
+     * @throws TaskStopTriggerException
+     */
+    public void send(String value, String key, boolean sync) throws TaskStopTriggerException {
+        send(value, null, key, sync);
+    }
+
     private void sendTo(List<ProducerRecord<String, String>> msgList, boolean sync) throws TaskStopTriggerException {
         boolean sendResult = false;
         //做retries-1次尝试
@@ -163,6 +179,7 @@ public class KafkaProduceClient extends AbstractClient<KafkaProduceConfig> imple
                 sendResult = true;
                 break;
             } catch (Throwable e) {
+                LOGGER.error("fail to send message to kafka,times:{}", i, e);
                 try {
                     Thread.sleep(500L);
                 } catch (Throwable sleepException) {
@@ -266,11 +283,17 @@ public class KafkaProduceClient extends AbstractClient<KafkaProduceConfig> imple
         return oggJson;
     }
 
-
-
-
-    private void reconnection() {
-        canProduce = new CountDownLatch(1);
+    private synchronized void reconnection() {
+        doShutdown();
         doStart();
+    }
+
+    @Override
+    public void uploadStatistic(String target, String key, String data) {
+        try {
+            send(data, key, true);
+        } catch (Throwable e) {
+            LOGGER.warn("上传统计信息失败,忽略异常", e);
+        }
     }
 }
