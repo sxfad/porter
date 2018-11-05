@@ -224,9 +224,9 @@ public class JobTasksController {
     @PostMapping(value = "/dealspecialjson")
     @ApiOperation(value = "解析字符串", notes = "解析字符串")
     public ResponseMessage dealSpecialJson(String jobXmlText) {
-        System.out.println(jobXmlText);
+        log.info("解析字符串:[{}]", jobXmlText);
         try {
-            TaskConfig taskConfig = jobTasksService.dealSpecialJson(java.net.URLEncoder.encode(jobXmlText, "UTF-8"));
+            TaskConfig taskConfig = jobTasksService.dealSpecialJson(java.net.URLDecoder.decode(jobXmlText, "UTF-8"));
             return ok(taskConfig);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
@@ -285,13 +285,4 @@ public class JobTasksController {
         return ok(number);
     }
 
-    /**
-     * 
-     * @return
-     * 
-     *         @PostMapping("/addtaskconifg")
-     * @ApiOperation(value = "任务", notes = "任务") public ResponseMessage
-     *                     addTaskConifg(@RequestBody TaskConfig taskConfig) {
-     *                     return ok(null); }
-     */
 }
