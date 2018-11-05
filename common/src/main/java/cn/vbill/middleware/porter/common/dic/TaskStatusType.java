@@ -18,6 +18,8 @@
 package cn.vbill.middleware.porter.common.dic;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -73,14 +75,17 @@ public enum TaskStatusType {
     @Getter
     private final String name;
 
+    @JsonIgnore
     public boolean isStopped() {
         return this == STOPPED;
     }
 
+    @JsonIgnore
     public boolean isWorking() {
         return this == WORKING;
     }
 
+    @JsonIgnore
     public boolean isDeleted() {
         return this == DELETED;
     }
