@@ -133,7 +133,6 @@
         insert into job_tasks(
             id,
             job_name,
-            job_state,
             job_type,
             source_consume_adt,
             source_convert_adt,
@@ -152,7 +151,6 @@
         ) values (
             #{id},
             #{jobName},
-            'NEW',
             '2',
             'CANAL',
             'CANAL_ROW',
