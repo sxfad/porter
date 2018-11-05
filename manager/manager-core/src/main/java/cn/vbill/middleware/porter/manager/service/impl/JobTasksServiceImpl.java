@@ -128,8 +128,8 @@ public class JobTasksServiceImpl implements JobTasksService {
 
     @Override
     public Integer insertZKCapture(JobTasks jobTasks) {
-        TaskConfig task = JSONObject.parseObject(jobTasks.getJobJsonText(), TaskConfig.class);
-        jobTasks.setJobName("本地任务-" + task.getTaskId());
+        // TaskConfig task = JSONObject.parseObject(jobTasks.getJobJsonText(), TaskConfig.class);
+        jobTasks.setJobName("本地任务-" + null);
         return jobTasksMapper.insertZKCapture(jobTasks);
     }
 
