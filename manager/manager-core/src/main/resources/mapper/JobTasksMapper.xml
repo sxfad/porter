@@ -152,7 +152,7 @@
         ) values (
             #{id},
             #{jobName},
-            'WORKING',
+            'NEW',
             '2',
             'CANAL',
             'CANAL_ROW',
