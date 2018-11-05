@@ -73,13 +73,13 @@ public class ZookeeperDistributedLock extends ZookeeperClusterListener implement
             protected String getPath() {
                 return listenPath();
             }
+
             @Override
             protected boolean doFilter(ZookeeperClusterEvent event) {
                 return true;
             }
         };
     }
-
 
 
     @Override
@@ -143,7 +143,9 @@ public class ZookeeperDistributedLock extends ZookeeperClusterListener implement
                     try {
                         latch.await();
                     } catch (InterruptedException e) {
-                        if (interruptibly) throw e;
+                        if (interruptibly) {
+                            throw e;
+                        }
                     }
                     lock(resource, interruptibly);
                     return latch;
@@ -159,6 +161,7 @@ public class ZookeeperDistributedLock extends ZookeeperClusterListener implement
             return value;
         });
     }
+
     private void clearResourceTag(String resource) {
         LATCH_WAIT_COUNT.computeIfPresent(resource, (key, value) -> {
             value.decrementAndGet();
