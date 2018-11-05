@@ -35,4 +35,13 @@ public interface EventProcessor {
      * @return: void
      */
     void process(ETLBucket bucket);
+
+    /**
+     * 任务停止的时候调用，用以释放链接、内存占用等
+     */
+    void shutdown();
+    /**
+     * 任务启动的时候调用，用以创建链接、内存占用等
+     */
+    void start();
 }

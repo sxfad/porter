@@ -126,8 +126,7 @@ public class ZookeeperDistributedLock extends ZookeeperClusterListener implement
     public void unlock(String resource) {
         String resourcePath = LOCK_ROOT + resource;
         //判断是否存在锁，并且为当前线程所占
-        if (client.isExists(resourcePath, true)
-                && client.getData(resourcePath).getLeft().equals(Thread.currentThread().getId() + "")) {
+        if (client.isExists(resourcePath, true) && client.getData(resourcePath).getLeft().equals(Thread.currentThread().getId() + "")) {
             client.delete(resourcePath);
         }
     }

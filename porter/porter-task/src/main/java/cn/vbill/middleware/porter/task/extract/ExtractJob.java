@@ -76,11 +76,22 @@ public class ExtractJob extends AbstractStageJob {
     @Override
     protected void doStop() {
         executorService.shutdown();
+        try {
+            if (null != metadata.getProcessor()) metadata.getProcessor().shutdown();
+        } catch (Throwable e) {
+            LOGGER.error("自定义Extract processor关闭出错", e);
+            NodeLog.upload(NodeLog.LogType.TASK_WARNING, "自定义Extract processor关闭出错:" + e.getMessage());
+        }
     }
 
     @Override
     protected void doStart() {
-
+        try {
+            if (null != metadata.getProcessor()) metadata.getProcessor().start();
+        } catch (Throwable e) {
+            LOGGER.error("自定义Extract processor启动出错", e);
+            NodeLog.upload(NodeLog.LogType.TASK_WARNING, "自定义Extract processor启动出错:" + e.getMessage());
+        }
     }
 
     @Override
