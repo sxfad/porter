@@ -231,7 +231,7 @@ public class JobTasksController {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        return ok();
+        return ResponseMessage.error(null);
     }
 
     /**
