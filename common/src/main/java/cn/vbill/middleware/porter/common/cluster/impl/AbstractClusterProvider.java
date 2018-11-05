@@ -81,24 +81,28 @@ public abstract class AbstractClusterProvider<C extends Client> implements Clust
 
     /**
      * getMatchType
+     *
      * @return
      */
     protected abstract ClusterPlugin getMatchType();
 
     /**
      * newMonitor
+     *
      * @return
      */
     protected abstract ClusterMonitor newMonitor();
 
     /**
      * getClusterListenerClass
+     *
      * @return
      */
     protected abstract Class getClusterListenerClass();
 
     /**
      * initClient
+     *
      * @param clusterConfig
      * @return
      * @throws ConfigParseException
@@ -261,7 +265,9 @@ public abstract class AbstractClusterProvider<C extends Client> implements Clust
 
     @Override
     public DistributedLock getLock() {
-        if (null == lock) new UnsupportedOperationException("分布式锁功能未提供");
+        if (null == lock) {
+            new UnsupportedOperationException("分布式锁功能未提供");
+        }
         return lock;
     }
 }
