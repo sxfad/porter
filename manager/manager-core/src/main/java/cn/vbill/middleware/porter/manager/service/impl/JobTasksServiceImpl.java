@@ -176,6 +176,9 @@ public class JobTasksServiceImpl implements JobTasksService {
     public JobTasks selectById(Long id) {
 
         JobTasks jobTasks = jobTasksMapper.selectById(id);
+        if (jobTasks.getJobType() == 2) {
+            return jobTasks;
+        }
         // 根据 sourceDataId 查询 同步数据来源实体信息
         if (jobTasks != null && jobTasks.getSourceDataId() != null) {
             DataSource sourceDataEntity = dataSourceService.selectById(jobTasks.getSourceDataId());
