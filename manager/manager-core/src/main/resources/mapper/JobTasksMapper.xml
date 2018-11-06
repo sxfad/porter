@@ -133,6 +133,7 @@
         insert into job_tasks(
             id,
             job_name,
+            job_state,
             job_type,
             source_consume_adt,
             source_convert_adt,
@@ -151,6 +152,7 @@
         ) values (
             #{id},
             #{jobName},
+            'NEW',
             '2',
             'CANAL',
             'CANAL_ROW',
@@ -203,12 +205,16 @@
     <update id="updateZKCapture">
         update job_tasks
         <set>
+            <if test="jobTasks.jobName != null">
+                job_name = #{jobTasks.jobName},
+            </if>
             <if test="jobTasks.jobXmlText != null">
                 job_xml_text = #{jobTasks.jobXmlText},
             </if>
             <if test="jobTasks.jobJsonText != null">
                 job_json_text = #{jobTasks.jobJsonText},
             </if>
+            job_state = 'NEW'
         </set>
         where id = #{jobTasks.id}
     </update>
