@@ -17,12 +17,13 @@
 
 package cn.vbill.middleware.porter.common.dic;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 /**
  * 转换器插件
@@ -61,4 +62,12 @@ public enum ConsumeConverterPlugin {
     @Getter
     private final String name;
 
+    public static ConsumeConverterPlugin enumByCode(String code) {
+        for (ConsumeConverterPlugin e : ConsumeConverterPlugin.values()) {
+            if (e.getCode().equalsIgnoreCase(code)) {
+                return e;
+            }
+        }
+        return null;
+    }
 }

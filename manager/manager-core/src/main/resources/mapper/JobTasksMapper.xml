@@ -152,16 +152,16 @@
         ) values (
             #{id},
             #{jobName},
-            'NEW',
+            #{jobState},
             '2',
-            'CANAL',
-            'CANAL_ROW',
+            #{sourceConsumeAdt},
+            #{sourceConvertAdt},
             '0',
             '0',
             '0',
             '0',
             '0',
-            'JDBC_BATCH',
+            #{targetLoadAdt},
             '0',
             '0',
             '0',
@@ -214,7 +214,16 @@
             <if test="jobTasks.jobJsonText != null">
                 job_json_text = #{jobTasks.jobJsonText},
             </if>
-            job_state = 'NEW'
+            <if test="jobTasks.sourceConsumeAdt != null">
+                source_consume_adt = #{jobTasks.sourceConsumeAdt},
+            </if>
+            <if test="jobTasks.sourceConvertAdt != null">
+                source_convert_adt = #{jobTasks.sourceConvertAdt},
+            </if>
+            <if test="jobTasks.targetLoadAdt != null">
+                target_load_adt = #{jobTasks.targetLoadAdt},
+            </if>
+            job_state = #{jobTasks.jobState},
         </set>
         where id = #{jobTasks.id}
     </update>
