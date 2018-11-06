@@ -21,6 +21,7 @@ import cn.vbill.middleware.porter.common.util.DefaultNamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -44,6 +45,9 @@ public abstract class AbstractStageJob implements StageJob {
     //管道无数据线程等待间隙
     private static  final long DEFAULT_THREAD_WAIT_SPAN = 2000;
     private final long threadWaitSpan;
+
+    //终止job保证先终止业务逻辑再清理连接
+    private final CountDownLatch jobStopLatch = new CountDownLatch(1);
 
     public AbstractStageJob(String baseThreadName) {
         this(baseThreadName, DEFAULT_THREAD_WAIT_SPAN);
@@ -102,6 +106,7 @@ public abstract class AbstractStageJob implements StageJob {
                 }
                 //先停止任务线程
                 loopService.interrupt();
+                jobStopLatch.await();
             } catch (Throwable e) {
                 LOGGER.error("停止任务线程逻辑失败", e);
             } finally {
@@ -138,8 +143,8 @@ public abstract class AbstractStageJob implements StageJob {
                     LOGGER.debug("源队列为空，线程进入等待.");
                     Thread.sleep(threadWaitSpan);
                 } catch (InterruptedException e) {
+                    jobStopLatch.countDown();
                     //如果线程有中断信号，退出线程
-                    Thread.interrupted();
                     break;
                 }
             }

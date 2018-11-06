@@ -239,4 +239,11 @@ public interface DataConsumer {
      * @return: void
      */
     void setEmptyFetchThreshold(long secondsValue);
+
+    /**
+     * 获取初始化消费点
+     * @return
+     */
+    String getInitiatePosition();
+    void setOffset(String offset);
 }

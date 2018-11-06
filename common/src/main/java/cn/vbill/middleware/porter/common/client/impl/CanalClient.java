@@ -263,6 +263,11 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
     }
 
     @Override
+    public String getInitiatePosition(String offset) {
+        return StringUtils.isNotBlank(offset) ? new CanalPosition(-1, 4, offset).render() : "";
+    }
+
+    @Override
     public boolean isAutoCommitPosition() {
         return false;
     }
@@ -294,7 +299,6 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
             canFetch.await();
             return true;
         } catch (InterruptedException e) {
-            Thread.interrupted();
             return false;
         }
     }

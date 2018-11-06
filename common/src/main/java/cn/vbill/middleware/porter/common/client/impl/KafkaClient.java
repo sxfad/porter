@@ -27,6 +27,7 @@ import cn.vbill.middleware.porter.common.util.MachineUtils;
 import com.alibaba.fastjson.JSONObject;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -171,6 +172,13 @@ public class KafkaClient extends AbstractClient<KafkaConfig> implements ConsumeC
     }
 
     @Override
+    public String getInitiatePosition(String offset) {
+        KafkaConfig config = new KafkaConfig();
+        return StringUtils.isNotBlank(offset) && NumberUtils.isCreatable(offset) && null != config.getTopics() && config.getTopics().size() == 1 ?
+                new KafkaPosition(config.getTopics().get(0), NumberUtils.createNumber(offset).longValue(), config.getPartition()).render(): "";
+    }
+
+    @Override
     public boolean isAutoCommitPosition() {
         return getConfig().isAutoCommit();
     }
@@ -223,7 +231,6 @@ public class KafkaClient extends AbstractClient<KafkaConfig> implements ConsumeC
             return true;
         } catch (InterruptedException e) {
             e.printStackTrace();
-            Thread.interrupted();
             return false;
         }
     }

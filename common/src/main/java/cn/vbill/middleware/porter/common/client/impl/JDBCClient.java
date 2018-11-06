@@ -286,10 +286,6 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
         }
     }
 
-
-
-
-
     @Override
     public String getClientInfo() {
         JDBCConfig config = getConfig();
@@ -303,7 +299,6 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
         private volatile TransactionTemplate transactionTemplate;
         private final ReadWriteLock connLock = new ReentrantReadWriteLock();
         private JdbcWapper() {
-
         }
 
         private JdbcWapper start() {

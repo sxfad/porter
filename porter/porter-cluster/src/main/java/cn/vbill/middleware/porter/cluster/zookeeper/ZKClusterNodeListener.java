@@ -216,7 +216,6 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements T
                     } catch (KeeperException e) {
                         LOGGER.warn("上传节点心跳失败", e);
                     } catch (InterruptedException e) {
-                        Thread.interrupted();
                         e.printStackTrace();
                     }
                 }
