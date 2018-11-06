@@ -410,9 +410,9 @@ public class JobTasksServiceImpl implements JobTasksService {
         List<TableMapperConfig> tableList = new ArrayList<>();
         TableMapperConfig tableMapperConfig = null;
         for (JobTasksTable jobTasksTable : tables) {
-            String[] schema = { jobTasksTable.getSourceTableName().split("[.]")[0],
+            String[] schema = {jobTasksTable.getSourceTableName().split("[.]")[0],
                     jobTasksTable.getTargetTableName().split("[.]")[0] };
-            String[] table = { jobTasksTable.getSourceTableName().split("[.]")[1],
+            String[] table = {jobTasksTable.getSourceTableName().split("[.]")[1],
                     jobTasksTable.getTargetTableName().split("[.]")[1] };
 
             Map<String, String> column = null;
