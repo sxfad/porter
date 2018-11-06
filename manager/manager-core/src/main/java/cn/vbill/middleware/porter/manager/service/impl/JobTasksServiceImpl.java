@@ -333,6 +333,8 @@ public class JobTasksServiceImpl implements JobTasksService {
         JobTasks jobTasks = this.selectById(id);
         if (jobTasks.getJobType() == 2) {
             TaskConfig task = JSONObject.parseObject(jobTasks.getJobJsonText(), TaskConfig.class);
+            task.setStatus(status);
+            logger.info("taskConfig:" + JSON.toJSONString(task));
             return task;
         }
         // 来源数据-消费插件.
