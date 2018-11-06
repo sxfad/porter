@@ -117,8 +117,18 @@ public class KafkaClient extends AbstractClient<KafkaConfig> implements ConsumeC
                         //判断设置的消费进度是否当前分区可用最小进度
                         long endOffset = consumer.endOffsets(Arrays.asList(tp)).get(tp);
                         long beginOffset = consumer.beginningOffsets(Arrays.asList(tp)).get(tp);
-                        if (endOffset >= kafkaPosition.offset + 1 && beginOffset <= kafkaPosition.offset + 1) {
-                            consumer.seek(tp, kafkaPosition.offset + 1);
+                        long tryOffset = kafkaPosition.offset + 1;
+                        if (endOffset >= tryOffset && beginOffset <= tryOffset) {
+                            /**
+                             * ---------为避免因上次停止任务造成的消费同步点异常,从而丢失数据，往前消费一个批次---------
+                             * 2018-11-06
+                             */
+                            KafkaConfig config = getConfig();
+                            long tmpTryOffset = tryOffset - config.getOncePollSize();
+                            if (endOffset >= tmpTryOffset && beginOffset <= tmpTryOffset) {
+                                tryOffset = tmpTryOffset;
+                            }
+                            //---------为避免因上次停止任务造成的消费同步点异常,从而丢失数据，往前消费一个批次---------
                         } else {
                             throw new DataConsumerBuildException("拟消费下标:" + (kafkaPosition.offset + 1)
                                     + ", 实际可消费下标范围:" + beginOffset + "~" + endOffset);
@@ -136,39 +146,43 @@ public class KafkaClient extends AbstractClient<KafkaConfig> implements ConsumeC
     }
 
     @Override
-    public <F, O> List<F> fetch(FetchCallback<F, O> callback) {
-        List<F> msgs = new ArrayList<>();
-        if (isStarted()) {
-            ConsumerRecords<String, String> results = null;
-            synchronized (consumer) {
-                try {
-                    //提交kafka消费进度
-                    commitLazyPosition();
-                    results = consumer.poll(pollTimeOut);
-                } catch (WakeupException e) {
-                    LOGGER.info("trigger kafka consumer WakeupException:{}", getClientInfo());
-                    consumer.unsubscribe();
-                    consumer.close();
-                    consumer = null;
-                    canFetch = new CountDownLatch(1);
-                }
-            }
-            if (null != results && !results.isEmpty()) {
-                Iterator<ConsumerRecord<String, String>> it = results.iterator();
-                while (it.hasNext()) {
+    public <F, O> List<F> fetch(FetchCallback<F, O> callback) throws InterruptedException {
+        try {
+            List<F> msgs = new ArrayList<>();
+            if (isStarted()) {
+                ConsumerRecords<String, String> results = null;
+                synchronized (consumer) {
                     try {
-                        ConsumerRecord<String, String> record = it.next();
-                        F f = callback.accept(record);
-                        if (null != f) {
-                            msgs.add(f);
+                        //提交kafka消费进度
+                        commitLazyPosition();
+                        results = consumer.poll(pollTimeOut);
+                    } catch (WakeupException e) {
+                        LOGGER.info("trigger kafka consumer WakeupException:{}", getClientInfo());
+                        consumer.unsubscribe();
+                        consumer.close();
+                        consumer = null;
+                        canFetch = new CountDownLatch(1);
+                    }
+                }
+                if (null != results && !results.isEmpty()) {
+                    Iterator<ConsumerRecord<String, String>> it = results.iterator();
+                    while (it.hasNext()) {
+                        try {
+                            ConsumerRecord<String, String> record = it.next();
+                            F f = callback.accept(record);
+                            if (null != f) {
+                                msgs.add(f);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
                     }
                 }
             }
+            return msgs;
+        } catch (org.apache.kafka.common.errors.InterruptException e) {
+            throw new InterruptedException(e.getMessage());
         }
-        return msgs;
     }
 
     @Override

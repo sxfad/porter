@@ -36,7 +36,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public abstract class AbstractStageJob implements StageJob {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractStageJob.class);
     protected static final int LOGIC_THREAD_SIZE = 5;
-    private AtomicBoolean stat = new AtomicBoolean(false);
+    private final AtomicBoolean stat = new AtomicBoolean(false);
     private final Thread loopService;
     private final ThreadFactory threadFactory;
     //任务退出信号量，为了保证优雅关机时内存中的数据处理完毕
@@ -154,4 +154,7 @@ public abstract class AbstractStageJob implements StageJob {
         return threadFactory;
     }
 
+    public final boolean getWorkingStat() {
+        return !stat.get();
+    }
 }

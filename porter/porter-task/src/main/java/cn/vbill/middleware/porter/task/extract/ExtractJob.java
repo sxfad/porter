@@ -128,7 +128,7 @@ public class ExtractJob extends AbstractStageJob {
                         "extract MessageEvent error" + e.getMessage());
                 LOGGER.error("extract MessageEvent error!", e);
             }
-        } while (null != events);
+        } while (null != events && getWorkingStat());
     }
 
     @Override

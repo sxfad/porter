@@ -108,7 +108,7 @@ public class SelectJob extends AbstractStageJob {
                 NodeLog.upload(NodeLog.LogType.TASK_LOG, work.getTaskId(), consumer.getSwimlaneId(), "fetch MessageEvent error" + e.getMessage());
                 LOGGER.error("fetch MessageEvent error!", e);
             }
-        } while (null != events && !events.isEmpty());
+        } while (null != events && !events.isEmpty() && getWorkingStat());
 
         try {
             //退出轮训循环，判断累计查不到数据时间，按照配置发送邮件告警
