@@ -60,4 +60,12 @@ public enum ConsumerPlugin {
     @Getter
     private final String name;
 
+    public static ConsumerPlugin enumByCode(String code) {
+        for (ConsumerPlugin e : ConsumerPlugin.values()) {
+            if (e.getCode().equalsIgnoreCase(code)) {
+                return e;
+            }
+        }
+        return null;
+    }
 }

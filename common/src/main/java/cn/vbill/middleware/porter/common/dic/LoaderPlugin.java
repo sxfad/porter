@@ -90,4 +90,13 @@ public enum LoaderPlugin {
     private final String code;
     @Getter
     private final String name;
+
+    public static LoaderPlugin enumByCode(String code) {
+        for (LoaderPlugin e : LoaderPlugin.values()) {
+            if (e.getCode().equalsIgnoreCase(code)) {
+                return e;
+            }
+        }
+        return null;
+    }
 }

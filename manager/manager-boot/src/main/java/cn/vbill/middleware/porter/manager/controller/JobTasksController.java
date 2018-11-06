@@ -198,7 +198,7 @@ public class JobTasksController {
     @PostMapping("/addspecial")
     @ApiOperation(value = "新增特殊任务", notes = "新增特殊任务")
     public ResponseMessage addSpecial(@RequestBody JobTasks jobTasks) {
-        Integer number = jobTasksService.insertZKCapture(jobTasks);
+        Integer number = jobTasksService.insertZKCapture(jobTasks, TaskStatusType.NEW);
         return ok(number);
     }
 
@@ -211,7 +211,7 @@ public class JobTasksController {
     @PutMapping("/updatespecial")
     @ApiOperation(value = "修改特殊任务", notes = "修改特殊任务")
     public ResponseMessage updateSpecial(@RequestBody JobTasks jobTasks) {
-        Integer number = jobTasksService.updateZKCapture(jobTasks);
+        Integer number = jobTasksService.updateZKCapture(jobTasks, TaskStatusType.NEW);
         return ok(number);
     }
 

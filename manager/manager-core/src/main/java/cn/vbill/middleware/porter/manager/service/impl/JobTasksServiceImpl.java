@@ -127,7 +127,22 @@ public class JobTasksServiceImpl implements JobTasksService {
     }
 
     @Override
-    public Integer insertZKCapture(JobTasks jobTasks) {
+    public Integer insertZKCapture(JobTasks jobTasks, TaskStatusType jobState) {
+        jobTasks.setJobState(jobState);
+        TaskConfig task = JSONObject.parseObject(jobTasks.getJobJsonText(), TaskConfig.class);
+        jobTasks.setId(Long.valueOf(task.getTaskId()));
+        if (jobTasks.getJobName() == null) {
+            jobTasks.setJobName("本地任务-" + task.getTaskId());
+        }
+        // 来源数据-消费插件
+        ConsumerPlugin sourceConsumeAdt = ConsumerPlugin.enumByCode(task.getConsumer().getConsumerName());
+        jobTasks.setSourceConsumeAdt(sourceConsumeAdt);
+        // 来源数据-消费转换插件
+        ConsumeConverterPlugin sourceConvertAdt = ConsumeConverterPlugin.enumByCode(task.getConsumer().getConverter());
+        jobTasks.setSourceConvertAdt(sourceConvertAdt);
+        // 目标插件
+        LoaderPlugin targetLoadAdt = LoaderPlugin.enumByCode(task.getLoader().getLoaderName());
+        jobTasks.setTargetLoadAdt(targetLoadAdt);
         return jobTasksMapper.insertZKCapture(jobTasks);
     }
 
@@ -171,6 +186,9 @@ public class JobTasksServiceImpl implements JobTasksService {
     public JobTasks selectById(Long id) {
 
         JobTasks jobTasks = jobTasksMapper.selectById(id);
+        if (jobTasks.getJobType() == 2) {
+            return jobTasks;
+        }
         // 根据 sourceDataId 查询 同步数据来源实体信息
         if (jobTasks != null && jobTasks.getSourceDataId() != null) {
             DataSource sourceDataEntity = dataSourceService.selectById(jobTasks.getSourceDataId());
@@ -216,7 +234,18 @@ public class JobTasksServiceImpl implements JobTasksService {
     }
 
     @Override
-    public Integer updateZKCapture(JobTasks jobTasks) {
+    public Integer updateZKCapture(JobTasks jobTasks, TaskStatusType jobState) {
+        jobTasks.setJobState(jobState);
+        TaskConfig task = JSONObject.parseObject(jobTasks.getJobJsonText(), TaskConfig.class);
+        // 来源数据-消费插件
+        ConsumerPlugin sourceConsumeAdt = ConsumerPlugin.enumByCode(task.getConsumer().getConsumerName());
+        jobTasks.setSourceConsumeAdt(sourceConsumeAdt);
+        // 来源数据-消费转换插件
+        ConsumeConverterPlugin sourceConvertAdt = ConsumeConverterPlugin.enumByCode(task.getConsumer().getConverter());
+        jobTasks.setSourceConvertAdt(sourceConvertAdt);
+        // 目标插件
+        LoaderPlugin targetLoadAdt = LoaderPlugin.enumByCode(task.getLoader().getLoaderName());
+        jobTasks.setTargetLoadAdt(targetLoadAdt);
         return jobTasksMapper.updateZKCapture(jobTasks);
     }
 
@@ -304,6 +333,8 @@ public class JobTasksServiceImpl implements JobTasksService {
         JobTasks jobTasks = this.selectById(id);
         if (jobTasks.getJobType() == 2) {
             TaskConfig task = JSONObject.parseObject(jobTasks.getJobJsonText(), TaskConfig.class);
+            task.setStatus(status);
+            logger.info("taskConfig:" + JSON.toJSONString(task));
             return task;
         }
         // 来源数据-消费插件.
