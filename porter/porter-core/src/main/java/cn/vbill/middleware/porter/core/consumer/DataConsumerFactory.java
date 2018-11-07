@@ -105,7 +105,7 @@ public enum DataConsumerFactory {
             consumer.setExcludes(config.getExcludes());
             consumer.setIncludes(config.getIncludes());
             consumer.setEventProcessor(processor);
-            consumer.setOffset(config.getConsumerName());
+            consumer.setOffset(config.getOffset());
 
             /**
              * 空查询告警参数
