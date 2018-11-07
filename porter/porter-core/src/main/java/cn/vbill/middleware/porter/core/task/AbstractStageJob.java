@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -106,7 +107,7 @@ public abstract class AbstractStageJob implements StageJob {
                 }
                 //先停止任务线程
                 loopService.interrupt();
-                jobStopLatch.await();
+                jobStopLatch.await(10, TimeUnit.SECONDS);
             } catch (Throwable e) {
                 LOGGER.error("停止任务线程逻辑失败", e);
             } finally {
@@ -133,7 +134,7 @@ public abstract class AbstractStageJob implements StageJob {
         @Override
         public void run() {
             //如果线程没有中断信号并且服务可用，持续执行
-            while (!Thread.currentThread().isInterrupted() && stat.get()) {
+            while (!Thread.currentThread().isInterrupted() && getWorkingStat()) {
                 try {
                     stopSignal.acquire();
                     LOGGER.debug("源队列为空，线程恢复执行.");
@@ -148,6 +149,11 @@ public abstract class AbstractStageJob implements StageJob {
                     break;
                 }
             }
+            /**
+             * 用于loopLogic没触发InterruptedException时
+             * If the current count equals zero then nothing happens.
+             */
+            jobStopLatch.countDown();
         }
     }
     protected ThreadFactory getThreadFactory() {
@@ -155,6 +161,6 @@ public abstract class AbstractStageJob implements StageJob {
     }
 
     public final boolean getWorkingStat() {
-        return !stat.get();
+        return stat.get();
     }
 }
