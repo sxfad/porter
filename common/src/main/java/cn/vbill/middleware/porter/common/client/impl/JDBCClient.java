@@ -129,7 +129,7 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
      * @param tableName
      * @return
      */
-    private TableSchema getTableSchema(String schema, String tableName) {
+    private TableSchema getTableSchema(String schema, String tableName) throws InterruptedException {
         Table dbTable = jdbcProxy.findTable(schema, schema, tableName, makePrimaryKeyWhenNo);
         TableSchema tableSchema = new TableSchema();
         //mysql特殊场景下(例如大小写敏感)，schema字段为空
@@ -194,7 +194,7 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
      * @return
      * @throws TaskStopTriggerException
      */
-    public int[] batchUpdate(String sqlType, String sql, List<Object[]> batchArgs) throws TaskStopTriggerException {
+    public int[] batchUpdate(String sqlType, String sql, List<Object[]> batchArgs) throws TaskStopTriggerException, InterruptedException {
         int[] affect = jdbcProxy.batchUpdate(sql, batchArgs);
 
         if (null == affect || affect.length == 0) {
@@ -217,7 +217,7 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
      * @return
      * @throws TaskStopTriggerException
      */
-    public int update(String type, String sql, Object... args) throws TaskStopTriggerException {
+    public int update(String type, String sql, Object... args) throws TaskStopTriggerException, InterruptedException {
         int affect = jdbcProxy.update(sql, args);
         if (affect < 1) {
             LOGGER.error("sql:{},params:{},affect:{}", sql, JSON.toJSONString(Arrays.asList(args)), affect);
@@ -259,7 +259,7 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
      * @throws TaskStopTriggerException
      */
     private void batchErroUpdate(String sqlType, int batchSize, String sql, List<Object[]> batchArgs, int from, List<Integer> affect)
-            throws TaskStopTriggerException {
+            throws TaskStopTriggerException, InterruptedException {
         int size = batchArgs.size();
         int batchEnd = from + batchSize;
         //获取当前分组
@@ -354,7 +354,31 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
             }
         }
 
-        private Table findTable(String catalogName, String schema, String tableName, boolean makePrimaryKeyWhenNo) {
+        private Table findTable(String catalogName, String schema, String tableName, boolean makePrimaryKeyWhenNo) throws InterruptedException {
+            boolean sendResult = false;
+            Table result = null;
+            int retries = getConfig().getRetries();
+            //做retries-1次尝试
+            for (int i = 0; i < retries - 1; i++) {
+                try {
+                    result = nativeFindTable(catalogName, schema, tableName, makePrimaryKeyWhenNo);
+                    sendResult = true;
+                    break;
+                } catch (Throwable e) {
+                    LOGGER.warn("got error by findTable:{}.{},times:{}", catalogName, tableName, i, e);
+                    Thread.sleep(1000L * 60 * 1);
+                    reconnection();
+                }
+            }
+            //做最后一次尝试，否则抛出异常
+            if (!sendResult) {
+                result = nativeFindTable(catalogName, schema, tableName, makePrimaryKeyWhenNo);
+            }
+            return result;
+        }
+
+
+        private Table nativeFindTable(String catalogName, String schema, String tableName, boolean makePrimaryKeyWhenNo) {
             connLock.readLock().lock();
             try {
                 Table table = DdlUtils.findTable(jdbcTemplate, catalogName, schema, tableName, makePrimaryKeyWhenNo);
@@ -362,6 +386,7 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
             } finally {
                 connLock.readLock().unlock();
             }
+
         }
 
         private void query(String sql, RowCallbackHandler rch, Object[] args) {
@@ -373,11 +398,11 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
             }
         }
 
-        private int[] batchUpdate(String sql, List<Object[]> batchArgs) throws TaskStopTriggerException {
+        private int[] batchUpdate(String sql, List<Object[]> batchArgs) throws TaskStopTriggerException, InterruptedException {
             return batchUpdate(sql, batchArgs, false);
         }
 
-        private int[] batchUpdate(String sql, List<Object[]> batchArgs, boolean capture) throws TaskStopTriggerException {
+        private int[] batchUpdate(String sql, List<Object[]> batchArgs, boolean capture) throws TaskStopTriggerException, InterruptedException {
             return atomicExecute(new TransactionCallback<int[]>() {
                 @Override
                 @SneakyThrows(Throwable.class)
@@ -387,11 +412,11 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
             }, capture);
         }
 
-        private int update(String sql, Object... args) throws TaskStopTriggerException {
+        private int update(String sql, Object... args) throws TaskStopTriggerException, InterruptedException {
             return update(sql, false, args);
         }
 
-        private int update(String sql, boolean capture, Object... args) throws TaskStopTriggerException {
+        private int update(String sql, boolean capture, Object... args) throws TaskStopTriggerException, InterruptedException {
             return atomicExecute(new TransactionCallback<Integer>() {
                 @Override
                 @SneakyThrows(Throwable.class)
@@ -401,7 +426,7 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
             }, capture);
         }
 
-        private <T> T atomicExecute(TransactionCallback<T> action, boolean capture) throws TaskStopTriggerException {
+        private <T> T atomicExecute(TransactionCallback<T> action, boolean capture) throws TaskStopTriggerException, InterruptedException {
             boolean sendResult = false;
             T result = null;
             int retries = getConfig().getRetries();
@@ -413,10 +438,7 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
                     break;
                 } catch (TaskStopTriggerException e) {
                     LOGGER.warn("got error by execute sql,times:{}", i, e);
-                    try {
-                        Thread.sleep(1000L * 60 * 1);
-                    } catch (Throwable sleepException) {
-                    }
+                    Thread.sleep(1000L * 60 * 1);
                     reconnection();
                 }
             }
