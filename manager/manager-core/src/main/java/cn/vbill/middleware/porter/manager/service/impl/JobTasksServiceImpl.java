@@ -484,7 +484,7 @@ public class JobTasksServiceImpl implements JobTasksService {
             MutablePropertySources sources = new MutablePropertySources();
             sources.addFirst(new PropertiesPropertySource(UUID.randomUUID().toString(), properties));
             factory.setPropertySources(sources);
-            factory.setTargetName("porter.task[0]");
+            //factory.setTargetName("porter.task[0]");
             factory.bindPropertiesToTarget();
 
         } catch (IOException e) {
