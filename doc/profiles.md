@@ -420,4 +420,3 @@
 	字段映射,可不配置。
 	porter.task[index].mapper[下标].column.源端字段名=目标端字段名
 ```
-	

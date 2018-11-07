@@ -102,5 +102,4 @@ public interface AlarmMapper {
      * @return
      */
     Integer updateSelective(@Param("id") Long id, @Param("alarm") Alarm alarm);
-
 }

@@ -19,6 +19,7 @@ package cn.vbill.middleware.porter.manager.controller;
 
 import static cn.vbill.middleware.porter.manager.web.message.ResponseMessage.ok;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -38,6 +39,7 @@ import com.alibaba.fastjson.JSON;
 
 import cn.vbill.middleware.porter.common.cluster.ClusterProviderProxy;
 import cn.vbill.middleware.porter.common.cluster.command.TaskPushCommand;
+import cn.vbill.middleware.porter.common.config.TaskConfig;
 import cn.vbill.middleware.porter.common.dic.TaskStatusType;
 import cn.vbill.middleware.porter.manager.core.entity.JobTasks;
 import cn.vbill.middleware.porter.manager.service.JobTasksService;
@@ -196,7 +198,7 @@ public class JobTasksController {
     @PostMapping("/addspecial")
     @ApiOperation(value = "新增特殊任务", notes = "新增特殊任务")
     public ResponseMessage addSpecial(@RequestBody JobTasks jobTasks) {
-        Integer number = jobTasksService.insertZKCapture(jobTasks);
+        Integer number = jobTasksService.insertZKCapture(jobTasks, TaskStatusType.NEW);
         return ok(number);
     }
 
@@ -209,23 +211,27 @@ public class JobTasksController {
     @PutMapping("/updatespecial")
     @ApiOperation(value = "修改特殊任务", notes = "修改特殊任务")
     public ResponseMessage updateSpecial(@RequestBody JobTasks jobTasks) {
-        Integer number = jobTasksService.updateZKCapture(jobTasks);
+        Integer number = jobTasksService.updateZKCapture(jobTasks, TaskStatusType.NEW);
         return ok(number);
     }
 
     /**
      * 解析特殊配置
      * 
-     * @param jobTasks
+     * @param jobXmlText
      * @return
      */
     @PostMapping(value = "/dealspecialjson")
     @ApiOperation(value = "解析字符串", notes = "解析字符串")
-    public ResponseMessage dealSpecialJson(String jobXmlText) {
-        System.out.println(jobXmlText);
-        //java.net.URLEncoder.encode(name,"UTF-8");
-        //String jobJosnText = jobTasksService.dealSpecialJson(jobTasks.getJobXmlText());
-        return ok(null);
+    public ResponseMessage dealSpecialJson(@RequestBody String jobXmlText) {
+        log.info("解析字符串:[{}]", jobXmlText);
+        try {
+            TaskConfig taskConfig = jobTasksService.dealSpecialJson(java.net.URLDecoder.decode(jobXmlText, "UTF-8"));
+            return ok(taskConfig);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return ResponseMessage.error(null);
     }
 
     /**
@@ -278,14 +284,4 @@ public class JobTasksController {
         }
         return ok(number);
     }
-    
-    /**
-     * 
-     * @return
-     
-    @PostMapping("/addtaskconifg")
-    @ApiOperation(value = "任务", notes = "任务")
-    public ResponseMessage addTaskConifg(@RequestBody TaskConfig taskConfig) {
-        return ok(null);
-    }*/
 }

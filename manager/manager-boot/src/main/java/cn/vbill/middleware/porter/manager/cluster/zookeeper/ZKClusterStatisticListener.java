@@ -63,7 +63,6 @@ public class ZKClusterStatisticListener extends ZookeeperClusterListener {
         ZookeeperClusterEvent zkEvent = (ZookeeperClusterEvent) event;
         LOGGER.debug("StatisticListener:{},{},{}", zkEvent.getPath(), zkEvent.getData(), zkEvent.getEventType());
         String zkPath = zkEvent.getPath();
-
         if (zkEvent.isOnline()) {
             try {
                 // 日志
@@ -90,7 +89,6 @@ public class ZKClusterStatisticListener extends ZookeeperClusterListener {
                         }
                     }
                 }
-
                 // 性能指标数据
                 if (TASK_PATTERN.matcher(zkPath).matches()) {
                     TaskPerformance performance = JSONObject.parseObject(zkEvent.getData(), TaskPerformance.class);

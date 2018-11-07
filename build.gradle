@@ -1,4 +1,5 @@
 apply plugin: 'java'
+apply plugin: 'maven'
 version '3.0'
 
 repositories {
@@ -12,9 +13,6 @@ buildscript {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:1.5.9.RELEASE"
     }
 }
-
-
-
 
 
 subprojects {

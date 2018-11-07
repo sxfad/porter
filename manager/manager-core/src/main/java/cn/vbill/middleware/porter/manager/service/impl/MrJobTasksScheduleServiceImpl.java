@@ -176,10 +176,10 @@ public class MrJobTasksScheduleServiceImpl implements MrJobTasksScheduleService 
         JobTasks jobTasks = new JobTasks(task, taskConfigJson);
         JobTasks old = jobTasksService.selectByIdOne(jobTasks.getId());
         if (old == null || old.getId() == null) {
-            jobTasksService.insertZKCapture(jobTasks);
+            jobTasksService.insertZKCapture(jobTasks, TaskStatusType.WORKING);
         } else {
             jobTasks.setId(old.getId());
-            jobTasksService.updateZKCapture(jobTasks);
+            jobTasksService.updateZKCapture(jobTasks, TaskStatusType.WORKING);
         }
     }
 }

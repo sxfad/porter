@@ -155,5 +155,5 @@ public class HomeBlockResult {
         this.mrNodeNum3 = mrNodeNum3;
     }
 
-
+    
 }

@@ -415,4 +415,3 @@
 	Field mapping, no need to configure.
 	porter.task[index].mapper[subscript].column.Source field name = target field name
 ```
-	

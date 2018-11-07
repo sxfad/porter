@@ -127,7 +127,7 @@
             '2'
         )
     </insert>
-    
+
     <!-- 新增 -->
     <insert id="insertZKCapture" useGeneratedKeys="true" keyProperty="id">
         insert into job_tasks(
@@ -152,16 +152,16 @@
         ) values (
             #{id},
             #{jobName},
-            'WORKING',
+            #{jobState},
             '2',
-            'CANAL',
-            'CANAL_ROW',
+            #{sourceConsumeAdt},
+            #{sourceConvertAdt},
             '0',
             '0',
             '0',
             '0',
             '0',
-            'JDBC_BATCH',
+            #{targetLoadAdt},
             '0',
             '0',
             '0',
@@ -205,12 +205,25 @@
     <update id="updateZKCapture">
         update job_tasks
         <set>
+            <if test="jobTasks.jobName != null">
+                job_name = #{jobTasks.jobName},
+            </if>
             <if test="jobTasks.jobXmlText != null">
                 job_xml_text = #{jobTasks.jobXmlText},
             </if>
             <if test="jobTasks.jobJsonText != null">
                 job_json_text = #{jobTasks.jobJsonText},
             </if>
+            <if test="jobTasks.sourceConsumeAdt != null">
+                source_consume_adt = #{jobTasks.sourceConsumeAdt},
+            </if>
+            <if test="jobTasks.sourceConvertAdt != null">
+                source_convert_adt = #{jobTasks.sourceConvertAdt},
+            </if>
+            <if test="jobTasks.targetLoadAdt != null">
+                target_load_adt = #{jobTasks.targetLoadAdt},
+            </if>
+            job_state = #{jobTasks.jobState},
         </set>
         where id = #{jobTasks.id}
     </update>
@@ -264,11 +277,11 @@
     <!-- 分页 -->
     <select id="page" resultType="cn.vbill.middleware.porter.manager.core.entity.JobTasks">
         select
-        id, job_name AS jobName, java_class_name as javaClassName, java_class_content as javaClassContent, 
+        id, job_name AS jobName, java_class_name as javaClassName, java_class_content as javaClassContent,
         job_state AS jobState, job_type as jobType,
         source_consume_adt AS sourceConsumeAdt, source_convert_adt AS sourceConvertAdt,
-        target_load_adt AS targetLoadAdt, 
-        job_xml_text as jobXmlText,job_json_text as jobJsonText, 
+        target_load_adt AS targetLoadAdt,
+        job_xml_text as jobXmlText,job_json_text as jobJsonText,
         create_time AS createTime
         from job_tasks
         <where>
@@ -285,9 +298,9 @@
             <if test="jobType != null and jobType != ''">
                 and job_type = #{jobType}
             </if>
-           <!--  <if test="code != null and code != ''">
-                and job_state = #{code}
-            </if> -->
+            <!--  <if test="code != null and code != ''">
+                 and job_state = #{code}
+             </if> -->
         </where>
         order by create_time desc
         limit #{page.offset},#{page.pageSize}

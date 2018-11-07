@@ -88,9 +88,6 @@ porter-boot-版本/bin/shutdown.sh
 ![首页](doc/img/Home.png)
 + [管理员手册](./doc/manager_manual.md)
 
-
 ## 联系我们
 
 * QQ群：835209101
-
-

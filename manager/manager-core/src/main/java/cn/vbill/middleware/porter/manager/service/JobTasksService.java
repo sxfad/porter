@@ -50,7 +50,7 @@ public interface JobTasksService {
      * @param: [jobTasks]
      * @return: java.lang.Integer
      */
-    Integer insertZKCapture(JobTasks jobTasks);
+    Integer insertZKCapture(JobTasks jobTasks, TaskStatusType jobState);
 
     /**
      * 新增Capture
@@ -77,8 +77,7 @@ public interface JobTasksService {
      * @param: [jobTasks]
      * @return: java.lang.Integer
      */
-    Integer updateZKCapture(JobTasks jobTasks);
-
+    Integer updateZKCapture(JobTasks jobTasks, TaskStatusType jobState);
     /**
      * 删除
      *
@@ -182,11 +181,12 @@ public interface JobTasksService {
      * @return: java.util.List<cn.vbill.middleware.porter.manager.core.entity.JobTasks>
      */
     List<JobTasks> selectJobNameList();
-    
+
     /**
      * 解析配置任务
+     * 
      * @param jobXmlText
      * @return
      */
-    String dealSpecialJson(String jobXmlText);
+    TaskConfig dealSpecialJson(String jobXmlText);
 }

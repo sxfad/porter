@@ -127,7 +127,22 @@ public class JobTasksServiceImpl implements JobTasksService {
     }
 
     @Override
-    public Integer insertZKCapture(JobTasks jobTasks) {
+    public Integer insertZKCapture(JobTasks jobTasks, TaskStatusType jobState) {
+        jobTasks.setJobState(jobState);
+        TaskConfig task = JSONObject.parseObject(jobTasks.getJobJsonText(), TaskConfig.class);
+        jobTasks.setId(Long.valueOf(task.getTaskId()));
+        if (jobTasks.getJobName() == null) {
+            jobTasks.setJobName("本地任务-" + task.getTaskId());
+        }
+        // 来源数据-消费插件
+        ConsumerPlugin sourceConsumeAdt = ConsumerPlugin.enumByCode(task.getConsumer().getConsumerName());
+        jobTasks.setSourceConsumeAdt(sourceConsumeAdt);
+        // 来源数据-消费转换插件
+        ConsumeConverterPlugin sourceConvertAdt = ConsumeConverterPlugin.enumByCode(task.getConsumer().getConverter());
+        jobTasks.setSourceConvertAdt(sourceConvertAdt);
+        // 目标插件
+        LoaderPlugin targetLoadAdt = LoaderPlugin.enumByCode(task.getLoader().getLoaderName());
+        jobTasks.setTargetLoadAdt(targetLoadAdt);
         return jobTasksMapper.insertZKCapture(jobTasks);
     }
 
@@ -171,6 +186,9 @@ public class JobTasksServiceImpl implements JobTasksService {
     public JobTasks selectById(Long id) {
 
         JobTasks jobTasks = jobTasksMapper.selectById(id);
+        if (jobTasks.getJobType() == 2) {
+            return jobTasks;
+        }
         // 根据 sourceDataId 查询 同步数据来源实体信息
         if (jobTasks != null && jobTasks.getSourceDataId() != null) {
             DataSource sourceDataEntity = dataSourceService.selectById(jobTasks.getSourceDataId());
@@ -216,7 +234,18 @@ public class JobTasksServiceImpl implements JobTasksService {
     }
 
     @Override
-    public Integer updateZKCapture(JobTasks jobTasks) {
+    public Integer updateZKCapture(JobTasks jobTasks, TaskStatusType jobState) {
+        jobTasks.setJobState(jobState);
+        TaskConfig task = JSONObject.parseObject(jobTasks.getJobJsonText(), TaskConfig.class);
+        // 来源数据-消费插件
+        ConsumerPlugin sourceConsumeAdt = ConsumerPlugin.enumByCode(task.getConsumer().getConsumerName());
+        jobTasks.setSourceConsumeAdt(sourceConsumeAdt);
+        // 来源数据-消费转换插件
+        ConsumeConverterPlugin sourceConvertAdt = ConsumeConverterPlugin.enumByCode(task.getConsumer().getConverter());
+        jobTasks.setSourceConvertAdt(sourceConvertAdt);
+        // 目标插件
+        LoaderPlugin targetLoadAdt = LoaderPlugin.enumByCode(task.getLoader().getLoaderName());
+        jobTasks.setTargetLoadAdt(targetLoadAdt);
         return jobTasksMapper.updateZKCapture(jobTasks);
     }
 
@@ -304,6 +333,8 @@ public class JobTasksServiceImpl implements JobTasksService {
         JobTasks jobTasks = this.selectById(id);
         if (jobTasks.getJobType() == 2) {
             TaskConfig task = JSONObject.parseObject(jobTasks.getJobJsonText(), TaskConfig.class);
+            task.setStatus(status);
+            logger.info("taskConfig:" + JSON.toJSONString(task));
             return task;
         }
         // 来源数据-消费插件.
@@ -380,9 +411,9 @@ public class JobTasksServiceImpl implements JobTasksService {
         TableMapperConfig tableMapperConfig = null;
         for (JobTasksTable jobTasksTable : tables) {
             String[] schema = {jobTasksTable.getSourceTableName().split("[.]")[0],
-                    jobTasksTable.getTargetTableName().split("[.]")[0]};
+                    jobTasksTable.getTargetTableName().split("[.]")[0] };
             String[] table = {jobTasksTable.getSourceTableName().split("[.]")[1],
-                    jobTasksTable.getTargetTableName().split("[.]")[1]};
+                    jobTasksTable.getTargetTableName().split("[.]")[1] };
 
             Map<String, String> column = null;
             if (!jobTasksTable.isDirectMapTable()) {
@@ -444,8 +475,7 @@ public class JobTasksServiceImpl implements JobTasksService {
     }
 
     @Override
-    public String dealSpecialJson(String jobXmlText) {
-        String jobJsonText = null;
+    public TaskConfig dealSpecialJson(String jobXmlText) {
         TaskConfig config = new TaskConfig();
         try {
             Properties properties = new Properties();
@@ -454,15 +484,14 @@ public class JobTasksServiceImpl implements JobTasksService {
             MutablePropertySources sources = new MutablePropertySources();
             sources.addFirst(new PropertiesPropertySource(UUID.randomUUID().toString(), properties));
             factory.setPropertySources(sources);
-            factory.setTargetName("porter.task[0]");
+            //factory.setTargetName("porter.task[0]");
             factory.bindPropertiesToTarget();
-            jobJsonText = JSONObject.toJSONString(config);
-            System.out.println(jobJsonText);
+
         } catch (IOException e) {
             logger.error("解析jobXmlText失败，请注意！！", e);
         } catch (BindException e) {
             logger.error("解析jobXmlText失败，请注意！！", e);
         }
-        return jobJsonText;
+        return config;
     }
 }

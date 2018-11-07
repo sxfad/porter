@@ -51,7 +51,6 @@ import cn.vbill.middleware.porter.manager.core.util.DealStrCutUtils;
 import cn.vbill.middleware.porter.manager.service.MrJobTasksScheduleService;
 import cn.vbill.middleware.porter.manager.service.impl.MrJobTasksScheduleServiceImpl;
 
-
 /**
  * 任务信息监听
  *
