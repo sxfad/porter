@@ -46,7 +46,7 @@ public class JdbcBatchLoader extends BaseJdbcLoader {
     }
 
     @Override
-    public Pair<Boolean, List<SubmitStatObject>> load(ETLBucket bucket) throws TaskStopTriggerException {
+    public Pair<Boolean, List<SubmitStatObject>> doLoad(ETLBucket bucket) throws TaskStopTriggerException {
         LOGGER.info("start loading bucket:{},size:{}", bucket.getSequence(), bucket.getRows().size());
         List<SubmitStatObject> affectRow = new ArrayList<>();
         for (List<ETLRow> rows : bucket.getBatchRows()) {

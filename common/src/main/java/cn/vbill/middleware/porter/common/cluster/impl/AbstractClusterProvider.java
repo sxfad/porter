@@ -89,12 +89,14 @@ public abstract class AbstractClusterProvider<C extends Client> implements Clust
 
     /**
      * newMonitor
+     *
      * @return
      */
     protected abstract ClusterMonitor newMonitor();
 
     /**
      * getClusterListenerClass
+     *
      * @return
      */
     protected abstract Class getClusterListenerClass();
@@ -110,8 +112,6 @@ public abstract class AbstractClusterProvider<C extends Client> implements Clust
     private C client;
     private ClusterMonitor monitor;
     private DistributedLock lock;
-
-
 
     @Override
     public boolean matches(ClusterPlugin type) {

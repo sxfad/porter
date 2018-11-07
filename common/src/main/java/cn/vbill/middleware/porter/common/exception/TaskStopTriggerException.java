@@ -30,6 +30,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.jdbc.UncategorizedSQLException;
+import org.springframework.transaction.CannotCreateTransactionException;
 
 import java.sql.BatchUpdateException;
 import java.sql.SQLException;
@@ -72,7 +73,8 @@ public class TaskStopTriggerException extends TaskException {
          */
         if (cause instanceof DataSourceClosedException || cause instanceof DataSourceDisableException
                 || cause instanceof DataSourceNotAvailableException || cause instanceof GetConnectionTimeoutException
-                || cause instanceof SQLRecoverableException || cause instanceof SQLRecoverableException || cause instanceof TransactionTimeoutException) {
+                || cause instanceof SQLRecoverableException || cause instanceof SQLRecoverableException || cause instanceof TransactionTimeoutException
+                || cause instanceof CannotCreateTransactionException) {
             return true;
         }
         if (cause instanceof CannotGetJdbcConnectionException || cause instanceof UncategorizedSQLException

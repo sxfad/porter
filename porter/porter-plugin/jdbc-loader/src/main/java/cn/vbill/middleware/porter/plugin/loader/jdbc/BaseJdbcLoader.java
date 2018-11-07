@@ -19,6 +19,8 @@ package cn.vbill.middleware.porter.plugin.loader.jdbc;
 
 import cn.vbill.middleware.porter.common.exception.TaskDataException;
 import cn.vbill.middleware.porter.common.exception.TaskStopTriggerException;
+import cn.vbill.middleware.porter.core.event.etl.ETLBucket;
+import cn.vbill.middleware.porter.core.loader.SubmitStatObject;
 import com.alibaba.fastjson.JSONObject;
 import cn.vbill.middleware.porter.common.client.impl.JDBCClient;
 import cn.vbill.middleware.porter.common.db.SqlTemplate;
@@ -243,4 +245,16 @@ public abstract class BaseJdbcLoader extends AbstractDataLoader {
                 k -> new LinkedHashMap<String, Object>());
         }
     }
+
+    @Override
+    public Pair<Boolean, List<SubmitStatObject>> load(ETLBucket bucket) throws TaskStopTriggerException, InterruptedException {
+        try {
+            return doLoad(bucket);
+        } catch (TaskStopTriggerException e) {
+            if (e.getMessage().contains("interrupt") && e.getMessage().contains("CannotCreateTransactionException")) throw new InterruptedException(e.getMessage());
+            throw e;
+        }
+    }
+
+    public abstract Pair<Boolean, List<SubmitStatObject>> doLoad(ETLBucket bucket) throws TaskStopTriggerException;
 }

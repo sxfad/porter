@@ -107,4 +107,5 @@ public interface ConsumeClient extends Client {
     }
 
 
+    String getInitiatePosition(String offset);
 }

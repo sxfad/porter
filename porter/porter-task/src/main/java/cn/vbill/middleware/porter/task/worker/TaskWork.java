@@ -48,6 +48,7 @@ import cn.vbill.middleware.porter.task.select.SelectJob;
 import cn.vbill.middleware.porter.task.transform.TransformJob;
 import com.alibaba.fastjson.JSON;
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -205,6 +206,8 @@ public class TaskWork {
                 @SneakyThrows(TaskStopTriggerException.class)
                 public void callback(String position) {
                     LOGGER.info("获取任务消费泳道[{}-{}]上次同步点->{}，通知SelectJob", taskId, dataConsumer.getSwimlaneId(), position);
+                    position = StringUtils.isBlank(position) ? dataConsumer.getInitiatePosition() : position;
+                    LOGGER.info("计算任务消费泳道[{}-{}]最终同步点->{}，通知SelectJob", taskId, dataConsumer.getSwimlaneId(), position);
                     dataConsumer.initializePosition(taskId, dataConsumer.getSwimlaneId(), position);
                 }
             }));
@@ -287,7 +290,6 @@ public class TaskWork {
                                 }
                             }
                         }
-
                     }
                 }));
             } catch (Throwable e) {

@@ -61,4 +61,12 @@ public enum ConsumeConverterPlugin {
     @Getter
     private final String name;
 
+    public static ConsumeConverterPlugin enumByCode(String code) {
+        for (ConsumeConverterPlugin e : ConsumeConverterPlugin.values()) {
+            if (e.getCode().equalsIgnoreCase(code)) {
+                return e;
+            }
+        }
+        return null;
+    }
 }

@@ -69,7 +69,7 @@ public interface DataLoader {
      * @param bucket
      * @return key : true 会提交同步点， false不会提交同步点 ; value : 影响行数
      */
-    Pair<Boolean, List<SubmitStatObject>> load(ETLBucket bucket) throws TaskStopTriggerException;
+    Pair<Boolean, List<SubmitStatObject>> load(ETLBucket bucket) throws TaskStopTriggerException, InterruptedException;
 
     /**
      * setLoadClient接口方法

@@ -69,7 +69,6 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
     private final Map<List<String>, TableSchema> tables = new ConcurrentHashMap<>();
 
     private final boolean makePrimaryKeyWhenNo;
-
     @Getter
     private SqlTemplate sqlTemplate;
     private final JdbcWapper jdbcProxy;
@@ -303,7 +302,6 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
         private volatile TransactionTemplate transactionTemplate;
         private final ReadWriteLock connLock = new ReentrantReadWriteLock();
         private JdbcWapper() {
-
         }
 
         private JdbcWapper start() {

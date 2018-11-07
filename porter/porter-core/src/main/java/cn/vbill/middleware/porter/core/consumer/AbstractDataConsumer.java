@@ -54,6 +54,8 @@ public abstract class AbstractDataConsumer implements DataConsumer {
     //空查询通知时间阀值
     @Setter @Getter private volatile long emptyFetchThreshold = -1;
 
+    //初始消费下标
+    @Setter private  String offset;
     /**
      * 获取PluginName
      *
@@ -190,5 +192,10 @@ public abstract class AbstractDataConsumer implements DataConsumer {
         }
         clientInfo.append("消费源->").append(consumeClient.getClientInfo());
         return clientInfo.toString();
+    }
+
+    @Override
+    public String getInitiatePosition() {
+        return consumeClient.getInitiatePosition(offset);
     }
 }

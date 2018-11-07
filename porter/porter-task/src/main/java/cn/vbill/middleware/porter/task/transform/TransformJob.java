@@ -80,7 +80,7 @@ public class TransformJob extends AbstractStageJob {
     }
 
     @Override
-    protected void loopLogic() {
+    protected void loopLogic() throws InterruptedException {
         //只要队列有消息，持续读取
         ETLBucket bucket = null;
         do {
@@ -106,10 +106,12 @@ public class TransformJob extends AbstractStageJob {
                     carrier.push(inThreadBucket.getSequence(), result);
                     carrier.printState();
                 }
+            }  catch (InterruptedException interrupt) {
+                throw interrupt;
             } catch (Throwable e) {
                 LOGGER.error("transform ETLBucket error!", e);
             }
-        } while (null != bucket);
+        } while (null != bucket && getWorkingStat());
     }
 
     @Override
@@ -130,11 +132,8 @@ public class TransformJob extends AbstractStageJob {
                     work.stopAndAlarm(msg);
                     break;
                 }
-                try {
-                    waitTime += peerWaitTime;
-                    Thread.sleep(peerWaitTime);
-                } catch (InterruptedException e) {
-                }
+                waitTime += peerWaitTime;
+                Thread.sleep(peerWaitTime);
             }
             LOGGER.debug("got sequence:{}, Future: {}", sequence, carrier.containsKey(sequence));
             result = carrier.pull(sequence);
