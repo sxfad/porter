@@ -21,8 +21,10 @@ import cn.vbill.middleware.porter.common.util.DefaultNamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -35,7 +37,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public abstract class AbstractStageJob implements StageJob {
     protected  final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
     protected static final int LOGIC_THREAD_SIZE = 5;
-    private AtomicBoolean stat = new AtomicBoolean(false);
+    private final AtomicBoolean stat = new AtomicBoolean(false);
     private final Thread loopService;
     private final ThreadFactory threadFactory;
     //任务退出信号量，为了保证优雅关机时内存中的数据处理完毕
@@ -44,6 +46,7 @@ public abstract class AbstractStageJob implements StageJob {
     //管道无数据线程等待间隙
     private static  final long DEFAULT_THREAD_WAIT_SPAN = 2000;
     private final long threadWaitSpan;
+    private final CountDownLatch stopJobLatch = new CountDownLatch(1);
 
     public AbstractStageJob(String baseThreadName) {
         this(baseThreadName, DEFAULT_THREAD_WAIT_SPAN);
@@ -86,6 +89,7 @@ public abstract class AbstractStageJob implements StageJob {
                     LOGGER.debug("源队列为空，发送线程中断信号");
                 }
                 loopService.interrupt();
+                stopJobLatch.await(10, TimeUnit.SECONDS);
             } catch (Throwable e) {
             } finally {
                 try {
@@ -103,7 +107,7 @@ public abstract class AbstractStageJob implements StageJob {
         @Override
         public void run() {
             //如果线程没有中断信号并且服务可用，持续执行
-            while (!Thread.currentThread().isInterrupted() && stat.get()) {
+            while (!Thread.currentThread().isInterrupted() && getWorkingStat()) {
                 try {
                     stopSignal.acquire();
                     LOGGER.debug("源队列为空，线程恢复执行.");
@@ -113,6 +117,8 @@ public abstract class AbstractStageJob implements StageJob {
                     LOGGER.debug("源队列为空，线程进入等待.");
                     Thread.sleep(threadWaitSpan);
                 } catch (InterruptedException e) {
+                    LOGGER.info("停止任务线程LoopService逻辑");
+                    stopJobLatch.countDown();
                     //如果线程有中断信号，退出线程
                     break;
                 }
@@ -123,4 +129,7 @@ public abstract class AbstractStageJob implements StageJob {
         return threadFactory;
     }
 
+    public final boolean getWorkingStat() {
+        return stat.get();
+    }
 }

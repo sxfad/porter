@@ -93,7 +93,7 @@ public class LoadJob extends AbstractStageJob {
     }
 
     @Override
-    protected void loopLogic() {
+    protected void loopLogic() throws InterruptedException {
         //只要队列有消息，持续读取
         ETLBucket bucket = null;
         do {
@@ -135,6 +135,8 @@ public class LoadJob extends AbstractStageJob {
                     loadResult.getRight().clear();
                     bucket.markUnUsed();
                 }
+            }  catch (InterruptedException e) {
+                throw e;
             } catch (TaskStopTriggerException stopException) {
                 LOGGER.error("Load ETLRow error", stopException);
                 stopException.printStackTrace();
@@ -149,7 +151,7 @@ public class LoadJob extends AbstractStageJob {
                         "Load ETLRow error"  + e.getMessage());
                 LOGGER.error("Load ETLRow error!", e);
             }
-        } while (null != bucket && !work.triggerStopped()); //数据不为空并且当前任务没有触发停止告警
+        } while (null != bucket && !work.triggerStopped() && getWorkingStat()); //数据不为空并且当前任务没有触发停止告警
     }
     @Override
     public ETLBucket output() throws Exception {

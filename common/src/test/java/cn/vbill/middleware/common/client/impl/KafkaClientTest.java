@@ -46,7 +46,7 @@ public class KafkaClientTest {
 
     @Test
     @Ignore
-    public void fetch() {
+    public void fetch() throws InterruptedException {
         KAFKA_CLIENT.fetch(new ConsumeClient.FetchCallback<Object, Object>() {
             @Override
             public <F, O> F accept(O o) {

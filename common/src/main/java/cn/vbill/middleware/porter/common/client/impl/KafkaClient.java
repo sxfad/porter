@@ -119,39 +119,43 @@ public class KafkaClient extends AbstractClient<KafkaConfig> implements ConsumeC
     }
 
     @Override
-    public <F, O> List<F> fetch(FetchCallback<F, O> callback) {
-        List<F> msgs = new ArrayList<>();
-        if (isStarted()) {
-            ConsumerRecords<String, String> results = null;
-            synchronized (consumer) {
-                try {
-                    //提交kafka消费进度
-                    commitLazyPosition();
-                    results = consumer.poll(pollTimeOut);
-                } catch (WakeupException e) {
-                    LOGGER.info("trigger kafka consumer WakeupException:{}", getClientInfo());
-                    consumer.unsubscribe();
-                    consumer.close();
-                    consumer = null;
-                    canFetch = new CountDownLatch(1);
-                }
-            }
-            if (null != results && !results.isEmpty()) {
-                Iterator<ConsumerRecord<String, String>> it = results.iterator();
-                while (it.hasNext()) {
+    public <F, O> List<F> fetch(FetchCallback<F, O> callback) throws InterruptedException {
+        try {
+            List<F> msgs = new ArrayList<>();
+            if (isStarted()) {
+                ConsumerRecords<String, String> results = null;
+                synchronized (consumer) {
                     try {
-                        ConsumerRecord<String, String> record = it.next();
-                        F f = callback.accept(record);
-                        if (null != f) {
-                            msgs.add(f);
+                        //提交kafka消费进度
+                        commitLazyPosition();
+                        results = consumer.poll(pollTimeOut);
+                    } catch (WakeupException e) {
+                        LOGGER.info("trigger kafka consumer WakeupException:{}", getClientInfo());
+                        consumer.unsubscribe();
+                        consumer.close();
+                        consumer = null;
+                        canFetch = new CountDownLatch(1);
+                    }
+                }
+                if (null != results && !results.isEmpty()) {
+                    Iterator<ConsumerRecord<String, String>> it = results.iterator();
+                    while (it.hasNext()) {
+                        try {
+                            ConsumerRecord<String, String> record = it.next();
+                            F f = callback.accept(record);
+                            if (null != f) {
+                                msgs.add(f);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                    } catch (Exception e) {
-                        e.printStackTrace();
                     }
                 }
             }
+            return msgs;
+        } catch (org.apache.kafka.common.errors.InterruptException e) {
+            throw new InterruptedException(e.getMessage());
         }
-        return msgs;
     }
 
     @Override

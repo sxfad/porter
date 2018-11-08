@@ -32,10 +32,10 @@ import java.util.Map;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月02日 14:24
  */
 public class KafkaProduceConfig extends SourceConfig {
-    @Setter @Getter private String servers; //服务器列表
-    @Setter @Getter private String group;//自动生成
-    @Setter @Getter private String topic;//主题 只能一个
-    @Setter @Getter private boolean transaction = true;//不输入
+    @Setter @Getter private String servers;  //服务器列表
+    @Setter @Getter private String group; //自动生成
+    @Setter @Getter private String topic; //主题 只能一个
+    @Setter @Getter private boolean transaction = true; //不输入
     @Setter @Getter private boolean oggJson = true; //是否格式化为ogg json格式
     //分片字段名
     //schema.表名->字段名1,字段名2
