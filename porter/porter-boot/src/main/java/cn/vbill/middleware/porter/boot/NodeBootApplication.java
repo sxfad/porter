@@ -18,7 +18,7 @@
 package cn.vbill.middleware.porter.boot;
 
 import cn.vbill.middleware.porter.common.client.PublicClientContext;
-import cn.vbill.middleware.porter.common.util.ProcessUtils;
+import cn.vbill.middleware.porter.common.dic.AlertPlugin;
 import cn.vbill.middleware.porter.boot.config.SourcesConfig;
 import cn.vbill.middleware.porter.core.NodeContext;
 import cn.vbill.middleware.porter.task.TaskController;
@@ -77,11 +77,13 @@ public class NodeBootApplication {
         NodeConfig config = context.getBean(NodeConfig.class);
 
         //从本地初始化告警配置
-        try {
-            AlertProviderFactory.INSTANCE.initialize(config.getAlert());
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException("告警配置初始化失败, 数据同步节点退出!error:" + e.getMessage());
+        if (null != config.getAlert() && config.getAlert().getStrategy() != AlertPlugin.NONE) {
+            try {
+                AlertProviderFactory.INSTANCE.initialize(config.getAlert());
+            } catch (Exception e) {
+                e.printStackTrace();
+                throw new RuntimeException("告警配置初始化失败, 数据同步节点退出!error:" + e.getMessage());
+            }
         }
 
         //初始化默认工作任务数
@@ -115,6 +117,7 @@ public class NodeBootApplication {
             //注册节点，注册失败退出进程
             ClusterProviderProxy.INSTANCE.broadcast(new NodeRegisterCommand(config.getId(), config.getStatistic().isUpload()));
         } catch (Exception e) {
+            e.printStackTrace();
             throw  new RuntimeException(e.getMessage() + "数据同步节点退出!error:" + e.getMessage());
         }
 
@@ -127,7 +130,5 @@ public class NodeBootApplication {
         //启动节点任务执行容器，并尝试执行本地配置文件任务
         controller.start(null != config.getTask() && !config.getTask().isEmpty() ? config.getTask() : null);
         LOGGER.info("NodeBootApplication started");
-        //保持进程持续运行不退出
-        ProcessUtils.keepRunning();
     }
 }

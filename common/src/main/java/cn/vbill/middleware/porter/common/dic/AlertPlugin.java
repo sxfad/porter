@@ -37,10 +37,9 @@ import lombok.Getter;
 @AllArgsConstructor
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum AlertPlugin {
-
     EMAIL("EMAIL", "邮件"),
-
-    MOBILE("MOBILE", "手机号");
+    MOBILE("MOBILE", "手机号"),
+    NONE("NONE", "无");
 
     @Getter
     private final String code;
