@@ -268,9 +268,9 @@
             <if test="jobType != null and jobType != ''">
                 and job_type = #{jobType}
             </if>
-            <!-- <if test="code != null and code != ''">
-                and job_state = #{code}
-            </if> -->
+            <if test="jobState != null and jobState != ''">
+                and job_state = #{jobState}
+            </if>
         </where>
     </select>
 
@@ -298,9 +298,9 @@
             <if test="jobType != null and jobType != ''">
                 and job_type = #{jobType}
             </if>
-           <!--  <if test="code != null and code != ''">
-                and job_state = #{code}
-            </if> -->
+            <if test="jobState != null and jobState != ''">
+                and job_state = #{jobState}
+            </if>
         </where>
         order by create_time desc
         limit #{page.offset},#{page.pageSize}
