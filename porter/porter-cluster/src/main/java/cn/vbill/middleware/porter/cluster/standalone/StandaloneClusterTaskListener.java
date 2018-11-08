@@ -116,9 +116,11 @@ public class StandaloneClusterTaskListener extends StandaloneListener implements
                 ClusterProviderProxy.INSTANCE.broadcast(new TaskAssignedCommand(task.getTaskId(), task.getSwimlaneId()));
                 client.delete(errorPath + "/" + task.getSwimlaneId());
             } catch (Throwable e) {
+                LOGGER.error("任务{}已分配", topicPath);
                 throw new TaskLockException(topicPath + ",锁定资源失败。");
             }
         } else {
+            LOGGER.error("任务{}已分配", topicPath);
             throw new TaskLockException(topicPath + ",锁定资源失败。");
         }
     }
