@@ -123,8 +123,7 @@ public class ScanDataAlerter implements Alerter {
 
         //数据不一致时发送告警
         if (countTarget != countSource) {
-            String notice = new StringBuffer()
-                    .append(noticeDateFormat.format(LocalDateTime.ofInstant(startDate.toInstant(), ZoneId.systemDefault())))
+            String notice = new StringBuffer().append(noticeDateFormat.format(LocalDateTime.ofInstant(startDate.toInstant(), ZoneId.systemDefault())))
                     .append("至")
                     .append(noticeDateFormat.format(LocalDateTime.ofInstant(endDate.toInstant(), ZoneId.systemDefault())))
                     .append("\n\r")
