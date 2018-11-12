@@ -83,7 +83,6 @@ public class DataSourceUtil {
                 rs.close();
             } catch (SQLException e) {
                 e.printStackTrace();
-                LOGGER.info("%s", e);
             }
         }
         // 关闭数据库操作对象
@@ -92,7 +91,6 @@ public class DataSourceUtil {
                 stmt.close();
             } catch (SQLException e) {
                 e.printStackTrace();
-                LOGGER.info("%s", e);
             }
         }
         // 关闭数据库连接
@@ -101,7 +99,6 @@ public class DataSourceUtil {
                 conn.close();
             } catch (SQLException e) {
                 e.printStackTrace();
-                LOGGER.info("%s", e);
             }
         }
     }

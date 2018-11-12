@@ -86,7 +86,6 @@ public enum DataLoaderFactory {
                     return t.getClass().newInstance();
                 } catch (Exception e) {
                     e.printStackTrace();
-                    LOGGER.error("%s", e);
                     throw new DataLoaderBuildException(e.getMessage());
                 }
             }

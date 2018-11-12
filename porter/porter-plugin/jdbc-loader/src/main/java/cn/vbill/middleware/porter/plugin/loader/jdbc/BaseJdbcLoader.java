@@ -49,7 +49,7 @@ public abstract class BaseJdbcLoader extends AbstractDataLoader {
      * @param sqlList
      * @return
      */
-    protected int loadSql(List<Pair<String, Object[]>> sqlList, EventType eventType) throws TaskStopTriggerException {
+    protected int loadSql(List<Pair<String, Object[]>> sqlList, EventType eventType) throws TaskStopTriggerException, InterruptedException {
         int affect = 0;
         int times = 0;
         try {
@@ -71,7 +71,7 @@ public abstract class BaseJdbcLoader extends AbstractDataLoader {
      * @param sqlList
      * @return
      */
-    protected int[] batchLoadSql(List<Pair<String, Object[]>> sqlList, EventType eventType) throws TaskStopTriggerException {
+    protected int[] batchLoadSql(List<Pair<String, Object[]>> sqlList, EventType eventType) throws TaskStopTriggerException, InterruptedException {
         JDBCClient client = getLoadClient();
         List<Pair<String, List<Object[]>>> reGroupList = new ArrayList<Pair<String, List<Object[]>>>();
         groupSql4Batch(reGroupList, sqlList, 0);
@@ -256,5 +256,5 @@ public abstract class BaseJdbcLoader extends AbstractDataLoader {
         }
     }
 
-    public abstract Pair<Boolean, List<SubmitStatObject>> doLoad(ETLBucket bucket) throws TaskStopTriggerException;
+    public abstract Pair<Boolean, List<SubmitStatObject>> doLoad(ETLBucket bucket) throws TaskStopTriggerException, InterruptedException;
 }
