@@ -129,8 +129,9 @@ public class KafkaClient extends AbstractClient<KafkaConfig> implements ConsumeC
                                 tryOffset = tmpTryOffset;
                             }
                             //---------为避免因上次停止任务造成的消费同步点异常,从而丢失数据，往前消费一个批次---------
+                            consumer.seek(tp, tryOffset);
                         } else {
-                            throw new DataConsumerBuildException("拟消费下标:" + (kafkaPosition.offset + 1)
+                            throw new DataConsumerBuildException("拟消费下标:" + tryOffset
                                     + ", 实际可消费下标范围:" + beginOffset + "~" + endOffset);
                         }
                     }
