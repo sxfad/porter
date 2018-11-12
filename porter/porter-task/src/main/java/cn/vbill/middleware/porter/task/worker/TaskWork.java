@@ -157,14 +157,12 @@ public class TaskWork {
                     submitStat();
                 } catch (Exception e) {
                     NodeLog.upload(NodeLog.LogType.TASK_LOG, taskId, dataConsumer.getSwimlaneId(), "停止上传消费进度失败:" + e.getMessage());
-                    LOGGER.error("%s", e);
                 }
                 try {
                     //广播任务结束消息
                     ClusterProviderProxy.INSTANCE.broadcast(new TaskStopCommand(taskId, dataConsumer.getSwimlaneId()));
                 } catch (Exception e) {
                     NodeLog.upload(NodeLog.LogType.TASK_LOG, taskId, dataConsumer.getSwimlaneId(), "广播TaskStopCommand失败:" + e.getMessage());
-                    LOGGER.error("%s", e);
                 }
             } catch (Exception e) {
                 e.printStackTrace();

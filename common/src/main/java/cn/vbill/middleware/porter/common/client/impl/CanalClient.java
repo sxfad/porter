@@ -102,7 +102,7 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
                 try {
                     canalServer.stop();
                 } catch (Throwable e) {
-                    LOGGER.error("%s", e);
+                    LOGGER.warn("关闭canal客户端异常", e);
                 }
             }
         }

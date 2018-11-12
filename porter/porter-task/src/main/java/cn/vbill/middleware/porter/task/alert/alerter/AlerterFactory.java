@@ -89,7 +89,6 @@ public class AlerterFactory {
                                 barrier.await();
                             } catch (Exception e) {
                                 e.printStackTrace();
-                                LOGGER.error("%s", e);
                             }
                         }
                     }
@@ -100,7 +99,6 @@ public class AlerterFactory {
                 barrier.await();
             } catch (Exception e) {
                 e.printStackTrace();
-                LOGGER.error("%s", e);
             } finally {
                 service.shutdown();
             }

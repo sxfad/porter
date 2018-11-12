@@ -46,7 +46,7 @@ public class JdbcSingleLoader extends BaseJdbcLoader {
     }
 
     @Override
-    public Pair<Boolean, List<SubmitStatObject>> doLoad(ETLBucket bucket) throws TaskStopTriggerException {
+    public Pair<Boolean, List<SubmitStatObject>> doLoad(ETLBucket bucket) throws TaskStopTriggerException, InterruptedException {
         LOGGER.info("start loading bucket:{},size:{}", bucket.getSequence(), bucket.getRows().size());
         List<SubmitStatObject> affectRow = new ArrayList<>();
         for (ETLRow row : bucket.getRows()) {

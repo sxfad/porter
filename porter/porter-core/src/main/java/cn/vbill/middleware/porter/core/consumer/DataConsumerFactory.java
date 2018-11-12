@@ -106,7 +106,7 @@ public enum DataConsumerFactory {
             consumer.setExcludes(config.getExcludes());
             consumer.setIncludes(config.getIncludes());
             consumer.setEventProcessor(processor);
-            consumer.setOffset(config.getConsumerName());
+            consumer.setOffset(config.getOffset());
 
             /**
              * 空查询告警参数
@@ -132,7 +132,6 @@ public enum DataConsumerFactory {
                     return t.getClass().newInstance();
                 } catch (Exception e) {
                     e.printStackTrace();
-                    LOGGER.error("%s", e);
                     throw new DataConsumerBuildException(e.getMessage());
                 }
             }

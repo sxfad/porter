@@ -194,7 +194,7 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
      * @return
      * @throws TaskStopTriggerException
      */
-    public int[] batchUpdate(String sqlType, String sql, List<Object[]> batchArgs) throws TaskStopTriggerException {
+    public int[] batchUpdate(String sqlType, String sql, List<Object[]> batchArgs) throws TaskStopTriggerException, InterruptedException {
         int[] affect = jdbcProxy.batchUpdate(sql, batchArgs);
         if (null == affect || affect.length == 0) {
             List<Integer> affectList = new ArrayList<>();
@@ -216,7 +216,7 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
      * @return
      * @throws TaskStopTriggerException
      */
-    public int update(String type, String sql, Object... args) throws TaskStopTriggerException {
+    public int update(String type, String sql, Object... args) throws TaskStopTriggerException, InterruptedException {
         int affect = jdbcProxy.update(sql, args);
         if (affect < 1) {
             LOGGER.error("sql:{},params:{},affect:{}", sql, JSON.toJSONString(Arrays.asList(args)), affect);
@@ -258,7 +258,7 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
      * @throws TaskStopTriggerException
      */
     private void batchErroUpdate(String sqlType, int batchSize, String sql, List<Object[]> batchArgs, int from, List<Integer> affect)
-            throws TaskStopTriggerException {
+            throws TaskStopTriggerException, InterruptedException {
         int size = batchArgs.size();
         int batchEnd = from + batchSize;
         //获取当前分组
@@ -376,11 +376,11 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
             }
         }
 
-        private int[] batchUpdate(String sql, List<Object[]> batchArgs) throws TaskStopTriggerException {
+        private int[] batchUpdate(String sql, List<Object[]> batchArgs) throws TaskStopTriggerException, InterruptedException {
             return batchUpdate(sql, batchArgs, false);
         }
 
-        private int[] batchUpdate(String sql, List<Object[]> batchArgs, boolean capture) throws TaskStopTriggerException {
+        private int[] batchUpdate(String sql, List<Object[]> batchArgs, boolean capture) throws TaskStopTriggerException, InterruptedException {
             return atomicExecute(new TransactionCallback<int[]>() {
                 @Override
                 @SneakyThrows(Throwable.class)
@@ -390,11 +390,11 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
             }, capture);
         }
 
-        private int update(String sql, Object... args) throws TaskStopTriggerException {
+        private int update(String sql, Object... args) throws TaskStopTriggerException, InterruptedException {
             return update(sql, false, args);
         }
 
-        private int update(String sql, boolean capture, Object... args) throws TaskStopTriggerException {
+        private int update(String sql, boolean capture, Object... args) throws TaskStopTriggerException, InterruptedException {
             return atomicExecute(new TransactionCallback<Integer>() {
                 @Override
                 @SneakyThrows(Throwable.class)
@@ -404,7 +404,7 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
             }, capture);
         }
 
-        private <T> T atomicExecute(TransactionCallback<T> action, boolean capture) throws TaskStopTriggerException {
+        private <T> T atomicExecute(TransactionCallback<T> action, boolean capture) throws TaskStopTriggerException, InterruptedException {
             boolean sendResult = false;
             T result = null;
             int retries = getConfig().getRetries();
@@ -416,10 +416,7 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
                     break;
                 } catch (TaskStopTriggerException e) {
                     LOGGER.warn("got error by execute sql,times:{}", i, e);
-                    try {
-                        Thread.sleep(1000L * 60 * 1);
-                    } catch (Throwable sleepException) {
-                    }
+                    Thread.sleep(1000L * 60 * 1);
                     reconnection();
                 }
             }
