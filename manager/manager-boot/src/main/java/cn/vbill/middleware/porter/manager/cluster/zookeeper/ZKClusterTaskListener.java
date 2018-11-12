@@ -202,7 +202,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements Z
             if (null != msg && !msg.trim().isEmpty()) {
                 NodeLog log = new NodeLog();
                 log.setError(msg);
-                log.setTitle("【管理员告警】已发布节点未分配任务列表");
+                log.setTitle("【管理员告警】运行状态异常任务列表");
                 log.setType(NodeLog.LogType.TASK_WARNING);
                 NodeLog.upload(log, null);
             }
@@ -250,8 +250,8 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements Z
                 for (SourceConfig source : sourceConfigs) {
                     String swimlaneLock = ZK_PATH + "/" + config.getTaskId() + "/lock/" + source.getSwimlaneId();
                     if (config.getStatus() == TaskStatusType.WORKING && null == client.exists(swimlaneLock, true)) {
-                        messages.append("预分配节点:").append(config.getNodeId()).append(",任务Id:").append(config.getTaskId())
-                                .append(",泳道Id:").append(source.getSwimlaneId()).append(System.lineSeparator());
+                        messages.append(System.lineSeparator()).append("预分配节点:").append(config.getNodeId()).append(",任务Id:").append(config.getTaskId())
+                                .append(",泳道:").append(source.getSwimlaneId()).append(System.lineSeparator());
                     }
                 }
             } catch (Throwable e) {
