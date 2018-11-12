@@ -73,7 +73,7 @@ public class ZKClusterConfigListener extends ZookeeperClusterListener implements
 
             @Override
             protected boolean doFilter(ZookeeperClusterEvent event) {
-                return false;
+                return true;
             }
         };
     }
