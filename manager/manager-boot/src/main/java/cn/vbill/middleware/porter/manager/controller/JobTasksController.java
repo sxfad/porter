@@ -227,7 +227,7 @@ public class JobTasksController {
         log.info("传入字符串:[{}]", jobXmlText);
         try {
             String taskConfigJson = java.net.URLDecoder.decode(jobXmlText, "UTF-8");
-            log.info("转移后字符串:[{}]", JSON.toJSON(taskConfigJson));
+            log.info("转移后字符串:[{}]", taskConfigJson);
             TaskConfig taskConfig = jobTasksService.dealSpecialJson(taskConfigJson);
             log.info("解析后字符串:[{}]", JSON.toJSON(taskConfig));
             return ok(taskConfig);
