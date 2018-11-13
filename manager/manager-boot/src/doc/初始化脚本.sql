@@ -463,13 +463,6 @@ INSERT INTO `c_role_menu` VALUES (19, 'C0001', 'M001');
 INSERT INTO `c_role_menu` VALUES (20, 'C0001', 'M001001');
 INSERT INTO `c_role_menu` VALUES (21, 'C0001', 'M001002');
 INSERT INTO `c_role_menu` VALUES (22, 'C0001', 'M001003');
-    -- ogg管理模块新增
-INSERT INTO `c_role_menu` VALUES (23, 'A0002', 'O001');
-INSERT INTO `c_role_menu` VALUES (24, 'A0002', 'O001001');
-INSERT INTO `c_role_menu` VALUES (25, 'B0001', 'O001');
-INSERT INTO `c_role_menu` VALUES (26, 'B0001', 'O001001');
-INSERT INTO `c_role_menu` VALUES (27, 'C0001', 'O001');
-INSERT INTO `c_role_menu` VALUES (28, 'C0001', 'O001001');
     -- 新增本地任务
 INSERT INTO `c_role_menu` VALUES (29, 'A0002', 'J001002');
 -- 初始化告警数据字典

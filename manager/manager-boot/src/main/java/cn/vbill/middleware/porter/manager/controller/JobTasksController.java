@@ -227,6 +227,7 @@ public class JobTasksController {
         log.info("解析字符串:[{}]", jobXmlText);
         try {
             TaskConfig taskConfig = jobTasksService.dealSpecialJson(java.net.URLDecoder.decode(jobXmlText, "UTF-8"));
+            log.info("解析后字符串:[{}]", JSON.toJSON(taskConfig));
             return ok(taskConfig);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
