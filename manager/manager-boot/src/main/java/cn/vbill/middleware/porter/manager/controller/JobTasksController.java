@@ -223,7 +223,8 @@ public class JobTasksController {
      */
     @PostMapping(value = "/dealspecialjson")
     @ApiOperation(value = "解析字符串", notes = "解析字符串")
-    public ResponseMessage dealSpecialJson(@RequestBody String jobXmlText) {
+    public ResponseMessage dealSpecialJson(@RequestBody JobTasks jobTasks) {
+        String jobXmlText = jobTasks.getJobXmlText();
         log.info("传入字符串:[{}]", jobXmlText);
         try {
             String taskConfigJson = java.net.URLDecoder.decode(jobXmlText, "UTF-8");
