@@ -25,12 +25,11 @@ import cn.vbill.middleware.porter.common.alert.AlertReceiver;
 import cn.vbill.middleware.porter.core.consumer.DataConsumer;
 import cn.vbill.middleware.porter.core.loader.DataLoader;
 import org.apache.commons.lang3.time.DateUtils;
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -43,7 +42,7 @@ import java.util.List;
 public class ScanDataAlerter implements Alerter {
     private static final Logger LOGGER = LoggerFactory.getLogger(ScanDataAlerter.class);
     private static final long TIME_SPAN_OF_MINUTES = 30;
-    private DateFormat noticeDateFormat = new SimpleDateFormat("yyyyMMdd HH:mm:ss");
+    private FastDateFormat noticeDateFormat = FastDateFormat.getInstance("yyyyMMdd HH:mm:ss");
 
     /**
      * check
