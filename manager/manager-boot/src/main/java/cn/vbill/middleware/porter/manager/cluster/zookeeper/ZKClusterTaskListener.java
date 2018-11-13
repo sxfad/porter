@@ -21,7 +21,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Pattern;
 
 import cn.vbill.middleware.porter.common.config.SourceConfig;
@@ -69,7 +72,16 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements Z
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ZKClusterTaskListener.class);
     // 未分配任务定时检查
-    private final ScheduledExecutorService taskUnsignedListener = Executors.newSingleThreadScheduledExecutor();
+    private final ScheduledExecutorService taskUnsignedListener = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
+        private final AtomicInteger seq = new AtomicInteger();
+        @Override
+        public Thread newThread(Runnable r) {
+            Thread t = new Thread(r);
+            t.setDaemon(false);
+            t.setName("UnsignedTask-Listener" + seq.incrementAndGet());
+            return t;
+        }
+    });
 
     @Override
     public String listenPath() {
