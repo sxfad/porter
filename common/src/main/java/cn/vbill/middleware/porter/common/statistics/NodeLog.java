@@ -43,7 +43,7 @@ import java.util.List;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月09日 16:16
  */
 public class NodeLog extends StatisticData {
-    private static final String NAME = "log";
+    public static final String NAME = "log";
     private static final Logger LOGGER = LoggerFactory.getLogger(NodeLog.class);
 
     /**

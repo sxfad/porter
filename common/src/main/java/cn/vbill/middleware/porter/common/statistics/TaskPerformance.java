@@ -33,7 +33,7 @@ import java.util.Date;
  */
 public class TaskPerformance extends StatisticData {
     @JSONField(serialize = false, deserialize = false)
-    private static final String NAME = "task";
+    public static final String NAME = "task";
     //任务ID
     @Setter @Getter private String taskId;
     //泳道ID
