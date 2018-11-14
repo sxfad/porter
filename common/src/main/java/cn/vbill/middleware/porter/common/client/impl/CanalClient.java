@@ -172,7 +172,8 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
 
                         //master连接不上
                         if (msg.contains("CanalParseException: java.io.IOException")
-                                || msg.contains("java.io.IOException: Received error packet: errno")) {
+                                || msg.contains("java.io.IOException: Received error packet: errno")
+                                || msg.contains("CanalParseException: command")) {
                             if (hasBroken.compareAndSet(false, true)) {
                                 brokenError = new TaskStopTriggerException("【Canal链接建立失败】【" + getClientInfo() + "】" + msg);
                             }

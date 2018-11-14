@@ -28,8 +28,10 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Pattern;
 
 import cn.vbill.middleware.porter.common.config.SourceConfig;
+import cn.vbill.middleware.porter.common.exception.ConfigParseException;
 import cn.vbill.middleware.porter.common.statistics.NodeLog;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.data.Stat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -257,8 +259,15 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements Z
         StringBuffer messages = new StringBuffer();
         List<TaskConfig> taskConfigs = deployedTasks();
         for (TaskConfig config : taskConfigs) {
+            List<SourceConfig> sourceConfigs = null;
             try {
-                List<SourceConfig> sourceConfigs = SourceConfig.getConfig(config.getConsumer().getSource()).swamlanes();
+                sourceConfigs = SourceConfig.getConfig(config.getConsumer().getSource()).swamlanes();
+            } catch (ConfigParseException e) {
+                NodeLog.upload(NodeLog.LogType.TASK_WARNING, config.getTaskId(), "", "运行状态检测异常-" + e.getMessage());
+                e.printStackTrace();
+                continue;
+            }
+            try {
                 for (SourceConfig source : sourceConfigs) {
                     String swimlaneLock = ZK_PATH + "/" + config.getTaskId() + "/lock/" + source.getSwimlaneId();
                     if (config.getStatus() == TaskStatusType.WORKING && null == client.exists(swimlaneLock, true)) {
@@ -266,8 +275,10 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements Z
                                 .append(",泳道:").append(source.getSwimlaneId()).append(System.lineSeparator());
                     }
                 }
-            } catch (Throwable e) {
+            } catch (KeeperException e) {
                 LOGGER.warn("list unsigned swimlane error", e);
+            } catch (InterruptedException e) {
+                LOGGER.warn("list unsigned swimlane suspend");
             }
         }
         return messages.toString();
