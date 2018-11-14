@@ -78,7 +78,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements Z
         public Thread newThread(Runnable r) {
             Thread t = new Thread(r);
             t.setDaemon(false);
-            t.setName("UnsignedTask-Listener" + seq.incrementAndGet());
+            t.setName("UnsignedTask-Listener-" + seq.incrementAndGet());
             return t;
         }
     });
