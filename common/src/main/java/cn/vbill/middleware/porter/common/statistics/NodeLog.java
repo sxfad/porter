@@ -97,11 +97,7 @@ public class NodeLog extends StatisticData {
         this.type = type;
         this.error = error;
         this.swimlaneId = swimlaneId;
-    }
-
-    @Override
-    public String getCategory() {
-        return NAME;
+        setCategory(NAME);
     }
 
     @Override

@@ -45,13 +45,7 @@ public abstract class StatisticData {
     @Setter
     @Getter
     private String nodeId;
-
-    /**
-     * getCategory
-     * @return
-     */
-    @JSONField(serialize = false, deserialize = false)
-    public abstract String getCategory();
+    @Getter @Setter private String category;
 
     /**
      * getSubId
