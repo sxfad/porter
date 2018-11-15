@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * 统计信息
@@ -36,7 +37,7 @@ import java.util.Date;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月23日 16:37
  */
 
-public abstract class StatisticData {
+public class StatisticData {
     @JSONField(serialize = false, deserialize = false)
     protected static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(StatisticData.class);
     @JSONField(serialize = false, deserialize = false)
@@ -48,11 +49,13 @@ public abstract class StatisticData {
     @Getter @Setter private String category;
 
     /**
-     * getSubId
+     * 需要子类继承
      * @return
      */
     @JSONField(serialize = false, deserialize = false)
-    protected abstract String getSubId();
+    protected  String getSubId() {
+        return UUID.randomUUID().toString();
+    }
 
     /**
      * StringBuilder
