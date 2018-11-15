@@ -38,6 +38,9 @@ import java.util.UUID;
  */
 
 public class StatisticData {
+    //丢弃
+    @JSONField(serialize = false, deserialize = false)
+    public static final String NAME = "discard";
     @JSONField(serialize = false, deserialize = false)
     protected static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(StatisticData.class);
     @JSONField(serialize = false, deserialize = false)
@@ -47,7 +50,9 @@ public class StatisticData {
     @Getter
     private String nodeId;
     @Getter @Setter private String category;
-
+    public StatisticData() {
+        category = NAME;
+    }
     /**
      * 需要子类继承
      * @return
