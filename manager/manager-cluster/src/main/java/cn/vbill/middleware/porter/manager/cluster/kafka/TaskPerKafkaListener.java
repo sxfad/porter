@@ -53,7 +53,7 @@ public class TaskPerKafkaListener {
     public void processMessage(String content) {
         StatisticData statisticData = JSONObject.parseObject(content, StatisticData.class);
         if (statisticData == null) {
-            LOGGER.error("Listener-StatisticData-null.....");
+            LOGGER.error("Listener-StatisticData-null.....[{}]", content);
             return;
         }
         if (TaskPerformance.NAME.equalsIgnoreCase(statisticData.getCategory())) {
