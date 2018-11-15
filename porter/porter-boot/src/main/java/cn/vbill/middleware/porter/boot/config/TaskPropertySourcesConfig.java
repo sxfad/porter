@@ -17,6 +17,7 @@
 
 package cn.vbill.middleware.porter.boot.config;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.EnvironmentAware;
@@ -30,7 +31,6 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
 import java.io.File;
-import java.io.FileFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -100,18 +100,14 @@ public class TaskPropertySourcesConfig implements EnvironmentAware, ResourceLoad
         List<File> files = new ArrayList<>();
         String[] path = new String[]{"file:./tasks/" + active, "file:./config/tasks/" + active, "classpath:/tasks/" + active};
         for (String p : path) {
-            Resource resource = resourceLoader.getResource(p);
+            Resource resource = null;
             File[] tasks = null;
             try {
+                resource =  resourceLoader.getResource(p);
                 File taskDir = resource.getFile();
-                tasks = taskDir.listFiles(new FileFilter() {
-                    @Override
-                    public boolean accept(File pathname) {
-                        return pathname.isFile() && pathname.getName().endsWith(".properties");
-                    }
-                });
+                tasks = taskDir.listFiles(pathname -> pathname.isFile() && pathname.getName().endsWith(".properties"));
             } catch (IOException e) {
-                LOGGER.error("%s", e);
+                LOGGER.warn("从以下目录{}找不到默认本地任务配置文件", StringUtils.join(path, ","));
             }
             if (null != tasks && tasks.length > 0) {
                 files.addAll(Arrays.asList(tasks));

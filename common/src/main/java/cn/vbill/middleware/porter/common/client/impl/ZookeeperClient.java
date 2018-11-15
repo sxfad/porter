@@ -108,6 +108,8 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
         byte[] dataBytes = new byte[0];
         try {
             dataBytes = zk.getData(path, true, stat);
+        } catch (KeeperException.NoNodeException e) {
+            LOGGER.warn("获取{}值失败", path);
         } catch (KeeperException e) {
             LOGGER.warn("获取{}值失败", path, e);
         } catch (InterruptedException e) {
