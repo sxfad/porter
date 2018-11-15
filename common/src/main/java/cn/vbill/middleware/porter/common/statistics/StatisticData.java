@@ -41,14 +41,17 @@ public abstract class StatisticData {
     protected static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(StatisticData.class);
     @JSONField(serialize = false, deserialize = false)
     private final DateFormat idDateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-    //节点ID
+    // 节点ID
     @Setter
     @Getter
     private String nodeId;
-    @Getter @Setter private String category;
+    @Getter
+    @Setter
+    private String category;
 
     /**
      * getSubId
+     * 
      * @return
      */
     @JSONField(serialize = false, deserialize = false)
@@ -56,6 +59,7 @@ public abstract class StatisticData {
 
     /**
      * StringBuilder
+     * 
      * @return
      */
     @JSONField(serialize = false, deserialize = false)
@@ -67,8 +71,10 @@ public abstract class StatisticData {
     public String getKey() {
         return new StringBuilder(nodeId).append("-").append(getSubId()).toString();
     }
+
     /**
      * toString
+     * 
      * @return
      */
     public String toString() {
@@ -77,6 +83,7 @@ public abstract class StatisticData {
 
     /**
      * toPrintln
+     * 
      * @return
      */
     public String toPrintln() {

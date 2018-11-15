@@ -25,8 +25,8 @@ import org.springframework.stereotype.Component;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.vbill.middleware.porter.common.statistics.NodeLog;
-import cn.vbill.middleware.porter.common.statistics.StatisticData;
 import cn.vbill.middleware.porter.common.statistics.TaskPerformance;
+import cn.vbill.middleware.porter.common.statistics.ZkStatisticData;
 import cn.vbill.middleware.porter.manager.service.MrJobTasksMonitorService;
 import cn.vbill.middleware.porter.manager.service.MrLogMonitorService;
 import cn.vbill.middleware.porter.manager.service.MrNodesMonitorService;
@@ -51,12 +51,12 @@ public class TaskPerKafkaListener {
 
     @KafkaListener(topics = "${spring.kafka.consumer.topics}")
     public void processMessage(String content) {
-        StatisticData statisticData = JSONObject.parseObject(content, StatisticData.class);
-        if (statisticData == null) {
+        ZkStatisticData zkStatisticData = JSONObject.parseObject(content, ZkStatisticData.class);
+        if (zkStatisticData == null) {
             LOGGER.error("Listener-StatisticData-null.....[{}]", content);
             return;
         }
-        if (TaskPerformance.NAME.equalsIgnoreCase(statisticData.getCategory())) {
+        if (TaskPerformance.NAME.equalsIgnoreCase(zkStatisticData.getCategory())) {
             try {
                 LOGGER.info("Listener-TaskPerformance....." + content);
                 TaskPerformance taskPerformance = JSONObject.parseObject(content, TaskPerformance.class);
@@ -65,7 +65,7 @@ public class TaskPerKafkaListener {
             } catch (Exception e) {
                 LOGGER.error("Listener-TaskPerformance-Error....出错,请追寻...", e);
             }
-        } else if (NodeLog.NAME.equalsIgnoreCase(statisticData.getCategory())) {
+        } else if (NodeLog.NAME.equalsIgnoreCase(zkStatisticData.getCategory())) {
             try {
                 LOGGER.info("Listener-NodeLog....." + content);
                 NodeLog log = JSONObject.parseObject(content, NodeLog.class);
