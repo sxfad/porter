@@ -16,6 +16,7 @@
  */
 package cn.vbill.middleware.porter.manager.cluster.kafka;
 
+import cn.vbill.middleware.porter.common.statistics.StatisticData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,6 @@ import org.springframework.stereotype.Component;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.vbill.middleware.porter.common.statistics.NodeLog;
-import cn.vbill.middleware.porter.common.statistics.StatisticData;
 import cn.vbill.middleware.porter.common.statistics.TaskPerformance;
 import cn.vbill.middleware.porter.manager.service.MrJobTasksMonitorService;
 import cn.vbill.middleware.porter.manager.service.MrLogMonitorService;
@@ -53,7 +53,7 @@ public class TaskPerKafkaListener {
     public void processMessage(String content) {
         StatisticData statisticData = JSONObject.parseObject(content, StatisticData.class);
         if (statisticData == null) {
-            LOGGER.error("Listener-StatisticData-null.....");
+            LOGGER.error("Listener-StatisticData-null.....[{}]", content);
             return;
         }
         if (TaskPerformance.NAME.equalsIgnoreCase(statisticData.getCategory())) {
