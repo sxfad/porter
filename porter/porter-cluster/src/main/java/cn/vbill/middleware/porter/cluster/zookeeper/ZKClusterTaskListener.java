@@ -198,9 +198,11 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
                 ClusterProviderProxy.INSTANCE.broadcast(new TaskAssignedCommand(task.getTaskId(), task.getSwimlaneId()));
                 client.delete(errorPath + "/" + task.getSwimlaneId());
             } catch (KeeperException.NodeExistsException e) {
+                LOGGER.error("任务{}已分配", topicPath);
                 throw new TaskLockException(topicPath + ",锁定资源失败。");
             }
         } else {
+            LOGGER.error("任务{}已分配", topicPath);
             throw new TaskLockException(topicPath + ",锁定资源失败。");
         }
     }

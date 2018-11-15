@@ -56,6 +56,7 @@ public abstract class AbstractDataConsumer implements DataConsumer {
 
     //初始消费下标
     @Setter private  String offset;
+
     /**
      * 获取PluginName
      *

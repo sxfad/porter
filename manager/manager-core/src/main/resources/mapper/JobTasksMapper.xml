@@ -127,6 +127,49 @@
             '2'
         )
     </insert>
+    
+    <!-- 新增 -->
+    <insert id="insertZKCapture" useGeneratedKeys="true" keyProperty="id">
+        insert into job_tasks(
+            id,
+            job_name,
+            job_state,
+            job_type,
+            source_consume_adt,
+            source_convert_adt,
+            source_data_tables_id,
+            source_data_source_id,
+            source_data_tables_name,
+            source_data_id,
+            source_data_name,
+            target_load_adt,
+            target_data_tables_id,
+            target_data_source_id,
+            target_data_tables_name,
+            job_xml_text,
+            job_json_text,
+            type
+        ) values (
+            #{id},
+            #{jobName},
+            #{jobState},
+            '2',
+            #{sourceConsumeAdt},
+            #{sourceConvertAdt},
+            '0',
+            '0',
+            '0',
+            '0',
+            '0',
+            #{targetLoadAdt},
+            '0',
+            '0',
+            '0',
+            #{jobXmlText},
+            #{jobJsonText},
+            '2'
+        )
+    </insert>
 
     <!-- 新增 -->
     <insert id="insertZKCapture" useGeneratedKeys="true" keyProperty="id">
@@ -268,9 +311,9 @@
             <if test="jobType != null and jobType != ''">
                 and job_type = #{jobType}
             </if>
-            <!-- <if test="code != null and code != ''">
-                and job_state = #{code}
-            </if> -->
+            <if test="jobState != null and jobState != ''">
+                and job_state = #{jobState}
+            </if>
         </where>
     </select>
 
@@ -281,7 +324,7 @@
         job_state AS jobState, job_type as jobType,
         source_consume_adt AS sourceConsumeAdt, source_convert_adt AS sourceConvertAdt,
         target_load_adt AS targetLoadAdt,
-        job_xml_text as jobXmlText,job_json_text as jobJsonText,
+        job_xml_text as jobXmlText,job_json_text as jobJsonText, 
         create_time AS createTime
         from job_tasks
         <where>
@@ -298,9 +341,9 @@
             <if test="jobType != null and jobType != ''">
                 and job_type = #{jobType}
             </if>
-            <!--  <if test="code != null and code != ''">
-                 and job_state = #{code}
-             </if> -->
+            <if test="jobState != null and jobState != ''">
+                and job_state = #{jobState}
+            </if>
         </where>
         order by create_time desc
         limit #{page.offset},#{page.pageSize}

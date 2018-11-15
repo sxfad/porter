@@ -43,42 +43,41 @@ import java.util.List;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月09日 16:16
  */
 public class NodeLog extends StatisticData {
-    private static final String NAME = "log";
+    public static final String NAME = "log";
     private static final Logger LOGGER = LoggerFactory.getLogger(NodeLog.class);
 
     /**
-     * 日志类型
-     * taskStopAlarm 任务停止告警日志，该日志类型不仅会在后台看到，同时会通过邮件、短信推送给监控人。
-     * taskLog  常规任务日志，仅发送给后台系统
+     * 日志类型 taskStopAlarm 任务停止告警日志，该日志类型不仅会在后台看到，同时会通过邮件、短信推送给监控人。 taskLog
+     * 常规任务日志，仅发送给后台系统
      */
     @Setter
     @Getter
     private LogType type;
-    //错误正文
+    // 错误正文
     @Setter
     @Getter
     private String error;
-    //任务所在主机IP
+    // 任务所在主机IP
     @Getter
     @Setter
     private String address = MachineUtils.IP_ADDRESS;
-    //任务所在主机
+    // 任务所在主机
     @Getter
     @Setter
     private String hostName = MachineUtils.HOST_NAME;
-    //进程ID
+    // 进程ID
     @Getter
     @Setter
     private String processId = MachineUtils.getPID() + "";
-    //任务ID
+    // 任务ID
     @Setter
     @Getter
     private String taskId;
-    //泳道ID
+    // 泳道ID
     @Setter
     @Getter
     private String swimlaneId;
-    //异常上报时间
+    // 异常上报时间
     @JSONField(format = "yyyyMMddHHmmss")
     @Setter
     @Getter
@@ -97,11 +96,7 @@ public class NodeLog extends StatisticData {
         this.type = type;
         this.error = error;
         this.swimlaneId = swimlaneId;
-    }
-
-    @Override
-    public String getCategory() {
-        return NAME;
+        setCategory(NAME);
     }
 
     @Override
@@ -118,7 +113,8 @@ public class NodeLog extends StatisticData {
      * @param error
      * @param receivers
      */
-    public static void upload(LogType type, String taskId, String swimlaneId, String error, List<AlertReceiver> receivers) {
+    public static void upload(LogType type, String taskId, String swimlaneId, String error,
+            List<AlertReceiver> receivers) {
         upload(new NodeLog(type, taskId, swimlaneId, error), receivers);
     }
 
@@ -134,7 +130,8 @@ public class NodeLog extends StatisticData {
             LOGGER.info("判断是否发送邮件通知....." + JSONObject.toJSONString(log));
             if (log.type == LogType.TASK_ALARM || log.type == LogType.TASK_WARNING) {
                 LOGGER.info("需要发送邮件通知.....");
-                AlertProviderFactory.INSTANCE.notice(StringUtils.isBlank(log.type.title) ? log.type.title : log.title, log.toPrintln(), receivers);
+                AlertProviderFactory.INSTANCE.notice(StringUtils.isBlank(log.type.title) ? log.type.title : log.title,
+                        log.toPrintln(), receivers);
             }
         } catch (Throwable e) {
             LOGGER.warn("发送邮件通知", e);
@@ -173,7 +170,6 @@ public class NodeLog extends StatisticData {
     public static void upload(LogType type, String error) {
         upload(new NodeLog(type, "", "", error), null);
     }
-
 
     @JsonFormat(shape = JsonFormat.Shape.OBJECT)
     public enum LogType {

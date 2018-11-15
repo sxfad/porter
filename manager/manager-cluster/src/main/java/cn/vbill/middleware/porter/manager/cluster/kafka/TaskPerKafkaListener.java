@@ -16,14 +16,19 @@
  */
 package cn.vbill.middleware.porter.manager.cluster.kafka;
 
+import cn.vbill.middleware.porter.common.statistics.StatisticData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 
 import com.alibaba.fastjson.JSONObject;
 
+import cn.vbill.middleware.porter.common.statistics.NodeLog;
 import cn.vbill.middleware.porter.common.statistics.TaskPerformance;
 import cn.vbill.middleware.porter.manager.service.MrJobTasksMonitorService;
+import cn.vbill.middleware.porter.manager.service.MrLogMonitorService;
 import cn.vbill.middleware.porter.manager.service.MrNodesMonitorService;
 
 /**
@@ -33,18 +38,43 @@ import cn.vbill.middleware.porter.manager.service.MrNodesMonitorService;
 @Component
 public class TaskPerKafkaListener {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(TaskPerKafkaListener.class);
     @Autowired
     private MrJobTasksMonitorService mrJobTasksMonitorService;
 
     @Autowired
     private MrNodesMonitorService mrNodesMonitorService;
 
+    @Autowired
+    private MrLogMonitorService mrLogMonitorService;
+
     @KafkaListener(topics = "${spring.kafka.consumer.topics}")
     public void processMessage(String content) {
-        TaskPerformance performance = JSONObject.parseObject(content, TaskPerformance.class);
-        // 任务泳道实时监控表 服务接口类
-        mrJobTasksMonitorService.dealTaskPerformance(performance);
-        // 节点任务实时监控表
-        mrNodesMonitorService.dealTaskPerformance(performance);
+        StatisticData statisticData = JSONObject.parseObject(content, StatisticData.class);
+        if (statisticData == null) {
+            LOGGER.error("Listener-StatisticData-null.....[{}]", content);
+            return;
+        }
+        if (TaskPerformance.NAME.equalsIgnoreCase(statisticData.getCategory())) {
+            try {
+                LOGGER.info("Listener-TaskPerformance....." + content);
+                TaskPerformance taskPerformance = JSONObject.parseObject(content, TaskPerformance.class);
+                mrJobTasksMonitorService.dealTaskPerformance(taskPerformance);
+                mrNodesMonitorService.dealTaskPerformance(taskPerformance);
+            } catch (Exception e) {
+                LOGGER.error("Listener-TaskPerformance-Error....出错,请追寻...", e);
+            }
+        } else if (NodeLog.NAME.equalsIgnoreCase(statisticData.getCategory())) {
+            try {
+                LOGGER.info("Listener-NodeLog....." + content);
+                NodeLog log = JSONObject.parseObject(content, NodeLog.class);
+                mrLogMonitorService.dealNodeLog(log);
+            } catch (Exception e) {
+                LOGGER.error("Listener-NodeLog-Error....出错,请追寻...", e);
+            }
+        } else {
+            LOGGER.error("C-TaskPerKafkaListener...接收到了无法解析数据,内容[{}].", content);
+        }
+
     }
 }

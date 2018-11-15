@@ -25,13 +25,11 @@ import cn.vbill.middleware.porter.core.consumer.DataConsumer;
 import cn.vbill.middleware.porter.core.loader.DataLoader;
 import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang3.time.DateUtils;
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 
@@ -44,7 +42,7 @@ import java.util.List;
 public class ScanDataAlerter implements Alerter {
     private static final Logger LOGGER = LoggerFactory.getLogger(ScanDataAlerter.class);
     private static final long TIME_SPAN_OF_MINUTES = 30;
-    private DateTimeFormatter noticeDateFormat = DateTimeFormatter.ofPattern("yyyyMMdd HH:mm:ss");
+    private FastDateFormat noticeDateFormat = FastDateFormat.getInstance("yyyyMMdd HH:mm:ss");
 
     /**
      * check
@@ -66,13 +64,13 @@ public class ScanDataAlerter implements Alerter {
         lastCheckedTime = null == lastCheckedTime ? stat.getRegisteredTime() : lastCheckedTime;
         lastCheckedTime = DateUtils.setSeconds(lastCheckedTime, 0);
 
-        LOGGER.info("获得同步检查时间点:{}", noticeDateFormat.format(LocalDateTime.ofInstant(lastCheckedTime.toInstant(), ZoneId.systemDefault())));
+        LOGGER.debug("获得同步检查时间点:{}", noticeDateFormat.format(lastCheckedTime));
 
         //计算与最同步时间间隔并推前5分钟,单位分钟
         long timeDiff = (DateUtils.addMinutes(stat.getLastLoadedDataTime(), 5).getTime()
                 - lastCheckedTime.getTime()) / 1000 / 60;
 
-        LOGGER.debug("计算与最新表记录操作时间间隔并推前5分钟:{},时间差:{}分钟", noticeDateFormat.format(LocalDateTime.ofInstant(stat.getLastLoadedDataTime().toInstant(), ZoneId.systemDefault())), timeDiff);
+        LOGGER.debug("计算与最新表记录操作时间间隔并推前5分钟:{},时间差:{}分钟", noticeDateFormat.format(stat.getLastLoadedDataTime()), timeDiff);
 
         //分割时间段
         int splitTimes = timeDiff > 0 ? (int) (timeDiff / TIME_SPAN_OF_MINUTES) : 0;
@@ -91,10 +89,7 @@ public class ScanDataAlerter implements Alerter {
                 Date endDate = DateUtils.addMinutes(lastCheckedTime, endMinute);
                 endDate = DateUtils.setSeconds(endDate, 59);
 
-                LOGGER.info("执行同步检查逻辑,执行时间段:{}-{}",
-                        noticeDateFormat.format(LocalDateTime.ofInstant(startDate.toInstant(), ZoneId.systemDefault())),
-                        noticeDateFormat.format(LocalDateTime.ofInstant(endDate.toInstant(), ZoneId.systemDefault())));
-
+                LOGGER.debug("执行同步检查逻辑,执行时间段:{}-{}", noticeDateFormat.format(startDate), noticeDateFormat.format(endDate));
                 //执行同步检查逻辑，暂时为单线程模式执行
                 checkLogic(stat, consumer, loader, startDate, endDate, checkMeta, receivers);
             }
@@ -118,14 +113,12 @@ public class ScanDataAlerter implements Alerter {
         int countTarget = loader.getDataCount(checkMeta.getLeft()[1], checkMeta.getMiddle()[1], checkMeta.getRight()[1], startDate, endDate);
 
 
-        LOGGER.debug("执行同步检查逻辑,执行时间段:{}-{}, 结果:{}-{}", noticeDateFormat.format(LocalDateTime.ofInstant(startDate.toInstant(), ZoneId.systemDefault())), noticeDateFormat.format(LocalDateTime.ofInstant(endDate.toInstant(), ZoneId.systemDefault())),
+        LOGGER.debug("执行同步检查逻辑,执行时间段:{}-{}, 结果:{}-{}", noticeDateFormat.format(startDate), noticeDateFormat.format(endDate),
                 countSource, countTarget);
 
         //数据不一致时发送告警
         if (countTarget != countSource) {
-            String notice = new StringBuffer().append(noticeDateFormat.format(LocalDateTime.ofInstant(startDate.toInstant(), ZoneId.systemDefault())))
-                    .append("至")
-                    .append(noticeDateFormat.format(LocalDateTime.ofInstant(endDate.toInstant(), ZoneId.systemDefault())))
+            String notice = new StringBuffer().append(noticeDateFormat.format(startDate)).append("至").append(noticeDateFormat.format(endDate))
                     .append("\n\r")
                     .append("源端数据变更").append(countSource).append("条,").append("\n\r")
                     .append("目标端数据变更").append(countTarget).append("条。").append("\n\r")
@@ -133,7 +126,7 @@ public class ScanDataAlerter implements Alerter {
 
             LOGGER.debug(notice);
 
-            String title = "[" + noticeDateFormat.format(LocalDateTime.now()) + "][" + MachineUtils.localhost() + ":" + MachineUtils.getPID() + "]数据同步告警";
+            String title = "[" + noticeDateFormat.format(new Date()) + "][" + MachineUtils.localhost() + ":" + MachineUtils.getPID() + "]数据同步告警";
             AlertProviderFactory.INSTANCE.notice(title, notice, receivers);
             //更新同步检查次数
             stat.incrementAlertedTimes();

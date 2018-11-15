@@ -408,13 +408,13 @@ CREATE TABLE `ogg_tables` (
   `remark` varchar(500) DEFAULT NULL COMMENT '备注',
   `related_task_info` varchar(500) DEFAULT NULL COMMENT '关联任务信息',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='ogg表数据信息';
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='ogg表数据信息'; 
 
 -- 初始用户
-INSERT  INTO `c_user`(`id`,`loginname`,`loginpw`,`nickname`,`email`,`mobile`,`depart_ment`,`role_code`,`state`,`remark`) VALUES
+INSERT  INTO `c_user`(`id`,`loginname`,`loginpw`,`nickname`,`email`,`mobile`,`depart_ment`,`role_code`,`state`,`remark`) VALUES 
 (1,'admin','21232f297a57a5a743894a0e4a801fc3','超级管理员','admin@qq.com','13800138000','CTO','A0001',1,'');
 -- 初始化角色
-INSERT  INTO `c_role`(`id`,`role_code`,`role_name`,`sort`,`iscancel`,`type`,`state`,`remark`) VALUES
+INSERT  INTO `c_role`(`id`,`role_code`,`role_name`,`sort`,`iscancel`,`type`,`state`,`remark`) VALUES 
 (1,'A0001','超级管理员',0,0,1,1,'超级管理员'),
 (2,'A0002','普通管理员',1,0,1,1,'普通管理员'),
 (3,'B0001','监控观察者',2,0,1,1,'观察者'),
@@ -439,7 +439,7 @@ INSERT INTO `c_menu` VALUES (15, 'C001001', 'C001', '用户管理', '/user', 'fa
 INSERT INTO `c_menu` VALUES (18, 'O001', '-1', 'OGG管理', '#', 'fa-legal', 1, 6, 0, 0, 1, 1, NULL);
 INSERT INTO `c_menu` VALUES (19, 'O001001', 'O001', '表名查询', '/oggTables', 'fa-table', 2, 1, 1, 0, 1, 1, NULL);
     -- 新增本地任务抓取
-INSERT INTO `c_menu` VALUES (20, 'J001002', 'J001', '本地任务', '/specialTask', 'fa-tasks', 2, 2, 1, 0, 1, 1, NULL);
+INSERT INTO `c_menu` VALUES (20, 'J001002', 'J001', '本地任务', '/specialTask', 'fa-tags', 2, 2, 1, 0, 1, 1, NULL);
 -- 初始化菜单权限
 INSERT INTO `c_role_menu` VALUES (1, 'A0002', 'F001');
 INSERT INTO `c_role_menu` VALUES (2, 'A0002', 'J001');
@@ -463,13 +463,6 @@ INSERT INTO `c_role_menu` VALUES (19, 'C0001', 'M001');
 INSERT INTO `c_role_menu` VALUES (20, 'C0001', 'M001001');
 INSERT INTO `c_role_menu` VALUES (21, 'C0001', 'M001002');
 INSERT INTO `c_role_menu` VALUES (22, 'C0001', 'M001003');
-    -- ogg管理模块新增
-INSERT INTO `c_role_menu` VALUES (23, 'A0002', 'O001');
-INSERT INTO `c_role_menu` VALUES (24, 'A0002', 'O001001');
-INSERT INTO `c_role_menu` VALUES (25, 'B0001', 'O001');
-INSERT INTO `c_role_menu` VALUES (26, 'B0001', 'O001001');
-INSERT INTO `c_role_menu` VALUES (27, 'C0001', 'O001');
-INSERT INTO `c_role_menu` VALUES (28, 'C0001', 'O001001');
     -- 新增本地任务
 INSERT INTO `c_role_menu` VALUES (29, 'A0002', 'J001002');
 -- 初始化告警数据字典
@@ -498,12 +491,12 @@ INSERT  INTO `d_data_source_plugin`(`id`,`source_type`,`field_name`,`field_code`
 (16,'KAFKA_PRODUCE','是否ogg-json格式','oggJson',3,'TEXT',true,'','例如:true or false',1,0,NULL),
 (17,'KAFKA_PRODUCE','分片字段名','partitionKey',4,'TEXT',NULL,'','例如:{"db.table_name":"id,name","db2.table_name":"id,gender"}(格式:schema.表名->字段名1,字段名2)',1,0,NULL);
 -- 初始化字典表
-INSERT  INTO `d_dictionary`(`id`,`code`,`name`,`parentcode`,`level`,`dictype`,`state`,`remark`) VALUES
+INSERT  INTO `d_dictionary`(`id`,`code`,`name`,`parentcode`,`level`,`dictype`,`state`,`remark`) VALUES 
 (1,'Manual','手动','-1',1,'PTmaintain',1,NULL),
 (2,'Automatic','自动','-1',1,'PTmaintain',1,NULL);
 -- 初始化邮箱
 insert  into `s_alarm`(`id`,`alarm_type`,`create_user_id`,`update_user_id`,`create_time`,`update_time`,`state`,`iscancel`,`remark`) values (1,'EMAIL',-1,-1,'2018-04-19 15:15:21','2018-04-19 15:15:21',1,0,NULL);
-insert  into `s_alarm_plugin`(`id`,`alarm_id`,`alarm_type`,`plugin_code`,`plugin_name`,`plugin_value`) values
+insert  into `s_alarm_plugin`(`id`,`alarm_id`,`alarm_type`,`plugin_code`,`plugin_name`,`plugin_value`) values 
 (1,1,'EMAIL','host','邮件服务器','smtp.163.com'),
 (2,1,'EMAIL','username','邮件账户','1@163.com'),
 (3,1,'EMAIL','password','邮箱密码','account');

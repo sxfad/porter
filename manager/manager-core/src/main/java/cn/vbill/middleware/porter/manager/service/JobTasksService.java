@@ -78,6 +78,7 @@ public interface JobTasksService {
      * @return: java.lang.Integer
      */
     Integer updateZKCapture(JobTasks jobTasks, TaskStatusType jobState);
+
     /**
      * 删除
      *
@@ -184,7 +185,6 @@ public interface JobTasksService {
 
     /**
      * 解析配置任务
-     * 
      * @param jobXmlText
      * @return
      */

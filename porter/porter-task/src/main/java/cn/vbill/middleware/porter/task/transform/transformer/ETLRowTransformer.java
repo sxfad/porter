@@ -28,6 +28,7 @@ import cn.vbill.middleware.porter.core.event.s.EventType;
 import cn.vbill.middleware.porter.core.loader.DataLoader;
 import cn.vbill.middleware.porter.core.task.TableMapper;
 import cn.vbill.middleware.porter.task.worker.TaskWork;
+import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -191,7 +192,7 @@ public class ETLRowTransformer implements Transformer {
         });
 
         row.getColumns().removeAll(removeables);
-
+        LOGGER.info("remove columns:{}", removeables.stream().map(p -> JSONObject.toJSONString(p)).reduce((p, n) -> p + "," + n).orElse(""));
         return !removeables.isEmpty();
     }
 
@@ -203,10 +204,12 @@ public class ETLRowTransformer implements Transformer {
      * @return: cn.vbill.middleware.porter.common.db.meta.TableSchema
      */
     private TableSchema findTable(DataLoader loader, String finalSchema, String finalTable)
-            throws TaskStopTriggerException {
+            throws TaskStopTriggerException, InterruptedException {
         TableSchema table = null;
         try {
             table = loader.findTable(finalSchema, finalTable);
+        } catch (InterruptedException e) {
+            throw e;
         } catch (Throwable e) {
             String error = "查询不到目标仓库表结构" + finalSchema + ". " + finalTable;
             //e.printStackTrace();

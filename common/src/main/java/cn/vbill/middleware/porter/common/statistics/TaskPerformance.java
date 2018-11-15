@@ -33,7 +33,7 @@ import java.util.Date;
  */
 public class TaskPerformance extends StatisticData {
     @JSONField(serialize = false, deserialize = false)
-    private static final String NAME = "task";
+    public static final String NAME = "task";
     //任务ID
     @Setter @Getter private String taskId;
     //泳道ID
@@ -61,7 +61,7 @@ public class TaskPerformance extends StatisticData {
     @Setter @Getter private Date time;
 
     public TaskPerformance() {
-
+        setCategory(NAME);
     }
 
     public TaskPerformance(DTaskStat stat) {
@@ -78,11 +78,6 @@ public class TaskPerformance extends StatisticData {
         this.errorDeleteRow = stat.getErrorDeleteRow().get();
         this.alertedTimes = stat.getAlertedTimes().get();
         this.time = new Date();
-    }
-
-    @Override
-    public String getCategory() {
-        return NAME;
     }
 
     @Override

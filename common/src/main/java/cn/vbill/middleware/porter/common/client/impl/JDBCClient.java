@@ -129,7 +129,7 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
      * @param tableName
      * @return
      */
-    private TableSchema getTableSchema(String schema, String tableName) {
+    private TableSchema getTableSchema(String schema, String tableName) throws InterruptedException {
         Table dbTable = jdbcProxy.findTable(schema, schema, tableName, makePrimaryKeyWhenNo);
         TableSchema tableSchema = new TableSchema();
         //mysql特殊场景下(例如大小写敏感)，schema字段为空
@@ -357,7 +357,31 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
             }
         }
 
-        private Table findTable(String catalogName, String schema, String tableName, boolean makePrimaryKeyWhenNo) {
+        private Table findTable(String catalogName, String schema, String tableName, boolean makePrimaryKeyWhenNo) throws InterruptedException {
+            boolean sendResult = false;
+            Table result = null;
+            int retries = getConfig().getRetries();
+            //做retries-1次尝试
+            for (int i = 0; i < retries - 1; i++) {
+                try {
+                    result = nativeFindTable(catalogName, schema, tableName, makePrimaryKeyWhenNo);
+                    sendResult = true;
+                    break;
+                } catch (Throwable e) {
+                    LOGGER.warn("got error by findTable:{}.{},times:{}", catalogName, tableName, i, e);
+                    Thread.sleep(1000L * 60 * 1);
+                    reconnection();
+                }
+            }
+            //做最后一次尝试，否则抛出异常
+            if (!sendResult) {
+                result = nativeFindTable(catalogName, schema, tableName, makePrimaryKeyWhenNo);
+            }
+            return result;
+        }
+
+
+        private Table nativeFindTable(String catalogName, String schema, String tableName, boolean makePrimaryKeyWhenNo) {
             connLock.readLock().lock();
             try {
                 Table table = DdlUtils.findTable(jdbcTemplate, catalogName, schema, tableName, makePrimaryKeyWhenNo);

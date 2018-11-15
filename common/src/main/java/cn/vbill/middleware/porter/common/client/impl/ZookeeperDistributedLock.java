@@ -160,6 +160,7 @@ public class ZookeeperDistributedLock extends ZookeeperClusterListener implement
             return value;
         });
     }
+
     private void clearResourceTag(String resource) {
         LATCH_WAIT_COUNT.computeIfPresent(resource, (key, value) -> {
             value.decrementAndGet();

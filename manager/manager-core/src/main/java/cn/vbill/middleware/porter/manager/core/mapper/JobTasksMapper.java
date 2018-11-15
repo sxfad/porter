@@ -92,7 +92,7 @@ public interface JobTasksMapper {
      */
     List<JobTasks> page(@Param("page") Page<JobTasks> page, @Param("state") Integer state,
             @Param("jobType") Integer jobType, @Param("jobName") String jobName, @Param("beginTime") String beginTime,
-            @Param("endTime") String endTime, @Param("code") String code);
+            @Param("endTime") String endTime, @Param("jobState") String jobState);
 
     /**
      * 分頁All
@@ -100,7 +100,7 @@ public interface JobTasksMapper {
      * @return
      */
     Integer pageAll(@Param("state") Integer state, @Param("jobType") Integer jobType, @Param("jobName") String jobName,
-            @Param("beginTime") String beginTime, @Param("endTime") String endTime, @Param("code") String code);
+            @Param("beginTime") String beginTime, @Param("endTime") String endTime, @Param("jobState") String jobState);
 
     /**
      * 修改任务状态

@@ -146,7 +146,6 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
             Stat stat = zk.exists(path, watch);
             return null != stat;
         } catch (Exception e) {
-            LOGGER.warn("判断{}是否存在出错", path, e);
             return false;
         }
     }

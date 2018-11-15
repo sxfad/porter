@@ -221,7 +221,9 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements T
                 }
             }, 10, 30, TimeUnit.SECONDS);
         } else {
-            throw new Exception(lockPath + ",节点已注册");
+            String lockPathMsg = lockPath + ",节点已注册";
+            LOGGER.error(lockPathMsg);
+            throw new Exception(lockPathMsg);
         }
     }
 

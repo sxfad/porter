@@ -140,8 +140,6 @@ public class SqlTemplateImpl implements SqlTemplate {
         return sql.toString().intern();
     }
 
-    // ================ helper method ============
-
     /**
      * appendEscape
      * @param columnName

@@ -218,15 +218,19 @@ public class JobTasksController {
     /**
      * 解析特殊配置
      * 
-     * @param jobXmlText
+     * @param jobTasks
      * @return
      */
     @PostMapping(value = "/dealspecialjson")
     @ApiOperation(value = "解析字符串", notes = "解析字符串")
-    public ResponseMessage dealSpecialJson(@RequestBody String jobXmlText) {
-        log.info("解析字符串:[{}]", jobXmlText);
+    public ResponseMessage dealSpecialJson(@RequestBody JobTasks jobTasks) {
+        String jobXmlText = jobTasks.getJobXmlText();
+        log.info("传入字符串:[{}]", jobXmlText);
         try {
-            TaskConfig taskConfig = jobTasksService.dealSpecialJson(java.net.URLDecoder.decode(jobXmlText, "UTF-8"));
+            String taskConfigJson = java.net.URLDecoder.decode(jobXmlText, "UTF-8");
+            log.info("转移后字符串:[{}]", taskConfigJson);
+            TaskConfig taskConfig = jobTasksService.dealSpecialJson(taskConfigJson);
+            log.info("解析后字符串:[{}]", JSON.toJSON(taskConfig));
             return ok(taskConfig);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
@@ -284,4 +288,5 @@ public class JobTasksController {
         }
         return ok(number);
     }
+
 }
