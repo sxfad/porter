@@ -171,49 +171,6 @@
         )
     </insert>
 
-    <!-- 新增 -->
-    <insert id="insertZKCapture" useGeneratedKeys="true" keyProperty="id">
-        insert into job_tasks(
-            id,
-            job_name,
-            job_state,
-            job_type,
-            source_consume_adt,
-            source_convert_adt,
-            source_data_tables_id,
-            source_data_source_id,
-            source_data_tables_name,
-            source_data_id,
-            source_data_name,
-            target_load_adt,
-            target_data_tables_id,
-            target_data_source_id,
-            target_data_tables_name,
-            job_xml_text,
-            job_json_text,
-            type
-        ) values (
-            #{id},
-            #{jobName},
-            #{jobState},
-            '2',
-            #{sourceConsumeAdt},
-            #{sourceConvertAdt},
-            '0',
-            '0',
-            '0',
-            '0',
-            '0',
-            #{targetLoadAdt},
-            '0',
-            '0',
-            '0',
-            #{jobXmlText},
-            #{jobJsonText},
-            '2'
-        )
-    </insert>
-
     <!-- 修改任务状态 -->
     <update id="updateState">
         update job_tasks
