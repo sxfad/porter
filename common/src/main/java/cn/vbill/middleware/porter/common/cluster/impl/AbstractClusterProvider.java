@@ -20,6 +20,7 @@ package cn.vbill.middleware.porter.common.cluster.impl;
 import cn.vbill.middleware.porter.common.client.Client;
 import cn.vbill.middleware.porter.common.client.ClusterClient;
 import cn.vbill.middleware.porter.common.client.DistributedLock;
+import cn.vbill.middleware.porter.common.client.SupportDistributedLock;
 import cn.vbill.middleware.porter.common.cluster.ClusterListener;
 import cn.vbill.middleware.porter.common.cluster.ClusterMonitor;
 import cn.vbill.middleware.porter.common.cluster.ClusterProvider;
@@ -250,7 +251,9 @@ public abstract class AbstractClusterProvider<C extends Client> implements Clust
             monitor.addListener(listener);
         });
         //初始化集群分布式锁功能
-        lock = initiateLock((ClusterClient) client);
+        if (lock instanceof SupportDistributedLock) {
+            lock = initiateLock((ClusterClient) client);
+        }
         if (null != lock && lock instanceof ClusterListener) {
             monitor.addListener((ClusterListener) lock);
         }
