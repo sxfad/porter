@@ -32,6 +32,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -64,7 +65,7 @@ public class AlerterFactory {
      * @param: [dataConsumer, dataLoader, work]
      * @return: void
      */
-    public void check(DataConsumer dataConsumer, DataLoader dataLoader, TaskWork work) {
+    public void check(DataConsumer dataConsumer, DataLoader dataLoader, TaskWork work) throws InterruptedException {
         //任务统计列表
         List<DTaskStat> stats = work.getStats();
         if (stats.size() > CHECK_POOL_ACTIVE_TASK_VALUE) {
@@ -76,6 +77,10 @@ public class AlerterFactory {
             }
             //Initiates an orderly shutdown in which previously submitted  tasks are executed, but no new tasks will be accepted.
             service.shutdown();
+            /* Blocks until all tasks have completed execution after a shutdown request
+             * 基于任务停止释放资源的需要，最多等待5分钟
+             */
+            service.awaitTermination(5, TimeUnit.MINUTES);
         } else {
             for (DTaskStat stat : stats) {
                 alerter.check(dataConsumer, dataLoader, stat, getCheckMeta(work, stat.getSchema(), stat.getTable()), work.getReceivers());
