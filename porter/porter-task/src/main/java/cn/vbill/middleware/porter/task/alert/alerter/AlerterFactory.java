@@ -25,14 +25,11 @@ import cn.vbill.middleware.porter.core.task.TableMapper;
 import cn.vbill.middleware.porter.task.worker.TaskWork;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -45,9 +42,10 @@ import java.util.concurrent.Executors;
 @Component
 @Scope("singleton")
 public class AlerterFactory {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(AlerterFactory.class);
-
+    //线程池线程数量
+    private static final int CHECK_POOL_THREADS = 3;
+    //当每次需要检查的表的数据量大于多少时，通过线程池执行
+    private static final int CHECK_POOL_ACTIVE_TASK_VALUE = 5;
     private Alerter alerter;
 
     public AlerterFactory() {
@@ -69,39 +67,15 @@ public class AlerterFactory {
     public void check(DataConsumer dataConsumer, DataLoader dataLoader, TaskWork work) {
         //任务统计列表
         List<DTaskStat> stats = work.getStats();
-        if (stats.size() > 5) {
-            //创建屏障
-            CyclicBarrier barrier = new CyclicBarrier(stats.size() + 1);
-
+        if (stats.size() > CHECK_POOL_ACTIVE_TASK_VALUE) {
             //创建线程池
-            int threadSize = 3;
-            ExecutorService service = Executors.newFixedThreadPool(threadSize);
+            ExecutorService service = Executors.newFixedThreadPool(CHECK_POOL_THREADS);
             //分配告警检查任务到线程池子
             for (DTaskStat stat : stats) {
-                service.submit(new Runnable() {
-                    @Override
-                    public void run() {
-                        //执行任务
-                        try {
-                            alerter.check(dataConsumer, dataLoader, stat, getCheckMeta(work, stat.getSchema(), stat.getTable()), work.getReceivers());
-                        } finally {
-                            try {
-                                barrier.await();
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-                });
+                service.submit(() -> alerter.check(dataConsumer, dataLoader, stat, getCheckMeta(work, stat.getSchema(), stat.getTable()), work.getReceivers()));
             }
-            //关闭线程池
-            try {
-                barrier.await();
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                service.shutdown();
-            }
+            //Initiates an orderly shutdown in which previously submitted  tasks are executed, but no new tasks will be accepted.
+            service.shutdown();
         } else {
             for (DTaskStat stat : stats) {
                 alerter.check(dataConsumer, dataLoader, stat, getCheckMeta(work, stat.getSchema(), stat.getTable()), work.getReceivers());
