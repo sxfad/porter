@@ -63,10 +63,12 @@ public class AlertJob extends AbstractStageJob {
     }
 
     @Override
-    protected void loopLogic() {
+    protected void loopLogic() throws InterruptedException {
         //10秒执行一次
         try {
             alerterFactory.check(dataConsumer, dataLoader, work);
+        } catch (InterruptedException e) {
+            throw e;
         } catch (Throwable e) {
             NodeLog.upload(NodeLog.LogType.TASK_LOG, work.getTaskId(), work.getDataConsumer().getSwimlaneId(), "db check error" + e.getMessage());
             LOGGER.error("[{}][{}]db check error!", work.getTaskId(), dataConsumer.getSwimlaneId(), e);
