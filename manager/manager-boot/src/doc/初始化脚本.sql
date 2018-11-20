@@ -183,6 +183,7 @@ CREATE TABLE `job_tasks` (
   `creater` BIGINT(20) NOT NULL DEFAULT '-1' COMMENT '创建人',
   `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `state` INT(5) NOT NULL DEFAULT '1' COMMENT '状态',
+  `type` int(5) DEFAULT '1' COMMENT '类型',
   `iscancel` INT(2) NOT NULL DEFAULT '0' COMMENT '是否作废',
   `remark` VARCHAR(100) DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`)

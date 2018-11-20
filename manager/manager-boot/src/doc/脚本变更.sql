@@ -10,3 +10,5 @@ DELETE FROM `c_role_menu` where id = 25;
 DELETE FROM `c_role_menu` where id = 26;
 DELETE FROM `c_role_menu` where id = 27;
 DELETE FROM `c_role_menu` where id = 28;
+-- 2018-11-20作废
+UPDATE c_menu SET iscancel = 1 WHERE CODE LIKE 'O001%'
