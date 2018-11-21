@@ -109,7 +109,7 @@ public class Task {
         Task task = new Task();
         task.setTaskId(config.getTaskId());
         task.setMappers(new ArrayList<>());
-        config.getMapper().stream().filter(m -> !m.isAuto()).forEach(m -> {
+        config.getMapper().stream().forEach(m -> {
             task.getMappers().add(TableMapper.fromConfig(m).toUpperCase());
         });
         List<DataConsumer> consumers = DataConsumerFactory.INSTANCE.getConsumer(config.getConsumer());

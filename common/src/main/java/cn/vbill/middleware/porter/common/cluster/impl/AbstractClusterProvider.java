@@ -248,7 +248,7 @@ public abstract class AbstractClusterProvider<C extends Client> implements Clust
             monitor.addListener(listener);
         });
         //初始化集群分布式锁功能
-        if (lock instanceof SupportDistributedLock) {
+        if (client instanceof SupportDistributedLock) {
             lock = initiateLock((ClusterClient) client);
         }
         if (null != lock && lock instanceof ClusterListener) {
