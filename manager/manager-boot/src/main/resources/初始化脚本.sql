@@ -183,6 +183,7 @@ CREATE TABLE `job_tasks` (
   `creater` BIGINT(20) NOT NULL DEFAULT '-1' COMMENT '创建人',
   `create_time` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `state` INT(5) NOT NULL DEFAULT '1' COMMENT '状态',
+  `type` int(5) DEFAULT '1' COMMENT '类型',
   `iscancel` INT(2) NOT NULL DEFAULT '0' COMMENT '是否作废',
   `remark` VARCHAR(100) DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`)
@@ -485,7 +486,7 @@ INSERT  INTO `d_data_source_plugin`(`id`,`source_type`,`field_name`,`field_code`
 (10,'CANAL','数据库','database',3,'TEXT',NULL,'','例如:paytest',1,0,NULL),
 (11,'CANAL','用户','username',4,'TEXT',NULL,'','',1,0,NULL),
 (12,'CANAL','密码','password',5,'TEXT',NULL,'','',1,0,NULL),
-(13,'CANAL','过滤器','filter',6,'TEXT',NULL,'','例如:paytest\.(aaa|aab|test_table|test_table2)',1,0,NULL),
+(13,'CANAL','过滤器','filter',6,'TEXT',NULL,'','例如:paytest\\.(aaa|aab|test_table|test_table2)',1,0,NULL),
 (14,'KAFKA_PRODUCE','服务器列表','servers',1,'TEXT',NULL,'','例如:0.0.0.1:9092,0.0.0.2:9092',1,0,NULL),
 (15,'KAFKA_PRODUCE','主题','topics',2,'TEXT',NULL,'','例如:test1(只能一个主题)',1,0,NULL),
 (16,'KAFKA_PRODUCE','是否ogg-json格式','oggJson',3,'TEXT',true,'','例如:true or false',1,0,NULL),
