@@ -72,6 +72,7 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
     @Getter
     private SqlTemplate sqlTemplate;
     private final JdbcWapper jdbcProxy;
+    private final int connRetries;
 
 
     public JDBCClient(JDBCConfig config) {
@@ -79,6 +80,7 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
         this.makePrimaryKeyWhenNo = config.isMakePrimaryKeyWhenNo();
         sqlTemplate = new SqlTemplateImpl();
         jdbcProxy = new JdbcWapper();
+        connRetries = config.getRetries();
     }
 
     @Override
@@ -357,9 +359,8 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
         private Table findTable(String catalogName, String schema, String tableName, boolean makePrimaryKeyWhenNo) throws InterruptedException {
             boolean sendResult = false;
             Table result = null;
-            int retries = getConfig().getRetries();
             //做retries-1次尝试
-            for (int i = 0; i < retries - 1; i++) {
+            for (int i = 0; i < connRetries - 1; i++) {
                 try {
                     result = nativeFindTable(catalogName, schema, tableName, makePrimaryKeyWhenNo);
                     sendResult = true;
@@ -403,13 +404,14 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
         }
 
         private int[] batchUpdate(String sql, List<Object[]> batchArgs, boolean capture) throws TaskStopTriggerException, InterruptedException {
-            return atomicExecute(new TransactionCallback<int[]>() {
+            int[] result = atomicExecute(new TransactionCallback<int[]>() {
                 @Override
                 @SneakyThrows(Throwable.class)
                 public int[] doInTransaction(TransactionStatus status) {
                     return jdbcTemplate.batchUpdate(sql, batchArgs);
                 }
             }, capture);
+            return null != result ? result : new int[] {};
         }
 
         private int update(String sql, Object... args) throws TaskStopTriggerException, InterruptedException {
@@ -417,21 +419,21 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
         }
 
         private int update(String sql, boolean capture, Object... args) throws TaskStopTriggerException, InterruptedException {
-            return atomicExecute(new TransactionCallback<Integer>() {
+            Integer result = atomicExecute(new TransactionCallback<Integer>() {
                 @Override
                 @SneakyThrows(Throwable.class)
                 public Integer doInTransaction(TransactionStatus status) {
                     return jdbcTemplate.update(sql, args);
                 }
             }, capture);
+            return null != result ? result : -1;
         }
 
         private <T> T atomicExecute(TransactionCallback<T> action, boolean capture) throws TaskStopTriggerException, InterruptedException {
             boolean sendResult = false;
             T result = null;
-            int retries = getConfig().getRetries();
             //做retries-1次尝试
-            for (int i = 0; i < retries - 1; i++) {
+            for (int i = 0; i < connRetries - 1; i++) {
                 try {
                     result = nativeAtomicExecute(action, capture);
                     sendResult = true;
