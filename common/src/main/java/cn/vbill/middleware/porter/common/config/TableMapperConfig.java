@@ -18,6 +18,7 @@
 package cn.vbill.middleware.porter.common.config;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Map;
@@ -28,25 +29,16 @@ import java.util.Map;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月04日 19:07
  */
+@NoArgsConstructor
 public class TableMapperConfig {
-
-    public TableMapperConfig() {
-
-    }
-
     public TableMapperConfig(String[] schema, String[] table, Map<String, String> column, Boolean ignoreTargetCase,
             Boolean forceMatched) {
-        this.auto = false;
         this.schema = schema;
         this.table = table;
         this.column = column;
         this.ignoreTargetCase = ignoreTargetCase;
         this.forceMatched = forceMatched;
     }
-
-    @Getter
-    @Setter
-    private boolean auto = true;
 
     @Getter
     @Setter
