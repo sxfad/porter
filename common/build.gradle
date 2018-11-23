@@ -14,7 +14,7 @@ dependencies {
         exclude group:'jdk.tools',module:'jdk.tools'
     }
 
-    compile('com.alibaba.otter:canal.server:1.0.25'){
+    compile('com.alibaba.otter:canal.server:1.1.0'){
         exclude group:'ch.qos.logback',module:'logback-core'
         exclude group:'ch.qos.logback',module:'logback-classic'
         exclude group:'org.slf4j',module:'jcl-over-slf4j'
