@@ -78,9 +78,9 @@ public class FileClient extends AbstractClient<FileOperationConfig> implements C
 
     @Override
     public Pair<String, Boolean> getData(String path) {
-        String content = null;
-        try {
-            content = Files.lines(Paths.get(getRealPath(path))).reduce((p, n) -> p + n).orElse("");
+       String content = null;
+        try (Stream<String> stream = Files.lines(Paths.get(getRealPath(path)))){
+        	content = stream.reduce((p, n) -> p + n).orElse("");
         } catch (IOException e) {
             LOGGER.warn("getData {} fail.", path, e);
         }
