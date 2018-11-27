@@ -37,7 +37,7 @@ public class EmailConfig extends SourceConfig {
     @Setter @Getter private boolean smtpAuth = true;
     @Setter @Getter private boolean smtpStarttlsEnable = true;
     @Setter @Getter private boolean smtpStarttlsRequired = false;
-
+    @Setter @Getter private boolean smtpSslEnable = false;
     public EmailConfig() {
         sourceType = SourceType.EMAIL;
     }

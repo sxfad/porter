@@ -24,6 +24,7 @@ import cn.vbill.middleware.porter.common.client.AbstractClient;
 import cn.vbill.middleware.porter.common.config.source.EmailConfig;
 import cn.vbill.middleware.porter.common.exception.ClientConnectionException;
 import com.alibaba.fastjson.JSONObject;
+import com.sun.mail.util.MailSSLSocketFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +33,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -62,7 +64,18 @@ public class EmailClient  extends AbstractClient<EmailConfig> implements AlertCl
         properties.put("mail.smtp.auth", config.isSmtpAuth());
         properties.put("mail.smtp.starttls.enable", config.isSmtpStarttlsEnable());
         properties.put("mail.smtp.starttls.required", config.isSmtpStarttlsRequired());
-
+        if(config.isSmtpSslEnable()){
+            properties.put("mail.smtp.ssl.enable", "true");
+            //开启安全协议
+            MailSSLSocketFactory sf = null;
+            try {
+                sf = new MailSSLSocketFactory();
+                sf.setTrustAllHosts(true);
+            } catch (GeneralSecurityException e1) {
+                e1.printStackTrace();
+            }
+            properties.put("mail.smtp.ssl.socketFactory", sf);
+        }
         JavaMailSenderImpl  senderImpl = new JavaMailSenderImpl();
 
         senderImpl.setHost(config.getHost());
