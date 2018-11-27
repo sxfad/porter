@@ -34,6 +34,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -79,8 +80,8 @@ public class FileClient extends AbstractClient<FileOperationConfig> implements C
     @Override
     public Pair<String, Boolean> getData(String path) {
         String content = null;
-        try {
-            content = Files.lines(Paths.get(getRealPath(path))).reduce((p, n) -> p + n).orElse("");
+        try (Stream<String> stream = Files.lines(Paths.get(getRealPath(path)))){
+        	content = stream.reduce((p, n) -> p + n).orElse("");
         } catch (IOException e) {
             LOGGER.warn("getData {} fail.", path, e);
         }
