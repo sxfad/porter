@@ -36,7 +36,7 @@ import java.util.Map;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月19日 13:59
  */
 
-@ConfigurationProperties(prefix = "node")
+@ConfigurationProperties(prefix = "porter")
 @Component
 public class SourcesConfig {
     private Map<String, Map<String, String>> source;
