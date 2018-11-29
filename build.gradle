@@ -86,6 +86,14 @@ subprojects {
     uploadArchives {
         repositories {
             mavenDeployer {
+                //
+                snapshotRepository(url: "http://172.16.60.188:8081/nexus/content/repositories/snapshots/") {
+                    authentication(userName: 'deployment', password: 'lemon888')
+                }
+                //
+                repository(url: "http://172.16.60.188:8081/nexus/content/repositories/releases/") {
+                    authentication(userName: 'deployment', password: 'lemon888')
+                }
                 mavenLocal()
             }
         }
