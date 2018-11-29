@@ -25,6 +25,7 @@ import cn.vbill.middleware.porter.core.event.s.MessageEvent;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,15 +73,15 @@ public class OggJsonConverter implements EventConverter {
         }
         event.setOpType(eventType);
         try {
-            String poTS = obj.getString("op_ts");
-            event.setOpTs(opTsF.parse(poTS.substring(0, poTS.length() - 3)));
+            String poTS = obj.containsKey("op_ts") ? obj.getString("op_ts") : null;
+            if (StringUtils.isNotEmpty(poTS)) event.setOpTs(opTsF.parse(poTS.substring(0, poTS.length() - 3)));
         } catch (Exception e) {
             LOGGER.error("op_ts", e);
         }
 
         try {
-            String currentTS = obj.getString("current_ts");
-            event.setCurrentTs(ctsf.parse(currentTS.substring(0, currentTS.length() - 3)));
+            String currentTS = obj.containsKey("current_ts") ? obj.getString("current_ts") : null;
+            if (StringUtils.isNotEmpty(currentTS)) event.setCurrentTs(ctsf.parse(currentTS.substring(0, currentTS.length() - 3)));
         } catch (Exception e) {
             LOGGER.error("解析current_ts出错", e);
         }
