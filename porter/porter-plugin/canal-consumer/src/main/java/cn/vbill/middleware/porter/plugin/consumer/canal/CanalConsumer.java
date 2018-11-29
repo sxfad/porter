@@ -45,7 +45,7 @@ public class CanalConsumer extends AbstractDataConsumer {
     public List<MessageEvent> doFetch() throws TaskStopTriggerException, InterruptedException {
         return consumeClient.fetch(new ConsumeClient.FetchCallback<MessageEvent, Object>() {
             @Override
-            public <F, O> List<F> acceptAll(O o) throws Exception{
+            public <F, O> List<F> acceptAll(O o) throws Exception {
                 List<MessageEvent> events = new ArrayList<>();
                 Message msg = (Message) o;
                 for (ByteString byteString : msg.getRawEntries()) {
