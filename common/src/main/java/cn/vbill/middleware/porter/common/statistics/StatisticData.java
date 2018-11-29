@@ -21,10 +21,9 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Getter;
 import lombok.Setter;
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.slf4j.LoggerFactory;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 
@@ -44,7 +43,7 @@ public class StatisticData {
     @JSONField(serialize = false, deserialize = false)
     protected static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(StatisticData.class);
     @JSONField(serialize = false, deserialize = false)
-    private final DateFormat idDateFormat = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+    private final FastDateFormat idDateFormat = FastDateFormat.getInstance("yyyyMMddHHmmssSSS");
     // 节点ID
     @Setter
     @Getter

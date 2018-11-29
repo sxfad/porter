@@ -29,6 +29,7 @@ import cn.vbill.middleware.porter.core.loader.SubmitStatObject;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import cn.vbill.middleware.porter.core.event.etl.ETLRow;
+import org.apache.commons.lang.time.FastDateFormat;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Pair;
@@ -36,8 +37,6 @@ import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Stream;
 
@@ -52,8 +51,8 @@ public class KafkaLoader extends AbstractDataLoader {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(KafkaLoader.class);
 
-    private static final DateFormat OP_TS_F = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSS");
-    private static final DateFormat C_TS_F = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm:ss.SSS000");
+    private static final FastDateFormat OP_TS_F = FastDateFormat.getInstance("yyyy-MM-dd hh:mm:ss.SSS");
+    private static final FastDateFormat C_TS_F = FastDateFormat.getInstance("yyyy-MM-dd'T'hh:mm:ss.SSS000");
     @Override
     protected String getPluginName() {
         return LoaderPlugin.KAFKA_SYNC.getCode();
