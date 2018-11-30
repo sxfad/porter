@@ -1,6 +1,6 @@
 # Porter | [English](./README_EN.md)
 
-[![GitHub release](https://img.shields.io/badge/release-2.0.2-blue.svg)](https://github.com/sxfad/porter)
+[![GitHub release](https://img.shields.io/badge/release-3.0-blue.svg)](https://github.com/sxfad/porter)
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
 
