@@ -1,6 +1,6 @@
 # Porter | [中文](./README.md)
 
-[![GitHub release](https://img.shields.io/badge/release-2.0.2-blue.svg)](https://github.com/sxfad/porter)
+[![GitHub release](https://img.shields.io/badge/release-3.0-blue.svg)](https://github.com/sxfad/porter)
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
 
@@ -33,7 +33,7 @@ Porter began in 2017 and provides data synchronization, but it's not just limite
 ### Compile from source
 ```
 git clone https://github.com/sxfad/porter.git
-cd proter
+cd porter
 git checkout version
 gradle build
 Find the installation package from the build/distributions list
