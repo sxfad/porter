@@ -156,7 +156,7 @@ public class MrJobTasksScheduleServiceImpl implements MrJobTasksScheduleService 
      * @return: void
      */
     private void dealDTaskStatSync(String jobId, String swimlaneId, String schemaTable,
-                                   MrJobTasksSchedule mrJobTasksSchedule) {
+            MrJobTasksSchedule mrJobTasksSchedule) {
         MrJobTasksSchedule old = mrJobTasksScheduleMapper.selectByJobIdAndSwimlaneId(jobId, swimlaneId, schemaTable);
         if (old == null || old.getId() == null) {
             mrJobTasksScheduleMapper.insert(mrJobTasksSchedule);
@@ -173,13 +173,15 @@ public class MrJobTasksScheduleServiceImpl implements MrJobTasksScheduleService 
     }
 
     private void dealJobJsonTextSysn(TaskConfig task, String taskConfigJson) {
-        JobTasks jobTasks = new JobTasks(task, taskConfigJson);
-        JobTasks old = jobTasksService.selectByIdOne(jobTasks.getId());
-        if (old == null || old.getId() == null) {
-            jobTasksService.insertZKCapture(jobTasks, TaskStatusType.WORKING);
-        } else {
-            jobTasks.setId(old.getId());
-            jobTasksService.updateZKCapture(jobTasks, TaskStatusType.WORKING);
+        if (task.isLocalTask()) {
+            JobTasks jobTasks = new JobTasks(task, taskConfigJson);
+            JobTasks old = jobTasksService.selectByIdOne(jobTasks.getId());
+            if (old == null || old.getId() == null) {
+                jobTasksService.insertZKCapture(jobTasks, TaskStatusType.WORKING);
+            } else {
+                jobTasks.setId(old.getId());
+                jobTasksService.updateZKCapture(jobTasks, TaskStatusType.WORKING);
+            }
         }
     }
 }
