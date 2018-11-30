@@ -238,7 +238,7 @@
     <!-- 根据主鍵查找 -->
     <select id="selectById" resultType="cn.vbill.middleware.porter.manager.core.entity.JobTasks">
         select
-            id, job_name AS jobName, java_class_name as javaClassName, java_class_content as javaClassContent, job_state AS jobState, 
+            id, job_name AS jobName, java_class_name as javaClassName, java_class_content as javaClassContent, job_state AS jobState,
             job_type as jobType,
             source_consume_adt AS sourceConsumeAdt, source_convert_adt AS sourceConvertAdt,
             source_data_tables_id AS sourceDataTablesId, source_data_source_id AS sourceDataSourceId, source_data_tables_name AS sourceDataTablesName,
@@ -256,6 +256,9 @@
         select count(id) from job_tasks
         <where>
             iscancel = 0
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
             <if test="jobName != null and jobName != ''">
                 and job_name LIKE CONCAT('%', #{jobName}, '%')
             </if>
@@ -286,6 +289,9 @@
         from job_tasks
         <where>
             iscancel = 0
+            <if test="id != null and id != ''">
+                and id = #{id}
+            </if>
             <if test="jobName != null and jobName != ''">
                 and job_name LIKE CONCAT('%', #{jobName}, '%')
             </if>

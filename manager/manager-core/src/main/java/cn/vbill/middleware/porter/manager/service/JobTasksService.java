@@ -124,7 +124,7 @@ public interface JobTasksService {
      * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.entity.JobTasks>
      */
     Page<JobTasks> page(Page<JobTasks> page, String jobName, String beginTime, String endTime, TaskStatusType jobState,
-            Integer jobType);
+            Integer jobType, Long id);
 
     /**
      * tableNames
