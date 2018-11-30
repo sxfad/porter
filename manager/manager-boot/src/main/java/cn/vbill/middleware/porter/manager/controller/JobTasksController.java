@@ -259,7 +259,7 @@ public class JobTasksController {
                 log.info("zk任务Id:[{}] 状态:[{}] 详情:[{}].", id, taskStatusType, JSON.toJSONString(config));
             } catch (Exception e) {
                 log.error("zk变更任务Id[{}] 状态[{}]失败,请关注！", id, taskStatusType);
-                e.printStackTrace();
+                ResponseMessage.error("变更任务失败！");
             }
         }
         return ok(number);
