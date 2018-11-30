@@ -49,6 +49,11 @@ porter.cluster.strategy=ZOOKEEPER
 porter.cluster.client.url=127.0.0.1:2181
 porter.cluster.client.sessionTimeout=100000
 
+#stastistics
+porter.cluster.statistic.sourceType=KAFKA_PRODUCE
+porter.cluster.statistic.servers=127.0.0.1:9200
+porter.cluster.statistic.topic=your kafka topic
+
 #standalone
 porter.cluster.strategy=STANDALONE
 porter.cluster.client.home=./.porter

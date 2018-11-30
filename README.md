@@ -50,6 +50,12 @@ porter.cluster.strategy=ZOOKEEPER
 porter.cluster.client.url=127.0.0.1:2181
 porter.cluster.client.sessionTimeout=100000
 
+#统计指标数据上传目标端链接信息，与manager-cluster搭配使用,当上传到zookeeper时，manager-cluster无需部署。
+porter.cluster.statistic.sourceType=KAFKA_PRODUCE
+porter.cluster.statistic.servers=127.0.0.1:9200
+porter.cluster.statistic.topic=你的kafka主题
+
+
 #单机配置
 porter.cluster.strategy=STANDALONE
 porter.cluster.client.home=./.porter

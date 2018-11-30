@@ -63,6 +63,7 @@
 
 ```
 	分布式集群实现，当前仅支持zookeeper
+	详细配置在ClusterConfig.java
 ```
 
 
@@ -101,6 +102,16 @@
 	STANDALONE模式参数
 	eg.
 		porter.cluster.client.home=路径
+```
+
+- porter.cluster.statistic
+
+```
+    统计指标数据上传目标端链接信息,默认上传到zookeeper。当上传到zookeeper时，manager-cluster无需部署
+    eg.
+    porter.cluster.statistic.sourceType=KAFKA_PRODUCE
+    porter.cluster.statistic.servers=127.0.0.1:9200
+    porter.cluster.statistic.topic=kafka主题
 ```
 
 ## 告警

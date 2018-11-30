@@ -99,6 +99,16 @@
 		porter.cluster.client.home=path
 ```
 
+- porter.cluster.statistic
+
+```
+    Client information about statistics,default zookeeper.manager-cluster is unneeded, if you choose zookeeper.
+    eg.
+    porter.cluster.statistic.sourceType=KAFKA_PRODUCE
+    porter.cluster.statistic.servers=127.0.0.1:9200
+    porter.cluster.statistic.topic=kafka topic
+```
+
 ## Alert
 ### porter.alert
 
