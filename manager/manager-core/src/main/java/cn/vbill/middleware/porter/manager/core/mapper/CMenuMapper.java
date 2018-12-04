@@ -101,4 +101,11 @@ public interface CMenuMapper {
      * @return: java.lang.Integer
      */
     Integer delete(Long id);
+
+    /**
+     * 获取所有的一级菜单和二级菜单
+     *
+     * @return
+     */
+    List<CMenu> getAll();
 }

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.vbill.middleware.porter.manager.core.mapper.CRoleMenuMapper">
+    <!-- 添加某一权限所能访问的菜单 -->
+    <insert id="insert" parameterType="java.util.List">
+        insert into c_role_menu
+        (role_code, menu_code)
+        values
+        <foreach collection="list" item="cRoleMenu" index="index" separator=",">
+            (
+              #{cRoleMenu.roleCode}, #{cRoleMenu.menuCode}
+            )
+        </foreach>
+    </insert>
+
+    <!-- 回显权限和能访问的菜单 -->
+    <select id="getRoleMenu" resultType="cn.vbill.middleware.porter.manager.core.entity.CRoleMenu">
+        select id, role_code as roleCode, menu_code as menuCode
+        from c_role_menu
+    </select>
+
+    <!-- 删除之前的权限能访问的菜单 -->
+    <delete id="delete">
+        delete from c_role_menu where role_code = #{roleCode}
+    </delete>
+</mapper>

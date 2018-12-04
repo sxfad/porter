@@ -171,4 +171,16 @@ public class CMenuController {
         return ok();
     }
 
+    /**
+     * 拿到所有的一级和二级菜单
+     *
+     * @return
+     */
+    @GetMapping("/getAll")
+    @ApiOperation(value = "拿到所有的一级二级菜单", notes = "拿到所有的一级二级菜单")
+    public ResponseMessage getAll() {
+        List<CMenu> menuList = cMenuService.getAll();
+        return ok(menuList);
+    }
+
 }
