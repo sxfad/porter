@@ -235,9 +235,9 @@ public class JobTasksController {
             log.info("解析后字符串:[{}]", JSON.toJSON(taskConfig));
             return ok(taskConfig);
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            log.error("输入数据解析失败!", e);
+            return ResponseMessage.error("输入数据解析失败!");
         }
-        return ResponseMessage.error(null);
     }
 
     /**
@@ -261,7 +261,7 @@ public class JobTasksController {
                 log.info("zk任务Id:[{}] 状态:[{}] 详情:[{}].", id, taskStatusType, JSON.toJSONString(config));
             } catch (Exception e) {
                 log.error("zk变更任务Id[{}] 状态[{}]失败,请关注！", id, taskStatusType);
-                ResponseMessage.error("变更任务失败！");
+                return ResponseMessage.error("变更任务失败！");
             }
         }
         return ok(number);
@@ -284,8 +284,8 @@ public class JobTasksController {
                 ClusterProviderProxy.INSTANCE
                         .broadcast(new TaskPushCommand(jobTasksService.fitJobTask(id, TaskStatusType.DELETED)));
             } catch (Exception e) {
-                log.error("zk删除任务节点[{}]失败,请关注！", id);
-                e.printStackTrace();
+                log.error("zk删除任务节点[{}]失败,请关注！", id, e);
+                return ResponseMessage.error("zk删除任务节点失败！");
             }
         }
         return ok(number);
