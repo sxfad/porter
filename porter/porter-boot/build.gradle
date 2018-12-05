@@ -40,10 +40,6 @@ distributions {
             from ("plugins") {
                 into "plugins"
             }
-
-            from ("bugs") {
-                into "bugs"
-            }
         }
     }
 }
