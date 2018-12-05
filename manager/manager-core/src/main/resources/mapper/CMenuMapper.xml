@@ -107,4 +107,10 @@
         </where>
         ORDER BY sort
     </select>
+
+    <select id="getAll" resultType="cn.vbill.middleware.porter.manager.core.entity.CMenu">
+        select id, code, fathercode, name, menu_url as menuUrl, menu_image as menuImage, level, sort, iscancel, isleaf
+        from c_menu
+        where iscancel = 0
+    </select>
 </mapper>

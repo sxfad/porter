@@ -61,4 +61,11 @@ public class CRoleController {
         List<CRole> roles = cRoleService.findList();
         return ok(roles);
     }
+
+    @GetMapping("/getAll")
+    @ApiOperation(value = "拿到所有的权限", notes = "拿到所有的权限")
+    public ResponseMessage findAll() {
+        List<CRole> roleList = cRoleService.getAll();
+        return ok(roleList);
+    }
 }
