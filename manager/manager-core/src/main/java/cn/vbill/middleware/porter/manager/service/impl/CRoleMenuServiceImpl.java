@@ -18,7 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * @Classname CRoleMenuServiceImpl
@@ -36,13 +35,13 @@ public class CRoleMenuServiceImpl implements CRoleMenuService {
     @Override
     public void insert(List<CRoleMenuVo> cRoleMenuVoList) {
 
-        for(CRoleMenuVo cRoleMenuVo : cRoleMenuVoList){
+        for (CRoleMenuVo cRoleMenuVo : cRoleMenuVoList) {
             // 获取权限编号并删除以前的记录
             String roleCode = cRoleMenuVo.getRoleCode();
             cRoleMenuMapper.delete(roleCode);
             // 新增某一权限所能访问的菜单
             List<CRoleMenu> cRoleMenuList = cRoleMenuVo.getcRoleMenuList();
-            if(cRoleMenuList != null && cRoleMenuList.size() > 0){
+            if (cRoleMenuList != null && cRoleMenuList.size() > 0) {
                 cRoleMenuMapper.insert(cRoleMenuList);
             }
         }

@@ -51,11 +51,11 @@
                        scope: 可以检查的类的范围，例如：public只能检查public修饰的类，private可以检查所有的类
                        excludeScope: 不能检查的类的范围，例如：public，public的类将不被检查，但访问权限小于public的类仍然会检查，其他的权限以此类推
                        tokens: 该属性适用的类型，例如：CLASS_DEF,INTERFACE_DEF
-       -->
         <module name="JavadocType">
             <property name="scope" value="protected"/>
             <property name="tokens" value="CLASS_DEF,INTERFACE_DEF"/>
         </module>
+        -->
         <!--
         检查方法的javadoc的注释
                        scope: 可以检查的方法的范围，例如：public只能检查public修饰的方法，private可以检查所有的方法

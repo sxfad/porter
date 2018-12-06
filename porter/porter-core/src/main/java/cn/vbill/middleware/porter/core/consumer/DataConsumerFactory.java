@@ -65,6 +65,9 @@ public enum DataConsumerFactory {
 
         List<DataConsumer> consumers = new ArrayList<>();
 
+        if (null == converter) {
+            throw new ClientException("消息转换器EventConverter未配置或不存在:" + config.getConverter());
+        }
 
         //获取源数据查询配置
         MetaQueryClient metaQueryClient = null;

@@ -1,6 +1,5 @@
 package cn.vbill.middleware.porter.manager.core.mapper;
 
-import cn.vbill.middleware.porter.manager.core.entity.CMenu;
 import cn.vbill.middleware.porter.manager.core.entity.CRoleMenu;
 
 import org.apache.ibatis.annotations.Param;
