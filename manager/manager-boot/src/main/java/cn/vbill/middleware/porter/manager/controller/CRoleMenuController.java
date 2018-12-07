@@ -31,7 +31,7 @@ import static cn.vbill.middleware.porter.manager.web.message.ResponseMessage.ok;
  * @version: V1.0
  * @review: he_xin/2018年12月03日 17:55
  */
-@Api(description = "角色管理")
+@Api(description = "角色菜单管理")
 @RestController
 @RequestMapping("/manager/crolemenu")
 public class CRoleMenuController {
@@ -42,6 +42,7 @@ public class CRoleMenuController {
     /**
      * 添加某一权限能访问的菜单
      *
+     * @author he_xin
      * @param cRoleMenuVoList
      * @return
      */
@@ -55,6 +56,7 @@ public class CRoleMenuController {
     /**
      * 回显权限和能访问的菜单
      *
+     * @author he_xin
      * @return
      */
     @GetMapping("/getroleMenu")

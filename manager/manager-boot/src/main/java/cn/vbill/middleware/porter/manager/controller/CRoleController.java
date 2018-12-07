@@ -62,6 +62,12 @@ public class CRoleController {
         return ok(roles);
     }
 
+    /**
+     * 查询所有权限
+     *
+     * @author he_xin
+     * @return
+     */
     @GetMapping("/getAll")
     @ApiOperation(value = "拿到所有的权限", notes = "拿到所有的权限")
     public ResponseMessage findAll() {

@@ -20,6 +20,7 @@ package cn.vbill.middleware.porter.manager.service.impl;
 import cn.vbill.middleware.porter.manager.core.entity.CMenu;
 import cn.vbill.middleware.porter.manager.core.mapper.CMenuMapper;
 import cn.vbill.middleware.porter.manager.service.CMenuService;
+import jdk.nashorn.internal.ir.ReturnNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -80,9 +81,52 @@ public class CMenuServiceImpl implements CMenuService {
     }
 
     @Override
-    public List<CMenu> getAll() {
-        List<CMenu> menuList = cmenuMapper.getAll();
+    public List<CMenu> getAll(Integer state) {
+        List<CMenu> menuList = cmenuMapper.getAll(state);
         return listMenu(menuList);
+    }
+
+    @Override
+    public Integer addMenu(CMenu cMenu) {
+        Integer num = cmenuMapper.checkCode(cMenu.getCode());
+        // 检查code编码是否重复
+        if(num != null) {
+            return -1;
+        }
+        return cmenuMapper.addMenu(cMenu);
+    }
+
+    @Override
+    public Integer updateState(String code, Integer state) {
+        // 拿到当前菜单的所有子菜单
+        List<String> codeList = cmenuMapper.getCode(code);
+        // 如果集合为空则认为此菜单为子菜单
+        if(codeList == null || codeList.size() == 0){
+            cmenuMapper.updateSingleState(code, state);
+        }
+        // 把当前菜单放入到list中
+        codeList.add(code);
+        // 修改状态
+        return cmenuMapper.updateState(codeList, state);
+    }
+
+    @Override
+    public Integer updateMenu(CMenu cMenu) {
+        return cmenuMapper.updateMenu(cMenu);
+    }
+
+    @Override
+    public Integer deleteMenu(String code) {
+        // 拿到当前菜单的所有子菜单
+        List<String> codeList = cmenuMapper.getCode(code);
+        // 如果集合为空则认为此菜单为子菜单
+        if (codeList == null || codeList.size() == 0) {
+            cmenuMapper.deleteSingleMenu(code);
+        }
+        // 把当前菜单放入到list中
+        codeList.add(code);
+        // 逻辑删除菜单信息
+        return cmenuMapper.deleteMenu(codeList);
     }
 
     /**

@@ -108,9 +108,110 @@
         ORDER BY sort
     </select>
 
+    <!-- 查询所有的菜单 -->
     <select id="getAll" resultType="cn.vbill.middleware.porter.manager.core.entity.CMenu">
-        select id, code, fathercode, name, menu_url as menuUrl, menu_image as menuImage, level, sort, iscancel, isleaf
+        select id, code, fathercode, name, menu_url as menuUrl, menu_image as menuImage, level, sort, iscancel, isleaf, state
         from c_menu
-        where iscancel = 0
+        <where>
+            <if test="state != null and state != ''">
+                state = #{state}
+            </if>
+            and iscancel = 0
+        </where>
+        order by sort asc
     </select>
+
+    <!-- 新增菜单 -->
+    <insert id="addMenu" parameterType="cn.vbill.middleware.porter.manager.core.entity.CMenu">
+        insert into c_menu(
+        fathercode,
+        code,
+        name,
+        menu_url,
+        menu_image,
+        level,
+        sort,
+        isleaf
+        ) values (
+        #{fathercode},
+        #{code},
+        #{name},
+        #{menuUrl},
+        #{menuImage},
+        #{level},
+        #{sort},
+        #{isleaf}
+        )
+    </insert>
+
+    <!-- 添加新的菜单时进行code的重复验证 -->
+    <select id="checkCode" resultType="java.lang.Integer" parameterType="java.lang.String">
+        select id
+        from c_menu
+        where iscancel = 0 and code = #{code}
+    </select>
+
+    <!-- 获取当前code的子菜单-->
+    <select id="getCode" resultType="java.lang.String">
+        select code
+        from c_menu
+        where iscancel = 0 and fathercode = #{code}
+    </select>
+
+    <!-- 菜单启用或者停用 -->
+    <update id="updateState">
+        update c_menu
+        set state = #{state}
+        <where>
+            code in
+            <foreach collection="codeList" item="code" index="index" open="(" close=")" separator=",">
+                #{code}
+            </foreach>
+        </where>
+    </update>
+
+    <update id="updateSingleState">
+        update c_menu
+        set state = #{state}
+        where code = #{code}
+    </update>
+
+    <!-- 修改菜单信息 -->
+    <update id="updateMenu" parameterType="cn.vbill.middleware.porter.manager.core.entity.CMenu">
+        update c_menu
+        <set>
+            <if test="name != null and name != ''">
+                name = #{name},
+            </if>
+            <if test="menuUrl != null and menuUrl != ''">
+                menu_url = #{menuUrl},
+            </if>
+            <if test="menuImage != null and menuImage != ''">
+                menu_image = #{menuImage},
+            </if>
+            <if test="sort != null and sort != ''">
+                sort = #{sort}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <!-- 逻辑删除菜单信息 -->
+    <update id="deleteMenu" parameterType="java.util.List">
+        update c_menu
+        set iscancel = 1
+        <where>
+            code in
+            <foreach collection="codeList" item="code" index="index" open="(" close=")" separator=",">
+                #{code}
+            </foreach>
+        </where>
+    </update>
+
+    <!-- 删除单个菜单信息 -->
+    <update id="deleteSingleMenu">
+        update c_menu
+        set iscancel = 1
+        where code = #{code}
+    </update>
 </mapper>

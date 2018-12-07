@@ -98,6 +98,39 @@ public interface CMenuService {
      * 获取全部的一级菜单和二级菜单
      *
      * @return
+     * @param state
      */
-    List<CMenu> getAll();
+    List<CMenu> getAll(Integer state);
+
+    /**
+     * 添加菜单
+     *
+     * @param cMenu
+     */
+    Integer addMenu(CMenu cMenu);
+
+    /**
+     * 菜单启用或者停用
+     *
+     * @param code
+     * @param state
+     * @return
+     */
+    Integer updateState(String code, Integer state);
+
+    /**
+     * 修改菜单信息
+     *
+     * @param cMenu
+     * @return
+     */
+    Integer updateMenu(CMenu cMenu);
+
+    /**
+     * 逻辑删除菜单
+     *
+     * @param code
+     * @return
+     */
+    Integer deleteMenu(String code);
 }

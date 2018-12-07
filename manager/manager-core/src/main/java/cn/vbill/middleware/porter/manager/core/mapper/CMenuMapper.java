@@ -105,7 +105,82 @@ public interface CMenuMapper {
     /**
      * 获取所有的一级菜单和二级菜单
      *
+     * @author he_xin
+     * @return
+     * @param state
+     */
+    List<CMenu> getAll(@Param("state") Integer state);
+
+    /**
+     * 新增菜单
+     *
+     * @author he_xin
+     * @param cMenu
      * @return
      */
-    List<CMenu> getAll();
+    Integer addMenu(CMenu cMenu);
+
+    /**
+     * 新增菜单时用于检查编号是否重复
+     *
+     * @author he_xin
+     * @param code
+     * @return
+     */
+    Integer checkCode(@Param("code") String code);
+
+    /**
+     * 获取当前code编号的子菜单
+     *
+     * @author he_xin
+     * @param code
+     * @return
+     */
+    List<String> getCode(@Param("code") String code);
+
+    /**
+     * 一级菜单连带二级菜单的启用或者停用
+     *
+     * @author he_xin
+     * @param codeList
+     * @param state
+     * @return
+     */
+    Integer updateState(@Param("codeList") List<String> codeList, @Param("state") Integer state);
+
+    /**
+     * 二级菜单的启用或者停用
+     *
+     * @author he_xin
+     * @param code
+     * @param state
+     * @return
+     */
+    Integer updateSingleState(@Param("code") String code, @Param("state") Integer state);
+    /**
+     * 修改菜单的信息
+     *
+     * @author he_xin
+     * @param cMenu
+     * @return
+     */
+    Integer updateMenu(CMenu cMenu);
+
+    /**
+     * 一级菜单连带二级菜单的逻辑删除菜单信息
+     *
+     * @author he_xin
+     * @param codeList
+     * @return
+     */
+    Integer deleteMenu(@Param("codeList") List<String> codeList);
+
+    /**
+     * 二级菜单的逻辑删除菜单信息
+     *
+     * @author he_xin
+     * @param code
+     * @return
+     */
+    Integer deleteSingleMenu(@Param("code") String code);
 }
