@@ -46,7 +46,7 @@ public enum EnableType {
     /**
      * FALSE
      */
-    FALSE("false","关闭");
+    FALSE("false", "关闭");
 
     /**
      * LINKMAP

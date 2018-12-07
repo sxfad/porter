@@ -33,7 +33,7 @@ Porter始于2017年，提供数据同步功能，但并不仅仅局限于数据�
 ### 从源码编译
 ```
 git clone https://github.com/sxfad/porter.git
-cd proter
+cd porter
 git checkout 版本
 gradle build
 从build/distributions目录查找安装包

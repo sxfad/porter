@@ -13,7 +13,6 @@ import cn.vbill.middleware.porter.manager.core.entity.CRoleMenu;
 import java.util.List;
 
 /**
- * @Classname CRoleMenuVo
  * @Description 权限菜单
  * @Date 2018/12/4 15:01
  * @author hexin[he_xin@suixingpay.com]
