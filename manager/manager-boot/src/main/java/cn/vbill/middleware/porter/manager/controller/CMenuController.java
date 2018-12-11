@@ -176,9 +176,9 @@ public class CMenuController {
     /**
      * 拿到所有的一级和二级菜单
      *
-     * @author he_xin
      * @param state 根据状态来判断是否启用
      * @return
+     * @author he_xin
      */
     @GetMapping("/getAll")
     @ApiOperation(value = "拿到所有的一级二级菜单", notes = "拿到所有的一级二级菜单")
@@ -190,9 +190,9 @@ public class CMenuController {
     /**
      * 新增菜单
      *
-     * @author he_xin
      * @param cMenu
      * @return
+     * @author he_xin
      */
     @PostMapping("/add")
     @ApiOperation(value = "新增菜单", notes = "新增菜单")
@@ -204,14 +204,14 @@ public class CMenuController {
     /**
      * 菜单启用或者停用
      *
-     * @author he_xin
      * @param code
      * @param state
      * @return
+     * @author he_xin
      */
     @PutMapping("/updateState")
     @ApiOperation(value = "修改状态", notes = "修改状态")
-    public ResponseMessage updateState(@RequestParam(value = "code", required = true) String code,@RequestParam(value = "state", required = true) Integer state) {
+    public ResponseMessage updateState(@RequestParam(value = "code", required = true) String code, @RequestParam(value = "state", required = true) Integer state) {
         Integer num = cMenuService.updateState(code, state);
         return ok(num);
     }
@@ -219,13 +219,13 @@ public class CMenuController {
     /**
      * 菜单的编辑
      *
-     * @author he_xin
      * @param cMenu
      * @return
+     * @author he_xin
      */
     @PutMapping("/updateMenu")
     @ApiOperation(value = "修改菜单信息", notes = "修改菜单信息")
-    public ResponseMessage updateMenu(@RequestBody CMenu cMenu){
+    public ResponseMessage updateMenu(@RequestBody CMenu cMenu) {
         Integer num = cMenuService.updateMenu(cMenu);
         return ok(num);
     }
@@ -233,9 +233,9 @@ public class CMenuController {
     /**
      * 逻辑删除菜单
      *
-     * @author he_xin
      * @param code
      * @return
+     * @author he_xin
      */
     @DeleteMapping("/deleteMenu")
     @ApiOperation(value = "删除菜单", notes = "删除菜单")
