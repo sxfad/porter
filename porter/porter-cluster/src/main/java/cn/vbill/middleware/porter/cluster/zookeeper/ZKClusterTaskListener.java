@@ -192,7 +192,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
         if (!client.isExists(topicPath, true)) {
             try {
                 //为当前工作节点分配任务topic
-                client.create(topicPath, true, new DTaskLock(task.getTaskId(), NodeContext.INSTANCE.getNodeId(),
+                client.create(topicPath, false, new DTaskLock(task.getTaskId(), NodeContext.INSTANCE.getNodeId(),
                         task.getSwimlaneId()).toString());
                 //通知对此感兴趣的Listener
                 ClusterProviderProxy.INSTANCE.broadcast(new TaskAssignedCommand(task.getTaskId(), task.getSwimlaneId()));
