@@ -182,7 +182,7 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements T
 
         Stat stat = client.exists(lockPath, false);
         if (null == stat) {
-            client.create(lockPath, false, new DNode(NodeContext.INSTANCE.getNodeId()).toString());
+            client.create(lockPath, true, new DNode(NodeContext.INSTANCE.getNodeId()).toString());
             client.createWhenNotExists(statPath, false, false, new DNode(NodeContext.INSTANCE.getNodeId()).toString());
 
             /**
