@@ -27,6 +27,7 @@ import com.alibaba.otter.canal.protocol.CanalEntry;
 import com.alibaba.otter.canal.protocol.Message;
 import cn.vbill.middleware.porter.core.event.s.MessageEvent;
 import com.google.protobuf.ByteString;
+import com.google.protobuf.InvalidProtocolBufferException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,17 +46,25 @@ public class CanalConsumer extends AbstractDataConsumer {
     public List<MessageEvent> doFetch() throws TaskStopTriggerException, InterruptedException {
         return consumeClient.fetch(new ConsumeClient.FetchCallback<MessageEvent, Object>() {
             @Override
-            public <F, O> List<F> acceptAll(O o) throws Exception {
+            public <F, O> List<F> acceptAll(O o) throws InvalidProtocolBufferException {
                 List<MessageEvent> events = new ArrayList<>();
                 Message msg = (Message) o;
-                for (ByteString byteString : msg.getRawEntries()) {
-                    msg.getEntries().add(CanalEntry.Entry.parseFrom(byteString));
+
+                List<CanalEntry.Entry> entries;
+                if (msg.isRaw()) {
+                    entries =  new ArrayList<>();
+                    for (ByteString e : msg.getRawEntries()) {
+                        entries.add(CanalEntry.Entry.parseFrom(e));
+                    }
+                } else {
+                    entries = msg.getEntries();
                 }
+
                 //批次消息同步提交点
                 CanalClient.CanalPosition bucketHeader = null;
-                List<CanalEntry.Entry> endEntries = msg.getEntries().stream().filter(e -> e.getEntryType() == CanalEntry.EntryType.TRANSACTIONEND)
+                List<CanalEntry.Entry> endEntries = entries.stream()
+                        .filter(e -> e.getEntryType() == CanalEntry.EntryType.TRANSACTIONEND || e.getEntryType() == CanalEntry.EntryType.TRANSACTIONBEGIN)
                         .collect(Collectors.toList());
-
                 if (!endEntries.isEmpty()) {
                     CanalEntry.Entry lastEndEntry = endEntries.get(endEntries.size() - 1);
                     bucketHeader = new CanalClient.CanalPosition(msg.getId(), lastEndEntry.getHeader().getLogfileOffset(),
@@ -64,7 +73,7 @@ public class CanalConsumer extends AbstractDataConsumer {
                     bucketHeader = new CanalClient.CanalPosition(msg.getId());
                 }
 
-                for (CanalEntry.Entry entry : msg.getEntries()) {
+                for (CanalEntry.Entry entry : entries) {
                     //事务消息同步点
                     CanalClient.CanalPosition rowHeader = new CanalClient.CanalPosition(msg.getId(), entry.getHeader().getLogfileOffset(),
                             entry.getHeader().getLogfileName());

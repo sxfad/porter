@@ -30,14 +30,15 @@ import cn.vbill.middleware.porter.common.dic.NodeStatusType;
 import cn.vbill.middleware.porter.common.statistics.NodeLog;
 import cn.vbill.middleware.porter.core.consumer.DataConsumer;
 import cn.vbill.middleware.porter.task.worker.TaskWorker;
+
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import sun.misc.Signal;
 import sun.misc.SignalHandler;
-
 
 import java.util.List;
 import java.util.Map;
@@ -94,7 +95,7 @@ public class TaskController implements TaskEventListener {
                         t.setNodeId(NodeContext.INSTANCE.getNodeId());
                         /**
                          * 2018-10-19 12:00:00
-                         * 除了单机模式外(standalone)，本地任务只上传不启动
+                         * 	除了单机模式外(standalone)，本地任务只上传不启动
                          *
                          */
                         if (NodeContext.INSTANCE.getWorkMode() == ClusterPlugin.STANDALONE) {
@@ -108,18 +109,21 @@ public class TaskController implements TaskEventListener {
                 LOGGER.warn("Task controller has started already");
             }
         } finally {
-            //进程退出钩子
-            //因为JVM不能保证ShutdownHook一定能执行，通过自定义信号实现优雅下线。
-            Signal graceShutdown = new Signal("USR2");
-            //不同的操作系统USR2信号量数值不一样，不支持windows操作系统
-            LOGGER.info("Shutdown gracefully with signal {}. [kill -{} {}]", graceShutdown.getName(), graceShutdown.getNumber(),
-                    MachineUtils.getPID());
-            Signal.handle(graceShutdown, new SignalHandler() {
-                @Override
-                public void handle(Signal signal) {
-                    shutdownHook(true);
-                }
-            });
+            //类unix操作系统
+            if (!SystemUtils.IS_OS_WINDOWS) {
+                //进程退出钩子
+                //因为JVM不能保证ShutdownHook一定能执行，通过自定义信号实现优雅下线。
+                Signal graceShutdown = new Signal("USR2");
+                //不同的操作系统USR2信号量数值不一样，不支持windows操作系统
+                LOGGER.info("Shutdown gracefully with signal {}. [kill -{} {}]", graceShutdown.getName(), graceShutdown.getNumber(),
+                        MachineUtils.getPID());
+                Signal.handle(graceShutdown, new SignalHandler() {
+                    @Override
+                    public void handle(Signal signal) {
+                        shutdownHook(true);
+                    }
+                });
+            }
 
             Runtime.getRuntime().addShutdownHook(new Thread("suixingpay-task-shutdownHook") {
                 @Override
@@ -274,4 +278,5 @@ public class TaskController implements TaskEventListener {
             LOGGER.warn("注册本地任务到集群失败:{}", taskConfig.getTaskId(), e);
         }
     }
+    
 }

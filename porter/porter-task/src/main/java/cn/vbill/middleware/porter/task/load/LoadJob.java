@@ -126,16 +126,15 @@ public class LoadJob extends AbstractStageJob {
                     if (!loadResult.getLeft()) {
                         throw new TaskStopTriggerException("批次" + bucket.getSequence() + "Load失败!");
                     }
+                    LOGGER.info("尝试提交消费同步点到集群策略:{}", bucket.getPosition().render());
                     //提交批次消费同步点
                     if (null != bucket.getPosition()) {
-                        LOGGER.debug("提交消费同步点到集群策略:{}", bucket.getPosition().render());
                         newestPositionDiffer = work.getDataConsumer().commitPosition(bucket.getPosition());
-                        LOGGER.debug("提交消费同步点到消费器客户端:{}", bucket.getPosition().render());
                         if (bucket.getPosition().checksum()) {
                             LOGGER.info("提交消费同步点:{},消息堆积:{}", bucket.getPosition().render(), newestPositionDiffer);
                             ClusterProviderProxy.INSTANCE.broadcast(new TaskPositionUploadCommand(work.getTaskId(),
                                     work.getDataConsumer().getSwimlaneId(), bucket.getPosition().render()));
-                            //LOGGER.info("结束提交消费同步点:{},消息堆积:{}", bucket.getPosition().render(), newestPositionDiffer);
+                            LOGGER.info("结束提交消费同步点:{},消息堆积:{}", bucket.getPosition().render(), newestPositionDiffer);
                         }
 
                         NodeContext.INSTANCE.flushConsumeProcess(
