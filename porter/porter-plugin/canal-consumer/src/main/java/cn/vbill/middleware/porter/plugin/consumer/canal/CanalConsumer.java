@@ -28,6 +28,8 @@ import com.alibaba.otter.canal.protocol.Message;
 import cn.vbill.middleware.porter.core.event.s.MessageEvent;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,6 +45,8 @@ import java.util.stream.Collectors;
  */
 @SuppressWarnings("unchecked")
 public class CanalConsumer extends AbstractDataConsumer {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CanalConsumer.class);
+
     public List<MessageEvent> doFetch() throws TaskStopTriggerException, InterruptedException {
         return consumeClient.fetch(new ConsumeClient.FetchCallback<MessageEvent, Object>() {
             @Override
@@ -62,9 +66,9 @@ public class CanalConsumer extends AbstractDataConsumer {
 
                 //批次消息同步提交点
                 CanalClient.CanalPosition bucketHeader = null;
-                List<CanalEntry.Entry> endEntries = msg.getEntries().stream().filter(e -> e.getEntryType() == CanalEntry.EntryType.TRANSACTIONEND)
+                List<CanalEntry.Entry> endEntries = entries.stream()
+                        .filter(e -> e.getEntryType() == CanalEntry.EntryType.TRANSACTIONEND || e.getEntryType() == CanalEntry.EntryType.TRANSACTIONBEGIN)
                         .collect(Collectors.toList());
-
                 if (!endEntries.isEmpty()) {
                     CanalEntry.Entry lastEndEntry = endEntries.get(endEntries.size() - 1);
                     bucketHeader = new CanalClient.CanalPosition(msg.getId(), lastEndEntry.getHeader().getLogfileOffset(),

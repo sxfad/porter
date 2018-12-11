@@ -226,6 +226,7 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
         if (isStarted()) {
             Message msg = null;
             try {
+
                 msg = canalServer.get(clientId, perPullSize, pollTimeOut < 0 ? null : pollTimeOut, TimeUnit.MILLISECONDS);
             } catch (CanalServerException e) {
                 //任务停止造成的线程中断异常
