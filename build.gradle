@@ -1,6 +1,6 @@
 apply plugin: 'java'
 apply plugin: 'maven'
-version '3.0'
+version '3.0.1'
 
 repositories {
     maven{ url"http://maven.aliyun.com/nexus/content/groups/public"}
@@ -26,7 +26,7 @@ subprojects {
     ext {
         group = 'cn.vbill.middleware.porter'
         junitVersion = '4.12'
-        version '3.0'
+        version '3.0.1'
         springVersion = '1.5.9.RELEASE'
         swaggerVersion = '2.7.0'
     }
