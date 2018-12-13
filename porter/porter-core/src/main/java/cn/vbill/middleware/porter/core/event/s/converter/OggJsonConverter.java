@@ -73,7 +73,7 @@ public class OggJsonConverter implements EventConverter {
         event.setOpType(eventType);
         try {
             String poTS = obj.containsKey("op_ts") ? obj.getString("op_ts") : null;
-            if (StringUtils.isNotEmpty(poTS)) event.setOpTs(opTsF.parse(poTS.substring(0, poTS.length() - 3)));
+            if (StringUtils.isNotEmpty(poTS)) event.setOpTs(opTsF.parse(poTS.substring(0, poTS.length() - (poTS.split("\\.")[1].length() - 3))));
         } catch (Exception e) {
             LOGGER.error("op_ts", e);
         }
