@@ -35,6 +35,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -57,6 +58,9 @@ public class LoadJob extends AbstractStageJob {
     private final TaskWork work;
     //最新的消费进度差值
     private volatile long newestPositionDiffer = 0;
+    //最近一次数据库插入开始执行时间
+    private volatile Calendar currentLoadStartTime;
+
     private final ScheduledExecutorService positionCheckService;
 
     public LoadJob(TaskWork work, long positionCheckInterval, long alarmPositionCount) {
@@ -68,14 +72,26 @@ public class LoadJob extends AbstractStageJob {
             positionCheckService = Executors.newSingleThreadScheduledExecutor(
                     new DefaultNamedThreadFactory(work.getBasicThreadName() + "-positionConsumedCheck"));
             positionCheckService.scheduleAtFixedRate(() -> {
+                String taskId = work.getTaskId();
+                String swimlaneId = work.getDataConsumer().getSwimlaneId();
                 //当前进度差值超过告警线
                 if (newestPositionDiffer >= alarmPositionCount) {
-                    String taskId = work.getTaskId();
-                    String swimlaneId = work.getDataConsumer().getSwimlaneId();
                     NodeLog noticeMsg = new NodeLog(NodeLog.LogType.TASK_WARNING, taskId, swimlaneId,
                             "未消费消息堆积:" + newestPositionDiffer + "条,告警阀值:" + alarmPositionCount);
                     noticeMsg.setTitle("【关注】" + taskId + "-" + swimlaneId + "消息堆积" + newestPositionDiffer + "条");
                     NodeLog.upload(noticeMsg, work.getReceivers());
+                }
+                //目标端数据库事务提交等待等原因造成的load等待
+                Calendar tmpCurrLoadStartTime = currentLoadStartTime;
+                long currentLoadTime = null != tmpCurrLoadStartTime ? tmpCurrLoadStartTime.getTime().getTime() : -1;
+                if (currentLoadTime > 0) {
+                    long minutesDiff = TimeUnit.MILLISECONDS.toMinutes(Calendar.getInstance().getTime().getTime() - currentLoadTime);
+                    if (minutesDiff > 5) { //事务提交等待超过5分钟
+                        NodeLog noticeMsg = new NodeLog(NodeLog.LogType.TASK_WARNING, taskId, swimlaneId,
+                                "目标端提交事务等待" + minutesDiff + "分钟,告警阀值:5分钟");
+                        noticeMsg.setTitle("【告警】" + taskId + "-" + swimlaneId + "目标端提交事务等待" + minutesDiff + "分钟");
+                        NodeLog.upload(noticeMsg, work.getReceivers());
+                    }
                 }
             }, positionCheckInterval, positionCheckInterval, TimeUnit.SECONDS);
         } else {
@@ -120,6 +136,8 @@ public class LoadJob extends AbstractStageJob {
 
                 //没有异常
                 if (null != bucket && null == bucket.getException()) {
+                    //记录当前时间
+                    currentLoadStartTime = Calendar.getInstance();
                     //执行载入逻辑
                     Pair<Boolean, List<SubmitStatObject>> loadResult = dataLoder.load(bucket);
                     //逻辑执行失败
@@ -141,6 +159,7 @@ public class LoadJob extends AbstractStageJob {
                                 work.getTaskId() + "-" + work.getDataConsumer().getSwimlaneId(),
                                 newestPositionDiffer + "");
                     }
+                    currentLoadStartTime = null;
                     //更新消费统计数据
                     loadResult.getRight().forEach(o -> updateStat(o));
                     //标记数据已清除

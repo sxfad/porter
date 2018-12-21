@@ -89,7 +89,7 @@ public class CMenuServiceImpl implements CMenuService {
     public Integer addMenu(CMenu cMenu) {
         Integer num = cmenuMapper.checkCode(cMenu.getCode());
         // 检查code编码是否重复
-        if(num != null) {
+        if (num != null) {
             return -1;
         }
         return cmenuMapper.addMenu(cMenu);
@@ -100,7 +100,7 @@ public class CMenuServiceImpl implements CMenuService {
         // 拿到当前菜单的所有子菜单
         List<String> codeList = cmenuMapper.getCode(code);
         // 如果集合为空则认为此菜单为子菜单
-        if(codeList == null || codeList.size() == 0){
+        if (codeList == null || codeList.size() == 0) {
             cmenuMapper.updateSingleState(code, state);
         }
         // 把当前菜单放入到list中

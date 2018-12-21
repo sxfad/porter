@@ -95,7 +95,7 @@ public class TaskController implements TaskEventListener {
                         t.setNodeId(NodeContext.INSTANCE.getNodeId());
                         /**
                          * 2018-10-19 12:00:00
-                         * 	除了单机模式外(standalone)，本地任务只上传不启动
+                         * 除了单机模式外(standalone)，本地任务只上传不启动
                          *
                          */
                         if (NodeContext.INSTANCE.getWorkMode() == ClusterPlugin.STANDALONE) {
