@@ -97,3 +97,5 @@ porter-boot-版本/bin/shutdown.sh
 ## 联系我们
 
 * QQ群：835209101
+
+![首页](doc/img/wx.png)
