@@ -56,8 +56,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.data.Stat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -79,7 +77,6 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
     private static final Pattern TASK_UNLOCKED_PATTERN = Pattern.compile(ZK_PATH + "/.*/lock/.*");
     private final List<TaskEventListener> taskListener;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ZKClusterTaskListener.class);
     private static final String LOCK_PATH = "/lock/";
 
     public ZKClusterTaskListener() {
@@ -198,10 +195,12 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
                 ClusterProviderProxy.INSTANCE.broadcast(new TaskAssignedCommand(task.getTaskId(), task.getSwimlaneId()));
                 client.delete(errorPath + "/" + task.getSwimlaneId());
             } catch (KeeperException.NodeExistsException e) {
+                taskAssignCheck(topicPath);
                 LOGGER.error("任务{}已分配", topicPath);
                 throw new TaskLockException(topicPath + ",锁定资源失败。");
             }
         } else {
+            taskAssignCheck(topicPath);
             LOGGER.error("任务{}已分配", topicPath);
             throw new TaskLockException(topicPath + ",锁定资源失败。");
         }
@@ -236,7 +235,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
                 client.setData(node, taskStat.toString(), nodePair.getRight().getVersion());
                 LOGGER.debug("stat store in zookeeper:{}", JSON.toJSONString(taskStat));
             } catch (Throwable e) {
-                logger.warn("任务进度状态上传失败", e);
+                LOGGER.warn("任务进度状态上传失败", e);
             }
         }
     }
@@ -273,7 +272,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
                     stats.add(taskStat);
                 }
             } catch (Exception e) {
-                logger.warn("查询任务进度状态失败", e);
+                LOGGER.warn("查询任务进度状态失败", e);
             }
         }
         if (null != command.getCallback()) {
@@ -323,5 +322,22 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
     @Override
     public String zkTaskPath() {
         return listenPath();
+    }
+
+
+    private void taskAssignCheck(String path) {
+        try {
+            if (!NodeContext.INSTANCE.forceAssign()) return;
+            Pair<String, Stat> lockPair = client.getData(path);
+            if (null != lockPair && StringUtils.isNotBlank(lockPair.getLeft())) {
+                DTaskLock lockInfo = JSONObject.parseObject(lockPair.getLeft(), DTaskLock.class);
+                if (lockInfo.getNodeId().equals(NodeContext.INSTANCE.getNodeId()) //节点Id相符
+                        && lockInfo.getAddress().equals(NodeContext.INSTANCE.getAddress())) { //IP地址相符
+                    client.delete(path);
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.warn("尝试删除任务占用");
+        }
     }
 }

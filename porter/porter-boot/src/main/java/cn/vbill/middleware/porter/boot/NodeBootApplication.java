@@ -67,7 +67,7 @@ public class NodeBootApplication {
         SpringApplication app = new SpringApplication(NodeBootApplication.class);
         app.setBannerMode(Banner.Mode.OFF);
         ConfigurableApplicationContext context = app.run(args);
-
+        NodeContext.INSTANCE.startupArgs(args);
         //注入spring工具类
         NodeContext.INSTANCE.setApplicationContext(context);
 
@@ -75,8 +75,9 @@ public class NodeBootApplication {
         try {
             JavaFileCompiler.getInstance().loadPlugin();
         } catch (MalformedURLException e) {
+            System.exit(-1);
             LOGGER.error("初始化插件失败", e);
-            throw new RuntimeException("初始化插件失败:" + e.getMessage());
+            System.exit(-1);
         }
 
 
@@ -88,8 +89,8 @@ public class NodeBootApplication {
             try {
                 AlertProviderFactory.INSTANCE.initialize(config.getAlert());
             } catch (Exception e) {
-                e.printStackTrace();
-                throw new RuntimeException("告警配置初始化失败, 数据同步节点退出!error:" + e.getMessage());
+                LOGGER.error("告警配置初始化失败, 数据同步节点退出!error:", e.getMessage());
+                System.exit(-1);
             }
         }
 
@@ -101,8 +102,8 @@ public class NodeBootApplication {
         try {
             PublicClientContext.INSTANCE.initialize(datasourceConfigBean.getConfig());
         } catch (Exception e) {
-            LOGGER.info("公用数据库连接池初始化失败", e);
-            throw new RuntimeException("公用资源连接SourcesConfig初始化失败, 数据同步节点退出!error:" + e.getMessage());
+            LOGGER.error("公用资源连接SourcesConfig初始化失败, 数据同步节点退出!error:", e);
+            System.exit(-1);
         }
 
         //初始化集群提供者中间件,spring spi插件
@@ -115,8 +116,8 @@ public class NodeBootApplication {
                 ClusterProviderProxy.INSTANCE.stop();
             } catch (Throwable stopError) {
             }
+            System.exit(-1);
             LOGGER.error("获取集群配置信息失败", e);
-            throw new RuntimeException("集群配置参数ClusterConfig初始化失败, 数据同步节点退出!error:" + e.getMessage());
         }
 
         //节点注册
@@ -127,7 +128,7 @@ public class NodeBootApplication {
         } catch (Exception e) {
             e.printStackTrace();
             LOGGER.error("注册到集群失败", e);
-            throw  new RuntimeException(e.getMessage() + "数据同步节点退出!error:" + e.getMessage());
+            System.exit(-1);
         }
 
 

@@ -11,9 +11,7 @@ package cn.vbill.middleware.porter.common.cluster.impl.standalone;
 
 import cn.vbill.middleware.porter.common.client.Client;
 import cn.vbill.middleware.porter.common.client.impl.FileClient;
-import cn.vbill.middleware.porter.common.cluster.ClusterListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import cn.vbill.middleware.porter.common.cluster.impl.AbstractClusterListener;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -21,24 +19,8 @@ import org.slf4j.LoggerFactory;
  * @version: V1.0
  * @review: zkevin/2018年10月19日 14:21
  */
-public abstract class StandaloneListener implements ClusterListener {
-    protected static final String PREFIX_ATALOG = "/suixingpay";
-    protected static final String BASE_CATALOG = PREFIX_ATALOG + "/datas";
-    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
+public abstract class StandaloneListener extends AbstractClusterListener {
     protected FileClient client;
-
-    /**
-     * listenPath
-     *
-     * @return
-     */
-    public abstract String listenPath();
-
-    @Override
-    public String getName() {
-        return listenPath();
-    }
-
     @Override
     public void setClient(Client client) {
         this.client = (FileClient) client;

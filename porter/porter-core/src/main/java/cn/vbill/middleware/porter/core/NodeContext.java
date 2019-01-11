@@ -29,8 +29,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.context.ApplicationContext;
 
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -53,8 +52,11 @@ public enum NodeContext {
     private final Map<String, String> taskErrorMarked = new ConcurrentHashMap<>();
     private final Map<String, Object> consumeProcess = new ConcurrentHashMap<>();
     private final Map<String, Object> consumerIdle = new ConcurrentHashMap<>();
+    private final List<String> startupArgs = new ArrayList<>();
 
-    private ApplicationContext context;
+    private volatile ApplicationContext context;
+
+    private volatile boolean force;
 
     /**
      * 获取Bean
@@ -401,6 +403,34 @@ public enum NodeContext {
         try {
             nodeLock.readLock().lock();
             return node.getWorkMode();
+        } finally {
+            nodeLock.readLock().unlock();
+        }
+    }
+
+    public void startupArgs(String[] args) {
+        try {
+            nodeLock.writeLock().lock();
+            startupArgs.addAll(Arrays.asList(args));
+            node.setForceAssign(startupArgs.stream().filter(e -> e.equals(Node.FORCE_ASSIGN_SIGN)).count() > 0);
+        } finally {
+            nodeLock.writeLock().unlock();
+        }
+    }
+
+    public boolean forceAssign() {
+        try {
+            nodeLock.readLock().lock();
+            return node.isForceAssign();
+        } finally {
+            nodeLock.readLock().unlock();
+        }
+    }
+
+    public String getAddress() {
+        try {
+            nodeLock.readLock().lock();
+            return node.getDnodeSnapshot().getAddress();
         } finally {
             nodeLock.readLock().unlock();
         }

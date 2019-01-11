@@ -50,14 +50,14 @@ public class ZKClusterConfigListener extends ZookeeperClusterListener implements
     @Override
     public void onEvent(ClusterEvent event) {
         ZookeeperClusterEvent zkEvent = (ZookeeperClusterEvent) event;
-        logger.info("集群配置参数监听:{},{},{}", zkEvent.getPath(), zkEvent.getData(), zkEvent.getEventType());
+        LOGGER.info("集群配置参数监听:{},{},{}", zkEvent.getPath(), zkEvent.getData(), zkEvent.getEventType());
         if (zkEvent.isDataChanged() || zkEvent.isOnline()) {
             if (zkEvent.getPath().equals(ALERT_CONFIG_PATH)) {
                 AlertConfig config = JSONObject.parseObject(event.getData(), AlertConfig.class);
                 try {
                     AlertProviderFactory.INSTANCE.initialize(config);
                 } catch (Throwable e) {
-                    logger.warn("告警客户端初始化失败", e);
+                    LOGGER.warn("告警客户端初始化失败", e);
                 }
             }
         }
