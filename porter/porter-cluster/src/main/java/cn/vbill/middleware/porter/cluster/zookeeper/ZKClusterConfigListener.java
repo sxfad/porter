@@ -57,7 +57,7 @@ public class ZKClusterConfigListener extends ZookeeperClusterListener {
     @Override
     public void onEvent(ClusterEvent event) {
         ZookeeperClusterEvent zkEvent = (ZookeeperClusterEvent) event;
-        logger.info("集群配置参数监听:{},{},{}", zkEvent.getPath(), zkEvent.getData(), zkEvent.getEventType());
+        LOGGER.info("集群配置参数监听:{},{},{}", zkEvent.getPath(), zkEvent.getData(), zkEvent.getEventType());
         if (zkEvent.isDataChanged() || zkEvent.isOnline()) {
             //日志
             if (zkEvent.getPath().equals(LOG_CONFIG_PATH)) {
@@ -74,9 +74,9 @@ public class ZKClusterConfigListener extends ZookeeperClusterListener {
                 try {
                     AlertProviderFactory.INSTANCE.initialize(config);
                 } catch (ConfigParseException e) {
-                    logger.warn("解析告警任务配置失败", e);
+                    LOGGER.warn("解析告警任务配置失败", e);
                 } catch (ClientConnectionException e) {
-                    logger.warn("告警客户端连接失败", e);
+                    LOGGER.warn("告警客户端连接失败", e);
                 }
             }
             //统计分析

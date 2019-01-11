@@ -47,8 +47,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.data.Stat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -76,7 +74,6 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements T
     private final ScheduledExecutorService heartbeatWorker =
             Executors.newSingleThreadScheduledExecutor(new DefaultNamedThreadFactory("node-heartbeat"));
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ZKClusterNodeListener.class);
     private static final String STAT_PATH = "/stat";
     private static final String TASK_PATH = "/task/";
 
@@ -221,9 +218,13 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements T
                 }
             }, 10, 30, TimeUnit.SECONDS);
         } else {
-            String lockPathMsg = lockPath + ",节点已注册";
-            LOGGER.error(lockPathMsg);
-            throw new Exception(lockPathMsg);
+            if (nodeAssignCheck(lockPath)) {
+                nodeRegister(nrCommend);
+            } else {
+                String lockPathMsg = lockPath + ",节点已注册";
+                LOGGER.error(lockPathMsg);
+                throw new Exception(lockPathMsg);
+            }
         }
     }
 
@@ -351,5 +352,23 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements T
     private DNode getDNode(String nodePath) {
         Pair<String, Stat> dataPair = client.getData(nodePath);
         return DNode.fromString(dataPair.getLeft(), DNode.class);
+    }
+
+    private boolean nodeAssignCheck(String path) {
+        try {
+            if (!NodeContext.INSTANCE.forceAssign()) return false;
+            Pair<String, Stat> lockPair = client.getData(path);
+            if (null != lockPair && StringUtils.isNotBlank(lockPair.getLeft())) {
+                DNode nodeInfo = JSONObject.parseObject(lockPair.getLeft(), DNode.class);
+                if (nodeInfo.getNodeId().equals(NodeContext.INSTANCE.getNodeId()) //节点Id相符
+                        && nodeInfo.getAddress().equals(NodeContext.INSTANCE.getAddress())) { //IP地址相符
+                    client.delete(path);
+                    return true;
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.warn("尝试删除节点占用");
+        }
+        return false;
     }
 }

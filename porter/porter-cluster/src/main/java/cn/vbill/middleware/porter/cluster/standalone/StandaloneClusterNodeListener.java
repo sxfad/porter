@@ -36,6 +36,8 @@ import cn.vbill.middleware.porter.common.dic.NodeStatusType;
 import cn.vbill.middleware.porter.common.util.DefaultNamedThreadFactory;
 import cn.vbill.middleware.porter.common.util.MachineUtils;
 import cn.vbill.middleware.porter.core.NodeContext;
+import com.alibaba.fastjson.JSONObject;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -138,9 +140,13 @@ public class StandaloneClusterNodeListener extends StandaloneListener implements
                 }
             }, 10, 30, TimeUnit.SECONDS);
         } else {
-            String lockPathMsg = lockPath + ",节点已注册";
-            LOGGER.error(lockPathMsg);
-            throw new Exception(lockPathMsg);
+            if (nodeAssignCheck(lockPath)) {
+                nodeRegister(nrCommend);
+            } else {
+                String lockPathMsg = lockPath + ",节点已注册";
+                LOGGER.error(lockPathMsg);
+                throw new Exception(lockPathMsg);
+            }
         }
     }
 
@@ -190,5 +196,23 @@ public class StandaloneClusterNodeListener extends StandaloneListener implements
     private DNode getDNode(String nodePath) {
         Pair<String, Boolean> dataPair = client.getData(nodePath);
         return DNode.fromString(dataPair.getLeft(), DNode.class);
+    }
+
+    private boolean nodeAssignCheck(String path) {
+        try {
+            if (!NodeContext.INSTANCE.forceAssign()) return false;
+            Pair<String, Boolean> lockPair = client.getData(path);
+            if (null != lockPair && StringUtils.isNotBlank(lockPair.getLeft())) {
+                DNode nodeDetail = JSONObject.parseObject(lockPair.getLeft(), DNode.class);
+                if (nodeDetail.getNodeId().equals(NodeContext.INSTANCE.getNodeId()) //节点Id相符
+                        && nodeDetail.getAddress().equals(NodeContext.INSTANCE.getAddress())) { //IP地址相符
+                    client.delete(path);
+                    return true;
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.warn("尝试删除节点占用");
+        }
+        return false;
     }
 }

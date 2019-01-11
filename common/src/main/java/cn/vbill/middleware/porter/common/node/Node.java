@@ -51,4 +51,8 @@ public class Node {
 
     //工作模式
     @Getter @Setter private ClusterPlugin workMode = ClusterPlugin.STANDALONE;
+
+    //强制任务分配
+    public static String FORCE_ASSIGN_SIGN = "--force";
+    @Getter @Setter private boolean forceAssign = false;
 }

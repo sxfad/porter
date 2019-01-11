@@ -36,10 +36,9 @@ import cn.vbill.middleware.porter.common.exception.TaskLockException;
 import cn.vbill.middleware.porter.common.exception.TaskStopTriggerException;
 import cn.vbill.middleware.porter.common.util.MachineUtils;
 import cn.vbill.middleware.porter.core.NodeContext;
+import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * 任务信息监听
@@ -49,7 +48,6 @@ import org.slf4j.LoggerFactory;
 public class StandaloneClusterTaskListener extends StandaloneListener implements
         TaskRegister, TaskStop, TaskStoppedByError, TaskPosition {
     private static final String ZK_PATH = BASE_CATALOG + "/task";
-    private static final Logger LOGGER = LoggerFactory.getLogger(StandaloneClusterTaskListener.class);
 
 
     @Override
@@ -116,12 +114,20 @@ public class StandaloneClusterTaskListener extends StandaloneListener implements
                 ClusterProviderProxy.INSTANCE.broadcast(new TaskAssignedCommand(task.getTaskId(), task.getSwimlaneId()));
                 client.delete(errorPath + "/" + task.getSwimlaneId());
             } catch (Throwable e) {
+                if (taskAssignCheck(topicPath)) {
+                    taskRegister(task);
+                } else {
+                    LOGGER.error("任务{}已分配", topicPath);
+                    throw new TaskLockException(topicPath + ",锁定资源失败。");
+                }
+            }
+        } else {
+            if (taskAssignCheck(topicPath)) {
+                taskRegister(task);
+            } else {
                 LOGGER.error("任务{}已分配", topicPath);
                 throw new TaskLockException(topicPath + ",锁定资源失败。");
             }
-        } else {
-            LOGGER.error("任务{}已分配", topicPath);
-            throw new TaskLockException(topicPath + ",锁定资源失败。");
         }
     }
 
@@ -142,5 +148,23 @@ public class StandaloneClusterTaskListener extends StandaloneListener implements
     public void tagError(TaskStoppedByErrorCommand command) throws Exception {
         String errorPath = listenPath() + "/" + command.getTaskId() + "/error/" + command.getSwimlaneId();
         client.createWhenNotExists(errorPath, false, false, command.getMsg());
+    }
+
+    private boolean taskAssignCheck(String path) {
+        try {
+            if (!NodeContext.INSTANCE.forceAssign()) return false;
+            Pair<String, Boolean> lockPair = client.getData(path);
+            if (null != lockPair && StringUtils.isNotBlank(lockPair.getLeft())) {
+                DTaskLock lockInfo = JSONObject.parseObject(lockPair.getLeft(), DTaskLock.class);
+                if (lockInfo.getNodeId().equals(NodeContext.INSTANCE.getNodeId()) //节点Id相符
+                        && lockInfo.getAddress().equals(NodeContext.INSTANCE.getAddress())) { //IP地址相符
+                    client.delete(path);
+                    return true;
+                }
+            }
+        } catch (Exception e) {
+            LOGGER.warn("尝试删除任务占用");
+        }
+        return false;
     }
 }
