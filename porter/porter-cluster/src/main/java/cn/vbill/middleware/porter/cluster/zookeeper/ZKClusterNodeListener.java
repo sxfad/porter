@@ -27,6 +27,7 @@ import cn.vbill.middleware.porter.common.cluster.command.broadcast.Shutdown;
 import cn.vbill.middleware.porter.common.cluster.command.broadcast.TaskAssigned;
 import cn.vbill.middleware.porter.common.cluster.command.broadcast.TaskStop;
 import cn.vbill.middleware.porter.common.cluster.data.DNode;
+import cn.vbill.middleware.porter.common.cluster.data.DTaskLock;
 import cn.vbill.middleware.porter.common.cluster.event.ClusterEvent;
 import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterEvent;
 import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListener;
@@ -320,10 +321,22 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements T
         String lockPath = BASE_CATALOG + TASK_PATH + taskId + "/lock/" + swimlaneId;
         try {
             Stat lockStat = client.exists(lockPath, true);
-            return null != lockStat;
+            boolean isLocked = null != lockStat;
+            if (isLocked && NodeContext.INSTANCE.forceAssign()) { //如果是任务已占用，则进一步检查是否需要清除锁定状态
+                //获取锁信息
+                Pair<String, Stat> lockPair = client.getData(lockPath);
+                //判断锁状态
+                if (null != lockPair && StringUtils.isNotBlank(lockPair.getLeft())) {
+                    DTaskLock lockInfo = JSONObject.parseObject(lockPair.getLeft(), DTaskLock.class);
+                    isLocked = !(lockInfo.getNodeId().equals(NodeContext.INSTANCE.getNodeId()) //节点Id相符
+                            && lockInfo.getAddress().equals(NodeContext.INSTANCE.getAddress())); //IP地址相符
+                }
+            }
+            return isLocked;
+
         } catch (Exception e) {
             LOGGER.warn("判断任务是否注册失败", e);
-            return false;
+            return true;
         }
     }
 
