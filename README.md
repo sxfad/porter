@@ -80,6 +80,14 @@ porter-boot-版本/bin/startup.sh --spring.profiles.active=运行环境
 porter-boot-版本/bin/shutdown.sh
 ```
 
+
+### 强制启动
+```
+当porter-boot因jvm crash、kill -9强杀进程等原因造成节点、任务没有正常退出，再次启动porter-boot不成功、任务无法分配时使用。
+通过porter-boot的http接口http://ip:端口/inspect/node/info  查看参数"forceAssign"判断是否处于强制启动状态
+porter-boot-版本/bin/startup.sh --force
+```
+
 ## 文档
 + [部署教程@code-hipster](./doc/tutorial.md)
 + [中文文档](./doc/document.md)
