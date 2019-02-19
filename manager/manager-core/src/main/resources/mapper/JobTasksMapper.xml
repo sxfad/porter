@@ -295,6 +295,9 @@
             <if test="id != null and id != ''">
                 and id = #{id}
             </if>
+            <if test="jobId != null and jobId != ''">
+                and id = #{jobId}
+            </if>
             <if test="jobName != null and jobName != ''">
                 and job_name LIKE CONCAT('%', #{jobName}, '%')
             </if>
