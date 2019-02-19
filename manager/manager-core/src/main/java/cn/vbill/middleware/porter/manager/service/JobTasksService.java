@@ -123,7 +123,7 @@ public interface JobTasksService {
      *             jobName, beginTime, endTime, jobState, jobType]
      * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.entity.JobTasks>
      */
-    Page<JobTasks> page(Page<JobTasks> page, String jobName, String beginTime, String endTime, TaskStatusType jobState,
+    Page<JobTasks> page(Page<JobTasks> page, String jobName, Long jobId, String beginTime, String endTime, TaskStatusType jobState,
             Integer jobType, Long id);
 
     /**
@@ -189,4 +189,10 @@ public interface JobTasksService {
      * @return
      */
     TaskConfig dealSpecialJson(String jobXmlText);
+
+    /**
+     * 显示任务id下拉框
+     * @return
+     */
+    List<Long> showjobIdList();
 }

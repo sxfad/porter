@@ -96,11 +96,12 @@ public class JobTasksController {
     public ResponseMessage list(@RequestParam(value = "pageNo", required = true) Integer pageNo,
             @RequestParam(value = "pageSize", required = true) Integer pageSize,
             @RequestParam(value = "jobName", required = false) String jobName,
+                                @RequestParam(value = "jobId", required = false) Long jobId,
             @RequestParam(value = "beginTime", required = false) String beginTime,
             @RequestParam(value = "endTime", required = false) String endTime,
             @RequestParam(value = "jobState", required = false) TaskStatusType jobState,
             @RequestParam(value = "id", required = false) Long id) {
-        Page<JobTasks> page = jobTasksService.page(new Page<>(pageNo, pageSize), jobName, beginTime, endTime, jobState,
+        Page<JobTasks> page = jobTasksService.page(new Page<>(pageNo, pageSize), jobName, jobId, beginTime, endTime, jobState,
                 1, id);
         return ok(page);
     }
@@ -119,12 +120,13 @@ public class JobTasksController {
     public ResponseMessage page(@RequestParam(value = "pageNo", required = true) Integer pageNo,
             @RequestParam(value = "pageSize", required = true) Integer pageSize,
             @RequestParam(value = "jobName", required = false) String jobName,
+            @RequestParam(value = "jobId", required = false) Long jobId,
             @RequestParam(value = "beginTime", required = false) String beginTime,
             @RequestParam(value = "endTime", required = false) String endTime,
             @RequestParam(value = "jobState", required = false) TaskStatusType jobState,
             @RequestParam(value = "jobType", required = false) Integer jobType,
             @RequestParam(value = "id", required = false) Long id) {
-        Page<JobTasks> page = jobTasksService.page(new Page<>(pageNo, pageSize), jobName, beginTime, endTime, jobState,
+        Page<JobTasks> page = jobTasksService.page(new Page<>(pageNo, pageSize), jobName, jobId, beginTime, endTime, jobState,
                 jobType, id);
         return ok(page);
     }
@@ -289,6 +291,21 @@ public class JobTasksController {
             }
         }
         return ok(number);
+    }
+
+    /**
+     * 显示任务id下拉框
+     *
+     * @author FuZizheng
+     * @date 2019/2/19 2:07 PM
+     * @param: []
+     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
+     */
+    @GetMapping("/showjobIdList")
+    @ApiOperation(value = "显示任务id", notes = "显示任务id")
+    public ResponseMessage jobIdList() {
+        List<Long> jobIds = jobTasksService.showjobIdList();
+        return ok(jobIds);
     }
 
 }

@@ -256,16 +256,16 @@ public class JobTasksServiceImpl implements JobTasksService {
     }
 
     @Override
-    public Page<JobTasks> page(Page<JobTasks> page, String jobName, String beginTime, String endTime,
+    public Page<JobTasks> page(Page<JobTasks> page, String jobName, Long jobId, String beginTime, String endTime,
             TaskStatusType jobState, Integer jobType, Long id) {
         String jobStateBck = null;
         if (null != jobState) {
             jobStateBck = jobState.getCode();
         }
-        Integer total = jobTasksMapper.pageAll(1, jobType, jobName, beginTime, endTime, jobStateBck, id);
+        Integer total = jobTasksMapper.pageAll(1, jobType, jobName, jobId, beginTime, endTime, jobStateBck, id);
         if (total > 0) {
             page.setTotalItems(total);
-            page.setResult(jobTasksMapper.page(page, 1, jobType, jobName, beginTime, endTime, jobStateBck, id));
+            page.setResult(jobTasksMapper.page(page, 1, jobType, jobName, jobId, beginTime, endTime, jobStateBck, id));
         }
         return page;
     }
@@ -493,5 +493,10 @@ public class JobTasksServiceImpl implements JobTasksService {
             logger.error("解析jobXmlText失败，请注意！！", e);
         }
         return config;
+    }
+
+    @Override
+    public List<Long> showjobIdList() {
+        return jobTasksMapper.showjobIdList();
     }
 }

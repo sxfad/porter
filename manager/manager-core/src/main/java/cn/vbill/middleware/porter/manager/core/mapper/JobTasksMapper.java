@@ -17,12 +17,11 @@
 
 package cn.vbill.middleware.porter.manager.core.mapper;
 
-import java.util.List;
-
 import cn.vbill.middleware.porter.manager.core.entity.JobTasks;
+import cn.vbill.middleware.porter.manager.web.page.Page;
 import org.apache.ibatis.annotations.Param;
 
-import cn.vbill.middleware.porter.manager.web.page.Page;
+import java.util.List;
 
 /**
  * 同步任务表 Mapper接口
@@ -90,9 +89,9 @@ public interface JobTasksMapper {
      *
      * @return
      */
-    List<JobTasks> page(@Param("page") Page<JobTasks> page, @Param("state") Integer state,
-            @Param("jobType") Integer jobType, @Param("jobName") String jobName, @Param("beginTime") String beginTime,
-            @Param("endTime") String endTime, @Param("jobState") String jobState, @Param("id") Long id);
+    List<JobTasks> page(@Param("page") Page<JobTasks> page, @Param("state") Integer state, @Param("jobType") Integer jobType,
+                        @Param("jobName") String jobName, @Param("jobId") Long jobId, @Param("beginTime") String beginTime,
+                        @Param("endTime") String endTime, @Param("jobState") String jobState, @Param("id") Long id);
 
     /**
      * 分頁All
@@ -100,8 +99,8 @@ public interface JobTasksMapper {
      * @return
      */
     Integer pageAll(@Param("state") Integer state, @Param("jobType") Integer jobType, @Param("jobName") String jobName,
-            @Param("beginTime") String beginTime, @Param("endTime") String endTime, @Param("jobState") String jobState,
-            @Param("id") Long id);
+                    @Param("jobId") Long jobId, @Param("beginTime") String beginTime, @Param("endTime") String endTime,
+                    @Param("jobState") String jobState, @Param("id") Long id);
 
     /**
      * 修改任务状态
@@ -130,4 +129,14 @@ public interface JobTasksMapper {
      * @return: java.util.List<cn.vbill.middleware.porter.manager.core.entity.JobTasks>
      */
     List<JobTasks> selectJobNameList();
+
+    /**
+     * 显示任务id下拉框
+     *
+     * @author FuZizheng
+     * @date 2019/2/19 2:17 PM
+     * @param: []
+     * @return: java.util.List<java.lang.Long>
+     */
+    List<Long> showjobIdList();
 }
