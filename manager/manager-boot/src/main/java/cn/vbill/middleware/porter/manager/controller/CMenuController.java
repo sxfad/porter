@@ -22,10 +22,8 @@ import cn.vbill.middleware.porter.manager.core.init.MenuUtils;
 import cn.vbill.middleware.porter.manager.core.init.ResourceUtils;
 import cn.vbill.middleware.porter.manager.service.CMenuService;
 import cn.vbill.middleware.porter.manager.web.message.ResponseMessage;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -96,7 +96,7 @@ public class JobTasksController {
     public ResponseMessage list(@RequestParam(value = "pageNo", required = true) Integer pageNo,
             @RequestParam(value = "pageSize", required = true) Integer pageSize,
             @RequestParam(value = "jobName", required = false) String jobName,
-                                @RequestParam(value = "jobId", required = false) Long jobId,
+            @RequestParam(value = "jobId", required = false) Long jobId,
             @RequestParam(value = "beginTime", required = false) String beginTime,
             @RequestParam(value = "endTime", required = false) String endTime,
             @RequestParam(value = "jobState", required = false) TaskStatusType jobState,

@@ -106,4 +106,18 @@ public class CUserServiceImpl implements CUserService {
         return cuserMapper.updateState(id, state);
     }
 
+    @Override
+    public Integer register(CUser cUser) {
+        // 新注册的用户状态是启用 1为正常 0为禁止登陆 -1为删除
+        cUser.setState(1);
+        // 新注册用户为注册用户身份
+        cUser.setRoleCode("A9999");
+        return cuserMapper.register(cUser);
+    }
+
+    @Override
+    public Long checkLoginName(String loginName) {
+        return cuserMapper.checkLoginName(loginName);
+    }
+
 }

@@ -201,7 +201,7 @@ public class CMenuServiceImpl implements CMenuService {
      * @author FuZizheng
      * @date 2018/8/10 下午2:15
      * @param: [menulist]
-     * @return: java.util.Map<java.lang.String,java.util.List<cn.vbill.middleware.porter.manager.core.entity.CMenu>>
+     * @return: java.util.Map<java.lang.String       ,       java.util.List       <       cn.vbill.middleware.porter.manager.core.entity.CMenu>>
      */
     private Map<String, List<CMenu>> listtomap(List<CMenu> menulist) {
         Map<String, List<CMenu>> menuMap = new HashMap<>();

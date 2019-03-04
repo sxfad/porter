@@ -45,7 +45,7 @@ public class WebMvcConfigAdapter extends WebMvcConfigurerAdapter {
     /**
      * LOGIN_URL_PATTERNS
      */
-    public static final String LOGIN_URL_PATTERNS = "/manager/login,/manager/register";
+    public static final String LOGIN_URL_PATTERNS = "/manager/login,/manager/register,/manager/checkLoginName";
 
     /**
      * ALARM_URL_PATTERNS

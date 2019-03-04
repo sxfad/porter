@@ -104,7 +104,7 @@ public interface NodesService {
      * @param: [page, ipAddress, state, machineName]
      * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.entity.Nodes>
      */
-    Page<Nodes> page(Page<Nodes> page, String ipAddress, Integer state, String machineName);
+    Page<Nodes> page(Page<Nodes> page, String nodeId, String ipAddress, Integer state, String machineName);
 
     /**
      * insertState
@@ -141,7 +141,7 @@ public interface NodesService {
      * @return: java.lang.Integer
      */
     Integer insertState(String nodeId, String machineName, String ipAddress, String pidNumber,
-            NodeStatusType taskPushState, String heartBeatTime, Integer state);
+                        NodeStatusType taskPushState, String heartBeatTime, Integer state);
 
     /**
      * updateState
@@ -151,7 +151,7 @@ public interface NodesService {
      * @return: java.lang.Integer
      */
     Integer updateState(String nodeId, String machineName, String ipAddress, String pidNumber,
-            NodeStatusType taskPushState, String heartBeatTime, Integer state);
+                        NodeStatusType taskPushState, String heartBeatTime, Integer state);
 
     /**
      * 更新心跳时间
@@ -161,7 +161,7 @@ public interface NodesService {
      * @return: java.lang.Integer
      */
     Integer updateHeartBeatTime(String nodeId, String machineName, String ipAddress, String pidNumber,
-            NodeStatusType taskPushState, String heartBeatTime);
+                                NodeStatusType taskPushState, String heartBeatTime);
 
     /**
      * testNodeId

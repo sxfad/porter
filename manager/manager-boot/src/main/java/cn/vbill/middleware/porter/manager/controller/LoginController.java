@@ -30,6 +30,9 @@ import io.swagger.annotations.ApiOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -104,6 +107,36 @@ public class LoginController {
         map.put("roleCode", loginUserToken.getRoleCode());
         map.put("CMenu", MenuUtils.ROLE_MENU.get(loginUserToken.getRoleCode()));
         return ResponseMessage.ok(map);
+    }
+
+    /**
+     * 注册
+     *
+     * @author hexin
+     * @date 2019-03-01 10:32
+     * @param: [cUser]
+     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
+     */
+    @PostMapping("/register")
+    @ApiOperation(value = "用户注册", notes = "用户注册")
+    public ResponseMessage register(@RequestBody CUser cUser) {
+        Integer number = cuserService.register(cUser);
+        return ResponseMessage.ok(number);
+    }
+
+    /**
+     * 验证登录名是否重复
+     *
+     * @author hexin
+     * @date 2019-03-01 10:32
+     * @param: [loginName]
+     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
+     */
+    @GetMapping("/checkLoginName")
+    @ApiOperation(value = "检查登录名是否重复", notes = "检查登录名是否重复,返回结果为空则说明不重复，反之重复")
+    public ResponseMessage checkLoginName(String loginName) {
+        Long id = cuserService.checkLoginName(loginName);
+        return ResponseMessage.ok(id);
     }
 
 }

@@ -41,7 +41,7 @@ import static cn.vbill.middleware.porter.manager.web.message.ResponseMessage.ok;
  */
 @Api(description = "角色菜单管理")
 @RestController
-@RequestMapping("/manager/crolemenu")
+@RequestMapping("/manager/cRoleMenu")
 public class CRoleMenuController {
 
     @Autowired
@@ -67,7 +67,7 @@ public class CRoleMenuController {
      * @author he_xin
      * @return
      */
-    @GetMapping("/getroleMenu")
+    @GetMapping("/getRoleMenu")
     @ApiOperation(value = "回显权限和能访问的菜单", notes = "回显权限和能访问的菜单")
     public ResponseMessage getRoleMenu() {
         List<CRoleMenu> cRoleMenuList = cRoleMenuService.getRoleMenu();

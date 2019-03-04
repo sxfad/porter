@@ -219,6 +219,32 @@
         where state=1
     </select>
 
+    <!-- 注册 -->
+    <insert id="register">
+        insert into c_user(
+        loginname,
+        loginpw,
+        nickname,
+        email,
+        mobile,
+        depart_ment,
+        role_code,
+        state
+        ) values (
+        #{loginname},
+        #{loginpw},
+        #{nickname},
+        #{email},
+        #{mobile},
+        #{departMent},
+        #{roleCode},
+        #{state}
+        )
+    </insert>
 
+    <!-- 验证注册姓名是否重复 -->
+    <select id="checkLoginName" resultType="java.lang.Long">
+        select count(id) from c_user where state >= 0 and loginname = #{loginName}
+    </select>
 </mapper>
 

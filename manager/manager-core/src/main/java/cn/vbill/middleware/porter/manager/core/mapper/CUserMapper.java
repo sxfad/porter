@@ -126,4 +126,20 @@ public interface CUserMapper {
      * @return
      */
     Integer updateState(@Param("id") Long id, @Param("state") Integer state);
+
+    /**
+     * 用户注册
+     *
+     * @param cUser
+     * @return
+     */
+    Integer register(CUser cUser);
+
+    /**
+     * 检查登陆名称是否重复
+     *
+     * @param loginName
+     * @return
+     */
+    Long checkLoginName(@Param("loginName") String loginName);
 }

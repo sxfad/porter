@@ -17,13 +17,13 @@
 
 package cn.vbill.middleware.porter.manager.controller;
 
-import cn.vbill.middleware.porter.manager.service.NodesService;
 import cn.vbill.middleware.porter.common.cluster.ClusterProviderProxy;
 import cn.vbill.middleware.porter.common.cluster.command.NodeOrderPushCommand;
 import cn.vbill.middleware.porter.common.config.NodeCommandConfig;
 import cn.vbill.middleware.porter.common.dic.NodeStatusType;
 import cn.vbill.middleware.porter.common.node.NodeCommandType;
 import cn.vbill.middleware.porter.manager.core.entity.Nodes;
+import cn.vbill.middleware.porter.manager.service.NodesService;
 import cn.vbill.middleware.porter.manager.web.message.ResponseMessage;
 import cn.vbill.middleware.porter.manager.web.page.Page;
 import io.swagger.annotations.Api;
@@ -62,17 +62,18 @@ public class NodesController {
      * @author FuZizheng
      * @date 2018/3/16 下午3:34
      * @param: [pageNo,
-     *             pageSize, ipAddress, state, machineName, type]
+     * pageSize, ipAddress, state, machineName, type]
      * @return: ResponseMessage
      */
     @GetMapping
     @ApiOperation(value = "查询列表", notes = "查询列表")
     public ResponseMessage list(@RequestParam(value = "pageNo", required = true) Integer pageNo,
-            @RequestParam(value = "pageSize", required = true) Integer pageSize,
-            @RequestParam(value = "ipAddress", required = false) String ipAddress,
-            @RequestParam(value = "state", required = false) Integer state,
-            @RequestParam(value = "machineName", required = false) String machineName) {
-        Page<Nodes> page = nodesService.page(new Page<Nodes>(pageNo, pageSize), ipAddress, state, machineName);
+                                @RequestParam(value = "pageSize", required = true) Integer pageSize,
+                                @RequestParam(value = "nodeId", required = false) String nodeId,
+                                @RequestParam(value = "ipAddress", required = false) String ipAddress,
+                                @RequestParam(value = "state", required = false) Integer state,
+                                @RequestParam(value = "machineName", required = false) String machineName) {
+        Page<Nodes> page = nodesService.page(new Page<Nodes>(pageNo, pageSize), nodeId, ipAddress, state, machineName);
         return ok(page);
     }
 
@@ -132,7 +133,7 @@ public class NodesController {
     @PostMapping("/taskpushstate")
     @ApiOperation(value = "任务状态推送", notes = "任务状态推送")
     public ResponseMessage taskPushState(@RequestParam(value = "id", required = true) Long id,
-            @RequestParam(value = "taskPushState", required = true) NodeStatusType taskPushState) throws Exception {
+                                         @RequestParam(value = "taskPushState", required = true) NodeStatusType taskPushState) throws Exception {
         Integer i = nodesService.taskPushState(id, taskPushState);
         if (i == 1) {
             Nodes nodes = nodesService.selectById(id);

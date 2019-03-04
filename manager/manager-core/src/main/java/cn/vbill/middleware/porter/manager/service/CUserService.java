@@ -130,4 +130,20 @@ public interface CUserService {
      * @return: java.lang.Integer
      */
     Integer updateState(Long id, Integer state);
+
+    /**
+     * 用户注册
+     *
+     * @param cUser
+     * @return
+     */
+    Integer register(CUser cUser);
+
+    /**
+     * 检查登陆名称是否重复
+     *
+     * @param loginName
+     * @return
+     */
+    Long checkLoginName(String loginName);
 }

@@ -164,6 +164,9 @@
             <if test="state != null and state != ''">
                 and state = #{state}
             </if>
+            <if test="nodeId != null and nodeId != ''">
+                and node_id = #{nodeId}
+            </if>
             <if test="ipAddress != null and ipAddress != ''">
                 and ip_address LIKE CONCAT('%', #{ipAddress}, '%')
             </if>
@@ -180,6 +183,9 @@
         from b_nodes
         <where>
             iscancel = 0
+            <if test="nodeId != null and nodeId != ''">
+                and node_id = #{nodeId}
+            </if>
             <if test="ipAddress != null and ipAddress != ''">
                 and ip_address LIKE CONCAT('%', #{ipAddress}, '%')
             </if>

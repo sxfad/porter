@@ -91,11 +91,11 @@ public class NodesServiceImpl implements NodesService {
     }
 
     @Override
-    public Page<Nodes> page(Page<Nodes> page, String ipAddress, Integer state, String machineName) {
-        Integer total = nodesMapper.pageAll(ipAddress, state, machineName);
+    public Page<Nodes> page(Page<Nodes> page, String nodeId, String ipAddress, Integer state, String machineName) {
+        Integer total = nodesMapper.pageAll(nodeId, ipAddress, state, machineName);
         if (total > 0) {
             page.setTotalItems(total);
-            page.setResult(nodesMapper.page(page, ipAddress, state, machineName));
+            page.setResult(nodesMapper.page(page, nodeId, ipAddress, state, machineName));
         }
         return page;
     }

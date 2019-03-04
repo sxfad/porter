@@ -93,7 +93,7 @@ public interface NodesMapper {
      *
      * @return
      */
-    List<Nodes> page(@Param("page") Page<Nodes> page, @Param("ipAddress") String ipAddress,
+    List<Nodes> page(@Param("page") Page<Nodes> page, @Param("nodeId") String nodeId, @Param("ipAddress") String ipAddress,
                      @Param("state") Integer state, @Param("machineName") String machineName);
 
     /**
@@ -104,8 +104,8 @@ public interface NodesMapper {
      * @param machineName
      * @return
      */
-    Integer pageAll(@Param("ipAddress") String ipAddress, @Param("state") Integer state,
-            @Param("machineName") String machineName);
+    Integer pageAll(@Param("nodeId") String nodeId, @Param("ipAddress") String ipAddress, @Param("state") Integer state,
+                    @Param("machineName") String machineName);
 
     /**
      * 新增
@@ -119,9 +119,9 @@ public interface NodesMapper {
      * @return
      */
     Integer insertState(@Param("nodeId") String nodeId, @Param("machineName") String machineName,
-            @Param("ipAddress") String ipAddress, @Param("pidNumber") String pidNumber,
-            @Param("taskPushState") String taskPushState, @Param("heartBeatTime") String heartBeatTime,
-            @Param("state") Integer state);
+                        @Param("ipAddress") String ipAddress, @Param("pidNumber") String pidNumber,
+                        @Param("taskPushState") String taskPushState, @Param("heartBeatTime") String heartBeatTime,
+                        @Param("state") Integer state);
 
     /**
      * 节点状态
@@ -132,9 +132,9 @@ public interface NodesMapper {
      * @return
      */
     Integer updateState(@Param("nodeId") String nodeId, @Param("machineName") String machineName,
-            @Param("ipAddress") String ipAddress, @Param("pidNumber") String pidNumber,
-            @Param("taskPushState") String taskPushState, @Param("heartBeatTime") String heartBeatTime,
-            @Param("state") Integer state);
+                        @Param("ipAddress") String ipAddress, @Param("pidNumber") String pidNumber,
+                        @Param("taskPushState") String taskPushState, @Param("heartBeatTime") String heartBeatTime,
+                        @Param("state") Integer state);
 
     /**
      * 修改心跳时间并且变更节点状态
@@ -145,8 +145,8 @@ public interface NodesMapper {
      * @return
      */
     Integer updateHeartBeatTime(@Param("nodeId") String nodeId, @Param("machineName") String machineName,
-            @Param("ipAddress") String ipAddress, @Param("pidNumber") String pidNumber,
-            @Param("taskPushState") String taskPushState, @Param("heartBeatTime") String heartBeatTime);
+                                @Param("ipAddress") String ipAddress, @Param("pidNumber") String pidNumber,
+                                @Param("taskPushState") String taskPushState, @Param("heartBeatTime") String heartBeatTime);
 
     /**
      * 验证nodeId是否重复
@@ -158,7 +158,7 @@ public interface NodesMapper {
 
     /**
      * 查询所有节点
-     * 
+     *
      * @return
      */
     List<Nodes> selectList();
