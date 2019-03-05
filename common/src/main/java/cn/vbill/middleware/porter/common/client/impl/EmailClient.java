@@ -63,6 +63,10 @@ public class EmailClient  extends AbstractClient<EmailConfig> implements AlertCl
         properties.put("mail.smtp.starttls.enable", config.isSmtpStarttlsEnable());
         properties.put("mail.smtp.starttls.required", config.isSmtpStarttlsRequired());
 
+        properties.put("mail.smtp.connectiontimeout", config.getConnectionTimeout());
+        properties.put("mail.smtp.timeout", config.getTimeout());
+
+
         JavaMailSenderImpl  senderImpl = new JavaMailSenderImpl();
 
         senderImpl.setHost(config.getHost());

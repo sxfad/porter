@@ -77,6 +77,8 @@ public class ZKClusterConfigListener extends ZookeeperClusterListener {
                     LOGGER.warn("解析告警任务配置失败", e);
                 } catch (ClientConnectionException e) {
                     LOGGER.warn("告警客户端连接失败", e);
+                } catch (InterruptedException e) {
+                    LOGGER.warn("告警客户端连接失败, 线程被中断", e);
                 }
             }
             //统计分析

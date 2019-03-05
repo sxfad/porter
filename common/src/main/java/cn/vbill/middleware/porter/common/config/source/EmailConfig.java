@@ -37,6 +37,8 @@ public class EmailConfig extends SourceConfig {
     @Setter @Getter private boolean smtpAuth = true;
     @Setter @Getter private boolean smtpStarttlsEnable = true;
     @Setter @Getter private boolean smtpStarttlsRequired = false;
+    @Setter @Getter private Long connectionTimeout = 30000L;
+    @Setter @Getter private Long timeout = 30000L;
 
     public EmailConfig() {
         sourceType = SourceType.EMAIL;

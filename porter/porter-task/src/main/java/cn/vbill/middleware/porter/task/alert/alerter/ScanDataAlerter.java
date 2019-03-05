@@ -52,7 +52,7 @@ public class ScanDataAlerter implements Alerter {
      * @return: void
      */
     public void check(DataConsumer consumer, DataLoader loader, DTaskStat stat, Triple<String[], String[],
-            String[]> checkMeta, List<AlertReceiver> receivers) {
+            String[]> checkMeta, List<AlertReceiver> receivers) throws InterruptedException {
         LOGGER.debug("trying scan data");
         if (null == stat || !stat.getUpdateStat().get() || null == stat.getLastLoadedDataTime() || null == checkMeta.getRight()) {
             LOGGER.debug("null == stat ||  !stat.getUpdateStat().get() || null == stat.getLastLoadedTime() || null == checkMeta.getRight()");
@@ -108,7 +108,7 @@ public class ScanDataAlerter implements Alerter {
      * @return: void
      */
     private void checkLogic(DTaskStat stat, DataConsumer consumer, DataLoader loader, Date startDate, Date endDate,
-                            Triple<String[], String[], String[]> checkMeta, List<AlertReceiver> receivers) {
+                            Triple<String[], String[], String[]> checkMeta, List<AlertReceiver> receivers) throws InterruptedException {
         //更新对比时间
         int countSource = consumer.getDataCount(checkMeta.getLeft()[0], checkMeta.getMiddle()[0], checkMeta.getRight()[0], startDate, endDate);
         int countTarget = loader.getDataCount(checkMeta.getLeft()[1], checkMeta.getMiddle()[1], checkMeta.getRight()[1], startDate, endDate);

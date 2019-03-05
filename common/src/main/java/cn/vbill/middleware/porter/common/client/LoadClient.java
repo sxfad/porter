@@ -24,5 +24,7 @@ package cn.vbill.middleware.porter.common.client;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月09日 15:46
  */
 public interface LoadClient extends Client {
-
+    default void reset() {
+        
+    }
 }

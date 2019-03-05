@@ -38,5 +38,5 @@ public interface Alerter {
      * @return: void
      */
     void check(DataConsumer consumer, DataLoader loader, DTaskStat stat, Triple<String[], String[], String[]> checkMeta,
-               List<AlertReceiver> receivers);
+               List<AlertReceiver> receivers) throws InterruptedException;
 }
