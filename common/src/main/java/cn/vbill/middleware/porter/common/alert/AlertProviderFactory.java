@@ -28,6 +28,7 @@ import cn.vbill.middleware.porter.common.exception.ClientConnectionException;
 import cn.vbill.middleware.porter.common.exception.ConfigParseException;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -48,7 +49,7 @@ public enum AlertProviderFactory {
      */
     INSTANCE();
     private final ReadWriteLock initializedLock = new ReentrantReadWriteLock();
-    private AlertProvider alert;
+    private volatile AlertProvider alert;
 
     /**
      * initialize
@@ -57,22 +58,23 @@ public enum AlertProviderFactory {
      * @param: [config]
      * @return: void
      */
-    public void initialize(AlertConfig config) throws ConfigParseException, ClientConnectionException {
+    public void initialize(AlertConfig config) throws ConfigParseException, ClientConnectionException, InterruptedException {
         //校验配置文件参数
         if (null == config || null == config.getStrategy() || null == config.getClient()
                 || config.getClient().isEmpty()) {
             return;
         }
 
-        initializedLock.writeLock().lock();
-        try {
-            if (config.getStrategy() == AlertPlugin.EMAIL) {
-                AlertClient client = new EmailClient(new EmailConfig(config.getClient()).stuff(), config.getReceiver(),
-                        config.getFrequencyOfSeconds());
-                alert = new NormalAlertProvider(client);
+        if (initializedLock.writeLock().tryLock(1, TimeUnit.MINUTES)) {
+            try {
+                if (config.getStrategy() == AlertPlugin.EMAIL) {
+                    AlertClient client = new EmailClient(new EmailConfig(config.getClient()).stuff(), config.getReceiver(),
+                            config.getFrequencyOfSeconds());
+                    alert = new NormalAlertProvider(client);
+                }
+            } finally {
+                initializedLock.writeLock().unlock();
             }
-        } finally {
-            initializedLock.writeLock().unlock();
         }
     }
 
@@ -83,12 +85,15 @@ public enum AlertProviderFactory {
      * @param: [title, msg, receiverList]
      * @return: void
      */
-    public void notice(String title, String msg, List<AlertReceiver> receiverList) {
-        initializedLock.readLock().lock();
-        if (null != alert) {
-            alert.notice(title, msg, receiverList);
+    public void notice(String title, String msg, List<AlertReceiver> receiverList) throws InterruptedException {
+        if (initializedLock.readLock().tryLock(1, TimeUnit.MINUTES)) {
+            try {
+                if (null != alert) {
+                    alert.notice(title, msg, receiverList);
+                }
+            } finally {
+                initializedLock.readLock().unlock();
+            }
         }
-
-        initializedLock.readLock().unlock();
     }
 }

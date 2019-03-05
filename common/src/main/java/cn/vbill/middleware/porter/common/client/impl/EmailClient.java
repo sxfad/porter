@@ -64,6 +64,10 @@ public class EmailClient  extends AbstractClient<EmailConfig> implements AlertCl
         properties.put("mail.smtp.auth", config.isSmtpAuth());
         properties.put("mail.smtp.starttls.enable", config.isSmtpStarttlsEnable());
         properties.put("mail.smtp.starttls.required", config.isSmtpStarttlsRequired());
+
+        properties.put("mail.smtp.connectiontimeout", config.getConnectionTimeout());
+        properties.put("mail.smtp.timeout", config.getTimeout());
+
         if (config.isSmtpSslEnable()) {
             properties.put("mail.smtp.ssl.enable", "true");
             //开启安全协议
