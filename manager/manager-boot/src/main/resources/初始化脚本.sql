@@ -503,3 +503,31 @@ insert  into `s_alarm_plugin`(`id`,`alarm_id`,`alarm_type`,`plugin_code`,`plugin
 (2,1,'EMAIL','username','邮件账户','1@163.com'),
 (3,1,'EMAIL','password','邮箱密码','account');
 insert  into `s_alarm_user`(`id`,`alarm_id`,`user_id`) values (1,1,1);
+-- 任务所有权控制表
+DROP TABLE IF EXISTS `job_tasks_owner`;
+CREATE TABLE `job_tasks_owner` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `job_id` bigint(20) DEFAULT '-1' COMMENT '任务id',
+  `owner_level` int(2) DEFAULT '1' COMMENT '权限控制类型(1:人2:部门3:角色组)',
+  `owner_id` bigint(20) DEFAULT '-1' COMMENT '所有者id',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '修改时间',
+  `operator` bigint(20) DEFAULT '-1' COMMENT '操作人',
+  `iscancel` int(2) DEFAULT '0' COMMENT '是否作废',
+  `remark` varchar(200) DEFAULT NULL COMMENT '备注',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='任务所有权控制表'
+-- 节点所有权控制表
+DROP TABLE IF EXISTS `b_nodes_owner`;
+CREATE TABLE `b_nodes_owner` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `node_id` bigint(20) DEFAULT '-1' COMMENT '任务id',
+  `owner_level` int(2) DEFAULT '1' COMMENT '权限控制类型(1:人2:部门3:角色组)',
+  `owner_id` bigint(20) DEFAULT '-1' COMMENT '所有者id',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '修改时间',
+  `operator` bigint(20) DEFAULT '-1' COMMENT '操作人',
+  `iscancel` int(2) DEFAULT '0' COMMENT '是否作废',
+  `remark` varchar(200) DEFAULT NULL COMMENT '备注',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='节点所有权控制表'
