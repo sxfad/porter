@@ -105,6 +105,7 @@ public class TaskController implements TaskEventListener {
                         }
                     }
                 }
+
             } else {
                 LOGGER.warn("Task controller has started already");
             }
