@@ -44,6 +44,13 @@ public class DataLoaderConfig {
     @Setter
     private Map<String, String> source;
 
-    //新增更新转插入策略开关
-    @Getter @Setter private boolean insertOnUpdateError = true;
+    // 是否启用数据源
+    @Getter
+    @Setter
+    private Boolean isUsing = true;
+
+    // 新增更新转插入策略开关
+    @Getter
+    @Setter
+    private boolean insertOnUpdateError = true;
 }

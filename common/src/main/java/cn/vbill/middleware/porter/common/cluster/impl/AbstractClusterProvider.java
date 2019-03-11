@@ -17,6 +17,14 @@
 
 package cn.vbill.middleware.porter.common.cluster.impl;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.core.io.support.SpringFactoriesLoader;
+
 import cn.vbill.middleware.porter.common.client.Client;
 import cn.vbill.middleware.porter.common.client.ClusterClient;
 import cn.vbill.middleware.porter.common.client.DistributedLock;
@@ -26,6 +34,7 @@ import cn.vbill.middleware.porter.common.cluster.ClusterMonitor;
 import cn.vbill.middleware.porter.common.cluster.ClusterProvider;
 import cn.vbill.middleware.porter.common.cluster.command.ClusterCommand;
 import cn.vbill.middleware.porter.common.cluster.command.ConfigPushCommand;
+import cn.vbill.middleware.porter.common.cluster.command.DataSourcePushCommand;
 import cn.vbill.middleware.porter.common.cluster.command.NodeOrderPushCommand;
 import cn.vbill.middleware.porter.common.cluster.command.NodeRegisterCommand;
 import cn.vbill.middleware.porter.common.cluster.command.ShutdownCommand;
@@ -40,6 +49,7 @@ import cn.vbill.middleware.porter.common.cluster.command.TaskStatQueryCommand;
 import cn.vbill.middleware.porter.common.cluster.command.TaskStopCommand;
 import cn.vbill.middleware.porter.common.cluster.command.TaskStoppedByErrorCommand;
 import cn.vbill.middleware.porter.common.cluster.command.broadcast.ConfigPush;
+import cn.vbill.middleware.porter.common.cluster.command.broadcast.DataSourcePush;
 import cn.vbill.middleware.porter.common.cluster.command.broadcast.NodeOrderPush;
 import cn.vbill.middleware.porter.common.cluster.command.broadcast.NodeRegister;
 import cn.vbill.middleware.porter.common.cluster.command.broadcast.Shutdown;
@@ -60,13 +70,6 @@ import cn.vbill.middleware.porter.common.exception.ConfigParseException;
 import cn.vbill.middleware.porter.common.task.TaskEventListener;
 import cn.vbill.middleware.porter.common.task.TaskEventProvider;
 import cn.vbill.middleware.porter.common.util.compile.JavaFileCompiler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.core.io.support.SpringFactoriesLoader;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * 集群提供者
@@ -83,6 +86,7 @@ public abstract class AbstractClusterProvider<C extends Client> implements Clust
 
     /**
      * getMatchType
+     * 
      * @return
      */
     protected abstract ClusterPlugin getMatchType();
@@ -103,6 +107,7 @@ public abstract class AbstractClusterProvider<C extends Client> implements Clust
 
     /**
      * initClient
+     * 
      * @param clusterConfig
      * @return
      * @throws ConfigParseException
@@ -196,6 +201,10 @@ public abstract class AbstractClusterProvider<C extends Client> implements Clust
             if (listener instanceof ConfigPush && command instanceof ConfigPushCommand) {
                 ((ConfigPush) listener).push((ConfigPushCommand) command);
             }
+
+            if (listener instanceof DataSourcePush && command instanceof DataSourcePushCommand) {
+                ((DataSourcePush) listener).push((DataSourcePushCommand) command);
+            }
         }
     }
 
@@ -240,14 +249,15 @@ public abstract class AbstractClusterProvider<C extends Client> implements Clust
         }
         monitor = newMonitor();
         monitor.setClient(client);
-        //通过spring框架的SPI loader加载服务
-        List<ClusterListener> listeners = SpringFactoriesLoader.loadFactories(getClusterListenerClass(), JavaFileCompiler.getInstance());
-        //添加SPI到监听器
+        // 通过spring框架的SPI loader加载服务
+        List<ClusterListener> listeners = SpringFactoriesLoader.loadFactories(getClusterListenerClass(),
+                JavaFileCompiler.getInstance());
+        // 添加SPI到监听器
         listeners.forEach(listener -> {
             listener.setClient(client);
             monitor.addListener(listener);
         });
-        //初始化集群分布式锁功能
+        // 初始化集群分布式锁功能
         if (client instanceof SupportDistributedLock) {
             lock = initiateLock((ClusterClient) client);
         }
@@ -265,7 +275,8 @@ public abstract class AbstractClusterProvider<C extends Client> implements Clust
 
     @Override
     public DistributedLock getLock() {
-        if (null == lock) new UnsupportedOperationException("分布式锁功能未提供");
+        if (null == lock)
+            new UnsupportedOperationException("分布式锁功能未提供");
         return lock;
     }
 }
