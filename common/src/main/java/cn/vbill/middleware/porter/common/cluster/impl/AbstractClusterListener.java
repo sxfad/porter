@@ -28,11 +28,14 @@ import org.slf4j.LoggerFactory;
  * @review: zkevin/2019年01月11日 14:51
  */
 public abstract class AbstractClusterListener implements ClusterListener {
+
     protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+
     public static final String PREFIX_ATALOG = "/suixingpay";
     public static final String BASE_CATALOG = PREFIX_ATALOG + "/datas";
 
     public abstract String listenPath();
+
     @Override
     public String getName() {
         return listenPath();

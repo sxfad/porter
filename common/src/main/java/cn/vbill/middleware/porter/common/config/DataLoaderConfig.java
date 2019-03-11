@@ -36,6 +36,14 @@ public class DataLoaderConfig {
         this.source = source;
     }
 
+    public DataLoaderConfig(String loaderName, Map<String, String> source, Boolean isUsing,
+            boolean insertOnUpdateError) {
+        this.loaderName = loaderName;
+        this.source = source;
+        this.isUsing = isUsing;
+        this.insertOnUpdateError = insertOnUpdateError;
+    }
+
     // 目标插件
     @Getter
     @Setter
