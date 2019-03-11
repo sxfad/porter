@@ -99,10 +99,10 @@ public class DataConsumerConfig {
     private JavaFileConfig eventProcessor;
 
 
-    //空查询通知间隔,单位秒
+    //空查询通知间隔,单位秒           每隔多长时间通知一次
     @Setter @Getter private  long emptyFetchNoticeSpan = 60L * 60;
 
-    //空查询通知时间阀值
+    //空查询通知时间阀值                 多长时间没接到消息出发通知
     @Setter @Getter private  long emptyFetchThreshold = 60L * 60;
 
     //初始消费位置
