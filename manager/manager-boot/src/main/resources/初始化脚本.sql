@@ -111,7 +111,20 @@ CREATE TABLE `b_nodes` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `node_id` (`node_id`)
 ) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='节点信息表';
-
+-- 节点所有权控制表
+DROP TABLE IF EXISTS `b_nodes_owner`;
+CREATE TABLE `b_nodes_owner` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `node_id` bigint(20) DEFAULT '-1' COMMENT '任务id',
+  `owner_level` int(2) DEFAULT '1' COMMENT '权限控制类型(1:人2:部门3:角色组)',
+  `owner_id` bigint(20) DEFAULT '-1' COMMENT '所有者id',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '修改时间',
+  `operator` bigint(20) DEFAULT '-1' COMMENT '操作人',
+  `iscancel` int(2) DEFAULT '0' COMMENT '是否作废',
+  `remark` varchar(200) DEFAULT NULL COMMENT '备注',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='节点所有权控制表'
 -- 告警字段字典
 DROP TABLE IF EXISTS `d_alarm_plugin`;
 CREATE TABLE `d_alarm_plugin` (
@@ -158,6 +171,24 @@ CREATE TABLE `d_dictionary` (
   PRIMARY KEY (`id`)
 ) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='数据字典表';
 
+-- 公共数据源配置表
+DROP TABLE IF EXISTS `b_public_data_source`;
+CREATE TABLE `b_public_data_source` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `code` char(35) NOT NULL COMMENT '数据源编码',
+  `name` varchar(50) DEFAULT NULL COMMENT '数据源名称',
+  `xml_text` text COMMENT '数据源xml文本',
+  `json_text` text COMMENT '数据源json文本',
+  `declares` varchar(200) DEFAULT NULL COMMENT '数据源说明',
+  `creator` bigint(20) DEFAULT NULL COMMENT '创建人',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `state` int(5) NOT NULL DEFAULT '1' COMMENT '数据状态1正常-1作废0警告',
+  `type` int(5) NOT NULL DEFAULT '1' COMMENT '类型',
+  `iscancel` int(2) DEFAULT '0' COMMENT '是否作废',
+  `remark` varchar(500) DEFAULT NULL COMMENT '备注',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='公共数据源配置表'
+
 -- 同步任务表
 DROP TABLE IF EXISTS `job_tasks`;
 CREATE TABLE `job_tasks` (
@@ -188,6 +219,20 @@ CREATE TABLE `job_tasks` (
   `remark` VARCHAR(100) DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`)
 ) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='同步任务表';
+-- 任务所有权控制表
+DROP TABLE IF EXISTS `job_tasks_owner`;
+CREATE TABLE `job_tasks_owner` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `job_id` bigint(20) DEFAULT '-1' COMMENT '任务id',
+  `owner_level` int(2) DEFAULT '1' COMMENT '权限控制类型(1:人2:部门3:角色组)',
+  `owner_id` bigint(20) DEFAULT '-1' COMMENT '所有者id',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '修改时间',
+  `operator` bigint(20) DEFAULT '-1' COMMENT '操作人',
+  `iscancel` int(2) DEFAULT '0' COMMENT '是否作废',
+  `remark` varchar(200) DEFAULT NULL COMMENT '备注',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='任务所有权控制表'
 -- 任务节点分发表
 DROP TABLE IF EXISTS `job_task_nodes`;
 CREATE TABLE `job_task_nodes` (
@@ -503,31 +548,3 @@ insert  into `s_alarm_plugin`(`id`,`alarm_id`,`alarm_type`,`plugin_code`,`plugin
 (2,1,'EMAIL','username','邮件账户','1@163.com'),
 (3,1,'EMAIL','password','邮箱密码','account');
 insert  into `s_alarm_user`(`id`,`alarm_id`,`user_id`) values (1,1,1);
--- 任务所有权控制表
-DROP TABLE IF EXISTS `job_tasks_owner`;
-CREATE TABLE `job_tasks_owner` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `job_id` bigint(20) DEFAULT '-1' COMMENT '任务id',
-  `owner_level` int(2) DEFAULT '1' COMMENT '权限控制类型(1:人2:部门3:角色组)',
-  `owner_id` bigint(20) DEFAULT '-1' COMMENT '所有者id',
-  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `update_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '修改时间',
-  `operator` bigint(20) DEFAULT '-1' COMMENT '操作人',
-  `iscancel` int(2) DEFAULT '0' COMMENT '是否作废',
-  `remark` varchar(200) DEFAULT NULL COMMENT '备注',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='任务所有权控制表'
--- 节点所有权控制表
-DROP TABLE IF EXISTS `b_nodes_owner`;
-CREATE TABLE `b_nodes_owner` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `node_id` bigint(20) DEFAULT '-1' COMMENT '任务id',
-  `owner_level` int(2) DEFAULT '1' COMMENT '权限控制类型(1:人2:部门3:角色组)',
-  `owner_id` bigint(20) DEFAULT '-1' COMMENT '所有者id',
-  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `update_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '修改时间',
-  `operator` bigint(20) DEFAULT '-1' COMMENT '操作人',
-  `iscancel` int(2) DEFAULT '0' COMMENT '是否作废',
-  `remark` varchar(200) DEFAULT NULL COMMENT '备注',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='节点所有权控制表'
