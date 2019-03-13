@@ -17,6 +17,7 @@
 
 package cn.vbill.middleware.porter.boot;
 
+import cn.vbill.middleware.porter.boot.helper.GCHelper;
 import cn.vbill.middleware.porter.common.client.PublicClientContext;
 import cn.vbill.middleware.porter.common.dic.AlertPlugin;
 import cn.vbill.middleware.porter.boot.config.SourcesConfig;
@@ -71,41 +72,41 @@ public class NodeBootApplication {
         //注入spring工具类
         NodeContext.INSTANCE.setApplicationContext(context);
 
+        LOGGER.info("loading 3rd libraries.......");
         //扫描plugins目录，加载插件
         try {
             JavaFileCompiler.getInstance().loadPlugin();
         } catch (MalformedURLException e) {
             System.exit(-1);
-            LOGGER.error("初始化插件失败", e);
+            LOGGER.error("fail to load 3rd libraries", e);
             System.exit(-1);
         }
 
-
+        LOGGER.info("initiating system properties.......");
         //获取配置类
         NodeConfig config = context.getBean(NodeConfig.class);
-
         //从本地初始化告警配置
         if (null != config.getAlert() && AlertPlugin.NONE != config.getAlert().getStrategy()) {
             try {
                 AlertProviderFactory.INSTANCE.initialize(config.getAlert());
             } catch (Exception e) {
-                LOGGER.error("告警配置初始化失败, 数据同步节点退出!error:", e.getMessage());
+                LOGGER.error("fail to initiate alert properties", e.getMessage());
                 System.exit(-1);
             }
         }
 
         //初始化默认工作任务数
         NodeContext.INSTANCE.updateWorkLimit(config.getWorkLimit());
-
         //从本地初始化公用数据库连接池
         SourcesConfig datasourceConfigBean = context.getBean(SourcesConfig.class);
         try {
             PublicClientContext.INSTANCE.initialize(datasourceConfigBean.getConfig());
         } catch (Exception e) {
-            LOGGER.error("公用资源连接SourcesConfig初始化失败, 数据同步节点退出!error:", e);
+            LOGGER.error("fail to initiate public jdbc properties", e);
             System.exit(-1);
         }
 
+        LOGGER.info("initiating cluster properties........");
         //初始化集群提供者中间件,spring spi插件
         try {
             //获取集群配置信息
@@ -117,28 +118,32 @@ public class NodeBootApplication {
             } catch (Throwable stopError) {
             }
             System.exit(-1);
-            LOGGER.error("获取集群配置信息失败", e);
+            LOGGER.error("fail to initiate cluster properties", e);
         }
 
         //节点注册
-        LOGGER.info("建群.......");
+        LOGGER.info("joining into cluster register.......");
         try {
             //注册节点，注册失败退出进程
             ClusterProviderProxy.INSTANCE.broadcast(new NodeRegisterCommand(config.getId(), config.getStatistic().isUpload()));
         } catch (Exception e) {
             e.printStackTrace();
-            LOGGER.error("注册到集群失败", e);
+            LOGGER.error("fail to join into cluster register", e);
             System.exit(-1);
         }
+        LOGGER.info("joined into cluster register.......");
 
-
-        LOGGER.info("加入群聊.......");
         //获取任务配置
         //监工上线
-        LOGGER.info("监工上线.......");
+        LOGGER.info("initiating task container.......");
         TaskController controller = context.getBean(TaskController.class);
         //启动节点任务执行容器，并尝试执行本地配置文件任务
         controller.start(null != config.getTask() && !config.getTask().isEmpty() ? config.getTask() : null);
+
+        if (config.isGc()) {
+            LOGGER.info("running GC Thread.......");
+            GCHelper.run(config.getGcDelayOfMinutes());
+        }
         LOGGER.info("NodeBootApplication started");
     }
 }

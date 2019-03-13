@@ -47,5 +47,9 @@ public class NodeConfig {
     private AlertConfig alert;
     private ClusterConfig cluster;
     private List<TaskConfig> task = new ArrayList<>();
+
+    //允许默认定时GC
+    private boolean gc = false;
+    private Integer gcDelayOfMinutes = 30;
 }
 
