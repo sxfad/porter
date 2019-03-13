@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.vbill.middleware.porter.manager.core.mapper.PublicDataSourceMapper">
+    <!-- 通用查询映射结果 
+    <resultMap id="BaseResultMap" type="cn.vbill.middleware.porter.manager.core.entity.PublicDataSource">
+        <result column="id" property="id" />
+        <result column="code" property="code" />
+        <result column="name" property="name" />
+        <result column="xml_text" property="xmlText" />
+        <result column="json_text" property="jsonText" />
+        <result column="declares" property="declares" />
+        <result column="creator" property="creator" />
+        <result column="create_time" property="createTime" />
+        <result column="state" property="state" />
+        <result column="type" property="type" />
+        <result column="iscancel" property="iscancel" />
+        <result column="remark" property="remark" />
+    </resultMap>-->
+
+    <!-- 通用查询结果列 
+    <sql id="Base_Column_List">
+        select id, code, name, xml_text AS xmlText, json_text AS jsonText, declares, creator, create_time AS createTime, state, type, iscancel, remark from b_public_data_source
+    </sql>-->
+
+    <!-- 新增 -->
+    <insert id="insert">
+        insert into b_public_data_source(
+            id,
+                code,
+                name,
+                xml_text,
+                json_text,
+                declares,
+                creator,
+                create_time,
+                state,
+                type,
+                iscancel,
+                remark,
+        ) values (
+            #{id},
+                #{code},
+                #{name},
+                #{xmlText},
+                #{jsonText},
+                #{declares},
+                #{creator},
+                #{createTime},
+                #{state},
+                #{type},
+                #{iscancel},
+                #{remark},
+        )
+    </insert>
+
+    <!-- 修改 -->
+    <update id="update">
+        update b_public_data_source
+        set
+            id = #{publicDataSource.id},
+                code = #{publicDataSource.code},
+                name = #{publicDataSource.name},
+                xml_text = #{publicDataSource.xmlText},
+                json_text = #{publicDataSource.jsonText},
+                declares = #{publicDataSource.declares},
+                creator = #{publicDataSource.creator},
+                create_time = #{publicDataSource.createTime},
+                state = #{publicDataSource.state},
+                type = #{publicDataSource.type},
+                iscancel = #{publicDataSource.iscancel},
+                remark = #{publicDataSource.remark},
+                where id = #{id}
+    </update>
+
+    <!-- 刪除 -->
+    <delete id="delete">
+        delete from b_public_data_source where id = #{id}
+    </delete>
+
+    <!-- 根据主鍵查找 -->
+    <select id="selectById" resultType="cn.vbill.middleware.porter.manager.core.entity.PublicDataSource">
+        select id, code, name, xml_text AS xmlText, json_text AS jsonText, declares, creator, create_time AS createTime, state, type, iscancel, remark from b_public_data_source
+        where id = #{id}
+    </select>
+
+    <!-- 分页All -->
+    <select id="pageAll" resultType="java.lang.Integer">
+        select count(id) from b_public_data_source
+        where 1=1
+    </select>
+
+    <!-- 分页 -->
+    <select id="page" resultType="cn.vbill.middleware.porter.manager.core.entity.PublicDataSource">
+        select id, code, name, xml_text AS xmlText, json_text AS jsonText, declares, creator, create_time AS createTime, state, type, iscancel, remark from b_public_data_source
+        where 1=1 limit #{page.offset},#{page.pageSize}
+    </select>
+
+    <!-- 验证新增 -->
+    <insert id="insertSelective">
+        insert into b_public_data_source
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+                <if test="id != null">
+            id,
+        </if>
+                    <if test="code != null">
+            code,
+        </if>
+                    <if test="name != null">
+            name,
+        </if>
+                    <if test="xmlText != null">
+            xml_text,
+        </if>
+                    <if test="jsonText != null">
+            json_text,
+        </if>
+                    <if test="declares != null">
+            declares,
+        </if>
+                    <if test="creator != null">
+            creator,
+        </if>
+                    <if test="createTime != null">
+            create_time,
+        </if>
+                    <if test="state != null">
+            state,
+        </if>
+                    <if test="type != null">
+            type,
+        </if>
+                    <if test="iscancel != null">
+            iscancel,
+        </if>
+                    <if test="remark != null">
+            remark,
+        </if>
+                </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+                <if test="id != null">
+            #{id,jdbcType=BIGINT},
+        </if>
+                    <if test="code != null">
+            #{code,jdbcType=CHAR},
+        </if>
+                    <if test="name != null">
+            #{name,jdbcType=VARCHAR},
+        </if>
+                    <if test="xmlText != null">
+            #{xmlText,jdbcType=false},
+        </if>
+                    <if test="jsonText != null">
+            #{jsonText,jdbcType=false},
+        </if>
+                    <if test="declares != null">
+            #{declares,jdbcType=VARCHAR},
+        </if>
+                    <if test="creator != null">
+            #{creator,jdbcType=BIGINT},
+        </if>
+                    <if test="createTime != null">
+            #{createTime,jdbcType=TIMESTAMP},
+        </if>
+                    <if test="state != null">
+            #{state,jdbcType=INTEGER},
+        </if>
+                    <if test="type != null">
+            #{type,jdbcType=INTEGER},
+        </if>
+                    <if test="iscancel != null">
+            #{iscancel,jdbcType=INTEGER},
+        </if>
+                    <if test="remark != null">
+            #{remark,jdbcType=VARCHAR},
+        </if>
+                </trim>
+    </insert>
+
+    <!-- 验证修改 -->
+    <update id="updateSelective">
+        update b_public_data_source
+        <set>
+                <if test="publicDataSource.id != null">
+            id = #{publicDataSource.id,jdbcType=BIGINT},
+        </if>
+                    <if test="publicDataSource.code != null">
+            code = #{publicDataSource.code,jdbcType=CHAR},
+        </if>
+                    <if test="publicDataSource.name != null">
+            name = #{publicDataSource.name,jdbcType=VARCHAR},
+        </if>
+                    <if test="publicDataSource.xmlText != null">
+            xml_text = #{publicDataSource.xmlText,jdbcType=false},
+        </if>
+                    <if test="publicDataSource.jsonText != null">
+            json_text = #{publicDataSource.jsonText,jdbcType=false},
+        </if>
+                    <if test="publicDataSource.declares != null">
+            declares = #{publicDataSource.declares,jdbcType=VARCHAR},
+        </if>
+                    <if test="publicDataSource.creator != null">
+            creator = #{publicDataSource.creator,jdbcType=BIGINT},
+        </if>
+                    <if test="publicDataSource.createTime != null">
+            create_time = #{publicDataSource.createTime,jdbcType=TIMESTAMP},
+        </if>
+                    <if test="publicDataSource.state != null">
+            state = #{publicDataSource.state,jdbcType=INTEGER},
+        </if>
+                    <if test="publicDataSource.type != null">
+            type = #{publicDataSource.type,jdbcType=INTEGER},
+        </if>
+                    <if test="publicDataSource.iscancel != null">
+            iscancel = #{publicDataSource.iscancel,jdbcType=INTEGER},
+        </if>
+                    <if test="publicDataSource.remark != null">
+            remark = #{publicDataSource.remark,jdbcType=VARCHAR},
+        </if>
+                </set>
+        where id = #{id}
+    </update>
+
+</mapper>
