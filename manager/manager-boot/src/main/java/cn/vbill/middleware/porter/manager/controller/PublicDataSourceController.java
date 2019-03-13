@@ -16,12 +16,12 @@
  */
 package cn.vbill.middleware.porter.manager.controller;
 
-import cn.vbill.middleware.porter.manager.core.entity.PublicDataSource;
-import cn.vbill.middleware.porter.manager.service.PublicDataSourceService;
-import cn.vbill.middleware.porter.manager.web.message.ResponseMessage;
-import cn.vbill.middleware.porter.manager.web.page.Page;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import static cn.vbill.middleware.porter.manager.web.message.ResponseMessage.ok;
+
+import java.io.UnsupportedEncodingException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,7 +33,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import static cn.vbill.middleware.porter.manager.web.message.ResponseMessage.ok;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+
+import cn.vbill.middleware.porter.common.cluster.ClusterProviderProxy;
+import cn.vbill.middleware.porter.common.cluster.command.DataSourcePushCommand;
+import cn.vbill.middleware.porter.common.config.DataLoaderConfig;
+import cn.vbill.middleware.porter.manager.core.entity.PublicDataSource;
+import cn.vbill.middleware.porter.manager.service.PublicDataSourceService;
+import cn.vbill.middleware.porter.manager.web.message.ResponseMessage;
+import cn.vbill.middleware.porter.manager.web.page.Page;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 /**
  * 公共数据源配置表 controller控制器
@@ -45,8 +56,10 @@ import static cn.vbill.middleware.porter.manager.web.message.ResponseMessage.ok;
  */
 @Api(description = "公共数据源配置表管理")
 @RestController
-@RequestMapping("/publicdatasource")
+@RequestMapping("/pdse")
 public class PublicDataSourceController {
+
+    private Logger log = LoggerFactory.getLogger(PublicDataSourceController.class);
 
     @Autowired
     protected PublicDataSourceService publicDataSourceService;
@@ -71,7 +84,8 @@ public class PublicDataSourceController {
      *
      * @author FuZizheng
      * @date ` 10:14
-     * @param: [id, publicDataSource]
+     * @param: [id,
+     *             publicDataSource]
      * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
      */
     @PutMapping("/{id}")
@@ -116,15 +130,59 @@ public class PublicDataSourceController {
      *
      * @author FuZizheng
      * @date 10:14
-     * @param: [pageNum, pageSize]
+     * @param: [pageNum,
+     *             pageSize]
      * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
      */
     @GetMapping
     @ApiOperation(value = "查询列表", notes = "查询列表")
     public ResponseMessage list(@RequestParam(value = "pageNum", required = true) Integer pageNum,
-                                @RequestParam(value = "pageSize", required = true) Integer pageSize) {
+            @RequestParam(value = "pageSize", required = true) Integer pageSize) {
         Page<PublicDataSource> page = publicDataSourceService.page(new Page<PublicDataSource>(pageNum, pageSize));
         return ok(page);
     }
 
+    /**
+     * 解析特殊配置
+     * 
+     * @param jobTasks
+     * @return
+     */
+    @PostMapping(value = "/dealxml")
+    @ApiOperation(value = "解析字符串", notes = "解析字符串")
+    public ResponseMessage dealxml(@RequestBody PublicDataSource publicDataSource) {
+        String xmlText = publicDataSource.getXmlText();
+        log.info("dealxml传入字符串:[{}]", xmlText);
+        try {
+            String xmlTextStr = java.net.URLDecoder.decode(xmlText, "UTF-8");
+            log.info("dealxml转移后字符串:[{}]", xmlTextStr);
+            DataLoaderConfig config = publicDataSourceService.dealxml(xmlTextStr);
+            log.info("dealxml解析后字符串:[{}]", JSON.toJSON(config));
+            return ok(config);
+        } catch (UnsupportedEncodingException e) {
+            log.error("dealxml输入数据解析失败!", e);
+            return ResponseMessage.error("dealxml输入数据解析失败!");
+        }
+    }
+
+    /**
+     * 推送数据源
+     * 
+     * @param id
+     * @return
+     */
+    @PostMapping(value = "/push/{id}")
+    @ApiOperation(value = "推送公共数据源", notes = "推送公共数据源")
+    public ResponseMessage zkpush(@PathVariable("id") Long id) {
+        PublicDataSource publicDataSource = publicDataSourceService.selectById(id);
+        DataLoaderConfig config = JSONObject.parseObject(publicDataSource.getJsonText(), DataLoaderConfig.class);
+        try {
+            ClusterProviderProxy.INSTANCE.broadcast(new DataSourcePushCommand(config));
+            log.info("推送公共数据源[{}]信息到zk成功,详细信息[{}]!", id, JSON.toJSONString(config));
+        } catch (Exception e) {
+            log.error("推送公共数据源[{}]信息到zk失败,请关注！", id, e);
+            return ResponseMessage.error("推送公共数据源信息失败，请关注！");
+        }
+        return ok(id);
+    }
 }
