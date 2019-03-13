@@ -106,7 +106,7 @@ public class PublicDataSourceController {
     @DeleteMapping("/{id}")
     @ApiOperation(value = "删除", notes = "删除")
     public ResponseMessage delete(@PathVariable("id") Long id) {
-        publicDataSourceService.delete(id);
+        publicDataSourceService.updateCancel(id);
         return ok();
     }
 
@@ -137,8 +137,11 @@ public class PublicDataSourceController {
     @GetMapping
     @ApiOperation(value = "查询列表", notes = "查询列表")
     public ResponseMessage list(@RequestParam(value = "pageNum", required = true) Integer pageNum,
-            @RequestParam(value = "pageSize", required = true) Integer pageSize) {
-        Page<PublicDataSource> page = publicDataSourceService.page(new Page<PublicDataSource>(pageNum, pageSize));
+            @RequestParam(value = "pageSize", required = true) Integer pageSize,
+            @RequestParam(value = "id", required = false) Long id,
+            @RequestParam(value = "code", required = false) String code,
+            @RequestParam(value = "name", required = false) String name) {
+        Page<PublicDataSource> page = publicDataSourceService.page(new Page<PublicDataSource>(pageNum, pageSize), id, code, name);
         return ok(page);
     }
 

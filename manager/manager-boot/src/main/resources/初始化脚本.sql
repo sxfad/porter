@@ -180,7 +180,7 @@ CREATE TABLE `b_public_data_source` (
   `xml_text` text COMMENT '数据源xml文本',
   `json_text` text COMMENT '数据源json文本',
   `declares` varchar(200) DEFAULT NULL COMMENT '数据源说明',
-  `creator` bigint(20) DEFAULT NULL COMMENT '创建人',
+  `creator` bigint(20) DEFAULT '-1' COMMENT '创建人',
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `state` int(5) NOT NULL DEFAULT '1' COMMENT '状态',
   `type` int(5) NOT NULL DEFAULT '1' COMMENT '类型',
