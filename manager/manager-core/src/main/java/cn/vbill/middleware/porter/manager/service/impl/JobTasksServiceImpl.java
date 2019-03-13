@@ -26,6 +26,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
 
+import cn.vbill.middleware.porter.manager.core.dto.RoleDataControl;
+import cn.vbill.middleware.porter.manager.web.rcc.RoleCheckContext;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -262,10 +264,12 @@ public class JobTasksServiceImpl implements JobTasksService {
         if (null != jobState) {
             jobStateBck = jobState.getCode();
         }
-        Integer total = jobTasksMapper.pageAll(1, jobType, jobName, jobId, beginTime, endTime, jobStateBck, id);
+        //数据权限
+        RoleDataControl roleDataControl = RoleCheckContext.getUserIdHolder();
+        Integer total = jobTasksMapper.pageAll(1, jobType, jobName, jobId, beginTime, endTime, jobStateBck, id, roleDataControl);
         if (total > 0) {
             page.setTotalItems(total);
-            page.setResult(jobTasksMapper.page(page, 1, jobType, jobName, jobId, beginTime, endTime, jobStateBck, id));
+            page.setResult(jobTasksMapper.page(page, 1, jobType, jobName, jobId, beginTime, endTime, jobStateBck, id, roleDataControl));
         }
         return page;
     }
