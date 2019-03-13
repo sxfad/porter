@@ -1,23 +1,35 @@
-/**  
- * All rights Reserved, Designed By Suixingpay.
- * @author: FairyHood 
- * @date: 2019-03-13 09:58:24  
- * @Copyright ©2017 Suixingpay. All rights reserved. 
- * 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
+/*
+ * Copyright ©2018 vbill.cn.
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * </p>
  */
 package cn.vbill.middleware.porter.manager.core.mapper;
 
-import com.suixingpay.takin.mybatis.mapper.GenericMapper;
 import cn.vbill.middleware.porter.manager.core.entity.PublicDataSource;
+import cn.vbill.middleware.porter.manager.web.page.Page;
+import org.apache.ibatis.annotations.Param;
 
- /**  
+import java.util.List;
+
+/**
  * 公共数据源配置表 Mapper接口
  * @author: FairyHood
  * @date: 2019-03-13 09:58:24
  * @version: V1.0-auto
  * @review: FairyHood/2019-03-13 09:58:24
  */
-public interface PublicDataSourceMapper extends GenericMapper<PublicDataSource,Long> {
+public interface PublicDataSourceMapper  {
 
     /**
      * 新增(插入非空字段)
@@ -26,12 +38,6 @@ public interface PublicDataSourceMapper extends GenericMapper<PublicDataSource,L
      */
     Integer insert(PublicDataSource publicDataSource);
 
-    /**
-     * 新增(插入全部字段)
-     * @param publicDataSource
-     * @return Integer
-     */
-    Integer insertAllColumn(PublicDataSource publicDataSource);
 
     /**
      * 修改(修改非空字段)
@@ -40,12 +46,6 @@ public interface PublicDataSourceMapper extends GenericMapper<PublicDataSource,L
      */
     Integer update(@Param("id") Long id, @Param("publicDataSource") PublicDataSource publicDataSource);
 
-    /**
-     * 修改(修改全部字段)
-     * @param loginUser
-     * @return Integer
-     */
-    Integer updateAllColumn(@Param("id") Long id, @Param("publicDataSource") PublicDataSource publicDataSource);
 
     /**
      * 根据主键查找实体
@@ -54,26 +54,21 @@ public interface PublicDataSourceMapper extends GenericMapper<PublicDataSource,L
      */
     PublicDataSource selectById(Long id);
 
-    /**
-     * list数据
-     * @return List
-     */
-    List<PublicDataSource> selectList();
 
     /**
      * 分頁total
-     * @param other
+     * @param state
      * @return Integer
      */
-    Integer pageAll(@Param("other") String other);
+    Integer pageAll(@Param("state") Integer state);
 
     /**
      * 分頁
      * @param page
-     * @param other
+     * @param state
      * @return List
      */
-    List<PublicDataSource> page(@Param("page") Page<PublicDataSource> page, @Param("other") String other);
+    List<PublicDataSource> page(@Param("page") Page<PublicDataSource> page, @Param("state") Integer state);
 
     /**
      * 刪除
