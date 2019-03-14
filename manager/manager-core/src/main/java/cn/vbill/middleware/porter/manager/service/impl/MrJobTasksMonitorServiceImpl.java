@@ -21,9 +21,13 @@ import cn.vbill.middleware.porter.manager.core.entity.MrJobTasksMonitor;
 import cn.vbill.middleware.porter.manager.core.icon.MrJobMonitor;
 import cn.vbill.middleware.porter.manager.core.mapper.MrJobTasksMonitorMapper;
 import cn.vbill.middleware.porter.common.statistics.TaskPerformance;
+import cn.vbill.middleware.porter.manager.core.util.DateFormatUtils;
 import cn.vbill.middleware.porter.manager.web.page.Page;
 import cn.vbill.middleware.porter.manager.service.MrJobTasksMonitorService;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +49,7 @@ public class MrJobTasksMonitorServiceImpl implements MrJobTasksMonitorService {
 
     @Override
     public Integer insert(MrJobTasksMonitor mrJobTasksMonitor) {
-        return mrJobTasksMonitorMapper.insert(mrJobTasksMonitor);
+        return mrJobTasksMonitorMapper.insert(mrJobTasksMonitor, null);
     }
 
     @Override
@@ -76,7 +80,12 @@ public class MrJobTasksMonitorServiceImpl implements MrJobTasksMonitorService {
     @Override
     public void dealTaskPerformance(TaskPerformance performance) {
         MrJobTasksMonitor mrJobTasksMonitor = new MrJobTasksMonitor(performance);
-        mrJobTasksMonitorMapper.insert(mrJobTasksMonitor);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
+        String date = simpleDateFormat.format(new Date());
+        // 拼出表名
+        StringBuffer monitorTable = new StringBuffer("mr_job_tasks_monitor_");
+        monitorTable.append(date);
+        mrJobTasksMonitorMapper.insert(mrJobTasksMonitor, monitorTable.toString());
     }
 
     @Override
@@ -84,6 +93,41 @@ public class MrJobTasksMonitorServiceImpl implements MrJobTasksMonitorService {
         Long startRow = intervalTime * intervalCount;
         List<MrJobTasksMonitor> list =  mrJobTasksMonitorMapper.selectByJobSwimlane(jobId, swimlaneId, schemaTable, startRow, intervalTime);
         return new MrJobMonitor(list);
+    }
+
+    @Override
+    public MrJobMonitor obMrJobMonitorDetail(String jobId, String swimlaneId, String schemaTable, String date, Long intervalTime, Long intervalCount) {
+        Long startRow = intervalTime * intervalCount;
+        Date nowDate = new Date();
+        String newDate = DateFormatUtils.formatDate("yyyy-MM-dd", nowDate);
+
+        // 如果是当前日期则显示最近的时间，否则显示一天的数据
+        if (!newDate.equals(date)) {
+            intervalTime = 1440L;
+        }
+        // 拼出表名
+        String monitorTable = convert(date);
+        List<MrJobTasksMonitor> list = mrJobTasksMonitorMapper.selectByJobSwimlaneDetail(jobId, swimlaneId, schemaTable, date, startRow, intervalTime, monitorTable);
+        return new MrJobMonitor(list);
+    }
+
+    /**
+     * 把yyyy-MM-dd格式的日期转化为yyyyMMdd格式
+     *
+     * @param date
+     * @return
+     */
+    private String convert(String date) {
+        String tableDate = null;
+        try {
+            Date nowDate = DateFormatUtils.pareDate("yyyy-MM-dd", date);
+            tableDate = DateFormatUtils.formatDate("yyyyMMdd", nowDate);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+        StringBuffer monitorTable = new StringBuffer("mr_job_tasks_monitor_");
+        monitorTable.append(tableDate);
+        return monitorTable.toString();
     }
 
 }

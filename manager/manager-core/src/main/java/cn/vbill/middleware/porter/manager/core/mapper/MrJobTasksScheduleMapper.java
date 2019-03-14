@@ -114,4 +114,15 @@ public interface MrJobTasksScheduleMapper {
      */
     List<MrJobTasksSchedule> list(@Param("jobId") String jobId, @Param("heartBeatBeginDate") String heartBeatBeginDate,
             @Param("heartBeatEndDate") String heartBeatEndDate);
+
+    /**
+     * 条件查询获取列表
+     *
+     * @param jobId
+     * @param heartBeatBeginDate
+     * @param heartBeatEndDate
+     * @return
+     */
+    List<MrJobTasksSchedule> listJobTasks(@Param("jobId") String jobId, @Param("heartBeatBeginDate") String heartBeatBeginDate,
+                                          @Param("heartBeatEndDate") String heartBeatEndDate, @Param("schemaTable") String schema_table);
 }

@@ -22,7 +22,7 @@
 
     <!-- 新增 -->
     <insert id="insert">
-        insert into mr_nodes_monitor(
+        insert into ${monitorTable}(
         node_id,
         monitor_date,
         monitor_ymd,
@@ -33,21 +33,21 @@
         monitor_alarm,
         partition_day
         ) values (
-        #{nodeId},
-        #{monitorDate},
-        #{monitorYmd},
-        #{monitorHour},
-        #{monitorMinute},
-        #{monitorSecond},
-        #{monitorTps},
-        #{monitorAlarm},
-        #{partitionDay}
+        #{mrNodesMonitor.nodeId},
+        #{mrNodesMonitor.monitorDate},
+        #{mrNodesMonitor.monitorYmd},
+        #{mrNodesMonitor.monitorHour},
+        #{mrNodesMonitor.monitorMinute},
+        #{mrNodesMonitor.monitorSecond},
+        #{mrNodesMonitor.monitorTps},
+        #{mrNodesMonitor.monitorAlarm},
+        #{mrNodesMonitor.partitionDay}
         )
     </insert>
 
     <!-- 修改 -->
     <update id="update">
-        update mr_nodes_monitor
+        update ${monitorTable}
         set
         monitor_tps = #{mrNodesMonitor.monitorTps},
         monitor_alarm = #{mrNodesMonitor.monitorAlarm}
@@ -87,6 +87,27 @@
     <select id="selectByNodeId" resultType="cn.vbill.middleware.porter.manager.core.entity.MrNodesMonitor">
         select id, node_id AS nodeId, monitor_date AS monitorDate, monitor_ymd AS monitorYmd, monitor_hour AS monitorHour, monitor_minute AS monitorMinute, monitor_second AS monitorSecond, monitor_tps AS monitorTps, monitor_alarm AS monitorAlarm, partition_day AS partitionDay from mr_nodes_monitor
         WHERE node_id = #{nodeId} ORDER BY monitor_date DESC
+        limit #{startRow},#{intervalTime}
+    </select>
+
+    <!-- 节点监控统计 增加查询过去某天的节点数据 -->
+    <select id="selectByNodeIdDetail" resultType="cn.vbill.middleware.porter.manager.core.entity.MrNodesMonitor">
+        SELECT
+        id,
+        node_id AS nodeId,
+        monitor_date AS monitorDate,
+        monitor_ymd AS monitorYmd,
+        monitor_hour AS monitorHour,
+        monitor_minute AS monitorMinute,
+        monitor_second AS monitorSecond,
+        monitor_tps AS monitorTps,
+        monitor_alarm AS monitorAlarm,
+        partition_day AS partitionDay
+        FROM
+        ${monitorTable}
+        WHERE
+          node_id = #{nodeId}
+        ORDER BY monitor_date DESC
         limit #{startRow},#{intervalTime}
     </select>
 

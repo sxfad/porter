@@ -91,4 +91,15 @@ public interface MrNodesMonitorService {
      */
     MrNodeMonitor obNodeMonitor(String nodeId, Long intervalTime, Long intervalCount);
 
+    /**
+     * 查询节点数据，新增查询过去某天的节点数据
+     *
+     * @param nodeId
+     * @param date
+     * @param intervalTime
+     * @param intervalCount
+     * @return
+     */
+    MrNodeMonitor obNodeMonitorDetail(String nodeId, String date, Long intervalTime, Long intervalCount);
+
 }

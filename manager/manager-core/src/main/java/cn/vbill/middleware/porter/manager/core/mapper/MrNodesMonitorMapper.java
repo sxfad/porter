@@ -37,15 +37,17 @@ public interface MrNodesMonitorMapper {
      * 新增
      *
      * @param mrNodesMonitor
+     * @param monitorTable
      */
-    Integer insert(MrNodesMonitor mrNodesMonitor);
+    Integer insert(@Param("mrNodesMonitor") MrNodesMonitor mrNodesMonitor, @Param("monitorTable") String monitorTable);
 
     /**
      * 修改
      *
      * @param mrNodesMonitor
+     * @param monitorTable
      */
-    Integer update(@Param("id") Long id, @Param("mrNodesMonitor") MrNodesMonitor mrNodesMonitor);
+    Integer update(@Param("id") Long id, @Param("mrNodesMonitor") MrNodesMonitor mrNodesMonitor, @Param("monitorTable") String monitorTable);
 
     /**
      * 刪除
@@ -96,5 +98,21 @@ public interface MrNodesMonitorMapper {
     List<MrNodesMonitor> selectByNodeId(@Param("nodeId") String nodeId,
                                         @Param("startRow") Long startRow,
                                         @Param("intervalTime") Long intervalTime);
+
+    /**
+     * 分頁All
+     *
+     * @param nodeId
+     * @param startRow
+     * @param intervalTime
+     * @param monitorDate
+     * @param monitorTable
+     * @return
+     */
+    List<MrNodesMonitor> selectByNodeIdDetail(@Param("nodeId") String nodeId,
+                                              @Param("startRow") Long startRow,
+                                              @Param("intervalTime") Long intervalTime,
+                                              @Param("monitorDate") String monitorDate,
+                                              @Param("monitorTable") String monitorTable);
 
 }

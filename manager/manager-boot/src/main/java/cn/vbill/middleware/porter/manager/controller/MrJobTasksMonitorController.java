@@ -64,4 +64,27 @@ public class MrJobTasksMonitorController {
                 intervalTime, intervalCount);
         return ResponseMessage.ok(mrJobMonitor);
     }
+
+    /**
+     * 任务泳道实时数据
+     *
+     * @param jobId
+     * @param swimlaneId
+     * @param schemaTable
+     * @param date
+     * @param intervalTime
+     * @param intervalCount
+     * @return
+     */
+    @ApiOperation(value = "任务泳道实时数据(按分)", notes = "任务泳道实时数据(按分)")
+    @GetMapping("/jobMonitorDetail")
+    public ResponseMessage jobMonitorDetail(@RequestParam(value = "jobId", required = true) String jobId,
+                                            @RequestParam(value = "swimlaneId", required = true) String swimlaneId,
+                                            @RequestParam(value = "schemaTable", required = true) String schemaTable,
+                                            @RequestParam(value = "monitorDate", required = true) String date,
+                                            @RequestParam(value = "intervalTime", required = true) Long intervalTime,
+                                            @RequestParam(value = "intervalCount", required = true) Long intervalCount) {
+        MrJobMonitor mrJobMonitor = mrJobTasksMonitorService.obMrJobMonitorDetail(jobId, swimlaneId, schemaTable, date, intervalTime, intervalCount);
+        return ResponseMessage.ok(mrJobMonitor);
+    }
 }
