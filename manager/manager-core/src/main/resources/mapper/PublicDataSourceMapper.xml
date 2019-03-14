@@ -25,29 +25,21 @@
     <!-- 新增 -->
     <insert id="insert">
         insert into b_public_data_source(
+                id,
                 code,
                 name,
                 xml_text,
                 json_text,
                 declares,
-                creator,
-                create_time,
-                state,
-                type,
-                iscancel,
-                remark
+                creator
         ) values (
+                #{id},
                 #{code},
                 #{name},
                 #{xmlText},
                 #{jsonText},
                 #{declares},
-                #{creator},
-                #{createTime},
-                #{state},
-                #{type},
-                #{iscancel},
-                #{remark}
+                #{creator}
         )
     </insert>
 
@@ -55,17 +47,19 @@
     <update id="update">
         update b_public_data_source
         set
-                code = #{publicDataSource.code},
                 name = #{publicDataSource.name},
                 xml_text = #{publicDataSource.xmlText},
                 json_text = #{publicDataSource.jsonText},
                 declares = #{publicDataSource.declares},
-                creator = #{publicDataSource.creator},
-                create_time = #{publicDataSource.createTime},
-                state = #{publicDataSource.state},
-                type = #{publicDataSource.type},
-                iscancel = #{publicDataSource.iscancel},
-                remark = #{publicDataSource.remark}
+                creator = #{publicDataSource.creator}
+                where id = #{id}
+    </update>
+
+    <!-- 修改 -->
+    <update id="updateCancel">
+        update b_public_data_source
+        set
+                iscancel = 1
                 where id = #{id}
     </update>
 
@@ -83,13 +77,32 @@
     <!-- 分页All -->
     <select id="pageAll" resultType="java.lang.Integer">
         select count(id) from b_public_data_source
-        where 1=1
+        where iscancel = 0
+        <if test="id != null and id != ''">
+            and id = #{id}
+        </if>
+        <if test="code != null and code != ''">
+            and code like CONCAT('%', #{code}, '%')
+        </if>
+        <if test="name != null and name != ''">
+            and name like CONCAT('%', #{name}, '%')
+        </if>
     </select>
 
     <!-- 分页 -->
     <select id="page" resultType="cn.vbill.middleware.porter.manager.core.entity.PublicDataSource">
         select id, code, name, xml_text AS xmlText, json_text AS jsonText, declares, creator, create_time AS createTime, state, type, iscancel, remark from b_public_data_source
-        where 1=1 limit #{page.offset},#{page.pageSize}
+        where iscancel = 0
+        <if test="id != null and id != ''">
+            and id = #{id}
+        </if>
+        <if test="code != null and code != ''">
+            and code like CONCAT('%', #{code}, '%')
+        </if>
+        <if test="name != null and name != ''">
+            and name like CONCAT('%', #{name}, '%')
+        </if>
+        limit #{page.offset},#{page.pageSize}
     </select>
 
     <!-- 验证新增 -->

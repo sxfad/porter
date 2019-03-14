@@ -24,54 +24,83 @@ import java.util.List;
 
 /**
  * 公共数据源配置表 Mapper接口
+ * 
  * @author: FairyHood
  * @date: 2019-03-13 09:58:24
  * @version: V1.0-auto
  * @review: FairyHood/2019-03-13 09:58:24
  */
-public interface PublicDataSourceMapper  {
+public interface PublicDataSourceMapper {
 
     /**
-     * 新增(插入非空字段)
+     * 新增
+     * 
      * @param publicDataSource
      * @return Integer
      */
     Integer insert(PublicDataSource publicDataSource);
 
+    /**
+     * 新增(非空字段)
+     * 
+     * @param publicDataSource
+     * @return Integer
+     */
+    Integer insertSelective(PublicDataSource publicDataSource);
 
     /**
-     * 修改(修改非空字段)
+     * 修改
+     * 
      * @param publicDataSource
      * @return Integer
      */
     Integer update(@Param("id") Long id, @Param("publicDataSource") PublicDataSource publicDataSource);
 
+    /**
+     * 修改(修改非空字段)
+     * 
+     * @param publicDataSource
+     * @return Integer
+     */
+    Integer updateSelective(@Param("id") Long id, @Param("publicDataSource") PublicDataSource publicDataSource);
 
     /**
      * 根据主键查找实体
+     * 
      * @param id
      * @return LoginUser
      */
     PublicDataSource selectById(Long id);
 
-
     /**
      * 分頁total
+     * 
      * @param state
      * @return Integer
      */
-    Integer pageAll(@Param("state") Integer state);
+    Integer pageAll(@Param("id") Long id, @Param("code") String code, @Param("name") String name);
 
     /**
      * 分頁
+     * 
      * @param page
      * @param state
      * @return List
      */
-    List<PublicDataSource> page(@Param("page") Page<PublicDataSource> page, @Param("state") Integer state);
+    List<PublicDataSource> page(@Param("page") Page<PublicDataSource> page, @Param("id") Long id,
+            @Param("code") String code, @Param("name") String name);
+
+    /**
+     * 作废
+     * 
+     * @param id
+     * @return
+     */
+    Integer updateCancel(@Param("id") Long id);
 
     /**
      * 刪除
+     * 
      * @param id
      * @return Integer
      */

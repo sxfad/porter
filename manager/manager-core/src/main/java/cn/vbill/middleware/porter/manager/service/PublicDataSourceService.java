@@ -16,8 +16,9 @@
  */
 package cn.vbill.middleware.porter.manager.service;
 
-import cn.vbill.middleware.porter.manager.web.page.Page;
+import cn.vbill.middleware.porter.common.config.DataLoaderConfig;
 import cn.vbill.middleware.porter.manager.core.entity.PublicDataSource;
+import cn.vbill.middleware.porter.manager.web.page.Page;
 
 /**
  * 公共数据源配置表 服务接口类
@@ -29,14 +30,60 @@ import cn.vbill.middleware.porter.manager.core.entity.PublicDataSource;
  */
 public interface PublicDataSourceService {
 
+    /**
+     * 新增
+     * 
+     * @param publicDataSource
+     * @return
+     */
     Integer insert(PublicDataSource publicDataSource);
 
+    /**
+     * 修改
+     * 
+     * @param id
+     * @param publicDataSource
+     * @return
+     */
     Integer update(Long id, PublicDataSource publicDataSource);
 
+    /**
+     * 作废
+     * 
+     * @param id
+     * @return
+     */
+    Integer updateCancel(Long id);
+
+    /**
+     * 删除
+     * 
+     * @param id
+     * @return
+     */
     Integer delete(Long id);
 
+    /**
+     * 查找
+     * 
+     * @param id
+     * @return
+     */
     PublicDataSource selectById(Long id);
 
-    Page<PublicDataSource> page(Page<PublicDataSource> page);
+    /**
+     * 分页
+     * 
+     * @param page
+     * @return
+     */
+    Page<PublicDataSource> page(Page<PublicDataSource> page, Long id, String code, String name);
 
+    /**
+     * 解析配置任务
+     * 
+     * @param jobXmlText
+     * @return
+     */
+    DataLoaderConfig dealxml(String xmlTextStr);
 }
