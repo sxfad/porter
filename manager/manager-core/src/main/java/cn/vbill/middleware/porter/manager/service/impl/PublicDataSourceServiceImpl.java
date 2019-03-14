@@ -54,11 +54,13 @@ public class PublicDataSourceServiceImpl implements PublicDataSourceService {
 
     @Override
     public Integer insert(PublicDataSource publicDataSource) {
+        publicDataSource.setCreator(-1l);//等权限类代码
         return publicDataSourceMapper.insert(publicDataSource);
     }
 
     @Override
     public Integer update(Long id, PublicDataSource publicDataSource) {
+        publicDataSource.setCreator(-1l);//等权限类代码
         return publicDataSourceMapper.update(id, publicDataSource);
     }
 

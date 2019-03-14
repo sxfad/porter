@@ -87,10 +87,14 @@ public class PublicDataSource implements Serializable {
     private Integer iscancel;
 
     /**
+     * 推送状态
+     */
+    private Integer ispush;
+
+    /**
      * 备注.
      */
     private String remark;
-
 
     /**
      * 主键.get方法
@@ -244,6 +248,14 @@ public class PublicDataSource implements Serializable {
      */
     public void setIscancel(Integer iscancel) {
         this.iscancel = iscancel;
+    }
+
+    public Integer getIspush() {
+        return ispush;
+    }
+
+    public void setIspush(Integer ispush) {
+        this.ispush = ispush;
     }
 
     /**

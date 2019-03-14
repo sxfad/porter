@@ -14,12 +14,13 @@
         <result column="state" property="state" />
         <result column="type" property="type" />
         <result column="iscancel" property="iscancel" />
+        <result column="ispush" property="ispush" />
         <result column="remark" property="remark" />
     </resultMap>-->
 
     <!-- 通用查询结果列 
     <sql id="Base_Column_List">
-        select id, code, name, xml_text AS xmlText, json_text AS jsonText, declares, creator, create_time AS createTime, state, type, iscancel, remark from b_public_data_source
+        select id, code, name, xml_text AS xmlText, json_text AS jsonText, declares, creator, create_time AS createTime, state, type, iscancel, ispush, remark from b_public_data_source
     </sql>-->
 
     <!-- 新增 -->
@@ -31,7 +32,8 @@
                 xml_text,
                 json_text,
                 declares,
-                creator
+                creator,
+                ispush
         ) values (
                 #{id},
                 #{code},
@@ -39,7 +41,8 @@
                 #{xmlText},
                 #{jsonText},
                 #{declares},
-                #{creator}
+                #{creator},
+                0
         )
     </insert>
 
@@ -51,7 +54,8 @@
                 xml_text = #{publicDataSource.xmlText},
                 json_text = #{publicDataSource.jsonText},
                 declares = #{publicDataSource.declares},
-                creator = #{publicDataSource.creator}
+                creator = #{publicDataSource.creator},
+                ispush = 0
                 where id = #{id}
     </update>
 
@@ -70,7 +74,7 @@
 
     <!-- 根据主鍵查找 -->
     <select id="selectById" resultType="cn.vbill.middleware.porter.manager.core.entity.PublicDataSource">
-        select id, code, name, xml_text AS xmlText, json_text AS jsonText, declares, creator, create_time AS createTime, state, type, iscancel, remark from b_public_data_source
+        select id, code, name, xml_text AS xmlText, json_text AS jsonText, declares, creator, create_time AS createTime, state, type, iscancel, ispush, remark from b_public_data_source
         where id = #{id}
     </select>
 
@@ -91,7 +95,7 @@
 
     <!-- 分页 -->
     <select id="page" resultType="cn.vbill.middleware.porter.manager.core.entity.PublicDataSource">
-        select id, code, name, xml_text AS xmlText, json_text AS jsonText, declares, creator, create_time AS createTime, state, type, iscancel, remark from b_public_data_source
+        select id, code, name, xml_text AS xmlText, json_text AS jsonText, declares, creator, create_time AS createTime, state, type, iscancel, ispush, remark from b_public_data_source
         where iscancel = 0
         <if test="id != null and id != ''">
             and id = #{id}
@@ -102,7 +106,7 @@
         <if test="name != null and name != ''">
             and name like CONCAT('%', #{name}, '%')
         </if>
-        limit #{page.offset},#{page.pageSize}
+        limit #{page.offset},#{page.pageSize} order by id 
     </select>
 
     <!-- 验证新增 -->
@@ -142,6 +146,9 @@
             <if test="iscancel != null">
                 iscancel,
             </if>
+            <if test="ispush != null">
+                ispush,
+            </if>
             <if test="remark != null">
                 remark,
             </if>
@@ -179,6 +186,9 @@
             </if>
             <if test="iscancel != null">
                 #{iscancel,jdbcType=INTEGER},
+            </if>
+            <if test="ispush != null">
+                #{ispush,jdbcType=INTEGER},
             </if>
             <if test="remark != null">
                 #{remark,jdbcType=VARCHAR},
@@ -222,6 +232,9 @@
             </if>
             <if test="publicDataSource.iscancel != null">
                 iscancel = #{publicDataSource.iscancel,jdbcType=INTEGER},
+            </if>
+            <if test="publicDataSource.ispush != null">
+                ispush = #{publicDataSource.ispush,jdbcType=INTEGER},
             </if>
             <if test="publicDataSource.remark != null">
                 remark = #{publicDataSource.remark,jdbcType=VARCHAR},

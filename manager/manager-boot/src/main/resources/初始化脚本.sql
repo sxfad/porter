@@ -180,16 +180,16 @@ CREATE TABLE `b_public_data_source` (
   `xml_text` text COMMENT '数据源xml文本',
   `json_text` text COMMENT '数据源json文本',
   `declares` varchar(200) DEFAULT NULL COMMENT '数据源说明',
-  `creator` bigint(20) DEFAULT '-1' COMMENT '创建人',
+  `creator` bigint(20) DEFAULT NULL COMMENT '创建人',
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `state` int(5) NOT NULL DEFAULT '1' COMMENT '状态',
   `type` int(5) NOT NULL DEFAULT '1' COMMENT '类型',
   `iscancel` int(2) DEFAULT '0' COMMENT '是否作废',
+  `ispush` int(5) DEFAULT '0' COMMENT '推送状态(0:新增 -1：回收  1：已推送)',
   `remark` varchar(500) DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`),
   UNIQUE KEY `UNIQUE_CODE` (`code`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COMMENT='公共数据源配置表'
-
+) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8 COMMENT='公共数据源配置表'
 
 -- 同步任务表
 DROP TABLE IF EXISTS `job_tasks`;
