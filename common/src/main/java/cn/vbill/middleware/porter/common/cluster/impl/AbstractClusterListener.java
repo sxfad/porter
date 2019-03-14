@@ -17,6 +17,7 @@
 
 package cn.vbill.middleware.porter.common.cluster.impl;
 
+import cn.vbill.middleware.porter.common.client.ClusterClient;
 import cn.vbill.middleware.porter.common.cluster.ClusterListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,13 +29,13 @@ import org.slf4j.LoggerFactory;
  * @review: zkevin/2019年01月11日 14:51
  */
 public abstract class AbstractClusterListener implements ClusterListener {
-    protected final Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+    protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     public static final String PREFIX_ATALOG = "/suixingpay";
     public static final String BASE_CATALOG = PREFIX_ATALOG + "/datas";
 
-    public abstract String listenPath();
+    protected ClusterClient client;
     @Override
-    public String getName() {
-        return listenPath();
+    public void setClient(ClusterClient client) {
+        this.client = client;
     }
 }

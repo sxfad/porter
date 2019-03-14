@@ -23,8 +23,7 @@ import cn.vbill.middleware.porter.common.client.StatisticClient;
 import cn.vbill.middleware.porter.common.client.SupportDistributedLock;
 import cn.vbill.middleware.porter.common.config.source.ZookeeperConfig;
 import lombok.Setter;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.Watcher;
@@ -44,7 +43,7 @@ import java.util.List;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月02日 15:37
  */
-public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements ClusterClient<Stat>, StatisticClient, SupportDistributedLock {
+public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements ClusterClient, SupportDistributedLock {
     private volatile ZooKeeper zk;
     @Setter private volatile Watcher watcher;
     private volatile StatisticClient statisticClient;
@@ -103,94 +102,44 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
     }
 
     @Override
-    public Pair<String, Stat> getData(String path)  {
-        Stat stat = new Stat();
-        byte[] dataBytes = new byte[0];
+    public TreeNode getData(String path)  {
+        Stat stat = null;
+        String content = null;
         try {
+            stat = new Stat();
+            byte[] dataBytes = new byte[0];
             dataBytes = zk.getData(path, true, stat);
+            content = new String(dataBytes);
         } catch (KeeperException.NoNodeException e) {
             LOGGER.warn("获取{}值失败", path);
+            stat = null;
         } catch (KeeperException e) {
             LOGGER.warn("获取{}值失败", path, e);
+            stat = null;
         } catch (InterruptedException e) {
             e.printStackTrace();
+            stat = null;
         }
-        return new ImmutablePair(new String(dataBytes), stat);
+        return null != stat ? new TreeNode(path, content, LockVersion.newVersion(stat.getVersion())) : null;
     }
 
     @Override
-    public String  create(String path, boolean isTemp, String data) throws KeeperException, InterruptedException {
-        return zk.create(path, null != data ? data.getBytes() : "".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, isTemp
+    public TreeNode  create(String path, boolean isTemp, String data) throws KeeperException, InterruptedException {
+        String newPath = zk.create(path, null != data ? data.getBytes() : "".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, isTemp
                 ? CreateMode.EPHEMERAL : CreateMode.PERSISTENT);
+        return StringUtils.isNotBlank(newPath) ? new TreeNode(newPath, data, LockVersion.newVersion(-1)) : null;
     }
 
     @Override
-    public Stat setData(String path, String data, int version) throws KeeperException, InterruptedException {
-        return zk.setData(path, null != data ? data.getBytes() : "".getBytes(), version);
+    public LockVersion setData(String path, String data, LockVersion version) throws KeeperException, InterruptedException {
+        Stat stat = zk.setData(path, null != data ? data.getBytes() : "".getBytes(), version.getVersion());
+        return null != stat ? LockVersion.newVersion(stat.getVersion()) : null;
     }
 
     @Override
-    public Stat exists(String path, boolean watch) throws KeeperException, InterruptedException {
-        return zk.exists(path, watch);
-    }
-
-    /**
-     * isExists
-     *
-     * @param path
-     * @param watch
-     * @return
-     */
-    public boolean isExists(String path, boolean watch) {
-        try {
-            Stat stat = zk.exists(path, watch);
-            return null != stat;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    /**
-     * changeData
-     *
-     * @param path
-     * @param isTemp
-     * @param watch
-     * @param data
-     */
-    public void  changeData(String path, boolean isTemp, boolean watch,  String data) {
-        try {
-            Stat stat = exists(path, watch);
-            if (null == stat) {
-                create(path, isTemp, data);
-            } else {
-                setData(path, data, stat.getVersion());
-            }
-        } catch (Throwable e) {
-            LOGGER.warn("改变zookeeper节点出错", e);
-        }
-    }
-
-    /**
-     * createWhenNotExists
-     *
-     * @param path
-     * @param isTemp
-     * @param watch
-     * @param data
-     * @return
-     */
-    public Stat  createWhenNotExists(String path, boolean isTemp, boolean watch,  String data) {
-        Stat stat = null;
-        try {
-            stat = exists(path, watch);
-            if (null == stat) {
-                create(path, isTemp, data);
-            }
-        } catch (Throwable e) {
-            LOGGER.warn("创建zookeeper节点", e);
-        }
-        return stat;
+    public LockVersion exists(String path, boolean watch) throws KeeperException, InterruptedException {
+        Stat stat = zk.exists(path, watch);
+        return null != stat ? LockVersion.newVersion(stat.getVersion()) : null;
     }
 
     @Override
@@ -227,6 +176,7 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
     /**
      * zookeeper 链接自旋
      */
+    @Override
     public void clientSpinning() {
         ZookeeperConfig config = getConfig();
         if (!alive() && !canRestore()) {

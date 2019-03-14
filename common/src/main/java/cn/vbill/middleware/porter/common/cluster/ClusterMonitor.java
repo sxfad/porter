@@ -17,9 +17,12 @@
 
 package cn.vbill.middleware.porter.common.cluster;
 
-import cn.vbill.middleware.porter.common.client.Client;
-import cn.vbill.middleware.porter.common.cluster.event.ClusterEvent;
+import cn.vbill.middleware.porter.common.client.ClusterClient;
+import cn.vbill.middleware.porter.common.cluster.event.ClusterListenerEventExecutor;
+import cn.vbill.middleware.porter.common.cluster.event.command.ClusterCommand;
+import cn.vbill.middleware.porter.common.cluster.event.ClusterTreeNodeEvent;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -34,19 +37,19 @@ public interface ClusterMonitor {
      * 添加监听器
      * @param listener
      */
-    void addListener(ClusterListener listener);
+    void registerListener(List<ClusterListener> listener);
 
     /**
      * 设置集群提供客户端
      * @param client
      */
-    void setClient(Client client);
+    void setClient(ClusterClient client);
 
     /**
      *
      * @param e
      */
-    void onEvent(ClusterEvent e);
+    void onEvent(ClusterTreeNodeEvent e);
 
     /**
      * 获取监听器
@@ -57,11 +60,14 @@ public interface ClusterMonitor {
     /**
      * 启动监听
      */
-    void start();
+    void start() throws InterruptedException;
 
     /**
      * 停止监听
      * @throws Exception
      */
     void stop();
+
+    void noticeClusterListenerEvent(ClusterCommand command);
+    void registerClusterEvent(ClusterListenerEventExecutor eventExecutor);
 }

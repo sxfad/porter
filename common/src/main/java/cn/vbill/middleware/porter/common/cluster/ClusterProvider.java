@@ -17,13 +17,16 @@
 
 package cn.vbill.middleware.porter.common.cluster;
 
+import cn.vbill.middleware.porter.common.client.ClusterClient;
 import cn.vbill.middleware.porter.common.client.DistributedLock;
+import cn.vbill.middleware.porter.common.cluster.event.ClusterListenerEventExecutor;
 import cn.vbill.middleware.porter.common.config.ClusterConfig;
 import cn.vbill.middleware.porter.common.task.TaskEventListener;
-import cn.vbill.middleware.porter.common.cluster.command.ClusterCommand;
+import cn.vbill.middleware.porter.common.cluster.event.command.ClusterCommand;
 import cn.vbill.middleware.porter.common.dic.ClusterPlugin;
 
 import java.io.IOException;
+import java.util.function.BiConsumer;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -68,7 +71,7 @@ public interface ClusterProvider {
      * @param command
      * @throws Exception
      */
-    void broadcastCommand(ClusterCommand command) throws Exception;
+    void broadcastEvent(ClusterCommand command) throws Exception;
 
     /**
      * 集群插件是否有效
@@ -80,4 +83,7 @@ public interface ClusterProvider {
      * @return
      */
     DistributedLock getLock();
+
+    void registerClusterEvent(ClusterListenerEventExecutor eventExecutor);
+    void runWithClusterEvent(BiConsumer<ClusterCommand, ClusterClient> block, ClusterCommand command);
 }

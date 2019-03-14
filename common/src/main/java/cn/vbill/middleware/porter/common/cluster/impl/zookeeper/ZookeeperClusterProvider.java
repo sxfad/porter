@@ -58,7 +58,7 @@ public class ZookeeperClusterProvider extends AbstractClusterProvider {
     }
 
     @Override
-    protected Client initClient(ClusterConfig clusterConfig) throws ConfigParseException, ClientException {
+    protected ClusterClient initClient(ClusterConfig clusterConfig) throws ConfigParseException, ClientException {
         ZookeeperConfig config = new ZookeeperConfig(clusterConfig.getClient()).stuff();
         ZookeeperClient zookeeperClient = new ZookeeperClient(config);
 

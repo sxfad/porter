@@ -17,8 +17,12 @@
 
 package cn.vbill.middleware.porter.common.cluster;
 
-import cn.vbill.middleware.porter.common.client.Client;
-import cn.vbill.middleware.porter.common.cluster.event.ClusterEvent;
+import cn.vbill.middleware.porter.common.client.ClusterClient;
+import cn.vbill.middleware.porter.common.cluster.event.ClusterListenerEventExecutor;
+import cn.vbill.middleware.porter.common.cluster.event.ClusterTreeNodeEvent;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * 集群监听器监听者
@@ -30,17 +34,10 @@ import cn.vbill.middleware.porter.common.cluster.event.ClusterEvent;
 public interface ClusterListener {
 
     /**
-     * getName
-     *
-     * @return
-     */
-    String getName();
-
-    /**
      * 监听方法通知
      * @param event
      */
-    void onEvent(ClusterEvent event);
+    void onEvent(ClusterTreeNodeEvent event);
 
     /**
      * 集群监听过滤器，如果不符合过滤器要求则停止通知
@@ -52,12 +49,31 @@ public interface ClusterListener {
      * 集群实现依赖客户端
      * @param client
      */
-    void setClient(Client client);
+    void setClient(ClusterClient client);
 
     /**
      * start
      */
     default void start() {
 
+    }
+
+    /**
+     * 是否监听listenPath
+     *
+     * @return
+     */
+    default boolean watchListenPath() {
+        return false;
+    }
+
+    String listenPath();
+
+    default String getName() {
+        return listenPath();
+    }
+
+    default List<ClusterListenerEventExecutor> watchedEvents() {
+        return Collections.emptyList();
     }
 }

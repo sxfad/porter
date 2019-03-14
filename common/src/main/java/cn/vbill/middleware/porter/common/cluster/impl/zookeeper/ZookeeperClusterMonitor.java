@@ -17,16 +17,13 @@
 
 package cn.vbill.middleware.porter.common.cluster.impl.zookeeper;
 
-import cn.vbill.middleware.porter.common.cluster.event.EventType;
+import cn.vbill.middleware.porter.common.client.ClusterClient;
+import cn.vbill.middleware.porter.common.cluster.event.ClusterTreeNodeEvent;
+import cn.vbill.middleware.porter.common.cluster.event.TreeNodeEventType;
 import cn.vbill.middleware.porter.common.cluster.impl.AbstractClusterMonitor;
-import cn.vbill.middleware.porter.common.client.Client;
 import cn.vbill.middleware.porter.common.client.impl.ZookeeperClient;
-import cn.vbill.middleware.porter.common.cluster.ClusterListener;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
-import org.apache.zookeeper.data.Stat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,53 +39,19 @@ import java.util.stream.Collectors;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月14日 18:22
  */
 public class ZookeeperClusterMonitor extends AbstractClusterMonitor implements Watcher {
-    private ZookeeperClient client;
     private final Map<String, List<String>> nodeChildren = new ConcurrentHashMap<>();
-
-    private final CountDownLatch ready = new CountDownLatch(1);
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ZookeeperClusterMonitor.class);
+    private final CountDownLatch initiatedStatus = new CountDownLatch(1);
 
     @Override
-    public void setClient(Client client) {
-        this.client = (ZookeeperClient) client;
-        this.client.setWatcher(this);
+    public void setClient(ClusterClient client) {
+        super.setClient(client);
+        ((ZookeeperClient) getClient()).setWatcher(this);
     }
 
-    @Override
-    public void doStart() {
-        try {
-            ready.await();
-            Stat preStat = client.exists(ZookeeperClusterListener.PREFIX_ATALOG, false);
-            if (null == preStat) {
-                client.create(ZookeeperClusterListener.PREFIX_ATALOG, false, "{}");
-            }
-            Stat stat = client.exists(ZookeeperClusterListener.BASE_CATALOG, false);
-            if (null == stat) {
-                client.create(ZookeeperClusterListener.BASE_CATALOG, false, "{}");
-            }
-            for (ClusterListener listener : listeners.values()) {
-                ZookeeperClusterListener zkListener = null;
-                try {
-                    zkListener = (ZookeeperClusterListener) listener;
-                    LOGGER.info("init:{},watch:{}", zkListener.listenPath(), zkListener.watchListenPath());
-                    client.createWhenNotExists(zkListener.listenPath(), false, false, "{}");
-                    LOGGER.info("attempted create node:{}", zkListener.listenPath());
-                    //只有该ClusterListener监听path变化时才会触发triggerTreeEvent
-                    if (zkListener.watchListenPath()) {
-                        LOGGER.info("trigger children watch event:{}", zkListener.listenPath());
-                        //watch children changed
-                        triggerTreeEvent(zkListener.listenPath());
-                    }
-                } catch (Throwable e) {
-                    LOGGER.warn("初始化zookeeper节点{}监听失败", (null != zkListener ? zkListener.listenPath() : "---"), e);
-                }
-            }
-        } catch (Throwable e) {
-            LOGGER.error("启动ZookeeperClusterMonitor异常", e);
-        }
+    protected void initiate() throws InterruptedException {
+        initiatedStatus.await();
+        super.initiate();
     }
-
     /**
      * NodeCreated  A watch is set with a call to exists.
      * NodeDeleted A watch is set with a call to either exists or getData.
@@ -103,22 +66,22 @@ public class ZookeeperClusterMonitor extends AbstractClusterMonitor implements W
         Event.EventType eventType = event.getType();
         String path = event.getPath();
         Event.KeeperState state = event.getState();
-        //将WatchedEvent转换为ClusterEvent
+        //将WatchedEvent转换为ClusterTreeNodeEvent
         try {
             //连接建立
             if (eventType == Event.EventType.None && state == Event.KeeperState.SyncConnected && path == null) {
-                ready.countDown();
+                initiatedStatus.countDown();
             } else if (eventType == Event.EventType.NodeDeleted) {
-                onEvent(new ZookeeperClusterEvent(EventType.OFFLINE, null, path));
+                onEvent(new ClusterTreeNodeEvent(TreeNodeEventType.OFFLINE, null, path));
             } else if (eventType == Event.EventType.NodeCreated) {
-                onEvent(new ZookeeperClusterEvent(EventType.ONLINE, client.getData(path).getLeft(), path));
+                onEvent(new ClusterTreeNodeEvent(TreeNodeEventType.ONLINE, getClient().getData(path).getData(), path));
             } else if (eventType == Event.EventType.NodeDataChanged) {
-                onEvent(new ZookeeperClusterEvent(EventType.DATA_CHANGED, client.getData(path).getLeft(), path));
+                onEvent(new ClusterTreeNodeEvent(TreeNodeEventType.DATA_CHANGED, getClient().getData(path).getData(), path));
             } else if (eventType == Event.EventType.NodeChildrenChanged) { //子节点创建、删除会触发该事件
-                triggerTreeEvent(path);
+                triggerWatch(path);
             }
         } catch (Exception e) {
-            LOGGER.warn("zookeeper watcher process", e);
+            logger.warn("zookeeper watcher process", e);
         }
     }
 
@@ -127,12 +90,13 @@ public class ZookeeperClusterMonitor extends AbstractClusterMonitor implements W
      *
      * @param path
      */
-    private void triggerTreeEvent(String path) {
+    @Override
+    public void triggerWatch(String path) {
         //构造子节点集合
         List<String> localChildren = nodeChildren.computeIfAbsent(path, s -> new ArrayList<>());
 
         //create a watch event:NodeChildrenChanged
-        List<String> remoteChildren = client.getChildren(path);
+        List<String> remoteChildren = getClient().getChildren(path);
 
         //判断是否新节点创建
         for (String child : remoteChildren) {
@@ -140,11 +104,11 @@ public class ZookeeperClusterMonitor extends AbstractClusterMonitor implements W
 
             //new node
             if (!localChildren.contains(childFullPath)) {
-                triggerTreeEvent(childFullPath);
+                triggerWatch(childFullPath);
                 //only for trigger watcher "getChildren"
-                client.getChildren(childFullPath);
+                getClient().getChildren(childFullPath);
                 localChildren.add(childFullPath);
-                onEvent(new ZookeeperClusterEvent(EventType.ONLINE, client.getData(childFullPath).getLeft(), childFullPath));
+                onEvent(new ClusterTreeNodeEvent(TreeNodeEventType.ONLINE, getClient().getData(childFullPath).getData(), childFullPath));
             }
         }
 

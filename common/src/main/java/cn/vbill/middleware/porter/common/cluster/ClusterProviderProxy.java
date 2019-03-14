@@ -17,14 +17,17 @@
 
 package cn.vbill.middleware.porter.common.cluster;
 
+import cn.vbill.middleware.porter.common.client.ClusterClient;
+import cn.vbill.middleware.porter.common.cluster.event.ClusterListenerEventExecutor;
 import cn.vbill.middleware.porter.common.config.ClusterConfig;
 import cn.vbill.middleware.porter.common.task.TaskEventListener;
-import cn.vbill.middleware.porter.common.cluster.command.ClusterCommand;
+import cn.vbill.middleware.porter.common.cluster.event.command.ClusterCommand;
 import cn.vbill.middleware.porter.common.util.compile.JavaFileCompiler;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BiConsumer;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -67,8 +70,16 @@ public enum ClusterProviderProxy {
      * @param command
      * @throws Exception
      */
-    public void broadcast(ClusterCommand command) throws Exception {
-        provider.broadcastCommand(command);
+    public void broadcastEvent(ClusterCommand command) throws Exception {
+        provider.broadcastEvent(command);
+    }
+
+    public void registerClusterEvent(ClusterListenerEventExecutor eventExecutor) {
+        provider.registerClusterEvent(eventExecutor);
+    }
+
+    public void runWithClusterEvent(BiConsumer<ClusterCommand, ClusterClient> block, ClusterCommand command) {
+        provider.runWithClusterEvent(block, command);
     }
 
     /**

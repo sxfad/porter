@@ -19,7 +19,7 @@ package cn.vbill.middleware.porter.manager.controller;
 
 import cn.vbill.middleware.porter.common.alert.AlertReceiver;
 import cn.vbill.middleware.porter.common.cluster.ClusterProviderProxy;
-import cn.vbill.middleware.porter.common.cluster.command.AlertConfigPushCommand;
+import cn.vbill.middleware.porter.common.cluster.event.command.AlertConfigPushCommand;
 import cn.vbill.middleware.porter.common.config.AlertConfig;
 import cn.vbill.middleware.porter.manager.core.entity.Alarm;
 import cn.vbill.middleware.porter.manager.core.entity.AlarmPlugin;
@@ -71,7 +71,7 @@ public class AlarmController {
             AlertReceiver[] receiver = receiver(alarms.getCusers());
             Map<String, String> client = fieldsMap(alarms.getAlarmPlugins());
             ClusterProviderProxy.INSTANCE
-                    .broadcast(new AlertConfigPushCommand(new AlertConfig(alarms.getAlarmType(), receiver, client)));
+                    .broadcastEvent(new AlertConfigPushCommand(new AlertConfig(alarms.getAlarmType(), receiver, client)));
         }
         return ResponseMessage.ok(number);
     }

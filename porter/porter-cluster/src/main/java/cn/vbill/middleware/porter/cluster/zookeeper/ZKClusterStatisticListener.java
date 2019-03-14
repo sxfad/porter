@@ -18,14 +18,16 @@
 package cn.vbill.middleware.porter.cluster.zookeeper;
 
 import cn.vbill.middleware.porter.common.cluster.ClusterListenerFilter;
-import cn.vbill.middleware.porter.common.cluster.command.StatisticUploadCommand;
-import cn.vbill.middleware.porter.common.cluster.command.broadcast.StatisticUpload;
-import cn.vbill.middleware.porter.common.cluster.event.ClusterEvent;
-import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterEvent;
+import cn.vbill.middleware.porter.common.cluster.event.ClusterListenerEventExecutor;
+import cn.vbill.middleware.porter.common.cluster.event.ClusterListenerEventType;
+import cn.vbill.middleware.porter.common.cluster.event.command.StatisticUploadCommand;
+import cn.vbill.middleware.porter.common.cluster.event.ClusterTreeNodeEvent;
 import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListener;
-import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListenerFilter;
 import cn.vbill.middleware.porter.common.statistics.StatisticData;
 import cn.vbill.middleware.porter.core.NodeContext;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 统计信息上传
@@ -34,7 +36,7 @@ import cn.vbill.middleware.porter.core.NodeContext;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月15日 10:09
  */
-public class ZKClusterStatisticListener extends ZookeeperClusterListener implements StatisticUpload {
+public class ZKClusterStatisticListener extends ZookeeperClusterListener {
     private static final String ZK_PATH = BASE_CATALOG + "/statistic";
 
     @Override
@@ -48,38 +50,43 @@ public class ZKClusterStatisticListener extends ZookeeperClusterListener impleme
     }
 
     @Override
-    public void onEvent(ClusterEvent event) {
+    public void onEvent(ClusterTreeNodeEvent event) {
 
     }
 
     @Override
     public ClusterListenerFilter filter() {
-        return new ZookeeperClusterListenerFilter() {
+        return new ClusterListenerFilter() {
             @Override
-            protected String getPath() {
+            public String getPath() {
                 return listenPath();
             }
 
             @Override
-            protected boolean doFilter(ZookeeperClusterEvent event) {
+            public boolean doFilter(ClusterTreeNodeEvent event) {
                 return false;
             }
         };
     }
 
     @Override
-    public void upload(StatisticUploadCommand command) throws Exception {
-        StatisticData data = command.getStatisticData();
-        data.setNodeId(NodeContext.INSTANCE.getNodeId());
-        client.createWhenNotExists(listenPath() + "/" + data.getCategory(), false, false, "{}");
-        String dataNode = listenPath() + "/" + data.getCategory() + "/" + data.getId();
-        client.uploadStatistic(dataNode, data.getKey(), data.toString());
+    public void start() {
+        client.create(listenPath(),  null, false, false);
+        client.create(listenPath() + "/task", "{}", false, false);
+        client.create(listenPath() + "/log", "{}", false, false);
     }
 
     @Override
-    public void start() {
-        client.createWhenNotExists(listenPath(), false, false, null);
-        client.createWhenNotExists(listenPath() + "/task", false, false, "{}");
-        client.createWhenNotExists(listenPath() + "/log", false, false, "{}");
+    public List<ClusterListenerEventExecutor> watchedEvents() {
+        List<ClusterListenerEventExecutor> executors = new ArrayList<>();
+        //消费进度上传事件
+        executors.add(new ClusterListenerEventExecutor(this.getClass(), ClusterListenerEventType.TaskStop).bind((command, client) -> {
+            StatisticData data = ((StatisticUploadCommand) command).getStatisticData();
+            data.setNodeId(NodeContext.INSTANCE.getNodeId());
+            client.create(listenPath() + "/" + data.getCategory(), "{}", false, false);
+            String dataNode = listenPath() + "/" + data.getCategory() + "/" + data.getId();
+            client.uploadStatistic(dataNode, data.getKey(), data.toString());
+        }, client));
+        return executors;
     }
 }

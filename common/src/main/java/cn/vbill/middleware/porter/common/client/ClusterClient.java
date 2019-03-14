@@ -17,77 +17,148 @@
 
 package cn.vbill.middleware.porter.common.client;
 
-import org.apache.commons.lang3.tuple.Pair;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
 /**
- * @param <S>
+ * 树形结构实现集群客户端
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年02月07日 14:08
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月07日 14:08
  */
-public interface ClusterClient<S> {
+public interface ClusterClient extends StatisticClient {
 
     /**
      * getChildren
      *
      * @date 2018/8/10 下午2:56
-     * @param: [path]
+     * @param: [nodePath]
      * @return: java.util.List<java.lang.String>
      */
-    List<String> getChildren(String path);
+    List<String> getChildren(String nodePath);
 
     /**
      * getData
      *
      * @date 2018/8/10 下午2:56
-     * @param: [path]
+     * @param: [nodePath]
      * @return: org.apache.commons.lang3.tuple.Pair<java.lang.String,S>
      */
-    Pair<String, S> getData(String path);
+    TreeNode getData(String nodePath);
 
     /**
-     * create
-     *
+     * create throws exception when errors.
      * @date 2018/8/10 下午2:56
-     * @param: [path, isTemp, data]
-     * @return: java.lang.String
+     * @param: [nodePath, isTemp, data]
+     * @return: TreeNode
      */
-    String create(String path, boolean isTemp, String data) throws Exception;
+    TreeNode create(String nodePath, boolean isTemp, String data) throws Exception;
 
     /**
-     * setData
-     *
+     * create tree node, if already exists, do nothing. No  exception throws when errors.
+     * @param nodePath
+     * @param data
+     * @param isTemp
+     * @param watch
+     * @return
+     */
+    default LockVersion create(String nodePath, String data, boolean isTemp, boolean watch) {
+        LockVersion stat = null;
+        try {
+            stat = exists(nodePath, watch);
+            if (null == stat) {
+                TreeNode newVersion = create(nodePath, isTemp, data);
+                stat = null != newVersion ? newVersion.getVersion() : null;
+            }
+        } catch (Exception e) {
+        }
+        return stat;
+    }
+
+    /**
+     * create root node
+     * @param nodePath
+     * @param isTemp
+     * @throws Exception
+     */
+    default void createRoot(String nodePath, boolean isTemp) throws Exception {
+        create(nodePath, isTemp, null);
+    }
+
+
+    /**
+     * changeData and return new version. If no tree node exists, create new. No  exception throws when errors.
      * @date 2018/8/10 下午2:56
-     * @param: [path, data, version]
-     * @return: S
+     * @param: [nodePath, data, version]
      */
-    S setData(String path, String data, int version) throws Exception;
+    default void changeData(String path, boolean isTemp, boolean watch,  String data) {
+        try {
+            LockVersion stat = exists(path, watch);
+            if (null == stat) {
+                create(path, isTemp, data);
+            } else {
+                setData(path, data, stat);
+            }
+        } catch (Throwable e) {
+        }
+    }
 
     /**
-     * exists
-     *
+     * setData and return new version.
+     * @date 2018/8/10 下午2:56
+     * @param: [nodePath, data, version]
+     * @return: LockVersion
+     */
+    LockVersion setData(String nodePath, String data, LockVersion version) throws Exception;
+
+    /**
+     * exists return version.if not exists, return null.
      * @date 2018/8/10 下午2:57
-     * @param: [path, watch]
-     * @return: S
+     * @param: [nodePath, watch]
+     * @return: Integer
      */
-    S exists(String path, boolean watch) throws Exception;
+    LockVersion exists(String nodePath, boolean watch) throws Exception;
+
+
+
+    /**
+     * isExists
+     * @param path
+     * @param watch
+     * @return
+     */
+    default boolean isExists(String path, boolean watch) {
+        try {
+            LockVersion stat = exists(path, watch);
+            return null != stat;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 
     /**
      * delete
-     *
      * @author FuZizheng
      * @date 2018/8/10 下午2:57
-     * @param: [path]
+     * @param: [nodePath]
      * @return: void
      */
-    void delete(String path) throws Exception;
+    void delete(String nodePath);
+
 
     /**
-     * alive
-     *
+     * 代理统计指标上传客户端
+     * @param client
+     * @throws Exception
+     */
+    void setStatisticClient(StatisticClient client) throws Exception;
+
+    /**
+     * 活跃状态检测
      * @date 2018/8/10 下午2:57
      * @param: []
      * @return: boolean
@@ -95,7 +166,7 @@ public interface ClusterClient<S> {
     boolean alive();
 
     /**
-     * clientSpinning
+     * Client断开重连
      *
      * @date 2018/8/10 下午2:57
      * @param: []
@@ -105,5 +176,21 @@ public interface ClusterClient<S> {
 
     }
 
-    void setStatisticClient(StatisticClient client) throws Exception;
+    @Getter @Setter
+    @AllArgsConstructor
+    class  TreeNode {
+        private String path;
+        private String data;
+        private LockVersion version;
+    }
+
+    @Getter @Setter
+    @AllArgsConstructor
+    class LockVersion {
+        private Integer version;
+
+        public static LockVersion newVersion(int version) {
+            return new LockVersion(version);
+        }
+    }
 }

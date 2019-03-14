@@ -21,8 +21,6 @@ import cn.vbill.middleware.porter.common.client.AbstractClient;
 import cn.vbill.middleware.porter.common.client.ClusterClient;
 import cn.vbill.middleware.porter.common.client.StatisticClient;
 import cn.vbill.middleware.porter.common.config.source.FileOperationConfig;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +40,7 @@ import java.util.stream.Stream;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月02日 15:37
  */
-public class FileClient extends AbstractClient<FileOperationConfig> implements ClusterClient<Boolean> {
+public class FileClient extends AbstractClient<FileOperationConfig> implements ClusterClient {
     private static final Logger LOGGER = LoggerFactory.getLogger(FileClient.class);
 
     private String workspace;
@@ -78,36 +76,34 @@ public class FileClient extends AbstractClient<FileOperationConfig> implements C
     }
 
     @Override
-    public Pair<String, Boolean> getData(String path) {
+    public TreeNode getData(String path) {
         String content = null;
         try (Stream<String> stream = Files.lines(Paths.get(getRealPath(path)))) {
             content = stream.reduce((p, n) -> p + n).orElse("");
         } catch (IOException e) {
             LOGGER.warn("getData {} fail.", path, e);
         }
-        return new ImmutablePair<>(content, null == content);
+        return null == content ? null : new TreeNode(path, content, LockVersion.newVersion(-1));
     }
 
     @Override
-    public String create(String path, boolean isTemp, String data) throws IOException {
-        setData(path, data, -1);
-        return path;
-    }
-
-    public void createDir(String path) throws IOException {
-        Files.createDirectories(Paths.get(getRealPath(path)));
+    public TreeNode create(String path, boolean isTemp, String data) throws IOException {
+        return new TreeNode(path, data, setData(path, data, LockVersion.newVersion(-1)));
     }
 
     @Override
-    public Boolean setData(String path, String data, int version) throws IOException {
+    public LockVersion setData(String path, String data, LockVersion version) throws IOException {
         Path pathObj = Paths.get(getRealPath(path));
-        delete(path);
-        return null != Files.write(pathObj, data.getBytes());
+        if (Files.exists(pathObj)) {
+            Files.deleteIfExists(pathObj);
+            return null != Files.write(pathObj, null != data ? data.getBytes() : "".getBytes()) ? version : null;
+        }
+        return null;
     }
 
     @Override
-    public Boolean exists(String path, boolean watch) {
-        return Files.exists(Paths.get(getRealPath(path)));
+    public LockVersion exists(String path, boolean watch) {
+        return Files.exists(Paths.get(getRealPath(path))) ? LockVersion.newVersion(-1) : null;
     }
 
     @Override
@@ -133,24 +129,8 @@ public class FileClient extends AbstractClient<FileOperationConfig> implements C
         return workspace + path;
     }
 
-    /**
-     * createWhenNotExists
-     * @param path
-     * @param isTemp
-     * @param watch
-     * @param data
-     * @return
-     */
-    public Boolean  createWhenNotExists(String path, boolean isTemp, boolean watch,  String data) {
-        Boolean stat = false;
-        try {
-            stat = exists(path, watch);
-            if (!stat) {
-                create(path, isTemp, data);
-            }
-        } catch (Exception e) {
-            LOGGER.warn("create {} fail", path, e);
-        }
-        return stat;
+    @Override
+    public void createRoot(String nodePath, boolean isTemp) throws Exception {
+        Files.createDirectories(Paths.get(getRealPath(nodePath)));
     }
 }

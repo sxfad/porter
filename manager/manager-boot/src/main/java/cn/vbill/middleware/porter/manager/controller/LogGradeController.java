@@ -18,7 +18,7 @@
 package cn.vbill.middleware.porter.manager.controller;
 
 import cn.vbill.middleware.porter.common.cluster.ClusterProviderProxy;
-import cn.vbill.middleware.porter.common.cluster.command.LogConfigPushCommand;
+import cn.vbill.middleware.porter.common.cluster.event.command.LogConfigPushCommand;
 import cn.vbill.middleware.porter.common.config.LogConfig;
 import cn.vbill.middleware.porter.manager.core.entity.LogGrade;
 import cn.vbill.middleware.porter.manager.service.LogGradeService;
@@ -63,7 +63,7 @@ public class LogGradeController {
         Integer number = logGradeService.insert(logGrade);
         if (number == 1) {
             ClusterProviderProxy.INSTANCE
-                    .broadcast(new LogConfigPushCommand(new LogConfig(logGrade.getLogLevel().getCode())));
+                    .broadcastEvent(new LogConfigPushCommand(new LogConfig(logGrade.getLogLevel().getCode())));
         }
         return ResponseMessage.ok(number);
     }

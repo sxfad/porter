@@ -17,14 +17,15 @@
 
 package cn.vbill.middleware.porter.manager.cluster.zookeeper;
 
-import cn.vbill.middleware.porter.common.cluster.ClusterListenerFilter;
-import cn.vbill.middleware.porter.common.cluster.command.NodeOrderPushCommand;
-import cn.vbill.middleware.porter.common.cluster.command.broadcast.NodeOrderPush;
+import cn.vbill.middleware.porter.common.client.ClusterClient;
+import cn.vbill.middleware.porter.common.cluster.event.ClusterListenerEventExecutor;
+import cn.vbill.middleware.porter.common.cluster.event.ClusterListenerEventType;
+import cn.vbill.middleware.porter.common.cluster.event.command.NodeOrderPushCommand;
 import cn.vbill.middleware.porter.common.cluster.data.DNode;
-import cn.vbill.middleware.porter.common.cluster.event.ClusterEvent;
-import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterEvent;
+import cn.vbill.middleware.porter.common.cluster.event.ClusterTreeNodeEvent;
+import cn.vbill.middleware.porter.common.cluster.event.executor.TaskPushEventExecutor;
 import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListener;
-import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListenerFilter;
+import cn.vbill.middleware.porter.common.cluster.ClusterListenerFilter;
 import cn.vbill.middleware.porter.manager.core.util.ApplicationContextUtil;
 import cn.vbill.middleware.porter.manager.core.util.DateFormatUtils;
 import cn.vbill.middleware.porter.manager.service.MrNodesScheduleService;
@@ -32,11 +33,9 @@ import cn.vbill.middleware.porter.manager.service.NodesService;
 import cn.vbill.middleware.porter.manager.service.impl.MrNodesScheduleServiceImpl;
 import cn.vbill.middleware.porter.manager.service.impl.NodesServiceImpl;
 import com.alibaba.fastjson.JSON;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.zookeeper.data.Stat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -48,12 +47,10 @@ import java.util.regex.Pattern;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月15日 10:09
  */
-public class ZKClusterNodeListener extends ZookeeperClusterListener implements NodeOrderPush {
+public class ZKClusterNodeListener extends ZookeeperClusterListener {
     private static final String ZK_PATH = BASE_CATALOG + "/node";
     private static final Pattern NODE_STAT_PATTERN = Pattern.compile(ZK_PATH + "/.*/stat");
     private static final Pattern NODE_LOCK_PATTERN = Pattern.compile(ZK_PATH + "/.*/lock");
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ZKClusterNodeListener.class);
 
     @Override
     public String listenPath() {
@@ -61,47 +58,46 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements N
     }
 
     @Override
-    public void onEvent(ClusterEvent event) {
-        ZookeeperClusterEvent zkEvent = (ZookeeperClusterEvent) event;
-        LOGGER.debug("NodeListener:{},{},{}", zkEvent.getPath(), zkEvent.getData(), zkEvent.getEventType());
+    public void onEvent(ClusterTreeNodeEvent zkEvent) {
+        logger.debug("NodeListener:{},{},{}", zkEvent.getId(), zkEvent.getData(), zkEvent.getEventType());
         try {
             // 当前时间
             NodesService nodesService = ApplicationContextUtil.getBean(NodesServiceImpl.class);
             // 节点上下线
-            if (NODE_LOCK_PATTERN.matcher(zkEvent.getPath()).matches()) {
-                String nodeInfoPath = zkEvent.getPath().replace("/lock", "/stat");
+            if (NODE_LOCK_PATTERN.matcher(zkEvent.getId()).matches()) {
+                String nodeInfoPath = zkEvent.getId().replace("/lock", "/stat");
                 DNode node = getDNode(nodeInfoPath);
                 String heartBeatTime = DateFormatUtils.formatDate(DateFormatUtils.PATTERN_DEFAULT, node.getHeartbeat());
                 if (zkEvent.isOnline()) { // 节点上线
-                    LOGGER.info("节点[{}]上线", node.getNodeId());
+                    logger.info("节点[{}]上线", node.getNodeId());
                     // 服务启动，在线通知
                     int i = nodesService.updateState(node, heartBeatTime, 1);
                     if (i == 0) {
                         nodesService.insertState(node, heartBeatTime, 1);
-                        LOGGER.warn("节点[{}]尚未完善管理后台节点信息，请及时配置！", node.getNodeId());
+                        logger.warn("节点[{}]尚未完善管理后台节点信息，请及时配置！", node.getNodeId());
                     }
                 }
                 if (zkEvent.isOffline()) { // 节点下线
                     // do something 服务停止，离线通知
                     int i = nodesService.updateState(node, heartBeatTime, -1);
-                    LOGGER.info("节点[{}]下线", node.getNodeId());
+                    logger.info("节点[{}]下线", node.getNodeId());
                     if (i == 0) {
-                        LOGGER.warn("节点[{}]尚未完善管理后台节点信息，请及时配置！", node.getNodeId());
+                        logger.warn("节点[{}]尚未完善管理后台节点信息，请及时配置！", node.getNodeId());
                         nodesService.insertState(node, heartBeatTime, -1);
                     }
                 }
             }
 
             // 节点状态更新
-            if (NODE_STAT_PATTERN.matcher(zkEvent.getPath()).matches()) {
-                DNode node = getDNode(zkEvent.getPath());
+            if (NODE_STAT_PATTERN.matcher(zkEvent.getId()).matches()) {
+                DNode node = getDNode(zkEvent.getId());
                 String heartBeatTime = DateFormatUtils.formatDate(DateFormatUtils.PATTERN_DEFAULT, node.getHeartbeat());
-                LOGGER.info("节点[{}]状态上报", node.getNodeId());
-                LOGGER.info("2-DNode...." + node.getNodeId() + "..." + JSON.toJSONString(node));
+                logger.info("节点[{}]状态上报", node.getNodeId());
+                logger.info("2-DNode...." + node.getNodeId() + "..." + JSON.toJSONString(node));
                 // do something 心跳时间记录 并且表示节点在线
                 int i = nodesService.updateHeartBeatTime(node, heartBeatTime);
                 if (i == 0) {
-                    LOGGER.warn("节点[{}]尚未完善管理后台节点信息，请及时配置！", node.getNodeId());
+                    logger.warn("节点[{}]尚未完善管理后台节点信息，请及时配置！", node.getNodeId());
                     nodesService.insertState(node, heartBeatTime, 1);
                 }
                 MrNodesScheduleService mrNodesScheduleService = ApplicationContextUtil
@@ -110,20 +106,20 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements N
             }
         } catch (Throwable e) {
             e.printStackTrace();
-            LOGGER.error("2-DNode-Error....出错,请追寻...", e);
+            logger.error("2-DNode-Error....出错,请追寻...", e);
         }
     }
 
     @Override
     public ClusterListenerFilter filter() {
-        return new ZookeeperClusterListenerFilter() {
+        return new ClusterListenerFilter() {
             @Override
-            protected String getPath() {
+            public String getPath() {
                 return listenPath();
             }
 
             @Override
-            protected boolean doFilter(ZookeeperClusterEvent event) {
+            public boolean doFilter(ClusterTreeNodeEvent event) {
                 return true;
             }
         };
@@ -137,17 +133,25 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements N
      * @return: cn.vbill.middleware.porter.common.cluster.data.DNode
      */
     private DNode getDNode(String nodePath) {
-        Pair<String, Stat> dataPair = client.getData(nodePath);
-        return DNode.fromString(dataPair.getLeft(), DNode.class);
+        ClusterClient.TreeNode dataPair = client.getData(nodePath);
+        return DNode.fromString(dataPair.getData(), DNode.class);
     }
 
     @Override
-    public void push(NodeOrderPushCommand command) throws Exception {
-        String nodePath = ZK_PATH + "/" + command.getConfig().getNodeId();
-        String baseOrderPath = nodePath + "/order";
-        String orderPath = baseOrderPath + "/" + UUID.randomUUID().toString();
-        client.createWhenNotExists(nodePath, false, true, null);
-        client.createWhenNotExists(baseOrderPath, false, true, null);
-        client.changeData(orderPath, true, false, command.render());
+    public List<ClusterListenerEventExecutor> watchedEvents() {
+        List<ClusterListenerEventExecutor> executors = new ArrayList<>();
+        //任务上传事件
+        executors.add(new TaskPushEventExecutor(this.getClass(), true, true, listenPath()));
+        //任务注册
+        executors.add(new ClusterListenerEventExecutor(this.getClass(), ClusterListenerEventType.NodeOrderPush).bind((clusterCommand, client) -> {
+            NodeOrderPushCommand command = (NodeOrderPushCommand) clusterCommand;
+            String nodePath = ZK_PATH + "/" + command.getConfig().getNodeId();
+            String baseOrderPath = nodePath + "/order";
+            String orderPath = baseOrderPath + "/" + UUID.randomUUID().toString();
+            client.create(nodePath, null, false, true);
+            client.create(baseOrderPath, null, false, true);
+            client.changeData(orderPath, true, false, command.render());
+        }, client));
+        return executors;
     }
 }

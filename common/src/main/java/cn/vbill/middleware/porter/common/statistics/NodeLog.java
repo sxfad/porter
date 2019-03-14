@@ -18,7 +18,7 @@
 package cn.vbill.middleware.porter.common.statistics;
 
 import cn.vbill.middleware.porter.common.cluster.ClusterProviderProxy;
-import cn.vbill.middleware.porter.common.cluster.command.StatisticUploadCommand;
+import cn.vbill.middleware.porter.common.cluster.event.command.StatisticUploadCommand;
 import cn.vbill.middleware.porter.common.util.MachineUtils;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
@@ -126,7 +126,7 @@ public class NodeLog extends StatisticData {
      */
     public static void upload(NodeLog log, List<AlertReceiver> receivers) {
         try {
-            ClusterProviderProxy.INSTANCE.broadcast(new StatisticUploadCommand(log));
+            ClusterProviderProxy.INSTANCE.broadcastEvent(new StatisticUploadCommand(log));
             LOGGER.info("判断是否发送邮件通知....." + JSONObject.toJSONString(log));
             if (log.type == LogType.TASK_ALARM || log.type == LogType.TASK_WARNING) {
                 LOGGER.info("需要发送邮件通知.....");

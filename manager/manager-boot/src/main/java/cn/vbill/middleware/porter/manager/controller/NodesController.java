@@ -18,7 +18,7 @@
 package cn.vbill.middleware.porter.manager.controller;
 
 import cn.vbill.middleware.porter.common.cluster.ClusterProviderProxy;
-import cn.vbill.middleware.porter.common.cluster.command.NodeOrderPushCommand;
+import cn.vbill.middleware.porter.common.cluster.event.command.NodeOrderPushCommand;
 import cn.vbill.middleware.porter.common.config.NodeCommandConfig;
 import cn.vbill.middleware.porter.common.dic.NodeStatusType;
 import cn.vbill.middleware.porter.common.node.NodeCommandType;
@@ -137,7 +137,7 @@ public class NodesController {
         Integer i = nodesService.taskPushState(id, taskPushState);
         if (i == 1) {
             Nodes nodes = nodesService.selectById(id);
-            ClusterProviderProxy.INSTANCE.broadcast(new NodeOrderPushCommand(
+            ClusterProviderProxy.INSTANCE.broadcastEvent(new NodeOrderPushCommand(
                     new NodeCommandConfig(nodes.getNodeId().toString(), taskPushState, NodeCommandType.CHANGE_STATUS)));
             return ok(nodes);
         }
@@ -158,7 +158,7 @@ public class NodesController {
         // System.out.println("停止任务:" + id);
         Nodes nodes = nodesService.selectById(id);
         ClusterProviderProxy.INSTANCE
-                .broadcast(new NodeOrderPushCommand(new NodeCommandConfig(nodes.getNodeId().toString(),
+                .broadcastEvent(new NodeOrderPushCommand(new NodeCommandConfig(nodes.getNodeId().toString(),
                         NodeStatusType.SUSPEND, NodeCommandType.RELEASE_WORK)));
         return ok();
     }

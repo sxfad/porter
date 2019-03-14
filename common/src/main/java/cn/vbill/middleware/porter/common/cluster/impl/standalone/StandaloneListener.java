@@ -17,8 +17,6 @@
 
 package cn.vbill.middleware.porter.common.cluster.impl.standalone;
 
-import cn.vbill.middleware.porter.common.client.Client;
-import cn.vbill.middleware.porter.common.client.impl.FileClient;
 import cn.vbill.middleware.porter.common.cluster.impl.AbstractClusterListener;
 
 /**
@@ -28,9 +26,8 @@ import cn.vbill.middleware.porter.common.cluster.impl.AbstractClusterListener;
  * @review: zkevin/2018年10月19日 14:21
  */
 public abstract class StandaloneListener extends AbstractClusterListener {
-    protected FileClient client;
     @Override
-    public void setClient(Client client) {
-        this.client = (FileClient) client;
+    public boolean watchListenPath() {
+        return false;
     }
 }
