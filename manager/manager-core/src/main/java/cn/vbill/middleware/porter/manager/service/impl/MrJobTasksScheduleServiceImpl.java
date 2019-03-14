@@ -17,6 +17,8 @@
 
 package cn.vbill.middleware.porter.manager.service.impl;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -145,6 +147,17 @@ public class MrJobTasksScheduleServiceImpl implements MrJobTasksScheduleService 
     @Override
     public List<MrJobTasksSchedule> list(String jobId, String heartBeatBeginDate, String heartBeatEndDate) {
         return mrJobTasksScheduleMapper.list(jobId, heartBeatBeginDate, heartBeatEndDate);
+    }
+
+    @Override
+    public List<MrJobTasksSchedule> listJobTasks(String jobId, String heartBeatBeginDate, String heartBeatEndDate) {
+
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
+        String date = simpleDateFormat.format(new Date());
+        // 拼出表名
+        StringBuffer stringBuffer = new StringBuffer("mr_job_tasks_monitor_");
+        stringBuffer.append(date);
+        return mrJobTasksScheduleMapper.listJobTasks(jobId, heartBeatBeginDate, heartBeatEndDate, stringBuffer.toString());
     }
 
     /**

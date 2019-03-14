@@ -27,6 +27,7 @@ import cn.vbill.middleware.porter.common.dic.ClusterPlugin;
 
 import java.io.IOException;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -85,5 +86,6 @@ public interface ClusterProvider {
     DistributedLock getLock();
 
     void registerClusterEvent(ClusterListenerEventExecutor eventExecutor);
-    void runWithClusterEvent(BiConsumer<ClusterCommand, ClusterClient> block, ClusterCommand command);
+    void broadcastEvent(BiConsumer<ClusterCommand, ClusterClient> block, ClusterCommand command);
+    void broadcastEvent(Consumer<ClusterClient> block);
 }

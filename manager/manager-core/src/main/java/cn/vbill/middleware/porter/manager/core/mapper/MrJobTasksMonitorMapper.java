@@ -37,8 +37,9 @@ public interface MrJobTasksMonitorMapper {
      * 新增
      *
      * @param mrJobTasksMonitor
+     * @param monitorTable
      */
-    Integer insert(MrJobTasksMonitor mrJobTasksMonitor);
+    Integer insert(@Param("mrJobTasksMonitor") MrJobTasksMonitor mrJobTasksMonitor, @Param("monitorTable") String monitorTable);
 
     /**
      * 修改
@@ -88,4 +89,23 @@ public interface MrJobTasksMonitorMapper {
                                                 @Param("schemaTable") String schemaTable, @Param("startRow") Long startRow,
                                                 @Param("intervalSize") Long intervalSize);
 
+    /**
+     * 查看表的细节图
+     *
+     * @param jobId
+     * @param swimlaneId
+     * @param schemaTable
+     * @param date
+     * @param startRow
+     * @param intervalSize
+     * @param monitorTable
+     * @return
+     */
+    List<MrJobTasksMonitor> selectByJobSwimlaneDetail(@Param("jobId") String jobId,
+                                                      @Param("swimlaneId") String swimlaneId,
+                                                      @Param("schemaTable") String schemaTable,
+                                                      @Param("monitorDate") String date,
+                                                      @Param("startRow") Long startRow,
+                                                      @Param("intervalSize") Long intervalSize,
+                                                      @Param("monitorTable") String monitorTable);
 }

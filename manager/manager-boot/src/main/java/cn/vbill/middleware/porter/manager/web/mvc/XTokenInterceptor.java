@@ -17,6 +17,7 @@
 
 package cn.vbill.middleware.porter.manager.web.mvc;
 
+import cn.vbill.middleware.porter.manager.web.rcc.RoleCheckContext;
 import cn.vbill.middleware.porter.manager.web.tl.WebToeknContext;
 import com.alibaba.fastjson.JSON;
 import cn.vbill.middleware.porter.manager.web.token.TokenUtil;
@@ -69,6 +70,7 @@ public class XTokenInterceptor extends HandlerInterceptorAdapter {
                 return false;
             }
             WebToeknContext.initToken(token);
+            RoleCheckContext.checkUserRole(token);
             return true;
         } catch (Exception e) {
             return false;

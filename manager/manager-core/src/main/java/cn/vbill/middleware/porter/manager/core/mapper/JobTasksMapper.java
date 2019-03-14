@@ -17,6 +17,7 @@
 
 package cn.vbill.middleware.porter.manager.core.mapper;
 
+import cn.vbill.middleware.porter.manager.core.dto.RoleDataControl;
 import cn.vbill.middleware.porter.manager.core.entity.JobTasks;
 import cn.vbill.middleware.porter.manager.web.page.Page;
 import org.apache.ibatis.annotations.Param;
@@ -91,7 +92,8 @@ public interface JobTasksMapper {
      */
     List<JobTasks> page(@Param("page") Page<JobTasks> page, @Param("state") Integer state, @Param("jobType") Integer jobType,
                         @Param("jobName") String jobName, @Param("jobId") Long jobId, @Param("beginTime") String beginTime,
-                        @Param("endTime") String endTime, @Param("jobState") String jobState, @Param("id") Long id);
+                        @Param("endTime") String endTime, @Param("jobState") String jobState, @Param("id") Long id,
+                        @Param("roleDataControl") RoleDataControl roleDataControl);
 
     /**
      * 分頁All
@@ -100,7 +102,7 @@ public interface JobTasksMapper {
      */
     Integer pageAll(@Param("state") Integer state, @Param("jobType") Integer jobType, @Param("jobName") String jobName,
                     @Param("jobId") Long jobId, @Param("beginTime") String beginTime, @Param("endTime") String endTime,
-                    @Param("jobState") String jobState, @Param("id") Long id);
+                    @Param("jobState") String jobState, @Param("id") Long id, @Param("roleDataControl") RoleDataControl roleDataControl);
 
     /**
      * 修改任务状态

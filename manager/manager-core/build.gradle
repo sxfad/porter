@@ -2,6 +2,8 @@ group 'cn.vbill.middleware.porter.manager'
 archivesBaseName = 'porter-manager-core'
 dependencies {
     compile project(':common')
+    //token
+    compile 'io.jsonwebtoken:jjwt:0.6.0'
     //数据源
     compile 'com.alibaba:druid-spring-boot-starter:1.1.2'
     compile 'mysql:mysql-connector-java:5.1.45'

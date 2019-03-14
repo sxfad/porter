@@ -19,9 +19,11 @@ package cn.vbill.middleware.porter.manager.service.impl;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+import cn.vbill.middleware.porter.manager.core.dto.RoleDataControl;
 import cn.vbill.middleware.porter.manager.core.entity.MrNodesSchedule;
 import cn.vbill.middleware.porter.manager.core.mapper.MrNodesScheduleMapper;
 import cn.vbill.middleware.porter.manager.service.MrNodesScheduleService;
+import cn.vbill.middleware.porter.manager.web.rcc.RoleCheckContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -66,10 +68,11 @@ public class MrNodesScheduleServiceImpl implements MrNodesScheduleService {
 
     @Override
     public Page<MrNodesSchedule> page(Page<MrNodesSchedule> page, String ipAddress, String computerName) {
-        Integer total = mrNodesScheduleMapper.pageAll(1, ipAddress, computerName);
+        RoleDataControl roleDataControl = RoleCheckContext.getUserIdHolder();
+        Integer total = mrNodesScheduleMapper.pageAll(1, ipAddress, computerName, roleDataControl);
         if (total > 0) {
             page.setTotalItems(total);
-            page.setResult(mrNodesScheduleMapper.page(page, 1, ipAddress, computerName));
+            page.setResult(mrNodesScheduleMapper.page(page, 1, ipAddress, computerName, roleDataControl));
         }
         return page;
     }

@@ -17,6 +17,7 @@
 
 package cn.vbill.middleware.porter.manager.core.mapper;
 
+import cn.vbill.middleware.porter.manager.core.dto.RoleDataControl;
 import cn.vbill.middleware.porter.manager.core.entity.Nodes;
 import cn.vbill.middleware.porter.manager.web.page.Page;
 import org.apache.ibatis.annotations.Param;
@@ -94,7 +95,7 @@ public interface NodesMapper {
      * @return
      */
     List<Nodes> page(@Param("page") Page<Nodes> page, @Param("nodeId") String nodeId, @Param("ipAddress") String ipAddress,
-                     @Param("state") Integer state, @Param("machineName") String machineName);
+                     @Param("state") Integer state, @Param("machineName") String machineName, @Param("roleDataControl") RoleDataControl roleDataControl);
 
     /**
      * 分頁All
@@ -102,10 +103,11 @@ public interface NodesMapper {
      * @param ipAddress
      * @param state
      * @param machineName
+     * @param roleDataControl
      * @return
      */
     Integer pageAll(@Param("nodeId") String nodeId, @Param("ipAddress") String ipAddress, @Param("state") Integer state,
-                    @Param("machineName") String machineName);
+                    @Param("machineName") String machineName, @Param("roleDataControl") RoleDataControl roleDataControl);
 
     /**
      * 新增

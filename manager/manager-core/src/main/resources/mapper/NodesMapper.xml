@@ -173,6 +173,9 @@
             <if test="machineName != null and machineName != ''">
                 and machine_name LIKE CONCAT('%', #{machineName}, '%')
             </if>
+            <if test="roleDataControl.roleCode == 'A9999'">
+                and node_id in (select node_id from b_nodes_owner where owner_level = 1 and owner_id = #{roleDataControl.userId})
+            </if>
         </where>
     </select>
 
@@ -194,6 +197,9 @@
             </if>
             <if test="machineName != null and machineName != ''">
                 and machine_name LIKE CONCAT('%',#{machineName},'%')
+            </if>
+            <if test='roleDataControl.roleCode == "A9999"'>
+                and node_id in (select node_id from b_nodes_owner where owner_level = 1 and owner_id = #{roleDataControl.userId})
             </if>
         </where>
         ORDER BY state ASC, heart_beat_time desc

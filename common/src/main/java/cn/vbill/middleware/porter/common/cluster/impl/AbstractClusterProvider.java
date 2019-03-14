@@ -42,6 +42,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 /**
  * 集群提供者
@@ -123,8 +124,13 @@ public abstract class AbstractClusterProvider implements ClusterProvider {
     }
 
     @Override
-    public void runWithClusterEvent(BiConsumer<ClusterCommand, ClusterClient> block, ClusterCommand command) {
+    public void broadcastEvent(BiConsumer<ClusterCommand, ClusterClient> block, ClusterCommand command) {
         block.accept(command, client);
+    }
+
+    @Override
+    public void broadcastEvent(Consumer<ClusterClient> block) {
+        block.accept(client);
     }
 
     @Override

@@ -17,6 +17,7 @@
 
 package cn.vbill.middleware.porter.manager.service.impl;
 
+import cn.vbill.middleware.porter.manager.core.dto.RoleDataControl;
 import cn.vbill.middleware.porter.manager.service.NodesService;
 import cn.vbill.middleware.porter.common.cluster.data.DNode;
 import cn.vbill.middleware.porter.common.dic.NodeStatusType;
@@ -26,6 +27,7 @@ import cn.vbill.middleware.porter.manager.web.page.Page;
 
 import java.util.List;
 
+import cn.vbill.middleware.porter.manager.web.rcc.RoleCheckContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -92,10 +94,11 @@ public class NodesServiceImpl implements NodesService {
 
     @Override
     public Page<Nodes> page(Page<Nodes> page, String nodeId, String ipAddress, Integer state, String machineName) {
-        Integer total = nodesMapper.pageAll(nodeId, ipAddress, state, machineName);
+        RoleDataControl roleDataControl = RoleCheckContext.getUserIdHolder();
+        Integer total = nodesMapper.pageAll(nodeId, ipAddress, state, machineName, roleDataControl);
         if (total > 0) {
             page.setTotalItems(total);
-            page.setResult(nodesMapper.page(page, nodeId, ipAddress, state, machineName));
+            page.setResult(nodesMapper.page(page, nodeId, ipAddress, state, machineName, roleDataControl));
         }
         return page;
     }

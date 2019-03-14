@@ -83,4 +83,16 @@ public interface MrJobTasksMonitorService {
     /** 获取实时监控数据 . */
     MrJobMonitor obMrJobMonitor(String jobId, String swimlaneId, String schemaTable, Long intervalTime, Long intervalCount);
 
+    /**
+     * 获取实时监控数据(增加查看过去某一天的数据)
+     *
+     * @param jobId
+     * @param swimlaneId
+     * @param schemaTable
+     * @param date
+     * @param intervalTime
+     * @param intervalCount
+     * @return
+     */
+    MrJobMonitor obMrJobMonitorDetail(String jobId, String swimlaneId, String schemaTable, String date, Long intervalTime, Long intervalCount);
 }

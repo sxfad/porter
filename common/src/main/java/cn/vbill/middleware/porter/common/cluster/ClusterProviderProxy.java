@@ -28,6 +28,7 @@ import org.springframework.core.io.support.SpringFactoriesLoader;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -78,8 +79,12 @@ public enum ClusterProviderProxy {
         provider.registerClusterEvent(eventExecutor);
     }
 
-    public void runWithClusterEvent(BiConsumer<ClusterCommand, ClusterClient> block, ClusterCommand command) {
-        provider.runWithClusterEvent(block, command);
+    public void broadcastEvent(BiConsumer<ClusterCommand, ClusterClient> block, ClusterCommand command) {
+        provider.broadcastEvent(block, command);
+    }
+
+    public void broadcastEvent(Consumer<ClusterClient> block) {
+        provider.broadcastEvent(block);
     }
 
     /**

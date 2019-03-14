@@ -83,4 +83,21 @@ public class MrJobTasksScheduleController {
         List<MrJobTasksSchedule> list = mrJobTasksScheduleService.list(jobId, heartBeatBeginDate, heartBeatEndDate);
         return ok(list);
     }
+
+    /**
+     * 条件查询获取列表
+     *
+     * @param jobId
+     * @param heartBeatBeginDate
+     * @param heartBeatEndDate
+     * @return
+     */
+    @GetMapping("/list")
+    @ApiOperation(value = "查询列表", notes = "查询列表")
+    public ResponseMessage listJobTasks(@RequestParam(value = "jobId", required = false) String jobId,
+                                        @RequestParam(value = "heartBeatBeginDate", required = false) String heartBeatBeginDate,
+                                        @RequestParam(value = "heartBeatEndDate", required = false) String heartBeatEndDate) {
+        List<MrJobTasksSchedule> list = mrJobTasksScheduleService.listJobTasks(jobId, heartBeatBeginDate, heartBeatEndDate);
+        return ok(list);
+    }
 }

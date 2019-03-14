@@ -277,6 +277,9 @@
             <if test="jobState != null and jobState != ''">
                 and job_state = #{jobState}
             </if>
+            <if test='roleDataControl.roleCode == "A9999"'>
+                and id in (select job_id from job_tasks_owner where owner_level = 1 and owner_id = #{roleDataControl.userId})
+            </if>
         </where>
     </select>
 
@@ -312,6 +315,9 @@
             </if>
             <if test="jobState != null and jobState != ''">
                 and job_state = #{jobState}
+            </if>
+            <if test='roleDataControl.roleCode == "A9999"'>
+                and id in (select job_id from job_tasks_owner where owner_level = 1 and owner_id = #{roleDataControl.userId})
             </if>
         </where>
         order by create_time desc

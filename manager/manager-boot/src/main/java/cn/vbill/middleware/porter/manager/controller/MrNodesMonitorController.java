@@ -63,4 +63,23 @@ public class MrNodesMonitorController {
         return ok(mrNodeMonitor);
     }
 
+    /**
+     * 节点实时数据(增加查询以前的某一天的节点数据)
+     *
+     * @param nodeId
+     * @param date
+     * @param intervalTime
+     * @param intervalCount
+     * @return
+     */
+    @GetMapping("/nodeMonitorDetail")
+    @ApiOperation(value = "节点实时数据(按分)", notes = "节点实时数据(按分),增加查看过去某一天的节点数据")
+    public ResponseMessage nodeMonitorDetail(@RequestParam(value = "nodeId", required = false) String nodeId,
+                                             @RequestParam(value = "date", required = true) String date,
+                                             @RequestParam(value = "intervalTime", required = false) Long intervalTime,
+                                             @RequestParam(value = "intervalCount", required = false) Long intervalCount) {
+        MrNodeMonitor mrNodeMonitor = mrNodesMonitorService.obNodeMonitorDetail(nodeId, date, intervalTime, intervalCount);
+        return ok(mrNodeMonitor);
+    }
+
 }

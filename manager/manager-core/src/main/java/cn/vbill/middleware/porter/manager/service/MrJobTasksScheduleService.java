@@ -119,4 +119,14 @@ public interface MrJobTasksScheduleService {
      * @return: java.util.List<cn.vbill.middleware.porter.manager.core.entity.MrJobTasksSchedule>
      */
     List<MrJobTasksSchedule> list(String jobId, String heartBeatBeginDate, String heartBeatEndDate);
+
+    /**
+     * 列表
+     *
+     * @param jobId
+     * @param heartBeatBeginDate
+     * @param heartBeatEndDate
+     * @return
+     */
+    List<MrJobTasksSchedule> listJobTasks(String jobId, String heartBeatBeginDate, String heartBeatEndDate);
 }

@@ -17,6 +17,9 @@
 
 package cn.vbill.middleware.porter.manager.service.impl;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -49,12 +52,12 @@ public class MrNodesMonitorServiceImpl implements MrNodesMonitorService {
 
     @Override
     public Integer insert(MrNodesMonitor mrNodesMonitor) {
-        return mrNodesMonitorMapper.insert(mrNodesMonitor);
+        return mrNodesMonitorMapper.insert(mrNodesMonitor, null);
     }
 
     @Override
     public Integer update(Long id, MrNodesMonitor mrNodesMonitor) {
-        return mrNodesMonitorMapper.update(id, mrNodesMonitor);
+        return mrNodesMonitorMapper.update(id, mrNodesMonitor, null);
     }
 
     @Override
@@ -109,6 +112,41 @@ public class MrNodesMonitorServiceImpl implements MrNodesMonitorService {
         return new MrNodeMonitor(list);
     }
 
+    @Override
+    public MrNodeMonitor obNodeMonitorDetail(String nodeId, String date, Long intervalTime, Long intervalCount) {
+        Long startRow = intervalTime * intervalCount;
+        Date nowDate = new Date();
+        String newDate = DateFormatUtils.formatDate("yyyy-MM-dd", nowDate);
+
+        // 如果是当前日期则显示最近的时间，否则显示一天的数据
+        if (!newDate.equals(date)) {
+            intervalTime = 1440L;
+        }
+        // 拼出表名
+        String monitorTable = convert(date);
+        List<MrNodesMonitor> mrNodesMonitors = mrNodesMonitorMapper.selectByNodeIdDetail(nodeId, startRow, intervalTime, date, monitorTable);
+        return new MrNodeMonitor(mrNodesMonitors);
+    }
+
+    /**
+     * 把yyyy-MM-dd格式的日期转化为yyyyMMdd格式
+     *
+     * @param date
+     * @return
+     */
+    private String convert(String date) {
+        String tableDate = null;
+        try {
+            Date nowDate = DateFormatUtils.pareDate("yyyy-MM-dd", date);
+            tableDate = DateFormatUtils.formatDate("yyyyMMdd", nowDate);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+        StringBuffer monitorTable = new StringBuffer("mr_nodes_monitor_");
+        monitorTable.append(tableDate);
+        return monitorTable.toString();
+    }
+
     /**
      * dealTaskPerformanceSync
      * @param nodeId
@@ -117,13 +155,18 @@ public class MrNodesMonitorServiceImpl implements MrNodesMonitorService {
      */
     private void dealTaskPerformanceSync(String nodeId, String dataTimes, MrNodesMonitor mrNodesMonitor) {
         MrNodesMonitor old = mrNodesMonitorMapper.selectByNodeIdAndTime(nodeId, dataTimes);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
+        String date = simpleDateFormat.format(new Date());
+        // 拼出表名
+        StringBuffer monitorTable = new StringBuffer("mr_nodes_monitor_");
+        monitorTable.append(date);
         if (old == null || old.getId() == null) {
-            mrNodesMonitorMapper.insert(mrNodesMonitor);
+            mrNodesMonitorMapper.insert(mrNodesMonitor, monitorTable.toString());
         } else {
             mrNodesMonitor.setId(old.getId());
             mrNodesMonitor.setMonitorTps(mrNodesMonitor.getMonitorTps() + old.getMonitorTps());
             mrNodesMonitor.setMonitorAlarm(mrNodesMonitor.getMonitorAlarm() + old.getMonitorAlarm());
-            mrNodesMonitorMapper.update(old.getId(), mrNodesMonitor);
+            mrNodesMonitorMapper.update(old.getId(), mrNodesMonitor, monitorTable.toString());
         }
     }
 }
