@@ -99,7 +99,7 @@
 
     <!-- 分页All -->
     <select id="pageAll" resultType="java.lang.Integer">
-        select count(node_id) from mr_nodes_schedule
+        select count(id) from mr_nodes_schedule
         <where>
             iscancel = 0
             <if test="ipAddress != null and ipAddress !=''">

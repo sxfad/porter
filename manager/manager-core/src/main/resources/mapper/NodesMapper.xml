@@ -158,7 +158,7 @@
 
     <!-- 分页All -->
     <select id="pageAll" resultType="java.lang.Integer">
-        select count(node_id) from b_nodes
+        select count(id) from b_nodes
         <where>
             iscancel = 0
             <if test="state != null and state != ''">
