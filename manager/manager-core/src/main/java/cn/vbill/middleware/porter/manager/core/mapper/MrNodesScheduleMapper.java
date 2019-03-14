@@ -17,6 +17,7 @@
 
 package cn.vbill.middleware.porter.manager.core.mapper;
 
+import cn.vbill.middleware.porter.manager.core.dto.RoleDataControl;
 import cn.vbill.middleware.porter.manager.core.entity.MrNodesSchedule;
 import cn.vbill.middleware.porter.manager.web.page.Page;
 import org.apache.ibatis.annotations.Param;
@@ -76,7 +77,8 @@ public interface MrNodesScheduleMapper {
      * @return
      */
     List<MrNodesSchedule> page(@Param("page") Page<MrNodesSchedule> page, @Param("state") Integer state,
-                               @Param("ipAddress") String ipAddress, @Param("computerName") String computerName);
+                               @Param("ipAddress") String ipAddress, @Param("computerName") String computerName,
+                               @Param("roleDataControl") RoleDataControl roleDataControl);
 
     /**
      * 分頁All
@@ -84,7 +86,7 @@ public interface MrNodesScheduleMapper {
      * @return
      */
     Integer pageAll(@Param("state") Integer state, @Param("ipAddress") String ipAddress,
-                    @Param("computerName") String computerName);
+                    @Param("computerName") String computerName, @Param("roleDataControl") RoleDataControl roleDataControl);
 
     /**
      * 根据节点id查询
