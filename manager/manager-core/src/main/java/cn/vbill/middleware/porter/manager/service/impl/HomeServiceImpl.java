@@ -17,11 +17,16 @@
 
 package cn.vbill.middleware.porter.manager.service.impl;
 
+import cn.vbill.middleware.porter.manager.core.dto.RoleDataControl;
 import cn.vbill.middleware.porter.manager.core.icon.HomeBlockResult;
 import cn.vbill.middleware.porter.manager.core.mapper.HomeMapper;
 import cn.vbill.middleware.porter.manager.service.HomeService;
+import cn.vbill.middleware.porter.manager.web.rcc.RoleCheckContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  *
@@ -36,7 +41,18 @@ public class HomeServiceImpl implements HomeService {
 
     @Override
     public HomeBlockResult bolck() {
-        HomeBlockResult homeBlockResult = homeMapper.block();
+        //数据权限
+        RoleDataControl roleDataControl = RoleCheckContext.getUserIdHolder();
+        //获取当前表名
+        String newTableName = getTableName();
+
+        HomeBlockResult homeBlockResult = homeMapper.block(roleDataControl, newTableName);
         return homeBlockResult;
+    }
+
+    private String getTableName() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        String newDate = sdf.format(new Date());
+        return "mr_log_monitor_" + newDate;
     }
 }

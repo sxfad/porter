@@ -59,10 +59,8 @@ public class MrLogMonitorController {
                                 @RequestParam(value = "pageSize", required = true) Integer pageSize,
                                 @RequestParam(value = "ipAddress", required = false) String ipAddress,
                                 @RequestParam(value = "state", required = false) Integer state,
-                                @RequestParam(value = "beginTime", required = false) String beginTime,
-                                @RequestParam(value = "endTime", required = false) String endTime) {
-        Page<MrLogMonitor> page = mrLogMonitorService.page(new Page<MrLogMonitor>(pageNo, pageSize), ipAddress, state,
-                beginTime, endTime);
+                                @RequestParam(value = "date", required = false) String date) {
+        Page<MrLogMonitor> page = mrLogMonitorService.page(new Page<MrLogMonitor>(pageNo, pageSize), ipAddress, state, date);
         return ResponseMessage.ok(page);
     }
 

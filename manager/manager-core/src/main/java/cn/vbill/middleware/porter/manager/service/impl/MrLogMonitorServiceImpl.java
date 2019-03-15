@@ -17,13 +17,18 @@
 
 package cn.vbill.middleware.porter.manager.service.impl;
 
+import cn.vbill.middleware.porter.manager.core.dto.RoleDataControl;
 import cn.vbill.middleware.porter.manager.core.entity.MrLogMonitor;
 import cn.vbill.middleware.porter.manager.core.mapper.MrLogMonitorMapper;
 import cn.vbill.middleware.porter.manager.service.MrLogMonitorService;
 import cn.vbill.middleware.porter.common.statistics.NodeLog;
 import cn.vbill.middleware.porter.manager.web.page.Page;
+import cn.vbill.middleware.porter.manager.web.rcc.RoleCheckContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * 日志监控信息表 服务实现类
@@ -41,7 +46,7 @@ public class MrLogMonitorServiceImpl implements MrLogMonitorService {
 
     @Override
     public Integer insert(MrLogMonitor mrLogMonitor) {
-        return mrLogMonitorMapper.insert(mrLogMonitor);
+        return mrLogMonitorMapper.insert(mrLogMonitor, null);
     }
 
     @Override
@@ -60,11 +65,16 @@ public class MrLogMonitorServiceImpl implements MrLogMonitorService {
     }
 
     @Override
-    public Page<MrLogMonitor> page(Page<MrLogMonitor> page, String ipAddress, Integer state, String beginTime, String endTime) {
-        Integer total = mrLogMonitorMapper.pageAll(ipAddress, state, beginTime, endTime);
+    public Page<MrLogMonitor> page(Page<MrLogMonitor> page, String ipAddress, Integer state, String date) {
+        //数据权限
+        RoleDataControl roleDataControl = RoleCheckContext.getUserIdHolder();
+        //拼接表名
+        String nowTableName = getTableName(date);
+
+        Integer total = mrLogMonitorMapper.pageAll(ipAddress, state, roleDataControl, nowTableName);
         if (total > 0) {
             page.setTotalItems(total);
-            page.setResult(mrLogMonitorMapper.page(page, ipAddress, state, beginTime, endTime));
+            page.setResult(mrLogMonitorMapper.page(page, ipAddress, state, roleDataControl, nowTableName));
         }
         return page;
     }
@@ -72,7 +82,29 @@ public class MrLogMonitorServiceImpl implements MrLogMonitorService {
     @Override
     public void dealNodeLog(NodeLog log) {
         MrLogMonitor mrLogMonitor = new MrLogMonitor(log);
-        mrLogMonitorMapper.insert(mrLogMonitor);
+        //拼接当日表名
+        String nowTableName = getTableName(null);
+        mrLogMonitorMapper.insert(mrLogMonitor, nowTableName);
     }
 
+    /**
+     * 表名生成器
+     *
+     * @author FuZizheng
+     * @date 2019-03-15 11:17
+     * @param: [date]
+     * @return: java.lang.String
+     */
+    private String getTableName(String date) {
+        String newDate = null;
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+//        newDate = (date != null ? date.replace("-", "") : sdf.format(new Date()));
+        if (date != null) {
+            newDate = date.replace("-", "");
+        } else {
+            newDate = sdf.format(new Date());
+        }
+        // 日志信息表实时表
+        return "mr_log_monitor_" + newDate;
+    }
 }

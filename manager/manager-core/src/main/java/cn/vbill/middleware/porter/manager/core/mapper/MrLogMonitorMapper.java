@@ -17,6 +17,7 @@
 
 package cn.vbill.middleware.porter.manager.core.mapper;
 
+import cn.vbill.middleware.porter.manager.core.dto.RoleDataControl;
 import cn.vbill.middleware.porter.manager.core.entity.MrLogMonitor;
 import cn.vbill.middleware.porter.manager.web.page.Page;
 import org.apache.ibatis.annotations.Param;
@@ -37,8 +38,9 @@ public interface MrLogMonitorMapper {
      * 新增
      *
      * @param mrLogMonitor
+     * @param nowTableName
      */
-    Integer insert(MrLogMonitor mrLogMonitor);
+    Integer insert(@Param("mrLogMonitor") MrLogMonitor mrLogMonitor, @Param("nowTableName") String nowTableName);
 
     /**
      * 修改
@@ -69,7 +71,8 @@ public interface MrLogMonitorMapper {
      * @return
      */
     List<MrLogMonitor> page(@Param("page") Page<MrLogMonitor> page, @Param("ipAddress") String ipAddress,
-            @Param("state") Integer state, @Param("beginTime") String beginTime, @Param("endTime") String endTime);
+                            @Param("state") Integer state, @Param("roleDataControl") RoleDataControl roleDataControl,
+                            @Param("nowTableName") String nowTableName);
 
     /**
      * 分頁All
@@ -77,6 +80,6 @@ public interface MrLogMonitorMapper {
      * @return
      */
     Integer pageAll(@Param("ipAddress") String ipAddress, @Param("state") Integer state,
-            @Param("beginTime") String beginTime, @Param("endTime") String endTime);
+                    @Param("roleDataControl") RoleDataControl roleDataControl, @Param("nowTableName") String nowTableName);
 
 }

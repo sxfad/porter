@@ -28,7 +28,7 @@
 
     <!-- 新增 -->
     <insert id="insert">
-        insert into mr_log_monitor(
+        insert into ${nowTableName}(
         node_id,
         job_id,
         job_name,
@@ -38,14 +38,14 @@
         log_content,
         partition_day
         ) values (
-        #{nodeId},
-        #{jobId},
-        #{jobName},
-        #{ipAdress},
-        #{logDate},
-        #{logTitle},
-        #{logContent},
-        #{partitionDay}
+        #{mrLogMonitor.nodeId},
+        #{mrLogMonitor.jobId},
+        #{mrLogMonitor.jobName},
+        #{mrLogMonitor.ipAdress},
+        #{mrLogMonitor.logDate},
+        #{mrLogMonitor.logTitle},
+        #{mrLogMonitor.logContent},
+        #{mrLogMonitor.partitionDay}
         )
     </insert>
 
@@ -84,7 +84,7 @@
 
     <!-- 分页All -->
     <select id="pageAll" resultType="java.lang.Integer">
-        select count(id) from mr_log_monitor
+        select count(id) from ${nowTableName}
         <where>
             iscancel = 0
             <if test="ipAddress != null and ipAddress != ''">
@@ -93,11 +93,11 @@
             <if test="state != null and state != ''">
                 and state = #{state}
             </if>
-            <if test="beginTime != null and beginTime != ''">
-                and log_date &gt; #{beginTime}
-            </if>
-            <if test="endTime != null and endTime != ''">
-                and log_date &lt; #{endTime}
+            <if test="roleDataControl.roleCode == 'A9999'">
+                and
+                (node_id in (select p.node_id from b_nodes_owner p where p.owner_id = #{roleDataControl.userId} and p.owner_level = 1)
+                or
+                job_id in (select t.job_id from job_tasks_owner t where t.owner_id = #{roleDataControl.userId} and t.owner_level = 1))
             </if>
         </where>
     </select>
@@ -105,7 +105,7 @@
     <!-- 分页 -->
     <select id="page" resultType="cn.vbill.middleware.porter.manager.core.entity.MrLogMonitor">
         select id, node_id AS nodeId, job_id AS jobId, job_name AS jobName, ip_adress AS ipAdress, log_date AS logDate, log_title AS logTitle, log_content AS logContent
-        from mr_log_monitor
+        from ${nowTableName}
         <where>
             iscancel = 0
             <if test="ipAddress != null and ipAddress != ''">
@@ -114,11 +114,11 @@
             <if test="state != null and state != ''">
                 and state = #{state}
             </if>
-            <if test="beginTime != null and beginTime != ''">
-                and log_date &gt; #{beginTime}
-            </if>
-            <if test="endTime != null and endTime != ''">
-                and log_date &lt; #{endTime}
+            <if test="roleDataControl.roleCode == 'A9999'">
+                and
+                (node_id in (select p.node_id from b_nodes_owner p where p.owner_id = #{roleDataControl.userId} and p.owner_level = 1)
+                or
+                job_id in (select t.job_id from job_tasks_owner t where t.owner_id = #{roleDataControl.userId} and t.owner_level = 1))
             </if>
         </where>
         order by log_date desc

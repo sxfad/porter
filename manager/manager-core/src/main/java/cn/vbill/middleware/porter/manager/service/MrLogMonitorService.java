@@ -74,7 +74,7 @@ public interface MrLogMonitorService {
      * @param: [page, ipAddress, state, beginTime, endTime]
      * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.entity.MrLogMonitor>
      */
-    Page<MrLogMonitor> page(Page<MrLogMonitor> page, String ipAddress, Integer state, String beginTime, String endTime);
+    Page<MrLogMonitor> page(Page<MrLogMonitor> page, String ipAddress, Integer state, String date);
 
     /** 解析任务日志. */
     void dealNodeLog(NodeLog log);
