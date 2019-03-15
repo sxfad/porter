@@ -27,27 +27,20 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 
+import cn.vbill.middleware.porter.common.client.ClusterClient;
+import cn.vbill.middleware.porter.common.cluster.ClusterListenerFilter;
+import cn.vbill.middleware.porter.common.cluster.event.ClusterListenerEventExecutor;
+import cn.vbill.middleware.porter.common.cluster.event.executor.*;
 import cn.vbill.middleware.porter.common.config.SourceConfig;
 import cn.vbill.middleware.porter.common.exception.ConfigParseException;
 import cn.vbill.middleware.porter.common.statistics.NodeLog;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.zookeeper.KeeperException;
-import org.apache.zookeeper.data.Stat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
-import cn.vbill.middleware.porter.common.client.impl.ZookeeperClient;
-import cn.vbill.middleware.porter.common.cluster.ClusterListenerFilter;
-import cn.vbill.middleware.porter.common.cluster.command.TaskPushCommand;
 import cn.vbill.middleware.porter.common.cluster.data.DTaskStat;
-import cn.vbill.middleware.porter.common.cluster.event.ClusterEvent;
-import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterEvent;
+import cn.vbill.middleware.porter.common.cluster.event.ClusterTreeNodeEvent;
 import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListener;
-import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListenerFilter;
-import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.broadcast.ZKTaskPush;
 import cn.vbill.middleware.porter.common.config.TaskConfig;
 import cn.vbill.middleware.porter.common.dic.TaskStatusType;
 import cn.vbill.middleware.porter.manager.ManagerContext;
@@ -64,7 +57,7 @@ import cn.vbill.middleware.porter.manager.service.impl.MrJobTasksScheduleService
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月15日 10:09
  */
-public class ZKClusterTaskListener extends ZookeeperClusterListener implements ZKTaskPush {
+public class ZKClusterTaskListener extends ZookeeperClusterListener {
 
     private static final String ZK_PATH = BASE_CATALOG + "/task";
     private static final Pattern TASK_STAT_PATTERN = Pattern.compile(ZK_PATH + "/.*/stat/.*");
@@ -72,7 +65,6 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements Z
     private static final Pattern TASK_LOCK_PATTERN = Pattern.compile(ZK_PATH + "/.*/lock/.*");
     private static final Pattern TASK_DIST_PATTERN = Pattern.compile(ZK_PATH + "/.*/dist/.*");
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ZKClusterTaskListener.class);
     // 未分配任务定时检查
     private final ScheduledExecutorService taskUnsignedListener = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
         private final AtomicInteger seq = new AtomicInteger();
@@ -91,121 +83,103 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements Z
     }
 
     @Override
-    public void onEvent(ClusterEvent event) {
-        ZookeeperClusterEvent zkEvent = (ZookeeperClusterEvent) event;
-        String zkPath = zkEvent.getPath();
-        LOGGER.debug("TaskListener:{},{},{}", zkEvent.getPath(), zkEvent.getData(), zkEvent.getEventType());
+    public void onEvent(ClusterTreeNodeEvent zkEvent) {
+        String zkPath = zkEvent.getId();
+        logger.debug("TaskListener:{},{},{}", zkPath, zkEvent.getData(), zkEvent.getEventType());
         try {
             // 任务进度更新
             if (TASK_STAT_PATTERN.matcher(zkPath).matches() && zkEvent.isDataChanged()) {
                 DTaskStat stat = DTaskStat.fromString(zkEvent.getData(), DTaskStat.class);
-                LOGGER.info("4-DTaskStat.... " + JSON.toJSON(stat));
+                logger.info("4-DTaskStat.... " + JSON.toJSON(stat));
                 // do something
                 try {
                     MrJobTasksScheduleService mrJobTasksScheduleService = ApplicationContextUtil
                             .getBean(MrJobTasksScheduleServiceImpl.class);
                     mrJobTasksScheduleService.dealDTaskStat(stat);
                 } catch (Exception e) {
-                    LOGGER.error("4-DTaskStat-Error....出错,请追寻...", e);
+                    logger.error("4-DTaskStat-Error....出错,请追寻...", e);
                 }
             }
             // 任务错误
-            if (TASK_ERROR_PATTERN.matcher(zkEvent.getPath()).matches()) {
+            if (TASK_ERROR_PATTERN.matcher(zkPath).matches()) {
                 String[] taskAndSwimlane = null;
                 try {
                     taskAndSwimlane = zkPath.replace(listenPath(), "").substring(1).split("/error/");
                 } catch (Throwable e) {
-                    LOGGER.error("zk任务错误消息解析失败！", e);
+                    logger.error("zk任务错误消息解析失败！", e);
                 }
                 if (null == taskAndSwimlane || taskAndSwimlane.length != 2) {
-                    LOGGER.error("zk任务错误消息未解析出合规的内容 [{}]", JSON.toJSONString(taskAndSwimlane));
+                    logger.error("zk任务错误消息未解析出合规的内容 [{}]", JSON.toJSONString(taskAndSwimlane));
                     return;
                 }
                 if (zkEvent.isDataChanged() || zkEvent.isOnline()) {
                     ManagerContext.INSTANCE.newStoppedTask(taskAndSwimlane[0], taskAndSwimlane[1]);
-                    LOGGER.info("zk任务错误消息DataChanged or Online,内容:[{}]", JSON.toJSONString(taskAndSwimlane));
+                    logger.info("zk任务错误消息DataChanged or Online,内容:[{}]", JSON.toJSONString(taskAndSwimlane));
                     return;
                 }
                 if (zkEvent.isOffline()) {
-                    LOGGER.info("zk任务错误消息Offline,内容:[{}]", JSON.toJSONString(taskAndSwimlane));
+                    logger.info("zk任务错误消息Offline,内容:[{}]", JSON.toJSONString(taskAndSwimlane));
                     ManagerContext.INSTANCE.removeStoppedTask(taskAndSwimlane[0], taskAndSwimlane[1]);
                     return;
                 }
             }
             // 监控任务上线
-            if (TASK_LOCK_PATTERN.matcher(zkEvent.getPath()).matches() && event.isOnline()) {
+            if (TASK_LOCK_PATTERN.matcher(zkPath).matches() && zkEvent.isOnline()) {
                 try {
                     String taskId = DealStrCutUtils.getSubUtilSimple(zkPath, "task/(.*?)/lock");
                     MrJobTasksScheduleService mrJobTasksScheduleService = ApplicationContextUtil
                             .getBean(MrJobTasksScheduleServiceImpl.class);
                     mrJobTasksScheduleService.updateState(taskId == null ? 0 : Long.valueOf(taskId),
                             TaskStatusType.WORKING);
-                    LOGGER.info("4-DTaskStat-[{}]任务启动.", taskId);
+                    logger.info("4-DTaskStat-[{}]任务启动.", taskId);
                 } catch (Exception e) {
-                    LOGGER.error("4-DTaskStat-Error-lock....任务启动出错,请追寻...", e);
+                    logger.error("4-DTaskStat-Error-lock....任务启动出错,请追寻...", e);
                 }
             }
             // 监控任务下线
-            if (TASK_LOCK_PATTERN.matcher(zkEvent.getPath()).matches() && event.isOffline()) {
+            if (TASK_LOCK_PATTERN.matcher(zkPath).matches() && zkEvent.isOffline()) {
                 try {
                     String taskId = DealStrCutUtils.getSubUtilSimple(zkPath, "task/(.*?)/lock");
                     MrJobTasksScheduleService mrJobTasksScheduleService = ApplicationContextUtil
                             .getBean(MrJobTasksScheduleServiceImpl.class);
                     mrJobTasksScheduleService.updateState(taskId == null ? 0 : Long.valueOf(taskId),
                             TaskStatusType.STOPPED);
-                    LOGGER.info("4-DTaskStat-[{}]任务停止.", taskId);
+                    logger.info("4-DTaskStat-[{}]任务停止.", taskId);
                 } catch (Exception e) {
-                    LOGGER.error("4-DTaskStat-Error-lock....任务停止出错,请追寻...", e);
+                    logger.error("4-DTaskStat-Error-lock....任务停止出错,请追寻...", e);
                 }
             }
             // 抓取任务配置信息
-            if (TASK_DIST_PATTERN.matcher(zkEvent.getPath()).matches() && event.isOnline()) {
+            if (TASK_DIST_PATTERN.matcher(zkPath).matches() && zkEvent.isOnline()) {
                 try {
                     TaskConfig task = JSONObject.parseObject(zkEvent.getData(), TaskConfig.class);
                     if (task.isLocalTask()) {
                         MrJobTasksScheduleService mrJobTasksScheduleService = ApplicationContextUtil
                                 .getBean(MrJobTasksScheduleServiceImpl.class);
                         mrJobTasksScheduleService.dealJobJsonText(task, zkEvent.getData());
-                        LOGGER.info("4-DTaskStat-dist-本地任务配置抓取-[{}]", zkEvent.getData());
+                        logger.info("4-DTaskStat-dist-本地任务配置抓取-[{}]", zkEvent.getData());
                     }
                 } catch (Exception e) {
-                    LOGGER.error("4-DTaskStat-Error-dist....本地任务配置抓取出错,请追寻...", e);
+                    logger.error("4-DTaskStat-Error-dist....本地任务配置抓取出错,请追寻...", e);
                 }
             }
         } catch (Throwable e) {
-            LOGGER.error("4-DTaskStat-Throwable....出错,请追寻...", e);
+            logger.error("4-DTaskStat-Throwable....出错,请追寻...", e);
         }
     }
 
     @Override
     public ClusterListenerFilter filter() {
-        return new ZookeeperClusterListenerFilter() {
-
+        return new ClusterListenerFilter() {
             @Override
-            protected String getPath() {
+            public String getPath() {
                 return listenPath();
             }
-
             @Override
-            protected boolean doFilter(ZookeeperClusterEvent event) {
+            public boolean doFilter(ClusterTreeNodeEvent event) {
                 return true;
             }
         };
-    }
-
-    @Override
-    public void push(TaskPushCommand command) throws Exception {
-        push(command, true, true);
-    }
-
-    @Override
-    public ZookeeperClient getZKClient() {
-        return client;
-    }
-
-    @Override
-    public String zkTaskPath() {
-        return ZK_PATH;
     }
 
     @Override
@@ -234,17 +208,17 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements Z
         for (String id : taskIds) {
             String dist = ZK_PATH + "/" + id + "/dist";
             try {
-                Stat stat = client.exists(dist, true);
+                ClusterClient.LockVersion stat = client.exists(dist, true);
                 if (null != stat) {
                     List<String> canals = client.getChildren(dist);
                     for (String canal : canals) {
-                        Pair<String, Stat> taskContent = client.getData(dist + "/" + canal);
-                        if (null != taskContent.getLeft() && !taskContent.getLeft().isEmpty())
-                            taskConfigs.add(JSONObject.parseObject(taskContent.getLeft(), TaskConfig.class));
+                        ClusterClient.TreeNode taskContent = client.getData(dist + "/" + canal);
+                        if (null != taskContent.getData() && !taskContent.getData().isEmpty())
+                            taskConfigs.add(JSONObject.parseObject(taskContent.getData(), TaskConfig.class));
                     }
                 }
             } catch (Throwable e) {
-                LOGGER.warn("list deployed task error", e);
+                logger.warn("list deployed task error", e);
             }
         }
         return taskConfigs;
@@ -270,18 +244,25 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements Z
             try {
                 for (SourceConfig source : sourceConfigs) {
                     String swimlaneLock = ZK_PATH + "/" + config.getTaskId() + "/lock/" + source.getSwimlaneId();
-                    if (config.getStatus() == TaskStatusType.WORKING && null == client.exists(swimlaneLock, true)) {
+                    if (config.getStatus() == TaskStatusType.WORKING && !client.isExists(swimlaneLock, true)) {
                         messages.append(System.lineSeparator()).append("预分配节点:").append(config.getNodeId()).append(",任务Id:").append(config.getTaskId())
                                 .append(",泳道:").append(source.getSwimlaneId()).append(System.lineSeparator());
                     }
                 }
-            } catch (KeeperException e) {
-                LOGGER.warn("list unsigned swimlane error", e);
-            } catch (InterruptedException e) {
-                LOGGER.warn("list unsigned swimlane suspend");
+            } catch (Exception e) {
+                logger.warn("list unsigned swimlane error", e);
             }
         }
         return messages.toString();
+    }
+
+
+    @Override
+    public List<ClusterListenerEventExecutor> watchedEvents() {
+        List<ClusterListenerEventExecutor> executors = new ArrayList<>();
+        //任务上传事件
+        executors.add(new TaskPushEventExecutor(this.getClass(), true, true, listenPath()));
+        return executors;
     }
 
 }

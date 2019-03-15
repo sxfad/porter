@@ -17,7 +17,7 @@
 
 package cn.vbill.middleware.porter.task;
 
-import cn.vbill.middleware.porter.common.cluster.command.TaskPushCommand;
+import cn.vbill.middleware.porter.common.cluster.event.command.TaskPushCommand;
 import cn.vbill.middleware.porter.common.dic.ClusterPlugin;
 import cn.vbill.middleware.porter.common.task.TaskEventListener;
 import cn.vbill.middleware.porter.common.util.MachineUtils;
@@ -273,7 +273,7 @@ public class TaskController implements TaskEventListener {
     private void registerLocalTask(TaskConfig taskConfig) {
         try {
             if (taskConfig.isLocalTask()) {
-                ClusterProviderProxy.INSTANCE.broadcast(new TaskPushCommand(taskConfig));
+                ClusterProviderProxy.INSTANCE.broadcastEvent(new TaskPushCommand(taskConfig));
             }
         } catch (Throwable e) {
             LOGGER.warn("注册本地任务到集群失败:{}", taskConfig.getTaskId(), e);

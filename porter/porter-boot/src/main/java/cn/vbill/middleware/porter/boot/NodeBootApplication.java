@@ -25,7 +25,7 @@ import cn.vbill.middleware.porter.core.NodeContext;
 import cn.vbill.middleware.porter.task.TaskController;
 import cn.vbill.middleware.porter.common.alert.AlertProviderFactory;
 import cn.vbill.middleware.porter.common.cluster.ClusterProviderProxy;
-import cn.vbill.middleware.porter.common.cluster.command.NodeRegisterCommand;
+import cn.vbill.middleware.porter.common.cluster.event.command.NodeRegisterCommand;
 import cn.vbill.middleware.porter.common.util.compile.JavaFileCompiler;
 import cn.vbill.middleware.porter.boot.config.NodeConfig;
 import org.slf4j.Logger;
@@ -125,7 +125,7 @@ public class NodeBootApplication {
         LOGGER.info("joining into cluster register.......");
         try {
             //注册节点，注册失败退出进程
-            ClusterProviderProxy.INSTANCE.broadcast(new NodeRegisterCommand(config.getId(), config.getStatistic().isUpload()));
+            ClusterProviderProxy.INSTANCE.broadcastEvent(new NodeRegisterCommand(config.getId(), config.getStatistic().isUpload()));
         } catch (Exception e) {
             e.printStackTrace();
             LOGGER.error("fail to join into cluster register", e);

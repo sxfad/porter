@@ -20,6 +20,8 @@ import static cn.vbill.middleware.porter.manager.web.message.ResponseMessage.ok;
 
 import java.io.UnsupportedEncodingException;
 
+import cn.vbill.middleware.porter.common.cluster.impl.AbstractClusterListener;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +39,6 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.vbill.middleware.porter.common.cluster.ClusterProviderProxy;
-import cn.vbill.middleware.porter.common.cluster.command.DataSourcePushCommand;
 import cn.vbill.middleware.porter.common.config.DataLoaderConfig;
 import cn.vbill.middleware.porter.manager.core.entity.PublicDataSource;
 import cn.vbill.middleware.porter.manager.service.PublicDataSourceService;
@@ -180,7 +181,12 @@ public class PublicDataSourceController {
         PublicDataSource publicDataSource = publicDataSourceService.selectById(id);
         DataLoaderConfig config = JSONObject.parseObject(publicDataSource.getJsonText(), DataLoaderConfig.class);
         try {
-            ClusterProviderProxy.INSTANCE.broadcast(new DataSourcePushCommand(config));
+            ClusterProviderProxy.INSTANCE.broadcastEvent(client -> {
+                String configPath = AbstractClusterListener.BASE_CATALOG + "/datesource/" + config.getLoaderName();
+                if (!StringUtils.isBlank(configPath)) {
+                    client.changeData(configPath, false, false, JSON.toJSONString(config));
+                }
+            });
             log.info("推送公共数据源[{}]信息到zk成功,详细信息[{}]!", id, JSON.toJSONString(config));
         } catch (Exception e) {
             log.error("推送公共数据源[{}]信息到zk失败,请关注！", id, e);

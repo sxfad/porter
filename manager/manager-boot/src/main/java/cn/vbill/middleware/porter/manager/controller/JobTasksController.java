@@ -38,7 +38,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alibaba.fastjson.JSON;
 
 import cn.vbill.middleware.porter.common.cluster.ClusterProviderProxy;
-import cn.vbill.middleware.porter.common.cluster.command.TaskPushCommand;
+import cn.vbill.middleware.porter.common.cluster.event.command.TaskPushCommand;
 import cn.vbill.middleware.porter.common.config.TaskConfig;
 import cn.vbill.middleware.porter.common.dic.TaskStatusType;
 import cn.vbill.middleware.porter.manager.core.entity.JobTasks;
@@ -259,7 +259,7 @@ public class JobTasksController {
         if (taskStatusType == TaskStatusType.WORKING || taskStatusType == TaskStatusType.STOPPED) {
             try {
                 TaskPushCommand config = new TaskPushCommand(jobTasksService.fitJobTask(id, taskStatusType));
-                ClusterProviderProxy.INSTANCE.broadcast(config);
+                ClusterProviderProxy.INSTANCE.broadcastEvent(config);
                 log.info("zk任务Id:[{}] 状态:[{}] 详情:[{}].", id, taskStatusType, JSON.toJSONString(config));
             } catch (Exception e) {
                 log.error("zk变更任务Id[{}] 状态[{}]失败,请关注！", id, taskStatusType);
@@ -284,7 +284,7 @@ public class JobTasksController {
         if (number == 1) {
             try {
                 ClusterProviderProxy.INSTANCE
-                        .broadcast(new TaskPushCommand(jobTasksService.fitJobTask(id, TaskStatusType.DELETED)));
+                        .broadcastEvent(new TaskPushCommand(jobTasksService.fitJobTask(id, TaskStatusType.DELETED)));
             } catch (Exception e) {
                 log.error("zk删除任务节点[{}]失败,请关注！", id, e);
                 return ResponseMessage.error("zk删除任务节点失败！");

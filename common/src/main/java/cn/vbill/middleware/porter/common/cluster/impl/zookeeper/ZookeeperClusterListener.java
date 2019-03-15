@@ -17,8 +17,6 @@
 
 package cn.vbill.middleware.porter.common.cluster.impl.zookeeper;
 
-import cn.vbill.middleware.porter.common.client.Client;
-import cn.vbill.middleware.porter.common.client.impl.ZookeeperClient;
 import cn.vbill.middleware.porter.common.cluster.impl.AbstractClusterListener;
 
 /**
@@ -27,20 +25,10 @@ import cn.vbill.middleware.porter.common.cluster.impl.AbstractClusterListener;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月19日 16:24
  */
-public abstract class ZookeeperClusterListener extends AbstractClusterListener {
-    protected ZookeeperClient client;
+public  abstract class ZookeeperClusterListener extends AbstractClusterListener {
     @Override
-    public void setClient(Client client) {
-        this.client = (ZookeeperClient) client;
-    }
-
-
-    /**
-     * 是否监听listenPath
-     *
-     * @return
-     */
     public boolean watchListenPath() {
         return true;
     }
+
 }

@@ -17,18 +17,21 @@
 
 package cn.vbill.middleware.porter.common.cluster.impl;
 
+import cn.vbill.middleware.porter.common.client.ClusterClient;
 import cn.vbill.middleware.porter.common.cluster.ClusterListener;
 import cn.vbill.middleware.porter.common.cluster.ClusterListenerFilter;
 import cn.vbill.middleware.porter.common.cluster.ClusterMonitor;
 import cn.vbill.middleware.porter.common.cluster.ClusterProviderProxy;
-import cn.vbill.middleware.porter.common.cluster.command.ShutdownCommand;
-import cn.vbill.middleware.porter.common.cluster.event.ClusterEvent;
+import cn.vbill.middleware.porter.common.cluster.event.ClusterListenerEventExecutor;
+import cn.vbill.middleware.porter.common.cluster.event.command.*;
+import cn.vbill.middleware.porter.common.cluster.event.ClusterListenerEventType;
+import cn.vbill.middleware.porter.common.cluster.event.ClusterTreeNodeEvent;
+import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -39,19 +42,70 @@ import java.util.Map;
 public abstract class AbstractClusterMonitor implements ClusterMonitor {
     protected final Logger logger = LoggerFactory.getLogger(this.getClass());
     protected final Map<String, ClusterListener> listeners = new LinkedHashMap<>();
+    protected final Map<ClusterListenerEventType, List<ClusterListenerEventExecutor>> eventWatchdog = new ConcurrentHashMap<>();
+    private ClusterClient client;
+
+    @Override
+    public void stop() {
+        try {
+            //最后的清除任务
+            ClusterProviderProxy.INSTANCE.broadcastEvent(new ShutdownCommand());
+        } catch (Exception e) {
+            logger.warn("停止集群监听失败", e);
+        }
+    }
+
+    @Override
+    public void start() throws InterruptedException {
+        initiate();
+        //监听器初始化
+        listeners.forEach((k, v) -> {
+            try {
+                v.start();
+            } catch (Exception e) {
+                logger.warn("集群监听器启动失败", e);
+            }
+        });
+    }
+
+
+    protected void initiate() throws InterruptedException {
+        try {
+            if (!getClient().isExists(ZookeeperClusterListener.PREFIX_ATALOG, false)) {
+                getClient().createRoot(ZookeeperClusterListener.PREFIX_ATALOG, false);
+            }
+            if (!getClient().isExists(ZookeeperClusterListener.BASE_CATALOG, false)) {
+                getClient().createRoot(ZookeeperClusterListener.BASE_CATALOG, false);
+            }
+            for (ClusterListener listener : listeners.values()) {
+                try {
+                    logger.info("init:{},watch:{}", listener.listenPath(), listener.watchListenPath());
+                    getClient().createRoot(listener.listenPath(), false);
+                    logger.info("attempted create node:{}", listener.listenPath());
+                    //只有该ClusterListener监听path变化时才会触发triggerTreeEvent
+                    if (listener.watchListenPath()) {
+                        logger.info("trigger children watch event:{}", listener.listenPath());
+                        //watch children changed
+                        triggerWatch(listener.listenPath());
+                    }
+                } catch (Throwable e) {
+                    logger.warn("初始化节点{}监听失败", (null != listener ? listener.listenPath() : "---"), e);
+                }
+            }
+        } catch (Throwable e) {
+            logger.error("initiate ClusterMonitor error", e);
+        }
+    }
+
+
 
     /**
      * doStart
      */
-    protected abstract void doStart();
+    protected abstract void triggerWatch(String treeNodePath);
 
     @Override
-    public void addListener(ClusterListener listener) {
-        listeners.put(listener.getName(), listener);
-    }
-
-    @Override
-    public void onEvent(ClusterEvent e) {
+    public void onEvent(ClusterTreeNodeEvent e) {
         if (null != e && null != listeners && !listeners.isEmpty()) {
             for (ClusterListener listener : listeners.values()) {
                 ClusterListenerFilter filter = listener.filter();
@@ -68,25 +122,33 @@ public abstract class AbstractClusterMonitor implements ClusterMonitor {
     }
 
     @Override
-    public void stop() {
-        try {
-            //最后的清除任务
-            ClusterProviderProxy.INSTANCE.broadcast(new ShutdownCommand());
-        } catch (Exception e) {
-            logger.warn("停止集群监听失败", e);
-        }
+    public void setClient(ClusterClient client) {
+        this.client = client;
+    }
+
+    public ClusterClient getClient() {
+        return client;
+    }
+
+    public void registerListener(List<ClusterListener> target) {
+        //添加SPI到监听器
+        target.forEach(listener -> {
+            listener.setClient(client);
+            listeners.put(listener.getName(), listener);
+            if (null != listener.watchedEvents()) {
+                listener.watchedEvents().forEach(e -> registerClusterEvent(e));
+            }
+        });
+    }
+
+    public void registerClusterEvent(ClusterListenerEventExecutor eventExecutor) {
+        if (null != eventExecutor && null == eventExecutor.getClient()) eventExecutor.bind(client);
+        eventWatchdog.getOrDefault(eventExecutor.getBindEvent(), new ArrayList<>()).add(eventExecutor);
     }
 
     @Override
-    public void start() {
-        doStart();
-        //监听器初始化
-        listeners.forEach((k, v) -> {
-            try {
-                v.start();
-            } catch (Exception e) {
-                logger.warn("集群监听器启动失败", e);
-            }
-        });
+    public void noticeClusterListenerEvent(ClusterCommand command) {
+        eventWatchdog.getOrDefault(command.getClusterListenerEventType(), Collections.emptyList())
+                .forEach(l -> l.execute(command));
     }
 }

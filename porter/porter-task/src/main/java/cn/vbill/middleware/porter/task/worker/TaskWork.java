@@ -19,13 +19,13 @@ package cn.vbill.middleware.porter.task.worker;
 
 import cn.vbill.middleware.porter.common.alert.AlertReceiver;
 import cn.vbill.middleware.porter.common.cluster.ClusterProviderProxy;
-import cn.vbill.middleware.porter.common.cluster.command.StatisticUploadCommand;
-import cn.vbill.middleware.porter.common.cluster.command.TaskPositionQueryCommand;
-import cn.vbill.middleware.porter.common.cluster.command.TaskRegisterCommand;
-import cn.vbill.middleware.porter.common.cluster.command.TaskStatCommand;
-import cn.vbill.middleware.porter.common.cluster.command.TaskStatQueryCommand;
-import cn.vbill.middleware.porter.common.cluster.command.TaskStopCommand;
-import cn.vbill.middleware.porter.common.cluster.command.TaskStoppedByErrorCommand;
+import cn.vbill.middleware.porter.common.cluster.event.command.StatisticUploadCommand;
+import cn.vbill.middleware.porter.common.cluster.event.command.TaskPositionQueryCommand;
+import cn.vbill.middleware.porter.common.cluster.event.command.TaskRegisterCommand;
+import cn.vbill.middleware.porter.common.cluster.event.command.TaskStatCommand;
+import cn.vbill.middleware.porter.common.cluster.event.command.TaskStatQueryCommand;
+import cn.vbill.middleware.porter.common.cluster.event.command.TaskStopCommand;
+import cn.vbill.middleware.porter.common.cluster.event.command.TaskStoppedByErrorCommand;
 import cn.vbill.middleware.porter.common.cluster.data.DCallback;
 import cn.vbill.middleware.porter.common.cluster.data.DObject;
 import cn.vbill.middleware.porter.common.cluster.data.DTaskStat;
@@ -120,7 +120,7 @@ public class TaskWork {
         }
 
         //从集群模块获取任务状态统计信息
-        ClusterProviderProxy.INSTANCE.broadcast(new TaskStatQueryCommand(taskId, dataConsumer.getSwimlaneId(), new DCallback() {
+        ClusterProviderProxy.INSTANCE.broadcastEvent(new TaskStatQueryCommand(taskId, dataConsumer.getSwimlaneId(), new DCallback() {
             @Override
             public void callback(List<DObject> objects) {
                 for (DObject object : objects) {
@@ -160,7 +160,7 @@ public class TaskWork {
                 }
                 try {
                     //广播任务结束消息
-                    ClusterProviderProxy.INSTANCE.broadcast(new TaskStopCommand(taskId, dataConsumer.getSwimlaneId()));
+                    ClusterProviderProxy.INSTANCE.broadcastEvent(new TaskStopCommand(taskId, dataConsumer.getSwimlaneId()));
                 } catch (Exception e) {
                     NodeLog.upload(NodeLog.LogType.TASK_LOG, taskId, dataConsumer.getSwimlaneId(), "广播TaskStopCommand失败:" + e.getMessage());
                 }
@@ -191,7 +191,7 @@ public class TaskWork {
 
 
             //会抛出分布式锁任务抢占异常
-            ClusterProviderProxy.INSTANCE.broadcast(new TaskRegisterCommand(taskId, dataConsumer.getSwimlaneId()));
+            ClusterProviderProxy.INSTANCE.broadcastEvent(new TaskRegisterCommand(taskId, dataConsumer.getSwimlaneId()));
             //开始阶段性工作
             for (Map.Entry<StageType, StageJob> jobs : stageJobs.entrySet()) {
                 jobs.getValue().start();
@@ -199,7 +199,7 @@ public class TaskWork {
 
             LOGGER.info("开始获取任务消费泳道[{}-{}]上次同步点", taskId, dataConsumer.getSwimlaneId());
             //获取上次任务进度
-            ClusterProviderProxy.INSTANCE.broadcast(new TaskPositionQueryCommand(taskId, dataConsumer.getSwimlaneId(), new DCallback() {
+            ClusterProviderProxy.INSTANCE.broadcastEvent(new TaskPositionQueryCommand(taskId, dataConsumer.getSwimlaneId(), new DCallback() {
                 @Override
                 @SneakyThrows(TaskStopTriggerException.class)
                 public void callback(String position) {
@@ -272,7 +272,7 @@ public class TaskWork {
             }
             LOGGER.debug("stat snapshot:{}", JSON.toJSONString(newStat));
             try {
-                ClusterProviderProxy.INSTANCE.broadcast(new TaskStatCommand(newStat, new DCallback() {
+                ClusterProviderProxy.INSTANCE.broadcastEvent(new TaskStatCommand(newStat, new DCallback() {
                     @Override
                     public void callback(DObject object) {
                         DTaskStat remoteData = (DTaskStat) object;
@@ -298,7 +298,7 @@ public class TaskWork {
             try {
                 //TaskPerformance
                 if (NodeContext.INSTANCE.isUploadStatistic()) {
-                    ClusterProviderProxy.INSTANCE.broadcast(new StatisticUploadCommand(new TaskPerformance(newStat)));
+                    ClusterProviderProxy.INSTANCE.broadcastEvent(new StatisticUploadCommand(new TaskPerformance(newStat)));
                 }
             } catch (Throwable e) {
                 NodeLog.upload(NodeLog.LogType.TASK_LOG, taskId, dataConsumer.getSwimlaneId(), "上传任务统计信息失败:" + e.getMessage());
@@ -378,7 +378,7 @@ public class TaskWork {
                         LOGGER.error("拼接任务异常停止告警信息出错", e);
                     }
                     try {
-                        ClusterProviderProxy.INSTANCE.broadcast(new TaskStoppedByErrorCommand(taskId, dataConsumer.getSwimlaneId(), alarmNotice));
+                        ClusterProviderProxy.INSTANCE.broadcastEvent(new TaskStoppedByErrorCommand(taskId, dataConsumer.getSwimlaneId(), alarmNotice));
                     } catch (Throwable e) {
                         LOGGER.error("在集群策略存储引擎标识任务因错误失败出错:{}", e.getMessage());
                     }

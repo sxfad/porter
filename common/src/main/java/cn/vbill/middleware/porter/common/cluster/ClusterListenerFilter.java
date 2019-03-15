@@ -17,7 +17,7 @@
 
 package cn.vbill.middleware.porter.common.cluster;
 
-import cn.vbill.middleware.porter.common.cluster.event.ClusterEvent;
+import cn.vbill.middleware.porter.common.cluster.event.ClusterTreeNodeEvent;
 
 /**
  * 集群监听过滤器
@@ -30,9 +30,17 @@ public interface ClusterListenerFilter {
 
     /**
      * onFilter
-     * 
      * @param event
      * @return
      */
-    boolean onFilter(ClusterEvent event);
+    default boolean onFilter(ClusterTreeNodeEvent event) {
+        //是否路径匹配
+        boolean isPathMatch = event.getId().startsWith(getPath());
+        return isPathMatch && doFilter(event);
+    }
+    boolean doFilter(ClusterTreeNodeEvent event);
+
+    String getPath();
+
+
 }

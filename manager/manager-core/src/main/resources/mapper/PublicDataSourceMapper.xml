@@ -95,7 +95,7 @@
 
     <!-- 分页 -->
     <select id="page" resultType="cn.vbill.middleware.porter.manager.core.entity.PublicDataSource">
-        select id, code, name, xml_text AS xmlText, json_text AS jsonText, declares, creator, create_time AS createTime, state, type, iscancel, ispush, remark from b_public_data_source
+        select id, code, name, declares, creator, create_time AS createTime, state, type, iscancel, ispush, remark from b_public_data_source
         where iscancel = 0
         <if test="id != null and id != ''">
             and id = #{id}

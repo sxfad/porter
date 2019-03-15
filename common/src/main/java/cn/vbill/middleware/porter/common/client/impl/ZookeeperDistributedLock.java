@@ -19,11 +19,9 @@ package cn.vbill.middleware.porter.common.client.impl;
 
 import cn.vbill.middleware.porter.common.client.DistributedLock;
 import cn.vbill.middleware.porter.common.cluster.ClusterListenerFilter;
-import cn.vbill.middleware.porter.common.cluster.event.ClusterEvent;
-import cn.vbill.middleware.porter.common.cluster.event.EventType;
-import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterEvent;
+import cn.vbill.middleware.porter.common.cluster.event.ClusterTreeNodeEvent;
+import cn.vbill.middleware.porter.common.cluster.event.TreeNodeEventType;
 import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListener;
-import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListenerFilter;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,12 +56,11 @@ public class ZookeeperDistributedLock extends ZookeeperClusterListener implement
     }
 
     @Override
-    public void onEvent(ClusterEvent event) {
-        ZookeeperClusterEvent zkEvent = (ZookeeperClusterEvent) event;
-        String zkPath = zkEvent.getPath();
-        LOGGER.info("TaskListener:{},{},{}", zkEvent.getPath(), zkEvent.getData(), zkEvent.getEventType());
+    public void onEvent(ClusterTreeNodeEvent event) {
+        String zkPath = event.getId();
+        LOGGER.info("TaskListener:{},{},{}", zkPath, event.getData(), event.getEventType());
         if (NODE_LOCK_PATTERN.matcher(zkPath).matches()) {
-            if (zkEvent.getEventType() == EventType.OFFLINE) {
+            if (event.getEventType() == TreeNodeEventType.OFFLINE) {
                 //获取锁资源
                 String resource = zkPath.replace(LOCK_ROOT, "");
                 LATCH.computeIfPresent(resource, (key, latch) -> {
@@ -76,13 +73,13 @@ public class ZookeeperDistributedLock extends ZookeeperClusterListener implement
 
     @Override
     public ClusterListenerFilter filter() {
-        return new ZookeeperClusterListenerFilter() {
+        return new ClusterListenerFilter() {
             @Override
-            protected String getPath() {
+            public String getPath() {
                 return listenPath();
             }
             @Override
-            protected boolean doFilter(ZookeeperClusterEvent event) {
+            public boolean doFilter(ClusterTreeNodeEvent event) {
                 return true;
             }
         };
@@ -105,7 +102,7 @@ public class ZookeeperDistributedLock extends ZookeeperClusterListener implement
     }
 
 
-    public void lockInterruptibly(String resource) throws InterruptedException {
+    public void lockInterruptibly(String resource) {
         tagResource(resource);
         try {
             lock(resource, true);
@@ -133,7 +130,7 @@ public class ZookeeperDistributedLock extends ZookeeperClusterListener implement
     public void unlock(String resource) {
         String resourcePath = LOCK_ROOT + resource;
         //判断是否存在锁，并且为当前线程所占
-        if (client.isExists(resourcePath, true) && client.getData(resourcePath).getLeft().equals(Thread.currentThread().getId() + "")) {
+        if (client.isExists(resourcePath, true) && client.getData(resourcePath).getData().equals(Thread.currentThread().getId() + "")) {
             client.delete(resourcePath);
         }
     }

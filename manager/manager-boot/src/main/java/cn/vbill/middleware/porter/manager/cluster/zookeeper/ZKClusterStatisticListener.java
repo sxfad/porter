@@ -17,11 +17,9 @@
 
 package cn.vbill.middleware.porter.manager.cluster.zookeeper;
 
-import cn.vbill.middleware.porter.common.cluster.ClusterListenerFilter;
-import cn.vbill.middleware.porter.common.cluster.event.ClusterEvent;
-import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterEvent;
+import cn.vbill.middleware.porter.common.cluster.event.ClusterTreeNodeEvent;
 import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListener;
-import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListenerFilter;
+import cn.vbill.middleware.porter.common.cluster.ClusterListenerFilter;
 import cn.vbill.middleware.porter.common.statistics.NodeLog;
 import cn.vbill.middleware.porter.common.statistics.TaskPerformance;
 import cn.vbill.middleware.porter.manager.core.util.ApplicationContextUtil;
@@ -33,9 +31,6 @@ import cn.vbill.middleware.porter.manager.service.impl.MrLogMonitorServiceImpl;
 import cn.vbill.middleware.porter.manager.service.impl.MrNodesMonitorServiceImpl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.regex.Pattern;
 
 /**
@@ -51,18 +46,15 @@ public class ZKClusterStatisticListener extends ZookeeperClusterListener {
     private static final Pattern LOG_PATTERN = Pattern.compile(ZK_PATH + "/log/.*");
     private static final Pattern TASK_PATTERN = Pattern.compile(ZK_PATH + "/task/.*");
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ZKClusterStatisticListener.class);
-
     @Override
     public String listenPath() {
         return ZK_PATH;
     }
 
     @Override
-    public void onEvent(ClusterEvent event) {
-        ZookeeperClusterEvent zkEvent = (ZookeeperClusterEvent) event;
-        LOGGER.debug("StatisticListener:{},{},{}", zkEvent.getPath(), zkEvent.getData(), zkEvent.getEventType());
-        String zkPath = zkEvent.getPath();
+    public void onEvent(ClusterTreeNodeEvent zkEvent) {
+        String zkPath = zkEvent.getId();
+        logger.debug("StatisticListener:{},{},{}", zkPath, zkEvent.getData(), zkEvent.getEventType());
         if (zkEvent.isOnline()) {
             try {
                 // 日志
@@ -76,16 +68,16 @@ public class ZKClusterStatisticListener extends ZookeeperClusterListener {
                      * LOGGER.error("3-NodeLog-Error....出错,请追寻...", e); }
                      */
                     if (log == null) {
-                        LOGGER.error("3-NodeLog....." + JSON.toJSON(log));
+                        logger.error("3-NodeLog....." + JSON.toJSON(log));
                     } else {
-                        LOGGER.info("3-NodeLog....." + JSON.toJSON(log));
+                        logger.info("3-NodeLog....." + JSON.toJSON(log));
                         // do something
                         try {
                             MrLogMonitorService mrLogMonitorService = ApplicationContextUtil
                                     .getBean(MrLogMonitorServiceImpl.class);
                             mrLogMonitorService.dealNodeLog(log);
                         } catch (Exception e) {
-                            LOGGER.error("3-NodeLog-Error....出错,请追寻...", e);
+                            logger.error("3-NodeLog-Error....出错,请追寻...", e);
                         }
                     }
                 }
@@ -93,9 +85,9 @@ public class ZKClusterStatisticListener extends ZookeeperClusterListener {
                 if (TASK_PATTERN.matcher(zkPath).matches()) {
                     TaskPerformance performance = JSONObject.parseObject(zkEvent.getData(), TaskPerformance.class);
                     if (performance == null) {
-                        LOGGER.error("3-TaskPerformance....." + JSON.toJSON(performance));
+                        logger.error("3-TaskPerformance....." + JSON.toJSON(performance));
                     } else {
-                        LOGGER.info("3-TaskPerformance....." + JSON.toJSON(performance));
+                        logger.info("3-TaskPerformance....." + JSON.toJSON(performance));
                         // do something
                         try {
                             // 任务泳道实时监控表 服务接口类
@@ -107,13 +99,13 @@ public class ZKClusterStatisticListener extends ZookeeperClusterListener {
                                     .getBean(MrNodesMonitorServiceImpl.class);
                             mrNodesMonitorService.dealTaskPerformance(performance);
                         } catch (Exception e) {
-                            LOGGER.error("3-TaskPerformance-Error....出错,请追寻...", e);
+                            logger.error("3-TaskPerformance-Error....出错,请追寻...", e);
                         }
                     }
                 }
             } catch (Throwable e) {
                 e.printStackTrace();
-                LOGGER.error("3-TaskPerformance-Error....出错,请追寻...", e);
+                logger.error("3-TaskPerformance-Error....出错,请追寻...", e);
             } finally {
                 // 删除已获取的事件
                 client.delete(zkPath);
@@ -123,14 +115,14 @@ public class ZKClusterStatisticListener extends ZookeeperClusterListener {
 
     @Override
     public ClusterListenerFilter filter() {
-        return new ZookeeperClusterListenerFilter() {
+        return new ClusterListenerFilter() {
             @Override
-            protected String getPath() {
+            public String getPath() {
                 return listenPath();
             }
 
             @Override
-            protected boolean doFilter(ZookeeperClusterEvent event) {
+            public boolean doFilter(ClusterTreeNodeEvent event) {
                 return true;
             }
         };
@@ -138,8 +130,8 @@ public class ZKClusterStatisticListener extends ZookeeperClusterListener {
 
     @Override
     public void start() {
-        client.createWhenNotExists(ZK_PATH, false, true, null);
-        client.createWhenNotExists(ZK_PATH + "/log", false, true, null);
-        client.createWhenNotExists(ZK_PATH + "/task", false, true, null);
+        client.create(ZK_PATH, null, false, true);
+        client.create(ZK_PATH + "/log", null, false, true);
+        client.create(ZK_PATH + "/task", null, false, true);
     }
 }

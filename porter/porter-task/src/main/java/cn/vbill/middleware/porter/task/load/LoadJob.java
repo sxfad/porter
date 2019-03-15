@@ -18,7 +18,7 @@
 package cn.vbill.middleware.porter.task.load;
 
 import cn.vbill.middleware.porter.common.cluster.ClusterProviderProxy;
-import cn.vbill.middleware.porter.common.cluster.command.TaskPositionUploadCommand;
+import cn.vbill.middleware.porter.common.cluster.event.command.TaskPositionUploadCommand;
 import cn.vbill.middleware.porter.common.cluster.data.DTaskStat;
 import cn.vbill.middleware.porter.common.exception.TaskStopTriggerException;
 import cn.vbill.middleware.porter.common.statistics.NodeLog;
@@ -150,7 +150,7 @@ public class LoadJob extends AbstractStageJob {
                         newestPositionDiffer = work.getDataConsumer().commitPosition(bucket.getPosition());
                         if (bucket.getPosition().checksum()) {
                             LOGGER.info("提交消费同步点:{},消息堆积:{}", bucket.getPosition().render(), newestPositionDiffer);
-                            ClusterProviderProxy.INSTANCE.broadcast(new TaskPositionUploadCommand(work.getTaskId(),
+                            ClusterProviderProxy.INSTANCE.broadcastEvent(new TaskPositionUploadCommand(work.getTaskId(),
                                     work.getDataConsumer().getSwimlaneId(), bucket.getPosition().render()));
                             LOGGER.info("结束提交消费同步点:{},消息堆积:{}", bucket.getPosition().render(), newestPositionDiffer);
                         }
