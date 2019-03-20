@@ -192,7 +192,7 @@ public class ETLRowTransformer implements Transformer {
         });
 
         row.getColumns().removeAll(removeables);
-        LOGGER.info("remove columns:{}", removeables.stream().map(p -> JSONObject.toJSONString(p)).reduce((p, n) -> p + "," + n).orElse(""));
+        LOGGER.debug("remove columns:{}", removeables.stream().map(p -> JSONObject.toJSONString(p)).reduce((p, n) -> p + "," + n).orElse(""));
         return !removeables.isEmpty();
     }
 

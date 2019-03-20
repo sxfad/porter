@@ -17,6 +17,7 @@
 
 package cn.vbill.middleware.porter.boot;
 
+import cn.vbill.middleware.porter.boot.helper.GCHelper;
 import cn.vbill.middleware.porter.common.client.PublicClientContext;
 import cn.vbill.middleware.porter.common.dic.AlertPlugin;
 import cn.vbill.middleware.porter.boot.config.SourcesConfig;
@@ -75,8 +76,7 @@ public class NodeBootApplication {
         try {
             JavaFileCompiler.getInstance().loadPlugin();
         } catch (MalformedURLException e) {
-            System.exit(-1);
-            LOGGER.error("初始化插件失败", e);
+            LOGGER.error("初始化插件失败, 数据同步节点退出!", e);
             System.exit(-1);
         }
 
@@ -89,7 +89,7 @@ public class NodeBootApplication {
             try {
                 AlertProviderFactory.INSTANCE.initialize(config.getAlert());
             } catch (Exception e) {
-                LOGGER.error("告警配置初始化失败, 数据同步节点退出!error:", e.getMessage());
+                LOGGER.error("告警配置初始化失败, 数据同步节点退出!", e);
                 System.exit(-1);
             }
         }
@@ -102,7 +102,7 @@ public class NodeBootApplication {
         try {
             PublicClientContext.INSTANCE.initialize(datasourceConfigBean.getConfig());
         } catch (Exception e) {
-            LOGGER.error("公用资源连接SourcesConfig初始化失败, 数据同步节点退出!error:", e);
+            LOGGER.info("公用资源连接SourcesConfig初始化失败, 数据同步节点退出!", e);
             System.exit(-1);
         }
 
@@ -116,8 +116,8 @@ public class NodeBootApplication {
                 ClusterProviderProxy.INSTANCE.stop();
             } catch (Throwable stopError) {
             }
+            LOGGER.error("集群配置参数ClusterConfig初始化失败, 数据同步节点退出!", e);
             System.exit(-1);
-            LOGGER.error("获取集群配置信息失败", e);
         }
 
         //节点注册
@@ -126,8 +126,7 @@ public class NodeBootApplication {
             //注册节点，注册失败退出进程
             ClusterProviderProxy.INSTANCE.broadcast(new NodeRegisterCommand(config.getId(), config.getStatistic().isUpload()));
         } catch (Exception e) {
-            e.printStackTrace();
-            LOGGER.error("注册到集群失败", e);
+            LOGGER.error("注册到集群失败,数据同步节点退出!", e);
             System.exit(-1);
         }
 
@@ -139,6 +138,10 @@ public class NodeBootApplication {
         TaskController controller = context.getBean(TaskController.class);
         //启动节点任务执行容器，并尝试执行本地配置文件任务
         controller.start(null != config.getTask() && !config.getTask().isEmpty() ? config.getTask() : null);
+        if (config.isGc()) {
+            LOGGER.info("running GC Thread.......");
+            GCHelper.run(config.getGcDelayOfMinutes());
+        }
         LOGGER.info("NodeBootApplication started");
     }
 }

@@ -61,17 +61,4 @@ public class CRoleController {
         List<CRole> roles = cRoleService.findList();
         return ok(roles);
     }
-
-    /**
-     * 查询所有权限
-     *
-     * @author he_xin
-     * @return
-     */
-    @GetMapping("/getAll")
-    @ApiOperation(value = "拿到所有的权限", notes = "拿到所有的权限")
-    public ResponseMessage findAll() {
-        List<CRole> roleList = cRoleService.getAll();
-        return ok(roleList);
-    }
 }

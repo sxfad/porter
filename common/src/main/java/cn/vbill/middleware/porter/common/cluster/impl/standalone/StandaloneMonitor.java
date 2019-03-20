@@ -20,7 +20,6 @@ package cn.vbill.middleware.porter.common.cluster.impl.standalone;
 import cn.vbill.middleware.porter.common.client.Client;
 import cn.vbill.middleware.porter.common.client.impl.FileClient;
 import cn.vbill.middleware.porter.common.cluster.ClusterListener;
-import cn.vbill.middleware.porter.common.cluster.impl.AbstractClusterListener;
 import cn.vbill.middleware.porter.common.cluster.impl.AbstractClusterMonitor;
 
 /**
@@ -34,7 +33,7 @@ public class StandaloneMonitor extends AbstractClusterMonitor {
     @Override
     public void doStart() {
         try {
-            boolean preStat = client.exists(AbstractClusterListener.PREFIX_ATALOG, false);
+            boolean preStat = client.exists(StandaloneListener.PREFIX_ATALOG, false);
             if (!preStat) {
                 client.createDir(StandaloneListener.PREFIX_ATALOG);
             }

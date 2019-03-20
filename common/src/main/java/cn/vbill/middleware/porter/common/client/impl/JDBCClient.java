@@ -113,7 +113,9 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
     private TableSchema getTable(String schema, String tableName, boolean cache) throws Exception {
         List<String> keyList = Arrays.asList(schema, tableName);
         if (!cache) {
-            return getTableSchema(schema, tableName);
+            TableSchema ts = getTableSchema(schema, tableName);
+            tables.put(keyList, ts);
+            return ts;
         }
 
         return tables.computeIfAbsent(keyList, new Function<List<String>, TableSchema>() {
@@ -293,6 +295,11 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
         JDBCConfig config = getConfig();
         return new StringBuilder().append("数据库地址->").append(config.getUrl()).append(",用户->").append(config.getUserName())
                 .toString();
+    }
+
+    @Override
+    public void reset() {
+        tables.clear();
     }
 
     private final class JdbcWapper {

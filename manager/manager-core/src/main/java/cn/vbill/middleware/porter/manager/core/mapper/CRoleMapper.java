@@ -48,11 +48,4 @@ public interface CRoleMapper {
      * @return: java.util.List<cn.vbill.middleware.porter.manager.core.entity.CRole>
      */
     List<CRole> findList();
-
-    /**
-     * 获取所有的权限(除了超级管理员)
-     *
-     * @return
-     */
-    List<CRole> getAll();
 }

@@ -278,5 +278,4 @@ public class TaskController implements TaskEventListener {
             LOGGER.warn("注册本地任务到集群失败:{}", taskConfig.getTaskId(), e);
         }
     }
-    
 }

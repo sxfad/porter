@@ -265,7 +265,9 @@ public abstract class AbstractClusterProvider<C extends Client> implements Clust
 
     @Override
     public DistributedLock getLock() {
-        if (null == lock) new UnsupportedOperationException("分布式锁功能未提供");
+        if (null == lock) {
+            new UnsupportedOperationException("分布式锁功能未提供");
+        }
         return lock;
     }
 }

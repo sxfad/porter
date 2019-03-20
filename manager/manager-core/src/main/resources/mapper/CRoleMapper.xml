@@ -25,11 +25,4 @@
         WHERE iscancel = 0 and role_code &lt;&gt; 'A0001'
         ORDER BY sort asc
     </select>
-
-    <select id="getAll" resultType="cn.vbill.middleware.porter.manager.core.entity.CRole">
-        SELECT id, role_code as roleCode, role_name as roleName, sort, iscancel
-        from c_role
-        where iscancel = 0 and role_code != 'A0001'
-        order by sort asc
-    </select>
 </mapper>

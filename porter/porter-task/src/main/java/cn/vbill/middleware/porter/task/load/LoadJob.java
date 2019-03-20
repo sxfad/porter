@@ -60,7 +60,6 @@ public class LoadJob extends AbstractStageJob {
     private volatile long newestPositionDiffer = 0;
     //最近一次数据库插入开始执行时间
     private volatile Calendar currentLoadStartTime;
-
     private final ScheduledExecutorService positionCheckService;
 
     public LoadJob(TaskWork work, long positionCheckInterval, long alarmPositionCount) {
@@ -149,7 +148,7 @@ public class LoadJob extends AbstractStageJob {
                     if (null != bucket.getPosition()) {
                         newestPositionDiffer = work.getDataConsumer().commitPosition(bucket.getPosition());
                         if (bucket.getPosition().checksum()) {
-                            LOGGER.info("提交消费同步点:{},消息堆积:{}", bucket.getPosition().render(), newestPositionDiffer);
+                            LOGGER.info("开始提交消费同步点:{},消息堆积:{}", bucket.getPosition().render(), newestPositionDiffer);
                             ClusterProviderProxy.INSTANCE.broadcast(new TaskPositionUploadCommand(work.getTaskId(),
                                     work.getDataConsumer().getSwimlaneId(), bucket.getPosition().render()));
                             LOGGER.info("结束提交消费同步点:{},消息堆积:{}", bucket.getPosition().render(), newestPositionDiffer);

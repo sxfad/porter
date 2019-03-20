@@ -48,8 +48,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.zookeeper.KeeperException;
 import org.apache.zookeeper.data.Stat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -77,7 +75,6 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements T
     private final ScheduledExecutorService heartbeatWorker =
             Executors.newSingleThreadScheduledExecutor(new DefaultNamedThreadFactory("node-heartbeat"));
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ZKClusterNodeListener.class);
     private static final String STAT_PATH = "/stat";
     private static final String TASK_PATH = "/task/";
 
@@ -113,7 +110,6 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements T
                     });
                 }
             }
-
             //节点状态变更
             if (null != commandConfig && commandConfig.getCommand() == NodeCommandType.CHANGE_STATUS) {
                 NodeStatusType oldStat = NodeContext.INSTANCE.getNodeStatus();
@@ -333,7 +329,6 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements T
                 }
             }
             return isLocked;
-
         } catch (Exception e) {
             LOGGER.warn("判断任务是否注册失败", e);
             return true;

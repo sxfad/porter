@@ -52,11 +52,11 @@ public enum NodeContext {
     private final Map<String, String> taskErrorMarked = new ConcurrentHashMap<>();
     private final Map<String, Object> consumeProcess = new ConcurrentHashMap<>();
     private final Map<String, Object> consumerIdle = new ConcurrentHashMap<>();
-    private final List<String> startupArgs = new ArrayList<>();
 
     private volatile ApplicationContext context;
-
+    private final List<String> startupArgs = new ArrayList<>();
     private volatile boolean force;
+
 
     /**
      * 获取Bean

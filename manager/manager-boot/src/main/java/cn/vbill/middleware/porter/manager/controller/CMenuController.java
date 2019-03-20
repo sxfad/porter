@@ -22,10 +22,8 @@ import cn.vbill.middleware.porter.manager.core.init.MenuUtils;
 import cn.vbill.middleware.porter.manager.core.init.ResourceUtils;
 import cn.vbill.middleware.porter.manager.service.CMenuService;
 import cn.vbill.middleware.porter.manager.web.message.ResponseMessage;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -173,74 +171,4 @@ public class CMenuController {
         return ok();
     }
 
-    /**
-     * 拿到所有的一级和二级菜单
-     *
-     * @param state 根据状态来判断是否启用
-     * @return
-     * @author he_xin
-     */
-    @GetMapping("/getAll")
-    @ApiOperation(value = "拿到所有的一级二级菜单", notes = "拿到所有的一级二级菜单")
-    public ResponseMessage getAll(@RequestParam(value = "state", required = false) Integer state) {
-        List<CMenu> menuList = cMenuService.getAll(state);
-        return ok(menuList);
-    }
-
-    /**
-     * 新增菜单
-     *
-     * @param cMenu
-     * @return
-     * @author he_xin
-     */
-    @PostMapping("/add")
-    @ApiOperation(value = "新增菜单", notes = "新增菜单")
-    public ResponseMessage addMenu(@RequestBody CMenu cMenu) {
-        Integer num = cMenuService.addMenu(cMenu);
-        return ok(num);
-    }
-
-    /**
-     * 菜单启用或者停用
-     *
-     * @param code
-     * @param state
-     * @return
-     * @author he_xin
-     */
-    @PutMapping("/updateState")
-    @ApiOperation(value = "修改状态", notes = "修改状态")
-    public ResponseMessage updateState(@RequestParam(value = "code", required = true) String code, @RequestParam(value = "state", required = true) Integer state) {
-        Integer num = cMenuService.updateState(code, state);
-        return ok(num);
-    }
-
-    /**
-     * 菜单的编辑
-     *
-     * @param cMenu
-     * @return
-     * @author he_xin
-     */
-    @PutMapping("/updateMenu")
-    @ApiOperation(value = "修改菜单信息", notes = "修改菜单信息")
-    public ResponseMessage updateMenu(@RequestBody CMenu cMenu) {
-        Integer num = cMenuService.updateMenu(cMenu);
-        return ok(num);
-    }
-
-    /**
-     * 逻辑删除菜单
-     *
-     * @param code
-     * @return
-     * @author he_xin
-     */
-    @DeleteMapping("/deleteMenu")
-    @ApiOperation(value = "删除菜单", notes = "删除菜单")
-    public ResponseMessage deleteMenu(String code) {
-        Integer num = cMenuService.deleteMenu(code);
-        return ok(num);
-    }
 }

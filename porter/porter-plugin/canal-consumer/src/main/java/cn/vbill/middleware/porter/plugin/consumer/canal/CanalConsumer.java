@@ -43,6 +43,7 @@ import java.util.stream.Collectors;
  */
 @SuppressWarnings("unchecked")
 public class CanalConsumer extends AbstractDataConsumer {
+
     public List<MessageEvent> doFetch() throws TaskStopTriggerException, InterruptedException {
         return consumeClient.fetch(new ConsumeClient.FetchCallback<MessageEvent, Object>() {
             @Override

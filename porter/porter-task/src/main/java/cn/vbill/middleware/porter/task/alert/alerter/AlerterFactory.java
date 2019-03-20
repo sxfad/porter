@@ -23,6 +23,7 @@ import cn.vbill.middleware.porter.common.util.compile.JavaFileCompiler;
 import cn.vbill.middleware.porter.core.consumer.DataConsumer;
 import cn.vbill.middleware.porter.core.task.TableMapper;
 import cn.vbill.middleware.porter.task.worker.TaskWork;
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
 import org.springframework.context.annotation.Scope;
@@ -73,7 +74,12 @@ public class AlerterFactory {
             ExecutorService service = Executors.newFixedThreadPool(CHECK_POOL_THREADS);
             //分配告警检查任务到线程池子
             for (DTaskStat stat : stats) {
-                service.submit(() -> alerter.check(dataConsumer, dataLoader, stat, getCheckMeta(work, stat.getSchema(), stat.getTable()), work.getReceivers()));
+                service.submit(new Runnable() {
+                    @SneakyThrows(InterruptedException.class)
+                    public void run() {
+                        alerter.check(dataConsumer, dataLoader, stat, getCheckMeta(work, stat.getSchema(), stat.getTable()), work.getReceivers());
+                    }
+                });
             }
             //Initiates an orderly shutdown in which previously submitted  tasks are executed, but no new tasks will be accepted.
             service.shutdown();

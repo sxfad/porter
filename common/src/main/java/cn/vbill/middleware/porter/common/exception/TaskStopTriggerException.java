@@ -74,7 +74,7 @@ public class TaskStopTriggerException extends TaskException {
         if (cause instanceof DataSourceClosedException || cause instanceof DataSourceDisableException
                 || cause instanceof DataSourceNotAvailableException || cause instanceof GetConnectionTimeoutException
                 || cause instanceof SQLRecoverableException || cause instanceof SQLRecoverableException || cause instanceof TransactionTimeoutException
-                || cause instanceof CannotCreateTransactionException) {
+                || cause instanceof CannotCreateTransactionException || cause instanceof CannotCreateTransactionException) {
             return true;
         }
         if (cause instanceof CannotGetJdbcConnectionException || cause instanceof UncategorizedSQLException

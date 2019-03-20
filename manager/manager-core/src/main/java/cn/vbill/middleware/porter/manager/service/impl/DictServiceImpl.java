@@ -17,7 +17,15 @@
 
 package cn.vbill.middleware.porter.manager.service.impl;
 
-import cn.vbill.middleware.porter.common.dic.*;
+import cn.vbill.middleware.porter.common.dic.AlertPlugin;
+import cn.vbill.middleware.porter.common.dic.ClusterPlugin;
+import cn.vbill.middleware.porter.common.dic.ConsumeConverterPlugin;
+import cn.vbill.middleware.porter.common.dic.ConsumerPlugin;
+import cn.vbill.middleware.porter.common.dic.DbType;
+import cn.vbill.middleware.porter.common.dic.LoaderPlugin;
+import cn.vbill.middleware.porter.common.dic.NodeStatusType;
+import cn.vbill.middleware.porter.common.dic.SourceType;
+import cn.vbill.middleware.porter.common.dic.TaskStatusType;
 import cn.vbill.middleware.porter.manager.core.enums.InputTypeEnum;
 import cn.vbill.middleware.porter.manager.core.enums.LogLevelEnum;
 import cn.vbill.middleware.porter.manager.service.DictService;
@@ -48,7 +56,6 @@ public class DictServiceImpl implements DictService {
         map.put("ConsumeConverterPlugin", ConsumeConverterPlugin.LINKMAP); //ConsumeConverterPlugin 转换器插件
         map.put("ConsumerPlugin", ConsumerPlugin.LINKMAP); //ConsumerPlugin 消费器插件
         map.put("DbType", DbType.LINKMAP); //DbType 关系数据库类型
-        map.put("EnableType", EnableType.LINKMAP); //开关类型
         map.put("LoaderPlugin", LoaderPlugin.LINKMAP); // LoaderPlugin 载入器插件
         map.put("NodeStatusType", NodeStatusType.LINKMAP); //NodeStatusType 节点状态
         map.put("SourceType", SourceType.LINKMAP); //SourceType 数据源类型
