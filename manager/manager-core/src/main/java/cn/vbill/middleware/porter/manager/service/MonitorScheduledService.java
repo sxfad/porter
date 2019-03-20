@@ -40,4 +40,9 @@ public interface MonitorScheduledService {
      * @return: void
      */
     void dropTableTask();
+
+    /**
+     * 创建后天的表并且判断如果明天的表没创建则创建明天的表
+     */
+    void createTableTask();
 }

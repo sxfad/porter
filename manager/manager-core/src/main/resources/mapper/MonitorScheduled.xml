@@ -13,4 +13,18 @@
     <update id="dropTable">
         DROP TABLE IF EXISTS ${newTableName};
     </update>
+
+    <!-- 创建后天的表 -->
+    <update id="createTable">
+        CREATE TABLE ${newTable} like ${oldTable};
+    </update>
+
+    <!-- 检查明天的表是否生成 -->
+    <select id="checkTomorrowTable" resultType="string">
+        show tables like #{tomorrowTable};
+    </select>
+    <!-- 创建明天的表 -->
+    <update id="createTomorrowTable">
+        CREATE TABLE ${tomorrowTable} like ${oldTable};
+    </update>
 </mapper>
