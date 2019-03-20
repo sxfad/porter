@@ -57,11 +57,19 @@
                 where id = #{id}
     </update>
 
-    <!-- 修改 -->
+    <!-- 修改 cancel状态-->
     <update id="updateCancel">
         update b_public_data_source
         set
                 iscancel = 1
+                where id = #{id}
+    </update>
+
+    <!-- 修改 -->
+    <update id="updatePush">
+        update b_public_data_source
+        set
+                ispush = #{ispush}
                 where id = #{id}
     </update>
 

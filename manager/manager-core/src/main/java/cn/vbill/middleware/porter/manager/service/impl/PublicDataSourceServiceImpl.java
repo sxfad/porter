@@ -56,7 +56,7 @@ public class PublicDataSourceServiceImpl implements PublicDataSourceService {
 
     @Override
     public Integer insert(PublicDataSource publicDataSource) {
-        //等权限类代码
+        // 等权限类代码
         publicDataSource.setCreator(-1L);
         DataLoaderConfig config = JSONObject.parseObject(publicDataSource.getJsonText(), DataLoaderConfig.class);
         publicDataSource.setCode(config.getLoaderName());
@@ -65,7 +65,7 @@ public class PublicDataSourceServiceImpl implements PublicDataSourceService {
 
     @Override
     public Integer update(Long id, PublicDataSource publicDataSource) {
-        //等权限类代码
+        // 等权限类代码
         publicDataSource.setCreator(-1L);
         DataLoaderConfig config = JSONObject.parseObject(publicDataSource.getJsonText(), DataLoaderConfig.class);
         publicDataSource.setCode(config.getLoaderName());
@@ -95,6 +95,11 @@ public class PublicDataSourceServiceImpl implements PublicDataSourceService {
     @Override
     public Integer updateCancel(Long id) {
         return publicDataSourceMapper.updateCancel(id);
+    }
+
+    @Override
+    public Integer updatePush(Long id, Integer ispush) {
+        return publicDataSourceMapper.updatePush(id, ispush);
     }
 
     @Override
