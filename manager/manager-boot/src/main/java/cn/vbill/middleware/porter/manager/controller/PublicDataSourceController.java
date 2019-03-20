@@ -127,7 +127,7 @@ public class PublicDataSourceController {
     }
 
     /**
-     * 插叙列表
+     * 查询列表
      *
      * @author FuZizheng
      * @date 10:14
@@ -141,7 +141,8 @@ public class PublicDataSourceController {
             @RequestParam(value = "pageSize", required = true) Integer pageSize,
             @RequestParam(value = "id", required = false) Long id,
             @RequestParam(value = "code", required = false) String code,
-            @RequestParam(value = "name", required = false) String name) {
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "ipsite", required = false) String ipsite) {
         Page<PublicDataSource> page = publicDataSourceService.page(new Page<PublicDataSource>(pageNum, pageSize), id, code, name);
         return ok(page);
     }
