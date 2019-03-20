@@ -91,12 +91,20 @@ public interface PublicDataSourceMapper {
             @Param("code") String code, @Param("name") String name);
 
     /**
-     * 作废
+     * 作废cancel
      * 
      * @param id
      * @return
      */
     Integer updateCancel(@Param("id") Long id);
+
+    /**
+     * 修改推送状态
+     * 
+     * @param id
+     * @return
+     */
+    Integer updatePush(@Param("id") Long id, @Param("ispush") Integer ispush);
 
     /**
      * 刪除

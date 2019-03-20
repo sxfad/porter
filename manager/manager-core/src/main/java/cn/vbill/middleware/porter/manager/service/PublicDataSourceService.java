@@ -56,6 +56,15 @@ public interface PublicDataSourceService {
     Integer updateCancel(Long id);
 
     /**
+     * 修改推送状态
+     * 
+     * @param id
+     * @param ispush
+     * @return
+     */
+    Integer updatePush(Long id, Integer ispush);
+
+    /**
      * 删除
      * 
      * @param id
