@@ -17,7 +17,9 @@
 
 package cn.vbill.middleware.porter.manager.core.mapper;
 
+import cn.vbill.middleware.porter.manager.core.dto.RoleDataControl;
 import cn.vbill.middleware.porter.manager.core.icon.HomeBlockResult;
+import org.apache.ibatis.annotations.Param;
 
 /**
  *
@@ -30,6 +32,8 @@ public interface HomeMapper {
      * 计数
      *
      * @return
+     * @param roleDataControl
+     * @param newTableName
      */
-    HomeBlockResult block();
+    HomeBlockResult block(@Param("roleDataControl") RoleDataControl roleDataControl, @Param("newTableName") String newTableName);
 }

@@ -30,6 +30,8 @@ import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.BindException;
 
+import com.alibaba.fastjson.JSONObject;
+
 import cn.vbill.middleware.porter.common.config.DataLoaderConfig;
 import cn.vbill.middleware.porter.manager.core.entity.PublicDataSource;
 import cn.vbill.middleware.porter.manager.core.mapper.PublicDataSourceMapper;
@@ -54,15 +56,19 @@ public class PublicDataSourceServiceImpl implements PublicDataSourceService {
 
     @Override
     public Integer insert(PublicDataSource publicDataSource) {
-        //等权限类代码
+        // 等权限类代码
         publicDataSource.setCreator(-1L);
+        DataLoaderConfig config = JSONObject.parseObject(publicDataSource.getJsonText(), DataLoaderConfig.class);
+        publicDataSource.setCode(config.getLoaderName());
         return publicDataSourceMapper.insert(publicDataSource);
     }
 
     @Override
     public Integer update(Long id, PublicDataSource publicDataSource) {
-        //等权限类代码
+        // 等权限类代码
         publicDataSource.setCreator(-1L);
+        DataLoaderConfig config = JSONObject.parseObject(publicDataSource.getJsonText(), DataLoaderConfig.class);
+        publicDataSource.setCode(config.getLoaderName());
         return publicDataSourceMapper.update(id, publicDataSource);
     }
 
@@ -89,6 +95,11 @@ public class PublicDataSourceServiceImpl implements PublicDataSourceService {
     @Override
     public Integer updateCancel(Long id) {
         return publicDataSourceMapper.updateCancel(id);
+    }
+
+    @Override
+    public Integer updatePush(Long id, Integer ispush) {
+        return publicDataSourceMapper.updatePush(id, ispush);
     }
 
     @Override

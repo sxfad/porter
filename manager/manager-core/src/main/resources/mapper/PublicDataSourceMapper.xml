@@ -26,7 +26,6 @@
     <!-- 新增 -->
     <insert id="insert">
         insert into b_public_data_source(
-                id,
                 code,
                 name,
                 xml_text,
@@ -35,7 +34,6 @@
                 creator,
                 ispush
         ) values (
-                #{id},
                 #{code},
                 #{name},
                 #{xmlText},
@@ -59,11 +57,19 @@
                 where id = #{id}
     </update>
 
-    <!-- 修改 -->
+    <!-- 修改 cancel状态-->
     <update id="updateCancel">
         update b_public_data_source
         set
                 iscancel = 1
+                where id = #{id}
+    </update>
+
+    <!-- 修改 -->
+    <update id="updatePush">
+        update b_public_data_source
+        set
+                ispush = #{ispush}
                 where id = #{id}
     </update>
 
@@ -106,7 +112,8 @@
         <if test="name != null and name != ''">
             and name like CONCAT('%', #{name}, '%')
         </if>
-        limit #{page.offset},#{page.pageSize} order by id 
+        order by id 
+        limit #{page.offset},#{page.pageSize} 
     </select>
 
     <!-- 验证新增 -->

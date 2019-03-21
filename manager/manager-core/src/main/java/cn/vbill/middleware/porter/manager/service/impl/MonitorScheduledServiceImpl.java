@@ -18,6 +18,7 @@
 package cn.vbill.middleware.porter.manager.service.impl;
 
 import cn.vbill.middleware.porter.manager.core.mapper.MonitorScheduledMapper;
+import cn.vbill.middleware.porter.manager.core.util.DateFormatUtils;
 import cn.vbill.middleware.porter.manager.core.util.DateMathUtils;
 import cn.vbill.middleware.porter.manager.service.MonitorScheduledService;
 import org.slf4j.Logger;
@@ -108,5 +109,61 @@ public class MonitorScheduledServiceImpl implements MonitorScheduledService {
         } finally {
             logger.info("删除存在30天的表 总耗时：[{}]", (System.currentTimeMillis() - a));
         }
+    }
+
+    @Override
+    public void createTableTask() {
+        Long a = System.currentTimeMillis();
+        try {
+            // Map<String, Map<String, String>> key根据数据表保存，value中的map，key为根据昨天、明天、后天拼表名
+            Map<String, Map<String, String>> map = new HashMap<>();
+            // 组装数据
+            map = conver("mr_nodes_monitor_", map);
+            map = conver("mr_log_monitor_", map);
+            map = conver("mr_job_tasks_monitor_", map);
+
+            Map<String, String> dataMap = null;
+            String oldTable = null;
+            String tomorrowTable = null;
+            String nowTable = null;
+            for(Map.Entry<String, Map<String, String>> entry : map.entrySet()) {
+                dataMap = entry.getValue();
+                oldTable = dataMap.get("old");
+                tomorrowTable = dataMap.get("tomorrow");
+                nowTable = dataMap.get("now");
+                monitorScheduledMapper.createTable(nowTable, oldTable);
+                String tomorrow = monitorScheduledMapper.checkTomorrowTable(tomorrowTable);
+                if(tomorrow == null) {
+                    logger.error("未查到[{}]表，开始重新新建...", tomorrowTable);
+                    monitorScheduledMapper.createTomorrowTable(tomorrowTable, oldTable);
+                }
+            }
+        } finally {
+            logger.info("新建数据库表 总耗时：[{}]", (System.currentTimeMillis() - a));
+        }
+    }
+
+    /**
+     * 拼出表名，放在map中
+     *
+     * @param table
+     * @param map
+     */
+    private Map<String, Map<String, String>> conver(String table, Map map) {
+        Date date = new Date();
+        // 昨天、明天、后天的日期
+        Date oldDate = DateMathUtils.dateAddDays(date, -1);
+        Date tomorrowDate = DateMathUtils.dateAddDays(date, +1);
+        Date newDate = DateMathUtils.dateAddDays(date, +2);
+
+        String oldTable = table + DateFormatUtils.formatDate("yyyyMMdd", oldDate);
+        String tomorrowTable = table + DateFormatUtils.formatDate("yyyyMMdd", tomorrowDate);
+        String newTable = table + DateFormatUtils.formatDate("yyyyMMdd", newDate);
+        Map<String, String> dataMap = new HashMap();
+        dataMap.put("old", oldTable);
+        dataMap.put("tomorrow", tomorrowTable);
+        dataMap.put("new", newTable);
+        map.put(table, dataMap);
+        return map;
     }
 }

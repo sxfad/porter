@@ -2,7 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.vbill.middleware.porter.manager.core.mapper.HomeMapper">
 
-
     <select id="block" resultType="cn.vbill.middleware.porter.manager.core.icon.HomeBlockResult">
         SELECT
             a.num1 AS tenMinutesCount,
@@ -15,18 +14,75 @@
             f.num2 AS mrNodeNum2,
             f.num3 AS mrNodeNum3
         FROM
-            ( SELECT COUNT( id ) num1 FROM mr_log_monitor WHERE log_date > DATE_ADD( NOW( ), INTERVAL - 1 HOUR ) ) a,
-            ( SELECT COUNT( id ) num2 FROM mr_log_monitor WHERE log_date > DATE_ADD( NOW( ), INTERVAL - 8 HOUR ) ) b,
-            ( SELECT COUNT( id ) num3 FROM mr_log_monitor WHERE log_date > DATE_ADD( NOW( ), INTERVAL - 24 HOUR ) ) c,
-            ( SELECT COUNT( id ) num4 FROM job_tasks WHERE job_state = 'WORKING' ) d,
+            (
+                SELECT
+                    COUNT( id ) num1
+                FROM
+                    ${newTableName}
+                <where>
+                    log_date > DATE_ADD( NOW( ), INTERVAL - 1 HOUR )
+                    <if test="roleDataControl.roleCode == 'A9999'">
+                        and
+                        (node_id in (select p.node_id from b_nodes_owner p where p.owner_id = #{roleDataControl.userId} and p.owner_level = 1)
+                        or
+                        job_id in (select t.job_id from job_tasks_owner t where t.owner_id = #{roleDataControl.userId} and t.owner_level = 1))
+                    </if>
+                </where>
+            ) a,
+            (
+                SELECT
+                    COUNT( id ) num2
+                FROM
+                    ${newTableName}
+                <where>
+                    log_date > DATE_ADD( NOW( ), INTERVAL - 8 HOUR )
+                    <if test="roleDataControl.roleCode == 'A9999'">
+                        and
+                        (node_id in (select p.node_id from b_nodes_owner p where p.owner_id = #{roleDataControl.userId} and p.owner_level = 1)
+                        or
+                        job_id in (select t.job_id from job_tasks_owner t where t.owner_id = #{roleDataControl.userId} and t.owner_level = 1))
+                    </if>
+                </where>
+            ) b,
+            (
+                SELECT
+                    COUNT( id ) num3
+                FROM
+                    ${newTableName}
+                <where>
+                    log_date > DATE_ADD( NOW( ), INTERVAL - 24 HOUR )
+                    <if test="roleDataControl.roleCode == 'A9999'">
+                        and
+                        (node_id in (select p.node_id from b_nodes_owner p where p.owner_id = #{roleDataControl.userId} and p.owner_level = 1)
+                        or
+                        job_id in (select t.job_id from job_tasks_owner t where t.owner_id = #{roleDataControl.userId} and t.owner_level = 1))
+                    </if>
+                </where>
+            ) c,
+            (
+                SELECT
+                    COUNT( id ) num4
+                FROM
+                    job_tasks
+                <where>
+                    job_state = 'WORKING'
+                    <if test="roleDataControl.roleCode == 'A9999'">
+                      and id in (select job_id from job_tasks_owner where owner_level = 1 and owner_id = #{roleDataControl.userId})
+                    </if>
+                </where>
+            ) d,
             (
                 SELECT
                     SUM( ( CASE WHEN state = 1 THEN 1 ELSE 0 END ) ) AS num1,
                     SUM( ( CASE WHEN state = 1 AND task_push_state = 'WORKING' THEN 1 ELSE 0 END ) ) AS num2
                 FROM
                     b_nodes
-                WHERE
+                <where>
                     iscancel = 0
+                    <if test="roleDataControl.roleCode == 'A9999'">
+                        and node_id in (select node_id from b_nodes_owner where owner_level = 1 and owner_id = #{roleDataControl.userId})
+                    </if>
+                </where>
             ) e,
             (
                 SELECT
@@ -35,9 +91,12 @@
                     SUM( ( CASE WHEN health_level = 'RED' THEN 1 ELSE 0 END ) ) AS num3
                 FROM
                     mr_nodes_schedule
-                WHERE
-                    iscancel = 0
-                AND node_id IN ( SELECT node_id FROM b_nodes WHERE state = 1 )
+                <where>
+                    iscancel = 0 AND node_id IN ( SELECT node_id FROM b_nodes WHERE state = 1 )
+                    <if test="roleDataControl.roleCode =='A9999'">
+                        AND node_id IN (select p.node_id from b_nodes_owner p where p.owner_id = #{roleDataControl.userId} and p.owner_level = 1)
+                    </if>
+                </where>
             ) f;
     </select>
 </mapper>

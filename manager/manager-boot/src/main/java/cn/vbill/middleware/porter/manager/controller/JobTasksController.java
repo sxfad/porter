@@ -95,8 +95,8 @@ public class JobTasksController {
     @ApiOperation(value = "查询分页", notes = "查询分页")
     public ResponseMessage list(@RequestParam(value = "pageNo", required = true) Integer pageNo,
             @RequestParam(value = "pageSize", required = true) Integer pageSize,
-            @RequestParam(value = "jobName", required = false) String jobName,
             @RequestParam(value = "jobId", required = false) Long jobId,
+            @RequestParam(value = "jobName", required = false) String jobName,
             @RequestParam(value = "beginTime", required = false) String beginTime,
             @RequestParam(value = "endTime", required = false) String endTime,
             @RequestParam(value = "jobState", required = false) TaskStatusType jobState,
@@ -119,8 +119,8 @@ public class JobTasksController {
     @ApiOperation(value = "查询分页", notes = "查询分页")
     public ResponseMessage page(@RequestParam(value = "pageNo", required = true) Integer pageNo,
             @RequestParam(value = "pageSize", required = true) Integer pageSize,
-            @RequestParam(value = "jobName", required = false) String jobName,
             @RequestParam(value = "jobId", required = false) Long jobId,
+            @RequestParam(value = "jobName", required = false) String jobName,
             @RequestParam(value = "beginTime", required = false) String beginTime,
             @RequestParam(value = "endTime", required = false) String endTime,
             @RequestParam(value = "jobState", required = false) TaskStatusType jobState,

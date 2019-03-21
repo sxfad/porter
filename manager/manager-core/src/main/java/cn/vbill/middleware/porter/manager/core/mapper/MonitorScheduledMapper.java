@@ -45,4 +45,29 @@ public interface MonitorScheduledMapper {
      * @param newTableName
      */
     void dropTable(@Param("newTableName") String newTableName);
+
+    /**
+     * 创建后天的表
+     *
+     * @param newTable
+     * @param oldTable
+     */
+    void createTable(@Param("newTable") String newTable, @Param("oldTable") String oldTable);
+
+    /**
+     * 判断明天表是否被创建
+     *
+     * @param tomorrowTable
+     * @return
+     */
+    String checkTomorrowTable(@Param("tomorrowTable") String tomorrowTable);
+
+    /**
+     * 创建明天表
+     *
+     * @param tomorrowTable
+     * @param oldTable
+     */
+    void createTomorrowTable(@Param("tomorrowTable") String tomorrowTable, @Param("oldTable") String oldTable);
+
 }

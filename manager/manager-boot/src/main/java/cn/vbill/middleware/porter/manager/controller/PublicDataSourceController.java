@@ -20,7 +20,6 @@ import static cn.vbill.middleware.porter.manager.web.message.ResponseMessage.ok;
 
 import java.io.UnsupportedEncodingException;
 
-import cn.vbill.middleware.porter.common.cluster.impl.AbstractClusterListener;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,6 +38,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.vbill.middleware.porter.common.cluster.ClusterProviderProxy;
+import cn.vbill.middleware.porter.common.cluster.impl.AbstractClusterListener;
 import cn.vbill.middleware.porter.common.config.DataLoaderConfig;
 import cn.vbill.middleware.porter.manager.core.entity.PublicDataSource;
 import cn.vbill.middleware.porter.manager.service.PublicDataSourceService;
@@ -57,7 +57,7 @@ import io.swagger.annotations.ApiOperation;
  */
 @Api(description = "公共数据源配置表管理")
 @RestController
-@RequestMapping("/pdse")
+@RequestMapping("/manager/pdse")
 public class PublicDataSourceController {
 
     private Logger log = LoggerFactory.getLogger(PublicDataSourceController.class);
@@ -127,7 +127,7 @@ public class PublicDataSourceController {
     }
 
     /**
-     * 插叙列表
+     * 查询列表
      *
      * @author FuZizheng
      * @date 10:14
@@ -141,8 +141,10 @@ public class PublicDataSourceController {
             @RequestParam(value = "pageSize", required = true) Integer pageSize,
             @RequestParam(value = "id", required = false) Long id,
             @RequestParam(value = "code", required = false) String code,
-            @RequestParam(value = "name", required = false) String name) {
-        Page<PublicDataSource> page = publicDataSourceService.page(new Page<PublicDataSource>(pageNum, pageSize), id, code, name);
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "ipsite", required = false) String ipsite) {
+        Page<PublicDataSource> page = publicDataSourceService.page(new Page<PublicDataSource>(pageNum, pageSize), id,
+                code, name);
         return ok(page);
     }
 
@@ -187,10 +189,38 @@ public class PublicDataSourceController {
                     client.changeData(configPath, false, false, JSON.toJSONString(config));
                 }
             });
+            publicDataSourceService.updatePush(id, 1);
             log.info("推送公共数据源[{}]信息到zk成功,详细信息[{}]!", id, JSON.toJSONString(config));
         } catch (Exception e) {
             log.error("推送公共数据源[{}]信息到zk失败,请关注！", id, e);
             return ResponseMessage.error("推送公共数据源信息失败，请关注！");
+        }
+        return ok(id);
+    }
+
+    /**
+     * 推送数据源
+     * 
+     * @param id
+     * @return
+     */
+    @PostMapping(value = "/takeback/{id}")
+    @ApiOperation(value = "回收公共数据源", notes = "回收公共数据源")
+    public ResponseMessage takeback(@PathVariable("id") Long id) {
+        PublicDataSource publicDataSource = publicDataSourceService.selectById(id);
+        DataLoaderConfig config = JSONObject.parseObject(publicDataSource.getJsonText(), DataLoaderConfig.class);
+        try {
+            ClusterProviderProxy.INSTANCE.broadcastEvent(client -> {
+                String configPath = AbstractClusterListener.BASE_CATALOG + "/datesource/" + config.getLoaderName();
+                if (!StringUtils.isBlank(configPath)) {
+                    client.delete(configPath);
+                }
+            });
+            publicDataSourceService.updatePush(id, -1);
+            log.info("回收公共数据源[{}]信息到zk成功,详细信息[{}]!", id, JSON.toJSONString(config));
+        } catch (Exception e) {
+            log.error("回收公共数据源[{}]信息到zk失败,请关注！", id, e);
+            return ResponseMessage.error("回收公共数据源信息失败，请关注！");
         }
         return ok(id);
     }
