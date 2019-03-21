@@ -97,6 +97,8 @@ public class NodeBootApplication {
 
         //初始化默认工作任务数
         NodeContext.INSTANCE.updateWorkLimit(config.getWorkLimit());
+
+        NodeContext.INSTANCE.syncNodeId(config.getId());
         //从本地初始化公用数据库连接池
         SourcesConfig datasourceConfigBean = context.getBean(SourcesConfig.class);
         try {
@@ -117,8 +119,8 @@ public class NodeBootApplication {
                 ClusterProviderProxy.INSTANCE.stop();
             } catch (Throwable stopError) {
             }
-            System.exit(-1);
             LOGGER.error("fail to initiate cluster properties", e);
+            System.exit(-1);
         }
 
         //节点注册

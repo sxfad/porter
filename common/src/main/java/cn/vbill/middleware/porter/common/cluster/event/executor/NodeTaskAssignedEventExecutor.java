@@ -30,7 +30,7 @@ import java.util.function.BiConsumer;
 public class NodeTaskAssignedEventExecutor extends ClusterListenerEventExecutor {
 
     public NodeTaskAssignedEventExecutor(Class bindClass, String nodeId, String treeNodePath) {
-        super(bindClass, ClusterListenerEventType.TaskStop);
+        super(bindClass, ClusterListenerEventType.TaskAssigned);
         bind(getBlock(treeNodePath, nodeId));
     }
 

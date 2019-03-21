@@ -17,13 +17,8 @@
 
 package cn.vbill.middleware.porter.common.config;
 
-import cn.vbill.middleware.porter.common.config.source.CanalConfig;
 import cn.vbill.middleware.porter.common.config.source.EmailConfig;
 import cn.vbill.middleware.porter.common.config.source.FileOperationConfig;
-import cn.vbill.middleware.porter.common.config.source.JDBCConfig;
-import cn.vbill.middleware.porter.common.config.source.KafkaConfig;
-import cn.vbill.middleware.porter.common.config.source.KafkaProduceConfig;
-import cn.vbill.middleware.porter.common.config.source.KuduConfig;
 import cn.vbill.middleware.porter.common.config.source.NameSourceConfig;
 import cn.vbill.middleware.porter.common.config.source.ZookeeperConfig;
 import cn.vbill.middleware.porter.common.dic.SourceType;
@@ -71,6 +66,7 @@ public abstract class SourceConfig implements SwamlaneSupport {
     public static final String NAME_SOURCE_KEY = "sourceName";
     @Getter
     protected SourceType sourceType;
+
     private Map<String, String> properties;
 
     /**
@@ -112,35 +108,20 @@ public abstract class SourceConfig implements SwamlaneSupport {
      * @throws ConfigParseException
      */
     public static <T extends SourceConfig> T getConfig(Map<String, String> properties) throws ConfigParseException {
+        String sourceTypeCode = properties.getOrDefault(SOURCE_TYPE_KEY, "");
         T config = null;
         try {
-            String sourceTypeStr = properties.getOrDefault(SOURCE_TYPE_KEY, "");
-            SourceType sourceType = !StringUtils.isBlank(sourceTypeStr) ? SourceType.valueOf(sourceTypeStr) : null;
+            SourceType sourceType = !StringUtils.isBlank(sourceTypeCode) ? SourceType.getSourceType(sourceTypeCode) : null;
             if (null != sourceType) {
                 switch (sourceType) {
                     case ZOOKEEPER:
                         config = (T) new ZookeeperConfig();
-                        break;
-                    case JDBC:
-                        config = (T) new JDBCConfig();
-                        break;
-                    case KAFKA:
-                        config = (T) new KafkaConfig();
                         break;
                     case EMAIL:
                         config = (T) new EmailConfig();
                         break;
                     case NAME_SOURCE:
                         config = (T) new NameSourceConfig();
-                        break;
-                    case CANAL:
-                        config = (T) new CanalConfig();
-                        break;
-                    case KUDU:
-                        config = (T) new KuduConfig();
-                        break;
-                    case KAFKA_PRODUCE:
-                        config = (T) new KafkaProduceConfig();
                         break;
                     case FILE:
                         config = (T) new FileOperationConfig();
@@ -154,9 +135,9 @@ public abstract class SourceConfig implements SwamlaneSupport {
             }
 
             //如果配置文件对象仍不存在，尝试从插件服务SPI加载
-            if (null == config && null != sourceType) {
+            if (null == config && StringUtils.isNotBlank(sourceTypeCode)) {
                 for (PluginServiceConfig c : PLUGIN_SERVICE_CONFIGS) {
-                    if (c instanceof SourceConfig && c.isMatch(sourceType.getCode())) {
+                    if (c instanceof SourceConfig && c.isMatch(sourceTypeCode)) {
                         config = (T) c.getClass().newInstance();
                         break;
                     }

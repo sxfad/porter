@@ -17,7 +17,7 @@
 
 package cn.vbill.middleware.porter.manager.core.entity;
 
-import cn.vbill.middleware.porter.common.dic.SourceType;
+import cn.vbill.middleware.porter.manager.core.enums.SourceType;
 
 import java.util.ArrayList;
 import java.util.Date;

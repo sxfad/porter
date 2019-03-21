@@ -28,7 +28,7 @@ import java.util.function.BiConsumer;
 public class TaskStopByErrorEventExecutor extends ClusterListenerEventExecutor {
 
     public TaskStopByErrorEventExecutor(Class bindClass, String treeNodePath) {
-        super(bindClass, ClusterListenerEventType.TaskPush);
+        super(bindClass, ClusterListenerEventType.TaskStoppedByError);
         bind(getBlock(treeNodePath));
     }
 

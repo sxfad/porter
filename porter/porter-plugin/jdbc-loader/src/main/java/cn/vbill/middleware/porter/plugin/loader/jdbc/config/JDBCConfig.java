@@ -15,11 +15,13 @@
  * </p>
  */
 
-package cn.vbill.middleware.porter.common.config.source;
+package cn.vbill.middleware.porter.plugin.loader.jdbc.config;
 
-import cn.vbill.middleware.porter.common.dic.DbType;
-import cn.vbill.middleware.porter.common.dic.SourceType;
+import cn.vbill.middleware.porter.common.config.PluginServiceConfig;
 import cn.vbill.middleware.porter.common.config.SourceConfig;
+import cn.vbill.middleware.porter.common.dic.DbType;
+import cn.vbill.middleware.porter.plugin.loader.jdbc.JdbcLoaderConst;
+import cn.vbill.middleware.porter.plugin.loader.jdbc.client.JDBCClient;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
@@ -30,7 +32,7 @@ import org.apache.commons.lang3.StringUtils;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月02日 14:24
  */
-public class JDBCConfig extends SourceConfig {
+public class JDBCConfig extends SourceConfig implements PluginServiceConfig {
     //驱动类型
     @Setter @Getter private String driverClassName;
     @Setter @Getter private String url;
@@ -51,10 +53,6 @@ public class JDBCConfig extends SourceConfig {
     //sql异常重试次数5*1 min
     @Setter @Getter private int retries = 5;
 
-    public  JDBCConfig() {
-        sourceType =  SourceType.JDBC;
-    }
-
     @Override
     protected void childStuff() {
         String typeStr = getProperties().getOrDefault("dbType", "");
@@ -73,5 +71,16 @@ public class JDBCConfig extends SourceConfig {
     @Override
     protected boolean doCheck() {
         return true;
+    }
+
+    @Override
+    public String getInstanceClientType() {
+        return JDBCClient.class.getName();
+    }
+
+
+    @Override
+    public String getInstanceConfigType() {
+        return JdbcLoaderConst.LOADER_SOURCE_TYPE_NAME.getCode();
     }
 }

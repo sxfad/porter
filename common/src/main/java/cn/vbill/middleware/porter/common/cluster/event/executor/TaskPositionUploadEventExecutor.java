@@ -29,7 +29,7 @@ import java.util.function.BiConsumer;
 public class TaskPositionUploadEventExecutor extends ClusterListenerEventExecutor {
 
     public TaskPositionUploadEventExecutor(Class bindClass, String treeNodePath) {
-        super(bindClass, ClusterListenerEventType.TaskPush);
+        super(bindClass, ClusterListenerEventType.TaskPositionUpload);
         bind(getBlock(treeNodePath));
     }
 

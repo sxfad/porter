@@ -115,7 +115,6 @@ public class StandaloneClusterNodeListener extends StandaloneListener {
             @SneakyThrows
             public void accept(ClusterCommand clusterCommand, ClusterClient client) {
                 NodeRegisterCommand nrCommend = (NodeRegisterCommand) clusterCommand;
-                NodeContext.INSTANCE.syncNodeId(nrCommend.getId());
                 NodeContext.INSTANCE.syncUploadStatistic(nrCommend.isUploadStatistic());
                 //重置任务状态
                 NodeContext.INSTANCE.resetHealthLevel();

@@ -18,8 +18,8 @@
 package cn.vbill.middleware.porter.manager.service.impl;
 
 import cn.vbill.middleware.porter.common.dic.*;
-import cn.vbill.middleware.porter.manager.core.enums.InputTypeEnum;
-import cn.vbill.middleware.porter.manager.core.enums.LogLevelEnum;
+import cn.vbill.middleware.porter.manager.core.enums.*;
+import cn.vbill.middleware.porter.manager.core.enums.SourceType;
 import cn.vbill.middleware.porter.manager.service.DictService;
 import cn.vbill.middleware.porter.manager.service.DictionaryService;
 import org.springframework.beans.factory.annotation.Autowired;

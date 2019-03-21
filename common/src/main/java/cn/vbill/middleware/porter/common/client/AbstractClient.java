@@ -17,21 +17,11 @@
 
 package cn.vbill.middleware.porter.common.client;
 
-import cn.vbill.middleware.porter.common.client.impl.CanalClient;
 import cn.vbill.middleware.porter.common.client.impl.EmailClient;
-import cn.vbill.middleware.porter.common.client.impl.JDBCClient;
-import cn.vbill.middleware.porter.common.client.impl.KUDUClient;
-import cn.vbill.middleware.porter.common.client.impl.KafkaClient;
-import cn.vbill.middleware.porter.common.client.impl.KafkaProduceClient;
 import cn.vbill.middleware.porter.common.client.impl.ZookeeperClient;
 import cn.vbill.middleware.porter.common.config.PluginServiceConfig;
 import cn.vbill.middleware.porter.common.config.SourceConfig;
-import cn.vbill.middleware.porter.common.config.source.CanalConfig;
 import cn.vbill.middleware.porter.common.config.source.EmailConfig;
-import cn.vbill.middleware.porter.common.config.source.JDBCConfig;
-import cn.vbill.middleware.porter.common.config.source.KafkaConfig;
-import cn.vbill.middleware.porter.common.config.source.KafkaProduceConfig;
-import cn.vbill.middleware.porter.common.config.source.KuduConfig;
 import cn.vbill.middleware.porter.common.config.source.NameSourceConfig;
 import cn.vbill.middleware.porter.common.config.source.ZookeeperConfig;
 import cn.vbill.middleware.porter.common.exception.ClientException;
@@ -44,6 +34,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.support.SpringFactoriesLoader;
+import org.springframework.util.ClassUtils;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -61,16 +52,21 @@ public abstract class AbstractClient<T extends SourceConfig> implements Client {
 
     //插件服务配置文件
     @JSONField(serialize = false, deserialize = false)
-    private static final List<PluginServiceClient> PLUGIN_SERVICE_CLIENTS =
-            SpringFactoriesLoader.loadFactories(PluginServiceClient.class, JavaFileCompiler.getInstance());
+    private static final List<String> PLUGIN_SERVICE_CLIENTS =
+            SpringFactoriesLoader.loadFactoryNames(PluginServiceClient.class, JavaFileCompiler.getInstance());
 
     private final AtomicBoolean status = new AtomicBoolean(false);
     @Getter
     @Setter
     private boolean isPublic = false;
-    private final T config;
+
+    private volatile T config;
+
+    public AbstractClient() {
+    }
 
     public AbstractClient(T config) {
+        this();
         this.config = config;
     }
 
@@ -143,36 +139,21 @@ public abstract class AbstractClient<T extends SourceConfig> implements Client {
         if (config instanceof NameSourceConfig) {
             return PublicClientContext.INSTANCE.getSource(((NameSourceConfig) config).getSourceName());
         }
-        if (config instanceof JDBCConfig) {
-            return new JDBCClient((JDBCConfig) config);
-        }
-        if (config instanceof KafkaConfig) {
-            return new KafkaClient((KafkaConfig) config);
-        }
         if (config instanceof ZookeeperConfig) {
             return new ZookeeperClient((ZookeeperConfig) config);
         }
         if (config instanceof EmailConfig) {
             return new EmailClient((EmailConfig) config);
         }
-        if (config instanceof CanalConfig) {
-            return new CanalClient((CanalConfig) config);
-        }
-        if (config instanceof KuduConfig) {
-            return new KUDUClient((KuduConfig) config);
-        }
-        if (config instanceof KafkaProduceConfig) {
-            return new KafkaProduceClient((KafkaProduceConfig) config);
-        }
 
         //自定义插件配置文件
         if (config instanceof PluginServiceConfig) {
-            PluginServiceConfig pluginConfig = (PluginServiceConfig) config;
             //如果仍不能匹配客户端，尝试从插件服务SPI加载
-            for (PluginServiceClient c : PLUGIN_SERVICE_CLIENTS) {
-                if (c.isMatch(pluginConfig.getTargetName())) {
+            for (String c : PLUGIN_SERVICE_CLIENTS) {
+                if (c.equals(((PluginServiceConfig) config).getInstanceClientType())) {
                     try {
-                        return (Client) c.getClass().getConstructor(config.getClass()).newInstance(config);
+
+                        return (Client) ClassUtils.forName(c, JavaFileCompiler.getInstance()).getConstructor(config.getClass()).newInstance(config);
                     } catch (Throwable e) {
                         continue;
                     }

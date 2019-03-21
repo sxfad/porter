@@ -15,19 +15,20 @@
  * </p>
  */
 
-package cn.vbill.middleware.porter.common.client.impl;
+package cn.vbill.middleware.porter.plugin.loader.jdbc.client;
 
+import cn.vbill.middleware.porter.common.client.AbstractClient;
 import cn.vbill.middleware.porter.common.client.LoadClient;
 import cn.vbill.middleware.porter.common.client.MetaQueryClient;
-import cn.vbill.middleware.porter.common.config.source.JDBCConfig;
+import cn.vbill.middleware.porter.common.client.PluginServiceClient;
+import cn.vbill.middleware.porter.common.db.DdlUtils;
+import cn.vbill.middleware.porter.common.db.SqlTemplate;
+import cn.vbill.middleware.porter.common.db.SqlTemplateImpl;
 import cn.vbill.middleware.porter.common.db.meta.TableColumn;
 import cn.vbill.middleware.porter.common.db.meta.TableSchema;
 import cn.vbill.middleware.porter.common.dic.DbType;
 import cn.vbill.middleware.porter.common.exception.TaskStopTriggerException;
-import cn.vbill.middleware.porter.common.client.AbstractClient;
-import cn.vbill.middleware.porter.common.db.DdlUtils;
-import cn.vbill.middleware.porter.common.db.SqlTemplate;
-import cn.vbill.middleware.porter.common.db.SqlTemplateImpl;
+import cn.vbill.middleware.porter.plugin.loader.jdbc.config.JDBCConfig;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -48,11 +49,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -64,7 +61,7 @@ import java.util.function.Function;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月02日 15:14
  */
-public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient, MetaQueryClient {
+public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient, MetaQueryClient, PluginServiceClient {
     private static final Logger LOGGER = LoggerFactory.getLogger(JDBCClient.class);
     private final Map<List<String>, TableSchema> tables = new ConcurrentHashMap<>();
 
@@ -300,6 +297,7 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
     public void reset() {
         tables.clear();
     }
+
 
     private final class JdbcWapper {
         private volatile DruidDataSource dataSource;

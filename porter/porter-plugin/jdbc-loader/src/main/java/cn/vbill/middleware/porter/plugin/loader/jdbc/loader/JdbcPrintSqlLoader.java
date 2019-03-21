@@ -15,11 +15,11 @@
  * </p>
  */
 
-package cn.vbill.middleware.porter.plugin.loader.jdbc;
+package cn.vbill.middleware.porter.plugin.loader.jdbc.loader;
 
 import cn.vbill.middleware.porter.common.exception.TaskStopTriggerException;
+import cn.vbill.middleware.porter.plugin.loader.jdbc.JdbcLoaderConst;
 import com.alibaba.fastjson.JSONObject;
-import cn.vbill.middleware.porter.common.dic.LoaderPlugin;
 import cn.vbill.middleware.porter.core.event.etl.ETLBucket;
 import cn.vbill.middleware.porter.core.event.etl.ETLRow;
 import cn.vbill.middleware.porter.core.loader.SubmitStatObject;
@@ -44,7 +44,7 @@ public class JdbcPrintSqlLoader extends BaseJdbcLoader {
 
     @Override
     protected String getPluginName() {
-        return LoaderPlugin.JDBC_SQL_PRINT.getCode();
+        return JdbcLoaderConst.LOADER_PLUGIN_JDBC_SQL_PRINT.getCode();
     }
 
     @Override

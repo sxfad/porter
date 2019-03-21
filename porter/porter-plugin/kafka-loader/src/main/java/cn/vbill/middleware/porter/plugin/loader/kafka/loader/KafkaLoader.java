@@ -15,17 +15,17 @@
  * </p>
  */
 
-package cn.vbill.middleware.porter.plugin.loader.kafka;
+package cn.vbill.middleware.porter.plugin.loader.kafka.loader;
 
 
-import cn.vbill.middleware.porter.common.client.impl.KafkaProduceClient;
-import cn.vbill.middleware.porter.common.dic.LoaderPlugin;
 import cn.vbill.middleware.porter.common.exception.TaskDataException;
 import cn.vbill.middleware.porter.common.exception.TaskStopTriggerException;
 import cn.vbill.middleware.porter.core.event.etl.ETLBucket;
 import cn.vbill.middleware.porter.core.event.etl.ETLColumn;
 import cn.vbill.middleware.porter.core.loader.AbstractDataLoader;
 import cn.vbill.middleware.porter.core.loader.SubmitStatObject;
+import cn.vbill.middleware.porter.plugin.loader.kafka.KafkaLoaderConst;
+import cn.vbill.middleware.porter.plugin.loader.kafka.client.KafkaProduceClient;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import cn.vbill.middleware.porter.core.event.etl.ETLRow;
@@ -48,14 +48,12 @@ import java.util.stream.Stream;
  */
 @SuppressWarnings("unchecked")
 public class KafkaLoader extends AbstractDataLoader {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(KafkaLoader.class);
-
     private static final FastDateFormat OP_TS_F = FastDateFormat.getInstance("yyyy-MM-dd hh:mm:ss.SSS");
     private static final FastDateFormat C_TS_F = FastDateFormat.getInstance("yyyy-MM-dd'T'hh:mm:ss.SSS000");
     @Override
     protected String getPluginName() {
-        return LoaderPlugin.KAFKA_SYNC.getCode();
+        return KafkaLoaderConst.LOADER_PLUGIN_NAME.getCode();
     }
 
     @Override

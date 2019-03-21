@@ -17,9 +17,6 @@
 
 package cn.vbill.middleware.porter.common.client;
 
-
-import org.apache.commons.lang3.StringUtils;
-
 /**
  * 插件服务客户端接口
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -28,18 +25,4 @@ import org.apache.commons.lang3.StringUtils;
  * @review: zkevin/2018年04月25日 10:28
  */
 public interface PluginServiceClient {
-    /**
-     * 用于插件服务客户端加载匹配
-     * @param clientName
-     * @return
-     */
-    default boolean isMatch(String clientName) {
-        return StringUtils.trimToEmpty(getClientName()).equals(StringUtils.trimToEmpty(clientName));
-    }
-
-    /**
-     * 获取客户端名称
-     * @return
-     */
-    String getClientName();
 }

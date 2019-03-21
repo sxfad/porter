@@ -15,14 +15,15 @@
  * </p>
  */
 
-package cn.vbill.middleware.porter.common.client.impl;
+package cn.vbill.middleware.porter.plugin.loader.kudu.client;
 
 import cn.vbill.middleware.porter.common.client.AbstractClient;
 import cn.vbill.middleware.porter.common.client.LoadClient;
 import cn.vbill.middleware.porter.common.client.MetaQueryClient;
-import cn.vbill.middleware.porter.common.config.source.KuduConfig;
+import cn.vbill.middleware.porter.common.client.PluginServiceClient;
 import cn.vbill.middleware.porter.common.db.meta.TableColumn;
 import cn.vbill.middleware.porter.common.db.meta.TableSchema;
+import cn.vbill.middleware.porter.plugin.loader.kudu.config.KuduConfig;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
@@ -30,21 +31,9 @@ import org.apache.commons.lang3.tuple.Triple;
 import org.apache.kudu.ColumnSchema;
 import org.apache.kudu.Common;
 import org.apache.kudu.Schema;
-import org.apache.kudu.client.CreateTableOptions;
-import org.apache.kudu.client.KuduClient;
-import org.apache.kudu.client.KuduException;
-import org.apache.kudu.client.KuduSession;
-import org.apache.kudu.client.KuduTable;
-import org.apache.kudu.client.Operation;
-import org.apache.kudu.client.OperationResponse;
-import org.apache.kudu.client.PartialRow;
-import org.apache.kudu.client.SessionConfiguration;
+import org.apache.kudu.client.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Date;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
@@ -57,7 +46,7 @@ import java.util.function.Function;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月02日 15:14
  */
-public class KUDUClient extends AbstractClient<KuduConfig> implements LoadClient, MetaQueryClient {
+public class KUDUClient extends AbstractClient<KuduConfig> implements PluginServiceClient, LoadClient, MetaQueryClient {
     private final Map<List<String>, TableSchema> tables = new ConcurrentHashMap<>();
 
     @Getter
@@ -275,6 +264,8 @@ public class KUDUClient extends AbstractClient<KuduConfig> implements LoadClient
             }
         });
     }
+
+
 
     private enum OperationType {
         DELETE, UPDATE, INSERT;

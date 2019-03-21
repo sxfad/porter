@@ -15,38 +15,29 @@
  * </p>
  */
 
-package cn.vbill.middleware.porter.common.client.impl;
+package cn.vbill.middleware.porter.plugin.consumer.kafka.client;
 
 import cn.vbill.middleware.porter.common.client.AbstractClient;
-import cn.vbill.middleware.porter.common.config.source.KafkaConfig;
+import cn.vbill.middleware.porter.common.client.PluginServiceClient;
 import cn.vbill.middleware.porter.common.consumer.ConsumeClient;
 import cn.vbill.middleware.porter.common.consumer.Position;
 import cn.vbill.middleware.porter.common.exception.DataConsumerBuildException;
 import cn.vbill.middleware.porter.common.exception.TaskStopTriggerException;
 import cn.vbill.middleware.porter.common.util.MachineUtils;
+import cn.vbill.middleware.porter.plugin.consumer.kafka.config.KafkaConfig;
 import com.alibaba.fastjson.JSONObject;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
-import org.apache.kafka.clients.consumer.Consumer;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.consumer.OffsetAndMetadata;
+import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.errors.WakeupException;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 
@@ -56,7 +47,8 @@ import java.util.concurrent.CountDownLatch;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月02日 15:14
  */
-public class KafkaClient extends AbstractClient<KafkaConfig> implements ConsumeClient {
+@NoArgsConstructor
+public class KafkaClient extends AbstractClient<KafkaConfig> implements ConsumeClient, PluginServiceClient {
 
     private Consumer<String, String> consumer;
     private CountDownLatch canFetch = new CountDownLatch(1);
@@ -249,6 +241,8 @@ public class KafkaClient extends AbstractClient<KafkaConfig> implements ConsumeC
             return false;
         }
     }
+
+
 
     /**
      * kafka位点信息

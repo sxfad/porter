@@ -15,10 +15,12 @@
  * </p>
  */
 
-package cn.vbill.middleware.porter.common.config.source;
+package cn.vbill.middleware.porter.plugin.loader.kudu.config;
 
-import cn.vbill.middleware.porter.common.dic.SourceType;
+import cn.vbill.middleware.porter.common.config.PluginServiceConfig;
 import cn.vbill.middleware.porter.common.config.SourceConfig;
+import cn.vbill.middleware.porter.plugin.loader.kudu.KuduLoaderConst;
+import cn.vbill.middleware.porter.plugin.loader.kudu.client.KUDUClient;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
@@ -35,15 +37,12 @@ import java.util.stream.Collectors;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月02日 14:24
  */
-public class KuduConfig extends SourceConfig {
+public class KuduConfig extends SourceConfig implements PluginServiceConfig {
     private static final String SERVER_SPLIT_CHARACTER = ",";
     //ip:port
     @Setter @Getter private List<String> servers = new ArrayList<>();
     @Setter @Getter private int workerCount  = 10;
 
-    public KuduConfig() {
-        sourceType = SourceType.KUDU;
-    }
 
     @Override
     protected void childStuff() {
@@ -61,5 +60,15 @@ public class KuduConfig extends SourceConfig {
     @Override
     protected boolean doCheck() {
         return true;
+    }
+
+    @Override
+    public String getInstanceClientType() {
+        return KUDUClient.class.getName();
+    }
+
+    @Override
+    public String getInstanceConfigType() {
+        return KuduLoaderConst.LOADER_SOURCE_TYPE_NAME.getCode();
     }
 }

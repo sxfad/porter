@@ -15,16 +15,16 @@
  * </p>
  */
 
-package cn.vbill.middleware.porter.plugin.consumer.kafka;
+package cn.vbill.middleware.porter.plugin.consumer.kafka.consumer;
 
 
-import cn.vbill.middleware.porter.common.client.impl.KafkaClient;
 import cn.vbill.middleware.porter.common.consumer.ConsumeClient;
 import cn.vbill.middleware.porter.common.consumer.Position;
-import cn.vbill.middleware.porter.common.dic.ConsumerPlugin;
 import cn.vbill.middleware.porter.common.exception.TaskStopTriggerException;
 import cn.vbill.middleware.porter.core.consumer.AbstractDataConsumer;
 import cn.vbill.middleware.porter.core.event.s.MessageEvent;
+import cn.vbill.middleware.porter.plugin.consumer.kafka.KafkaConsumerConst;
+import cn.vbill.middleware.porter.plugin.consumer.kafka.client.KafkaClient;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
 import java.util.List;
@@ -51,6 +51,7 @@ public class KafkaConsumer extends AbstractDataConsumer {
 
     @Override
     protected String getPluginName() {
-        return ConsumerPlugin.KAFKA.getCode();
+        new KafkaClient();
+        return KafkaConsumerConst.CONSUMER_PLUGIN_NAME.getCode();
     }
 }

@@ -56,16 +56,12 @@ public class TaskPushEventExecutor extends ClusterListenerEventExecutor {
                 for (SourceConfig sc : sourceConfigs) {
                     String pushPath = distPath + "/" + sc.getSwimlaneId();
                     String errorPath = taskPath + "/error/" + sc.getSwimlaneId();
-                    if (!config.getStatus().isDeleted()) {
-                        // 为每个泳道填充参数
-                        config.getConsumer().setSource(sc.getProperties());
-                        if (regardless) {
-                            client.changeData(pushPath, false, watchTasks, JSONObject.toJSONString(config));
-                        } else if (!regardless && !client.isExists(pushPath, watchTasks)) {
-                            client.create(pushPath, false, JSONObject.toJSONString(config));
-                        }
-                    } else {
-                        client.delete(pushPath);
+                    // 为每个泳道填充参数
+                    config.getConsumer().setSource(sc.getProperties());
+                    if (regardless) {
+                        client.changeData(pushPath, false, watchTasks, JSONObject.toJSONString(config));
+                    } else if (!regardless && !client.isExists(pushPath, watchTasks)) {
+                        client.create(pushPath, false, JSONObject.toJSONString(config));
                     }
                     client.delete(errorPath);
                 }

@@ -15,21 +15,19 @@
  * </p>
  */
 
-package cn.vbill.middleware.porter.common.config.source;
+package cn.vbill.middleware.porter.plugin.consumer.kafka.config;
 
+import cn.vbill.middleware.porter.common.config.PluginServiceConfig;
 import cn.vbill.middleware.porter.common.config.SourceConfig;
-import cn.vbill.middleware.porter.common.dic.SourceType;
 import cn.vbill.middleware.porter.common.exception.ConfigParseException;
+import cn.vbill.middleware.porter.plugin.consumer.kafka.KafkaConsumerConst;
+import cn.vbill.middleware.porter.plugin.consumer.kafka.client.KafkaClient;
 import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -38,7 +36,7 @@ import java.util.stream.Collectors;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月02日 14:24
  */
-public class KafkaConfig  extends SourceConfig {
+public class KafkaConfig extends SourceConfig implements PluginServiceConfig {
     @JSONField(serialize = false, deserialize = false)
     private static final String TOPIC_SPLIT_CHARACTER = ",";
     @JSONField(serialize = false, deserialize = false)
@@ -56,10 +54,6 @@ public class KafkaConfig  extends SourceConfig {
     //消费分区 2018.10.16 zhangkewei
     @Setter @Getter private int partition = 0;
 
-
-    public   KafkaConfig() {
-        sourceType = SourceType.KAFKA;
-    }
 
     @Override
     protected void childStuff() {
@@ -96,5 +90,15 @@ public class KafkaConfig  extends SourceConfig {
     @Override
     protected boolean doCheck() {
         return !topics.isEmpty() && (partition == 0 || (partition > 0 && topics.size() == 1));
+    }
+
+    @Override
+    public String getInstanceClientType() {
+        return KafkaClient.class.getName();
+    }
+
+    @Override
+    public String getInstanceConfigType() {
+        return KafkaConsumerConst.CONSUMER_PLUGIN_NAME.getCode();
     }
 }
