@@ -57,7 +57,7 @@ import io.swagger.annotations.ApiOperation;
  */
 @Api(description = "公共数据源配置表管理")
 @RestController
-@RequestMapping("/pdse")
+@RequestMapping("/manager/pdse")
 public class PublicDataSourceController {
 
     private Logger log = LoggerFactory.getLogger(PublicDataSourceController.class);
