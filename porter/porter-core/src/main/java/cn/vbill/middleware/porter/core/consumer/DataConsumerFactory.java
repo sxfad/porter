@@ -87,17 +87,18 @@ public enum DataConsumerFactory {
             try {
                 processor = JavaFileCompiler.getInstance().newJavaObject(config.getEventProcessor(), EventProcessor.class);
             } catch (Exception e) {
-                LOGGER.error("%s", e);
                 throw new ConfigParseException("EventProcessor转换java对象失败:" + e.getMessage());
             }
         }
 
         //消费数据获取来源
-        List<SourceConfig> configs = SourceConfig.getConfig(config.getSource()).swamlanes();
+        SourceConfig configSet = SourceConfig.getConfig(config.getSource());
+        if (null == configSet) throw new ConfigParseException(config.getSource() + "不能识别的数据源");
+        List<SourceConfig> configs = configSet.swamlanes();
         for (SourceConfig sourceConfig : configs) {
             Client tempClient = AbstractClient.getClient(sourceConfig);
             if (null == tempClient || !(tempClient instanceof ConsumeClient)) {
-                throw new ClientException("ConsumeClient初始化失败:" + config.getSource());
+                throw new ConfigParseException(config.getSource() + "不能识别的消费端链接信息");
             }
             ConsumeClient consumeClient = (ConsumeClient) tempClient;
 

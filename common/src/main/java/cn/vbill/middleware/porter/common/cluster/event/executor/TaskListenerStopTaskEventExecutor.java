@@ -30,7 +30,7 @@ import java.util.function.BiConsumer;
 public class TaskListenerStopTaskEventExecutor extends ClusterListenerEventExecutor {
 
     public TaskListenerStopTaskEventExecutor(Class bindClass, String treeNodePath, String nodeId) {
-        super(bindClass, ClusterListenerEventType.TaskPush);
+        super(bindClass, ClusterListenerEventType.TaskStop);
         bind(getBlock(treeNodePath, nodeId));
     }
 

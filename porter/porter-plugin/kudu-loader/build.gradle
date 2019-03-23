@@ -4,4 +4,9 @@ dependencies {
     compile (
             project(":porter:porter-core")
     )
+
+    compile('org.apache.kudu:kudu-client:1.6.0'){
+        exclude group:'org.slf4j',module:'slf4j-api'
+        exclude group:'jdk.tools',module:'jdk.tools'
+    }
 }

@@ -15,18 +15,18 @@
  * </p>
  */
 
-package cn.vbill.middleware.porter.plugin.loader.kudu;
+package cn.vbill.middleware.porter.plugin.loader.kudu.loader;
 
 import cn.vbill.middleware.porter.common.exception.TaskDataException;
 import cn.vbill.middleware.porter.common.exception.TaskStopTriggerException;
 import cn.vbill.middleware.porter.core.event.s.EventType;
-import cn.vbill.middleware.porter.common.client.impl.KUDUClient;
-import cn.vbill.middleware.porter.common.dic.LoaderPlugin;
 import cn.vbill.middleware.porter.core.event.etl.ETLBucket;
 import cn.vbill.middleware.porter.core.event.etl.ETLColumn;
 import cn.vbill.middleware.porter.core.event.etl.ETLRow;
 import cn.vbill.middleware.porter.core.loader.AbstractDataLoader;
 import cn.vbill.middleware.porter.core.loader.SubmitStatObject;
+import cn.vbill.middleware.porter.plugin.loader.kudu.KuduLoaderConst;
+import cn.vbill.middleware.porter.plugin.loader.kudu.client.KUDUClient;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
@@ -49,7 +49,7 @@ public class KuduLoader extends AbstractDataLoader {
 
     @Override
     protected String getPluginName() {
-        return LoaderPlugin.KUDU_NATIVE.getCode();
+        return KuduLoaderConst.LOADER_PLUGIN_NAME.getCode();
     }
 
     @Override

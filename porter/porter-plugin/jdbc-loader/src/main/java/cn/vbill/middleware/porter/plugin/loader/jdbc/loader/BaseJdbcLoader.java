@@ -15,14 +15,14 @@
  * </p>
  */
 
-package cn.vbill.middleware.porter.plugin.loader.jdbc;
+package cn.vbill.middleware.porter.plugin.loader.jdbc.loader;
 
 import cn.vbill.middleware.porter.common.exception.TaskDataException;
 import cn.vbill.middleware.porter.common.exception.TaskStopTriggerException;
 import cn.vbill.middleware.porter.core.event.etl.ETLBucket;
 import cn.vbill.middleware.porter.core.loader.SubmitStatObject;
+import cn.vbill.middleware.porter.plugin.loader.jdbc.client.JDBCClient;
 import com.alibaba.fastjson.JSONObject;
-import cn.vbill.middleware.porter.common.client.impl.JDBCClient;
 import cn.vbill.middleware.porter.common.db.SqlTemplate;
 import cn.vbill.middleware.porter.common.db.SqlUtils;
 import cn.vbill.middleware.porter.core.event.etl.ETLColumn;

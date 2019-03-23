@@ -15,14 +15,14 @@
  * </p>
  */
 
-package cn.vbill.middleware.porter.plugin.consumer.canal;
+package cn.vbill.middleware.porter.plugin.consumer.canal.consumer;
 
 
-import cn.vbill.middleware.porter.common.client.impl.CanalClient;
 import cn.vbill.middleware.porter.common.consumer.ConsumeClient;
-import cn.vbill.middleware.porter.common.dic.ConsumerPlugin;
 import cn.vbill.middleware.porter.common.exception.TaskStopTriggerException;
 import cn.vbill.middleware.porter.core.consumer.AbstractDataConsumer;
+import cn.vbill.middleware.porter.plugin.consumer.canal.CanalConsumerConst;
+import cn.vbill.middleware.porter.plugin.consumer.canal.client.CanalClient;
 import com.alibaba.otter.canal.protocol.CanalEntry;
 import com.alibaba.otter.canal.protocol.Message;
 import cn.vbill.middleware.porter.core.event.s.MessageEvent;
@@ -90,6 +90,6 @@ public class CanalConsumer extends AbstractDataConsumer {
 
     @Override
     protected String getPluginName() {
-        return ConsumerPlugin.CANAL.getCode();
+        return CanalConsumerConst.CONSUMER_PLUGIN_NAME.getCode();
     }
 }

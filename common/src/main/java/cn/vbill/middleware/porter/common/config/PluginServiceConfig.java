@@ -33,18 +33,9 @@ public interface PluginServiceConfig {
      * @return
      */
     default boolean isMatch(String configName) {
-        return StringUtils.trimToEmpty(getConfigName()).equals(StringUtils.trimToEmpty(configName));
+        return StringUtils.trimToEmpty(getInstanceConfigType()).equals(StringUtils.trimToEmpty(configName));
     }
 
-    /**
-     * 获取客户端名称
-     * @return
-     */
-    String getConfigName();
-
-    /**
-     * 获取配置文件目标用户名称
-     * @return
-     */
-    String getTargetName();
+    String getInstanceConfigType();
+    String getInstanceClientType();
 }

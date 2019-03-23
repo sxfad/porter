@@ -89,8 +89,8 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
         Matcher taskMatcher = TASK_DIST_PATTERN.matcher(event.getId());
         if (taskMatcher.matches()) {
             TaskConfig config = JSONObject.parseObject(event.getData(), TaskConfig.class);
+            NodeContext.INSTANCE.removeTaskError(config.getTaskId());
             if (event.isOnline() || event.isDataChanged()) { //任务创建 、任务修改
-                NodeContext.INSTANCE.removeTaskError(config.getTaskId());
                 triggerTaskEvent(config);
             }
 

@@ -18,10 +18,10 @@
 package cn.vbill.middleware.porter.manager.service.impl;
 
 import cn.vbill.middleware.porter.manager.core.dto.JDBCVo;
-import cn.vbill.middleware.porter.common.dic.SourceType;
 import cn.vbill.middleware.porter.manager.core.entity.DataSource;
 import cn.vbill.middleware.porter.manager.core.entity.DataTable;
 import cn.vbill.middleware.porter.manager.core.enums.QuerySQL;
+import cn.vbill.middleware.porter.manager.core.enums.SourceType;
 import cn.vbill.middleware.porter.manager.core.mapper.DataTableMapper;
 import cn.vbill.middleware.porter.manager.core.util.ApplicationContextUtil;
 import cn.vbill.middleware.porter.manager.service.DataSourceService;

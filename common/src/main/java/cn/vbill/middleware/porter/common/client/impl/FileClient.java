@@ -44,6 +44,7 @@ public class FileClient extends AbstractClient<FileOperationConfig> implements C
     private static final Logger LOGGER = LoggerFactory.getLogger(FileClient.class);
 
     private String workspace;
+
     public FileClient(FileOperationConfig config) {
         super(config);
     }

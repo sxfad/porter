@@ -15,7 +15,7 @@
  * </p>
  */
 
-package cn.vbill.middleware.porter.common.dic;
+package cn.vbill.middleware.porter.manager.core.enums;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 
 /**
- * 消费器插件
+ * 载入器插件
  *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年03月07日 10:00
@@ -34,25 +34,50 @@ import java.util.LinkedHashMap;
  */
 @AllArgsConstructor
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
-public enum ConsumerPlugin {
+public enum LoaderPlugin {
 
     /**
-     * CANAL
+     * JDBC批量
      */
-    CANAL("CanalFetch", "Canal"),
+    JDBC_BATCH("JdbcBatch", "JDBC批量"),
 
     /**
-     * KAFKA
+     * JDBC单行
      */
-    KAFKA("KafkaFetch", "Kafka");
+    JDBC_SINGLE("JdbcSingle", "JDBC单行"),
+
+    /**
+     * kudu单行
+     */
+    KUDU_NATIVE("KUDU_NATIVE", "kudu单行"),
+
+    /**
+     * SQL打印测试
+     */
+    JDBC_SQL_PRINT("JDBC_SQL_PRINT", "SQL打印测试"),
+
+    /**
+     * kafka同步
+     */
+    KAFKA_SYNC("KAFKA_SYNC", "kafka同步"),
+
+    /**
+     * kafka异步
+     */
+    KAFKA_ASYNC("KAFKA_ASYNC", "kafka异步");
 
     /**
      * LINKMAP
      */
     public static final HashMap<String, Object> LINKMAP = new LinkedHashMap<>();
+
     static {
-        LINKMAP.put("CANAL", CANAL.name);
-        LINKMAP.put("KAFKA", KAFKA.name);
+        LINKMAP.put("JDBC_BATCH", JDBC_BATCH.name);
+        LINKMAP.put("JDBC_SINGLE", JDBC_SINGLE.name);
+        LINKMAP.put(JDBC_SINGLE.code, KUDU_NATIVE.name);
+        LINKMAP.put(JDBC_SQL_PRINT.code, JDBC_SQL_PRINT.name);
+        LINKMAP.put(KAFKA_SYNC.code, KAFKA_SYNC.name);
+        LINKMAP.put(KAFKA_ASYNC.code, KAFKA_ASYNC.name);
     }
 
     @Getter
@@ -60,8 +85,8 @@ public enum ConsumerPlugin {
     @Getter
     private final String name;
 
-    public static ConsumerPlugin enumByCode(String code) {
-        for (ConsumerPlugin e : ConsumerPlugin.values()) {
+    public static LoaderPlugin enumByCode(String code) {
+        for (LoaderPlugin e : LoaderPlugin.values()) {
             if (e.getCode().equalsIgnoreCase(code)) {
                 return e;
             }

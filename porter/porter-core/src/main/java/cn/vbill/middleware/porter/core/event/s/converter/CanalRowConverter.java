@@ -89,7 +89,8 @@ public class CanalRowConverter implements EventConverter {
                     if (c.getIsKey()) {
                         event.getPrimaryKeys().add(c.getName());
                     }
-                    event.getBefore().put(c.getName(), c.getValue());
+
+                    event.getBefore().put(c.getName(), c.getIsNull() ? null : c.getValue());
                 });
             } else if (eventType == CanalEntry.EventType.INSERT) {
                 event.setOpType(EventType.INSERT);
@@ -97,7 +98,7 @@ public class CanalRowConverter implements EventConverter {
                     if (c.getIsKey()) {
                         event.getPrimaryKeys().add(c.getName());
                     }
-                    event.getAfter().put(c.getName(), c.getValue());
+                    event.getAfter().put(c.getName(), c.getIsNull() ? null : c.getValue());
                 });
 
             } else if (eventType == CanalEntry.EventType.UPDATE) {
@@ -108,12 +109,12 @@ public class CanalRowConverter implements EventConverter {
                     if (c.getIsKey()) {
                         event.getPrimaryKeys().add(c.getName());
                     }
-                    event.getBefore().put(c.getName(), c.getValue());
+                    event.getBefore().put(c.getName(), c.getIsNull() ? null : c.getValue());
                 });
 
                 //after
                 rowData.getAfterColumnsList().forEach(c -> {
-                    event.getAfter().put(c.getName(), c.getValue());
+                    event.getAfter().put(c.getName(), c.getIsNull() ? null : c.getValue());
                 });
             }
             events.add(event);

@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -135,15 +136,17 @@ public abstract class AbstractClusterMonitor implements ClusterMonitor {
         target.forEach(listener -> {
             listener.setClient(client);
             listeners.put(listener.getName(), listener);
-            if (null != listener.watchedEvents()) {
-                listener.watchedEvents().forEach(e -> registerClusterEvent(e));
+            List<ClusterListenerEventExecutor> executors = listener.watchedEvents();
+            if (null != executors) {
+                executors.forEach(e -> registerClusterEvent(e));
             }
         });
     }
 
     public void registerClusterEvent(ClusterListenerEventExecutor eventExecutor) {
         if (null != eventExecutor && null == eventExecutor.getClient()) eventExecutor.bind(client);
-        eventWatchdog.getOrDefault(eventExecutor.getBindEvent(), new ArrayList<>()).add(eventExecutor);
+        eventWatchdog.computeIfAbsent(eventExecutor.getBindEvent(), clusterListenerEventType -> new ArrayList<>());
+        eventWatchdog.get(eventExecutor.getBindEvent()).add(eventExecutor);
     }
 
     @Override

@@ -15,33 +15,20 @@
  * </p>
  */
 
-package cn.vbill.middleware.porter.common.client.impl;
+package cn.vbill.middleware.porter.plugin.loader.kafka.client;
 
-import cn.vbill.middleware.porter.common.client.AbstractClient;
-import cn.vbill.middleware.porter.common.client.LoadClient;
-import cn.vbill.middleware.porter.common.client.MetaQueryClient;
-import cn.vbill.middleware.porter.common.client.StatisticClient;
-import cn.vbill.middleware.porter.common.config.source.KafkaProduceConfig;
+import cn.vbill.middleware.porter.common.client.*;
 import cn.vbill.middleware.porter.common.db.meta.TableSchema;
 import cn.vbill.middleware.porter.common.exception.TaskStopTriggerException;
 import cn.vbill.middleware.porter.common.util.MachineUtils;
+import cn.vbill.middleware.porter.plugin.loader.kafka.config.KafkaProduceConfig;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Triple;
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.Producer;
-import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.clients.producer.RecordMetadata;
+import org.apache.kafka.clients.producer.*;
 import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.serialization.StringSerializer;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
@@ -54,7 +41,7 @@ import java.util.stream.Collectors;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月02日 15:14
  */
-public class KafkaProduceClient extends AbstractClient<KafkaProduceConfig> implements LoadClient, MetaQueryClient, StatisticClient {
+public class KafkaProduceClient extends AbstractClient<KafkaProduceConfig> implements PluginServiceClient, LoadClient, MetaQueryClient, StatisticClient {
     private volatile Producer<String, String> producer;
     private final String topic;
     private final boolean transaction;
@@ -296,4 +283,6 @@ public class KafkaProduceClient extends AbstractClient<KafkaProduceConfig> imple
             LOGGER.warn("上传统计信息失败,忽略异常", e);
         }
     }
+
+
 }

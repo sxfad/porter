@@ -57,13 +57,14 @@ public enum DataLoaderFactory {
      */
     public DataLoader getLoader(DataLoaderConfig config) throws ConfigParseException, ClientException, DataLoaderBuildException {
         Client client = AbstractClient.getClient(SourceConfig.getConfig(config.getSource()));
+        if (null == client) throw new ConfigParseException(config.getSource() + "不能识别的目标端链接信息");
         //获取源数据查询配置
         DataLoader loader = newLoader(config.getLoaderName());
         if (!(client instanceof LoadClient)) {
-            throw new ClientException(config.getSource() + "不是LoadClient实现");
+            throw new ClientException(config.getSource() + "无法识别为目标端链接客户端");
         }
         if (!(client instanceof MetaQueryClient)) {
-            throw new ClientException(config.getSource() + "MetaQueryClient");
+            throw new ClientException(config.getSource() + "无法识别为目标端元数据客户端");
         }
         loader.setLoadClient((LoadClient) client);
         loader.setMetaQueryClient((MetaQueryClient) client);

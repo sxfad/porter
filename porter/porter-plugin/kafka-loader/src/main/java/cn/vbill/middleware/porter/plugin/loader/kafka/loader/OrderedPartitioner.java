@@ -15,7 +15,7 @@
  * </p>
  */
 
-package cn.vbill.middleware.porter.plugin.loader.kafka;
+package cn.vbill.middleware.porter.plugin.loader.kafka.loader;
 
 import org.apache.kafka.clients.producer.Partitioner;
 import org.apache.kafka.common.Cluster;

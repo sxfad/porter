@@ -15,14 +15,15 @@
  * </p>
  */
 
-package cn.vbill.middleware.porter.common.client.impl;
+package cn.vbill.middleware.porter.plugin.consumer.canal.client;
 
 import cn.vbill.middleware.porter.common.client.AbstractClient;
-import cn.vbill.middleware.porter.common.config.source.CanalConfig;
+import cn.vbill.middleware.porter.common.client.PluginServiceClient;
 import cn.vbill.middleware.porter.common.consumer.ConsumeClient;
 import cn.vbill.middleware.porter.common.consumer.Position;
 import cn.vbill.middleware.porter.common.exception.TaskStopTriggerException;
 import cn.vbill.middleware.porter.common.statistics.NodeLog;
+import cn.vbill.middleware.porter.plugin.consumer.canal.config.CanalConfig;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.otter.canal.common.alarm.CanalAlarmHandler;
 import com.alibaba.otter.canal.instance.core.CanalInstance;
@@ -57,7 +58,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月02日 15:14
  */
-public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeClient {
+public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeClient, PluginServiceClient {
     private int perPullSize;
     private long pollTimeOut;
     private final CanalServerWithEmbedded canalServer;
@@ -304,6 +305,7 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
             return false;
         }
     }
+
 
     /**
      * canal位点信息

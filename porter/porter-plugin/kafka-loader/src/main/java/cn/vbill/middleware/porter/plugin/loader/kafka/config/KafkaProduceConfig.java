@@ -15,10 +15,12 @@
  * </p>
  */
 
-package cn.vbill.middleware.porter.common.config.source;
+package cn.vbill.middleware.porter.plugin.loader.kafka.config;
 
+import cn.vbill.middleware.porter.common.config.PluginServiceConfig;
 import cn.vbill.middleware.porter.common.config.SourceConfig;
-import cn.vbill.middleware.porter.common.dic.SourceType;
+import cn.vbill.middleware.porter.plugin.loader.kafka.KafkaLoaderConst;
+import cn.vbill.middleware.porter.plugin.loader.kafka.client.KafkaProduceClient;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -31,7 +33,7 @@ import java.util.Map;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月02日 14:24
  */
-public class KafkaProduceConfig extends SourceConfig {
+public class KafkaProduceConfig extends SourceConfig implements PluginServiceConfig {
     //服务器列表
     @Setter @Getter private String servers;
     //自动生成
@@ -47,10 +49,6 @@ public class KafkaProduceConfig extends SourceConfig {
     //分片字段名
     //schema.表名->字段名1,字段名2
     @Setter @Getter private Map<String, String> partitionKey = new HashMap<>();
-
-    public KafkaProduceConfig() {
-        sourceType = SourceType.KAFKA_PRODUCE;
-    }
 
     @Override
     protected void childStuff() {
@@ -70,5 +68,16 @@ public class KafkaProduceConfig extends SourceConfig {
     @Override
     protected boolean doCheck() {
         return true;
+    }
+
+    @Override
+    public String getInstanceClientType() {
+        return KafkaProduceClient.class.getName();
+    }
+
+
+    @Override
+    public String getInstanceConfigType() {
+        return KafkaLoaderConst.LOADER_SOURCE_TYPE_NAME.getCode();
     }
 }

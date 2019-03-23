@@ -15,10 +15,12 @@
  * </p>
  */
 
-package cn.vbill.middleware.porter.common.config.source;
+package cn.vbill.middleware.porter.plugin.consumer.canal.config;
 
+import cn.vbill.middleware.porter.common.config.PluginServiceConfig;
 import cn.vbill.middleware.porter.common.config.SourceConfig;
-import cn.vbill.middleware.porter.common.dic.SourceType;
+import cn.vbill.middleware.porter.plugin.consumer.canal.CanalConsumerConst;
+import cn.vbill.middleware.porter.plugin.consumer.canal.client.CanalClient;
 import com.alibaba.otter.canal.instance.manager.model.CanalParameter;
 import lombok.Getter;
 import lombok.Setter;
@@ -33,7 +35,7 @@ import java.util.UUID;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月02日 14:24
  */
-public class CanalConfig extends SourceConfig {
+public class CanalConfig extends SourceConfig implements PluginServiceConfig {
     private static final String ADDRESS_SPLIT_CHARACTER = ":";
 
     //实例描述
@@ -49,10 +51,6 @@ public class CanalConfig extends SourceConfig {
     @Setter @Getter private String filter = "";
     @Setter @Getter private int oncePollSize = 1000;
     @Setter @Getter private int pollTimeOut  = -1;
-
-    public CanalConfig() {
-        sourceType = SourceType.CANAL;
-    }
 
     @Override
     protected void childStuff() {
@@ -84,5 +82,16 @@ public class CanalConfig extends SourceConfig {
     @Override
     public String getSwimlaneId() {
         return database;
+    }
+
+    @Override
+    public String getInstanceClientType() {
+        return CanalClient.class.getName();
+    }
+
+
+    @Override
+    public String getInstanceConfigType() {
+        return CanalConsumerConst.CONSUMER_SOURCE_TYPE_NAME.getCode();
     }
 }
