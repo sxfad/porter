@@ -184,6 +184,7 @@ CREATE TABLE `b_public_data_source` (
   `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `state` int(5) NOT NULL DEFAULT '1' COMMENT '状态',
   `type` int(5) NOT NULL DEFAULT '1' COMMENT '类型',
+  `ispush` int(5) DEFAULT '0' COMMENT '推送状态(0:新增 -1：回收 1：已推送)',
   `iscancel` int(2) DEFAULT '0' COMMENT '是否作废',
   `ispush` int(5) DEFAULT '0' COMMENT '推送状态(0:新增 -1：回收  1：已推送)',
   `remark` varchar(500) DEFAULT NULL COMMENT '备注',
