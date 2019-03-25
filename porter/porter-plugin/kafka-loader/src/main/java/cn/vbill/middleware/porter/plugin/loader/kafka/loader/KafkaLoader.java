@@ -163,7 +163,7 @@ public class KafkaLoader extends AbstractDataLoader {
         formattedRow.put("table", row.getFinalSchema() + "." + row.getFinalTable());
         formattedRow.put("op_ts", OP_TS_F.format(new Date(row.getConsumerTime())));
         formattedRow.put("current_ts", C_TS_F.format(new Date()));
-        formattedRow.put("op_type", row.getFinalOpType().getCode());
+        formattedRow.put("op_type", row.getFinalOpType().getValue());
         JSONObject before = new JSONObject();
         JSONObject after = new JSONObject();
         JSONArray keys = new JSONArray();

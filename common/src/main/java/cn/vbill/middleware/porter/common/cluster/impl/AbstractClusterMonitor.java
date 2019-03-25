@@ -32,7 +32,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Function;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]

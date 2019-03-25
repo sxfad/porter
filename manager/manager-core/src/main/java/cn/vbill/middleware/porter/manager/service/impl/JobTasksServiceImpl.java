@@ -50,7 +50,7 @@ import cn.vbill.middleware.porter.common.config.JavaFileConfig;
 import cn.vbill.middleware.porter.common.config.SourceConfig;
 import cn.vbill.middleware.porter.common.config.TableMapperConfig;
 import cn.vbill.middleware.porter.common.config.TaskConfig;
-import cn.vbill.middleware.porter.common.dic.ConsumeConverterPlugin;
+import cn.vbill.middleware.porter.manager.core.enums.ConsumeConverterPlugin;
 import cn.vbill.middleware.porter.manager.core.enums.ConsumerPlugin;
 import cn.vbill.middleware.porter.manager.core.enums.LoaderPlugin;
 import cn.vbill.middleware.porter.common.dic.TaskStatusType;

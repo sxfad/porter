@@ -34,4 +34,8 @@ include 'porter:porter-plugin:kudu-loader'
 findProject('porter:porter-plugin:kudu-loader')?.name = 'kudu-loader'
 include 'porter:porter-plugin:kafka-loader'
 findProject(':porter:porter-plugin:kafka-loader')?.name = 'kafka-loader'
+include 'porter:porter-plugin:canal-row-converter'
+findProject(':porter:porter-plugin:canal-row-converter')?.name = 'canal-row-converter'
+include 'porter:porter-plugin:ogg-json-converter'
+findProject(':porter:porter-plugin:ogg-json-converter')?.name = 'ogg-json-converter'
 

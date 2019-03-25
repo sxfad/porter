@@ -1,3 +1,0 @@
-cn.vbill.middleware.porter.core.event.s.EventConverter = \
-  cn.vbill.middleware.porter.core.event.s.converter.OggJsonConverter,\
-  cn.vbill.middleware.porter.core.event.s.converter.CanalRowConverter
