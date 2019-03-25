@@ -261,7 +261,7 @@ public class LoadJob extends AbstractStageJob {
 
         //打印当前消息所在点位，方便问题查找
         if (!hit) {
-            LOGGER.error("{}.{} {} {}", object.getSchema(), object.getTable(), object.getType().getCode(), object.getPosition().render());
+            LOGGER.error("{}.{} {} {}", object.getSchema(), object.getTable(), object.getType().getValue(), object.getPosition().render());
         }
     }
 }

@@ -15,16 +15,13 @@
  * </p>
  */
 
-package cn.vbill.middleware.porter.core.event.s.converter;
+package cn.vbill.middleware.porter.plugin.converter.canal;
 
+import cn.vbill.middleware.porter.common.consumer.Position;
 import cn.vbill.middleware.porter.core.event.s.EventConverter;
 import cn.vbill.middleware.porter.core.event.s.EventType;
 import cn.vbill.middleware.porter.core.event.s.MessageEvent;
-import cn.vbill.middleware.porter.common.dic.ConsumeConverterPlugin;
 import com.alibaba.otter.canal.protocol.CanalEntry;
-import cn.vbill.middleware.porter.common.consumer.Position;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -39,11 +36,11 @@ import java.util.List;
  */
 public class CanalRowConverter implements EventConverter {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CanalRowConverter.class);
+    private static final String CONVERTER_NAME = "canalRow";
 
     @Override
     public String getName() {
-        return ConsumeConverterPlugin.CANAL_ROW.getCode();
+        return CONVERTER_NAME;
     }
 
     @Override

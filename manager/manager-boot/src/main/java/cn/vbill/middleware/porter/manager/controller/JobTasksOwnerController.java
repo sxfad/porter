@@ -1,8 +1,9 @@
 /**
  * All rights Reserved, Designed By Suixingpay.
+ *
  * @author: FairyHood
- * @date: 2019-03-20 16:29:06  
- * @Copyright ©2017 Suixingpay. All rights reserved. 
+ * @date: 2019-03-20 16:29:06
+ * @Copyright ©2017 Suixingpay. All rights reserved.
  * 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
  */
 package cn.vbill.middleware.porter.manager.controller;
@@ -20,12 +21,13 @@ import static cn.vbill.middleware.porter.manager.web.message.ResponseMessage.ok;
 
 /**
  * 任务所有权控制表 controller控制器
+ *
  * @author: FairyHood
  * @date: 2019-03-20 16:29:06
  * @version: V1.0-auto
  * @review: FairyHood/2019-03-20 16:29:06
  */
-@Api(description="任务所有权控制表管理")
+@Api(description = "任务所有权控制表管理")
 @RestController
 @RequestMapping("/jobtasksowner")
 public class JobTasksOwnerController {

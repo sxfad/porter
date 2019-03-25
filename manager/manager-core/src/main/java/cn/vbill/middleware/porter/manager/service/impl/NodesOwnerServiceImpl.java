@@ -1,8 +1,9 @@
 /**
  * All rights Reserved, Designed By Suixingpay.
+ *
  * @author: FairyHood
  * @date: 2019-03-20 16:29:06
- * @Copyright ©2017 Suixingpay. All rights reserved. 
+ * @Copyright ©2017 Suixingpay. All rights reserved.
  * 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
  */
 package cn.vbill.middleware.porter.manager.service.impl;
@@ -51,7 +52,7 @@ public class NodesOwnerServiceImpl implements NodesOwnerService {
     @Override
     public Page<NodesOwner> page(Page<NodesOwner> page) {
         Integer total = nodesOwnerMapper.pageAll(1);
-        if(total>0) {
+        if (total > 0) {
             page.setTotalItems(total);
             page.setResult(nodesOwnerMapper.page(page, 1));
         }

@@ -56,11 +56,11 @@ public enum SourceType {
     private final String code;
 
     private static Map<String, SourceType> ENUMS = new HashMap<String, SourceType>() {{
-            put(ZOOKEEPER.code, ZOOKEEPER);
-            put(EMAIL.code, EMAIL);
-            put(NAME_SOURCE.code, NAME_SOURCE);
-            put(FILE.code, FILE);
-    }};
+                put(ZOOKEEPER.code, ZOOKEEPER);
+                put(EMAIL.code, EMAIL);
+                put(NAME_SOURCE.code, NAME_SOURCE);
+                put(FILE.code, FILE);
+        }};
 
     public static SourceType getSourceType(String code) {
         return ENUMS.getOrDefault(code, null);

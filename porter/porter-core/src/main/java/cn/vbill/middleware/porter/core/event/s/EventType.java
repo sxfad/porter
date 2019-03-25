@@ -29,40 +29,39 @@ public enum EventType {
     /**
      * insert
      */
-    INSERT(0, "INSERT", "I"),
+    INSERT(0, "INSERT"),
 
     /**
      * update
      */
-    UPDATE(1, "UPDATE", "U"),
+    UPDATE(1, "UPDATE"),
 
     /**
      * delete
      */
-    DELETE(2, "DELETE", "D"),
+    DELETE(2, "DELETE"),
 
     /**
      * transaction begin
      */
-    TRANSACTION_BEGIN(3, "BEGIN", ""),
+    TRANSACTION_BEGIN(3, "BEGIN"),
 
     /**
      * transaction end
      */
-    TRANSACTION_END(4, "END", "END"),
+    TRANSACTION_END(4, "END"),
 
     /**
      * truncate
      */
-    TRUNCATE(5, "TRUNCATE", "T"),
+    TRUNCATE(5, "TRUNCATE"),
 
     /**
      * unknown
      */
-    UNKNOWN(-1, "UNKNOWN", "UNKNOWN");
+    UNKNOWN(-1, "UNKNOWN");
     private int index;
     private String value;
-    private String code;
 
     /**
      * insert index
@@ -93,45 +92,16 @@ public enum EventType {
      * truncate index
      */
     public static final int TRUNCATE_INDEX = 5;
-    EventType(int index, String value, String code) {
+    EventType(int index, String value) {
         this.index =  index;
         this.value = value;
-        this.code = code;
     }
 
-    /**
-     * 初始化type
-     *
-     * @date 2018/8/8 下午5:58
-     * @param: [kafkaEvent]
-     * @return: cn.vbill.middleware.porter.core.event.s.EventType
-     */
-    public static EventType type(String kafkaEvent) {
-        if (kafkaEvent.equals("I")) {
-            return  INSERT;
-        } else if (kafkaEvent.equals("U")) {
-            return  UPDATE;
-        } else if (kafkaEvent.equals("D")) {
-            return  DELETE;
-        } else if (kafkaEvent.equals("BEGIN")) {
-            return  TRANSACTION_BEGIN;
-        } else if (kafkaEvent.equals("END")) {
-            return  TRANSACTION_END;
-        } else if (kafkaEvent.equals("T")) {
-            return  TRUNCATE;
-        } else {
-            return UNKNOWN;
-        }
-    }
     public int getIndex() {
         return index;
     }
 
     public String getValue() {
         return value;
-    }
-
-    public String getCode() {
-        return code;
     }
 }
