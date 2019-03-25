@@ -15,10 +15,9 @@
  * </p>
  */
 
-package cn.vbill.middleware.porter.core.event.s.converter;
+package cn.vbill.middleware.porter.plugin.converter.ogg;
 
 import cn.vbill.middleware.porter.common.consumer.Position;
-import cn.vbill.middleware.porter.common.dic.ConsumeConverterPlugin;
 import cn.vbill.middleware.porter.core.event.s.EventConverter;
 import cn.vbill.middleware.porter.core.event.s.EventType;
 import cn.vbill.middleware.porter.core.event.s.MessageEvent;
@@ -30,6 +29,7 @@ import org.apache.commons.lang3.time.FastDateFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -45,10 +45,18 @@ public class OggJsonConverter implements EventConverter {
 
     private FastDateFormat opTsF = FastDateFormat.getInstance("yyyy-MM-dd hh:mm:ss.SSS");
     private FastDateFormat ctsf = FastDateFormat.getInstance("yyyy-MM-dd'T'hh:mm:ss.SSS");
-
+    private static final String CONVERTER_NAME = "oggJson";
+    private static final Map<String, EventType> EVENT_MAPPING = new HashMap<String, EventType>() {{
+            put("I", EventType.INSERT);
+            put("U", EventType.UPDATE);
+            put("D", EventType.DELETE);
+            put("T", EventType.TRUNCATE);
+            put("BEGIN", EventType.TRANSACTION_BEGIN);
+            put("END", EventType.TRANSACTION_END);
+        }};
     @Override
     public String getName() {
-        return ConsumeConverterPlugin.OGG_JSON.getCode();
+        return CONVERTER_NAME;
     }
 
     @Override
@@ -57,7 +65,8 @@ public class OggJsonConverter implements EventConverter {
         Position position = (Position) params[1];
         JSONObject obj = JSON.parseObject((String) params[2]);
 
-        EventType eventType = EventType.type(obj.getString("op_type"));
+        EventType eventType = EVENT_MAPPING.getOrDefault(obj.getString("op_type"), EventType.UNKNOWN);
+
         //不能解析的事件跳过
         if (null == eventType ||  eventType == EventType.UNKNOWN) {
             return null;
