@@ -83,11 +83,11 @@ public class PublicDataSourceServiceImpl implements PublicDataSourceService {
     }
 
     @Override
-    public Page<PublicDataSource> page(Page<PublicDataSource> page, Long id, String code, String name) {
-        Integer total = publicDataSourceMapper.pageAll(id, code, name);
+    public Page<PublicDataSource> page(Page<PublicDataSource> page, Long id, String code, String name, String ipsite) {
+        Integer total = publicDataSourceMapper.pageAll(id, code, name, ipsite);
         if (total > 0) {
             page.setTotalItems(total);
-            page.setResult(publicDataSourceMapper.page(page, id, code, name));
+            page.setResult(publicDataSourceMapper.page(page, id, code, name, ipsite));
         }
         return page;
     }
