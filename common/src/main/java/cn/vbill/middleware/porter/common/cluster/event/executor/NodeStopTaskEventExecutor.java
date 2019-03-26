@@ -42,7 +42,7 @@ public class NodeStopTaskEventExecutor extends ClusterListenerEventExecutor {
                 TaskStopCommand command = (TaskStopCommand) clusterCommand;
                 String path = treeNodePath + "/" + nodeId + "/stat";
                 synchronized (path.intern()) {
-                    DNode nodeData = DNode.fromString(client.getData(path).getData(), DNode.class);
+                    DNode nodeData = client.isExists(path, false) ? DNode.fromString(client.getData(path).getData(), DNode.class) : new DNode(nodeId);
                     if (null != nodeData.getTasks() && !nodeData.getTasks().isEmpty()) {
                         TreeSet<String> swimlaneIdList = nodeData.getTasks().getOrDefault(command.getTaskId(), new TreeSet<>());
                         if (swimlaneIdList.contains(command.getSwimlaneId())) {

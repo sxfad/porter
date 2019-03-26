@@ -1,7 +1,7 @@
 group 'cn.vbill.middleware.porter.plugin'
-jar.baseName = 'ogg-json-converter'
+jar.baseName = 'porter-plugin-oggjson-converter'
 dependencies {
-    compile (
+    compileOnly (
             project(":porter:porter-core")
     )
 }

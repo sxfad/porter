@@ -1,8 +1,27 @@
 group 'cn.vbill.middleware.porter.plugin'
 jar.baseName = 'porter-plugin-canal-consumer'
 dependencies {
-    compile (
+    compileOnly (
             project(":porter:porter-core")
 
     )
+
+    compile("com.alibaba.otter:canal.server:${canalVersion}"){
+        exclude group:'ch.qos.logback',module:'logback-core'
+        exclude group:'ch.qos.logback',module:'logback-classic'
+        exclude group:'org.slf4j',module:'jcl-over-slf4j'
+        exclude group:'org.slf4j',module:'slf4j-api'
+        exclude group:'org.slf4j',module:'slf4j-log4j12'
+        exclude group:'log4j',module:'log4j'
+        exclude group:'org.springframework',module:'spring-orm'
+        exclude group:'org.springframework',module:'spring-jdbc'
+        exclude group:'org.springframework',module:'spring-context'
+        exclude group:'org.springframework',module:'spring-aop'
+        exclude group:'org.springframework',module:'spring-core'
+        exclude group:'org.apache.zookeeper',module:'zookeeper'
+        exclude group:'com.101tec',module:'zkclient'
+        exclude group:'com.alibaba',module:'druid'
+        exclude group:'commons-beanutils',module:'commons-beanutils'
+        exclude group:'mysql',module:'mysql-connector-java'
+    }
 }

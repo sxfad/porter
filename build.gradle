@@ -26,6 +26,7 @@ subprojects {
         version '4.0'
         springVersion = '1.5.9.RELEASE'
         swaggerVersion = '2.7.0'
+        canalVersion = '1.1.0'
     }
     sourceCompatibility = 1.8
     targetCompatibility = 1.8

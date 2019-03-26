@@ -9,6 +9,8 @@ dependencies {
             project(":porter:porter-plugin:jdbc-loader"),
             project(":porter:porter-plugin:kudu-loader"),
             project(":porter:porter-plugin:canal-consumer"),
-            project(":porter:porter-plugin:kafka-loader")
+            project(":porter:porter-plugin:kafka-loader"),
+            project(":porter:porter-plugin:canal-row-converter"),
+            project(":porter:porter-plugin:ogg-json-converter")
     )
 }

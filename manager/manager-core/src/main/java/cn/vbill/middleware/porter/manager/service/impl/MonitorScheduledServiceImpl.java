@@ -126,14 +126,14 @@ public class MonitorScheduledServiceImpl implements MonitorScheduledService {
             String oldTable = null;
             String tomorrowTable = null;
             String nowTable = null;
-            for(Map.Entry<String, Map<String, String>> entry : map.entrySet()) {
+            for (Map.Entry<String, Map<String, String>> entry : map.entrySet()) {
                 dataMap = entry.getValue();
                 oldTable = dataMap.get("old");
                 tomorrowTable = dataMap.get("tomorrow");
                 nowTable = dataMap.get("now");
                 monitorScheduledMapper.createTable(nowTable, oldTable);
                 String tomorrow = monitorScheduledMapper.checkTomorrowTable(tomorrowTable);
-                if(tomorrow == null) {
+                if (tomorrow == null) {
                     logger.error("未查到[{}]表，开始重新新建...", tomorrowTable);
                     monitorScheduledMapper.createTomorrowTable(tomorrowTable, oldTable);
                 }
