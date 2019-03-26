@@ -86,7 +86,7 @@ public interface PublicDataSourceService {
      * @param page
      * @return
      */
-    Page<PublicDataSource> page(Page<PublicDataSource> page, Long id, String code, String name);
+    Page<PublicDataSource> page(Page<PublicDataSource> page, Long id, String code, String name, String ipsite);
 
     /**
      * 解析配置任务
