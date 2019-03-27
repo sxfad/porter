@@ -28,6 +28,7 @@ import java.util.UUID;
 
 import cn.vbill.middleware.porter.manager.core.dto.RoleDataControl;
 import cn.vbill.middleware.porter.manager.core.enums.SourceType;
+import cn.vbill.middleware.porter.manager.service.JobTasksOwnerService;
 import cn.vbill.middleware.porter.manager.web.rcc.RoleCheckContext;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -114,6 +115,9 @@ public class JobTasksServiceImpl implements JobTasksService {
     @Autowired
     private JobTaskNodesService jobTaskNodesService;
 
+    @Autowired
+    private JobTasksOwnerService jobTasksOwnerService;
+
     @Override
     @Transactional
     public Integer insert(JobTasks jobTasks) {
@@ -129,6 +133,7 @@ public class JobTasksServiceImpl implements JobTasksService {
     }
 
     @Override
+    @Transactional
     public Integer insertZKCapture(JobTasks jobTasks, TaskStatusType jobState) {
         jobTasks.setJobState(jobState);
         TaskConfig task = JSONObject.parseObject(jobTasks.getJobJsonText(), TaskConfig.class);
@@ -145,7 +150,13 @@ public class JobTasksServiceImpl implements JobTasksService {
         // 目标插件
         LoaderPlugin targetLoadAdt = LoaderPlugin.enumByCode(task.getLoader().getLoaderName());
         jobTasks.setTargetLoadAdt(targetLoadAdt);
-        return jobTasksMapper.insertZKCapture(jobTasks);
+        // 创建人
+        jobTasks.setCreater(RoleCheckContext.getUserIdHolder().getUserId());
+        Integer number = jobTasksMapper.insertZKCapture(jobTasks);
+
+        // 新增 JobTasksOwner
+        jobTasksOwnerService.insertByJobTasks(jobTasks.getId());
+        return number;
     }
 
     @Override
