@@ -52,6 +52,10 @@ public class DataLoaderConfig {
     @Setter
     private Map<String, String> source;
 
+    @Setter
+    @Getter
+    private String nodeId;
+
     // 是否启用数据源
     @Getter
     @Setter

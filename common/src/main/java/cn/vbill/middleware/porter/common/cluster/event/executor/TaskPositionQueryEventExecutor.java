@@ -1,14 +1,20 @@
-/**
- * All rights Reserved, Designed By Suixingpay.
+/*
+ * Copyright ©2018 vbill.cn.
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * @author: zhangkewei[zhang_kw@suixingpay.com]
- * @date: 2019年03月14日 15:47
- * @Copyright ©2019 Suixingpay. All rights reserved.
- * 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * </p>
  */
-
 package cn.vbill.middleware.porter.common.cluster.event.executor;
-
 
 import cn.vbill.middleware.porter.common.client.ClusterClient;
 import cn.vbill.middleware.porter.common.cluster.event.ClusterListenerEventExecutor;
@@ -39,9 +45,11 @@ public class TaskPositionQueryEventExecutor extends ClusterListenerEventExecutor
             TaskPositionQueryCommand command = (TaskPositionQueryCommand) clusterCommand;
 
             String positionPath = treeNodePath + "/" + command.getTaskId() + "/position/" + command.getSwimlaneId();
-            ClusterClient.TreeNode positionPair = client.getData(positionPath);
+            ClusterClient.TreeNode positionPair = client.isExists(positionPath, false) ? client.getData(positionPath)
+                    : null;
             String position = null != positionPair && !StringUtils.isBlank(positionPair.getData())
-                    ? positionPair.getData() : StringUtils.EMPTY;
+                    ? positionPair.getData()
+                    : StringUtils.EMPTY;
             if (null != command.getCallback()) {
                 command.getCallback().callback(position);
             }

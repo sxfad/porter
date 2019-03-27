@@ -44,38 +44,37 @@ public class MonitorScheduledServiceImpl implements MonitorScheduledService {
     private MonitorScheduledMapper monitorScheduledMapper;
 
     /**
-     * entryData.getKey():log_date
-     * entry.getKey():mr_log_monitor
+     * entryData.getKey():log_date entry.getKey():mr_log_monitor
      * entry.getValue()mr_log_monitor_20180425
      */
     @Override
     public void transferDataTask() {
         Long a = System.currentTimeMillis();
         try {
-            //获取当前时间 并计算出前天的时间
+            // 获取当前时间 并计算出前天的时间
             Date date = DateMathUtils.dateAddDays(new Date(), -2);
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
             String newDate = sdf.format(date);
-            //节点任务实时监控表
+            // 节点任务实时监控表
             String mrNodesMonitorName = "mr_nodes_monitor_" + newDate;
-            //日志信息表
+            // 日志信息表
             String mrLogMonitorName = "mr_log_monitor_" + newDate;
-            //任务泳道实时监控表
+            // 任务泳道实时监控表
             String mrJobTasksMonitorName = "mr_job_tasks_monitor_" + newDate;
 
             Map<String, Map<String, String>> dataMap = new HashMap<>();
-            //key:旧表表名 value:新表表名
+            // key:旧表表名 value:新表表名
             Map<String, String> monitorDateMap = new HashMap<>();
             monitorDateMap.put("mr_nodes_monitor", mrNodesMonitorName);
             monitorDateMap.put("mr_job_tasks_monitor", mrJobTasksMonitorName);
             Map<String, String> logDateMap = new HashMap<>();
             logDateMap.put("mr_log_monitor", mrLogMonitorName);
-            //不同的日期字段
+            // 不同的日期字段
             dataMap.put("log_date", logDateMap);
             dataMap.put("monitor_date", monitorDateMap);
             for (Map.Entry<String, Map<String, String>> entryData : dataMap.entrySet()) {
                 for (Map.Entry<String, String> entry : dataMap.get(entryData.getKey()).entrySet()) {
-                    //判断时间、旧表表名、新表表名、前天日期
+                    // 判断时间、旧表表名、新表表名、前天日期
                     monitorScheduledMapper.transferData(entryData.getKey(), entry.getKey(), entry.getValue(), newDate);
                 }
             }
@@ -88,15 +87,15 @@ public class MonitorScheduledServiceImpl implements MonitorScheduledService {
     public void dropTableTask() {
         Long a = System.currentTimeMillis();
         try {
-            //根据当前时间计算30天前的时间
+            // 根据当前时间计算30天前的时间
             Date date = DateMathUtils.dateAddDays(new Date(), -30);
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
             String newDate = sdf.format(date);
-            //节点任务实时监控表
+            // 节点任务实时监控表
             String mrNodesMonitorName = "mr_nodes_monitor_" + newDate;
-            //日志信息表
+            // 日志信息表
             String mrLogMonitorName = "mr_log_monitor_" + newDate;
-            //任务泳道实时监控表
+            // 任务泳道实时监控表
             String mrJobTasksMonitorName = "mr_job_tasks_monitor_" + newDate;
 
             Map<String, String> nameMap = new HashMap<>();
@@ -149,7 +148,7 @@ public class MonitorScheduledServiceImpl implements MonitorScheduledService {
      * @param table
      * @param map
      */
-    private Map<String, Map<String, String>> conver(String table, Map map) {
+    private Map<String, Map<String, String>> conver(String table, Map<String, Map<String, String>> map) {
         Date date = new Date();
         // 明天、后天的日期
         Date tomorrowDate = DateMathUtils.dateAddDays(date, +1);
@@ -159,7 +158,7 @@ public class MonitorScheduledServiceImpl implements MonitorScheduledService {
         String oldTable = table.substring(0, table.length() - 1);
         String tomorrowTable = table + DateFormatUtils.formatDate("yyyyMMdd", tomorrowDate);
         String newTable = table + DateFormatUtils.formatDate("yyyyMMdd", newDate);
-        Map<String, String> dataMap = new HashMap();
+        Map<String, String> dataMap = new HashMap<String, String>();
         dataMap.put("old", oldTable);
         dataMap.put("tomorrow", tomorrowTable);
         dataMap.put("new", newTable);

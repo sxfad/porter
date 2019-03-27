@@ -23,14 +23,10 @@
     <insert id="insert">
         insert into job_tasks_owner(
             job_id,
-            owner_level,
-            owner_id,
-            operator
+            owner_id
         ) values (
             #{jobId},
-            #{ownerLevel},
-            #{ownerId},
-            #{operator}
+            #{ownerId}
         )
     </insert>
 
@@ -52,6 +48,39 @@
     <delete id="delete">
         delete from job_tasks_owner where id = #{id}
     </delete>
+
+    <!-- 权限移交：移除当前所有者权限 -->
+    <update id="deleteByOwnerIdAndJobId">
+        update job_tasks_owner
+        set
+          iscancel = 1
+        where job_id = #{jobId} and owner_id = #{ownerId}
+    </update>
+
+    <!-- 权限移交：权限移交给toUserId -->
+    <insert id="changePermission">
+        insert into job_tasks_owner(
+            job_id,
+            owner_id
+        ) values (
+            #{jobId},
+            #{ownerId}
+        )
+    </insert>
+
+    <!-- 权限共享 -->
+    <insert id="sharePermission">
+        insert into job_tasks_owner(
+            job_id,
+            owner_id
+        ) values
+        <foreach collection="list" item="toUserIds" index="index" separator=",">
+            (
+              #{jobId},
+              #{toUserIds.id}
+            )
+        </foreach>
+    </insert>
 
     <!-- 根据主鍵查找 -->
     <select id="selectById" resultType="cn.vbill.middleware.porter.manager.core.entity.JobTasksOwner">

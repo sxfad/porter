@@ -144,7 +144,7 @@ public class PublicDataSourceController {
             @RequestParam(value = "name", required = false) String name,
             @RequestParam(value = "ipsite", required = false) String ipsite) {
         Page<PublicDataSource> page = publicDataSourceService.page(new Page<PublicDataSource>(pageNum, pageSize), id,
-                code, name);
+                code, name, ipsite);
         return ok(page);
     }
 

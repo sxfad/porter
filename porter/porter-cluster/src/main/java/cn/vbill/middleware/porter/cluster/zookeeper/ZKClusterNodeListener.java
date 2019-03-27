@@ -289,7 +289,7 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements T
                         public void run() {
                             try {
                                 synchronized (statPath.intern()) {
-                                    ClusterClient.TreeNode treeNode = client.getData(statPath);
+                                    ClusterClient.TreeNode treeNode = client.isExists(statPath, false) ? client.getData(statPath) : null;
                                     if (null != treeNode && null != treeNode.getVersion()) {
                                         DNode nodeData = DNode.fromString(treeNode.getData(), DNode.class);
                                         //设置心跳时间

@@ -1,7 +1,10 @@
 group 'cn.vbill.middleware.porter.plugin'
 jar.baseName = 'porter-plugin-kafka-consumer'
 dependencies {
-    compile (
+    compileOnly (
             project(":porter:porter-core")
     )
+    compile('org.apache.kafka:kafka-clients:1.0.0'){
+        exclude group:'org.slf4j',module:'slf4j-api'
+    }
 }

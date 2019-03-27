@@ -1,14 +1,20 @@
-/**
- * All rights Reserved, Designed By Suixingpay.
+/*
+ * Copyright ©2018 vbill.cn.
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * @author: zhangkewei[zhang_kw@suixingpay.com]
- * @date: 2019年03月14日 15:47
- * @Copyright ©2019 Suixingpay. All rights reserved.
- * 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * </p>
  */
-
 package cn.vbill.middleware.porter.common.cluster.event.executor;
-
 
 import cn.vbill.middleware.porter.common.client.ClusterClient;
 import cn.vbill.middleware.porter.common.cluster.data.DNode;
@@ -42,11 +48,15 @@ public class NodeTaskAssignedEventExecutor extends ClusterListenerEventExecutor 
                 TaskAssignedCommand command = (TaskAssignedCommand) clusterCommand;
                 String path = treeNodePath + "/" + nodeId + "/stat";
                 synchronized (path.intern()) {
-                    DNode nodeData = DNode.fromString(client.getData(path).getData(), DNode.class);
-                    TreeSet<String> resources = nodeData.getTasks().getOrDefault(command.getTaskId(), new TreeSet<>());
+                    DNode nodeData = client.isExists(path, false)
+                            ? DNode.fromString(client.getData(path).getData(), DNode.class)
+                            : new DNode(nodeId);
+                    TreeSet<String> resources = null != nodeData
+                            ? nodeData.getTasks().getOrDefault(command.getTaskId(), new TreeSet<>())
+                            : new TreeSet<>();
                     resources.add(command.getSwimlaneId());
                     nodeData.getTasks().put(command.getTaskId(), resources);
-                    client.setData(path, nodeData.toString(), ClusterClient.LockVersion.newVersion(-1));
+                    client.changeData(path, false, false, nodeData.toString());
                 }
             }
         };

@@ -97,6 +97,9 @@
         <if test="name != null and name != ''">
             and name like CONCAT('%', #{name}, '%')
         </if>
+        <if test="ipsite != null and ipsite != ''">
+            and json_text like CONCAT('%', #{ipsite}, '%') 
+        </if>
     </select>
 
     <!-- 分页 -->
@@ -111,6 +114,9 @@
         </if>
         <if test="name != null and name != ''">
             and name like CONCAT('%', #{name}, '%')
+        </if>
+        <if test="ipsite != null and ipsite != ''">
+            and json_text like CONCAT('%', #{ipsite}, '%') 
         </if>
         order by id 
         limit #{page.offset},#{page.pageSize} 
