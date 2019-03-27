@@ -126,14 +126,14 @@ public class MonitorScheduledServiceImpl implements MonitorScheduledService {
             String oldTable = null;
             String tomorrowTable = null;
             String nowTable = null;
-            for(Map.Entry<String, Map<String, String>> entry : map.entrySet()) {
+            for (Map.Entry<String, Map<String, String>> entry : map.entrySet()) {
                 dataMap = entry.getValue();
                 oldTable = dataMap.get("old");
                 tomorrowTable = dataMap.get("tomorrow");
-                nowTable = dataMap.get("now");
+                nowTable = dataMap.get("new");
                 monitorScheduledMapper.createTable(nowTable, oldTable);
                 String tomorrow = monitorScheduledMapper.checkTomorrowTable(tomorrowTable);
-                if(tomorrow == null) {
+                if (tomorrow == null) {
                     logger.error("未查到[{}]表，开始重新新建...", tomorrowTable);
                     monitorScheduledMapper.createTomorrowTable(tomorrowTable, oldTable);
                 }
@@ -151,12 +151,12 @@ public class MonitorScheduledServiceImpl implements MonitorScheduledService {
      */
     private Map<String, Map<String, String>> conver(String table, Map map) {
         Date date = new Date();
-        // 昨天、明天、后天的日期
-        Date oldDate = DateMathUtils.dateAddDays(date, -1);
+        // 明天、后天的日期
         Date tomorrowDate = DateMathUtils.dateAddDays(date, +1);
         Date newDate = DateMathUtils.dateAddDays(date, +2);
 
-        String oldTable = table + DateFormatUtils.formatDate("yyyyMMdd", oldDate);
+        // 去掉最后一个下划线，形成表名
+        String oldTable = table.substring(0, table.length() - 1);
         String tomorrowTable = table + DateFormatUtils.formatDate("yyyyMMdd", tomorrowDate);
         String newTable = table + DateFormatUtils.formatDate("yyyyMMdd", newDate);
         Map<String, String> dataMap = new HashMap();
