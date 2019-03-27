@@ -48,7 +48,7 @@ import static cn.vbill.middleware.porter.manager.web.message.ResponseMessage.ok;
  */
 @Api(description = "任务所有权控制表管理")
 @RestController
-@RequestMapping("/jobtasksowner")
+@RequestMapping("/manager/jobtasksowner")
 public class JobTasksOwnerController {
 
     @Autowired

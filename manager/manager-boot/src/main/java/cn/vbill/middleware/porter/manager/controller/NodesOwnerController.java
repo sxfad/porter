@@ -37,7 +37,7 @@ import static cn.vbill.middleware.porter.manager.web.message.ResponseMessage.ok;
  */
 @Api(description = "节点所有权控制表管理")
 @RestController
-@RequestMapping("/nodesowner")
+@RequestMapping("/manager/nodesowner")
 public class NodesOwnerController {
 
     @Autowired
