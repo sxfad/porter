@@ -39,8 +39,7 @@ public interface NodesOwnerService {
     /**
      * 修改
      *
-     * @param id,
-     *            nodesOwner
+     * @param id, nodesOwner
      */
     Integer update(Long id, NodesOwner nodesOwner);
 

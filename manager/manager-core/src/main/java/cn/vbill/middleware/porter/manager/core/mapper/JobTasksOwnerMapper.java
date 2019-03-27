@@ -16,6 +16,7 @@
  */
 package cn.vbill.middleware.porter.manager.core.mapper;
 
+import cn.vbill.middleware.porter.manager.core.entity.CUser;
 import cn.vbill.middleware.porter.manager.core.entity.JobTasksOwner;
 import cn.vbill.middleware.porter.manager.web.page.Page;
 import org.apache.ibatis.annotations.Param;
@@ -76,4 +77,29 @@ public interface JobTasksOwnerMapper {
      */
     Integer pageAll(@Param("state") Integer state);
 
+    /**
+     * 权限移交：移除当前所有者权限
+     *
+     * @param jobId
+     * @param ownerId
+     */
+    Integer deleteByOwnerIdAndJobId(@Param("jobId") Long jobId, @Param("ownerId") Long ownerId);
+
+    /**
+     * 权限移交：权限移交给toUserId
+     *
+     * @param jobId
+     * @param ownerId
+     * @return
+     */
+    Integer changePermission(@Param("jobId") Long jobId, @Param("ownerId") Long ownerId);
+
+    /**
+     * 权限共享
+     *
+     * @param jobId
+     * @param toUserIds
+     * @return
+     */
+    Integer sharePermission(@Param("jobId") Long jobId, @Param("toUserIds") List<CUser> toUserIds);
 }

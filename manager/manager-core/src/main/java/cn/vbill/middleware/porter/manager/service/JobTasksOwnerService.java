@@ -16,8 +16,11 @@
  */
 package cn.vbill.middleware.porter.manager.service;
 
+import cn.vbill.middleware.porter.manager.core.entity.CUser;
 import cn.vbill.middleware.porter.manager.core.entity.JobTasksOwner;
 import cn.vbill.middleware.porter.manager.web.page.Page;
+
+import java.util.List;
 
 /**
  * 任务所有权控制表 服务接口类
@@ -64,4 +67,29 @@ public interface JobTasksOwnerService {
      * @param page
      */
     Page<JobTasksOwner> page(Page<JobTasksOwner> page);
+
+    /**
+     * 新增任务同时更新任务所有权控制
+     *
+     * @param jobId
+     */
+    void insertByJobTasks(Long jobId);
+
+    /**
+     * 权限移交
+     *
+     * @param jobId
+     * @param toUserId
+     * @return
+     */
+    Integer changePermission(Long jobId, Long fromUserId, Long toUserId);
+
+    /**
+     * 权限共享
+     *
+     * @param jobId
+     * @param toUserIds
+     * @return
+     */
+    Integer sharePermission(Long jobId, List<CUser> toUserIds);
 }

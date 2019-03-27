@@ -16,6 +16,7 @@
  */
 package cn.vbill.middleware.porter.manager.controller;
 
+import cn.vbill.middleware.porter.manager.core.entity.CUser;
 import cn.vbill.middleware.porter.manager.core.entity.JobTasksOwner;
 import cn.vbill.middleware.porter.manager.service.JobTasksOwnerService;
 import cn.vbill.middleware.porter.manager.web.message.ResponseMessage;
@@ -23,7 +24,17 @@ import cn.vbill.middleware.porter.manager.web.page.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 import static cn.vbill.middleware.porter.manager.web.message.ResponseMessage.ok;
 
@@ -42,6 +53,40 @@ public class JobTasksOwnerController {
 
     @Autowired
     protected JobTasksOwnerService jobTasksOwnerService;
+
+    /**
+     * 权限移交
+     *
+     * @author FuZizheng
+     * @date 2019-03-26 15:52
+     * @param: [jobId,
+     *             fromUserId, toUserId]
+     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
+     */
+    @PostMapping("/change")
+    @ApiOperation(value = "权限移交", notes = "权限移交")
+    public ResponseMessage changePermission(@RequestParam(required = true) Long jobId,
+            @RequestParam(required = false) Long fromUserId, @RequestParam(required = true) Long toUserId) {
+        Integer number = jobTasksOwnerService.changePermission(jobId, fromUserId, toUserId);
+        return ok(number);
+    }
+
+    /**
+     * 权限共享
+     *
+     * @author FuZizheng
+     * @date 2019-03-26 15:55
+     * @param: [jobId,
+     *             fromUserId, toUserId]
+     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
+     */
+    @PostMapping("/share")
+    @ApiOperation(value = "权限共享", notes = "权限共享")
+    public ResponseMessage sharePermission(@RequestParam(required = true) Long jobId,
+            @RequestParam(required = true) List<CUser> toUserIds) {
+        Integer number = jobTasksOwnerService.sharePermission(jobId, toUserIds);
+        return ok(number);
+    }
 
     /**
      * 新增任务owner

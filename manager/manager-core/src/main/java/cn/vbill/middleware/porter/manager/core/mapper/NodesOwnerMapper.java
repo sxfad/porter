@@ -75,5 +75,4 @@ public interface NodesOwnerMapper {
      * @return
      */
     Integer pageAll(@Param("state") Integer state);
-
 }
