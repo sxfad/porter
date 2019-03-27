@@ -1,12 +1,10 @@
 group 'cn.vbill.middleware.porter.plugin'
-jar.baseName = 'porter-plugin-canal-consumer'
+jar.baseName = 'porter-plugin-canalrow-converter'
 dependencies {
     compileOnly (
             project(":porter:porter-core")
-
     )
-
-    compile("com.alibaba.otter:canal.server:${canalVersion}"){
+    compile("com.alibaba.otter:canal.protocol:${canalVersion}"){
         exclude group:'ch.qos.logback',module:'logback-core'
         exclude group:'ch.qos.logback',module:'logback-classic'
         exclude group:'org.slf4j',module:'jcl-over-slf4j'

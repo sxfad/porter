@@ -15,7 +15,7 @@
  * </p>
  */
 
-package cn.vbill.middleware.porter.common.dic;
+package cn.vbill.middleware.porter.manager.core.enums;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;

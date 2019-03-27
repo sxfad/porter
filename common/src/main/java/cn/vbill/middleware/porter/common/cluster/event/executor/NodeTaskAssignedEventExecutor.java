@@ -42,11 +42,11 @@ public class NodeTaskAssignedEventExecutor extends ClusterListenerEventExecutor 
                 TaskAssignedCommand command = (TaskAssignedCommand) clusterCommand;
                 String path = treeNodePath + "/" + nodeId + "/stat";
                 synchronized (path.intern()) {
-                    DNode nodeData = DNode.fromString(client.getData(path).getData(), DNode.class);
-                    TreeSet<String> resources = nodeData.getTasks().getOrDefault(command.getTaskId(), new TreeSet<>());
+                    DNode nodeData = client.isExists(path, false) ? DNode.fromString(client.getData(path).getData(), DNode.class) : new DNode(nodeId);
+                    TreeSet<String> resources = null != nodeData ? nodeData.getTasks().getOrDefault(command.getTaskId(), new TreeSet<>()) : new TreeSet<>();
                     resources.add(command.getSwimlaneId());
                     nodeData.getTasks().put(command.getTaskId(), resources);
-                    client.setData(path, nodeData.toString(), ClusterClient.LockVersion.newVersion(-1));
+                    client.changeData(path, false, false, nodeData.toString());
                 }
             }
         };

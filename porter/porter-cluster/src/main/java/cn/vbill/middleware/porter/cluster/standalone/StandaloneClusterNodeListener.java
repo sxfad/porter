@@ -134,7 +134,7 @@ public class StandaloneClusterNodeListener extends StandaloneListener {
                         public void run() {
                             try {
                                 synchronized (statPath.intern()) {
-                                    ClusterClient.TreeNode node = client.getData(statPath);
+                                    ClusterClient.TreeNode node = client.isExists(statPath, false) ? client.getData(statPath) : null;
                                     if (null != node && null != node.getVersion()) {
                                         DNode nodeData = DNode.fromString(node.getData(), DNode.class);
                                         //设置心跳时间

@@ -78,7 +78,8 @@ public interface PublicDataSourceMapper {
      * @param state
      * @return Integer
      */
-    Integer pageAll(@Param("id") Long id, @Param("code") String code, @Param("name") String name);
+    Integer pageAll(@Param("id") Long id, @Param("code") String code, @Param("name") String name,
+            @Param("ipsite") String ipsite);
 
     /**
      * 分頁
@@ -88,7 +89,7 @@ public interface PublicDataSourceMapper {
      * @return List
      */
     List<PublicDataSource> page(@Param("page") Page<PublicDataSource> page, @Param("id") Long id,
-            @Param("code") String code, @Param("name") String name);
+            @Param("code") String code, @Param("name") String name, @Param("ipsite") String ipsite);
 
     /**
      * 作废cancel

@@ -1,5 +1,5 @@
 group 'cn.vbill.middleware.porter.plugin'
-jar.baseName = 'porter-plugin-jdbc-loader'
+jar.baseName = 'porter-plugin-oggjson-converter'
 dependencies {
     compileOnly (
             project(":porter:porter-core")
