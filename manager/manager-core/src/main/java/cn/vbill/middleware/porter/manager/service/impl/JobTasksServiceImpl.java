@@ -125,6 +125,7 @@ public class JobTasksServiceImpl implements JobTasksService {
         jobTasksTableService.insertList(jobTasks);
         // 新增 jobtaskNode
         jobTaskNodesService.insertList(jobTasks);
+        // 新增jobtaskOwner
         return number;
     }
 
