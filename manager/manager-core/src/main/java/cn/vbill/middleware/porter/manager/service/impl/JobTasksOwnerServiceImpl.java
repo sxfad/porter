@@ -84,7 +84,7 @@ public class JobTasksOwnerServiceImpl implements JobTasksOwnerService {
     @Transactional
     public Integer changePermission(Long jobId, Long fromUserId, Long toUserId) {
         // 是否为非"A9999"权限用户操作
-        if ("".equals(fromUserId) || fromUserId == null) {
+        if (null != fromUserId) {
             // 1.删除当前用户控制权
             jobTasksOwnerMapper.deleteByOwnerIdAndJobId(jobId, fromUserId);
         } else {
