@@ -62,8 +62,12 @@ public class MonitorScheduler {
      */
     @Scheduled(cron = "0 0 3 * * ? ")
     public void dropTableScheduler() {
-        logger.info("启动定时器，删除存在30天的表");
-        monitorScheduledService.dropTableTask();
+        try {
+            logger.info("启动定时器，删除存在30天的表");
+            monitorScheduledService.dropTableTask();
+        } catch (Throwable e) {
+            logger.error("删除存在30天的表失败，异常信息:[{}]", e);
+        }
     }
 
     /**
@@ -72,7 +76,11 @@ public class MonitorScheduler {
     @Scheduled(cron = "0 0 2 * * ? ")
     @Transactional
     public void createTableScheduler() {
-        logger.info("启动定时器，创建数据库表");
-        monitorScheduledService.createTableTask();
+        try {
+            logger.info("启动定时器，创建数据库表");
+            monitorScheduledService.createTableTask();
+        } catch (Throwable e) {
+            logger.error("定时任务创建表失败，异常信息:[{}]", e);
+        }
     }
 }

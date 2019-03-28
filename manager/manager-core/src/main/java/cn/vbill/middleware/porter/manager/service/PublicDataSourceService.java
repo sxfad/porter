@@ -91,7 +91,7 @@ public interface PublicDataSourceService {
     /**
      * 解析配置任务
      * 
-     * @param jobXmlText
+     * @param xmlTextStr
      * @return
      */
     PublicSourceConfig dealxml(String xmlTextStr);

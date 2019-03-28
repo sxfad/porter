@@ -1,10 +1,18 @@
-/**
- * All rights Reserved, Designed By Suixingpay.
+/*
+ * Copyright ©2018 vbill.cn.
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * @author: FairyHood
- * @date: 2019-03-20 16:29:06
- * @Copyright ©2017 Suixingpay. All rights reserved.
- * 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * </p>
  */
 package cn.vbill.middleware.porter.manager.controller;
 
@@ -29,7 +37,7 @@ import static cn.vbill.middleware.porter.manager.web.message.ResponseMessage.ok;
  */
 @Api(description = "节点所有权控制表管理")
 @RestController
-@RequestMapping("/nodesowner")
+@RequestMapping("/manager/nodesowner")
 public class NodesOwnerController {
 
     @Autowired
@@ -98,7 +106,7 @@ public class NodesOwnerController {
     @GetMapping
     @ApiOperation(value = "查询列表", notes = "查询列表")
     public ResponseMessage list(@RequestParam(value = "pageNum", required = false) Integer pageNum,
-                                @RequestParam(value = "pageSize", required = false) Integer pageSize) {
+            @RequestParam(value = "pageSize", required = false) Integer pageSize) {
         Page<NodesOwner> page = nodesOwnerService.page(new Page<NodesOwner>(pageNum, pageSize));
         return ok(page);
     }

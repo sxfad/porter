@@ -23,6 +23,7 @@
     <select id="checkTomorrowTable" resultType="string">
         show tables like #{tomorrowTable};
     </select>
+
     <!-- 创建明天的表 -->
     <update id="createTomorrowTable">
         CREATE TABLE ${tomorrowTable} like ${oldTable};

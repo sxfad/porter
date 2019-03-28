@@ -148,7 +148,8 @@
             target_data_tables_name,
             job_xml_text,
             job_json_text,
-            type
+            type,
+            creater
         ) values (
             #{id},
             #{jobName},
@@ -167,7 +168,8 @@
             '0',
             #{jobXmlText},
             #{jobJsonText},
-            '2'
+            '2',
+            #{creater}
         )
     </insert>
 
