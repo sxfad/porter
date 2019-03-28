@@ -2,7 +2,8 @@ cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListene
   cn.vbill.middleware.porter.cluster.zookeeper.ZKClusterTaskListener,\
   cn.vbill.middleware.porter.cluster.zookeeper.ZKClusterNodeListener,\
   cn.vbill.middleware.porter.cluster.zookeeper.ZKClusterStatisticListener,\
-  cn.vbill.middleware.porter.cluster.zookeeper.ZKClusterConfigListener
+  cn.vbill.middleware.porter.cluster.zookeeper.ZKClusterConfigListener,\
+  cn.vbill.middleware.porter.cluster.zookeeper.ZKClusterDatasourceConfigListener
 
 
 cn.vbill.middleware.porter.common.cluster.impl.standalone.StandaloneListener=\

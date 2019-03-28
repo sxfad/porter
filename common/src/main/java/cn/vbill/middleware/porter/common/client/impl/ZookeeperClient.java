@@ -216,4 +216,11 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
             }
         }
     }
+
+    @Override
+    public void createRoot(String nodePath, boolean isTemp) throws Exception {
+        if (!isExists(nodePath, false)) {
+            create(nodePath, isTemp, null);
+        }
+    }
 }

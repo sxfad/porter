@@ -39,7 +39,7 @@ public class TaskPositionQueryEventExecutor extends ClusterListenerEventExecutor
             TaskPositionQueryCommand command = (TaskPositionQueryCommand) clusterCommand;
 
             String positionPath = treeNodePath + "/" + command.getTaskId() + "/position/" + command.getSwimlaneId();
-            ClusterClient.TreeNode positionPair = client.isExists(positionPath, false)? client.getData(positionPath) : null;
+            ClusterClient.TreeNode positionPair = client.isExists(positionPath, false) ? client.getData(positionPath) : null;
             String position = null != positionPair && !StringUtils.isBlank(positionPair.getData())
                     ? positionPair.getData() : StringUtils.EMPTY;
             if (null != command.getCallback()) {

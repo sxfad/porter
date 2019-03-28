@@ -40,6 +40,7 @@ public enum PublicClientContext {
      */
     INSTANCE();
     private final Map<String, Client> allSources = new ConcurrentHashMap<>();
+    private final Map<String, Client> unusedSources = new ConcurrentHashMap<>();
 
     /**
      * 初始化公用DataSource
@@ -48,10 +49,26 @@ public enum PublicClientContext {
      */
     public void initialize(List<Pair<String, SourceConfig>> configs) throws Exception {
         for (Pair<String, SourceConfig> p : configs) {
-            Client client = AbstractClient.getClient(p.getRight());
-            client.setPublic(true);
-            client.start();
-            allSources.put(p.getLeft(), client);
+            initialize(p.getLeft(), p.getRight());
+        }
+    }
+
+    public void initialize(String sourceName, SourceConfig config) throws Exception {
+        allSources.compute(sourceName, (key, client) -> {
+            try {
+                Client newClient = AbstractClient.getClient(config);
+                newClient.setPublic(true);
+                newClient.start();
+                return newClient;
+            } catch (Throwable e) {
+                return client;
+            }
+        });
+    }
+    public void remove(String sourceName) {
+        Client client = allSources.remove(sourceName);
+        if (null != client) {
+            unusedSources.put(sourceName, client);
         }
     }
 

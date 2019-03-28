@@ -16,7 +16,7 @@
  */
 package cn.vbill.middleware.porter.manager.service;
 
-import cn.vbill.middleware.porter.common.config.DataLoaderConfig;
+import cn.vbill.middleware.porter.common.config.PublicSourceConfig;
 import cn.vbill.middleware.porter.manager.core.entity.PublicDataSource;
 import cn.vbill.middleware.porter.manager.web.page.Page;
 
@@ -94,5 +94,5 @@ public interface PublicDataSourceService {
      * @param jobXmlText
      * @return
      */
-    DataLoaderConfig dealxml(String xmlTextStr);
+    PublicSourceConfig dealxml(String xmlTextStr);
 }

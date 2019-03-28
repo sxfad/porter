@@ -20,6 +20,7 @@ import static cn.vbill.middleware.porter.manager.web.message.ResponseMessage.ok;
 
 import java.io.UnsupportedEncodingException;
 
+import cn.vbill.middleware.porter.common.config.PublicSourceConfig;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +40,6 @@ import com.alibaba.fastjson.JSONObject;
 
 import cn.vbill.middleware.porter.common.cluster.ClusterProviderProxy;
 import cn.vbill.middleware.porter.common.cluster.impl.AbstractClusterListener;
-import cn.vbill.middleware.porter.common.config.DataLoaderConfig;
 import cn.vbill.middleware.porter.manager.core.entity.PublicDataSource;
 import cn.vbill.middleware.porter.manager.service.PublicDataSourceService;
 import cn.vbill.middleware.porter.manager.web.message.ResponseMessage;
@@ -162,7 +162,7 @@ public class PublicDataSourceController {
         try {
             String xmlTextStr = java.net.URLDecoder.decode(xmlText, "UTF-8");
             log.info("dealxml转移后字符串:[{}]", xmlTextStr);
-            DataLoaderConfig config = publicDataSourceService.dealxml(xmlTextStr);
+            PublicSourceConfig config = publicDataSourceService.dealxml(xmlTextStr);
             log.info("dealxml解析后字符串:[{}]", JSON.toJSON(config));
             return ok(config);
         } catch (UnsupportedEncodingException e) {
@@ -181,10 +181,11 @@ public class PublicDataSourceController {
     @ApiOperation(value = "推送公共数据源", notes = "推送公共数据源")
     public ResponseMessage zkpush(@PathVariable("id") Long id) {
         PublicDataSource publicDataSource = publicDataSourceService.selectById(id);
-        DataLoaderConfig config = JSONObject.parseObject(publicDataSource.getJsonText(), DataLoaderConfig.class);
+        PublicSourceConfig config = JSONObject.parseObject(publicDataSource.getJsonText(), PublicSourceConfig.class);
+        config.setCode(publicDataSource.getCode());
         try {
             ClusterProviderProxy.INSTANCE.broadcastEvent(client -> {
-                String configPath = AbstractClusterListener.BASE_CATALOG + "/datesource/" + config.getLoaderName();
+                String configPath = AbstractClusterListener.BASE_CATALOG + "/datesource/" + publicDataSource.getCode();
                 if (!StringUtils.isBlank(configPath)) {
                     client.changeData(configPath, false, false, JSON.toJSONString(config));
                 }
@@ -208,10 +209,11 @@ public class PublicDataSourceController {
     @ApiOperation(value = "回收公共数据源", notes = "回收公共数据源")
     public ResponseMessage takeback(@PathVariable("id") Long id) {
         PublicDataSource publicDataSource = publicDataSourceService.selectById(id);
-        DataLoaderConfig config = JSONObject.parseObject(publicDataSource.getJsonText(), DataLoaderConfig.class);
+        PublicSourceConfig config = JSONObject.parseObject(publicDataSource.getJsonText(), PublicSourceConfig.class);
+        config.setCode(publicDataSource.getCode());
         try {
             ClusterProviderProxy.INSTANCE.broadcastEvent(client -> {
-                String configPath = AbstractClusterListener.BASE_CATALOG + "/datesource/" + config.getLoaderName();
+                String configPath = AbstractClusterListener.BASE_CATALOG + "/datesource/" + publicDataSource.getCode();
                 if (!StringUtils.isBlank(configPath)) {
                     client.delete(configPath);
                 }

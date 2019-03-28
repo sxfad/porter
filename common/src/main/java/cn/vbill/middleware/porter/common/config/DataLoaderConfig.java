@@ -36,11 +36,9 @@ public class DataLoaderConfig {
         this.source = source;
     }
 
-    public DataLoaderConfig(String loaderName, Map<String, String> source, Boolean isUsing,
-            boolean insertOnUpdateError) {
+    public DataLoaderConfig(String loaderName, Map<String, String> source, boolean insertOnUpdateError) {
         this.loaderName = loaderName;
         this.source = source;
-        this.isUsing = isUsing;
         this.insertOnUpdateError = insertOnUpdateError;
     }
 
@@ -51,15 +49,6 @@ public class DataLoaderConfig {
     @Getter
     @Setter
     private Map<String, String> source;
-
-    @Setter
-    @Getter
-    private String nodeId;
-
-    // 是否启用数据源
-    @Getter
-    @Setter
-    private Boolean isUsing = true;
 
     // 新增更新转插入策略开关
     @Getter

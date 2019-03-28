@@ -382,7 +382,6 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
             return result;
         }
 
-
         private Table nativeFindTable(String catalogName, String schema, String tableName, boolean makePrimaryKeyWhenNo) {
             connLock.readLock().lock();
             try {
