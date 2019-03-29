@@ -54,23 +54,6 @@ CREATE TABLE `c_role_menu` (
   PRIMARY KEY (`id`)
 ) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='角色菜单关联表';
 
--- 数据权限控制表
-DROP TABLE IF EXISTS `c_data_authority`;
-CREATE TABLE `c_data_authority` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `object_table` char(30) DEFAULT null COMMENT '目标表',
-  `object_id` bigint(20) DEFAULT '-1' COMMENT '目标id',  
-  `owner_level` int(2) DEFAULT '1' COMMENT '权限控制类型(1:人2:部门3:角色组)',
-  `owner_id` bigint(20) DEFAULT '-1' COMMENT '所有者id',
-  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `update_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '修改时间',
-  `operator` bigint(20) DEFAULT '-1' COMMENT '操作人',
-  `type` int(5) DEFAULT '1' COMMENT '类型(1：权限所有人 2：权限共享者)',
-  `iscancel` int(2) DEFAULT '0' COMMENT '是否作废',
-  `remark` varchar(200) DEFAULT NULL COMMENT '备注',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='数据权限控制表'
-
 -- 数据源信息表
 DROP TABLE IF EXISTS `b_data_source`;
 CREATE TABLE `b_data_source` (
