@@ -130,6 +130,7 @@ public class JobTasksServiceImpl implements JobTasksService {
         // 新增 jobtaskNode
         jobTaskNodesService.insertList(jobTasks);
         // 新增jobtaskOwner
+        jobTasksOwnerService.insertByJobTasks(jobTasks.getId());
         return number;
     }
 
@@ -347,6 +348,12 @@ public class JobTasksServiceImpl implements JobTasksService {
     @Override
     public TaskConfig fitJobTask(Long id, TaskStatusType status) {
         JobTasks jobTasks = this.selectById(id);
+        // 告警人id列表
+        List<CUser> cusers = jobTasks.getUsers();
+        // 权限所有者和共享者列表
+        //List<CUser> owners = null;//代码等待
+        // 告警用户信息(设置的告警人+任务权限所有者)
+        AlertReceiver[] receiver = receiver(cusers);
         if (jobTasks.getJobType() == 2) {
             TaskConfig task = JSONObject.parseObject(jobTasks.getJobJsonText(), TaskConfig.class);
             task.setStatus(status);
@@ -372,8 +379,6 @@ public class JobTasksServiceImpl implements JobTasksService {
         DataTable tarDataTable = dataTableService.selectById(targetDataTablesId);
         DataSource tarDataSource = dataSourceService.selectById(tarDataTable.getSourceId());
 
-        // 告警人id列表
-        List<CUser> cusers = jobTasks.getUsers();
         // 表对照关系
         List<JobTasksTable> tables = jobTasks.getTables();
 
@@ -392,8 +397,6 @@ public class JobTasksServiceImpl implements JobTasksService {
         DataLoaderConfig loader = new DataLoaderConfig(targetLoadAdt.getCode(), dataSourceMap(id, tarDataSource));
         // 表对应关系映射
         List<TableMapperConfig> tableMapper = tableMapperList(tables);
-        // 告警用户信息
-        AlertReceiver[] receiver = receiver(cusers);
         // 返回构造函数
         TaskConfig taskConfig = new TaskConfig(status, id.toString(), jobTasks.getNodesString(), dataConsumerConfig,
                 loader, tableMapper, receiver);

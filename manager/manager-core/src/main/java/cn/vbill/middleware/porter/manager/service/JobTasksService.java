@@ -146,7 +146,7 @@ public interface JobTasksService {
     List<String> fields(Long sourceId, Long tablesId, String tableAllName);
 
     /**
-     * updateState
+     * 修改任务状态
      *
      * @date 2018/8/10 上午11:45
      * @param: [id,
@@ -156,7 +156,7 @@ public interface JobTasksService {
     Integer updateState(Long id, TaskStatusType taskStatusType);
 
     /**
-     * fitJobTask
+     * 任务统计
      *
      * @date 2018/8/10 上午11:45
      * @param: [id,
@@ -166,7 +166,7 @@ public interface JobTasksService {
     TaskConfig fitJobTask(Long id, TaskStatusType status);
 
     /**
-     * selectList
+     * 查询所有任务
      *
      * @date 2018/8/10 上午11:45
      * @param: []

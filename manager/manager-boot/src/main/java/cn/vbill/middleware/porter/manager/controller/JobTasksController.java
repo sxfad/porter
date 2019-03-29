@@ -172,7 +172,7 @@ public class JobTasksController {
      * @return: ResponseMessage
      */
     @PostMapping
-    @ApiOperation(value = "新增", notes = "新增")
+    @ApiOperation(value = "新增普通任务", notes = "新增普通任务")
     public ResponseMessage add(@RequestBody JobTasks jobTasks) {
         Integer number = jobTasksService.insert(jobTasks);
         return ok(number);
@@ -187,7 +187,7 @@ public class JobTasksController {
      * @return: ResponseMessage
      */
     @PutMapping
-    @ApiOperation(value = "修改", notes = "修改")
+    @ApiOperation(value = "修改普通任务", notes = "修改普通任务")
     public ResponseMessage update(@RequestBody JobTasks jobTasks) {
         Integer number = jobTasksService.update(jobTasks);
         return ok(number);
