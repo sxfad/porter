@@ -224,6 +224,36 @@ public class MrJobTasksSchedule implements java.io.Serializable {
     private String remark;
 
     /**
+     * 每日插入成功的数量
+     */
+    private String insertSuccessByDay;
+
+    /**
+     * 每日插入失败的数量
+     */
+    private String insertFailureByDay;
+
+    /**
+     * 每日修改成功的数量
+     */
+    private String updateSuccessByDay;
+
+    /**
+     * 每日修改失败的数量
+     */
+    private String updateFailureByDay;
+
+    /**
+     * 每日删除成功的数量
+     */
+    private String deleteSuccessByDay;
+
+    /**
+     * 每日删除失败的数量
+     */
+    private String deleteFailureByDay;
+
+    /**
      * 主键 get方法.
      */
     public Long getId() {
@@ -613,6 +643,54 @@ public class MrJobTasksSchedule implements java.io.Serializable {
      */
     public void setRemark(String remark) {
         this.remark = remark == null ? null : remark.trim();
+    }
+
+    public String getInsertSuccessByDay() {
+        return insertSuccessByDay;
+    }
+
+    public void setInsertSuccessByDay(String insertSuccessByDay) {
+        this.insertSuccessByDay = insertSuccessByDay;
+    }
+
+    public String getInsertFailureByDay() {
+        return insertFailureByDay;
+    }
+
+    public void setInsertFailureByDay(String insertFailureByDay) {
+        this.insertFailureByDay = insertFailureByDay;
+    }
+
+    public String getUpdateSuccessByDay() {
+        return updateSuccessByDay;
+    }
+
+    public void setUpdateSuccessByDay(String updateSuccessByDay) {
+        this.updateSuccessByDay = updateSuccessByDay;
+    }
+
+    public String getUpdateFailureByDay() {
+        return updateFailureByDay;
+    }
+
+    public void setUpdateFailureByDay(String updateFailureByDay) {
+        this.updateFailureByDay = updateFailureByDay;
+    }
+
+    public String getDeleteSuccessByDay() {
+        return deleteSuccessByDay;
+    }
+
+    public void setDeleteSuccessByDay(String deleteSuccessByDay) {
+        this.deleteSuccessByDay = deleteSuccessByDay;
+    }
+
+    public String getDeleteFailureByDay() {
+        return deleteFailureByDay;
+    }
+
+    public void setDeleteFailureByDay(String deleteFailureByDay) {
+        this.deleteFailureByDay = deleteFailureByDay;
     }
 
 }
