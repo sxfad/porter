@@ -3,7 +3,7 @@ archivesBaseName = 'porter-commons'
 dependencies {
     compile(
             'org.apache.ddlutils:ddlutils:1.0',
-            'com.fasterxml.jackson.core:jackson-annotations:2.8.5'
+            'com.fasterxml.jackson.core:jackson-annotations:2.8.10'
     )
 
 }
