@@ -2,6 +2,12 @@ apply plugin: 'java'
 apply plugin: 'maven'
 version '4.0'
 
+configurations.all {
+    resolutionStrategy {
+        force 'xml-apis:xml-apis:1.4.01'
+    }
+}
+
 repositories {
     maven{ url"http://maven.aliyun.com/nexus/content/groups/public"}
 }
@@ -39,7 +45,6 @@ subprojects {
         options.encoding = 'UTF-8'
     }
     dependencies {
-        testCompile "junit:junit:${junitVersion}"
         compile (
                 'com.alibaba:fastjson:1.2.28',
                 'com.alibaba:druid:1.1.9',
@@ -57,6 +62,7 @@ subprojects {
             exclude group:'log4j',module:'log4j'
         }
         compileOnly 'org.projectlombok:lombok:1.16.20'
+        testImplementation "junit:junit:${junitVersion}"
     }
     //将子项目包复制到根目录
     build.doLast {
