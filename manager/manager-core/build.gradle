@@ -6,8 +6,6 @@ dependencies {
     compile ('io.jsonwebtoken:jjwt:0.6.0'){
         exclude group:'com.fasterxml.jackson.core',module:'jackson-databind'
     }
-    compile 'com.fasterxml.jackson.core:jackson-databind:2.8.10'
-
     //数据源
     compile 'com.alibaba:druid-spring-boot-starter:1.1.2'
     compile 'mysql:mysql-connector-java:5.1.45'
