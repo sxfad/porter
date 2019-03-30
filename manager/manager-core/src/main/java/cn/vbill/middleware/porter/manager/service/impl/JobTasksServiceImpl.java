@@ -77,7 +77,7 @@ import cn.vbill.middleware.porter.manager.web.page.Page;
 import cn.vbill.middleware.porter.manager.web.rcc.RoleCheckContext;
 
 /**
- * 同步任务表 服务实现类
+ * 同步任务表 服务实现类 
  *
  * @author: FairyHood
  * @date: 2018-03-07 13:40:30
