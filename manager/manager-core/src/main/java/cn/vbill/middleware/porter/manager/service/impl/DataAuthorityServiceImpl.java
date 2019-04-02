@@ -16,10 +16,14 @@
  */
 package cn.vbill.middleware.porter.manager.service.impl;
 
+import cn.vbill.middleware.porter.manager.core.entity.CUser;
 import cn.vbill.middleware.porter.manager.core.entity.DataAuthority;
 import cn.vbill.middleware.porter.manager.core.mapper.DataAuthorityMapper;
 import cn.vbill.middleware.porter.manager.service.DataAuthorityService;
 import cn.vbill.middleware.porter.manager.web.page.Page;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -67,4 +71,8 @@ public class DataAuthorityServiceImpl implements DataAuthorityService {
         return page;
     }
 
+    @Override
+    public List<CUser> selectOwnersByObjectId(String ObjectName, Long ObjectId, Integer type) {
+        return dataAuthorityMapper.selectOwnersByObjectId(ObjectName, ObjectId, type);
+    }
 }
