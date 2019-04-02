@@ -48,7 +48,7 @@ distributions {
 
 
 dependencies {
-    implementation project(':manager:manager-web')
+    compile project(':manager:manager-web')
     testImplementation "org.springframework.boot:spring-boot-starter-actuator:${springVersion}"
     testImplementation "org.springframework.boot:spring-boot-starter-test:${springVersion}"
 }
