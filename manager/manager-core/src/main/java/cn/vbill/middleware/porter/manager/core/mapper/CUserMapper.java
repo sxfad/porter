@@ -142,4 +142,12 @@ public interface CUserMapper {
      * @return
      */
     Long checkLoginName(@Param("loginName") String loginName);
+
+    /**
+     * 根据job_task_owner表的ownerIdlist查询用户详细信息
+     *
+     * @param ownerIds
+     * @return
+     */
+    List<CUser> selectByIdList(@Param("ownerIds") List<Long> ownerIds);
 }

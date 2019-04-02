@@ -21,6 +21,7 @@ import cn.vbill.middleware.porter.manager.core.entity.JobTasksOwner;
 import cn.vbill.middleware.porter.manager.web.page.Page;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 任务所有权控制表 服务接口类
@@ -32,6 +33,23 @@ import java.util.List;
  */
 public interface JobTasksOwnerService {
 
+
+    /**
+     * 回显任务所有者、任务共享者
+     *
+     * @param jobId
+     * @return
+     */
+    Map<Integer, List<CUser>> jobOwnerTypeAll(Long jobId);
+
+    /**
+     * 根据任务id查询用户信息
+     *
+     * @param jobId
+     * @return
+     */
+    List<CUser> selectOwnerDetailByJobId(Long jobId);
+
     /**
      * 新增
      *
@@ -42,8 +60,7 @@ public interface JobTasksOwnerService {
     /**
      * 修改
      *
-     * @param id,
-     *            jobTasksOwner
+     * @param id, jobTasksOwner
      */
     Integer update(Long id, JobTasksOwner jobTasksOwner);
 

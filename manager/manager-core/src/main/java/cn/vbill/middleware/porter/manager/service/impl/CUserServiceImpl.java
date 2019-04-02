@@ -120,4 +120,9 @@ public class CUserServiceImpl implements CUserService {
         return cuserMapper.checkLoginName(loginName);
     }
 
+    @Override
+    public List<CUser> selectByIdList(List<Long> ownerIds) {
+        return cuserMapper.selectByIdList(ownerIds);
+    }
+
 }

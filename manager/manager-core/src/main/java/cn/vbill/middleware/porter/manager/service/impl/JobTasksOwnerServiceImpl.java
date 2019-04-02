@@ -19,6 +19,7 @@ package cn.vbill.middleware.porter.manager.service.impl;
 import cn.vbill.middleware.porter.manager.core.entity.CUser;
 import cn.vbill.middleware.porter.manager.core.entity.JobTasksOwner;
 import cn.vbill.middleware.porter.manager.core.mapper.JobTasksOwnerMapper;
+import cn.vbill.middleware.porter.manager.service.CUserService;
 import cn.vbill.middleware.porter.manager.service.JobTasksOwnerService;
 import cn.vbill.middleware.porter.manager.web.page.Page;
 import cn.vbill.middleware.porter.manager.web.rcc.RoleCheckContext;
@@ -26,7 +27,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 任务所有权控制表 服务实现类
@@ -41,6 +44,36 @@ public class JobTasksOwnerServiceImpl implements JobTasksOwnerService {
 
     @Autowired
     private JobTasksOwnerMapper jobTasksOwnerMapper;
+
+    @Autowired
+    private CUserService cUserService;
+
+    @Override
+    public Map<Integer, List<CUser>> jobOwnerTypeAll(Long jobId) {
+        List<CUser> userOwner = null;
+        List<CUser> userShares = null;
+        List<Long> userIdOnes = jobTasksOwnerMapper.selectOwnerIdByJobIdOrTypeOne(jobId, 1);
+        List<Long> userIdTwos = jobTasksOwnerMapper.selectOwnerIdByJobIdOrTypeOne(jobId, 2);
+        if (!userIdOnes.isEmpty()) {
+            userOwner = cUserService.selectByIdList(userIdOnes);
+        }
+        if (!userIdTwos.isEmpty()) {
+            userShares = cUserService.selectByIdList(userIdTwos);
+        }
+        Map<Integer, List<CUser>> map = new HashMap<>();
+        map.put(1, userOwner);
+        map.put(2, userShares);
+        return map;
+    }
+
+    @Override
+    public List<CUser> selectOwnerDetailByJobId(Long jobId) {
+        List<Long> ownerIds = jobTasksOwnerMapper.selectOwnerIdByJobIdOrTypeOne(jobId, null);
+        if (ownerIds.isEmpty()) {
+            return null;
+        }
+        return cUserService.selectByIdList(ownerIds);
+    }
 
     @Override
     public Integer insert(JobTasksOwner jobTasksOwner) {

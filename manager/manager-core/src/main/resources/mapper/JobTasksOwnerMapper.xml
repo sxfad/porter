@@ -88,6 +88,18 @@
         where id = #{id}
     </select>
 
+    <!-- 根据任务id和类型查询ownerId -->
+    <select id="selectOwnerIdByJobIdOrTypeOne" resultType="java.lang.Long">
+        select owner_id AS ownerId from job_tasks_owner
+        <where>
+            iscancel = 0
+            and job_id = #{jobId}
+            <if test="type != null ">
+                and type = #{type}
+            </if>
+        </where>
+    </select>
+
     <!-- 分页All -->
     <select id="pageAll" resultType="java.lang.Integer">
         select count(id) from job_tasks_owner

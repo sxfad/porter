@@ -34,6 +34,15 @@ import java.util.List;
 public interface JobTasksOwnerMapper {
 
     /**
+     * 根据任务id和类型查询ownerId
+     *
+     * @param jobId
+     * @param type
+     * @return
+     */
+    List<Long> selectOwnerIdByJobIdOrTypeOne(@Param("jobId") Long jobId, @Param("type") Integer type);
+
+    /**
      * 新增
      *
      * @param jobTasksOwner
@@ -102,4 +111,6 @@ public interface JobTasksOwnerMapper {
      * @return
      */
     Integer sharePermission(@Param("jobId") Long jobId, @Param("toUserIds") List<CUser> toUserIds);
+
+
 }
