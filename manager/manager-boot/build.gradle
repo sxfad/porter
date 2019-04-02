@@ -49,9 +49,9 @@ distributions {
 
 dependencies {
     compile project(':manager:manager-web')
-    Implementation "org.springframework.boot:spring-boot-starter-web:${springVersion}"
-    Implementation "io.springfox:springfox-swagger2:${swaggerVersion}"
-    Implementation "io.springfox:springfox-swagger-ui:${swaggerVersion}"
+    implementation "org.springframework.boot:spring-boot-starter-web:${springVersion}"
+    implementation "io.springfox:springfox-swagger2:${swaggerVersion}"
+    implementation "io.springfox:springfox-swagger-ui:${swaggerVersion}"
     testImplementation "org.springframework.boot:spring-boot-starter-actuator:${springVersion}"
     testImplementation "org.springframework.boot:spring-boot-starter-test:${springVersion}"
 }
