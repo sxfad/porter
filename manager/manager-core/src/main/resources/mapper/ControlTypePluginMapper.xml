@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.vbill.middleware.porter.manager.core.mapper.ControlTypePluginMapper">
+    <!-- 通用查询映射结果 
+    <resultMap id="BaseResultMap" type="cn.vbill.middleware.porter.manager.core.entity.ControlTypePlugin">
+        <result column="id" property="id" />
+        <result column="alert_type" property="alertType" />
+        <result column="field_name" property="fieldName" />
+        <result column="field_code" property="fieldCode" />
+        <result column="field_order" property="fieldOrder" />
+        <result column="field_type" property="fieldType" />
+        <result column="field_type_key" property="fieldTypeKey" />
+        <result column="state" property="state" />
+        <result column="iscancel" property="iscancel" />
+        <result column="remark" property="remark" />
+    </resultMap>-->
+
+    <!-- 通用查询结果列 
+    <sql id="Base_Column_List">
+        select id, alert_type AS alertType, field_name AS fieldName, field_code AS fieldCode, field_order AS fieldOrder, field_type AS fieldType, field_type_key AS fieldTypeKey, state, iscancel, remark from d_control_type_plugin
+    </sql>-->
+
+    <!-- 新增 -->
+    <insert id="insert">
+        insert into d_control_type_plugin(
+            alert_type,
+            field_name,
+            field_code,
+            field_order,
+            field_type,
+            field_type_key,
+            state,
+            iscancel,
+            remark
+        ) values (
+            #{alertType},
+            #{fieldName},
+            #{fieldCode},
+            #{fieldOrder},
+            #{fieldType},
+            #{fieldTypeKey},
+            #{state},
+            #{iscancel},
+            #{remark}
+        )
+    </insert>
+
+    <!-- 修改 -->
+    <update id="update">
+        update d_control_type_plugin
+        set
+            alert_type = #{controlTypePlugin.alertType},
+            field_name = #{controlTypePlugin.fieldName},
+            field_code = #{controlTypePlugin.fieldCode},
+            field_order = #{controlTypePlugin.fieldOrder},
+            field_type = #{controlTypePlugin.fieldType},
+            field_type_key = #{controlTypePlugin.fieldTypeKey},
+            state = #{controlTypePlugin.state},
+            iscancel = #{controlTypePlugin.iscancel},
+            remark = #{controlTypePlugin.remark}
+        where id = #{id}
+    </update>
+
+    <!-- 刪除 -->
+    <delete id="delete">
+        delete from d_control_type_plugin where id = #{id}
+    </delete>
+
+    <!-- 根据主鍵查找 -->
+    <select id="selectById" resultType="cn.vbill.middleware.porter.manager.core.entity.ControlTypePlugin">
+        select id, alert_type AS alertType, field_name AS fieldName, field_code AS fieldCode, field_order AS fieldOrder, field_type AS fieldType, field_type_key AS fieldTypeKey, state, iscancel, remark from d_control_type_plugin
+        where id = #{id}
+    </select>
+
+    <!-- 分页All -->
+    <select id="pageAll" resultType="java.lang.Integer">
+        select count(id) from d_control_type_plugin
+        where 1=1
+    </select>
+
+    <!-- 分页 -->
+    <select id="page" resultType="cn.vbill.middleware.porter.manager.core.entity.ControlTypePlugin">
+        select id, alert_type AS alertType, field_name AS fieldName, field_code AS fieldCode, field_order AS fieldOrder, field_type AS fieldType, field_type_key AS fieldTypeKey, state, iscancel, remark from d_control_type_plugin
+        where 1=1 limit #{page.offset},#{page.pageSize}
+    </select>
+
+    <!-- 验证新增 -->
+    <insert id="insertSelective">
+        insert into d_control_type_plugin
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="alertType != null">
+                alert_type,
+            </if>
+            <if test="fieldName != null">
+                field_name,
+            </if>
+            <if test="fieldCode != null">
+                field_code,
+            </if>
+            <if test="fieldOrder != null">
+                field_order,
+            </if>
+            <if test="fieldType != null">
+                field_type,
+            </if>
+            <if test="fieldTypeKey != null">
+                field_type_key,
+            </if>
+            <if test="state != null">
+                state,
+            </if>
+            <if test="iscancel != null">
+                iscancel,
+            </if>
+            <if test="remark != null">
+                remark,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=${field.mybatisType}},
+            </if>
+            <if test="alertType != null">
+                #{alertType,jdbcType=${field.mybatisType}},
+            </if>
+            <if test="fieldName != null">
+                #{fieldName,jdbcType=${field.mybatisType}},
+            </if>
+            <if test="fieldCode != null">
+                #{fieldCode,jdbcType=${field.mybatisType}},
+            </if>
+            <if test="fieldOrder != null">
+                #{fieldOrder,jdbcType=${field.mybatisType}},
+            </if>
+            <if test="fieldType != null">
+                #{fieldType,jdbcType=${field.mybatisType}},
+            </if>
+            <if test="fieldTypeKey != null">
+                #{fieldTypeKey,jdbcType=${field.mybatisType}},
+            </if>
+            <if test="state != null">
+                #{state,jdbcType=${field.mybatisType}},
+            </if>
+            <if test="iscancel != null">
+                #{iscancel,jdbcType=${field.mybatisType}},
+            </if>
+            <if test="remark != null">
+                #{remark,jdbcType=${field.mybatisType}},
+            </if>
+        </trim>
+    </insert>
+
+    <!-- 验证修改 -->
+    <update id="updateSelective">
+        update d_control_type_plugin
+        <set>
+            <if test="controlTypePlugin.id != null">
+                id = #{controlTypePlugin.id,jdbcType=${field.mybatisType}},
+            </if>
+            <if test="controlTypePlugin.alertType != null">
+                alert_type = #{controlTypePlugin.alertType,jdbcType=${field.mybatisType}},
+            </if>
+            <if test="controlTypePlugin.fieldName != null">
+                field_name = #{controlTypePlugin.fieldName,jdbcType=${field.mybatisType}},
+            </if>
+            <if test="controlTypePlugin.fieldCode != null">
+                field_code = #{controlTypePlugin.fieldCode,jdbcType=${field.mybatisType}},
+            </if>
+            <if test="controlTypePlugin.fieldOrder != null">
+                field_order = #{controlTypePlugin.fieldOrder,jdbcType=${field.mybatisType}},
+            </if>
+            <if test="controlTypePlugin.fieldType != null">
+                field_type = #{controlTypePlugin.fieldType,jdbcType=${field.mybatisType}},
+            </if>
+            <if test="controlTypePlugin.fieldTypeKey != null">
+                field_type_key = #{controlTypePlugin.fieldTypeKey,jdbcType=${field.mybatisType}},
+            </if>
+            <if test="controlTypePlugin.state != null">
+                state = #{controlTypePlugin.state,jdbcType=${field.mybatisType}},
+            </if>
+            <if test="controlTypePlugin.iscancel != null">
+                iscancel = #{controlTypePlugin.iscancel,jdbcType=${field.mybatisType}},
+            </if>
+            <if test="controlTypePlugin.remark != null">
+                remark = #{controlTypePlugin.remark,jdbcType=${field.mybatisType}},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+</mapper>
