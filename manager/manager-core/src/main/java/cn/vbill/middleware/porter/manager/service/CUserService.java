@@ -153,6 +153,6 @@ public interface CUserService {
      * @param jobId
      * @return
      */
-    List<CUser> selectOwnersByJobId(Long jobId);
+    List<CUser> selectOwnersByJobId(Long jobId, Integer type);
 
 }

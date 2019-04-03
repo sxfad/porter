@@ -27,7 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -52,17 +51,6 @@ public class JobTasksOwnerServiceImpl implements JobTasksOwnerService {
     public Map<Integer, List<CUser>> jobOwnerTypeAll(Long jobId) {
         List<CUser> userOwner = null;
         List<CUser> userShares = null;
-        List<Long> userIdOnes = jobTasksOwnerMapper.selectOwnerIdByJobIdOrTypeOne(jobId, 1);
-        List<Long> userIdTwos = jobTasksOwnerMapper.selectOwnerIdByJobIdOrTypeOne(jobId, 2);
-//        if (!userIdOnes.isEmpty()) {
-//            userOwner = cUserService.selectByIdList(userIdOnes);
-//        }
-//        if (!userIdTwos.isEmpty()) {
-//            userShares = cUserService.selectByIdList(userIdTwos);
-//        }
-//        Map<Integer, List<CUser>> map = new HashMap<>();
-//        map.put(1, userOwner);
-//        map.put(2, userShares);
         return null;
     }
 

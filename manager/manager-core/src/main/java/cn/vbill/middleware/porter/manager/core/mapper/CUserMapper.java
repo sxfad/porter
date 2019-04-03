@@ -147,7 +147,8 @@ public interface CUserMapper {
      * 根据jobId查询job_tasks_owner用户详细信息
      *
      * @param jobId
+     * @param type
      * @return
      */
-    List<CUser> selectOwnersByJobId(@Param("jobId") Long jobId);
+    List<CUser> selectOwnersByJobId(@Param("jobId") Long jobId, @Param("type") Integer type);
 }

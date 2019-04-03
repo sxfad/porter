@@ -121,11 +121,11 @@ public class CUserServiceImpl implements CUserService {
     }
 
     @Override
-    public List<CUser> selectOwnersByJobId(Long jobId) {
+    public List<CUser> selectOwnersByJobId(Long jobId, Integer type) {
         if (null == jobId) {
             return null;
         }
-        return cuserMapper.selectOwnersByJobId(jobId);
+        return cuserMapper.selectOwnersByJobId(jobId, type);
     }
 
 }
