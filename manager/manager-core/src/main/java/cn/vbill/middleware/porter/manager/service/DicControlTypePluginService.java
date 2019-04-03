@@ -16,8 +16,9 @@
  */
 package cn.vbill.middleware.porter.manager.service;
 
-import cn.vbill.middleware.porter.manager.core.entity.ControlTypePlugin;
-import cn.vbill.middleware.porter.manager.web.page.Page;
+import cn.vbill.middleware.porter.manager.core.entity.DicControlTypePlugin;
+
+import java.util.List;
 
 /**
  * 操作类型字典 服务接口类
@@ -27,40 +28,12 @@ import cn.vbill.middleware.porter.manager.web.page.Page;
  * @version: V1.0-auto
  * @review: FairyHood/2019-04-02 10:58:29
  */
-public interface ControlTypePluginService {
+public interface DicControlTypePluginService {
 
     /**
-     * 新增
+     * 获取全部操作类型字典
      *
-     * @param controlTypePlugin
+     * @return
      */
-    Integer insert(ControlTypePlugin controlTypePlugin);
-
-    /**
-     * 修改
-     *
-     * @param id, controlTypePlugin
-     */
-    Integer update(Long id, ControlTypePlugin controlTypePlugin);
-
-    /**
-     * 删除
-     *
-     * @param id
-     */
-    Integer delete(Long id);
-
-    /**
-     * 查询详情
-     *
-     * @param id
-     */
-    ControlTypePlugin selectById(Long id);
-
-    /**
-     * 分页查询
-     *
-     * @param page
-     */
-    Page<ControlTypePlugin> page(Page<ControlTypePlugin> page);
+    List<DicControlTypePlugin> findAll();
 }
