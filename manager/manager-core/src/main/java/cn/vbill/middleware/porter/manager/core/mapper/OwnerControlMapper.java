@@ -17,7 +17,6 @@
 package cn.vbill.middleware.porter.manager.core.mapper;
 
 import cn.vbill.middleware.porter.manager.core.entity.OwnerControl;
-import cn.vbill.middleware.porter.manager.web.page.Page;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -33,47 +32,10 @@ import java.util.List;
 public interface OwnerControlMapper {
 
     /**
-     * 新增
+     * 查询全部对应关系
      *
-     * @param ownerControl
-     */
-    Integer insert(OwnerControl ownerControl);
-
-    /**
-     * 修改
-     *
-     * @param ownerControl
-     */
-    Integer update(@Param("id") Long id, @Param("ownerControl") OwnerControl ownerControl);
-
-    /**
-     * 刪除
-     *
-     * @param id
+     * @param type
      * @return
      */
-    Integer delete(Long id);
-
-    /**
-     * 根據主鍵id查找數據
-     *
-     * @param id
-     * @return
-     */
-    OwnerControl selectById(Long id);
-
-    /**
-     * 分頁
-     *
-     * @return
-     */
-    List<OwnerControl> page(@Param("page") Page<OwnerControl> page, @Param("state") Integer state);
-
-    /**
-     * 分頁All
-     *
-     * @return
-     */
-    Integer pageAll(@Param("state") Integer state);
-
+    List<OwnerControl> findAll(@Param("type") Integer type);
 }

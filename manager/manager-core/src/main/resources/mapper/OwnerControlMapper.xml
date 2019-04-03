@@ -13,90 +13,13 @@
         select id, owner_type AS ownerType, control_type_id AS controlTypeId from r_owner_control
     </sql>-->
 
-    <!-- 新增 -->
-    <insert id="insert">
-        insert into r_owner_control(
-            owner_type,
-            control_type_id
-        ) values (
-            #{ownerType},
-            #{controlTypeId}
-        )
-    </insert>
-
-    <!-- 修改 -->
-    <update id="update">
-        update r_owner_control
-        set
-            owner_type = #{ownerControl.ownerType},
-            control_type_id = #{ownerControl.controlTypeId}
-        where id = #{id}
-    </update>
-
-    <!-- 刪除 -->
-    <delete id="delete">
-        delete from r_owner_control where id = #{id}
-    </delete>
-
-    <!-- 根据主鍵查找 -->
-    <select id="selectById" resultType="cn.vbill.middleware.porter.manager.core.entity.OwnerControl">
+    <!-- 查询全部对应关系 -->
+    <select id="findAll" resultType="cn.vbill.middleware.porter.manager.core.entity.OwnerControl">
         select id, owner_type AS ownerType, control_type_id AS controlTypeId from r_owner_control
-        where id = #{id}
+        <where>
+            <if test="type!= null">
+                owner_type = #{type}
+            </if>
+        </where>
     </select>
-
-    <!-- 分页All -->
-    <select id="pageAll" resultType="java.lang.Integer">
-        select count(id) from r_owner_control
-        where 1=1
-    </select>
-
-    <!-- 分页 -->
-    <select id="page" resultType="cn.vbill.middleware.porter.manager.core.entity.OwnerControl">
-        select id, owner_type AS ownerType, control_type_id AS controlTypeId from r_owner_control
-        where 1=1 limit #{page.offset},#{page.pageSize}
-    </select>
-
-    <!-- 验证新增 -->
-    <insert id="insertSelective">
-        insert into r_owner_control
-        <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="id != null">
-                id,
-            </if>
-            <if test="ownerType != null">
-                owner_type,
-            </if>
-            <if test="controlTypeId != null">
-                control_type_id,
-            </if>
-        </trim>
-        <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="id != null">
-                #{id,jdbcType=${field.mybatisType}},
-            </if>
-            <if test="ownerType != null">
-                #{ownerType,jdbcType=${field.mybatisType}},
-            </if>
-            <if test="controlTypeId != null">
-                #{controlTypeId,jdbcType=${field.mybatisType}},
-            </if>
-        </trim>
-    </insert>
-
-    <!-- 验证修改 -->
-    <update id="updateSelective">
-        update r_owner_control
-        <set>
-            <if test="ownerControl.id != null">
-                id = #{ownerControl.id,jdbcType=${field.mybatisType}},
-            </if>
-            <if test="ownerControl.ownerType != null">
-                owner_type = #{ownerControl.ownerType,jdbcType=${field.mybatisType}},
-            </if>
-            <if test="ownerControl.controlTypeId != null">
-                control_type_id = #{ownerControl.controlTypeId,jdbcType=${field.mybatisType}},
-            </if>
-        </set>
-        where id = #{id}
-    </update>
 </mapper>

@@ -17,7 +17,8 @@
 package cn.vbill.middleware.porter.manager.service;
 
 import cn.vbill.middleware.porter.manager.core.entity.OwnerControl;
-import cn.vbill.middleware.porter.manager.web.page.Page;
+
+import java.util.List;
 
 /**
  * 权限控制操作类型表 服务接口类
@@ -30,37 +31,9 @@ import cn.vbill.middleware.porter.manager.web.page.Page;
 public interface OwnerControlService {
 
     /**
-     * 新增
+     * 查询全部对应关系
      *
-     * @param ownerControl
+     * @return
      */
-    Integer insert(OwnerControl ownerControl);
-
-    /**
-     * 修改
-     *
-     * @param id, ownerControl
-     */
-    Integer update(Long id, OwnerControl ownerControl);
-
-    /**
-     * 删除
-     *
-     * @param id
-     */
-    Integer delete(Long id);
-
-    /**
-     * 查询详情
-     *
-     * @param id
-     */
-    OwnerControl selectById(Long id);
-
-    /**
-     * 分页查询
-     *
-     * @param page
-     */
-    Page<OwnerControl> page(Page<OwnerControl> page);
+    List<OwnerControl> findAll(Integer type);
 }
