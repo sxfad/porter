@@ -115,6 +115,17 @@
 		#{page.offset},#{page.pageSize}
 	</select>
 
+    <!-- 查询与ObjectId有关的权限所有者用户(type=null查询全部 type=1查询所有者 type=2查询共享者) -->
+    <select id="selectOwnersByObjectId" resultType="cn.vbill.middleware.porter.manager.core.entity.CUser">
+        SELECT id, loginname, loginpw, nickname, email, mobile, state, remark from c_user
+        WHERE id in (
+            SELECT t.owner_id FROM c_data_authority t WHERE LOWER(t.object_table) = LOWER(#{ObjectName}) AND t.object_id= #{ObjectId}
+            <if test="type != null and type != ''">
+                AND type = #{type}
+            </if>
+        )
+    </select>
+
 	<!-- 验证新增 -->
 	<insert id="insertSelective">
 		insert into c_data_authority

@@ -16,6 +16,9 @@
  */
 package cn.vbill.middleware.porter.manager.service;
 
+import java.util.List;
+
+import cn.vbill.middleware.porter.manager.core.entity.CUser;
 import cn.vbill.middleware.porter.manager.core.entity.DataAuthority;
 import cn.vbill.middleware.porter.manager.web.page.Page;
 
@@ -64,4 +67,14 @@ public interface DataAuthorityService {
      * @param page
      */
     Page<DataAuthority> page(Page<DataAuthority> page);
+
+    /**
+     * 查询与ObjectId有关的权限所有者用户(type=null查询全部 type=1查询所有者 type=2查询共享者)
+     * 
+     * @param ObjectName 对象标识
+     * @param ObjectId 对象id
+     * @param type 类型
+     * @return
+     */
+    List<CUser> selectOwnersByObjectId(String ObjectName, Long ObjectId, Integer type);
 }

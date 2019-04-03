@@ -16,6 +16,7 @@
  */
 package cn.vbill.middleware.porter.manager.core.mapper;
 
+import cn.vbill.middleware.porter.manager.core.entity.CUser;
 import cn.vbill.middleware.porter.manager.core.entity.DataAuthority;
 import cn.vbill.middleware.porter.manager.web.page.Page;
 import org.apache.ibatis.annotations.Param;
@@ -93,4 +94,13 @@ public interface DataAuthorityMapper {
      */
     Integer pageAll(@Param("state") Integer state);
 
+    /**
+     * 查询与ObjectId有关的权限所有者用户(type=null查询全部 type=1查询所有者 type=2查询共享者)
+     * 
+     * @param ObjectName
+     * @param ObjectId
+     * @param type
+     * @return
+     */
+    List<CUser> selectOwnersByObjectId(String ObjectName, Long ObjectId, Integer type);
 }
