@@ -32,7 +32,7 @@ import static cn.vbill.middleware.porter.manager.web.message.ResponseMessage.ok;
  */
 @Api(description = "操作类型字典管理")
 @RestController
-@RequestMapping("/controltypeplugin")
+@RequestMapping("/manager/controltypeplugin")
 public class DicControlTypePluginController {
 
     @Autowired

@@ -42,7 +42,7 @@ import static cn.vbill.middleware.porter.manager.web.message.ResponseMessage.ok;
  */
 @Api(description = "权限控制操作类型表管理")
 @RestController
-@RequestMapping("/ownercontrol")
+@RequestMapping("/manager/ownercontrol")
 public class OwnerControlController {
 
     @Autowired
