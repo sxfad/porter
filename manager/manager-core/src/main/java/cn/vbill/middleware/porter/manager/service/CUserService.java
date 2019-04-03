@@ -155,4 +155,10 @@ public interface CUserService {
      */
     List<CUser> selectOwnersByJobId(Long jobId, Integer type);
 
+    /**
+     * 注册用户列表
+     *
+     * @return
+     */
+    List<CUser> findRegister();
 }

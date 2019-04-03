@@ -179,10 +179,25 @@ public class CUserController {
      * @param: []
      * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
      */
-    @ApiOperation(value = "全部列表", notes = "全部列表")
     @GetMapping("/list")
+    @ApiOperation(value = "全部列表", notes = "全部列表")
     public ResponseMessage list() {
         List<CUser> list = cuserService.list();
+        return ok(list);
+    }
+
+    /**
+     * 注册用户列表
+     *
+     * @author MurasakiSeiFu
+     * @date 2019-04-03 16:58
+     * @param: []
+     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
+     */
+    @GetMapping("/findRegister")
+    @ApiOperation(value = "注册用户列表", notes = "注册用户列表")
+    public ResponseMessage findRegister() {
+        List<CUser> list = cuserService.findRegister();
         return ok(list);
     }
 }

@@ -249,7 +249,7 @@
 
     <!-- 根据jobId查询job_tasks_owner用户详细信息 -->
     <select id="selectOwnersByJobId" resultType="cn.vbill.middleware.porter.manager.core.entity.CUser">
-        select id, loginname, email, role_code AS roleCode from c_user
+        select id, loginname, nickname, email, role_code AS roleCode from c_user
         where state = 1 and
         id in
           (
@@ -263,6 +263,12 @@
                 </if>
             </where>
           )
+    </select>
+
+    <!-- 注册用户列表 -->
+    <select id="findRegister" resultType="cn.vbill.middleware.porter.manager.core.entity.CUser">
+        select id, nickname, role_code AS roleCode from c_user
+        where  state = 1 and role_code = 'A9999'
     </select>
 
 </mapper>

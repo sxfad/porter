@@ -151,4 +151,11 @@ public interface CUserMapper {
      * @return
      */
     List<CUser> selectOwnersByJobId(@Param("jobId") Long jobId, @Param("type") Integer type);
+
+    /**
+     * 注册用户列表
+     *
+     * @return
+     */
+    List<CUser> findRegister();
 }

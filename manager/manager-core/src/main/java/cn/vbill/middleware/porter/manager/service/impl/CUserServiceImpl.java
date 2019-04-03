@@ -128,4 +128,9 @@ public class CUserServiceImpl implements CUserService {
         return cuserMapper.selectOwnersByJobId(jobId, type);
     }
 
+    @Override
+    public List<CUser> findRegister() {
+        return cuserMapper.findRegister();
+    }
+
 }
