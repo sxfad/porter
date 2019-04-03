@@ -121,8 +121,11 @@ public class CUserServiceImpl implements CUserService {
     }
 
     @Override
-    public List<CUser> selectByIdList(List<Long> ownerIds) {
-        return cuserMapper.selectByIdList(ownerIds);
+    public List<CUser> selectOwnersByJobId(Long jobId) {
+        if (null == jobId) {
+            return null;
+        }
+        return cuserMapper.selectOwnersByJobId(jobId);
     }
 
 }

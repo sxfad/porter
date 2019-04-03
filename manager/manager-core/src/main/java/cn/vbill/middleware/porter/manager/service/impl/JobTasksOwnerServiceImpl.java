@@ -67,15 +67,6 @@ public class JobTasksOwnerServiceImpl implements JobTasksOwnerService {
     }
 
     @Override
-    public List<CUser> selectOwnerDetailByJobId(Long jobId) {
-        List<Long> ownerIds = jobTasksOwnerMapper.selectOwnerIdByJobIdOrTypeOne(jobId, null);
-        if (ownerIds.isEmpty()) {
-            return null;
-        }
-        return cUserService.selectByIdList(ownerIds);
-    }
-
-    @Override
     public Integer insert(JobTasksOwner jobTasksOwner) {
         return jobTasksOwnerMapper.insert(jobTasksOwner);
     }

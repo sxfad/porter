@@ -148,10 +148,11 @@ public interface CUserService {
     Long checkLoginName(String loginName);
 
     /**
-     * 根据job_task_owner表的ownerIdlist查询用户详细信息
+     * 根据jobId查询job_tasks_owner用户详细信息
      *
-     * @param ownerIds
+     * @param jobId
      * @return
      */
-    List<CUser> selectByIdList(List<Long> ownerIds);
+    List<CUser> selectOwnersByJobId(Long jobId);
+
 }

@@ -43,14 +43,6 @@ public interface JobTasksOwnerService {
     Map<Integer, List<CUser>> jobOwnerTypeAll(Long jobId);
 
     /**
-     * 根据任务id查询用户信息
-     *
-     * @param jobId
-     * @return
-     */
-    List<CUser> selectOwnerDetailByJobId(Long jobId);
-
-    /**
      * 新增
      *
      * @param jobTasksOwner
