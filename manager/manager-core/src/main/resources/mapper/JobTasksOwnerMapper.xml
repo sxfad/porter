@@ -38,4 +38,15 @@
             iscancel = 0
             and job_id = #{jobId} and owner_id = #{userId}
     </select>
+
+    <!-- 新增 -->
+    <insert id="insert">
+        insert into job_tasks_owner(
+            job_id,
+            owner_id
+        ) values (
+            #{jobId},
+            #{ownerId}
+        )
+    </insert>
 </mapper>

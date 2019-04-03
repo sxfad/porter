@@ -16,6 +16,7 @@
  */
 package cn.vbill.middleware.porter.manager.core.mapper;
 
+import cn.vbill.middleware.porter.manager.core.entity.JobTasksOwner;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -47,4 +48,11 @@ public interface JobTasksOwnerMapper {
      * @return
      */
     Integer findOwnerTypeByJobIdAndUserId(@Param("jobId") Long jobId, @Param("userId") Long userId);
+
+    /**
+     * 新增
+     *
+     * @param jobTasksOwner
+     */
+    Integer insert(JobTasksOwner jobTasksOwner);
 }

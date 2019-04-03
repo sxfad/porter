@@ -46,4 +46,11 @@ public interface JobTasksOwnerService {
      * @return
      */
     Integer findOwnerTypeByJobId(Long jobId);
+
+    /**
+     * 新增任务同时更新任务所有权控制
+     *
+     * @param jobId
+     */
+    void insertByJobTasks(Long jobId);
 }

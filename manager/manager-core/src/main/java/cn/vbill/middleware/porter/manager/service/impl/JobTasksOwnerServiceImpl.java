@@ -17,6 +17,7 @@
 package cn.vbill.middleware.porter.manager.service.impl;
 
 import cn.vbill.middleware.porter.manager.core.entity.CUser;
+import cn.vbill.middleware.porter.manager.core.entity.JobTasksOwner;
 import cn.vbill.middleware.porter.manager.core.mapper.JobTasksOwnerMapper;
 import cn.vbill.middleware.porter.manager.service.CUserService;
 import cn.vbill.middleware.porter.manager.service.JobTasksOwnerService;
@@ -70,5 +71,13 @@ public class JobTasksOwnerServiceImpl implements JobTasksOwnerService {
         }
         type = jobTasksOwnerMapper.findOwnerTypeByJobIdAndUserId(jobId, RoleCheckContext.getUserIdHolder().getUserId());
         return type;
+    }
+
+    @Override
+    public void insertByJobTasks(Long jobId) {
+        JobTasksOwner jobTasksOwner = new JobTasksOwner();
+        jobTasksOwner.setJobId(jobId);
+        jobTasksOwner.setOwnerId(RoleCheckContext.getUserIdHolder().getUserId());
+        jobTasksOwnerMapper.insert(jobTasksOwner);
     }
 }
