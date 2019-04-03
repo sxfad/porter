@@ -50,9 +50,9 @@ public enum ControlTypeEnum {
         private static final long serialVersionUID = 1L;
 
         {
-            put(CANCEL.code, CANCEL.name);
+            put(CHANGE.code, CHANGE.name);
             put(SHARE.code, SHARE.name);
-            put(CANCEL.code, SHARE.name);
+            put(CANCEL.code, CANCEL.name);
             put(RECYCLE.code, RECYCLE.name);
         }
     };
