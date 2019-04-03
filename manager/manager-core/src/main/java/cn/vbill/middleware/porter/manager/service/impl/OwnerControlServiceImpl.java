@@ -19,9 +19,10 @@ package cn.vbill.middleware.porter.manager.service.impl;
 import cn.vbill.middleware.porter.manager.core.entity.OwnerControl;
 import cn.vbill.middleware.porter.manager.core.mapper.OwnerControlMapper;
 import cn.vbill.middleware.porter.manager.service.OwnerControlService;
-import cn.vbill.middleware.porter.manager.web.page.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * 权限控制操作类型表 服务实现类
@@ -38,33 +39,7 @@ public class OwnerControlServiceImpl implements OwnerControlService {
     private OwnerControlMapper ownerControlMapper;
 
     @Override
-    public Integer insert(OwnerControl ownerControl) {
-        return ownerControlMapper.insert(ownerControl);
+    public List<OwnerControl> findAll(Integer type) {
+        return ownerControlMapper.findAll(type);
     }
-
-    @Override
-    public Integer update(Long id, OwnerControl ownerControl) {
-        return ownerControlMapper.update(id, ownerControl);
-    }
-
-    @Override
-    public Integer delete(Long id) {
-        return ownerControlMapper.delete(id);
-    }
-
-    @Override
-    public OwnerControl selectById(Long id) {
-        return ownerControlMapper.selectById(id);
-    }
-
-    @Override
-    public Page<OwnerControl> page(Page<OwnerControl> page) {
-        Integer total = ownerControlMapper.pageAll(1);
-        if (total > 0) {
-            page.setTotalItems(total);
-            page.setResult(ownerControlMapper.page(page, 1));
-        }
-        return page;
-    }
-
 }

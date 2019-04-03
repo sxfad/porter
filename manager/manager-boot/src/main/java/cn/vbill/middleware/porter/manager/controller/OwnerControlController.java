@@ -19,21 +19,15 @@ package cn.vbill.middleware.porter.manager.controller;
 import cn.vbill.middleware.porter.manager.core.entity.OwnerControl;
 import cn.vbill.middleware.porter.manager.service.OwnerControlService;
 import cn.vbill.middleware.porter.manager.web.message.ResponseMessage;
-import cn.vbill.middleware.porter.manager.web.page.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 import static cn.vbill.middleware.porter.manager.web.message.ResponseMessage.ok;
 
@@ -48,46 +42,39 @@ import static cn.vbill.middleware.porter.manager.web.message.ResponseMessage.ok;
  */
 @Api(description = "权限控制操作类型表管理")
 @RestController
-@RequestMapping("/ownercontrol")
+@RequestMapping("/manager/ownercontrol")
 public class OwnerControlController {
 
     @Autowired
     protected OwnerControlService ownerControlService;
 
-    @PostMapping
-    @ApiOperation(value = "新增", notes = "新增")
-    public ResponseMessage add(@RequestBody OwnerControl ownerControl) {
-        Integer number = ownerControlService.insert(ownerControl);
-        return ok(number);
+    /**
+     * 查询全部对应关系
+     *
+     * @author MurasakiSeiFu
+     * @date 2019-04-03 14:52
+     * @param: []
+     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
+     */
+    @GetMapping("/findAll")
+    @ApiOperation(value = "查询全部对应关系", notes = "查询全部对应关系")
+    public ResponseMessage findAll() {
+        List<OwnerControl> list = ownerControlService.findAll(null);
+        return ok(list);
     }
 
-    @PutMapping("/{id}")
-    @ApiOperation(value = "修改", notes = "修改")
-    public ResponseMessage update(@PathVariable("id") Long id, @RequestBody OwnerControl ownerControl) {
-        Integer number = ownerControlService.update(id, ownerControl);
-        return ok(number);
+    /**
+     * 根据权限类型查询
+     *
+     * @author MurasakiSeiFu
+     * @date 2019-04-03 14:56
+     * @param: []
+     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
+     */
+    @GetMapping("/findByType")
+    @ApiOperation(value = "根据权限类型查询", notes = "根据权限类型查询")
+    public ResponseMessage findByType(@RequestParam(value = "type", required = true) Integer type) {
+        List<OwnerControl> list = ownerControlService.findAll(type);
+        return ok(list);
     }
-
-    @DeleteMapping("/{id}")
-    @ApiOperation(value = "删除", notes = "删除")
-    public ResponseMessage delete(@PathVariable("id") Long id) {
-        ownerControlService.delete(id);
-        return ok();
-    }
-
-    @GetMapping("/{id}")
-    @ApiOperation(value = "查询明细", notes = "查询明细")
-    public ResponseMessage info(@PathVariable("id") Long id) {
-        OwnerControl ownerControl = ownerControlService.selectById(id);
-        return ok(ownerControl);
-    }
-
-    @GetMapping
-    @ApiOperation(value = "查询列表", notes = "查询列表")
-    public ResponseMessage list(@RequestParam(value = "pageNum", required = false) Integer pageNum,
-                                @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-        Page<OwnerControl> page = ownerControlService.page(new Page<OwnerControl>(pageNum, pageSize));
-        return ok(page);
-    }
-
 }

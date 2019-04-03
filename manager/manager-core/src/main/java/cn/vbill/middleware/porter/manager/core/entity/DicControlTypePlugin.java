@@ -26,7 +26,7 @@ import java.io.Serializable;
  * @version: V1.0-auto
  * @review: FairyHood/2019-04-02 10:58:29
  */
-public class ControlTypePlugin implements Serializable {
+public class DicControlTypePlugin implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

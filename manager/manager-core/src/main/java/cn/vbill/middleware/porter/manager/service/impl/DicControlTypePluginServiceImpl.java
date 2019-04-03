@@ -14,26 +14,32 @@
  * limitations under the License.
  * </p>
  */
-package cn.vbill.middleware.porter.manager.service;
+package cn.vbill.middleware.porter.manager.service.impl;
 
-import cn.vbill.middleware.porter.manager.core.entity.OwnerControl;
+import cn.vbill.middleware.porter.manager.core.entity.DicControlTypePlugin;
+import cn.vbill.middleware.porter.manager.core.mapper.DicControlTypePluginMapper;
+import cn.vbill.middleware.porter.manager.service.DicControlTypePluginService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 /**
- * 权限控制操作类型表 服务接口类
+ * 操作类型字典 服务实现类
  *
  * @author: FairyHood
  * @date: 2019-04-02 10:58:29
  * @version: V1.0-auto
  * @review: FairyHood/2019-04-02 10:58:29
  */
-public interface OwnerControlService {
+@Service
+public class DicControlTypePluginServiceImpl implements DicControlTypePluginService {
 
-    /**
-     * 查询全部对应关系
-     *
-     * @return
-     */
-    List<OwnerControl> findAll(Integer type);
+    @Autowired
+    private DicControlTypePluginMapper dicControlTypePluginMapper;
+
+    @Override
+    public List<DicControlTypePlugin> findAll() {
+        return dicControlTypePluginMapper.findAll();
+    }
 }

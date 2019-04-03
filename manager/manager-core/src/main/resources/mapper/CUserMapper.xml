@@ -247,13 +247,23 @@
         select count(id) from c_user where state >= 0 and loginname = #{loginName}
     </select>
 
-    <!-- 根据job_task_owner表的ownerIdlist查询用户详细信息 -->
-    <select id="selectByIdList" resultType="cn.vbill.middleware.porter.manager.core.entity.CUser">
-        select id, loginname, loginpw, nickname, email, mobile, state, remark, role_code AS roleCode from c_user
-        where id in
-        <foreach collection="ownerIds" item="ownerId" open="(" close=")" separator=",">
-          #{ownerId}
-        </foreach>
+    <!-- 根据jobId查询job_tasks_owner用户详细信息 -->
+    <select id="selectOwnersByJobId" resultType="cn.vbill.middleware.porter.manager.core.entity.CUser">
+        select id, loginname, email, role_code AS roleCode from c_user
+        where state = 1 and
+        id in
+          (
+            select owner_id
+            from job_tasks_owner
+            <where>
+                job_id = #{jobId}
+                and iscancel = 0
+                <if test="type != null">
+                    and type = #{type}
+                </if>
+            </where>
+          )
     </select>
+
 </mapper>
 

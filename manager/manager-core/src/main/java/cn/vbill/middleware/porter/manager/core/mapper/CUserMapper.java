@@ -144,10 +144,11 @@ public interface CUserMapper {
     Long checkLoginName(@Param("loginName") String loginName);
 
     /**
-     * 根据job_task_owner表的ownerIdlist查询用户详细信息
+     * 根据jobId查询job_tasks_owner用户详细信息
      *
-     * @param ownerIds
+     * @param jobId
+     * @param type
      * @return
      */
-    List<CUser> selectByIdList(@Param("ownerIds") List<Long> ownerIds);
+    List<CUser> selectOwnersByJobId(@Param("jobId") Long jobId, @Param("type") Integer type);
 }

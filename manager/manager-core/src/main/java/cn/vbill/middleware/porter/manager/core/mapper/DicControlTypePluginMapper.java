@@ -14,26 +14,26 @@
  * limitations under the License.
  * </p>
  */
-package cn.vbill.middleware.porter.manager.service;
+package cn.vbill.middleware.porter.manager.core.mapper;
 
-import cn.vbill.middleware.porter.manager.core.entity.OwnerControl;
+import cn.vbill.middleware.porter.manager.core.entity.DicControlTypePlugin;
 
 import java.util.List;
 
 /**
- * 权限控制操作类型表 服务接口类
+ * 操作类型字典 Mapper接口
  *
  * @author: FairyHood
  * @date: 2019-04-02 10:58:29
  * @version: V1.0-auto
  * @review: FairyHood/2019-04-02 10:58:29
  */
-public interface OwnerControlService {
+public interface DicControlTypePluginMapper {
 
     /**
-     * 查询全部对应关系
+     * 获取全部操作类型字典
      *
      * @return
      */
-    List<OwnerControl> findAll(Integer type);
+    List<DicControlTypePlugin> findAll();
 }

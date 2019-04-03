@@ -56,112 +56,26 @@ public class JobTasksOwnerController {
      * @param: [jobId]
      * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
      */
-    @GetMapping("/typeall/{jobId}")
+    @GetMapping("/ownerAll/{jobId}")
     @ApiOperation(value = "回显任务所有者、任务共享者")
     public ResponseMessage jobOwnerTypeAll(@PathVariable("jobId") Long jobId) {
         Map<Integer, List<CUser>> map = jobTasksOwnerService.jobOwnerTypeAll(jobId);
         return ok(map);
     }
 
-//    /**
-//     * 权限移交
-//     *
-//     * @author FuZizheng
-//     * @date 2019-03-26 15:52
-//     * @param: [jobId,
-//     *             fromUserId, toUserId]
-//     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
-//     */
-//    @PostMapping("/change")
-//    @ApiOperation(value = "权限移交", notes = "权限移交")
-//    public ResponseMessage changePermission(@RequestParam(required = true) Long jobId,
-//            @RequestParam(required = false) Long fromUserId, @RequestParam(required = true) Long toUserId) {
-//        Integer number = jobTasksOwnerService.changePermission(jobId, fromUserId, toUserId);
-//        return ok(number);
-//    }
-//
-//    /**
-//     * 权限共享
-//     *
-//     * @author FuZizheng
-//     * @date 2019-03-26 15:55
-//     * @param: [jobId,
-//     *             fromUserId, toUserId]
-//     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
-//     */
-//    @PostMapping("/share")
-//    @ApiOperation(value = "权限共享", notes = "权限共享")
-//    public ResponseMessage sharePermission(@RequestParam(required = true) Long jobId,
-//            @RequestParam(required = true) List<CUser> toUserIds) {
-//        Integer number = jobTasksOwnerService.sharePermission(jobId, toUserIds);
-//        return ok(number);
-//    }
-//
-//    /**
-//     * 新增任务owner
-//     *
-//     * @param jobTasksOwner
-//     * @return
-//     */
-//    @PostMapping
-//    @ApiOperation(value = "新增", notes = "新增")
-//    public ResponseMessage add(@RequestBody JobTasksOwner jobTasksOwner) {
-//        Integer number = jobTasksOwnerService.insert(jobTasksOwner);
-//        return ok(number);
-//    }
-//
-//    /**
-//     * 修改任务owner
-//     *
-//     * @param id
-//     * @param jobTasksOwner
-//     * @return
-//     */
-//    @PutMapping("/{id}")
-//    @ApiOperation(value = "修改", notes = "修改")
-//    public ResponseMessage update(@PathVariable("id") Long id, @RequestBody JobTasksOwner jobTasksOwner) {
-//        Integer number = jobTasksOwnerService.update(id, jobTasksOwner);
-//        return ok(number);
-//    }
-//
-//    /**
-//     * 删除任务owner
-//     *
-//     * @param id
-//     * @return
-//     */
-//    @DeleteMapping("/{id}")
-//    @ApiOperation(value = "删除", notes = "删除")
-//    public ResponseMessage delete(@PathVariable("id") Long id) {
-//        jobTasksOwnerService.delete(id);
-//        return ok();
-//    }
-//
-//    /**
-//     * 查询明细
-//     *
-//     * @param id
-//     * @return
-//     */
-//    @GetMapping("/{id}")
-//    @ApiOperation(value = "查询明细", notes = "查询明细")
-//    public ResponseMessage info(@PathVariable("id") Long id) {
-//        JobTasksOwner jobTasksOwner = jobTasksOwnerService.selectById(id);
-//        return ok(jobTasksOwner);
-//    }
-//
-//    /**
-//     * 查询列表
-//     *
-//     * @param pageNum
-//     * @param pageSize
-//     * @return
-//     */
-//    @GetMapping
-//    @ApiOperation(value = "查询列表", notes = "查询列表")
-//    public ResponseMessage list(@RequestParam(value = "pageNum", required = false) Integer pageNum,
-//            @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-//        Page<JobTasksOwner> page = jobTasksOwnerService.page(new Page<JobTasksOwner>(pageNum, pageSize));
-//        return ok(page);
-//    }
+    /**
+     * 获取用户type值
+     *
+     * @author MurasakiSeiFu
+     * @date 2019-04-03 15:06
+     * @param: [jobId]
+     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
+     */
+    @GetMapping("/findType/{jobId}")
+    @ApiOperation(value = "获取用户type", notes = "获取用户type")
+    public ResponseMessage findOwnerType(@PathVariable("jobId") Long jobId) {
+        Integer type = jobTasksOwnerService.findOwnerTypeByJobId(jobId);
+        return ok(type);
+    }
+
 }

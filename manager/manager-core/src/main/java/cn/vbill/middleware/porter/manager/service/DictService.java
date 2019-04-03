@@ -43,4 +43,14 @@ public interface DictService {
      * @return: java.util.Map<java.lang.String,java.lang.Object>
      */
     Map<String, Object> dictByType(String type);
+
+    /**
+     * 获取任务权限操作字典
+     *
+     * @author MurasakiSeiFu
+     * @date 2019-04-03 14:10
+     * @param: []
+     * @return: java.util.Map<java.lang.String,java.lang.Object>
+     */
+    Map<String, Object> dictControlType();
 }
