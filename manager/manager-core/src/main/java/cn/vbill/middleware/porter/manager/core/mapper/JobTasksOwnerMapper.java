@@ -16,9 +16,6 @@
  */
 package cn.vbill.middleware.porter.manager.core.mapper;
 
-import cn.vbill.middleware.porter.manager.core.entity.CUser;
-import cn.vbill.middleware.porter.manager.core.entity.JobTasksOwner;
-import cn.vbill.middleware.porter.manager.web.page.Page;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -43,74 +40,11 @@ public interface JobTasksOwnerMapper {
     List<Long> selectOwnerIdByJobIdOrTypeOne(@Param("jobId") Long jobId, @Param("type") Integer type);
 
     /**
-     * 新增
-     *
-     * @param jobTasksOwner
-     */
-    Integer insert(JobTasksOwner jobTasksOwner);
-
-    /**
-     * 修改
-     *
-     * @param jobTasksOwner
-     */
-    Integer update(@Param("id") Long id, @Param("jobTasksOwner") JobTasksOwner jobTasksOwner);
-
-    /**
-     * 刪除
-     *
-     * @param id
-     * @return
-     */
-    Integer delete(Long id);
-
-    /**
-     * 根據主鍵id查找數據
-     *
-     * @param id
-     * @return
-     */
-    JobTasksOwner selectById(Long id);
-
-    /**
-     * 分頁
-     *
-     * @return
-     */
-    List<JobTasksOwner> page(@Param("page") Page<JobTasksOwner> page, @Param("state") Integer state);
-
-    /**
-     * 分頁All
-     *
-     * @return
-     */
-    Integer pageAll(@Param("state") Integer state);
-
-    /**
-     * 权限移交：移除当前所有者权限
+     * 根据任务id和用户id查询该用户type
      *
      * @param jobId
-     * @param ownerId
-     */
-    Integer deleteByOwnerIdAndJobId(@Param("jobId") Long jobId, @Param("ownerId") Long ownerId);
-
-    /**
-     * 权限移交：权限移交给toUserId
-     *
-     * @param jobId
-     * @param ownerId
+     * @param userId
      * @return
      */
-    Integer changePermission(@Param("jobId") Long jobId, @Param("ownerId") Long ownerId);
-
-    /**
-     * 权限共享
-     *
-     * @param jobId
-     * @param toUserIds
-     * @return
-     */
-    Integer sharePermission(@Param("jobId") Long jobId, @Param("toUserIds") List<CUser> toUserIds);
-
-
+    Integer findOwnerTypeByJobIdAndUserId(@Param("jobId") Long jobId, @Param("userId") Long userId);
 }

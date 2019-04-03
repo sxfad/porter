@@ -17,15 +17,12 @@
 package cn.vbill.middleware.porter.manager.service.impl;
 
 import cn.vbill.middleware.porter.manager.core.entity.CUser;
-import cn.vbill.middleware.porter.manager.core.entity.JobTasksOwner;
 import cn.vbill.middleware.porter.manager.core.mapper.JobTasksOwnerMapper;
 import cn.vbill.middleware.porter.manager.service.CUserService;
 import cn.vbill.middleware.porter.manager.service.JobTasksOwnerService;
-import cn.vbill.middleware.porter.manager.web.page.Page;
 import cn.vbill.middleware.porter.manager.web.rcc.RoleCheckContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
@@ -63,59 +60,15 @@ public class JobTasksOwnerServiceImpl implements JobTasksOwnerService {
     }
 
     @Override
-    public Integer insert(JobTasksOwner jobTasksOwner) {
-        return jobTasksOwnerMapper.insert(jobTasksOwner);
-    }
-
-    @Override
-    public Integer update(Long id, JobTasksOwner jobTasksOwner) {
-        return jobTasksOwnerMapper.update(id, jobTasksOwner);
-    }
-
-    @Override
-    public Integer delete(Long id) {
-        return jobTasksOwnerMapper.delete(id);
-    }
-
-    @Override
-    public JobTasksOwner selectById(Long id) {
-        return jobTasksOwnerMapper.selectById(id);
-    }
-
-    @Override
-    public Page<JobTasksOwner> page(Page<JobTasksOwner> page) {
-        Integer total = jobTasksOwnerMapper.pageAll(1);
-        if (total > 0) {
-            page.setTotalItems(total);
-            page.setResult(jobTasksOwnerMapper.page(page, 1));
+    public Integer findOwnerTypeByJobId(Long jobId) {
+        Integer type = null;
+        String roleCode = RoleCheckContext.getUserIdHolder().getRoleCode();
+        // 判断当前角色是否为管理员
+        if ("A0001".equals(roleCode) || "A0002".equals(roleCode)) {
+            type = 0;
+            return type;
         }
-        return page;
-    }
-
-    @Override
-    public void insertByJobTasks(Long jobId) {
-        JobTasksOwner jobTasksOwner = new JobTasksOwner();
-        jobTasksOwner.setJobId(jobId);
-        jobTasksOwner.setOwnerId(RoleCheckContext.getUserIdHolder().getUserId());
-        jobTasksOwnerMapper.insert(jobTasksOwner);
-    }
-
-    @Override
-    @Transactional
-    public Integer changePermission(Long jobId, Long fromUserId, Long toUserId) {
-        // 是否为非"A9999"权限用户操作
-        if (null != fromUserId) {
-            // 1.删除当前用户控制权
-            jobTasksOwnerMapper.deleteByOwnerIdAndJobId(jobId, fromUserId);
-        } else {
-            jobTasksOwnerMapper.deleteByOwnerIdAndJobId(jobId, RoleCheckContext.getUserIdHolder().getUserId());
-        }
-        // 2.移交控制权给toUserId
-        return jobTasksOwnerMapper.changePermission(jobId, toUserId);
-    }
-
-    @Override
-    public Integer sharePermission(Long jobId, List<CUser> toUserIds) {
-        return jobTasksOwnerMapper.sharePermission(jobId, toUserIds);
+        type = jobTasksOwnerMapper.findOwnerTypeByJobIdAndUserId(jobId, RoleCheckContext.getUserIdHolder().getUserId());
+        return type;
     }
 }

@@ -17,8 +17,6 @@
 package cn.vbill.middleware.porter.manager.service;
 
 import cn.vbill.middleware.porter.manager.core.entity.CUser;
-import cn.vbill.middleware.porter.manager.core.entity.JobTasksOwner;
-import cn.vbill.middleware.porter.manager.web.page.Page;
 
 import java.util.List;
 import java.util.Map;
@@ -33,7 +31,6 @@ import java.util.Map;
  */
 public interface JobTasksOwnerService {
 
-
     /**
      * 回显任务所有者、任务共享者
      *
@@ -43,62 +40,10 @@ public interface JobTasksOwnerService {
     Map<Integer, List<CUser>> jobOwnerTypeAll(Long jobId);
 
     /**
-     * 新增
-     *
-     * @param jobTasksOwner
-     */
-    Integer insert(JobTasksOwner jobTasksOwner);
-
-    /**
-     * 修改
-     *
-     * @param id, jobTasksOwner
-     */
-    Integer update(Long id, JobTasksOwner jobTasksOwner);
-
-    /**
-     * 删除
-     *
-     * @param id
-     */
-    Integer delete(Long id);
-
-    /**
-     * 查询详情
-     *
-     * @param id
-     */
-    JobTasksOwner selectById(Long id);
-
-    /**
-     * 分页查询
-     *
-     * @param page
-     */
-    Page<JobTasksOwner> page(Page<JobTasksOwner> page);
-
-    /**
-     * 新增任务同时更新任务所有权控制
+     * 获取用户type
      *
      * @param jobId
-     */
-    void insertByJobTasks(Long jobId);
-
-    /**
-     * 权限移交
-     *
-     * @param jobId
-     * @param toUserId
      * @return
      */
-    Integer changePermission(Long jobId, Long fromUserId, Long toUserId);
-
-    /**
-     * 权限共享
-     *
-     * @param jobId
-     * @param toUserIds
-     * @return
-     */
-    Integer sharePermission(Long jobId, List<CUser> toUserIds);
+    Integer findOwnerTypeByJobId(Long jobId);
 }
