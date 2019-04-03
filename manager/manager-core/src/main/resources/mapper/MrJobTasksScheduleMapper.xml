@@ -188,12 +188,12 @@
         mr_job_tasks_schedule.delete_failure AS deleteFailure,
         dispose_schedule AS disposeSchedule,
         last_loaded_data_time AS lastLoadedDataTime,
-        insertSuccessByDay,
-        insertFailureByDay,
-        updateSuccessByDay,
-        updateFailureByDay,
-        deleteSuccessByDay,
-        deleteFailureByDay
+        ifnull(insertSuccessByDay,0) AS insertSuccessByDay,
+        ifnull(insertFailureByDay,0) AS insertFailureByDay,
+        ifnull(updateSuccessByDay,0) AS updateSuccessByDay,
+        ifnull(updateFailureByDay,0) AS updateFailureByDay,
+        ifnull(deleteSuccessByDay,0) AS deleteSuccessByDay,
+        ifnull(deleteFailureByDay,0) AS deleteFailureByDay
         FROM
         mr_job_tasks_schedule
         LEFT JOIN (

@@ -114,14 +114,12 @@ public class MrNodesMonitorServiceImpl implements MrNodesMonitorService {
 
     @Override
     public MrNodeMonitor obNodeMonitorDetail(String nodeId, String date, Long intervalTime, Long intervalCount) {
-        Long startRow = intervalTime * intervalCount;
-        Date nowDate = new Date();
-        String newDate = DateFormatUtils.formatDate("yyyy-MM-dd", nowDate);
-
+        String newDate = DateFormatUtils.formatDate("yyyy-MM-dd", new Date());
         // 如果是当前日期则显示最近的时间，否则显示一天的数据
         if (!newDate.equals(date)) {
             intervalTime = 1440L;
         }
+        Long startRow = intervalTime * intervalCount;
         // 拼出表名
         String monitorTable = convert(date);
         List<MrNodesMonitor> mrNodesMonitors = mrNodesMonitorMapper.selectByNodeIdDetail(nodeId, startRow, intervalTime, date, monitorTable);
