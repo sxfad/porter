@@ -54,16 +54,16 @@ public class JobTasksOwnerServiceImpl implements JobTasksOwnerService {
         List<CUser> userShares = null;
         List<Long> userIdOnes = jobTasksOwnerMapper.selectOwnerIdByJobIdOrTypeOne(jobId, 1);
         List<Long> userIdTwos = jobTasksOwnerMapper.selectOwnerIdByJobIdOrTypeOne(jobId, 2);
-        if (!userIdOnes.isEmpty()) {
-            userOwner = cUserService.selectByIdList(userIdOnes);
-        }
-        if (!userIdTwos.isEmpty()) {
-            userShares = cUserService.selectByIdList(userIdTwos);
-        }
-        Map<Integer, List<CUser>> map = new HashMap<>();
-        map.put(1, userOwner);
-        map.put(2, userShares);
-        return map;
+//        if (!userIdOnes.isEmpty()) {
+//            userOwner = cUserService.selectByIdList(userIdOnes);
+//        }
+//        if (!userIdTwos.isEmpty()) {
+//            userShares = cUserService.selectByIdList(userIdTwos);
+//        }
+//        Map<Integer, List<CUser>> map = new HashMap<>();
+//        map.put(1, userOwner);
+//        map.put(2, userShares);
+        return null;
     }
 
     @Override
