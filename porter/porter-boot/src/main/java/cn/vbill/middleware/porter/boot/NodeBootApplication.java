@@ -18,12 +18,12 @@
 package cn.vbill.middleware.porter.boot;
 
 import cn.vbill.middleware.porter.boot.helper.GCHelper;
-import cn.vbill.middleware.porter.common.client.PublicClientContext;
-import cn.vbill.middleware.porter.common.dic.AlertPlugin;
+import cn.vbill.middleware.porter.common.warning.entity.WarningPlugin;
+import cn.vbill.middleware.porter.common.task.loader.PublicClientContext;
 import cn.vbill.middleware.porter.boot.config.SourcesConfig;
 import cn.vbill.middleware.porter.core.NodeContext;
 import cn.vbill.middleware.porter.task.TaskController;
-import cn.vbill.middleware.porter.common.alert.AlertProviderFactory;
+import cn.vbill.middleware.porter.common.warning.WarningProviderFactory;
 import cn.vbill.middleware.porter.common.cluster.ClusterProviderProxy;
 import cn.vbill.middleware.porter.common.cluster.event.command.NodeRegisterCommand;
 import cn.vbill.middleware.porter.common.util.compile.JavaFileCompiler;
@@ -86,11 +86,11 @@ public class NodeBootApplication {
         //获取配置类
         NodeConfig config = context.getBean(NodeConfig.class);
         //从本地初始化告警配置
-        if (null != config.getAlert() && AlertPlugin.NONE != config.getAlert().getStrategy()) {
+        if (null != config.getAlert() && WarningPlugin.NONE != config.getAlert().getStrategy()) {
             try {
-                AlertProviderFactory.INSTANCE.initialize(config.getAlert());
+                WarningProviderFactory.INSTANCE.initialize(config.getAlert());
             } catch (Exception e) {
-                LOGGER.error("fail to initiate alert properties", e.getMessage());
+                LOGGER.error("fail to initiate warning properties", e.getMessage());
                 System.exit(-1);
             }
         }

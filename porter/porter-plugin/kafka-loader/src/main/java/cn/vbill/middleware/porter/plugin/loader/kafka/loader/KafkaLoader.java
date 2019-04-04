@@ -18,17 +18,17 @@
 package cn.vbill.middleware.porter.plugin.loader.kafka.loader;
 
 
-import cn.vbill.middleware.porter.common.exception.TaskDataException;
-import cn.vbill.middleware.porter.common.exception.TaskStopTriggerException;
-import cn.vbill.middleware.porter.core.event.etl.ETLBucket;
-import cn.vbill.middleware.porter.core.event.etl.ETLColumn;
-import cn.vbill.middleware.porter.core.loader.AbstractDataLoader;
-import cn.vbill.middleware.porter.core.loader.SubmitStatObject;
+import cn.vbill.middleware.porter.common.task.exception.TaskDataException;
+import cn.vbill.middleware.porter.common.task.exception.TaskStopTriggerException;
+import cn.vbill.middleware.porter.core.task.setl.ETLBucket;
+import cn.vbill.middleware.porter.core.task.setl.ETLColumn;
+import cn.vbill.middleware.porter.core.task.loader.AbstractDataLoader;
+import cn.vbill.middleware.porter.core.task.statistics.DSubmitStatObject;
 import cn.vbill.middleware.porter.plugin.loader.kafka.KafkaLoaderConst;
 import cn.vbill.middleware.porter.plugin.loader.kafka.client.KafkaProduceClient;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import cn.vbill.middleware.porter.core.event.etl.ETLRow;
+import cn.vbill.middleware.porter.core.task.setl.ETLRow;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
@@ -57,21 +57,21 @@ public class KafkaLoader extends AbstractDataLoader {
     }
 
     @Override
-    public Pair<Boolean, List<SubmitStatObject>> load(ETLBucket bucket) throws TaskStopTriggerException {
+    public Pair<Boolean, List<DSubmitStatObject>> load(ETLBucket bucket) throws TaskStopTriggerException {
         return storeData(bucket, true);
     }
 
-    protected Pair<Boolean, List<SubmitStatObject>> storeData(ETLBucket bucket, boolean sync) throws TaskStopTriggerException {
+    protected Pair<Boolean, List<DSubmitStatObject>> storeData(ETLBucket bucket, boolean sync) throws TaskStopTriggerException {
         LOGGER.info("start loading bucket:{},size:{}", bucket.getSequence(), bucket.getRows().size());
         KafkaProduceClient client = getLoadClient();
         List<Triple<String, String, Integer>> producerRecords = new ArrayList<>();
-        List<SubmitStatObject> affectRow = new ArrayList<>();
+        List<DSubmitStatObject> affectRow = new ArrayList<>();
         for (ETLRow row : bucket.getRows()) {
             String key = KafkaETLRowField.getRecordKey(row);
             String value = KafkaETLRowField.getRecordValue(row);
             producerRecords.add(new ImmutableTriple<>(key, value, null));
             //插入影响行数
-            affectRow.add(new SubmitStatObject(row.getFinalSchema(), row.getFinalTable(), row.getFinalOpType(),
+            affectRow.add(new DSubmitStatObject(row.getFinalSchema(), row.getFinalTable(), row.getFinalOpType(),
                     1, row.getPosition(), row.getOpTime()));
         }
         client.send(producerRecords, sync);

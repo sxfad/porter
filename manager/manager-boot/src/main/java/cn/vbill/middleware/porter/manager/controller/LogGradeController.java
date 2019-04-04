@@ -19,7 +19,7 @@ package cn.vbill.middleware.porter.manager.controller;
 
 import cn.vbill.middleware.porter.common.cluster.ClusterProviderProxy;
 import cn.vbill.middleware.porter.common.cluster.event.command.LogConfigPushCommand;
-import cn.vbill.middleware.porter.common.config.LogConfig;
+import cn.vbill.middleware.porter.common.node.config.LogConfig;
 import cn.vbill.middleware.porter.manager.core.entity.LogGrade;
 import cn.vbill.middleware.porter.manager.service.LogGradeService;
 import cn.vbill.middleware.porter.manager.web.message.ResponseMessage;

@@ -19,9 +19,9 @@ package cn.vbill.middleware.porter.manager.controller;
 
 import cn.vbill.middleware.porter.common.cluster.ClusterProviderProxy;
 import cn.vbill.middleware.porter.common.cluster.event.command.NodeOrderPushCommand;
-import cn.vbill.middleware.porter.common.config.NodeCommandConfig;
-import cn.vbill.middleware.porter.common.dic.NodeStatusType;
-import cn.vbill.middleware.porter.common.node.NodeCommandType;
+import cn.vbill.middleware.porter.common.node.config.NodeCommandConfig;
+import cn.vbill.middleware.porter.common.node.dic.NodeStatusType;
+import cn.vbill.middleware.porter.common.node.dic.NodeCommandType;
 import cn.vbill.middleware.porter.manager.core.entity.Nodes;
 import cn.vbill.middleware.porter.manager.service.NodesService;
 import cn.vbill.middleware.porter.manager.web.message.ResponseMessage;

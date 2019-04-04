@@ -39,8 +39,8 @@ import com.alibaba.fastjson.JSON;
 
 import cn.vbill.middleware.porter.common.cluster.ClusterProviderProxy;
 import cn.vbill.middleware.porter.common.cluster.event.command.TaskPushCommand;
-import cn.vbill.middleware.porter.common.config.TaskConfig;
-import cn.vbill.middleware.porter.common.dic.TaskStatusType;
+import cn.vbill.middleware.porter.common.task.config.TaskConfig;
+import cn.vbill.middleware.porter.common.task.dic.TaskStatusType;
 import cn.vbill.middleware.porter.manager.core.entity.JobTasks;
 import cn.vbill.middleware.porter.manager.service.JobTasksService;
 import cn.vbill.middleware.porter.manager.web.message.ResponseMessage;

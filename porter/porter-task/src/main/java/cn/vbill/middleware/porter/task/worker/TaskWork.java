@@ -17,7 +17,7 @@
 
 package cn.vbill.middleware.porter.task.worker;
 
-import cn.vbill.middleware.porter.common.alert.AlertReceiver;
+import cn.vbill.middleware.porter.common.warning.entity.WarningReceiver;
 import cn.vbill.middleware.porter.common.cluster.ClusterProviderProxy;
 import cn.vbill.middleware.porter.common.cluster.event.command.StatisticUploadCommand;
 import cn.vbill.middleware.porter.common.cluster.event.command.TaskPositionQueryCommand;
@@ -26,20 +26,21 @@ import cn.vbill.middleware.porter.common.cluster.event.command.TaskStatCommand;
 import cn.vbill.middleware.porter.common.cluster.event.command.TaskStatQueryCommand;
 import cn.vbill.middleware.porter.common.cluster.event.command.TaskStopCommand;
 import cn.vbill.middleware.porter.common.cluster.event.command.TaskStoppedByErrorCommand;
-import cn.vbill.middleware.porter.common.cluster.data.DCallback;
-import cn.vbill.middleware.porter.common.cluster.data.DObject;
-import cn.vbill.middleware.porter.common.cluster.data.DTaskStat;
-import cn.vbill.middleware.porter.common.exception.TaskStopTriggerException;
-import cn.vbill.middleware.porter.common.exception.WorkResourceAcquireException;
-import cn.vbill.middleware.porter.common.statistics.NodeLog;
-import cn.vbill.middleware.porter.common.statistics.TaskPerformance;
+import cn.vbill.middleware.porter.common.statistics.DCallback;
+import cn.vbill.middleware.porter.common.statistics.DObject;
+import cn.vbill.middleware.porter.common.task.statistics.DTaskStat;
+import cn.vbill.middleware.porter.common.task.exception.TaskStopTriggerException;
+import cn.vbill.middleware.porter.common.task.exception.WorkResourceAcquireException;
+import cn.vbill.middleware.porter.common.node.statistics.NodeLog;
+import cn.vbill.middleware.porter.common.task.statistics.TaskPerformance;
 import cn.vbill.middleware.porter.common.util.MachineUtils;
 import cn.vbill.middleware.porter.core.NodeContext;
-import cn.vbill.middleware.porter.core.consumer.DataConsumer;
-import cn.vbill.middleware.porter.core.loader.DataLoader;
-import cn.vbill.middleware.porter.core.task.StageJob;
-import cn.vbill.middleware.porter.core.task.StageType;
-import cn.vbill.middleware.porter.core.task.TableMapper;
+import cn.vbill.middleware.porter.core.task.TaskContext;
+import cn.vbill.middleware.porter.core.task.consumer.DataConsumer;
+import cn.vbill.middleware.porter.core.task.loader.DataLoader;
+import cn.vbill.middleware.porter.core.task.job.StageJob;
+import cn.vbill.middleware.porter.core.task.job.StageType;
+import cn.vbill.middleware.porter.core.task.entity.TableMapper;
 import cn.vbill.middleware.porter.task.TaskController;
 import cn.vbill.middleware.porter.task.alert.AlertJob;
 import cn.vbill.middleware.porter.task.extract.ExtractJob;
@@ -88,14 +89,14 @@ public class TaskWork {
     private final Map<String, TableMapper> mappers;
     private final TaskWorker worker;
 
-    private final List<AlertReceiver> receivers;
+    private final List<WarningReceiver> receivers;
 
     /**
      * 触发任务停止标识，生命周期内，仅有一次
      */
     private final AtomicBoolean stopTrigger = new AtomicBoolean(false);
 
-    public TaskWork(DataConsumer dataConsumer, DataLoader dataLoader, String taskId, List<AlertReceiver> receivers,
+    public TaskWork(DataConsumer dataConsumer, DataLoader dataLoader, String taskId, List<WarningReceiver> receivers,
                     TaskWorker worker, long positionCheckInterval, long alarmPositionCount) throws Exception {
         this.dataConsumer = dataConsumer;
         this.dataLoader = dataLoader;
@@ -156,17 +157,17 @@ public class TaskWork {
                     //上传消费进度
                     submitStat();
                 } catch (Exception e) {
-                    NodeLog.upload(NodeLog.LogType.TASK_LOG, taskId, dataConsumer.getSwimlaneId(), "停止上传消费进度失败:" + e.getMessage());
+                    TaskContext.warning(NodeLog.upload(NodeLog.LogType.INFO, taskId, dataConsumer.getSwimlaneId(), "停止上传消费进度失败:" + e.getMessage()));
                 }
                 try {
                     //广播任务结束消息
                     ClusterProviderProxy.INSTANCE.broadcastEvent(new TaskStopCommand(taskId, dataConsumer.getSwimlaneId()));
                 } catch (Exception e) {
-                    NodeLog.upload(NodeLog.LogType.TASK_LOG, taskId, dataConsumer.getSwimlaneId(), "广播TaskStopCommand失败:" + e.getMessage());
+                    TaskContext.warning(NodeLog.upload(NodeLog.LogType.INFO, taskId, dataConsumer.getSwimlaneId(), "广播TaskStopCommand失败:" + e.getMessage()));
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                NodeLog.upload(NodeLog.LogType.TASK_LOG, taskId, dataConsumer.getSwimlaneId(), "任务关闭失败:" + e.getMessage());
+                TaskContext.warning(NodeLog.upload(NodeLog.LogType.INFO, taskId, dataConsumer.getSwimlaneId(), "任务关闭失败:" + e.getMessage()));
                 LOGGER.error("终止执行任务[{}-{}]异常", taskId, dataConsumer.getSwimlaneId(), e);
             } finally {
                 NodeContext.INSTANCE.releaseWork();
@@ -291,7 +292,7 @@ public class TaskWork {
                     }
                 }));
             } catch (Throwable e) {
-                NodeLog.upload(NodeLog.LogType.TASK_LOG, taskId, dataConsumer.getSwimlaneId(), "上传任务状态信息失败:" + e.getMessage());
+                NodeLog.upload(NodeLog.LogType.INFO, taskId, dataConsumer.getSwimlaneId(), "上传任务状态信息失败:" + e.getMessage());
             }
 
             //上传统计
@@ -301,7 +302,7 @@ public class TaskWork {
                     ClusterProviderProxy.INSTANCE.broadcastEvent(new StatisticUploadCommand(new TaskPerformance(newStat)));
                 }
             } catch (Throwable e) {
-                NodeLog.upload(NodeLog.LogType.TASK_LOG, taskId, dataConsumer.getSwimlaneId(), "上传任务统计信息失败:" + e.getMessage());
+                TaskContext.warning(NodeLog.upload(NodeLog.LogType.INFO, taskId, dataConsumer.getSwimlaneId(), "上传任务统计信息失败:" + e.getMessage()));
             }
         });
     }
@@ -311,7 +312,7 @@ public class TaskWork {
      *
      * @date 2018/8/9 下午2:17
      * @param: [schema, table]
-     * @return: cn.vbill.middleware.porter.core.task.TableMapper
+     * @return: cn.vbill.middleware.porter.core.task.entity.TableMapper
      */
     public TableMapper getTableMapper(String schema, String table) {
         String key = schema + "." + table;
@@ -399,9 +400,9 @@ public class TaskWork {
                         LOGGER.info("开始发送日志通知.....");
 
                         //上传日志
-                        NodeLog log = new NodeLog(NodeLog.LogType.TASK_ALARM, taskId, dataConsumer.getSwimlaneId(), alarmNotice);
+                        NodeLog log = new NodeLog(NodeLog.LogType.ERROR, taskId, dataConsumer.getSwimlaneId(), alarmNotice);
                         log.setTitle("【告警】【" + MachineUtils.IP_ADDRESS + "】" + taskId + "-" + dataConsumer.getSwimlaneId() + "任务异常停止");
-                        NodeLog.upload(log, getReceivers());
+                        TaskContext.warning(log.upload());
                         LOGGER.info("结束发送日志通知.....");
                     } catch (Throwable e) {
                         LOGGER.warn("停止告警发送失败", e);
@@ -419,7 +420,7 @@ public class TaskWork {
         return dataLoader;
     }
 
-    public List<AlertReceiver> getReceivers() {
+    public List<WarningReceiver> getReceivers() {
         return receivers;
     }
 

@@ -185,7 +185,7 @@ public class CMenuServiceImpl implements CMenuService {
      * @author FuZizheng
      * @date 2018/8/10 下午2:15
      * @param: [menulist]
-     * @return: cn.vbill.middleware.porter.manager.core.entity.CMenu
+     * @return: cn.vbill.middleware.porter.manager.core.event.CMenu
      */
     private CMenu parentMenu(List<CMenu> menulist) {
 
@@ -201,7 +201,7 @@ public class CMenuServiceImpl implements CMenuService {
      * @author FuZizheng
      * @date 2018/8/10 下午2:15
      * @param: [menulist]
-     * @return: java.util.Map<java.lang.String       ,       java.util.List       <       cn.vbill.middleware.porter.manager.core.entity.CMenu>>
+     * @return: java.util.Map<java.lang.String       ,       java.util.List       <       cn.vbill.middleware.porter.manager.core.event.CMenu>>
      */
     private Map<String, List<CMenu>> listtomap(List<CMenu> menulist) {
         Map<String, List<CMenu>> menuMap = new HashMap<>();
@@ -224,7 +224,7 @@ public class CMenuServiceImpl implements CMenuService {
      * @author FuZizheng
      * @date 2018/8/10 下午2:16
      * @param: [fatherCode, menuMap]
-     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.entity.CMenu>
+     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.event.CMenu>
      */
     private List<CMenu> menus(String fatherCode, Map<String, List<CMenu>> menuMap) {
         List<CMenu> childlist = menuMap.get(fatherCode);

@@ -17,14 +17,14 @@
 
 package cn.vbill.middleware.porter.plugin.loader.kudu.loader;
 
-import cn.vbill.middleware.porter.common.exception.TaskDataException;
-import cn.vbill.middleware.porter.common.exception.TaskStopTriggerException;
-import cn.vbill.middleware.porter.core.event.s.EventType;
-import cn.vbill.middleware.porter.core.event.etl.ETLBucket;
-import cn.vbill.middleware.porter.core.event.etl.ETLColumn;
-import cn.vbill.middleware.porter.core.event.etl.ETLRow;
-import cn.vbill.middleware.porter.core.loader.AbstractDataLoader;
-import cn.vbill.middleware.porter.core.loader.SubmitStatObject;
+import cn.vbill.middleware.porter.common.task.exception.TaskDataException;
+import cn.vbill.middleware.porter.common.task.exception.TaskStopTriggerException;
+import cn.vbill.middleware.porter.core.message.MessageAction;
+import cn.vbill.middleware.porter.core.task.setl.ETLBucket;
+import cn.vbill.middleware.porter.core.task.setl.ETLColumn;
+import cn.vbill.middleware.porter.core.task.setl.ETLRow;
+import cn.vbill.middleware.porter.core.task.loader.AbstractDataLoader;
+import cn.vbill.middleware.porter.core.task.statistics.DSubmitStatObject;
 import cn.vbill.middleware.porter.plugin.loader.kudu.KuduLoaderConst;
 import cn.vbill.middleware.porter.plugin.loader.kudu.client.KUDUClient;
 import lombok.SneakyThrows;
@@ -53,8 +53,8 @@ public class KuduLoader extends AbstractDataLoader {
     }
 
     @Override
-    public Pair<Boolean, List<SubmitStatObject>> load(ETLBucket bucket) throws TaskStopTriggerException {
-        List<SubmitStatObject> affectRow = new ArrayList<>();
+    public Pair<Boolean, List<DSubmitStatObject>> load(ETLBucket bucket) throws TaskStopTriggerException {
+        List<DSubmitStatObject> affectRow = new ArrayList<>();
         KUDUClient client = getLoadClient();
         bucket.getBatchRows().forEach(new Consumer<List<ETLRow>>() {
             @Override
@@ -64,7 +64,7 @@ public class KuduLoader extends AbstractDataLoader {
                     return;
                 }
                 //批次操作类型
-                EventType type = l.get(0).getFinalOpType();
+                MessageAction type = l.get(0).getFinalOpType();
                 String tableName = l.get(0).getFinalTable();
                 String schemaName = l.get(0).getFinalSchema();
 
@@ -118,7 +118,7 @@ public class KuduLoader extends AbstractDataLoader {
                     //更新进度信息
                     for (int affect = 0; affect < l.size(); affect++) {
                         ETLRow row = l.get(affect);
-                        affectRow.add(new SubmitStatObject(schemaName, tableName, type,
+                        affectRow.add(new DSubmitStatObject(schemaName, tableName, type,
                                 result[affect], row.getPosition(), row.getOpTime()));
                     }
 
@@ -140,7 +140,7 @@ public class KuduLoader extends AbstractDataLoader {
                 if (c.isKey()) {
                     keys.add(new ImmutableTriple<>(c.getFinalName(), c.getFinalType(), c.getFinalValue()));
                     //更新时需要，判断主键是否发生变化
-                    if (!c.getFinalOldValue().equals(c.getFinalValue()) && row.getFinalOpType() == EventType.UPDATE) {
+                    if (!c.getFinalOldValue().equals(c.getFinalValue()) && row.getFinalOpType() == MessageAction.UPDATE) {
                         KuduCustomETLRowField.setKeyChanged(row, true);
                         oldKeys.add(new ImmutableTriple<>(c.getFinalName(), c.getFinalType(), c.getFinalOldValue()));
                     }

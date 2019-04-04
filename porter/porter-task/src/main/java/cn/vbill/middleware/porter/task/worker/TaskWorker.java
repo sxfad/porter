@@ -19,14 +19,15 @@ package cn.vbill.middleware.porter.task.worker;
 
 import cn.vbill.middleware.porter.common.exception.ClientException;
 import cn.vbill.middleware.porter.common.exception.ConfigParseException;
-import cn.vbill.middleware.porter.common.exception.DataConsumerBuildException;
-import cn.vbill.middleware.porter.common.exception.DataLoaderBuildException;
-import cn.vbill.middleware.porter.common.exception.TaskLockException;
-import cn.vbill.middleware.porter.common.statistics.NodeLog;
+import cn.vbill.middleware.porter.common.task.exception.DataConsumerBuildException;
+import cn.vbill.middleware.porter.common.task.exception.DataLoaderBuildException;
+import cn.vbill.middleware.porter.common.task.exception.TaskLockException;
+import cn.vbill.middleware.porter.common.node.statistics.NodeLog;
 import cn.vbill.middleware.porter.common.util.DefaultNamedThreadFactory;
-import cn.vbill.middleware.porter.core.task.Task;
-import cn.vbill.middleware.porter.common.config.TaskConfig;
-import cn.vbill.middleware.porter.core.task.TableMapper;
+import cn.vbill.middleware.porter.core.task.TaskContext;
+import cn.vbill.middleware.porter.core.task.entity.Task;
+import cn.vbill.middleware.porter.common.task.config.TaskConfig;
+import cn.vbill.middleware.porter.core.task.entity.TableMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -158,7 +159,7 @@ public class TaskWorker {
                 //任务抢占异常不属于报错范畴
                 if (!(e instanceof TaskLockException)) {
                     LOGGER.error("Consumer JOB[{}] failed to start!", c.getSwimlaneId(), e);
-                    NodeLog.upload(NodeLog.LogType.TASK_LOG, task.getTaskId(), c.getSwimlaneId(), e.getMessage());
+                    TaskContext.warning(NodeLog.upload(NodeLog.LogType.INFO, task.getTaskId(), c.getSwimlaneId(), e.getMessage()));
                 } else {
                     e.printStackTrace();
                 }

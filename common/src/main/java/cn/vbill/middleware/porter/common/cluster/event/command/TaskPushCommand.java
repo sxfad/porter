@@ -18,7 +18,7 @@
 package cn.vbill.middleware.porter.common.cluster.event.command;
 
 import cn.vbill.middleware.porter.common.cluster.event.ClusterListenerEventType;
-import cn.vbill.middleware.porter.common.config.TaskConfig;
+import cn.vbill.middleware.porter.common.task.config.TaskConfig;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -17,7 +17,11 @@
 
 package cn.vbill.middleware.porter.manager.service.impl;
 
+import cn.vbill.middleware.porter.common.cluster.dic.ClusterPlugin;
 import cn.vbill.middleware.porter.common.dic.*;
+import cn.vbill.middleware.porter.common.node.dic.NodeStatusType;
+import cn.vbill.middleware.porter.common.task.dic.TaskStatusType;
+import cn.vbill.middleware.porter.common.warning.entity.WarningPlugin;
 import cn.vbill.middleware.porter.manager.core.enums.*;
 import cn.vbill.middleware.porter.manager.core.enums.SourceType;
 import cn.vbill.middleware.porter.manager.service.DictService;
@@ -43,7 +47,7 @@ public class DictServiceImpl implements DictService {
     @Override
     public Map<String, Map<String, Object>> dictAll() {
         Map<String, Map<String, Object>> map = new HashMap<>();
-        map.put("AlertPlugin", AlertPlugin.LINKMAP); // AlertPlugin - 告警策略
+        map.put("AlertPlugin", WarningPlugin.LINKMAP); // WarningPlugin - 告警策略
         map.put("ClusterPlugin", ClusterPlugin.LINKMAP); //ClusterPlugin - 集群方案
         map.put("ConsumeConverterPlugin", ConsumeConverterPlugin.LINKMAP); //ConsumeConverterPlugin 转换器插件
         map.put("ConsumerPlugin", ConsumerPlugin.LINKMAP); //ConsumerPlugin 消费器插件

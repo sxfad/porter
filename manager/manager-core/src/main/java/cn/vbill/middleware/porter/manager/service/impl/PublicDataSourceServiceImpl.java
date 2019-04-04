@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.UUID;
 
-import cn.vbill.middleware.porter.common.config.PublicSourceConfig;
+import cn.vbill.middleware.porter.common.task.config.PublicSourceConfig;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

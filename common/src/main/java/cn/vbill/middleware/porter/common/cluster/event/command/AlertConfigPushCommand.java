@@ -18,7 +18,7 @@
 package cn.vbill.middleware.porter.common.cluster.event.command;
 
 import cn.vbill.middleware.porter.common.cluster.event.ClusterListenerEventType;
-import cn.vbill.middleware.porter.common.config.AlertConfig;
+import cn.vbill.middleware.porter.common.warning.config.WarningConfig;
 import com.alibaba.fastjson.JSONObject;
 
 import lombok.Getter;
@@ -38,14 +38,14 @@ public class AlertConfigPushCommand extends ConfigPushCommand {
         setType(ConfigPushType.ALERT);
     }
 
-    public AlertConfigPushCommand(AlertConfig config) {
+    public AlertConfigPushCommand(WarningConfig config) {
         this.config = config;
         setType(ConfigPushType.ALERT);
     }
 
     @Getter
     @Setter
-    private AlertConfig config;
+    private WarningConfig config;
 
     @Override
     public String render() {

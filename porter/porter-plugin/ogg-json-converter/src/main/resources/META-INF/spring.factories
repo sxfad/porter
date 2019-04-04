@@ -1,2 +1,2 @@
-cn.vbill.middleware.porter.core.event.s.EventConverter = \
+cn.vbill.middleware.porter.core.message.converter.EventConverter = \
   cn.vbill.middleware.porter.plugin.converter.ogg.OggJsonConverter

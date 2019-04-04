@@ -19,9 +19,9 @@ package cn.vbill.middleware.porter.manager.service;
 
 import java.util.List;
 
-import cn.vbill.middleware.porter.common.dic.TaskStatusType;
+import cn.vbill.middleware.porter.common.task.dic.TaskStatusType;
 import cn.vbill.middleware.porter.manager.core.entity.JobTasks;
-import cn.vbill.middleware.porter.common.config.TaskConfig;
+import cn.vbill.middleware.porter.common.task.config.TaskConfig;
 import cn.vbill.middleware.porter.manager.web.page.Page;
 
 /**
@@ -93,7 +93,7 @@ public interface JobTasksService {
      *
      * @date 2018/8/10 上午11:44
      * @param: [id]
-     * @return: cn.vbill.middleware.porter.manager.core.entity.JobTasks
+     * @return: cn.vbill.middleware.porter.manager.core.event.JobTasks
      */
     JobTasks selectById(Long id);
 
@@ -102,7 +102,7 @@ public interface JobTasksService {
      *
      * @date 2018/8/10 上午11:44
      * @param: [id]
-     * @return: cn.vbill.middleware.porter.manager.core.entity.JobTasks
+     * @return: cn.vbill.middleware.porter.manager.core.event.JobTasks
      */
     JobTasks selectByIdOne(Long id);
 
@@ -111,7 +111,7 @@ public interface JobTasksService {
      *
      * @date 2018/8/10 上午11:44
      * @param: [id]
-     * @return: cn.vbill.middleware.porter.manager.core.entity.JobTasks
+     * @return: cn.vbill.middleware.porter.manager.core.event.JobTasks
      */
     JobTasks selectEntityById(Long id);
 
@@ -121,7 +121,7 @@ public interface JobTasksService {
      * @date 2018/8/10 上午11:44
      * @param: [page,
      *             jobName, beginTime, endTime, jobState, jobType]
-     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.entity.JobTasks>
+     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.event.JobTasks>
      */
     Page<JobTasks> page(Page<JobTasks> page, String jobName, Long jobId, String beginTime, String endTime, TaskStatusType jobState,
             Integer jobType, Long id);
@@ -170,7 +170,7 @@ public interface JobTasksService {
      *
      * @date 2018/8/10 上午11:45
      * @param: []
-     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.entity.JobTasks>
+     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.event.JobTasks>
      */
     List<JobTasks> selectList();
 
@@ -179,7 +179,7 @@ public interface JobTasksService {
      *
      * @date 2018/8/10 上午11:45
      * @param: []
-     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.entity.JobTasks>
+     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.event.JobTasks>
      */
     List<JobTasks> selectJobNameList();
 

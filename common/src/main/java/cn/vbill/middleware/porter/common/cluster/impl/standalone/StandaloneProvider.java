@@ -17,14 +17,14 @@
 
 package cn.vbill.middleware.porter.common.cluster.impl.standalone;
 
-import cn.vbill.middleware.porter.common.client.ClusterClient;
-import cn.vbill.middleware.porter.common.client.DistributedLock;
-import cn.vbill.middleware.porter.common.client.impl.FileClient;
+import cn.vbill.middleware.porter.common.cluster.client.ClusterClient;
+import cn.vbill.middleware.porter.common.cluster.config.FileOperationConfig;
+import cn.vbill.middleware.porter.common.lock.DistributedLock;
+import cn.vbill.middleware.porter.common.cluster.client.FileClient;
 import cn.vbill.middleware.porter.common.cluster.ClusterMonitor;
 import cn.vbill.middleware.porter.common.cluster.impl.AbstractClusterProvider;
-import cn.vbill.middleware.porter.common.config.ClusterConfig;
-import cn.vbill.middleware.porter.common.config.source.FileOperationConfig;
-import cn.vbill.middleware.porter.common.dic.ClusterPlugin;
+import cn.vbill.middleware.porter.common.cluster.config.ClusterConfig;
+import cn.vbill.middleware.porter.common.cluster.dic.ClusterPlugin;
 import cn.vbill.middleware.porter.common.exception.ConfigParseException;
 
 /**

@@ -118,7 +118,7 @@ public interface JobTasksMapper {
      *
      * @date 2018/8/9 下午6:15
      * @param: []
-     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.entity.JobTasks>
+     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.event.JobTasks>
      */
     List<JobTasks> selectList();
 
@@ -128,7 +128,7 @@ public interface JobTasksMapper {
      * @author FuZizheng
      * @date 2018/8/9 下午6:15
      * @param: []
-     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.entity.JobTasks>
+     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.event.JobTasks>
      */
     List<JobTasks> selectJobNameList();
 

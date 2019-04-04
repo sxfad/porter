@@ -17,7 +17,7 @@
 
 package cn.vbill.middleware.porter.task.transform.transformer;
 
-import cn.vbill.middleware.porter.core.event.etl.ETLBucket;
+import cn.vbill.middleware.porter.core.task.setl.ETLBucket;
 import cn.vbill.middleware.porter.task.worker.TaskWork;
 
 /**

@@ -17,9 +17,8 @@
 
 package cn.vbill.middleware.porter.common.cluster.event;
 
-import cn.vbill.middleware.porter.common.client.ClusterClient;
+import cn.vbill.middleware.porter.common.cluster.client.ClusterClient;
 import cn.vbill.middleware.porter.common.cluster.event.command.ClusterCommand;
-import lombok.Getter;
 
 import java.util.function.BiConsumer;
 
@@ -32,11 +31,8 @@ import java.util.function.BiConsumer;
 public class ClusterListenerEventExecutor {
     private BiConsumer<ClusterCommand, ClusterClient> consumer;
 
-    @Getter
     private ClusterClient client;
-    @Getter
     private Class bindClass;
-    @Getter
     private ClusterListenerEventType bindEvent;
 
     public ClusterListenerEventExecutor(Class  bindClass, ClusterListenerEventType bindEvent) {
@@ -61,5 +57,17 @@ public class ClusterListenerEventExecutor {
 
     public void execute(ClusterCommand clusterCommand) {
         consumer.accept(clusterCommand, client);
+    }
+
+    public ClusterClient getClient() {
+        return client;
+    }
+
+    public Class getBindClass() {
+        return bindClass;
+    }
+
+    public ClusterListenerEventType getBindEvent() {
+        return bindEvent;
     }
 }

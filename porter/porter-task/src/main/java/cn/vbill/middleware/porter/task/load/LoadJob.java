@@ -19,17 +19,18 @@ package cn.vbill.middleware.porter.task.load;
 
 import cn.vbill.middleware.porter.common.cluster.ClusterProviderProxy;
 import cn.vbill.middleware.porter.common.cluster.event.command.TaskPositionUploadCommand;
-import cn.vbill.middleware.porter.common.cluster.data.DTaskStat;
-import cn.vbill.middleware.porter.common.exception.TaskStopTriggerException;
-import cn.vbill.middleware.porter.common.statistics.NodeLog;
+import cn.vbill.middleware.porter.common.task.statistics.DTaskStat;
+import cn.vbill.middleware.porter.common.task.exception.TaskStopTriggerException;
+import cn.vbill.middleware.porter.common.node.statistics.NodeLog;
 import cn.vbill.middleware.porter.common.util.DefaultNamedThreadFactory;
 import cn.vbill.middleware.porter.core.NodeContext;
-import cn.vbill.middleware.porter.core.event.etl.ETLBucket;
-import cn.vbill.middleware.porter.core.event.s.EventType;
-import cn.vbill.middleware.porter.core.loader.DataLoader;
-import cn.vbill.middleware.porter.core.loader.SubmitStatObject;
-import cn.vbill.middleware.porter.core.task.AbstractStageJob;
-import cn.vbill.middleware.porter.core.task.StageType;
+import cn.vbill.middleware.porter.core.task.setl.ETLBucket;
+import cn.vbill.middleware.porter.core.message.MessageAction;
+import cn.vbill.middleware.porter.core.task.loader.DataLoader;
+import cn.vbill.middleware.porter.core.task.statistics.DSubmitStatObject;
+import cn.vbill.middleware.porter.core.task.job.AbstractStageJob;
+import cn.vbill.middleware.porter.core.task.job.StageType;
+import cn.vbill.middleware.porter.core.task.TaskContext;
 import cn.vbill.middleware.porter.task.worker.TaskWork;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
@@ -76,10 +77,8 @@ public class LoadJob extends AbstractStageJob {
                 String swimlaneId = work.getDataConsumer().getSwimlaneId();
                 //当前进度差值超过告警线
                 if (newestPositionDiffer >= alarmPositionCount) {
-                    NodeLog noticeMsg = new NodeLog(NodeLog.LogType.TASK_WARNING, taskId, swimlaneId,
-                            "未消费消息堆积:" + newestPositionDiffer + "条,告警阀值:" + alarmPositionCount);
-                    noticeMsg.setTitle("【关注】" + taskId + "-" + swimlaneId + "消息堆积" + newestPositionDiffer + "条");
-                    NodeLog.upload(noticeMsg, work.getReceivers());
+                    TaskContext.warning(new NodeLog(NodeLog.LogType.WARNING, taskId, swimlaneId,
+                            "未消费消息堆积:" + newestPositionDiffer + "条,告警阀值:" + alarmPositionCount).bindTitle("【关注】" + taskId + "-" + swimlaneId + "消息堆积" + newestPositionDiffer + "条").upload());
                 }
                 //目标端数据库事务提交等待等原因造成的load等待
                 Calendar tmpCurrLoadStartTime = currentLoadStartTime;
@@ -87,16 +86,20 @@ public class LoadJob extends AbstractStageJob {
                 if (currentLoadTime > 0) {
                     long minutesDiff = TimeUnit.MILLISECONDS.toMinutes(Calendar.getInstance().getTime().getTime() - currentLoadTime);
                     if (minutesDiff > 5) { //事务提交等待超过5分钟
-                        NodeLog noticeMsg = new NodeLog(NodeLog.LogType.TASK_WARNING, taskId, swimlaneId,
-                                "目标端提交事务等待" + minutesDiff + "分钟,告警阀值:5分钟");
-                        noticeMsg.setTitle("【告警】" + taskId + "-" + swimlaneId + "目标端提交事务等待" + minutesDiff + "分钟");
-                        NodeLog.upload(noticeMsg, work.getReceivers());
+                        TaskContext.warning(new NodeLog(NodeLog.LogType.WARNING, taskId, swimlaneId, "目标端提交事务等待"
+                                + minutesDiff + "分钟,告警阀值:5分钟").bindTitle("【告警】" + taskId + "-" + swimlaneId
+                                + "目标端提交事务等待" + minutesDiff + "分钟").upload());
                     }
                 }
             }, positionCheckInterval, positionCheckInterval, TimeUnit.SECONDS);
         } else {
             positionCheckService = null;
         }
+    }
+
+    @Override
+    protected void threadTraceLogic() {
+        TaskContext.trace(work.getTaskId(), work.getDataConsumer(), work.getDataLoader(), work.getReceivers());
     }
 
     @Override
@@ -139,7 +142,7 @@ public class LoadJob extends AbstractStageJob {
                     //记录当前时间
                     currentLoadStartTime = Calendar.getInstance();
                     //执行载入逻辑
-                    Pair<Boolean, List<SubmitStatObject>> loadResult = dataLoder.load(bucket);
+                    Pair<Boolean, List<DSubmitStatObject>> loadResult = dataLoder.load(bucket);
                     //逻辑执行失败
                     if (!loadResult.getLeft()) {
                         throw new TaskStopTriggerException("批次" + bucket.getSequence() + "Load失败!");
@@ -178,7 +181,7 @@ public class LoadJob extends AbstractStageJob {
                 throw e;
             } catch (Throwable e) {
                 e.printStackTrace();
-                NodeLog.upload(NodeLog.LogType.TASK_LOG, work.getTaskId(), work.getDataConsumer().getSwimlaneId(),
+                NodeLog.upload(NodeLog.LogType.INFO, work.getTaskId(), work.getDataConsumer().getSwimlaneId(),
                         "Load ETLRow error" + e.getMessage());
                 LOGGER.error("Load ETLRow error!", e);
             }
@@ -210,35 +213,35 @@ public class LoadJob extends AbstractStageJob {
      *
      * @param object
      */
-    private void updateStat(SubmitStatObject object) {
+    private void updateStat(DSubmitStatObject object) {
         int affect = object.getAffect();
         boolean hit = affect > 0 || affect == -2;
-        EventType eventType = object.getType();
+        MessageAction action = object.getType();
         //虽然每个状态值的变更都有stat对象锁，但在最外层加对象锁避免了多次请求的问题（锁可重入），同时保证状态各字段变更一致性
         DTaskStat stat = work.getDTaskStat(object.getSchema(), object.getTable());
-        switch (eventType.getIndex()) {
-            case EventType.DELETE_INDEX:
+        switch (action.getIndex()) {
+            case MessageAction.DELETE_INDEX:
                 if (hit) {
                     stat.incrementDeleteRow();
                 } else {
                     stat.incrementErrorDeleteRow();
                 }
                 break;
-            case EventType.UPDATE_INDEX:
+            case MessageAction.UPDATE_INDEX:
                 if (hit) {
                     stat.incrementUpdateRow();
                 } else {
                     stat.incrementErrorUpdateRow();
                 }
                 break;
-            case EventType.INSERT_INDEX:
+            case MessageAction.INSERT_INDEX:
                 if (hit) {
                     stat.incrementInsertRow();
                 } else {
                     stat.incrementErrorInsertRow();
                 }
                 break;
-            case EventType.TRUNCATE_INDEX:
+            case MessageAction.TRUNCATE_INDEX:
                 if (hit) {
                     stat.incrementDeleteRow();
                 } else {

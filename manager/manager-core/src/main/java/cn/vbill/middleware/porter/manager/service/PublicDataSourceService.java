@@ -16,7 +16,7 @@
  */
 package cn.vbill.middleware.porter.manager.service;
 
-import cn.vbill.middleware.porter.common.config.PublicSourceConfig;
+import cn.vbill.middleware.porter.common.task.config.PublicSourceConfig;
 import cn.vbill.middleware.porter.manager.core.entity.PublicDataSource;
 import cn.vbill.middleware.porter.manager.web.page.Page;
 

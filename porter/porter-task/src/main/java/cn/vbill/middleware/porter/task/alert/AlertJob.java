@@ -17,11 +17,12 @@
 
 package cn.vbill.middleware.porter.task.alert;
 
-import cn.vbill.middleware.porter.common.statistics.NodeLog;
+import cn.vbill.middleware.porter.common.node.statistics.NodeLog;
 import cn.vbill.middleware.porter.core.NodeContext;
-import cn.vbill.middleware.porter.core.consumer.DataConsumer;
-import cn.vbill.middleware.porter.core.loader.DataLoader;
-import cn.vbill.middleware.porter.core.task.AbstractStageJob;
+import cn.vbill.middleware.porter.core.task.consumer.DataConsumer;
+import cn.vbill.middleware.porter.core.task.loader.DataLoader;
+import cn.vbill.middleware.porter.core.task.job.AbstractStageJob;
+import cn.vbill.middleware.porter.core.task.TaskContext;
 import cn.vbill.middleware.porter.task.alert.alerter.AlerterFactory;
 import cn.vbill.middleware.porter.task.worker.TaskWork;
 import org.slf4j.Logger;
@@ -63,6 +64,11 @@ public class AlertJob extends AbstractStageJob {
     }
 
     @Override
+    protected void threadTraceLogic() {
+        TaskContext.trace(work.getTaskId(), work.getDataConsumer(), work.getDataLoader(), work.getReceivers());
+    }
+
+    @Override
     protected void loopLogic() throws InterruptedException {
         //10秒执行一次
         try {
@@ -70,7 +76,7 @@ public class AlertJob extends AbstractStageJob {
         } catch (InterruptedException e) {
             throw e;
         } catch (Throwable e) {
-            NodeLog.upload(NodeLog.LogType.TASK_LOG, work.getTaskId(), work.getDataConsumer().getSwimlaneId(), "db check error" + e.getMessage());
+            TaskContext.warning(NodeLog.upload(NodeLog.LogType.INFO, work.getTaskId(), work.getDataConsumer().getSwimlaneId(), "db check error" + e.getMessage()));
             LOGGER.error("[{}][{}]db check error!", work.getTaskId(), dataConsumer.getSwimlaneId(), e);
         }
     }

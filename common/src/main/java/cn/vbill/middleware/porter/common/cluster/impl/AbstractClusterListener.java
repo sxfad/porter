@@ -17,7 +17,7 @@
 
 package cn.vbill.middleware.porter.common.cluster.impl;
 
-import cn.vbill.middleware.porter.common.client.ClusterClient;
+import cn.vbill.middleware.porter.common.cluster.client.ClusterClient;
 import cn.vbill.middleware.porter.common.cluster.ClusterListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

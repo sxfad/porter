@@ -62,7 +62,7 @@ public interface DataSourceService {
      *
      * @date 2018/8/10 上午11:14
      * @param: [id]
-     * @return: cn.vbill.middleware.porter.manager.core.entity.DataSource
+     * @return: cn.vbill.middleware.porter.manager.core.event.DataSource
      */
     DataSource selectById(Long id);
 
@@ -71,7 +71,7 @@ public interface DataSourceService {
      *
      * @date 2018/8/10 上午11:15
      * @param: [page, name, beginTime, endTime, dataType]
-     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.entity.DataSource>
+     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.event.DataSource>
      */
     Page<DataSource> page(Page<DataSource> page, String name, String beginTime, String endTime, String dataType);
 
@@ -80,7 +80,7 @@ public interface DataSourceService {
      *
      * @date 2018/8/10 上午11:15
      * @param: [page]
-     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.entity.DataSource>
+     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.event.DataSource>
      */
     Page<DataSource> findByTypePage(Page<DataSource> page);
 }

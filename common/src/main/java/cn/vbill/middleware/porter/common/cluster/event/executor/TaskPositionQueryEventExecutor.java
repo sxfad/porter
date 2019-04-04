@@ -10,7 +10,7 @@
 package cn.vbill.middleware.porter.common.cluster.event.executor;
 
 
-import cn.vbill.middleware.porter.common.client.ClusterClient;
+import cn.vbill.middleware.porter.common.cluster.client.ClusterClient;
 import cn.vbill.middleware.porter.common.cluster.event.ClusterListenerEventExecutor;
 import cn.vbill.middleware.porter.common.cluster.event.ClusterListenerEventType;
 import cn.vbill.middleware.porter.common.cluster.event.command.ClusterCommand;

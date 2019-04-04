@@ -17,11 +17,12 @@
 
 package cn.vbill.middleware.porter.task.alert.alerter;
 
-import cn.vbill.middleware.porter.common.cluster.data.DTaskStat;
-import cn.vbill.middleware.porter.core.loader.DataLoader;
+import cn.vbill.middleware.porter.common.task.statistics.DTaskStat;
+import cn.vbill.middleware.porter.core.task.loader.DataLoader;
 import cn.vbill.middleware.porter.common.util.compile.JavaFileCompiler;
-import cn.vbill.middleware.porter.core.consumer.DataConsumer;
-import cn.vbill.middleware.porter.core.task.TableMapper;
+import cn.vbill.middleware.porter.core.task.consumer.DataConsumer;
+import cn.vbill.middleware.porter.core.task.entity.TableMapper;
+import cn.vbill.middleware.porter.core.task.TaskContext;
 import cn.vbill.middleware.porter.task.worker.TaskWork;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
@@ -77,7 +78,8 @@ public class AlerterFactory {
                 service.submit(new Runnable() {
                     @SneakyThrows(InterruptedException.class)
                     public void run() {
-                        alerter.check(dataConsumer, dataLoader, stat, getCheckMeta(work, stat.getSchema(), stat.getTable()), work.getReceivers());
+                        TaskContext.trace(work.getTaskId(), work.getDataConsumer(), work.getDataLoader(), work.getReceivers());
+                        alerter.check(dataConsumer, dataLoader, stat, getCheckMeta(work, stat.getSchema(), stat.getTable()));
                     }
                 });
             }
@@ -89,7 +91,7 @@ public class AlerterFactory {
             service.awaitTermination(5, TimeUnit.MINUTES);
         } else {
             for (DTaskStat stat : stats) {
-                alerter.check(dataConsumer, dataLoader, stat, getCheckMeta(work, stat.getSchema(), stat.getTable()), work.getReceivers());
+                alerter.check(dataConsumer, dataLoader, stat, getCheckMeta(work, stat.getSchema(), stat.getTable()));
             }
         }
     }

@@ -63,7 +63,7 @@ public interface JobTasksUserService {
      *
      * @date 2018/8/10 上午11:53
      * @param: [id]
-     * @return: cn.vbill.middleware.porter.manager.core.entity.JobTasksUser
+     * @return: cn.vbill.middleware.porter.manager.core.event.JobTasksUser
      */
     JobTasksUser selectById(Long id);
 
@@ -72,7 +72,7 @@ public interface JobTasksUserService {
      *
      * @date 2018/8/10 上午11:53
      * @param: [page]
-     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.entity.JobTasksUser>
+     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.event.JobTasksUser>
      */
     Page<JobTasksUser> page(Page<JobTasksUser> page);
 

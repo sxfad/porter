@@ -17,19 +17,19 @@
 
 package cn.vbill.middleware.porter.common.client;
 
-import cn.vbill.middleware.porter.common.client.impl.EmailClient;
-import cn.vbill.middleware.porter.common.client.impl.ZookeeperClient;
-import cn.vbill.middleware.porter.common.config.PluginServiceConfig;
+import cn.vbill.middleware.porter.common.cluster.client.ZookeeperClient;
+import cn.vbill.middleware.porter.common.cluster.config.ZookeeperConfig;
+import cn.vbill.middleware.porter.common.plugin.config.PluginServiceConfig;
 import cn.vbill.middleware.porter.common.config.SourceConfig;
-import cn.vbill.middleware.porter.common.config.source.EmailConfig;
 import cn.vbill.middleware.porter.common.config.source.NameSourceConfig;
-import cn.vbill.middleware.porter.common.config.source.ZookeeperConfig;
 import cn.vbill.middleware.porter.common.exception.ClientException;
 import cn.vbill.middleware.porter.common.exception.ClientMatchException;
+import cn.vbill.middleware.porter.common.plugin.PluginServiceClient;
+import cn.vbill.middleware.porter.common.task.loader.PublicClientContext;
 import cn.vbill.middleware.porter.common.util.compile.JavaFileCompiler;
+import cn.vbill.middleware.porter.common.warning.client.EmailClient;
+import cn.vbill.middleware.porter.common.warning.config.EmailConfig;
 import com.alibaba.fastjson.annotation.JSONField;
-import lombok.Getter;
-import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,8 +56,6 @@ public abstract class AbstractClient<T extends SourceConfig> implements Client {
             SpringFactoriesLoader.loadFactoryNames(PluginServiceClient.class, JavaFileCompiler.getInstance());
 
     private final AtomicBoolean status = new AtomicBoolean(false);
-    @Getter
-    @Setter
     private boolean isPublic = false;
 
     private volatile T config;
@@ -166,5 +164,15 @@ public abstract class AbstractClient<T extends SourceConfig> implements Client {
     @Override
     public String getClientInfo() {
         return null != config && null != config.getProperties() ? config.getProperties().toString() : StringUtils.EMPTY;
+    }
+
+    @Override
+    public boolean isPublic() {
+        return isPublic;
+    }
+
+    @Override
+    public void setPublic(boolean aPublic) {
+        isPublic = aPublic;
     }
 }

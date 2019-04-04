@@ -17,11 +17,11 @@
 
 package cn.vbill.middleware.porter.manager.core.entity;
 
-import cn.vbill.middleware.porter.common.config.TaskConfig;
+import cn.vbill.middleware.porter.common.task.config.TaskConfig;
 import cn.vbill.middleware.porter.manager.core.enums.ConsumeConverterPlugin;
 import cn.vbill.middleware.porter.manager.core.enums.ConsumerPlugin;
 import cn.vbill.middleware.porter.manager.core.enums.LoaderPlugin;
-import cn.vbill.middleware.porter.common.dic.TaskStatusType;
+import cn.vbill.middleware.porter.common.task.dic.TaskStatusType;
 
 import java.util.ArrayList;
 import java.util.Date;

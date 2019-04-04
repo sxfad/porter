@@ -17,13 +17,14 @@
 
 package cn.vbill.middleware.porter.task.extract;
 
-import cn.vbill.middleware.porter.common.statistics.NodeLog;
+import cn.vbill.middleware.porter.common.node.statistics.NodeLog;
 import cn.vbill.middleware.porter.core.NodeContext;
-import cn.vbill.middleware.porter.core.event.etl.ETLBucket;
-import cn.vbill.middleware.porter.core.task.StageType;
+import cn.vbill.middleware.porter.core.task.setl.ETLBucket;
+import cn.vbill.middleware.porter.core.task.job.StageType;
+import cn.vbill.middleware.porter.core.task.TaskContext;
 import cn.vbill.middleware.porter.task.extract.extractor.ExtractorFactory;
-import cn.vbill.middleware.porter.core.event.s.MessageEvent;
-import cn.vbill.middleware.porter.core.task.AbstractStageJob;
+import cn.vbill.middleware.porter.core.message.MessageEvent;
+import cn.vbill.middleware.porter.core.task.job.AbstractStageJob;
 import cn.vbill.middleware.porter.datacarrier.DataCarrier;
 import cn.vbill.middleware.porter.datacarrier.DataCarrierFactory;
 import cn.vbill.middleware.porter.task.worker.TaskWork;
@@ -80,7 +81,9 @@ public class ExtractJob extends AbstractStageJob {
             if (null != metadata.getProcessor()) metadata.getProcessor().shutdown();
         } catch (Throwable e) {
             LOGGER.error("自定义Extract processor关闭出错", e);
-            NodeLog.upload(NodeLog.LogType.TASK_WARNING, "自定义Extract processor关闭出错:" + e.getMessage());
+            TaskContext.warning(new NodeLog(NodeLog.LogType.WARNING, "自定义Extract processor关闭出错:" + e.getMessage())
+                    .bindTaskId(TaskContext.trace().getTaskId()).bindSwimlaneId(TaskContext.trace().getSwimlaneId())
+                    .upload());
         }
     }
 
@@ -90,8 +93,15 @@ public class ExtractJob extends AbstractStageJob {
             if (null != metadata.getProcessor()) metadata.getProcessor().start();
         } catch (Throwable e) {
             LOGGER.error("自定义Extract processor启动出错", e);
-            NodeLog.upload(NodeLog.LogType.TASK_WARNING, "自定义Extract processor启动出错:" + e.getMessage());
+            TaskContext.warning(new NodeLog(NodeLog.LogType.WARNING, "自定义Extract processor启动出错:" + e.getMessage())
+                    .bindTaskId(TaskContext.trace().getTaskId()).bindSwimlaneId(TaskContext.trace().getSwimlaneId())
+                    .upload());
         }
+    }
+
+    @Override
+    protected void threadTraceLogic() {
+        TaskContext.trace(work.getTaskId(), work.getDataConsumer(), work.getDataLoader(), work.getReceivers());
     }
 
     @Override
@@ -109,6 +119,7 @@ public class ExtractJob extends AbstractStageJob {
                     //暂无Extractor失败处理方案
                     executorService.submit(() -> {
                         try {
+                            threadTraceLogic();
                             //将MessageEvent转换为ETLBucket
                             ETLBucket bucket = ETLBucket.from(inThreadEvents);
                             extractorFactory.extract(bucket, metadata);
@@ -124,8 +135,8 @@ public class ExtractJob extends AbstractStageJob {
                 throw interrupt;
             } catch (Throwable e) {
                 e.printStackTrace();
-                NodeLog.upload(NodeLog.LogType.TASK_LOG, work.getTaskId(),  work.getDataConsumer().getSwimlaneId(),
-                        "extract MessageEvent error" + e.getMessage());
+                TaskContext.warning(NodeLog.upload(NodeLog.LogType.INFO, work.getTaskId(),  work.getDataConsumer().getSwimlaneId(),
+                        "extract MessageEvent error" + e.getMessage()));
                 LOGGER.error("extract MessageEvent error!", e);
             }
         } while (null != events && getWorkingStat());

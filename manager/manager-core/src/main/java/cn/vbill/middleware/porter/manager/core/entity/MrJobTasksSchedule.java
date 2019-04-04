@@ -19,7 +19,7 @@ package cn.vbill.middleware.porter.manager.core.entity;
 
 import java.util.Date;
 
-import cn.vbill.middleware.porter.common.cluster.data.DTaskStat;
+import cn.vbill.middleware.porter.common.task.statistics.DTaskStat;
 import cn.vbill.middleware.porter.manager.core.init.ResourceUtils;
 
 /**

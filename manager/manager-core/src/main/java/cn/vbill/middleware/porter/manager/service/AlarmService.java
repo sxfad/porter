@@ -35,7 +35,7 @@ public interface AlarmService {
      *
      * @date 2018/8/10 上午10:12
      * @param: []
-     * @return: cn.vbill.middleware.porter.manager.core.entity.Alarm
+     * @return: cn.vbill.middleware.porter.manager.core.event.Alarm
      */
     Alarm selectFinallyOne();
 
@@ -71,7 +71,7 @@ public interface AlarmService {
      *
      * @date 2018/8/10 上午10:13
      * @param: [id]
-     * @return: cn.vbill.middleware.porter.manager.core.entity.Alarm
+     * @return: cn.vbill.middleware.porter.manager.core.event.Alarm
      */
     Alarm selectById(Long id);
 
@@ -80,7 +80,7 @@ public interface AlarmService {
      *
      * @date 2018/8/10 上午10:13
      * @param: [page]
-     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.entity.Alarm>
+     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.event.Alarm>
      */
     Page<Alarm> page(Page<Alarm> page);
 

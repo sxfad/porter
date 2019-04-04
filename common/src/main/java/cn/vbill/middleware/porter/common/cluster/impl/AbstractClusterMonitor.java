@@ -17,7 +17,7 @@
 
 package cn.vbill.middleware.porter.common.cluster.impl;
 
-import cn.vbill.middleware.porter.common.client.ClusterClient;
+import cn.vbill.middleware.porter.common.cluster.client.ClusterClient;
 import cn.vbill.middleware.porter.common.cluster.ClusterListener;
 import cn.vbill.middleware.porter.common.cluster.ClusterListenerFilter;
 import cn.vbill.middleware.porter.common.cluster.ClusterMonitor;
@@ -26,7 +26,6 @@ import cn.vbill.middleware.porter.common.cluster.event.ClusterListenerEventExecu
 import cn.vbill.middleware.porter.common.cluster.event.command.*;
 import cn.vbill.middleware.porter.common.cluster.event.ClusterListenerEventType;
 import cn.vbill.middleware.porter.common.cluster.event.ClusterTreeNodeEvent;
-import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,11 +70,11 @@ public abstract class AbstractClusterMonitor implements ClusterMonitor {
 
     protected void initiate() throws InterruptedException {
         try {
-            if (!getClient().isExists(ZookeeperClusterListener.PREFIX_ATALOG, false)) {
-                getClient().createRoot(ZookeeperClusterListener.PREFIX_ATALOG, false);
+            if (!getClient().isExists(AbstractClusterListener.PREFIX_ATALOG, false)) {
+                getClient().createRoot(AbstractClusterListener.PREFIX_ATALOG, false);
             }
-            if (!getClient().isExists(ZookeeperClusterListener.BASE_CATALOG, false)) {
-                getClient().createRoot(ZookeeperClusterListener.BASE_CATALOG, false);
+            if (!getClient().isExists(AbstractClusterListener.BASE_CATALOG, false)) {
+                getClient().createRoot(AbstractClusterListener.BASE_CATALOG, false);
             }
             for (ClusterListener listener : listeners.values()) {
                 try {

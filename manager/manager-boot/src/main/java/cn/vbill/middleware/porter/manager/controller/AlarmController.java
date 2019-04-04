@@ -17,10 +17,10 @@
 
 package cn.vbill.middleware.porter.manager.controller;
 
-import cn.vbill.middleware.porter.common.alert.AlertReceiver;
+import cn.vbill.middleware.porter.common.warning.entity.WarningReceiver;
 import cn.vbill.middleware.porter.common.cluster.ClusterProviderProxy;
 import cn.vbill.middleware.porter.common.cluster.event.command.AlertConfigPushCommand;
-import cn.vbill.middleware.porter.common.config.AlertConfig;
+import cn.vbill.middleware.porter.common.warning.config.WarningConfig;
 import cn.vbill.middleware.porter.manager.core.entity.Alarm;
 import cn.vbill.middleware.porter.manager.core.entity.AlarmPlugin;
 import cn.vbill.middleware.porter.manager.core.entity.CUser;
@@ -68,10 +68,10 @@ public class AlarmController {
         Integer number = alarmService.insert(alarm);
         if (number == 1) {
             Alarm alarms = alarmService.selectById(alarm.getId());
-            AlertReceiver[] receiver = receiver(alarms.getCusers());
+            WarningReceiver[] receiver = receiver(alarms.getCusers());
             Map<String, String> client = fieldsMap(alarms.getAlarmPlugins());
             ClusterProviderProxy.INSTANCE
-                    .broadcastEvent(new AlertConfigPushCommand(new AlertConfig(alarms.getAlarmType(), receiver, client)));
+                    .broadcastEvent(new AlertConfigPushCommand(new WarningConfig(alarms.getAlarmType(), receiver, client)));
         }
         return ResponseMessage.ok(number);
     }
@@ -95,15 +95,15 @@ public class AlarmController {
      *
      * @date 2018/8/9 下午4:19
      * @param: [cusers]
-     * @return: cn.vbill.middleware.porter.common.alert.AlertReceiver[]
+     * @return: cn.vbill.middleware.porter.common.warning.event.WarningReceiver[]
      */
-    private AlertReceiver[] receiver(List<CUser> cusers) {
-        AlertReceiver[] alertReceivers = new AlertReceiver[cusers.size()];
+    private WarningReceiver[] receiver(List<CUser> cusers) {
+        WarningReceiver[] warningReceivers = new WarningReceiver[cusers.size()];
         for (int i = 0; i < cusers.size(); i++) {
-            alertReceivers[i] = new AlertReceiver(cusers.get(i).getNickname(), cusers.get(i).getEmail(),
+            warningReceivers[i] = new WarningReceiver(cusers.get(i).getNickname(), cusers.get(i).getEmail(),
                     cusers.get(i).getMobile());
         }
-        return alertReceivers;
+        return warningReceivers;
     }
 
     /**

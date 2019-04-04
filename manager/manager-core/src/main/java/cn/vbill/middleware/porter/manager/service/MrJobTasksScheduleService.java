@@ -18,9 +18,9 @@
 package cn.vbill.middleware.porter.manager.service;
 
 import cn.vbill.middleware.porter.manager.core.entity.MrJobTasksSchedule;
-import cn.vbill.middleware.porter.common.cluster.data.DTaskStat;
-import cn.vbill.middleware.porter.common.config.TaskConfig;
-import cn.vbill.middleware.porter.common.dic.TaskStatusType;
+import cn.vbill.middleware.porter.common.task.statistics.DTaskStat;
+import cn.vbill.middleware.porter.common.task.config.TaskConfig;
+import cn.vbill.middleware.porter.common.task.dic.TaskStatusType;
 import cn.vbill.middleware.porter.manager.web.page.Page;
 
 import java.util.List;
@@ -68,7 +68,7 @@ public interface MrJobTasksScheduleService {
      *
      * @date 2018/8/10 下午1:59
      * @param: [id]
-     * @return: cn.vbill.middleware.porter.manager.core.entity.MrJobTasksSchedule
+     * @return: cn.vbill.middleware.porter.manager.core.event.MrJobTasksSchedule
      */
     MrJobTasksSchedule selectById(Long id);
 
@@ -86,7 +86,7 @@ public interface MrJobTasksScheduleService {
      *
      * @date 2018/8/10 下午1:59
      * @param: [page]
-     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.entity.MrJobTasksSchedule>
+     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.event.MrJobTasksSchedule>
      */
     Page<MrJobTasksSchedule> page(Page<MrJobTasksSchedule> page);
 
@@ -106,7 +106,7 @@ public interface MrJobTasksScheduleService {
      *
      * @date 2018/8/10 下午2:00
      * @param: [jobId]
-     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.entity.MrJobTasksSchedule>
+     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.event.MrJobTasksSchedule>
      */
     List<MrJobTasksSchedule> selectSwimlaneByJobId(String jobId);
 
@@ -116,7 +116,7 @@ public interface MrJobTasksScheduleService {
      * @date 2018/8/10 下午2:01
      * @param: [jobId,
      *             heartBeatBeginDate, heartBeatEndDate]
-     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.entity.MrJobTasksSchedule>
+     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.event.MrJobTasksSchedule>
      */
     List<MrJobTasksSchedule> list(String jobId, String heartBeatBeginDate, String heartBeatEndDate);
 

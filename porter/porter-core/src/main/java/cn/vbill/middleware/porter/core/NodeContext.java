@@ -17,11 +17,12 @@
 
 package cn.vbill.middleware.porter.core;
 
-import cn.vbill.middleware.porter.common.cluster.data.DNode;
-import cn.vbill.middleware.porter.common.dic.ClusterPlugin;
-import cn.vbill.middleware.porter.common.dic.NodeHealthLevel;
-import cn.vbill.middleware.porter.common.dic.NodeStatusType;
-import cn.vbill.middleware.porter.common.node.Node;
+import cn.vbill.middleware.porter.common.statistics.DNode;
+import cn.vbill.middleware.porter.common.cluster.dic.ClusterPlugin;
+import cn.vbill.middleware.porter.common.node.dic.NodeHealthLevel;
+import cn.vbill.middleware.porter.common.node.dic.NodeStatusType;
+import cn.vbill.middleware.porter.common.node.entity.Node;
+import cn.vbill.middleware.porter.common.warning.entity.WarningReceiver;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
@@ -57,6 +58,7 @@ public enum NodeContext {
     private volatile ApplicationContext context;
 
     private volatile boolean force;
+    private volatile WarningReceiver[] receivers = new WarningReceiver[0];
 
     /**
      * 获取Bean
@@ -434,5 +436,15 @@ public enum NodeContext {
         } finally {
             nodeLock.readLock().unlock();
         }
+    }
+
+    public synchronized void addWarningReceivers(List<WarningReceiver> newReceivers) {
+        List<WarningReceiver> tmp = Arrays.asList(receivers);
+        tmp.addAll(newReceivers);
+        receivers = tmp.toArray(new WarningReceiver[0]);
+    }
+
+    public WarningReceiver[] getReceivers() {
+        return receivers;
     }
 }

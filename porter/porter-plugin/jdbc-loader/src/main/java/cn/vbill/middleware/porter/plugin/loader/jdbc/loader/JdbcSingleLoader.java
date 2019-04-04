@@ -17,10 +17,10 @@
 
 package cn.vbill.middleware.porter.plugin.loader.jdbc.loader;
 
-import cn.vbill.middleware.porter.common.exception.TaskStopTriggerException;
-import cn.vbill.middleware.porter.core.event.etl.ETLBucket;
-import cn.vbill.middleware.porter.core.loader.SubmitStatObject;
-import cn.vbill.middleware.porter.core.event.etl.ETLRow;
+import cn.vbill.middleware.porter.common.task.exception.TaskStopTriggerException;
+import cn.vbill.middleware.porter.core.task.setl.ETLBucket;
+import cn.vbill.middleware.porter.core.task.statistics.DSubmitStatObject;
+import cn.vbill.middleware.porter.core.task.setl.ETLRow;
 import cn.vbill.middleware.porter.plugin.loader.jdbc.JdbcLoaderConst;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -46,14 +46,14 @@ public class JdbcSingleLoader extends BaseJdbcLoader {
     }
 
     @Override
-    public Pair<Boolean, List<SubmitStatObject>> doLoad(ETLBucket bucket) throws TaskStopTriggerException, InterruptedException {
+    public Pair<Boolean, List<DSubmitStatObject>> doLoad(ETLBucket bucket) throws TaskStopTriggerException, InterruptedException {
         LOGGER.info("start loading bucket:{},size:{}", bucket.getSequence(), bucket.getRows().size());
-        List<SubmitStatObject> affectRow = new ArrayList<>();
+        List<DSubmitStatObject> affectRow = new ArrayList<>();
         for (ETLRow row : bucket.getRows()) {
             //更新目标仓储
             int affect = loadSql(buildSql(row), row.getFinalOpType());
             //插入影响行数
-            affectRow.add(new SubmitStatObject(row.getFinalSchema(), row.getFinalTable(), row.getFinalOpType(),
+            affectRow.add(new DSubmitStatObject(row.getFinalSchema(), row.getFinalTable(), row.getFinalOpType(),
                     affect, row.getPosition(), row.getOpTime()));
         }
         if (null != bucket && null != bucket.getRows() && !bucket.getRows().isEmpty()) {

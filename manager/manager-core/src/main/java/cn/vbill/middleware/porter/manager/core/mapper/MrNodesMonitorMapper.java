@@ -71,7 +71,7 @@ public interface MrNodesMonitorMapper {
      * @author FuZizheng
      * @date 2018/8/10 上午9:55
      * @param: [nodeId, dataTimes]
-     * @return: cn.vbill.middleware.porter.manager.core.entity.MrNodesMonitor
+     * @return: cn.vbill.middleware.porter.manager.core.event.MrNodesMonitor
      */
     MrNodesMonitor selectByNodeIdAndTime(@Param("nodeId") String nodeId, @Param("dataTimes") String dataTimes);
 

@@ -30,7 +30,7 @@ import cn.vbill.middleware.porter.manager.service.MrNodesMonitorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import cn.vbill.middleware.porter.common.statistics.TaskPerformance;
+import cn.vbill.middleware.porter.common.task.statistics.TaskPerformance;
 import cn.vbill.middleware.porter.manager.core.util.DateFormatUtils;
 import cn.vbill.middleware.porter.manager.web.page.Page;
 

@@ -21,7 +21,7 @@ import cn.vbill.middleware.porter.manager.core.dto.RoleDataControl;
 import cn.vbill.middleware.porter.manager.core.entity.MrLogMonitor;
 import cn.vbill.middleware.porter.manager.core.mapper.MrLogMonitorMapper;
 import cn.vbill.middleware.porter.manager.service.MrLogMonitorService;
-import cn.vbill.middleware.porter.common.statistics.NodeLog;
+import cn.vbill.middleware.porter.common.node.statistics.NodeLog;
 import cn.vbill.middleware.porter.manager.web.page.Page;
 import cn.vbill.middleware.porter.manager.web.rcc.RoleCheckContext;
 import org.springframework.beans.factory.annotation.Autowired;

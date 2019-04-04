@@ -17,7 +17,7 @@
 
 package cn.vbill.middleware.porter.manager.core.entity;
 
-import cn.vbill.middleware.porter.common.dic.AlertPlugin;
+import cn.vbill.middleware.porter.common.warning.entity.WarningPlugin;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -42,7 +42,7 @@ public class Alarm implements java.io.Serializable {
     /**
      * 告警方式.
      */
-    private AlertPlugin alarmType;
+    private WarningPlugin alarmType;
 
     /**
      * 创建人.
@@ -109,14 +109,14 @@ public class Alarm implements java.io.Serializable {
     /**
      * 告警方式 get方法.
      */
-    public AlertPlugin getAlarmType() {
+    public WarningPlugin getAlarmType() {
         return alarmType;
     }
 
     /**
      * 告警方式 set方法.
      */
-    public void setAlarmType(AlertPlugin alarmType) {
+    public void setAlarmType(WarningPlugin alarmType) {
         this.alarmType = alarmType;
     }
 

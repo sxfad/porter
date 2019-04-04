@@ -83,7 +83,7 @@ public interface MrJobTasksMonitorMapper {
      *
      * @date 2018/8/9 下午6:16
      * @param: [jobId, swimlaneId, schemaTable, startRow, intervalSize]
-     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.entity.MrJobTasksMonitor>
+     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.event.MrJobTasksMonitor>
      */
     List<MrJobTasksMonitor> selectByJobSwimlane(@Param("jobId") String jobId, @Param("swimlaneId") String swimlaneId,
                                                 @Param("schemaTable") String schemaTable, @Param("startRow") Long startRow,

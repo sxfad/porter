@@ -62,7 +62,7 @@ public interface DataFieldService {
      *
      * @date 2018/8/10 上午11:09
      * @param: [id]
-     * @return: cn.vbill.middleware.porter.manager.core.entity.DataField
+     * @return: cn.vbill.middleware.porter.manager.core.event.DataField
      */
     DataField selectById(Long id);
 
@@ -71,7 +71,7 @@ public interface DataFieldService {
      *
      * @date 2018/8/10 上午11:09
      * @param: [page]
-     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.entity.DataField>
+     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.event.DataField>
      */
     Page<DataField> page(Page<DataField> page);
 }

@@ -20,7 +20,7 @@ package cn.vbill.middleware.porter.manager.core.entity;
 import java.util.Calendar;
 import java.util.Date;
 
-import cn.vbill.middleware.porter.common.statistics.TaskPerformance;
+import cn.vbill.middleware.porter.common.task.statistics.TaskPerformance;
 import cn.vbill.middleware.porter.manager.core.init.ResourceUtils;
 
 /**

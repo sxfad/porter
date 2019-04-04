@@ -17,12 +17,12 @@
 
 package cn.vbill.middleware.porter.cluster.zookeeper;
 
-import cn.vbill.middleware.porter.common.client.PublicClientContext;
+import cn.vbill.middleware.porter.common.task.loader.PublicClientContext;
 import cn.vbill.middleware.porter.common.cluster.ClusterListenerFilter;
 import cn.vbill.middleware.porter.common.cluster.event.ClusterListenerEventExecutor;
 import cn.vbill.middleware.porter.common.cluster.event.ClusterTreeNodeEvent;
 import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListener;
-import cn.vbill.middleware.porter.common.config.PublicSourceConfig;
+import cn.vbill.middleware.porter.common.task.config.PublicSourceConfig;
 import cn.vbill.middleware.porter.common.config.SourceConfig;
 import com.alibaba.fastjson.JSONObject;
 

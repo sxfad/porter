@@ -17,7 +17,7 @@
 
 package cn.vbill.middleware.porter.plugin.loader.kafka.config;
 
-import cn.vbill.middleware.porter.common.config.PluginServiceConfig;
+import cn.vbill.middleware.porter.common.plugin.config.PluginServiceConfig;
 import cn.vbill.middleware.porter.common.config.SourceConfig;
 import cn.vbill.middleware.porter.plugin.loader.kafka.KafkaLoaderConst;
 import cn.vbill.middleware.porter.plugin.loader.kafka.client.KafkaProduceClient;

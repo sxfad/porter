@@ -17,8 +17,8 @@
 
 package cn.vbill.middleware.porter.common.cluster.event.command;
 
-import cn.vbill.middleware.porter.common.cluster.data.DTaskStat;
-import cn.vbill.middleware.porter.common.cluster.data.DCallback;
+import cn.vbill.middleware.porter.common.task.statistics.DTaskStat;
+import cn.vbill.middleware.porter.common.statistics.DCallback;
 import cn.vbill.middleware.porter.common.cluster.event.ClusterListenerEventType;
 
 /**

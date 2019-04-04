@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.UUID;
 
+import cn.vbill.middleware.porter.common.warning.entity.WarningReceiver;
 import cn.vbill.middleware.porter.manager.core.dto.RoleDataControl;
 import cn.vbill.middleware.porter.manager.core.enums.SourceType;
 import cn.vbill.middleware.porter.manager.service.JobTasksOwnerService;
@@ -44,17 +45,16 @@ import org.springframework.validation.BindException;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
-import cn.vbill.middleware.porter.common.alert.AlertReceiver;
-import cn.vbill.middleware.porter.common.config.DataConsumerConfig;
-import cn.vbill.middleware.porter.common.config.DataLoaderConfig;
+import cn.vbill.middleware.porter.common.task.config.DataConsumerConfig;
+import cn.vbill.middleware.porter.common.task.config.DataLoaderConfig;
 import cn.vbill.middleware.porter.common.config.JavaFileConfig;
 import cn.vbill.middleware.porter.common.config.SourceConfig;
-import cn.vbill.middleware.porter.common.config.TableMapperConfig;
-import cn.vbill.middleware.porter.common.config.TaskConfig;
+import cn.vbill.middleware.porter.common.task.config.TableMapperConfig;
+import cn.vbill.middleware.porter.common.task.config.TaskConfig;
 import cn.vbill.middleware.porter.manager.core.enums.ConsumeConverterPlugin;
 import cn.vbill.middleware.porter.manager.core.enums.ConsumerPlugin;
 import cn.vbill.middleware.porter.manager.core.enums.LoaderPlugin;
-import cn.vbill.middleware.porter.common.dic.TaskStatusType;
+import cn.vbill.middleware.porter.common.task.dic.TaskStatusType;
 import cn.vbill.middleware.porter.manager.core.dto.JDBCVo;
 import cn.vbill.middleware.porter.manager.core.entity.CUser;
 import cn.vbill.middleware.porter.manager.core.entity.DataSource;
@@ -393,7 +393,7 @@ public class JobTasksServiceImpl implements JobTasksService {
         // 表对应关系映射
         List<TableMapperConfig> tableMapper = tableMapperList(tables);
         // 告警用户信息
-        AlertReceiver[] receiver = receiver(cusers);
+        WarningReceiver[] receiver = receiver(cusers);
         // 返回构造函数
         TaskConfig taskConfig = new TaskConfig(status, id.toString(), jobTasks.getNodesString(), dataConsumerConfig,
                 loader, tableMapper, receiver);
@@ -407,13 +407,13 @@ public class JobTasksServiceImpl implements JobTasksService {
      * @param cusers
      * @return
      */
-    private AlertReceiver[] receiver(List<CUser> cusers) {
-        AlertReceiver[] alertReceivers = new AlertReceiver[cusers.size()];
+    private WarningReceiver[] receiver(List<CUser> cusers) {
+        WarningReceiver[] warningReceivers = new WarningReceiver[cusers.size()];
         for (int i = 0; i < cusers.size(); i++) {
-            alertReceivers[i] = new AlertReceiver(cusers.get(i).getNickname(), cusers.get(i).getEmail(),
+            warningReceivers[i] = new WarningReceiver(cusers.get(i).getNickname(), cusers.get(i).getEmail(),
                     cusers.get(i).getMobile());
         }
-        return alertReceivers;
+        return warningReceivers;
     }
 
     /**

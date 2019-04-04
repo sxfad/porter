@@ -17,7 +17,7 @@
 
 package cn.vbill.middleware.porter.manager.core.entity;
 
-import cn.vbill.middleware.porter.common.dic.NodeStatusType;
+import cn.vbill.middleware.porter.common.node.dic.NodeStatusType;
 
 import java.util.Date;
 

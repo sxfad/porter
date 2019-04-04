@@ -23,11 +23,11 @@ import ch.qos.logback.classic.LoggerContext;
 import cn.vbill.middleware.porter.common.cluster.ClusterListenerFilter;
 import cn.vbill.middleware.porter.common.cluster.event.ClusterListenerEventExecutor;
 import com.alibaba.fastjson.JSONObject;
-import cn.vbill.middleware.porter.common.alert.AlertProviderFactory;
+import cn.vbill.middleware.porter.common.warning.WarningProviderFactory;
 import cn.vbill.middleware.porter.common.cluster.event.ClusterTreeNodeEvent;
 import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListener;
-import cn.vbill.middleware.porter.common.config.AlertConfig;
-import cn.vbill.middleware.porter.common.config.LogConfig;
+import cn.vbill.middleware.porter.common.warning.config.WarningConfig;
+import cn.vbill.middleware.porter.common.node.config.LogConfig;
 import cn.vbill.middleware.porter.common.config.StatisticConfig;
 import cn.vbill.middleware.porter.common.exception.ClientConnectionException;
 import cn.vbill.middleware.porter.common.exception.ConfigParseException;
@@ -47,7 +47,7 @@ import java.util.List;
 public class ZKClusterConfigListener extends ZookeeperClusterListener {
     private static final String ZK_PATH = BASE_CATALOG + "/config";
     private static final String LOG_CONFIG_PATH = ZK_PATH + "/log";
-    private static final String ALERT_CONFIG_PATH = ZK_PATH + "/alert";
+    private static final String ALERT_CONFIG_PATH = ZK_PATH + "/warning";
     private static final String STATISTIC_CONFIG_PATH = ZK_PATH + "/statistic";
 
     @Override
@@ -75,9 +75,9 @@ public class ZKClusterConfigListener extends ZookeeperClusterListener {
             }
             //告警
             if (event.getId().equals(ALERT_CONFIG_PATH)) {
-                AlertConfig config = JSONObject.parseObject(event.getData(), AlertConfig.class);
+                WarningConfig config = JSONObject.parseObject(event.getData(), WarningConfig.class);
                 try {
-                    AlertProviderFactory.INSTANCE.initialize(config);
+                    WarningProviderFactory.INSTANCE.initialize(config);
                 } catch (ConfigParseException e) {
                     logger.warn("解析告警任务配置失败", e);
                 } catch (ClientConnectionException e) {

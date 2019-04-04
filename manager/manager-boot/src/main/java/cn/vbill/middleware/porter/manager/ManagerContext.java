@@ -17,9 +17,11 @@
 
 package cn.vbill.middleware.porter.manager;
 
+import cn.vbill.middleware.porter.common.warning.entity.WarningReceiver;
 import org.apache.commons.collections.list.TreeList;
 import org.springframework.context.ApplicationContext;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -38,8 +40,10 @@ public enum ManagerContext {
      * INSTANCE
      */
     INSTANCE();
+
     private ApplicationContext context;
     private final Map<String, List<String>> stoppedTask = new ConcurrentHashMap<>();
+    private volatile WarningReceiver[] receivers = new WarningReceiver[0];
 
     /**
      * 获取Bean
@@ -84,5 +88,17 @@ public enum ManagerContext {
 
     public Map<String, List<String>> getStoppedTasks() {
         return Collections.unmodifiableMap(stoppedTask);
+    }
+
+
+
+    public synchronized void addWarningReceivers(List<WarningReceiver> newReceivers) {
+        List<WarningReceiver> tmp = Arrays.asList(receivers);
+        tmp.addAll(newReceivers);
+        receivers = tmp.toArray(new WarningReceiver[0]);
+    }
+
+    public WarningReceiver[] getReceivers() {
+        return receivers;
     }
 }

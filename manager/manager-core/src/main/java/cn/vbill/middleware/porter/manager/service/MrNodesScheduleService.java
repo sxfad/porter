@@ -17,7 +17,7 @@
 
 package cn.vbill.middleware.porter.manager.service;
 
-import cn.vbill.middleware.porter.common.cluster.data.DNode;
+import cn.vbill.middleware.porter.common.statistics.DNode;
 import cn.vbill.middleware.porter.manager.core.entity.MrNodesSchedule;
 import cn.vbill.middleware.porter.manager.web.page.Page;
 
@@ -67,7 +67,7 @@ public interface MrNodesScheduleService {
      * @author FuZizheng
      * @date 2018/8/10 下午2:06
      * @param: [id]
-     * @return: cn.vbill.middleware.porter.manager.core.entity.MrNodesSchedule
+     * @return: cn.vbill.middleware.porter.manager.core.event.MrNodesSchedule
      */
     MrNodesSchedule selectById(Long id);
 
@@ -76,7 +76,7 @@ public interface MrNodesScheduleService {
      *
      * @date 2018/8/10 下午2:06
      * @param: [page, ipAddress, computerName]
-     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.entity.MrNodesSchedule>
+     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.event.MrNodesSchedule>
      */
     Page<MrNodesSchedule> page(Page<MrNodesSchedule> page, String ipAddress, String computerName);
 

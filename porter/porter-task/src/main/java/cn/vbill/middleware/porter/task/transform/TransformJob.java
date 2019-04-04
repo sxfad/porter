@@ -17,13 +17,14 @@
 
 package cn.vbill.middleware.porter.task.transform;
 
-import cn.vbill.middleware.porter.common.exception.TaskStopTriggerException;
+import cn.vbill.middleware.porter.common.task.exception.TaskStopTriggerException;
 import cn.vbill.middleware.porter.core.NodeContext;
-import cn.vbill.middleware.porter.core.task.StageType;
+import cn.vbill.middleware.porter.core.task.job.StageType;
 import cn.vbill.middleware.porter.datacarrier.simple.FixedCapacityCarrier;
+import cn.vbill.middleware.porter.core.task.TaskContext;
 import cn.vbill.middleware.porter.task.transform.transformer.TransformFactory;
-import cn.vbill.middleware.porter.core.event.etl.ETLBucket;
-import cn.vbill.middleware.porter.core.task.AbstractStageJob;
+import cn.vbill.middleware.porter.core.task.setl.ETLBucket;
+import cn.vbill.middleware.porter.core.task.job.AbstractStageJob;
 import cn.vbill.middleware.porter.datacarrier.DataMapCarrier;
 import cn.vbill.middleware.porter.task.worker.TaskWork;
 import org.slf4j.Logger;
@@ -80,6 +81,11 @@ public class TransformJob extends AbstractStageJob {
     }
 
     @Override
+    protected void threadTraceLogic() {
+        TaskContext.trace(work.getTaskId(), work.getDataConsumer(), work.getDataLoader(), work.getReceivers());
+    }
+
+    @Override
     protected void loopLogic() throws InterruptedException {
         //只要队列有消息，持续读取
         ETLBucket bucket = null;
@@ -91,6 +97,7 @@ public class TransformJob extends AbstractStageJob {
                     final ETLBucket inThreadBucket = bucket;
                     Future<ETLBucket> result = executorService.submit(() -> {
                         try {
+                            threadTraceLogic();
                             //上个流程处理没有异常
                             if (null == inThreadBucket.getException()) {
                                 transformFactory.transform(inThreadBucket, work);

@@ -17,11 +17,11 @@
 
 package cn.vbill.middleware.porter.common.cluster.impl.zookeeper;
 
-import cn.vbill.middleware.porter.common.client.ClusterClient;
+import cn.vbill.middleware.porter.common.cluster.client.ClusterClient;
 import cn.vbill.middleware.porter.common.cluster.event.ClusterTreeNodeEvent;
 import cn.vbill.middleware.porter.common.cluster.event.TreeNodeEventType;
 import cn.vbill.middleware.porter.common.cluster.impl.AbstractClusterMonitor;
-import cn.vbill.middleware.porter.common.client.impl.ZookeeperClient;
+import cn.vbill.middleware.porter.common.cluster.client.ZookeeperClient;
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 

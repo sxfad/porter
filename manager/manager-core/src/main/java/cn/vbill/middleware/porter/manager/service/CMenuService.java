@@ -36,7 +36,7 @@ public interface CMenuService {
      *
      * @date 2018/8/10 上午10:17
      * @param: [roleCode]
-     * @return: cn.vbill.middleware.porter.manager.core.entity.CMenu
+     * @return: cn.vbill.middleware.porter.manager.core.event.CMenu
      */
     CMenu menuTree(String roleCode);
 
@@ -45,7 +45,7 @@ public interface CMenuService {
      *
      * @date 2018/8/10 上午10:28
      * @param: []
-     * @return: cn.vbill.middleware.porter.manager.core.entity.CMenu
+     * @return: cn.vbill.middleware.porter.manager.core.event.CMenu
      */
     CMenu findAll();
 
@@ -63,7 +63,7 @@ public interface CMenuService {
      *
      * @date 2018/8/10 上午10:28
      * @param: [fatherCode]
-     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.entity.CMenu>
+     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.event.CMenu>
      */
     List<CMenu> findByFatherCode(String fatherCode);
 
@@ -81,7 +81,7 @@ public interface CMenuService {
      *
      * @date 2018/8/10 上午10:33
      * @param: [id]
-     * @return: cn.vbill.middleware.porter.manager.core.entity.CMenu
+     * @return: cn.vbill.middleware.porter.manager.core.event.CMenu
      */
     CMenu findById(Long id);
 

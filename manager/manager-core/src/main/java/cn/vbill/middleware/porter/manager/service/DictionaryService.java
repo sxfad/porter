@@ -64,7 +64,7 @@ public interface DictionaryService {
      *
      * @date 2018/8/10 上午11:37
      * @param: [id]
-     * @return: cn.vbill.middleware.porter.manager.core.entity.Dictionary
+     * @return: cn.vbill.middleware.porter.manager.core.event.Dictionary
      */
     Dictionary selectById(Long id);
 
@@ -73,7 +73,7 @@ public interface DictionaryService {
      *
      * @date 2018/8/10 上午11:37
      * @param: [page]
-     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.entity.Dictionary>
+     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.event.Dictionary>
      */
     Page<Dictionary> page(Page<Dictionary> page);
 

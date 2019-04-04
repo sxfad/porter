@@ -19,7 +19,7 @@ package cn.vbill.middleware.porter.manager.service;
 
 import cn.vbill.middleware.porter.manager.core.entity.MrJobTasksMonitor;
 import cn.vbill.middleware.porter.manager.core.icon.MrJobMonitor;
-import cn.vbill.middleware.porter.common.statistics.TaskPerformance;
+import cn.vbill.middleware.porter.common.task.statistics.TaskPerformance;
 import cn.vbill.middleware.porter.manager.web.page.Page;
 
 /**
@@ -64,7 +64,7 @@ public interface MrJobTasksMonitorService {
      *
      * @date 2018/8/10 下午1:49
      * @param: [id]
-     * @return: cn.vbill.middleware.porter.manager.core.entity.MrJobTasksMonitor
+     * @return: cn.vbill.middleware.porter.manager.core.event.MrJobTasksMonitor
      */
     MrJobTasksMonitor selectById(Long id);
 
@@ -73,7 +73,7 @@ public interface MrJobTasksMonitorService {
      *
      * @date 2018/8/10 下午1:49
      * @param: [page]
-     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.entity.MrJobTasksMonitor>
+     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.event.MrJobTasksMonitor>
      */
     Page<MrJobTasksMonitor> page(Page<MrJobTasksMonitor> page);
 

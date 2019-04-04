@@ -17,10 +17,10 @@
 
 package cn.vbill.middleware.porter.plugin.converter.canal;
 
-import cn.vbill.middleware.porter.common.consumer.Position;
-import cn.vbill.middleware.porter.core.event.s.EventConverter;
-import cn.vbill.middleware.porter.core.event.s.EventType;
-import cn.vbill.middleware.porter.core.event.s.MessageEvent;
+import cn.vbill.middleware.porter.common.task.consumer.Position;
+import cn.vbill.middleware.porter.core.message.converter.EventConverter;
+import cn.vbill.middleware.porter.core.message.MessageAction;
+import cn.vbill.middleware.porter.core.message.MessageEvent;
 import com.alibaba.otter.canal.protocol.CanalEntry;
 
 import java.util.ArrayList;
@@ -81,7 +81,7 @@ public class CanalRowConverter implements EventConverter {
             event.setConsumerTime(entry.getHeader().hasExecuteTime() ? entry.getHeader().getExecuteTime() : -1);
             event.setConsumedTime(System.currentTimeMillis());
             if (eventType == CanalEntry.EventType.DELETE) {
-                event.setOpType(EventType.DELETE);
+                event.setOpType(MessageAction.DELETE);
                 rowData.getBeforeColumnsList().forEach(c -> {
                     if (c.getIsKey()) {
                         event.getPrimaryKeys().add(c.getName());
@@ -90,7 +90,7 @@ public class CanalRowConverter implements EventConverter {
                     event.getBefore().put(c.getName(), c.getIsNull() ? null : c.getValue());
                 });
             } else if (eventType == CanalEntry.EventType.INSERT) {
-                event.setOpType(EventType.INSERT);
+                event.setOpType(MessageAction.INSERT);
                 rowData.getAfterColumnsList().forEach(c -> {
                     if (c.getIsKey()) {
                         event.getPrimaryKeys().add(c.getName());
@@ -99,7 +99,7 @@ public class CanalRowConverter implements EventConverter {
                 });
 
             } else if (eventType == CanalEntry.EventType.UPDATE) {
-                event.setOpType(EventType.UPDATE);
+                event.setOpType(MessageAction.UPDATE);
 
                 //before
                 rowData.getBeforeColumnsList().forEach(c -> {

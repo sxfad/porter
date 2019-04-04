@@ -80,7 +80,7 @@ public class ZKClusterStatisticListener extends ZookeeperClusterListener {
     public List<ClusterListenerEventExecutor> watchedEvents() {
         List<ClusterListenerEventExecutor> executors = new ArrayList<>();
         //消费进度上传事件
-        executors.add(new ClusterListenerEventExecutor(this.getClass(), ClusterListenerEventType.TaskStop).bind((command, client) -> {
+        executors.add(new ClusterListenerEventExecutor(this.getClass(), ClusterListenerEventType.StatisticUpload).bind((command, client) -> {
             StatisticData data = ((StatisticUploadCommand) command).getStatisticData();
             data.setNodeId(NodeContext.INSTANCE.getNodeId());
             client.create(listenPath() + "/" + data.getCategory(), "{}", false, false);

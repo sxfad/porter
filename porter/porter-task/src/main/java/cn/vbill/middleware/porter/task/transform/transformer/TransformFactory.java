@@ -18,7 +18,7 @@
 package cn.vbill.middleware.porter.task.transform.transformer;
 
 import cn.vbill.middleware.porter.common.util.compile.JavaFileCompiler;
-import cn.vbill.middleware.porter.core.event.etl.ETLBucket;
+import cn.vbill.middleware.porter.core.task.setl.ETLBucket;
 import cn.vbill.middleware.porter.task.worker.TaskWork;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.support.SpringFactoriesLoader;

@@ -17,10 +17,10 @@
 
 package cn.vbill.middleware.porter.task.transform.transformer;
 
-import cn.vbill.middleware.porter.core.event.s.EventType;
-import cn.vbill.middleware.porter.common.consumer.Position;
-import cn.vbill.middleware.porter.core.event.etl.ETLBucket;
-import cn.vbill.middleware.porter.core.event.etl.ETLRow;
+import cn.vbill.middleware.porter.core.message.MessageAction;
+import cn.vbill.middleware.porter.common.task.consumer.Position;
+import cn.vbill.middleware.porter.core.task.setl.ETLBucket;
+import cn.vbill.middleware.porter.core.task.setl.ETLRow;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,19 +41,19 @@ public class BatchPrePareTransformerTest {
     @Test
     public void transform() {
         List<ETLRow> rows = new ArrayList<>();
-        rows.add(new ETLRow(0, 0, "s", "t", EventType.DELETE, null, null, null));
-        rows.add(new ETLRow(0, 0, "s", "t", EventType.DELETE, null, null, null));
-        rows.add(new ETLRow(0, 0, "s", "t", EventType.INSERT, null, null, null));
-        rows.add(new ETLRow(0, 0, "s", "t", EventType.DELETE, null, null, null));
-        rows.add(new ETLRow(0, 0, "s", "t", EventType.INSERT, null, null, null));
-        rows.add(new ETLRow(0, 0, "s", "t", EventType.INSERT, null, null, null));
-        rows.add(new ETLRow(0, 0, "s", "t", EventType.INSERT, null, null, null));
-        rows.add(new ETLRow(0, 0, "s", "t", EventType.TRUNCATE, null, null, null));
-        rows.add(new ETLRow(0, 0, "s", "t", EventType.TRUNCATE, null, null, null));
-        rows.add(new ETLRow(0, 0, "s", "t", EventType.UPDATE, null, null, null));
-        rows.add(new ETLRow(0, 0, "s", "t", EventType.TRUNCATE, null, null, null));
-        rows.add(new ETLRow(0, 0, "s", "t", EventType.INSERT, null, null, null));
-        rows.add(new ETLRow(0, 0, "s", "t", EventType.INSERT, null, null, null));
+        rows.add(new ETLRow(0, 0, "s", "t", MessageAction.DELETE, null, null, null));
+        rows.add(new ETLRow(0, 0, "s", "t", MessageAction.DELETE, null, null, null));
+        rows.add(new ETLRow(0, 0, "s", "t", MessageAction.INSERT, null, null, null));
+        rows.add(new ETLRow(0, 0, "s", "t", MessageAction.DELETE, null, null, null));
+        rows.add(new ETLRow(0, 0, "s", "t", MessageAction.INSERT, null, null, null));
+        rows.add(new ETLRow(0, 0, "s", "t", MessageAction.INSERT, null, null, null));
+        rows.add(new ETLRow(0, 0, "s", "t", MessageAction.INSERT, null, null, null));
+        rows.add(new ETLRow(0, 0, "s", "t", MessageAction.TRUNCATE, null, null, null));
+        rows.add(new ETLRow(0, 0, "s", "t", MessageAction.TRUNCATE, null, null, null));
+        rows.add(new ETLRow(0, 0, "s", "t", MessageAction.UPDATE, null, null, null));
+        rows.add(new ETLRow(0, 0, "s", "t", MessageAction.TRUNCATE, null, null, null));
+        rows.add(new ETLRow(0, 0, "s", "t", MessageAction.INSERT, null, null, null));
+        rows.add(new ETLRow(0, 0, "s", "t", MessageAction.INSERT, null, null, null));
 
         ETLBucket bucket = new ETLBucket("0", rows, new Position() {
             @Override

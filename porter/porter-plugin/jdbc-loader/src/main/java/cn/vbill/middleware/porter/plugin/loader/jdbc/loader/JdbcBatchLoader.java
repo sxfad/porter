@@ -17,10 +17,10 @@
 
 package cn.vbill.middleware.porter.plugin.loader.jdbc.loader;
 
-import cn.vbill.middleware.porter.common.exception.TaskStopTriggerException;
-import cn.vbill.middleware.porter.core.loader.SubmitStatObject;
-import cn.vbill.middleware.porter.core.event.etl.ETLBucket;
-import cn.vbill.middleware.porter.core.event.etl.ETLRow;
+import cn.vbill.middleware.porter.common.task.exception.TaskStopTriggerException;
+import cn.vbill.middleware.porter.core.task.statistics.DSubmitStatObject;
+import cn.vbill.middleware.porter.core.task.setl.ETLBucket;
+import cn.vbill.middleware.porter.core.task.setl.ETLRow;
 import cn.vbill.middleware.porter.plugin.loader.jdbc.JdbcLoaderConst;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -46,9 +46,9 @@ public class JdbcBatchLoader extends BaseJdbcLoader {
     }
 
     @Override
-    public Pair<Boolean, List<SubmitStatObject>> doLoad(ETLBucket bucket) throws TaskStopTriggerException, InterruptedException {
+    public Pair<Boolean, List<DSubmitStatObject>> doLoad(ETLBucket bucket) throws TaskStopTriggerException, InterruptedException {
         LOGGER.info("start loading bucket:{},size:{}", bucket.getSequence(), bucket.getRows().size());
-        List<SubmitStatObject> affectRow = new ArrayList<>();
+        List<DSubmitStatObject> affectRow = new ArrayList<>();
         for (List<ETLRow> rows : bucket.getBatchRows()) {
             if (rows.size() == 1) {
                 ETLRow row = rows.get(0);
@@ -56,7 +56,7 @@ public class JdbcBatchLoader extends BaseJdbcLoader {
                 int affect = loadSql(buildSql(row), row.getFinalOpType());
 
                 //插入影响行数
-                affectRow.add(new SubmitStatObject(row.getFinalSchema(), row.getFinalTable(), row.getFinalOpType(),
+                affectRow.add(new DSubmitStatObject(row.getFinalSchema(), row.getFinalTable(), row.getFinalOpType(),
                         affect, row.getPosition(), row.getOpTime()));
             } else if (rows.size() > 1) { //仅支持单条记录生成一个sql的情况
                 List<Pair<String, Object[]>> subList = new ArrayList<>();
@@ -75,7 +75,7 @@ public class JdbcBatchLoader extends BaseJdbcLoader {
                 for (int rindex = 0; rindex < rows.size(); rindex++) {
                     int affect = rindex < results.length ? results[rindex] : 0;
                     ETLRow row = rows.get(rindex);
-                    affectRow.add(new SubmitStatObject(row.getFinalSchema(), row.getFinalTable(), row.getFinalOpType(),
+                    affectRow.add(new DSubmitStatObject(row.getFinalSchema(), row.getFinalTable(), row.getFinalOpType(),
                             affect, row.getPosition(), row.getOpTime()));
                 }
             }
