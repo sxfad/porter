@@ -54,7 +54,6 @@ import cn.vbill.middleware.porter.manager.core.enums.ConsumerPlugin;
 import cn.vbill.middleware.porter.manager.core.enums.LoaderPlugin;
 import cn.vbill.middleware.porter.common.task.dic.TaskStatusType;
 import cn.vbill.middleware.porter.manager.core.dto.JDBCVo;
-import cn.vbill.middleware.porter.manager.core.dto.RoleDataControl;
 import cn.vbill.middleware.porter.manager.core.entity.CUser;
 import cn.vbill.middleware.porter.manager.core.entity.DataSource;
 import cn.vbill.middleware.porter.manager.core.entity.DataSourcePlugin;
@@ -63,11 +62,7 @@ import cn.vbill.middleware.porter.manager.core.entity.JobTaskNodes;
 import cn.vbill.middleware.porter.manager.core.entity.JobTasks;
 import cn.vbill.middleware.porter.manager.core.entity.JobTasksField;
 import cn.vbill.middleware.porter.manager.core.entity.JobTasksTable;
-import cn.vbill.middleware.porter.manager.core.enums.ConsumeConverterPlugin;
-import cn.vbill.middleware.porter.manager.core.enums.ConsumerPlugin;
-import cn.vbill.middleware.porter.manager.core.enums.LoaderPlugin;
 import cn.vbill.middleware.porter.manager.core.enums.QuerySQL;
-import cn.vbill.middleware.porter.manager.core.enums.SourceType;
 import cn.vbill.middleware.porter.manager.core.mapper.JobTasksMapper;
 import cn.vbill.middleware.porter.manager.core.util.ApplicationContextUtil;
 import cn.vbill.middleware.porter.manager.service.CUserService;
@@ -76,12 +71,10 @@ import cn.vbill.middleware.porter.manager.service.DataTableService;
 import cn.vbill.middleware.porter.manager.service.DbSelectService;
 import cn.vbill.middleware.porter.manager.service.JobTaskNodesService;
 import cn.vbill.middleware.porter.manager.service.JobTasksFieldService;
-import cn.vbill.middleware.porter.manager.service.JobTasksOwnerService;
 import cn.vbill.middleware.porter.manager.service.JobTasksService;
 import cn.vbill.middleware.porter.manager.service.JobTasksTableService;
 import cn.vbill.middleware.porter.manager.service.JobTasksUserService;
 import cn.vbill.middleware.porter.manager.web.page.Page;
-import cn.vbill.middleware.porter.manager.web.rcc.RoleCheckContext;
 
 /**
  * 同步任务表 服务实现类 
