@@ -78,6 +78,7 @@ public class ZKClusterConfigListener extends ZookeeperClusterListener {
                 WarningConfig config = JSONObject.parseObject(event.getData(), WarningConfig.class);
                 try {
                     WarningProviderFactory.INSTANCE.initialize(config);
+                    NodeContext.INSTANCE.addWarningReceivers(config.getReceiver());
                 } catch (ConfigParseException e) {
                     logger.warn("解析告警任务配置失败", e);
                 } catch (ClientConnectionException e) {

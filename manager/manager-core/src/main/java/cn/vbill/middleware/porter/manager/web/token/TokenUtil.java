@@ -90,6 +90,7 @@ public class TokenUtil {
         if (isValid(jwsToken)) {
             Jws<Claims> claimsJws = Jwts.parser().setSigningKey(SECRET).parseClaimsJws(jwsToken);
             if (claimsJws.getBody().getExpiration().before(new Date(System.currentTimeMillis()))) {
+                LOGGER.warn("token已失效");
                 throw new Exception("token已失效");
             }
             return mapToObject(claimsJws.getBody(), classT);

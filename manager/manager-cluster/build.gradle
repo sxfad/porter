@@ -49,8 +49,12 @@ distributions {
 
 dependencies {
     compile project(':manager:manager-core')
-    compile "org.springframework.boot:spring-boot-starter:${springVersion}"
-    compile("org.springframework.kafka:spring-kafka:1.3.7.RELEASE")
-    testCompile "org.springframework.boot:spring-boot-starter-actuator:${springVersion}"
-    testCompile "org.springframework.boot:spring-boot-starter-test:${springVersion}"
+    implementation "org.springframework.boot:spring-boot-starter:${springVersion}"
+    implementation("org.springframework.kafka:spring-kafka:2.2.4.RELEASE")
+    implementation('org.apache.kafka:kafka-clients:1.0.0'){
+        exclude group:'org.slf4j',module:'slf4j-api'
+    }
+    implementation "com.fasterxml.jackson.core:jackson-databind:2.9.8"
+    testImplementation "org.springframework.boot:spring-boot-starter-actuator:${springVersion}"
+    testImplementation "org.springframework.boot:spring-boot-starter-test:${springVersion}"
 }

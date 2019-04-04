@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper
+	namespace="cn.vbill.middleware.porter.manager.core.mapper.DataAuthorityMapper">
+	<!-- 通用查询映射结果 
+	<resultMap id="BaseResultMap"
+		type="cn.vbill.middleware.porter.manager.core.entity.DataAuthority">
+		<result column="id" property="id" />
+		<result column="object_table" property="objectTable" />
+		<result column="object_id" property="objectId" />
+		<result column="owner_level" property="ownerLevel" />
+		<result column="owner_id" property="ownerId" />
+		<result column="create_time" property="createTime" />
+		<result column="update_time" property="updateTime" />
+		<result column="operator" property="operator" />
+		<result column="type" property="type" />
+		<result column="iscancel" property="iscancel" />
+		<result column="remark" property="remark" />
+	</resultMap>-->
+
+	<!-- 通用查询结果列 
+	<sql id="Base_Column_List"> select id, object_table AS objectTable,
+		object_id AS objectId, owner_level AS ownerLevel, owner_id AS ownerId,
+		create_time
+		AS createTime, update_time AS updateTime, operator, type, iscancel,
+		remark
+		from c_data_authority
+	</sql>-->
+
+	<!-- 新增 -->
+	<insert id="insert">
+		insert into c_data_authority(
+		object_table,
+		object_id,
+		owner_level,
+		owner_id,
+		create_time,
+		update_time,
+		operator,
+		type,
+		iscancel,
+		remark
+		) values (
+		#{objectTable},
+		#{objectId},
+		#{ownerLevel},
+		#{ownerId},
+		#{createTime},
+		#{updateTime},
+		#{operator},
+		#{type},
+		#{iscancel},
+		#{remark}
+		)
+	</insert>
+
+	<!-- 修改 -->
+	<update id="update">
+		update c_data_authority
+		set
+		object_table =
+		#{dataAuthority.objectTable},
+		object_id = #{dataAuthority.objectId},
+		owner_level = #{dataAuthority.ownerLevel},
+		owner_id =
+		#{dataAuthority.ownerId},
+		create_time = #{dataAuthority.createTime},
+		update_time = #{dataAuthority.updateTime},
+		operator =
+		#{dataAuthority.operator},
+		type = #{dataAuthority.type},
+		iscancel =
+		#{dataAuthority.iscancel},
+		remark = #{dataAuthority.remark}
+		where id =
+		#{id}
+	</update>
+
+	<!-- 刪除 -->
+	<delete id="delete">
+		delete from c_data_authority where id = #{id}
+	</delete>
+
+	<!-- 根据主鍵查找 -->
+	<select id="selectById"
+		resultType="cn.vbill.middleware.porter.manager.core.entity.DataAuthority">
+		select id, object_table AS objectTable, object_id AS
+		objectId, owner_level
+		AS ownerLevel, owner_id AS ownerId, create_time
+		AS createTime,
+		update_time AS updateTime, operator, type, iscancel,
+		remark from
+		c_data_authority
+		where id = #{id}
+	</select>
+
+	<!-- 分页All -->
+	<select id="pageAll" resultType="java.lang.Integer">
+		select count(id) from
+		c_data_authority
+		where 1=1
+	</select>
+
+	<!-- 分页 -->
+	<select id="page"
+		resultType="cn.vbill.middleware.porter.manager.core.entity.DataAuthority">
+		select id, object_table AS objectTable, object_id AS
+		objectId, owner_level
+		AS ownerLevel, owner_id AS ownerId, create_time
+		AS createTime,
+		update_time AS updateTime, operator, type, iscancel,
+		remark from
+		c_data_authority
+		where 1=1 limit
+		#{page.offset},#{page.pageSize}
+	</select>
+
+    <!-- 查询与ObjectId有关的权限所有者用户(type=null查询全部 type=1查询所有者 type=2查询共享者) -->
+    <select id="selectOwnersByObjectId" resultType="cn.vbill.middleware.porter.manager.core.entity.CUser">
+        SELECT id, loginname, loginpw, nickname, email, mobile, state, remark from c_user
+        WHERE id in (
+            SELECT t.owner_id FROM c_data_authority t WHERE LOWER(t.object_table) = LOWER(#{ObjectName}) AND t.object_id= #{ObjectId}
+            <if test="type != null and type != ''">
+                AND type = #{type}
+            </if>
+        )
+    </select>
+
+	<!-- 验证新增 -->
+	<insert id="insertSelective">
+		insert into c_data_authority
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				id,
+			</if>
+			<if test="objectTable != null">
+				object_table,
+			</if>
+			<if test="objectId != null">
+				object_id,
+			</if>
+			<if test="ownerLevel != null">
+				owner_level,
+			</if>
+			<if test="ownerId != null">
+				owner_id,
+			</if>
+			<if test="createTime != null">
+				create_time,
+			</if>
+			<if test="updateTime != null">
+				update_time,
+			</if>
+			<if test="operator != null">
+				operator,
+			</if>
+			<if test="type != null">
+				type,
+			</if>
+			<if test="iscancel != null">
+				iscancel,
+			</if>
+			<if test="remark != null">
+				remark,
+			</if>
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			<if test="id != null">
+				#{id,jdbcType=${field.mybatisType}},
+			</if>
+			<if test="objectTable != null">
+				#{objectTable,jdbcType=${field.mybatisType}},
+			</if>
+			<if test="objectId != null">
+				#{objectId,jdbcType=${field.mybatisType}},
+			</if>
+			<if test="ownerLevel != null">
+				#{ownerLevel,jdbcType=${field.mybatisType}},
+			</if>
+			<if test="ownerId != null">
+				#{ownerId,jdbcType=${field.mybatisType}},
+			</if>
+			<if test="createTime != null">
+				#{createTime,jdbcType=${field.mybatisType}},
+			</if>
+			<if test="updateTime != null">
+				#{updateTime,jdbcType=${field.mybatisType}},
+			</if>
+			<if test="operator != null">
+				#{operator,jdbcType=${field.mybatisType}},
+			</if>
+			<if test="type != null">
+				#{type,jdbcType=${field.mybatisType}},
+			</if>
+			<if test="iscancel != null">
+				#{iscancel,jdbcType=${field.mybatisType}},
+			</if>
+			<if test="remark != null">
+				#{remark,jdbcType=${field.mybatisType}},
+			</if>
+		</trim>
+	</insert>
+
+	<!-- 验证修改 -->
+	<update id="updateSelective">
+		update c_data_authority
+		<set>
+			<if test="dataAuthority.id != null">
+				id = #{dataAuthority.id,jdbcType=${field.mybatisType}},
+			</if>
+			<if test="dataAuthority.objectTable != null">
+				object_table =
+				#{dataAuthority.objectTable,jdbcType=${field.mybatisType}},
+			</if>
+			<if test="dataAuthority.objectId != null">
+				object_id =
+				#{dataAuthority.objectId,jdbcType=${field.mybatisType}},
+			</if>
+			<if test="dataAuthority.ownerLevel != null">
+				owner_level =
+				#{dataAuthority.ownerLevel,jdbcType=${field.mybatisType}},
+			</if>
+			<if test="dataAuthority.ownerId != null">
+				owner_id =
+				#{dataAuthority.ownerId,jdbcType=${field.mybatisType}},
+			</if>
+			<if test="dataAuthority.createTime != null">
+				create_time =
+				#{dataAuthority.createTime,jdbcType=${field.mybatisType}},
+			</if>
+			<if test="dataAuthority.updateTime != null">
+				update_time =
+				#{dataAuthority.updateTime,jdbcType=${field.mybatisType}},
+			</if>
+			<if test="dataAuthority.operator != null">
+				operator =
+				#{dataAuthority.operator,jdbcType=${field.mybatisType}},
+			</if>
+			<if test="dataAuthority.type != null">
+				type =
+				#{dataAuthority.type,jdbcType=${field.mybatisType}},
+			</if>
+			<if test="dataAuthority.iscancel != null">
+				iscancel =
+				#{dataAuthority.iscancel,jdbcType=${field.mybatisType}},
+			</if>
+			<if test="dataAuthority.remark != null">
+				remark =
+				#{dataAuthority.remark,jdbcType=${field.mybatisType}},
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+</mapper>

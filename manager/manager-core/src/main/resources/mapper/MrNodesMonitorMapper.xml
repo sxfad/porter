@@ -107,7 +107,7 @@
         ${monitorTable}
         WHERE
           node_id = #{nodeId}
-        ORDER BY monitor_date DESC
+        ORDER BY monitor_date
         limit #{startRow},#{intervalTime}
     </select>
 

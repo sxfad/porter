@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.UUID;
 
 import cn.vbill.middleware.porter.common.warning.entity.WarningReceiver;
 import cn.vbill.middleware.porter.manager.core.dto.RoleDataControl;
@@ -35,12 +34,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.bind.PropertiesConfigurationFactory;
-import org.springframework.core.env.MutablePropertySources;
-import org.springframework.core.env.PropertiesPropertySource;
+import org.springframework.boot.context.properties.bind.Binder;
+import org.springframework.boot.context.properties.source.ConfigurationPropertySource;
+import org.springframework.boot.context.properties.source.MapConfigurationPropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.BindException;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -56,6 +54,7 @@ import cn.vbill.middleware.porter.manager.core.enums.ConsumerPlugin;
 import cn.vbill.middleware.porter.manager.core.enums.LoaderPlugin;
 import cn.vbill.middleware.porter.common.task.dic.TaskStatusType;
 import cn.vbill.middleware.porter.manager.core.dto.JDBCVo;
+import cn.vbill.middleware.porter.manager.core.dto.RoleDataControl;
 import cn.vbill.middleware.porter.manager.core.entity.CUser;
 import cn.vbill.middleware.porter.manager.core.entity.DataSource;
 import cn.vbill.middleware.porter.manager.core.entity.DataSourcePlugin;
@@ -64,7 +63,11 @@ import cn.vbill.middleware.porter.manager.core.entity.JobTaskNodes;
 import cn.vbill.middleware.porter.manager.core.entity.JobTasks;
 import cn.vbill.middleware.porter.manager.core.entity.JobTasksField;
 import cn.vbill.middleware.porter.manager.core.entity.JobTasksTable;
+import cn.vbill.middleware.porter.manager.core.enums.ConsumeConverterPlugin;
+import cn.vbill.middleware.porter.manager.core.enums.ConsumerPlugin;
+import cn.vbill.middleware.porter.manager.core.enums.LoaderPlugin;
 import cn.vbill.middleware.porter.manager.core.enums.QuerySQL;
+import cn.vbill.middleware.porter.manager.core.enums.SourceType;
 import cn.vbill.middleware.porter.manager.core.mapper.JobTasksMapper;
 import cn.vbill.middleware.porter.manager.core.util.ApplicationContextUtil;
 import cn.vbill.middleware.porter.manager.service.CUserService;
@@ -73,13 +76,15 @@ import cn.vbill.middleware.porter.manager.service.DataTableService;
 import cn.vbill.middleware.porter.manager.service.DbSelectService;
 import cn.vbill.middleware.porter.manager.service.JobTaskNodesService;
 import cn.vbill.middleware.porter.manager.service.JobTasksFieldService;
+import cn.vbill.middleware.porter.manager.service.JobTasksOwnerService;
 import cn.vbill.middleware.porter.manager.service.JobTasksService;
 import cn.vbill.middleware.porter.manager.service.JobTasksTableService;
 import cn.vbill.middleware.porter.manager.service.JobTasksUserService;
 import cn.vbill.middleware.porter.manager.web.page.Page;
+import cn.vbill.middleware.porter.manager.web.rcc.RoleCheckContext;
 
 /**
- * 同步任务表 服务实现类
+ * 同步任务表 服务实现类 
  *
  * @author: FairyHood
  * @date: 2018-03-07 13:40:30
@@ -130,6 +135,7 @@ public class JobTasksServiceImpl implements JobTasksService {
         // 新增 jobtaskNode
         jobTaskNodesService.insertList(jobTasks);
         // 新增jobtaskOwner
+        jobTasksOwnerService.insertByJobTasks(jobTasks.getId());
         return number;
     }
 
@@ -276,12 +282,14 @@ public class JobTasksServiceImpl implements JobTasksService {
         if (null != jobState) {
             jobStateBck = jobState.getCode();
         }
-        //数据权限
+        // 数据权限
         RoleDataControl roleDataControl = RoleCheckContext.getUserIdHolder();
-        Integer total = jobTasksMapper.pageAll(1, jobType, jobName, jobId, beginTime, endTime, jobStateBck, id, roleDataControl);
+        Integer total = jobTasksMapper.pageAll(1, jobType, jobName, jobId, beginTime, endTime, jobStateBck, id,
+                roleDataControl);
         if (total > 0) {
             page.setTotalItems(total);
-            page.setResult(jobTasksMapper.page(page, 1, jobType, jobName, jobId, beginTime, endTime, jobStateBck, id, roleDataControl));
+            page.setResult(jobTasksMapper.page(page, 1, jobType, jobName, jobId, beginTime, endTime, jobStateBck, id,
+                    roleDataControl));
         }
         return page;
     }
@@ -347,6 +355,12 @@ public class JobTasksServiceImpl implements JobTasksService {
     @Override
     public TaskConfig fitJobTask(Long id, TaskStatusType status) {
         JobTasks jobTasks = this.selectById(id);
+        // 告警人id列表
+        List<CUser> cusers = jobTasks.getUsers();
+        // 权限所有者和共享者列表
+        // List<CUser> owners = null;//代码等待
+        // 告警用户信息(设置的告警人+任务权限所有者)
+        WarningReceiver[] receiver = receiver(cusers);
         if (jobTasks.getJobType() == 2) {
             TaskConfig task = JSONObject.parseObject(jobTasks.getJobJsonText(), TaskConfig.class);
             task.setStatus(status);
@@ -372,8 +386,6 @@ public class JobTasksServiceImpl implements JobTasksService {
         DataTable tarDataTable = dataTableService.selectById(targetDataTablesId);
         DataSource tarDataSource = dataSourceService.selectById(tarDataTable.getSourceId());
 
-        // 告警人id列表
-        List<CUser> cusers = jobTasks.getUsers();
         // 表对照关系
         List<JobTasksTable> tables = jobTasks.getTables();
 
@@ -392,8 +404,6 @@ public class JobTasksServiceImpl implements JobTasksService {
         DataLoaderConfig loader = new DataLoaderConfig(targetLoadAdt.getCode(), dataSourceMap(id, tarDataSource));
         // 表对应关系映射
         List<TableMapperConfig> tableMapper = tableMapperList(tables);
-        // 告警用户信息
-        WarningReceiver[] receiver = receiver(cusers);
         // 返回构造函数
         TaskConfig taskConfig = new TaskConfig(status, id.toString(), jobTasks.getNodesString(), dataConsumerConfig,
                 loader, tableMapper, receiver);
@@ -426,9 +436,9 @@ public class JobTasksServiceImpl implements JobTasksService {
         List<TableMapperConfig> tableList = new ArrayList<>();
         TableMapperConfig tableMapperConfig = null;
         for (JobTasksTable jobTasksTable : tables) {
-            String[] schema = {jobTasksTable.getSourceTableName().split("[.]")[0],
+            String[] schema = { jobTasksTable.getSourceTableName().split("[.]")[0],
                     jobTasksTable.getTargetTableName().split("[.]")[0] };
-            String[] table = {jobTasksTable.getSourceTableName().split("[.]")[1],
+            String[] table = { jobTasksTable.getSourceTableName().split("[.]")[1],
                     jobTasksTable.getTargetTableName().split("[.]")[1] };
 
             Map<String, String> column = null;
@@ -493,19 +503,13 @@ public class JobTasksServiceImpl implements JobTasksService {
     @Override
     public TaskConfig dealSpecialJson(String jobXmlText) {
         TaskConfig config = new TaskConfig();
+        Properties properties = new Properties();
         try {
-            Properties properties = new Properties();
             properties.load(new ByteArrayInputStream(jobXmlText.getBytes()));
-            PropertiesConfigurationFactory<TaskConfig> factory = new PropertiesConfigurationFactory<>(config);
-            MutablePropertySources sources = new MutablePropertySources();
-            sources.addFirst(new PropertiesPropertySource(UUID.randomUUID().toString(), properties));
-            factory.setPropertySources(sources);
-            //factory.setTargetName("porter.task[0]");
-            factory.bindPropertiesToTarget();
-
+            ConfigurationPropertySource source = new MapConfigurationPropertySource(properties);
+            Binder binder = new Binder(source);
+            config = binder.bind("", TaskConfig.class).get();
         } catch (IOException e) {
-            logger.error("解析jobXmlText失败，请注意！！", e);
-        } catch (BindException e) {
             logger.error("解析jobXmlText失败，请注意！！", e);
         }
         return config;

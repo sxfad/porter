@@ -151,7 +151,7 @@
             ${monitorTable}
         WHERE
             job_id = #{jobId} and swimlane_id = #{swimlaneId} and schema_table = #{schemaTable}
-        ORDER BY monitor_date DESC
+        ORDER BY monitor_date
         limit #{startRow},#{intervalSize}
     </select>
 

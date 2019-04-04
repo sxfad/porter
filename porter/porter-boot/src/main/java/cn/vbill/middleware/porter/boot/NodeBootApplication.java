@@ -68,8 +68,6 @@ public class NodeBootApplication {
         SpringApplication app = new SpringApplication(NodeBootApplication.class);
         app.setBannerMode(Banner.Mode.OFF);
         ConfigurableApplicationContext context = app.run(args);
-        NodeContext.INSTANCE.startupArgs(args);
-        //注入spring工具类
         NodeContext.INSTANCE.setApplicationContext(context);
 
         LOGGER.info("loading 3rd libraries.......");
@@ -82,9 +80,19 @@ public class NodeBootApplication {
             System.exit(-1);
         }
 
-        LOGGER.info("initiating system properties.......");
-        //获取配置类
+
+        //初始化系统参数
         NodeConfig config = context.getBean(NodeConfig.class);
+        NodeContext.INSTANCE.startupArgs(args);
+        NodeContext.INSTANCE.updateWorkLimit(config.getWorkLimit());
+        NodeContext.INSTANCE.syncNodeId(config.getId());
+        if (config.isGc()) {
+            LOGGER.info("running GC Thread.......");
+            GCHelper.run(config.getGcDelayOfMinutes());
+        }
+
+        LOGGER.info("initiating system properties.......");
+
         //从本地初始化告警配置
         if (null != config.getAlert() && WarningPlugin.NONE != config.getAlert().getStrategy()) {
             try {
@@ -95,10 +103,6 @@ public class NodeBootApplication {
             }
         }
 
-        //初始化默认工作任务数
-        NodeContext.INSTANCE.updateWorkLimit(config.getWorkLimit());
-
-        NodeContext.INSTANCE.syncNodeId(config.getId());
         //从本地初始化公用数据库连接池
         SourcesConfig datasourceConfigBean = context.getBean(SourcesConfig.class);
         try {
@@ -141,11 +145,6 @@ public class NodeBootApplication {
         TaskController controller = context.getBean(TaskController.class);
         //启动节点任务执行容器，并尝试执行本地配置文件任务
         controller.start(null != config.getTask() && !config.getTask().isEmpty() ? config.getTask() : null);
-
-        if (config.isGc()) {
-            LOGGER.info("running GC Thread.......");
-            GCHelper.run(config.getGcDelayOfMinutes());
-        }
         LOGGER.info("NodeBootApplication started");
     }
 }

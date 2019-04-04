@@ -29,6 +29,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
+import static cn.vbill.middleware.porter.manager.web.message.ResponseMessage.ok;
+
 /**
  * @author guohongjian[guo_hj@suixingpay.com]
  */
@@ -51,7 +53,7 @@ public class DictController {
     @ApiOperation(value = "全部字典", notes = "全部字典")
     public ResponseMessage dict() {
         Map<String, Map<String, Object>> map = dictService.dictAll();
-        return ResponseMessage.ok(map);
+        return ok(map);
     }
 
     /**
@@ -65,6 +67,21 @@ public class DictController {
     @ApiOperation(value = "标识字典", notes = "标识字典")
     public ResponseMessage dictType(@PathVariable("type") String type) {
         Map<String, Object> map = dictService.dictByType(type);
-        return ResponseMessage.ok(map);
+        return ok(map);
+    }
+
+    /**
+     * 获取任务权限操作字典
+     *
+     * @author MurasakiSeiFu
+     * @date 2019-04-03 14:08
+     * @param: []
+     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
+     */
+    @GetMapping("/getControlType")
+    @ApiOperation(value = "获取任务权限操作字典", notes = "获取任务权限操作字典")
+    public ResponseMessage dictControlType() {
+        Map<String, Object> map = dictService.dictControlType();
+        return ok(map);
     }
 }

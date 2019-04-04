@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.vbill.middleware.porter.manager.core.mapper.DicControlTypePluginMapper">
+    <!-- 通用查询映射结果 
+    <resultMap id="BaseResultMap" type="cn.vbill.middleware.porter.manager.core.entity.DicControlTypePlugingin">
+        <result column="id" property="id" />
+        <result column="alert_type" property="alertType" />
+        <result column="field_name" property="fieldName" />
+        <result column="field_code" property="fieldCode" />
+        <result column="field_order" property="fieldOrder" />
+        <result column="field_type" property="fieldType" />
+        <result column="field_type_key" property="fieldTypeKey" />
+        <result column="state" property="state" />
+        <result column="iscancel" property="iscancel" />
+        <result column="remark" property="remark" />
+    </resultMap>-->
+
+    <!-- 通用查询结果列 
+    <sql id="Base_Column_List">
+    select id, alert_type AS alertType, field_name AS fieldName, field_code AS fieldCode, field_order AS fieldOrder, field_type AS fieldType, field_type_key AS fieldTypeKey, state, iscancel, remark from d_control_type_plugin
+</sql>-->
+
+    <!-- 获取全部操作类型字典 -->
+    <select id="findAll" resultType="cn.vbill.middleware.porter.manager.core.entity.DicControlTypePlugin">
+        select id, alert_type AS alertType, field_name AS fieldName, field_code AS fieldCode, field_order AS fieldOrder,
+        field_type AS fieldType, field_type_key AS fieldTypeKey, state, iscancel from d_control_type_plugin
+        where iscancel = 0
+        order by field_order
+    </select>
+</mapper>

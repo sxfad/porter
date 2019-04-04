@@ -146,4 +146,19 @@ public interface CUserService {
      * @return
      */
     Long checkLoginName(String loginName);
+
+    /**
+     * 根据jobId查询job_tasks_owner用户详细信息
+     *
+     * @param jobId
+     * @return
+     */
+    List<CUser> selectOwnersByJobId(Long jobId, Integer type);
+
+    /**
+     * 注册用户列表
+     *
+     * @return
+     */
+    List<CUser> findRegister();
 }

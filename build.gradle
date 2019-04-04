@@ -2,6 +2,12 @@ apply plugin: 'java'
 apply plugin: 'maven'
 version '4.0'
 
+configurations.all {
+    resolutionStrategy {
+        force 'xml-apis:xml-apis:1.4.01'
+    }
+}
+
 repositories {
     maven{ url"http://maven.aliyun.com/nexus/content/groups/public"}
 }
@@ -10,7 +16,7 @@ buildscript {
         maven{ url"http://maven.aliyun.com/nexus/content/groups/public"}
     }
     dependencies {
-        classpath "org.springframework.boot:spring-boot-gradle-plugin:1.5.9.RELEASE"
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:2.1.3.RELEASE"
     }
 }
 
@@ -24,7 +30,7 @@ subprojects {
         group = 'cn.vbill.middleware.porter'
         junitVersion = '4.12'
         version '4.0'
-        springVersion = '1.5.9.RELEASE'
+        springVersion = '2.1.3.RELEASE'
         swaggerVersion = '2.7.0'
         canalVersion = '1.1.0'
     }
@@ -39,10 +45,9 @@ subprojects {
         options.encoding = 'UTF-8'
     }
     dependencies {
-        testCompile "junit:junit:${junitVersion}"
         compile (
                 'com.alibaba:fastjson:1.2.28',
-                'com.alibaba:druid:1.1.9',
+                'com.alibaba:druid:1.1.14',
                 'org.apache.commons:commons-lang3:3.7',
                 "org.springframework.boot:spring-boot-starter:${springVersion}",
                 "org.springframework.boot:spring-boot-starter-jdbc:${springVersion}",
@@ -57,6 +62,8 @@ subprojects {
             exclude group:'log4j',module:'log4j'
         }
         compileOnly 'org.projectlombok:lombok:1.16.20'
+        annotationProcessor 'org.projectlombok:lombok:1.16.20'
+        testCompile "junit:junit:${junitVersion}"
     }
     //将子项目包复制到根目录
     build.doLast {

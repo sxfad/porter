@@ -19,28 +19,27 @@ package cn.vbill.middleware.porter.manager.service.impl;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Properties;
-import java.util.UUID;
 
 import cn.vbill.middleware.porter.common.task.config.PublicSourceConfig;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.bind.PropertiesConfigurationFactory;
-import org.springframework.core.env.MutablePropertySources;
-import org.springframework.core.env.PropertiesPropertySource;
+import org.springframework.boot.context.properties.bind.Binder;
+import org.springframework.boot.context.properties.source.ConfigurationPropertySource;
+import org.springframework.boot.context.properties.source.MapConfigurationPropertySource;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.BindException;
 
 import com.alibaba.fastjson.JSONObject;
 
+import cn.vbill.middleware.porter.common.plugin.config.PluginServiceConfig;
 import cn.vbill.middleware.porter.manager.core.entity.PublicDataSource;
 import cn.vbill.middleware.porter.manager.core.mapper.PublicDataSourceMapper;
 import cn.vbill.middleware.porter.manager.service.PublicDataSourceService;
 import cn.vbill.middleware.porter.manager.web.page.Page;
 
 /**
- * 公共数据源配置表 服务实现类
+ * 公共数据源配置表 服务实现类 
  * 
  * @author: FairyHood
  * @date: 2019-03-13 09:58:24
@@ -60,7 +59,8 @@ public class PublicDataSourceServiceImpl implements PublicDataSourceService {
         // 等权限类代码
         publicDataSource.setCreator(-1L);
         if (StringUtils.isBlank(publicDataSource.getCode())) {
-            PublicSourceConfig config = JSONObject.parseObject(publicDataSource.getJsonText(), PublicSourceConfig.class);
+            PublicSourceConfig config = JSONObject.parseObject(publicDataSource.getJsonText(),
+                    PublicSourceConfig.class);
             publicDataSource.setCode(config.getCode());
         }
         return publicDataSourceMapper.insert(publicDataSource);
@@ -71,7 +71,8 @@ public class PublicDataSourceServiceImpl implements PublicDataSourceService {
         // 等权限类代码
         publicDataSource.setCreator(-1L);
         if (StringUtils.isBlank(publicDataSource.getCode())) {
-            PublicSourceConfig config = JSONObject.parseObject(publicDataSource.getJsonText(), PublicSourceConfig.class);
+            PublicSourceConfig config = JSONObject.parseObject(publicDataSource.getJsonText(),
+                    PublicSourceConfig.class);
             publicDataSource.setCode(config.getCode());
         }
         return publicDataSourceMapper.update(id, publicDataSource);
@@ -110,19 +111,14 @@ public class PublicDataSourceServiceImpl implements PublicDataSourceService {
     @Override
     public PublicSourceConfig dealxml(String xmlTextStr) {
         PublicSourceConfig config = new PublicSourceConfig();
+        Properties properties = new Properties();
         try {
-            Properties properties = new Properties();
             properties.load(new ByteArrayInputStream(xmlTextStr.getBytes()));
-            PropertiesConfigurationFactory<PublicSourceConfig> factory = new PropertiesConfigurationFactory<>(config);
-            MutablePropertySources sources = new MutablePropertySources();
-            sources.addFirst(new PropertiesPropertySource(UUID.randomUUID().toString(), properties));
-            factory.setPropertySources(sources);
-            // factory.setTargetName("porter.task[0]");
-            factory.bindPropertiesToTarget();
+            ConfigurationPropertySource source = new MapConfigurationPropertySource(properties);
+            Binder binder = new Binder(source);
+            config = binder.bind("", PublicSourceConfig.class).get();
         } catch (IOException e) {
-            logger.error("解析jobXmlText失败IOException，请注意！！", e);
-        } catch (BindException e) {
-            logger.error("解析jobXmlText失败BindException，请注意！！", e);
+            logger.error("解析xmlTextStr失败，请注意！！", e);
         }
         return config;
     }

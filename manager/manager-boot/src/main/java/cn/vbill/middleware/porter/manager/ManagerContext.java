@@ -92,9 +92,9 @@ public enum ManagerContext {
 
 
 
-    public synchronized void addWarningReceivers(List<WarningReceiver> newReceivers) {
+    public synchronized void addWarningReceivers(WarningReceiver[] newReceivers) {
         List<WarningReceiver> tmp = Arrays.asList(receivers);
-        tmp.addAll(newReceivers);
+        tmp.addAll(Arrays.asList(newReceivers));
         receivers = tmp.toArray(new WarningReceiver[0]);
     }
 

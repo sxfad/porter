@@ -120,4 +120,17 @@ public class CUserServiceImpl implements CUserService {
         return cuserMapper.checkLoginName(loginName);
     }
 
+    @Override
+    public List<CUser> selectOwnersByJobId(Long jobId, Integer type) {
+        if (null == jobId) {
+            return null;
+        }
+        return cuserMapper.selectOwnersByJobId(jobId, type);
+    }
+
+    @Override
+    public List<CUser> findRegister() {
+        return cuserMapper.findRegister();
+    }
+
 }

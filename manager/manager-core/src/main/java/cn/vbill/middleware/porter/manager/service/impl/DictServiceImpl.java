@@ -67,4 +67,9 @@ public class DictServiceImpl implements DictService {
     public Map<String, Object> dictByType(String type) {
         return dictAll().get(type);
     }
+
+    @Override
+    public Map<String, Object> dictControlType() {
+        return ControlTypeEnum.LINKMAP;
+    }
 }

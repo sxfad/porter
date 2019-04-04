@@ -19,6 +19,26 @@
         select id, job_id AS jobId, owner_level AS ownerLevel, owner_id AS ownerId, create_time AS createTime, update_time AS updateTime, operator, iscancel, remark from job_tasks_owner
     </sql>-->
 
+    <!-- 根据任务id和类型查询ownerId -->
+    <select id="selectOwnerIdByJobIdOrTypeOne" resultType="java.lang.Long">
+        select owner_id AS ownerId from job_tasks_owner
+        <where>
+            iscancel = 0
+            and job_id = #{jobId}
+            <if test="type != null ">
+                and type = #{type}
+            </if>
+        </where>
+    </select>
+
+    <!-- 根据任务id和用户id查询该用户type -->
+    <select id="findOwnerTypeByJobIdAndUserId" resultType="java.lang.Integer">
+        select type from job_tasks_owner
+        where
+            iscancel = 0
+            and job_id = #{jobId} and owner_id = #{userId}
+    </select>
+
     <!-- 新增 -->
     <insert id="insert">
         insert into job_tasks_owner(
@@ -29,172 +49,4 @@
             #{ownerId}
         )
     </insert>
-
-    <!-- 修改 -->
-    <update id="update">
-        update job_tasks_owner
-        set
-            job_id = #{jobTasksOwner.jobId},
-            owner_level = #{jobTasksOwner.ownerLevel},
-            owner_id = #{jobTasksOwner.ownerId},
-            update_time = #{jobTasksOwner.updateTime},
-            operator = #{jobTasksOwner.operator},
-            iscancel = #{jobTasksOwner.iscancel},
-            remark = #{jobTasksOwner.remark}
-        where id = #{id}
-    </update>
-
-    <!-- 刪除 -->
-    <delete id="delete">
-        delete from job_tasks_owner where id = #{id}
-    </delete>
-
-    <!-- 权限移交：移除当前所有者权限 -->
-    <update id="deleteByOwnerIdAndJobId">
-        update job_tasks_owner
-        set
-          iscancel = 1
-        where job_id = #{jobId} and owner_id = #{ownerId}
-    </update>
-
-    <!-- 权限移交：权限移交给toUserId -->
-    <insert id="changePermission">
-        insert into job_tasks_owner(
-            job_id,
-            owner_id
-        ) values (
-            #{jobId},
-            #{ownerId}
-        )
-    </insert>
-
-    <!-- 权限共享 -->
-    <insert id="sharePermission">
-        insert into job_tasks_owner(
-            job_id,
-            owner_id
-        ) values
-        <foreach collection="list" item="toUserIds" index="index" separator=",">
-            (
-              #{jobId},
-              #{toUserIds.id}
-            )
-        </foreach>
-    </insert>
-
-    <!-- 根据主鍵查找 -->
-    <select id="selectById" resultType="cn.vbill.middleware.porter.manager.core.entity.JobTasksOwner">
-        select id, job_id AS jobId, owner_level AS ownerLevel, owner_id AS ownerId, create_time AS createTime, update_time AS updateTime, operator, iscancel, remark from job_tasks_owner
-        where id = #{id}
-    </select>
-
-    <!-- 分页All -->
-    <select id="pageAll" resultType="java.lang.Integer">
-        select count(id) from job_tasks_owner
-        where 1=1
-    </select>
-
-    <!-- 分页 -->
-    <select id="page" resultType="cn.vbill.middleware.porter.manager.core.entity.JobTasksOwner">
-        select id, job_id AS jobId, owner_level AS ownerLevel, owner_id AS ownerId, create_time AS createTime, update_time AS updateTime, operator, iscancel, remark from job_tasks_owner
-        where 1=1 limit #{page.offset},#{page.pageSize}
-    </select>
-
-    <!-- 验证新增 -->
-    <insert id="insertSelective">
-        insert into job_tasks_owner
-        <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="id != null">
-                id,
-            </if>
-            <if test="jobId != null">
-                job_id,
-            </if>
-            <if test="ownerLevel != null">
-                owner_level,
-            </if>
-            <if test="ownerId != null">
-                owner_id,
-            </if>
-            <if test="createTime != null">
-                create_time,
-            </if>
-            <if test="updateTime != null">
-                update_time,
-            </if>
-            <if test="operator != null">
-                operator,
-            </if>
-            <if test="iscancel != null">
-                iscancel,
-            </if>
-            <if test="remark != null">
-                remark,
-            </if>
-        </trim>
-        <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="id != null">
-                #{id,jdbcType=${field.mybatisType}},
-            </if>
-            <if test="jobId != null">
-                #{jobId,jdbcType=${field.mybatisType}},
-            </if>
-            <if test="ownerLevel != null">
-                #{ownerLevel,jdbcType=${field.mybatisType}},
-            </if>
-            <if test="ownerId != null">
-                #{ownerId,jdbcType=${field.mybatisType}},
-            </if>
-            <if test="createTime != null">
-                #{createTime,jdbcType=${field.mybatisType}},
-            </if>
-            <if test="updateTime != null">
-                #{updateTime,jdbcType=${field.mybatisType}},
-            </if>
-            <if test="operator != null">
-                #{operator,jdbcType=${field.mybatisType}},
-            </if>
-            <if test="iscancel != null">
-                #{iscancel,jdbcType=${field.mybatisType}},
-            </if>
-            <if test="remark != null">
-                #{remark,jdbcType=${field.mybatisType}},
-            </if>
-        </trim>
-    </insert>
-
-    <!-- 验证修改 -->
-    <update id="updateSelective">
-        update job_tasks_owner
-        <set>
-            <if test="jobTasksOwner.id != null">
-                id = #{jobTasksOwner.id,jdbcType=${field.mybatisType}},
-            </if>
-            <if test="jobTasksOwner.jobId != null">
-                job_id = #{jobTasksOwner.jobId,jdbcType=${field.mybatisType}},
-            </if>
-            <if test="jobTasksOwner.ownerLevel != null">
-                owner_level = #{jobTasksOwner.ownerLevel,jdbcType=${field.mybatisType}},
-            </if>
-            <if test="jobTasksOwner.ownerId != null">
-                owner_id = #{jobTasksOwner.ownerId,jdbcType=${field.mybatisType}},
-            </if>
-            <if test="jobTasksOwner.createTime != null">
-                create_time = #{jobTasksOwner.createTime,jdbcType=${field.mybatisType}},
-            </if>
-            <if test="jobTasksOwner.updateTime != null">
-                update_time = #{jobTasksOwner.updateTime,jdbcType=${field.mybatisType}},
-            </if>
-            <if test="jobTasksOwner.operator != null">
-                operator = #{jobTasksOwner.operator,jdbcType=${field.mybatisType}},
-            </if>
-            <if test="jobTasksOwner.iscancel != null">
-                iscancel = #{jobTasksOwner.iscancel,jdbcType=${field.mybatisType}},
-            </if>
-            <if test="jobTasksOwner.remark != null">
-                remark = #{jobTasksOwner.remark,jdbcType=${field.mybatisType}},
-            </if>
-        </set>
-        where id = #{id}
-    </update>
 </mapper>

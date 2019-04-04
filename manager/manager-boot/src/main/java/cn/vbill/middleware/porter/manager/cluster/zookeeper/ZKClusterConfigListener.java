@@ -26,6 +26,7 @@ import cn.vbill.middleware.porter.common.cluster.event.command.ConfigPushCommand
 import cn.vbill.middleware.porter.common.cluster.event.ClusterTreeNodeEvent;
 import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListener;
 import cn.vbill.middleware.porter.common.cluster.ClusterListenerFilter;
+import cn.vbill.middleware.porter.manager.ManagerContext;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.StringUtils;
 
@@ -58,6 +59,7 @@ public class ZKClusterConfigListener extends ZookeeperClusterListener {
                 WarningConfig config = JSONObject.parseObject(zkEvent.getData(), WarningConfig.class);
                 try {
                     WarningProviderFactory.INSTANCE.initialize(config);
+                    ManagerContext.INSTANCE.addWarningReceivers(config.getReceiver());
                 } catch (Throwable e) {
                     logger.warn("告警客户端初始化失败", e);
                 }

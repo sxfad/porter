@@ -16,41 +16,24 @@
  */
 package cn.vbill.middleware.porter.manager.service;
 
-import cn.vbill.middleware.porter.manager.core.entity.CUser;
+import cn.vbill.middleware.porter.manager.core.entity.OwnerControl;
 
 import java.util.List;
-import java.util.Map;
 
 /**
- * 任务所有权控制表 服务接口类
+ * 权限控制操作类型表 服务接口类
  *
  * @author: FairyHood
- * @date: 2019-03-20 16:29:06
+ * @date: 2019-04-02 10:58:29
  * @version: V1.0-auto
- * @review: FairyHood/2019-03-20 16:29:06
+ * @review: FairyHood/2019-04-02 10:58:29
  */
-public interface JobTasksOwnerService {
+public interface OwnerControlService {
 
     /**
-     * 回显任务所有者、任务共享者
+     * 查询全部对应关系
      *
-     * @param jobId
      * @return
      */
-    Map<Integer, List<CUser>> jobOwnerTypeAll(Long jobId);
-
-    /**
-     * 获取用户type
-     *
-     * @param jobId
-     * @return
-     */
-    Integer findOwnerTypeByJobId(Long jobId);
-
-    /**
-     * 新增任务同时更新任务所有权控制
-     *
-     * @param jobId
-     */
-    void insertByJobTasks(Long jobId);
+    List<OwnerControl> findAll(Integer type);
 }

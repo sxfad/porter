@@ -16,66 +16,65 @@
  */
 package cn.vbill.middleware.porter.manager.controller;
 
-import cn.vbill.middleware.porter.manager.core.entity.CUser;
-import cn.vbill.middleware.porter.manager.service.JobTasksOwnerService;
+import cn.vbill.middleware.porter.manager.core.entity.OwnerControl;
+import cn.vbill.middleware.porter.manager.service.OwnerControlService;
 import cn.vbill.middleware.porter.manager.web.message.ResponseMessage;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.Map;
 
 import static cn.vbill.middleware.porter.manager.web.message.ResponseMessage.ok;
 
+
 /**
- * 任务所有权控制表 controller控制器
+ * 权限控制操作类型表 controller控制器
  *
  * @author: FairyHood
- * @date: 2019-03-20 16:29:06
+ * @date: 2019-04-02 10:58:29
  * @version: V1.0-auto
- * @review: FairyHood/2019-03-20 16:29:06
+ * @review: FairyHood/2019-04-02 10:58:29
  */
-@Api(description = "任务所有权控制表管理")
+@Api(description = "权限控制操作类型表管理")
 @RestController
-@RequestMapping("/manager/jobtasksowner")
-public class JobTasksOwnerController {
+@RequestMapping("/manager/ownercontrol")
+public class OwnerControlController {
 
     @Autowired
-    protected JobTasksOwnerService jobTasksOwnerService;
+    protected OwnerControlService ownerControlService;
 
     /**
-     * 回显任务所有者、任务共享者
+     * 查询全部对应关系
      *
      * @author MurasakiSeiFu
-     * @date 2019-04-02 14:57
-     * @param: [jobId]
+     * @date 2019-04-03 14:52
+     * @param: []
      * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
      */
-    @GetMapping("/ownerAll/{jobId}")
-    @ApiOperation(value = "回显任务所有者、任务共享者")
-    public ResponseMessage jobOwnerTypeAll(@PathVariable("jobId") Long jobId) {
-        Map<Integer, List<CUser>> map = jobTasksOwnerService.jobOwnerTypeAll(jobId);
-        return ok(map);
+    @GetMapping("/findAll")
+    @ApiOperation(value = "查询全部对应关系", notes = "查询全部对应关系")
+    public ResponseMessage findAll() {
+        List<OwnerControl> list = ownerControlService.findAll(null);
+        return ok(list);
     }
 
     /**
-     * 获取用户type值
+     * 根据权限类型查询
      *
      * @author MurasakiSeiFu
-     * @date 2019-04-03 15:06
-     * @param: [jobId]
+     * @date 2019-04-03 14:56
+     * @param: []
      * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
      */
-    @GetMapping("/findType/{jobId}")
-    @ApiOperation(value = "获取用户type", notes = "获取用户type")
-    public ResponseMessage findOwnerType(@PathVariable("jobId") Long jobId) {
-        Integer type = jobTasksOwnerService.findOwnerTypeByJobId(jobId);
-        return ok(type);
+    @GetMapping("/findByType")
+    @ApiOperation(value = "根据权限类型查询", notes = "根据权限类型查询")
+    public ResponseMessage findByType(@RequestParam(value = "type", required = true) Integer type) {
+        List<OwnerControl> list = ownerControlService.findAll(type);
+        return ok(list);
     }
-
 }
