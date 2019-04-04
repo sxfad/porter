@@ -49,6 +49,7 @@ public class CanalConfig extends SourceConfig {
     @Setter @Getter private String filter = "";
     @Setter @Getter private int oncePollSize = 1000;
     @Setter @Getter private int pollTimeOut  = -1;
+    @Setter @Getter private boolean parallel = true;
 
     public CanalConfig() {
         sourceType = SourceType.CANAL;
