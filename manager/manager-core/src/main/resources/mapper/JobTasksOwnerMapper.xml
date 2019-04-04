@@ -57,7 +57,7 @@
         <where>
             1=1
             <if test="jobId != null">
-                and jobId = #{jobId}
+                and job_id = #{jobId}
             </if>
             <if test="type != null">
                 and type = #{type}
