@@ -16,6 +16,7 @@
  */
 package cn.vbill.middleware.porter.manager.controller;
 
+import cn.vbill.middleware.porter.manager.core.dto.ControlSettingVo;
 import cn.vbill.middleware.porter.manager.core.entity.CUser;
 import cn.vbill.middleware.porter.manager.service.JobTasksOwnerService;
 import cn.vbill.middleware.porter.manager.web.message.ResponseMessage;
@@ -24,6 +25,8 @@ import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -76,6 +79,21 @@ public class JobTasksOwnerController {
     public ResponseMessage findOwnerType(@PathVariable("jobId") Long jobId) {
         Integer type = jobTasksOwnerService.findOwnerTypeByJobId(jobId);
         return ok(type);
+    }
+
+    /**
+     * 权限设置
+     *
+     * @author MurasakiSeiFu
+     * @date 2019-04-04 10:05
+     * @param: []
+     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
+     */
+    @PutMapping
+    @ApiOperation(value = "权限设置", notes = "权限设置")
+    public ResponseMessage jobOwnerSetting(@RequestBody ControlSettingVo controlSettingVo) {
+        Integer number = jobTasksOwnerService.jobOwnerSetting(controlSettingVo);
+        return ok(number);
     }
 
 }

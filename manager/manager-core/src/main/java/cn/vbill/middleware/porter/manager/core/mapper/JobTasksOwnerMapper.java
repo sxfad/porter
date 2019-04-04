@@ -55,4 +55,20 @@ public interface JobTasksOwnerMapper {
      * @param jobTasksOwner
      */
     Integer insert(JobTasksOwner jobTasksOwner);
+
+    /**
+     * 逻辑删除
+     *
+     * @param jobId
+     * @param type
+     */
+    Integer delete(@Param("jobId") Long jobId, @Param("type") Integer type, @Param("userId") Long userId);
+
+    /**
+     * 批量新增
+     *
+     * @param toUserIds
+     * @return
+     */
+    Integer batchInsert(@Param("toUserIds") List<Long> toUserIds, @Param("jobId") Long jobId, @Param("type") Integer type);
 }

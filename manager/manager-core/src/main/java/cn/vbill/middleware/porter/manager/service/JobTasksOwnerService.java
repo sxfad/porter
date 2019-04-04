@@ -16,6 +16,7 @@
  */
 package cn.vbill.middleware.porter.manager.service;
 
+import cn.vbill.middleware.porter.manager.core.dto.ControlSettingVo;
 import cn.vbill.middleware.porter.manager.core.entity.CUser;
 
 import java.util.List;
@@ -53,4 +54,12 @@ public interface JobTasksOwnerService {
      * @param jobId
      */
     void insertByJobTasks(Long jobId);
+
+    /**
+     * 权限设置
+     *
+     * @param controlSettingVo
+     * @return
+     */
+    Integer jobOwnerSetting(ControlSettingVo controlSettingVo);
 }
