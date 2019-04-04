@@ -24,7 +24,7 @@ public enum ControlTypeEnum {
     /**
      * SHARE
      */
-    SHARE("SHAREE", "共享"),
+    SHARE("SHARE", "共享"),
 
     /**
      * CANCEL
