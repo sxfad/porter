@@ -18,14 +18,14 @@
 package cn.vbill.middleware.porter.plugin.consumer.canal.consumer;
 
 
-import cn.vbill.middleware.porter.common.consumer.ConsumeClient;
-import cn.vbill.middleware.porter.common.exception.TaskStopTriggerException;
-import cn.vbill.middleware.porter.core.consumer.AbstractDataConsumer;
+import cn.vbill.middleware.porter.common.task.consumer.ConsumeClient;
+import cn.vbill.middleware.porter.common.task.exception.TaskStopTriggerException;
+import cn.vbill.middleware.porter.core.task.consumer.AbstractDataConsumer;
 import cn.vbill.middleware.porter.plugin.consumer.canal.CanalConsumerConst;
 import cn.vbill.middleware.porter.plugin.consumer.canal.client.CanalClient;
 import com.alibaba.otter.canal.protocol.CanalEntry;
 import com.alibaba.otter.canal.protocol.Message;
-import cn.vbill.middleware.porter.core.event.s.MessageEvent;
+import cn.vbill.middleware.porter.core.message.MessageEvent;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 

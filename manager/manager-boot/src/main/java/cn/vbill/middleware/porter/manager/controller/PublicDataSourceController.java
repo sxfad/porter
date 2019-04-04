@@ -20,7 +20,7 @@ import static cn.vbill.middleware.porter.manager.web.message.ResponseMessage.ok;
 
 import java.io.UnsupportedEncodingException;
 
-import cn.vbill.middleware.porter.common.config.PublicSourceConfig;
+import cn.vbill.middleware.porter.common.task.config.PublicSourceConfig;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

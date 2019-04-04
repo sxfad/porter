@@ -17,12 +17,12 @@
 
 package cn.vbill.middleware.porter.task.alert.alerter;
 
-import cn.vbill.middleware.porter.common.alert.AlertProviderFactory;
-import cn.vbill.middleware.porter.common.alert.AlertReceiver;
-import cn.vbill.middleware.porter.common.cluster.data.DTaskStat;
+import cn.vbill.middleware.porter.common.node.statistics.NodeLog;
+import cn.vbill.middleware.porter.common.task.statistics.DTaskStat;
 import cn.vbill.middleware.porter.common.util.MachineUtils;
-import cn.vbill.middleware.porter.core.consumer.DataConsumer;
-import cn.vbill.middleware.porter.core.loader.DataLoader;
+import cn.vbill.middleware.porter.core.task.TaskContext;
+import cn.vbill.middleware.porter.core.task.consumer.DataConsumer;
+import cn.vbill.middleware.porter.core.task.loader.DataLoader;
 import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
@@ -31,7 +31,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Date;
-import java.util.List;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -52,7 +51,7 @@ public class ScanDataAlerter implements Alerter {
      * @return: void
      */
     public void check(DataConsumer consumer, DataLoader loader, DTaskStat stat, Triple<String[], String[],
-            String[]> checkMeta, List<AlertReceiver> receivers) throws InterruptedException {
+            String[]> checkMeta) throws InterruptedException {
         LOGGER.debug("trying scan data");
         if (null == stat || !stat.getUpdateStat().get() || null == stat.getLastLoadedDataTime() || null == checkMeta.getRight()) {
             LOGGER.debug("null == stat ||  !stat.getUpdateStat().get() || null == stat.getLastLoadedTime() || null == checkMeta.getRight()");
@@ -91,7 +90,7 @@ public class ScanDataAlerter implements Alerter {
 
                 LOGGER.debug("执行同步检查逻辑,执行时间段:{}-{}", noticeDateFormat.format(startDate), noticeDateFormat.format(endDate));
                 //执行同步检查逻辑，暂时为单线程模式执行
-                checkLogic(stat, consumer, loader, startDate, endDate, checkMeta, receivers);
+                checkLogic(stat, consumer, loader, startDate, endDate, checkMeta);
             }
             //更新同步时间点
             stat.setLastCheckedTime(DateUtils.addMinutes(lastCheckedTime, (int) (splitTimes * TIME_SPAN_OF_MINUTES) + 1));
@@ -107,7 +106,7 @@ public class ScanDataAlerter implements Alerter {
      * @return: void
      */
     private void checkLogic(DTaskStat stat, DataConsumer consumer, DataLoader loader, Date startDate, Date endDate,
-                            Triple<String[], String[], String[]> checkMeta, List<AlertReceiver> receivers) throws InterruptedException {
+                            Triple<String[], String[], String[]> checkMeta) throws InterruptedException {
         //更新对比时间
         int countSource = consumer.getDataCount(checkMeta.getLeft()[0], checkMeta.getMiddle()[0], checkMeta.getRight()[0], startDate, endDate);
         int countTarget = loader.getDataCount(checkMeta.getLeft()[1], checkMeta.getMiddle()[1], checkMeta.getRight()[1], startDate, endDate);
@@ -128,7 +127,8 @@ public class ScanDataAlerter implements Alerter {
             //更新同步检查次数
             stat.incrementAlertedTimes();
             String title = "[" + noticeDateFormat.format(new Date()) + "][" + MachineUtils.localhost() + ":" + MachineUtils.getPID() + "]数据同步告警";
-            AlertProviderFactory.INSTANCE.notice(title, notice, receivers);
+            TaskContext.warning(new NodeLog(NodeLog.LogType.WARNING, notice).bindTitle(title).bindTaskId(TaskContext.trace().getTaskId())
+                    .bindSwimlaneId(TaskContext.trace().getSwimlaneId()).upload());
         }
     }
 

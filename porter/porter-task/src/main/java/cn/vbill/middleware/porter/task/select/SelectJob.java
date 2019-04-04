@@ -17,14 +17,15 @@
 
 package cn.vbill.middleware.porter.task.select;
 
-import cn.vbill.middleware.porter.common.exception.TaskStopTriggerException;
-import cn.vbill.middleware.porter.common.statistics.NodeLog;
+import cn.vbill.middleware.porter.common.task.exception.TaskStopTriggerException;
+import cn.vbill.middleware.porter.common.node.statistics.NodeLog;
 import cn.vbill.middleware.porter.core.NodeContext;
-import cn.vbill.middleware.porter.core.consumer.DataConsumer;
-import cn.vbill.middleware.porter.core.event.s.MessageEvent;
-import cn.vbill.middleware.porter.core.task.AbstractStageJob;
+import cn.vbill.middleware.porter.core.task.consumer.DataConsumer;
+import cn.vbill.middleware.porter.core.message.MessageEvent;
+import cn.vbill.middleware.porter.core.task.job.AbstractStageJob;
 import cn.vbill.middleware.porter.datacarrier.DataCarrier;
 import cn.vbill.middleware.porter.datacarrier.DataCarrierFactory;
+import cn.vbill.middleware.porter.core.task.TaskContext;
 import cn.vbill.middleware.porter.task.worker.TaskWork;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
@@ -88,6 +89,11 @@ public class SelectJob extends AbstractStageJob {
     }
 
     @Override
+    protected void threadTraceLogic() {
+        TaskContext.trace(work.getTaskId(), work.getDataConsumer(), work.getDataLoader(), work.getReceivers());
+    }
+
+    @Override
     protected void loopLogic() throws InterruptedException {
         //只要队列有消息，持续读取
         List<MessageEvent> events = null;
@@ -105,7 +111,7 @@ public class SelectJob extends AbstractStageJob {
                 throw interrupt;
             } catch (Throwable e) {
                 e.printStackTrace();
-                NodeLog.upload(NodeLog.LogType.TASK_LOG, work.getTaskId(), consumer.getSwimlaneId(), "fetch MessageEvent error" + e.getMessage());
+                TaskContext.warning(NodeLog.upload(NodeLog.LogType.INFO, work.getTaskId(), consumer.getSwimlaneId(), "fetch MessageEvent error" + e.getMessage()));
                 LOGGER.error("fetch MessageEvent error!", e);
             }
         } while (null != events && !events.isEmpty() && getWorkingStat());
@@ -122,11 +128,9 @@ public class SelectJob extends AbstractStageJob {
                     || TimeUnit.SECONDS.convert(Math.abs(now.getTime() - lastNoneFetchNoticeTime.getTime()), TimeUnit.MILLISECONDS) >= fetchNoticeSpan;
             //fetchNoticeThreshould，并且持续fetchNoticeSpan秒没有发送通知
             if (overThresHold && triggerNotice) {
-                NodeLog log = new NodeLog(NodeLog.LogType.TASK_WARNING, taskId, swimlaneId,
+                TaskContext.warning(new NodeLog(NodeLog.LogType.WARNING, TaskContext.trace().getTaskId(), TaskContext.trace().getSwimlaneId(),
                         "\"" + work.getDataConsumer().getClientInfo() + "\"已持续" + (nofetchTime / 60) + "分钟未消费到数据，通知间隔"
-                                + (fetchNoticeSpan / 60) + "分钟");
-                log.setTitle("【关注】" + taskId + "-" + swimlaneId + "持续无数据消费" + (nofetchTime / 60) + "分钟");
-                NodeLog.upload(log, work.getReceivers());
+                                + (fetchNoticeSpan / 60) + "分钟").bindTitle("【关注】" + taskId + "-" + swimlaneId + "持续无数据消费" + (nofetchTime / 60) + "分钟"));
                 lastNoneFetchNoticeTime = now;
             }
             if (null == lastNoneFetchTime) {

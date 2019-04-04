@@ -65,7 +65,7 @@ public interface DicAlarmPluginService {
      *
      * @date 2018/8/10 上午11:28
      * @param: [id]
-     * @return: cn.vbill.middleware.porter.manager.core.entity.DicAlarmPlugin
+     * @return: cn.vbill.middleware.porter.manager.core.event.DicAlarmPlugin
      */
     DicAlarmPlugin selectById(Long id);
 
@@ -74,7 +74,7 @@ public interface DicAlarmPluginService {
      *
      * @date 2018/8/10 上午11:28
      * @param: [page]
-     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.entity.DicAlarmPlugin>
+     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.event.DicAlarmPlugin>
      */
     Page<DicAlarmPlugin> page(Page<DicAlarmPlugin> page);
 
@@ -84,7 +84,7 @@ public interface DicAlarmPluginService {
      * @author FuZizheng
      * @date 2018/8/10 上午11:28
      * @param: [alertType]
-     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.entity.DicAlarmPlugin>
+     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.event.DicAlarmPlugin>
      */
     List<DicAlarmPlugin> findByAlertType(String alertType);
 

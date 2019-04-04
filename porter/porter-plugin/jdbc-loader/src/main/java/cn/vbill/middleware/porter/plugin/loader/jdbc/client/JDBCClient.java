@@ -18,16 +18,16 @@
 package cn.vbill.middleware.porter.plugin.loader.jdbc.client;
 
 import cn.vbill.middleware.porter.common.client.AbstractClient;
-import cn.vbill.middleware.porter.common.client.LoadClient;
-import cn.vbill.middleware.porter.common.client.MetaQueryClient;
-import cn.vbill.middleware.porter.common.client.PluginServiceClient;
-import cn.vbill.middleware.porter.common.db.DdlUtils;
-import cn.vbill.middleware.porter.common.db.SqlTemplate;
-import cn.vbill.middleware.porter.common.db.SqlTemplateImpl;
-import cn.vbill.middleware.porter.common.db.meta.TableColumn;
-import cn.vbill.middleware.porter.common.db.meta.TableSchema;
+import cn.vbill.middleware.porter.common.task.loader.LoadClient;
+import cn.vbill.middleware.porter.common.task.consumer.MetaQueryClient;
+import cn.vbill.middleware.porter.common.plugin.PluginServiceClient;
+import cn.vbill.middleware.porter.common.util.db.DdlUtils;
+import cn.vbill.middleware.porter.common.util.db.SqlTemplate;
+import cn.vbill.middleware.porter.common.util.db.SqlTemplateImpl;
+import cn.vbill.middleware.porter.common.util.db.meta.TableColumn;
+import cn.vbill.middleware.porter.common.util.db.meta.TableSchema;
 import cn.vbill.middleware.porter.common.dic.DbType;
-import cn.vbill.middleware.porter.common.exception.TaskStopTriggerException;
+import cn.vbill.middleware.porter.common.task.exception.TaskStopTriggerException;
 import cn.vbill.middleware.porter.plugin.loader.jdbc.config.JDBCConfig;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.fastjson.JSON;

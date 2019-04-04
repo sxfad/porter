@@ -18,11 +18,11 @@
 package cn.vbill.middleware.porter.plugin.consumer.canal.client;
 
 import cn.vbill.middleware.porter.common.client.AbstractClient;
-import cn.vbill.middleware.porter.common.client.PluginServiceClient;
-import cn.vbill.middleware.porter.common.consumer.ConsumeClient;
-import cn.vbill.middleware.porter.common.consumer.Position;
-import cn.vbill.middleware.porter.common.exception.TaskStopTriggerException;
-import cn.vbill.middleware.porter.common.statistics.NodeLog;
+import cn.vbill.middleware.porter.common.plugin.PluginServiceClient;
+import cn.vbill.middleware.porter.common.task.consumer.ConsumeClient;
+import cn.vbill.middleware.porter.common.task.consumer.Position;
+import cn.vbill.middleware.porter.common.task.exception.TaskStopTriggerException;
+import cn.vbill.middleware.porter.common.node.statistics.NodeLog;
 import cn.vbill.middleware.porter.plugin.consumer.canal.config.CanalConfig;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.otter.canal.common.alarm.CanalAlarmHandler;
@@ -162,7 +162,6 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
                     canal.getCanalParameter().setMasterLogfileName(canalPosition.logfileName);
                     canal.getCanalParameter().setMasterLogfileOffest(canalPosition.offset);
                 }
-
                 CanalInstanceWithManager instance = new CanalInstanceWithManager(canal, clientId.getFilter());
                 instance.setAlarmHandler(new CanalAlarmHandler() {
                     private volatile boolean isRun = false;
@@ -186,7 +185,7 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
                         }
 
                         try {
-                            NodeLog.upload(NodeLog.LogType.TASK_LOG, getClientInfo() + ", error:" + msg);
+                            new NodeLog(NodeLog.LogType.INFO, getClientInfo() + ", error:" + msg).upload();
                         } catch (Throwable e) {
                             e.printStackTrace();
                             LOGGER.error("上传canal异常日志失败", e);

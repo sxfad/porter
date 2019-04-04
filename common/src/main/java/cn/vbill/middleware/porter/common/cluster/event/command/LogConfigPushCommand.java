@@ -18,7 +18,7 @@
 package cn.vbill.middleware.porter.common.cluster.event.command;
 
 import cn.vbill.middleware.porter.common.cluster.event.ClusterListenerEventType;
-import cn.vbill.middleware.porter.common.config.LogConfig;
+import cn.vbill.middleware.porter.common.node.config.LogConfig;
 import com.alibaba.fastjson.JSONObject;
 import lombok.Getter;
 import lombok.Setter;

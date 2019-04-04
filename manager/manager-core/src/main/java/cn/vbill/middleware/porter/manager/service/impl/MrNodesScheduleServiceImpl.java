@@ -27,7 +27,7 @@ import cn.vbill.middleware.porter.manager.web.rcc.RoleCheckContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import cn.vbill.middleware.porter.common.cluster.data.DNode;
+import cn.vbill.middleware.porter.common.statistics.DNode;
 import cn.vbill.middleware.porter.manager.web.page.Page;
 
 /**

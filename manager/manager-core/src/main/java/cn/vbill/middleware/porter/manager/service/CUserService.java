@@ -64,7 +64,7 @@ public interface CUserService {
      *
      * @date 2018/8/10 上午11:02
      * @param: [id]
-     * @return: cn.vbill.middleware.porter.manager.core.entity.CUser
+     * @return: cn.vbill.middleware.porter.manager.core.event.CUser
      */
     CUser selectById(Long id);
 
@@ -73,7 +73,7 @@ public interface CUserService {
      *
      * @date 2018/8/10 上午11:03
      * @param: [loginName, passwd]
-     * @return: cn.vbill.middleware.porter.manager.core.entity.CUser
+     * @return: cn.vbill.middleware.porter.manager.core.event.CUser
      */
     CUser selectByNameAndpasswd(String loginName, String passwd);
 
@@ -82,7 +82,7 @@ public interface CUserService {
      *
      * @date 2018/8/10 上午11:03
      * @param: [page]
-     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.entity.CUser>
+     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.event.CUser>
      */
     Page<CUser> page(Page<CUser> page);
 
@@ -91,7 +91,7 @@ public interface CUserService {
      *
      * @date 2018/8/10 上午11:03
      * @param: []
-     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.entity.CUser>
+     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.event.CUser>
      */
     List<CUser> list();
 
@@ -100,7 +100,7 @@ public interface CUserService {
      *
      * @date 2018/8/10 上午11:03
      * @param: [jobTasksId]
-     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.entity.CUser>
+     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.event.CUser>
      */
     List<CUser> selectByJobTasksId(Long jobTasksId);
 
@@ -109,7 +109,7 @@ public interface CUserService {
      *
      * @date 2018/8/10 上午11:04
      * @param: [alarmId]
-     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.entity.CUser>
+     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.event.CUser>
      */
     List<CUser> selectByAlarmId(Long alarmId);
 

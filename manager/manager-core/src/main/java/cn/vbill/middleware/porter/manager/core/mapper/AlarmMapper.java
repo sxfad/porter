@@ -38,7 +38,7 @@ public interface AlarmMapper {
      *
      * @date 2018/8/9 下午5:30
      * @param: []
-     * @return: cn.vbill.middleware.porter.manager.core.entity.Alarm
+     * @return: cn.vbill.middleware.porter.manager.core.event.Alarm
      */
     Alarm selectFinallyOne();
 

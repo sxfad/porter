@@ -19,8 +19,8 @@ package cn.vbill.middleware.porter.manager.service.impl;
 
 import cn.vbill.middleware.porter.manager.core.dto.RoleDataControl;
 import cn.vbill.middleware.porter.manager.service.NodesService;
-import cn.vbill.middleware.porter.common.cluster.data.DNode;
-import cn.vbill.middleware.porter.common.dic.NodeStatusType;
+import cn.vbill.middleware.porter.common.statistics.DNode;
+import cn.vbill.middleware.porter.common.node.dic.NodeStatusType;
 import cn.vbill.middleware.porter.manager.core.entity.Nodes;
 import cn.vbill.middleware.porter.manager.core.mapper.NodesMapper;
 import cn.vbill.middleware.porter.manager.web.page.Page;

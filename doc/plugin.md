@@ -8,7 +8,7 @@
 
 通过spring.factories发布:
 
-cn.vbill.middleware.porter.core.consumer.DataConsumer=xxx
+cn.vbill.middleware.porter.core.task.consumer.DataConsumer=xxx
 
 通过配置文件生效:
 
@@ -21,7 +21,7 @@ porter.task[index].consumer.consumerName=pluginName
 ```
 通过spring.factories发布:
 
-cn.vbill.middleware.porter.core.event.s.EventConverter = \
+cn.vbill.middleware.porter.core.message.converter.EventConverter = \
   cn.vbill.middleware.porter.plugin.OggXmlConverter
 
 通过配置文件生效:

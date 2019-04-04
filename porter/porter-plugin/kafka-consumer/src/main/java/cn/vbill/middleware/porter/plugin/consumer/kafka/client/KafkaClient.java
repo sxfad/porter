@@ -18,11 +18,11 @@
 package cn.vbill.middleware.porter.plugin.consumer.kafka.client;
 
 import cn.vbill.middleware.porter.common.client.AbstractClient;
-import cn.vbill.middleware.porter.common.client.PluginServiceClient;
-import cn.vbill.middleware.porter.common.consumer.ConsumeClient;
-import cn.vbill.middleware.porter.common.consumer.Position;
-import cn.vbill.middleware.porter.common.exception.DataConsumerBuildException;
-import cn.vbill.middleware.porter.common.exception.TaskStopTriggerException;
+import cn.vbill.middleware.porter.common.plugin.PluginServiceClient;
+import cn.vbill.middleware.porter.common.task.consumer.ConsumeClient;
+import cn.vbill.middleware.porter.common.task.consumer.Position;
+import cn.vbill.middleware.porter.common.task.exception.DataConsumerBuildException;
+import cn.vbill.middleware.porter.common.task.exception.TaskStopTriggerException;
 import cn.vbill.middleware.porter.common.util.MachineUtils;
 import cn.vbill.middleware.porter.plugin.consumer.kafka.config.KafkaConfig;
 import com.alibaba.fastjson.JSONObject;

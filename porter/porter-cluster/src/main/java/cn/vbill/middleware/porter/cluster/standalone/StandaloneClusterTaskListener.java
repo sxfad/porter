@@ -18,20 +18,20 @@
 package cn.vbill.middleware.porter.cluster.standalone;
 
 import cn.vbill.middleware.porter.cluster.CommonCodeBlock;
-import cn.vbill.middleware.porter.common.client.ClusterClient;
+import cn.vbill.middleware.porter.common.cluster.client.ClusterClient;
 import cn.vbill.middleware.porter.common.cluster.ClusterListenerFilter;
 import cn.vbill.middleware.porter.common.cluster.ClusterProviderProxy;
 import cn.vbill.middleware.porter.common.cluster.event.ClusterListenerEventExecutor;
 import cn.vbill.middleware.porter.common.cluster.event.ClusterListenerEventType;
 import cn.vbill.middleware.porter.common.cluster.event.command.*;
-import cn.vbill.middleware.porter.common.cluster.data.DTaskLock;
+import cn.vbill.middleware.porter.common.task.statistics.DTaskLock;
 import cn.vbill.middleware.porter.common.cluster.event.ClusterTreeNodeEvent;
 import cn.vbill.middleware.porter.common.cluster.event.executor.TaskListenerStopTaskEventExecutor;
 import cn.vbill.middleware.porter.common.cluster.event.executor.TaskPositionQueryEventExecutor;
 import cn.vbill.middleware.porter.common.cluster.event.executor.TaskPositionUploadEventExecutor;
 import cn.vbill.middleware.porter.common.cluster.event.executor.TaskStopByErrorEventExecutor;
 import cn.vbill.middleware.porter.common.cluster.impl.standalone.StandaloneListener;
-import cn.vbill.middleware.porter.common.exception.TaskLockException;
+import cn.vbill.middleware.porter.common.task.exception.TaskLockException;
 import cn.vbill.middleware.porter.core.NodeContext;
 import lombok.SneakyThrows;
 

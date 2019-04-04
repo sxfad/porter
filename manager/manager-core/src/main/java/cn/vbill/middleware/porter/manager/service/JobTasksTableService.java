@@ -65,7 +65,7 @@ public interface JobTasksTableService {
      *
      * @date 2018/8/10 上午11:50
      * @param: [id]
-     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.entity.JobTasksTable>
+     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.event.JobTasksTable>
      */
     List<JobTasksTable> selectById(Long id);
 
@@ -74,7 +74,7 @@ public interface JobTasksTableService {
      *
      * @date 2018/8/10 上午11:51
      * @param: [page]
-     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.entity.JobTasksTable>
+     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.event.JobTasksTable>
      */
     Page<JobTasksTable> page(Page<JobTasksTable> page);
 

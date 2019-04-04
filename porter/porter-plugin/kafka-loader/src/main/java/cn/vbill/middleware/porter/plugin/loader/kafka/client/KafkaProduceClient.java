@@ -18,8 +18,12 @@
 package cn.vbill.middleware.porter.plugin.loader.kafka.client;
 
 import cn.vbill.middleware.porter.common.client.*;
-import cn.vbill.middleware.porter.common.db.meta.TableSchema;
-import cn.vbill.middleware.porter.common.exception.TaskStopTriggerException;
+import cn.vbill.middleware.porter.common.plugin.PluginServiceClient;
+import cn.vbill.middleware.porter.common.statistics.StatisticClient;
+import cn.vbill.middleware.porter.common.task.consumer.MetaQueryClient;
+import cn.vbill.middleware.porter.common.task.loader.LoadClient;
+import cn.vbill.middleware.porter.common.util.db.meta.TableSchema;
+import cn.vbill.middleware.porter.common.task.exception.TaskStopTriggerException;
 import cn.vbill.middleware.porter.common.util.MachineUtils;
 import cn.vbill.middleware.porter.plugin.loader.kafka.config.KafkaProduceConfig;
 import org.apache.commons.lang3.StringUtils;

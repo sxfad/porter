@@ -38,7 +38,7 @@ public interface CMenuMapper {
      * @author FuZizheng
      * @date 2018/8/9 下午5:31
      * @param: [fatherCode]
-     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.entity.CMenu>
+     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.event.CMenu>
      */
     List<CMenu> findByFatherCode(String fatherCode);
 
@@ -48,7 +48,7 @@ public interface CMenuMapper {
      * @author FuZizheng
      * @date 2018/8/9 下午5:39
      * @param: []
-     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.entity.CMenu>
+     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.event.CMenu>
      */
     List<CMenu> findAll();
 
@@ -58,7 +58,7 @@ public interface CMenuMapper {
      * @author FuZizheng
      * @date 2018/8/9 下午5:39
      * @param: [roleCode]
-     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.entity.CMenu>
+     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.event.CMenu>
      */
     List<CMenu> findByRoleCode(@Param("roleCode") String roleCode);
 
@@ -88,7 +88,7 @@ public interface CMenuMapper {
      * @author FuZizheng
      * @date 2018/8/9 下午5:40
      * @param: [id]
-     * @return: cn.vbill.middleware.porter.manager.core.entity.CMenu
+     * @return: cn.vbill.middleware.porter.manager.core.event.CMenu
      */
     CMenu findById(Long id);
 

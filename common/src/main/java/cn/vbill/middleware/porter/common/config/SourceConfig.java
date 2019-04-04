@@ -17,16 +17,17 @@
 
 package cn.vbill.middleware.porter.common.config;
 
-import cn.vbill.middleware.porter.common.config.source.EmailConfig;
-import cn.vbill.middleware.porter.common.config.source.FileOperationConfig;
+import cn.vbill.middleware.porter.common.plugin.config.PluginServiceConfig;
+import cn.vbill.middleware.porter.common.warning.config.EmailConfig;
+import cn.vbill.middleware.porter.common.cluster.config.FileOperationConfig;
 import cn.vbill.middleware.porter.common.config.source.NameSourceConfig;
-import cn.vbill.middleware.porter.common.config.source.ZookeeperConfig;
+import cn.vbill.middleware.porter.common.cluster.config.ZookeeperConfig;
 import cn.vbill.middleware.porter.common.dic.SourceType;
 import cn.vbill.middleware.porter.common.exception.ConfigParseException;
+import cn.vbill.middleware.porter.common.task.config.SwamlaneSupport;
 import cn.vbill.middleware.porter.common.util.BeanUtils;
 import cn.vbill.middleware.porter.common.util.compile.JavaFileCompiler;
 import com.alibaba.fastjson.annotation.JSONField;
-import lombok.Getter;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -64,7 +65,6 @@ public abstract class SourceConfig implements SwamlaneSupport {
      */
     @JSONField(serialize = false, deserialize = false)
     public static final String NAME_SOURCE_KEY = "sourceName";
-    @Getter
     protected SourceType sourceType;
 
     private Map<String, String> properties;
@@ -187,4 +187,8 @@ public abstract class SourceConfig implements SwamlaneSupport {
      * @return
      */
     protected abstract boolean doCheck();
+
+    public SourceType getSourceType() {
+        return sourceType;
+    }
 }

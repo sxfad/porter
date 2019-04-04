@@ -55,7 +55,7 @@ public interface DataTableService {
      *
      * @date 2018/8/10 上午11:18
      * @param: [id]
-     * @return: cn.vbill.middleware.porter.manager.core.entity.DataTable
+     * @return: cn.vbill.middleware.porter.manager.core.event.DataTable
      */
     DataTable selectById(Long id);
 
@@ -64,7 +64,7 @@ public interface DataTableService {
      *
      * @date 2018/8/10 上午11:19
      * @param: [page, bankName, beginTime, endTime]
-     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.entity.DataTable>
+     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.event.DataTable>
      */
     Page<DataTable> page(Page<DataTable> page, String bankName, String beginTime, String endTime);
 
@@ -91,7 +91,7 @@ public interface DataTableService {
      *
      * @date 2018/8/10 上午11:24
      * @param: [dataTablePage]
-     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.entity.DataTable>
+     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.event.DataTable>
      */
     Page<DataTable> dataTableList(Page<DataTable> dataTablePage);
 }

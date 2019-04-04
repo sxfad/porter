@@ -36,7 +36,7 @@ public interface CRoleService {
      *
      * @date 2018/8/10 上午10:36
      * @param: []
-     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.entity.CRole>
+     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.event.CRole>
      */
     List<CRole> findAll();
 
@@ -45,7 +45,7 @@ public interface CRoleService {
      *
      * @date 2018/8/10 上午10:36
      * @param: []
-     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.entity.CRole>
+     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.event.CRole>
      */
     List<CRole> findList();
 

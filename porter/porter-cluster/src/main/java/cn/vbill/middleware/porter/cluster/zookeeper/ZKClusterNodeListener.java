@@ -18,25 +18,25 @@
 package cn.vbill.middleware.porter.cluster.zookeeper;
 
 import cn.vbill.middleware.porter.cluster.CommonCodeBlock;
-import cn.vbill.middleware.porter.common.client.ClusterClient;
+import cn.vbill.middleware.porter.common.cluster.client.ClusterClient;
 import cn.vbill.middleware.porter.common.cluster.ClusterListenerFilter;
 import cn.vbill.middleware.porter.common.cluster.event.ClusterListenerEventExecutor;
 import cn.vbill.middleware.porter.common.cluster.event.ClusterListenerEventType;
 import cn.vbill.middleware.porter.common.cluster.event.command.*;
-import cn.vbill.middleware.porter.common.cluster.data.DNode;
-import cn.vbill.middleware.porter.common.cluster.data.DTaskLock;
+import cn.vbill.middleware.porter.common.statistics.DNode;
+import cn.vbill.middleware.porter.common.task.statistics.DTaskLock;
 import cn.vbill.middleware.porter.common.cluster.event.ClusterTreeNodeEvent;
 import cn.vbill.middleware.porter.common.cluster.event.executor.NodeStopTaskEventExecutor;
 import cn.vbill.middleware.porter.common.cluster.event.executor.NodeTaskAssignedEventExecutor;
 import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListener;
-import cn.vbill.middleware.porter.common.config.NodeCommandConfig;
-import cn.vbill.middleware.porter.common.config.TaskConfig;
-import cn.vbill.middleware.porter.common.dic.NodeHealthLevel;
-import cn.vbill.middleware.porter.common.dic.NodeStatusType;
-import cn.vbill.middleware.porter.common.dic.TaskStatusType;
-import cn.vbill.middleware.porter.common.node.NodeCommandType;
-import cn.vbill.middleware.porter.common.task.TaskEventListener;
-import cn.vbill.middleware.porter.common.task.TaskEventProvider;
+import cn.vbill.middleware.porter.common.node.config.NodeCommandConfig;
+import cn.vbill.middleware.porter.common.task.config.TaskConfig;
+import cn.vbill.middleware.porter.common.node.dic.NodeHealthLevel;
+import cn.vbill.middleware.porter.common.node.dic.NodeStatusType;
+import cn.vbill.middleware.porter.common.task.dic.TaskStatusType;
+import cn.vbill.middleware.porter.common.node.dic.NodeCommandType;
+import cn.vbill.middleware.porter.common.task.event.TaskEventListener;
+import cn.vbill.middleware.porter.common.task.event.TaskEventProvider;
 import cn.vbill.middleware.porter.common.util.DefaultNamedThreadFactory;
 import cn.vbill.middleware.porter.common.util.MachineUtils;
 import cn.vbill.middleware.porter.core.NodeContext;
@@ -163,7 +163,7 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements T
             public boolean doFilter(ClusterTreeNodeEvent event) {
                 boolean access = false;
                 //仅仅监控应用自身
-                //event.getEventType() == EventType.ONLINE &&
+                //event.getEventType() == MessageAction.ONLINE &&
                 if (event.getId().contains(getPath() + "/" + NodeContext.INSTANCE.getNodeId())) {
                     access = true;
                 }

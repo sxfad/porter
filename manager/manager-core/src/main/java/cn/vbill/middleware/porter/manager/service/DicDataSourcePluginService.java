@@ -64,7 +64,7 @@ public interface DicDataSourcePluginService {
      *
      * @date 2018/8/10 上午11:30
      * @param: [id]
-     * @return: cn.vbill.middleware.porter.manager.core.entity.DicDataSourcePlugin
+     * @return: cn.vbill.middleware.porter.manager.core.event.DicDataSourcePlugin
      */
     DicDataSourcePlugin selectById(Long id);
 
@@ -73,7 +73,7 @@ public interface DicDataSourcePluginService {
      *
      * @date 2018/8/10 上午11:30
      * @param: [page]
-     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.entity.DicDataSourcePlugin>
+     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.event.DicDataSourcePlugin>
      */
     Page<DicDataSourcePlugin> page(Page<DicDataSourcePlugin> page);
 
@@ -82,7 +82,7 @@ public interface DicDataSourcePluginService {
      *
      * @date 2018/8/10 上午11:30
      * @param: [sourceType]
-     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.entity.DicDataSourcePlugin>
+     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.event.DicDataSourcePlugin>
      */
     List<DicDataSourcePlugin> findByType(String sourceType);
 }

@@ -65,7 +65,7 @@ public interface DataSourcePluginService {
      *
      * @date 2018/8/10 上午11:11
      * @param: [id]
-     * @return: cn.vbill.middleware.porter.manager.core.entity.DataSourcePlugin
+     * @return: cn.vbill.middleware.porter.manager.core.event.DataSourcePlugin
      */
     DataSourcePlugin selectById(Long id);
 
@@ -74,7 +74,7 @@ public interface DataSourcePluginService {
      *
      * @date 2018/8/10 上午11:11
      * @param: [page]
-     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.entity.DataSourcePlugin>
+     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.event.DataSourcePlugin>
      */
     Page<DataSourcePlugin> page(Page<DataSourcePlugin> page);
 
@@ -92,7 +92,7 @@ public interface DataSourcePluginService {
      *
      * @date 2018/8/10 上午11:11
      * @param: [sourceId]
-     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.entity.DataSourcePlugin>
+     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.event.DataSourcePlugin>
      */
     List<DataSourcePlugin> findListBySourceID(Long sourceId);
 }

@@ -17,7 +17,7 @@
 
 package cn.vbill.middleware.porter.manager.service;
 
-import cn.vbill.middleware.porter.common.statistics.NodeLog;
+import cn.vbill.middleware.porter.common.node.statistics.NodeLog;
 import cn.vbill.middleware.porter.manager.core.entity.MrLogMonitor;
 import cn.vbill.middleware.porter.manager.web.page.Page;
 
@@ -63,7 +63,7 @@ public interface MrLogMonitorService {
      *
      * @date 2018/8/10 下午2:02
      * @param: [id]
-     * @return: cn.vbill.middleware.porter.manager.core.entity.MrLogMonitor
+     * @return: cn.vbill.middleware.porter.manager.core.event.MrLogMonitor
      */
     MrLogMonitor selectById(Long id);
 
@@ -72,7 +72,7 @@ public interface MrLogMonitorService {
      *
      * @date 2018/8/10 下午2:04
      * @param: [page, ipAddress, state, beginTime, endTime]
-     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.entity.MrLogMonitor>
+     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.event.MrLogMonitor>
      */
     Page<MrLogMonitor> page(Page<MrLogMonitor> page, String ipAddress, Integer state, String date);
 

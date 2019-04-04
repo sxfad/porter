@@ -20,7 +20,7 @@ package cn.vbill.middleware.porter.manager.service.impl;
 import cn.vbill.middleware.porter.manager.core.entity.MrJobTasksMonitor;
 import cn.vbill.middleware.porter.manager.core.icon.MrJobMonitor;
 import cn.vbill.middleware.porter.manager.core.mapper.MrJobTasksMonitorMapper;
-import cn.vbill.middleware.porter.common.statistics.TaskPerformance;
+import cn.vbill.middleware.porter.common.task.statistics.TaskPerformance;
 import cn.vbill.middleware.porter.manager.core.util.DateFormatUtils;
 import cn.vbill.middleware.porter.manager.web.page.Page;
 import cn.vbill.middleware.porter.manager.service.MrJobTasksMonitorService;

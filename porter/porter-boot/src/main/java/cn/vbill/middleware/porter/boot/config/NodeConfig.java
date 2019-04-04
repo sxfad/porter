@@ -17,10 +17,10 @@
 
 package cn.vbill.middleware.porter.boot.config;
 
-import cn.vbill.middleware.porter.common.config.AlertConfig;
-import cn.vbill.middleware.porter.common.config.ClusterConfig;
+import cn.vbill.middleware.porter.common.warning.config.WarningConfig;
+import cn.vbill.middleware.porter.common.cluster.config.ClusterConfig;
 import cn.vbill.middleware.porter.common.config.StatisticConfig;
-import cn.vbill.middleware.porter.common.config.TaskConfig;
+import cn.vbill.middleware.porter.common.task.config.TaskConfig;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -44,7 +44,7 @@ public class NodeConfig {
     private String id = UUID.randomUUID().toString();
     private Integer workLimit = 10;
     private StatisticConfig statistic = new StatisticConfig();
-    private AlertConfig alert;
+    private WarningConfig alert;
     private ClusterConfig cluster;
     private List<TaskConfig> task = new ArrayList<>();
 

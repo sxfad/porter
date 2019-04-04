@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.vbill.middleware.porter.manager.core.mapper.PublicDataSourceMapper">
     <!-- 通用查询映射结果 
-    <resultMap id="BaseResultMap" type="cn.vbill.middleware.porter.manager.core.entity.PublicDataSource">
+    <resultMap id="BaseResultMap" type="cn.vbill.middleware.porter.manager.core.event.PublicDataSource">
         <result column="id" property="id" />
         <result column="code" property="code" />
         <result column="name" property="name" />

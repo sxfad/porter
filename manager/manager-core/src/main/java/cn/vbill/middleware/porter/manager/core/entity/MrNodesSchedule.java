@@ -24,8 +24,8 @@ import java.util.TreeSet;
 
 import cn.vbill.middleware.porter.manager.core.init.ResourceUtils;
 import com.alibaba.fastjson.JSON;
-import cn.vbill.middleware.porter.common.cluster.data.DNode;
-import cn.vbill.middleware.porter.common.dic.NodeHealthLevel;
+import cn.vbill.middleware.porter.common.statistics.DNode;
+import cn.vbill.middleware.porter.common.node.dic.NodeHealthLevel;
 
 /**
  * 节点任务监控表 实体Entity

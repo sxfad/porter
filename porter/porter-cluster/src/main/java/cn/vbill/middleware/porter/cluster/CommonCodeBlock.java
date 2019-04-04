@@ -16,9 +16,9 @@
  */
 package cn.vbill.middleware.porter.cluster;
 
-import cn.vbill.middleware.porter.common.client.ClusterClient;
-import cn.vbill.middleware.porter.common.cluster.data.DNode;
-import cn.vbill.middleware.porter.common.cluster.data.DTaskLock;
+import cn.vbill.middleware.porter.common.cluster.client.ClusterClient;
+import cn.vbill.middleware.porter.common.statistics.DNode;
+import cn.vbill.middleware.porter.common.task.statistics.DTaskLock;
 import cn.vbill.middleware.porter.core.NodeContext;
 import com.alibaba.fastjson.JSONObject;
 import lombok.AllArgsConstructor;

@@ -17,10 +17,10 @@
 
 package cn.vbill.middleware.porter.plugin.converter.ogg;
 
-import cn.vbill.middleware.porter.common.consumer.Position;
-import cn.vbill.middleware.porter.core.event.s.EventConverter;
-import cn.vbill.middleware.porter.core.event.s.EventType;
-import cn.vbill.middleware.porter.core.event.s.MessageEvent;
+import cn.vbill.middleware.porter.common.task.consumer.Position;
+import cn.vbill.middleware.porter.core.message.converter.EventConverter;
+import cn.vbill.middleware.porter.core.message.MessageAction;
+import cn.vbill.middleware.porter.core.message.MessageEvent;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -46,13 +46,13 @@ public class OggJsonConverter implements EventConverter {
     private FastDateFormat opTsF = FastDateFormat.getInstance("yyyy-MM-dd hh:mm:ss.SSS");
     private FastDateFormat ctsf = FastDateFormat.getInstance("yyyy-MM-dd'T'hh:mm:ss.SSS");
     private static final String CONVERTER_NAME = "oggJson";
-    private static final Map<String, EventType> EVENT_MAPPING = new HashMap<String, EventType>() {{
-            put("I", EventType.INSERT);
-            put("U", EventType.UPDATE);
-            put("D", EventType.DELETE);
-            put("T", EventType.TRUNCATE);
-            put("BEGIN", EventType.TRANSACTION_BEGIN);
-            put("END", EventType.TRANSACTION_END);
+    private static final Map<String, MessageAction> EVENT_MAPPING = new HashMap<String, MessageAction>() {{
+            put("I", MessageAction.INSERT);
+            put("U", MessageAction.UPDATE);
+            put("D", MessageAction.DELETE);
+            put("T", MessageAction.TRUNCATE);
+            put("BEGIN", MessageAction.TRANSACTION_BEGIN);
+            put("END", MessageAction.TRANSACTION_END);
         }};
     @Override
     public String getName() {
@@ -65,10 +65,10 @@ public class OggJsonConverter implements EventConverter {
         Position position = (Position) params[1];
         JSONObject obj = JSON.parseObject((String) params[2]);
 
-        EventType eventType = EVENT_MAPPING.getOrDefault(obj.getString("op_type"), EventType.UNKNOWN);
+        MessageAction action = EVENT_MAPPING.getOrDefault(obj.getString("op_type"), MessageAction.UNKNOWN);
 
         //不能解析的事件跳过
-        if (null == eventType ||  eventType == EventType.UNKNOWN) {
+        if (null == action ||  action == MessageAction.UNKNOWN) {
             return null;
         }
         //body
@@ -79,7 +79,7 @@ public class OggJsonConverter implements EventConverter {
             event.setSchema(stTmp[0]);
             event.setTable(stTmp[1]);
         }
-        event.setOpType(eventType);
+        event.setOpType(action);
         try {
             String poTS = obj.containsKey("op_ts") ? obj.getString("op_ts") : null;
             if (StringUtils.isNotEmpty(poTS)) event.setOpTs(opTsF.parse(poTS.substring(0, poTS.length() - (poTS.split("\\.")[1].length() - 3))));

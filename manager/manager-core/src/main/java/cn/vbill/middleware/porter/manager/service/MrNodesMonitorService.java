@@ -17,7 +17,7 @@
 
 package cn.vbill.middleware.porter.manager.service;
 
-import cn.vbill.middleware.porter.common.statistics.TaskPerformance;
+import cn.vbill.middleware.porter.common.task.statistics.TaskPerformance;
 import cn.vbill.middleware.porter.manager.core.entity.MrNodesMonitor;
 import cn.vbill.middleware.porter.manager.core.icon.MrNodeMonitor;
 import cn.vbill.middleware.porter.manager.web.page.Page;
@@ -64,7 +64,7 @@ public interface MrNodesMonitorService {
      *
      * @date 2018/8/10 下午2:05
      * @param: [id]
-     * @return: cn.vbill.middleware.porter.manager.core.entity.MrNodesMonitor
+     * @return: cn.vbill.middleware.porter.manager.core.event.MrNodesMonitor
      */
     MrNodesMonitor selectById(Long id);
 
@@ -73,7 +73,7 @@ public interface MrNodesMonitorService {
      *
      * @date 2018/8/10 下午2:05
      * @param: [page]
-     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.entity.MrNodesMonitor>
+     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.event.MrNodesMonitor>
      */
     Page<MrNodesMonitor> page(Page<MrNodesMonitor> page);
 

@@ -64,7 +64,7 @@ public interface JobTasksFieldService {
      *
      * @date 2018/8/10 上午11:41
      * @param: [id]
-     * @return: cn.vbill.middleware.porter.manager.core.entity.JobTasksField
+     * @return: cn.vbill.middleware.porter.manager.core.event.JobTasksField
      */
     JobTasksField selectById(Long id);
 
@@ -73,7 +73,7 @@ public interface JobTasksFieldService {
      *
      * @date 2018/8/10 上午11:42
      * @param: [page]
-     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.entity.JobTasksField>
+     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.event.JobTasksField>
      */
     Page<JobTasksField> page(Page<JobTasksField> page);
 
@@ -91,7 +91,7 @@ public interface JobTasksFieldService {
      *
      * @date 2018/8/10 上午11:42
      * @param: [id, jobTasksTableId]
-     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.entity.JobTasksField>
+     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.event.JobTasksField>
      */
     List<JobTasksField> selectInfo(Long id, Long jobTasksTableId);
 }

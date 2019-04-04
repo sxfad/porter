@@ -17,13 +17,10 @@
 
 package cn.vbill.middleware.porter.task.alert.alerter;
 
-import cn.vbill.middleware.porter.common.cluster.data.DTaskStat;
-import cn.vbill.middleware.porter.common.alert.AlertReceiver;
-import cn.vbill.middleware.porter.core.consumer.DataConsumer;
-import cn.vbill.middleware.porter.core.loader.DataLoader;
+import cn.vbill.middleware.porter.common.task.statistics.DTaskStat;
+import cn.vbill.middleware.porter.core.task.consumer.DataConsumer;
+import cn.vbill.middleware.porter.core.task.loader.DataLoader;
 import org.apache.commons.lang3.tuple.Triple;
-
-import java.util.List;
 
 /**
  * 告警接口
@@ -37,6 +34,5 @@ public interface Alerter {
      * @param: [consumer, loader, stat, checkMeta, receivers]
      * @return: void
      */
-    void check(DataConsumer consumer, DataLoader loader, DTaskStat stat, Triple<String[], String[], String[]> checkMeta,
-               List<AlertReceiver> receivers) throws InterruptedException;
+    void check(DataConsumer consumer, DataLoader loader, DTaskStat stat, Triple<String[], String[], String[]> checkMeta) throws InterruptedException;
 }

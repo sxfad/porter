@@ -8,7 +8,7 @@ Extends AbstractDataConsumer class
 
 Published by spring.factories:
 
-cn.vbill.middleware.porter.core.consumer.DataConsumer=xxx
+cn.vbill.middleware.porter.core.task.consumer.DataConsumer=xxx
 
 Effective through the configuration file:
 
@@ -21,7 +21,7 @@ porter.task[index].consumer.consumerName=pluginName
 ```
 Published by spring.factories:
 
-cn.vbill.middleware.porter.core.event.s.EventConverter = \
+cn.vbill.middleware.porter.core.message.converter.EventConverter = \
   cn.vbill.middleware.porter.plugin.OggXmlConverter
 
 Effective through the configuration file:

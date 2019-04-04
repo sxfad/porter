@@ -62,7 +62,7 @@ public interface LogGradeService {
      *
      * @date 2018/8/10 上午11:54
      * @param: [id]
-     * @return: cn.vbill.middleware.porter.manager.core.entity.LogGrade
+     * @return: cn.vbill.middleware.porter.manager.core.event.LogGrade
      */
     LogGrade selectById(Long id);
 
@@ -71,7 +71,7 @@ public interface LogGradeService {
      *
      * @date 2018/8/10 上午11:54
      * @param: [page]
-     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.entity.LogGrade>
+     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.event.LogGrade>
      */
     Page<LogGrade> page(Page<LogGrade> page);
 
@@ -80,7 +80,7 @@ public interface LogGradeService {
      *
      * @date 2018/8/10 上午11:54
      * @param: []
-     * @return: cn.vbill.middleware.porter.manager.core.entity.LogGrade
+     * @return: cn.vbill.middleware.porter.manager.core.event.LogGrade
      */
     LogGrade select();
 }

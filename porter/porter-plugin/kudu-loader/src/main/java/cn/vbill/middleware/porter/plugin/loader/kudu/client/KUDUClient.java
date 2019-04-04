@@ -18,11 +18,11 @@
 package cn.vbill.middleware.porter.plugin.loader.kudu.client;
 
 import cn.vbill.middleware.porter.common.client.AbstractClient;
-import cn.vbill.middleware.porter.common.client.LoadClient;
-import cn.vbill.middleware.porter.common.client.MetaQueryClient;
-import cn.vbill.middleware.porter.common.client.PluginServiceClient;
-import cn.vbill.middleware.porter.common.db.meta.TableColumn;
-import cn.vbill.middleware.porter.common.db.meta.TableSchema;
+import cn.vbill.middleware.porter.common.task.loader.LoadClient;
+import cn.vbill.middleware.porter.common.task.consumer.MetaQueryClient;
+import cn.vbill.middleware.porter.common.plugin.PluginServiceClient;
+import cn.vbill.middleware.porter.common.util.db.meta.TableColumn;
+import cn.vbill.middleware.porter.common.util.db.meta.TableSchema;
 import cn.vbill.middleware.porter.plugin.loader.kudu.config.KuduConfig;
 import lombok.Getter;
 import lombok.SneakyThrows;

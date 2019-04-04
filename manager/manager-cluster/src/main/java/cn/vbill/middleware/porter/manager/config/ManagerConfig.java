@@ -17,7 +17,7 @@
 
 package cn.vbill.middleware.porter.manager.config;
 
-import cn.vbill.middleware.porter.common.config.ClusterConfig;
+import cn.vbill.middleware.porter.common.cluster.config.ClusterConfig;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;

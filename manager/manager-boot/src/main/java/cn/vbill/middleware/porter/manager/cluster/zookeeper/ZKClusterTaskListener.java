@@ -27,22 +27,25 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 
-import cn.vbill.middleware.porter.common.client.ClusterClient;
+import cn.vbill.middleware.porter.common.cluster.client.ClusterClient;
 import cn.vbill.middleware.porter.common.cluster.ClusterListenerFilter;
 import cn.vbill.middleware.porter.common.cluster.event.ClusterListenerEventExecutor;
 import cn.vbill.middleware.porter.common.cluster.event.executor.*;
 import cn.vbill.middleware.porter.common.config.SourceConfig;
 import cn.vbill.middleware.porter.common.exception.ConfigParseException;
-import cn.vbill.middleware.porter.common.statistics.NodeLog;
+import cn.vbill.middleware.porter.common.node.statistics.NodeLog;
 
+import cn.vbill.middleware.porter.common.warning.WarningProviderFactory;
+import cn.vbill.middleware.porter.common.warning.entity.WarningErrorCode;
+import cn.vbill.middleware.porter.common.warning.entity.WarningMessage;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
-import cn.vbill.middleware.porter.common.cluster.data.DTaskStat;
+import cn.vbill.middleware.porter.common.task.statistics.DTaskStat;
 import cn.vbill.middleware.porter.common.cluster.event.ClusterTreeNodeEvent;
 import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListener;
-import cn.vbill.middleware.porter.common.config.TaskConfig;
-import cn.vbill.middleware.porter.common.dic.TaskStatusType;
+import cn.vbill.middleware.porter.common.task.config.TaskConfig;
+import cn.vbill.middleware.porter.common.task.dic.TaskStatusType;
 import cn.vbill.middleware.porter.manager.ManagerContext;
 import cn.vbill.middleware.porter.manager.core.util.ApplicationContextUtil;
 import cn.vbill.middleware.porter.manager.core.util.DealStrCutUtils;
@@ -188,11 +191,11 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener {
         taskUnsignedListener.scheduleAtFixedRate(() -> {
             String msg = unsignedTaskMsg();
             if (null != msg && !msg.trim().isEmpty()) {
-                NodeLog log = new NodeLog();
-                log.setError(msg);
-                log.setTitle("【管理员告警】运行状态异常任务列表");
-                log.setType(NodeLog.LogType.TASK_WARNING);
-                NodeLog.upload(log, null);
+                NodeLog log = new NodeLog(NodeLog.LogType.WARNING, msg).bindTitle("【管理员告警】运行状态异常任务列表").upload();
+                try {
+                    WarningProviderFactory.INSTANCE.notice(new WarningMessage(log.getTitle(), log.getError(), WarningErrorCode.match(log.getError())), ManagerContext.INSTANCE.getReceivers());
+                } catch (InterruptedException e) {
+                }
             }
         }, 30, 10, TimeUnit.MINUTES);
     }
@@ -237,7 +240,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener {
             try {
                 sourceConfigs = SourceConfig.getConfig(config.getConsumer().getSource()).swamlanes();
             } catch (ConfigParseException e) {
-                NodeLog.upload(NodeLog.LogType.TASK_WARNING, config.getTaskId(), "", "运行状态检测异常-" + e.getMessage());
+                NodeLog.upload(NodeLog.LogType.WARNING, config.getTaskId(), "", "运行状态检测异常-" + e.getMessage());
                 e.printStackTrace();
                 continue;
             }

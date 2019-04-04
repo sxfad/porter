@@ -17,7 +17,7 @@
 
 package cn.vbill.middleware.porter.task.extract;
 
-import cn.vbill.middleware.porter.core.event.s.EventProcessor;
+import cn.vbill.middleware.porter.core.task.consumer.EventProcessor;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

@@ -74,7 +74,7 @@ public interface AlarmPluginService {
      *
      * @date 2018/8/10 上午10:02
      * @param: [alarmId]
-     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.entity.AlarmPlugin>
+     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.event.AlarmPlugin>
      */
     List<AlarmPlugin> selectByAlarmId(Long alarmId);
 
@@ -83,7 +83,7 @@ public interface AlarmPluginService {
      *
      * @date 2018/8/10 上午10:02
      * @param: [id]
-     * @return: cn.vbill.middleware.porter.manager.core.entity.AlarmPlugin
+     * @return: cn.vbill.middleware.porter.manager.core.event.AlarmPlugin
      */
     AlarmPlugin selectById(Long id);
 
@@ -92,7 +92,7 @@ public interface AlarmPluginService {
      *
      * @date 2018/8/10 上午10:02
      * @param: [page]
-     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.entity.AlarmPlugin>
+     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.event.AlarmPlugin>
      */
     Page<AlarmPlugin> page(Page<AlarmPlugin> page);
 

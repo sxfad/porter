@@ -17,8 +17,8 @@
 
 package cn.vbill.middleware.porter.task.transform.transformer;
 
-import cn.vbill.middleware.porter.core.event.etl.ETLBucket;
-import cn.vbill.middleware.porter.core.event.etl.ETLRow;
+import cn.vbill.middleware.porter.core.task.setl.ETLBucket;
+import cn.vbill.middleware.porter.core.task.setl.ETLRow;
 import cn.vbill.middleware.porter.task.worker.TaskWork;
 
 import java.util.ArrayList;

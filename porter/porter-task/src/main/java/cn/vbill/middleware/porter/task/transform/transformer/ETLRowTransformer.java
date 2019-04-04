@@ -17,16 +17,16 @@
 
 package cn.vbill.middleware.porter.task.transform.transformer;
 
+import cn.vbill.middleware.porter.core.message.MessageAction;
 import com.alibaba.fastjson.JSON;
-import cn.vbill.middleware.porter.common.db.meta.TableColumn;
-import cn.vbill.middleware.porter.common.db.meta.TableSchema;
-import cn.vbill.middleware.porter.common.exception.TaskStopTriggerException;
-import cn.vbill.middleware.porter.core.event.etl.ETLBucket;
-import cn.vbill.middleware.porter.core.event.etl.ETLColumn;
-import cn.vbill.middleware.porter.core.event.etl.ETLRow;
-import cn.vbill.middleware.porter.core.event.s.EventType;
-import cn.vbill.middleware.porter.core.loader.DataLoader;
-import cn.vbill.middleware.porter.core.task.TableMapper;
+import cn.vbill.middleware.porter.common.util.db.meta.TableColumn;
+import cn.vbill.middleware.porter.common.util.db.meta.TableSchema;
+import cn.vbill.middleware.porter.common.task.exception.TaskStopTriggerException;
+import cn.vbill.middleware.porter.core.task.setl.ETLBucket;
+import cn.vbill.middleware.porter.core.task.setl.ETLColumn;
+import cn.vbill.middleware.porter.core.task.setl.ETLRow;
+import cn.vbill.middleware.porter.core.task.loader.DataLoader;
+import cn.vbill.middleware.porter.core.task.entity.TableMapper;
 import cn.vbill.middleware.porter.task.worker.TaskWork;
 import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.StringUtils;
@@ -79,7 +79,7 @@ public class ETLRowTransformer implements Transformer {
              * 为了减少表结构造成的数据问题，增加人工介入机会。
              * 默认TableMapper为绝对正确的输入，当前ETLRow数据类型为Insert时，如果有不存在预配置字段项的映射，任务停止，人工介入
              */
-            if (row.getFinalOpType() == EventType.INSERT && null != tableMapper && null != tableMapper.getColumn()
+            if (row.getFinalOpType() == MessageAction.INSERT && null != tableMapper && null != tableMapper.getColumn()
                     && !tableMapper.getColumn().isEmpty()) {
                 for (String columnName : tableMapper.getColumn().values()) {
                     //最终字段与映射表匹配数量
@@ -93,7 +93,7 @@ public class ETLRowTransformer implements Transformer {
 
 
             //当是更新时，判断主键是否变更
-            if (row.getFinalOpType() == EventType.UPDATE) {
+            if (row.getFinalOpType() == MessageAction.UPDATE) {
                 boolean isChanged = !row.getColumns().stream().filter(c -> c.isKey()
                         && !StringUtils.trimToEmpty(c.getFinalOldValue()).equals(StringUtils.trimToEmpty(c.getFinalValue())))
                         .collect(Collectors.toList()).isEmpty();
@@ -159,7 +159,7 @@ public class ETLRowTransformer implements Transformer {
                      * "after":{"UUID":"3fd9e39aead54fc2bdd385bdf29cdc08","DT_CTE":"20180506",}}
                      * 2018.05.25 23:25
                      */
-                    if (column.isPrimaryKey() && c.isFinalBeforeMissing() && row.getFinalOpType() == EventType.UPDATE) {
+                    if (column.isPrimaryKey() && c.isFinalBeforeMissing() && row.getFinalOpType() == MessageAction.UPDATE) {
                         c.setFinalOldValue(c.getFinalValue());
                         c.setFinalBeforeMissing(false);
                     }
@@ -167,7 +167,7 @@ public class ETLRowTransformer implements Transformer {
                 c.setRequired(column.isRequired());
 
                 //如果是更新且字段必填，更新前的值不存在
-                //if (row.getOpType() == EventType.UPDATE && column.isRequired() && StringUtils.isBlank(c.getOldValue())) {
+                //if (row.getOpType() == MessageAction.UPDATE && column.isRequired() && StringUtils.isBlank(c.getOldValue())) {
                 //    c.setOldValue(c.getNewValue());
                 //}
 
@@ -201,7 +201,7 @@ public class ETLRowTransformer implements Transformer {
      *
      * @date 2018/8/9 下午2:13
      * @param: [loader, finalSchema, finalTable]
-     * @return: cn.vbill.middleware.porter.common.db.meta.TableSchema
+     * @return: TableSchema
      */
     private TableSchema findTable(DataLoader loader, String finalSchema, String finalTable)
             throws TaskStopTriggerException, InterruptedException {

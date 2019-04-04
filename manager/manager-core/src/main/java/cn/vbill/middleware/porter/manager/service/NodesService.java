@@ -19,8 +19,8 @@ package cn.vbill.middleware.porter.manager.service;
 
 import java.util.List;
 
-import cn.vbill.middleware.porter.common.cluster.data.DNode;
-import cn.vbill.middleware.porter.common.dic.NodeStatusType;
+import cn.vbill.middleware.porter.common.statistics.DNode;
+import cn.vbill.middleware.porter.common.node.dic.NodeStatusType;
 import cn.vbill.middleware.porter.manager.core.entity.Nodes;
 import cn.vbill.middleware.porter.manager.web.page.Page;
 
@@ -84,7 +84,7 @@ public interface NodesService {
      *
      * @date 2018/8/10 下午2:11
      * @param: [id]
-     * @return: cn.vbill.middleware.porter.manager.core.entity.Nodes
+     * @return: cn.vbill.middleware.porter.manager.core.event.Nodes
      */
     Nodes selectById(Long id);
 
@@ -93,7 +93,7 @@ public interface NodesService {
      *
      * @date 2018/8/10 下午2:12
      * @param: [nodeId]
-     * @return: cn.vbill.middleware.porter.manager.core.entity.Nodes
+     * @return: cn.vbill.middleware.porter.manager.core.event.Nodes
      */
     Nodes selectByNodeId(String nodeId);
 
@@ -102,7 +102,7 @@ public interface NodesService {
      *
      * @date 2018/8/10 下午2:12
      * @param: [page, ipAddress, state, machineName]
-     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.entity.Nodes>
+     * @return: cn.vbill.middleware.porter.manager.web.page.Page<cn.vbill.middleware.porter.manager.core.event.Nodes>
      */
     Page<Nodes> page(Page<Nodes> page, String nodeId, String ipAddress, Integer state, String machineName);
 
@@ -177,7 +177,7 @@ public interface NodesService {
      *
      * @date 2018/8/10 下午2:14
      * @param: []
-     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.entity.Nodes>
+     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.event.Nodes>
      */
     List<Nodes> selectList();
 }

@@ -17,13 +17,13 @@
 
 package cn.vbill.middleware.porter.common.cluster;
 
-import cn.vbill.middleware.porter.common.client.ClusterClient;
-import cn.vbill.middleware.porter.common.client.DistributedLock;
+import cn.vbill.middleware.porter.common.cluster.client.ClusterClient;
+import cn.vbill.middleware.porter.common.lock.DistributedLock;
 import cn.vbill.middleware.porter.common.cluster.event.ClusterListenerEventExecutor;
-import cn.vbill.middleware.porter.common.config.ClusterConfig;
-import cn.vbill.middleware.porter.common.task.TaskEventListener;
+import cn.vbill.middleware.porter.common.cluster.config.ClusterConfig;
+import cn.vbill.middleware.porter.common.task.event.TaskEventListener;
 import cn.vbill.middleware.porter.common.cluster.event.command.ClusterCommand;
-import cn.vbill.middleware.porter.common.dic.ClusterPlugin;
+import cn.vbill.middleware.porter.common.cluster.dic.ClusterPlugin;
 
 import java.io.IOException;
 import java.util.function.BiConsumer;

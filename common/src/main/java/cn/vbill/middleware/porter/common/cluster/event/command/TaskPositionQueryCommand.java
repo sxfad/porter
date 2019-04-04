@@ -17,9 +17,8 @@
 
 package cn.vbill.middleware.porter.common.cluster.event.command;
 
-import cn.vbill.middleware.porter.common.cluster.data.DCallback;
+import cn.vbill.middleware.porter.common.statistics.DCallback;
 import cn.vbill.middleware.porter.common.cluster.event.ClusterListenerEventType;
-import lombok.Getter;
 
 /**
  * 任务消费进度查询（和管理后台无关  服务器上报zk）
@@ -29,9 +28,9 @@ import lombok.Getter;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年01月12日 18:46
  */
 public class TaskPositionQueryCommand extends ClusterCommand {
-    @Getter private final String taskId;
-    @Getter private final String swimlaneId;
-    @Getter private final DCallback callback;
+    private final String taskId;
+    private final String swimlaneId;
+    private final DCallback callback;
 
     public TaskPositionQueryCommand(String taskId, String swimlaneId, DCallback dCallback) {
         this.taskId = taskId;
@@ -42,5 +41,18 @@ public class TaskPositionQueryCommand extends ClusterCommand {
     @Override
     public ClusterListenerEventType getClusterListenerEventType() {
         return ClusterListenerEventType.TaskPositionQuery;
+    }
+
+
+    public String getTaskId() {
+        return taskId;
+    }
+
+    public String getSwimlaneId() {
+        return swimlaneId;
+    }
+
+    public DCallback getCallback() {
+        return callback;
     }
 }

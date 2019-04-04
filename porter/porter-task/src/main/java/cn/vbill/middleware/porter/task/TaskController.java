@@ -18,17 +18,18 @@
 package cn.vbill.middleware.porter.task;
 
 import cn.vbill.middleware.porter.common.cluster.event.command.TaskPushCommand;
-import cn.vbill.middleware.porter.common.dic.ClusterPlugin;
-import cn.vbill.middleware.porter.common.task.TaskEventListener;
+import cn.vbill.middleware.porter.common.cluster.dic.ClusterPlugin;
+import cn.vbill.middleware.porter.common.task.event.TaskEventListener;
 import cn.vbill.middleware.porter.common.util.MachineUtils;
 import cn.vbill.middleware.porter.core.NodeContext;
-import cn.vbill.middleware.porter.core.task.Task;
+import cn.vbill.middleware.porter.core.task.TaskContext;
+import cn.vbill.middleware.porter.core.task.entity.Task;
 import com.alibaba.fastjson.JSONObject;
 import cn.vbill.middleware.porter.common.cluster.ClusterProviderProxy;
-import cn.vbill.middleware.porter.common.config.TaskConfig;
-import cn.vbill.middleware.porter.common.dic.NodeStatusType;
-import cn.vbill.middleware.porter.common.statistics.NodeLog;
-import cn.vbill.middleware.porter.core.consumer.DataConsumer;
+import cn.vbill.middleware.porter.common.task.config.TaskConfig;
+import cn.vbill.middleware.porter.common.node.dic.NodeStatusType;
+import cn.vbill.middleware.porter.common.node.statistics.NodeLog;
+import cn.vbill.middleware.porter.core.task.consumer.DataConsumer;
 import cn.vbill.middleware.porter.task.worker.TaskWorker;
 
 import org.apache.commons.lang3.StringUtils;
@@ -188,8 +189,7 @@ public class TaskController implements TaskEventListener {
             worker.alloc(task);
             worker.start();
         } catch (Exception e) {
-            NodeLog.upload(task.getTaskId(), NodeLog.LogType.TASK_ALARM, e.getMessage());
-            e.printStackTrace();
+            TaskContext.warning(new NodeLog(NodeLog.LogType.ERROR, e.getMessage()).bindTaskId(task.getTaskId()).upload());
             LOGGER.error("failed to start task:{}", JSONObject.toJSONString(task), e);
         }
         //考虑到任务启动失败造成的worker闲置(内存、线程),检查worker是否有工作，如果空闲，释放worker资源
