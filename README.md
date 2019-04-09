@@ -89,6 +89,7 @@ porter-boot-版本/bin/startup.sh --force
 ```
 
 ## 文档
++ [新手教程](./doc/arrange.md)
 + [部署教程@code-hipster](./doc/tutorial.md)
 + [中文文档](./doc/document.md)
 + [英文文档](./doc/document_EN.md)
