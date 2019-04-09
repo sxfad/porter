@@ -32,6 +32,7 @@ import com.alibaba.otter.canal.instance.manager.CanalInstanceWithManager;
 import com.alibaba.otter.canal.instance.manager.model.Canal;
 import com.alibaba.otter.canal.instance.manager.model.CanalParameter;
 import com.alibaba.otter.canal.instance.manager.model.CanalStatus;
+import com.alibaba.otter.canal.parse.inbound.AbstractEventParser;
 import com.alibaba.otter.canal.protocol.ClientIdentity;
 import com.alibaba.otter.canal.protocol.Message;
 import com.alibaba.otter.canal.server.embedded.CanalServerWithEmbedded;
@@ -64,6 +65,7 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
     private final CanalServerWithEmbedded canalServer;
     private ClientIdentity clientId;
     private CountDownLatch canFetch = new CountDownLatch(1);
+    private boolean parallel;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CanalClient.class);
 
@@ -83,6 +85,7 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
         CanalConfig config = getConfig();
         perPullSize = config.getOncePollSize();
         pollTimeOut = config.getPollTimeOut();
+        parallel = config.isParallel();
         clientId = new ClientIdentity(config.getDatabase(), config.getSlaveId().shortValue(), config.getFilter());
     }
 
@@ -163,6 +166,9 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
                     canal.getCanalParameter().setMasterLogfileOffest(canalPosition.offset);
                 }
                 CanalInstanceWithManager instance = new CanalInstanceWithManager(canal, clientId.getFilter());
+                if(instance.getEventParser() instanceof AbstractEventParser) {
+                    ((AbstractEventParser) instance.getEventParser()).setParallel(parallel);
+                }
                 instance.setAlarmHandler(new CanalAlarmHandler() {
                     private volatile boolean isRun = false;
 
