@@ -49,7 +49,7 @@ public enum DataConsumerFactory {
      */
     INSTANCE();
     private final List<String> consumerTemplate = SpringFactoriesLoader.loadFactoryNames(DataConsumer.class, JavaFileCompiler.getInstance());
-    private final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(DataConsumerFactory.class);
+    private final org.slf4j.Logger logger = LoggerFactory.getLogger(DataConsumerFactory.class);
 
     /**
      * 获取Consumer
@@ -137,7 +137,7 @@ public enum DataConsumerFactory {
                     return tmpInstance;
                 }
             } catch (Throwable e) {
-                LOGGER.warn("{}不匹配{}", t, consumerName, e);
+                logger.warn("{}不匹配{}", t, consumerName, e);
             }
         }
         throw new DataConsumerBuildException();

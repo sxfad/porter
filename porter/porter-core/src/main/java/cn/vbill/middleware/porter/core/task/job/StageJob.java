@@ -19,8 +19,6 @@ package cn.vbill.middleware.porter.core.task.job;
 
 import cn.vbill.middleware.porter.common.task.exception.TaskStopTriggerException;
 
-import java.util.concurrent.ExecutionException;
-
 /**
  * 阶段性工作
  * @author: zhangkewei[zhang_kw@suixingpay.com]

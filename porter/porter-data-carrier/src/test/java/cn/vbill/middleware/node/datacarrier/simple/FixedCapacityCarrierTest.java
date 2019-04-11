@@ -40,7 +40,7 @@ public class FixedCapacityCarrierTest {
         carrier.printState();
     }
     @Test
-    public void pull() {
+    public void pull() throws InterruptedException {
         String value = carrier.pull("a");
         System.out.println("key : a" + ", value : " + value);
         carrier.printState();
@@ -87,7 +87,11 @@ public class FixedCapacityCarrierTest {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            carrier.pull("0");
+            try {
+                carrier.pull("0");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             carrier.print();
             latch.countDown();
         })).start();

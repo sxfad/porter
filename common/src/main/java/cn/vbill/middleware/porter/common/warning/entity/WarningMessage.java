@@ -59,9 +59,9 @@ public class WarningMessage {
     }
 
     public String shortMessage(List<String> prefix) {
-        WarningReceiver receiver = null != receivers && receivers.length > 0 ? receivers[0] : new WarningReceiver("系统管理员", "" ,"00000000000");
+        WarningReceiver receiver = null != receivers && receivers.length > 0 ? receivers[0] : new WarningReceiver("系统管理员", "", "00000000000");
         StringBuffer sb = new StringBuffer();
-        if (null != prefix && !prefix.isEmpty()) sb.append("[").append( StringUtils.join(prefix, "-")).append("]");
+        if (null != prefix && !prefix.isEmpty()) sb.append("[").append(StringUtils.join(prefix, "-")).append("]");
         sb.append(receiver.getRealName()).append(receiver.getPhone());
         sb.append("(").append(errorCode.getDesc()).append(")");
         return sb.toString();
