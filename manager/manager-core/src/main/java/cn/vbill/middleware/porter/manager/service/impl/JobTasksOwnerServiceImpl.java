@@ -16,12 +16,15 @@
  */
 package cn.vbill.middleware.porter.manager.service.impl;
 
+import cn.vbill.middleware.porter.manager.core.dto.ControlSettingVo;
 import cn.vbill.middleware.porter.manager.core.entity.CUser;
 import cn.vbill.middleware.porter.manager.core.entity.JobTasksOwner;
 import cn.vbill.middleware.porter.manager.core.mapper.JobTasksOwnerMapper;
 import cn.vbill.middleware.porter.manager.service.CUserService;
 import cn.vbill.middleware.porter.manager.service.JobTasksOwnerService;
 import cn.vbill.middleware.porter.manager.web.rcc.RoleCheckContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,6 +42,8 @@ import java.util.Map;
  */
 @Service
 public class JobTasksOwnerServiceImpl implements JobTasksOwnerService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(JobTasksOwnerServiceImpl.class);
 
     @Autowired
     private JobTasksOwnerMapper jobTasksOwnerMapper;
@@ -63,9 +68,9 @@ public class JobTasksOwnerServiceImpl implements JobTasksOwnerService {
     @Override
     public Integer findOwnerTypeByJobId(Long jobId) {
         Integer type = null;
-        String roleCode = RoleCheckContext.getUserIdHolder().getRoleCode();
+        Boolean isManager = checkLoginRole();
         // 判断当前角色是否为管理员
-        if ("A0001".equals(roleCode) || "A0002".equals(roleCode)) {
+        if (isManager) {
             type = 0;
             return type;
         }
@@ -79,5 +84,52 @@ public class JobTasksOwnerServiceImpl implements JobTasksOwnerService {
         jobTasksOwner.setJobId(jobId);
         jobTasksOwner.setOwnerId(RoleCheckContext.getUserIdHolder().getUserId());
         jobTasksOwnerMapper.insert(jobTasksOwner);
+    }
+
+    @Override
+    public Integer jobOwnerSetting(ControlSettingVo controlSettingVo) {
+        String controlType = null;
+        if (null != controlSettingVo.getControlTypeEnum()) {
+            controlType = controlSettingVo.getControlTypeEnum().getCode();
+        }
+        switch (controlType) {
+            // 移交
+            case "CHANGE":
+                Integer changeNum = jobTasksOwnerMapper.delete(controlSettingVo.getJobId(), 1, null);
+                if (!controlSettingVo.getToUserIds().isEmpty()) {
+                    jobTasksOwnerMapper.batchInsert(controlSettingVo.getToUserIds(), controlSettingVo.getJobId(), 1);
+                }
+                return changeNum;
+            // 共享
+            case "SHARE":
+                Integer shareNum = jobTasksOwnerMapper.delete(controlSettingVo.getJobId(), 2, null);
+                if (!controlSettingVo.getToUserIds().isEmpty()) {
+                    jobTasksOwnerMapper.batchInsert(controlSettingVo.getToUserIds(), controlSettingVo.getJobId(), 2);
+                }
+                return shareNum;
+            // 作废
+            case "CANCEL":
+                Integer type = jobTasksOwnerMapper.findOwnerTypeByJobIdAndUserId(controlSettingVo.getJobId(), RoleCheckContext.getUserIdHolder().getUserId());
+                return jobTasksOwnerMapper.delete(controlSettingVo.getJobId(), type, RoleCheckContext.getUserIdHolder().getUserId());
+            // 回收
+            case "RECYCLE":
+                return jobTasksOwnerMapper.delete(controlSettingVo.getJobId(), null, null);
+            default:
+                LOGGER.error("ControlType为null!!");
+                return null;
+        }
+    }
+
+    /**
+     * 判断当前登录用户是否为管理员
+     *
+     * @author MurasakiSeiFu
+     * @date 2019-04-04 13:48
+     * @param: []
+     * @return: java.lang.Boolean
+     */
+    private Boolean checkLoginRole() {
+        String roleCode = RoleCheckContext.getUserIdHolder().getRoleCode();
+        return ("A0001".equals(roleCode) || "A0002".equals(roleCode));
     }
 }
