@@ -22,7 +22,6 @@ import cn.vbill.middleware.porter.common.warning.WarningFrequency;
 import cn.vbill.middleware.porter.common.warning.config.EmailConfig;
 import cn.vbill.middleware.porter.common.warning.entity.WarningMessage;
 import cn.vbill.middleware.porter.common.exception.ClientConnectionException;
-import cn.vbill.middleware.porter.common.warning.entity.WarningReceiver;
 import com.alibaba.fastjson.JSONObject;
 import com.sun.mail.util.MailSSLSocketFactory;
 import org.apache.commons.lang3.StringUtils;
@@ -103,7 +102,7 @@ public class EmailClient  extends AbstractClient<EmailConfig> implements Warning
     }
 
     @Override
-    public void send(WarningMessage msg, WarningReceiver... receivers) {
+    public void send(WarningMessage msg) {
         LOGGER.info("开始发送邮件通知.....");
         String checkContent = new StringBuffer(StringUtils.trimToEmpty(msg.getContent())).append(StringUtils.trimToEmpty(msg.getTitle()))
                 .toString();
@@ -117,7 +116,7 @@ public class EmailClient  extends AbstractClient<EmailConfig> implements Warning
         message.setText(msg.getContent());
 
         List<String> emails = new ArrayList<>();
-        Arrays.asList(receivers).stream().filter(r -> !StringUtils.isBlank(r.getEmail())).forEach(r -> emails.add(r.getEmail()));
+        Arrays.asList(msg.getReceivers()).stream().filter(r -> !StringUtils.isBlank(r.getEmail())).forEach(r -> emails.add(r.getEmail()));
 
         LOGGER.info("判断待发送邮件通知名单.....");
         if (!emails.isEmpty()) {

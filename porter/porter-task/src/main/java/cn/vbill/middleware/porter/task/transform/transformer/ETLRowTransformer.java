@@ -17,6 +17,7 @@
 
 package cn.vbill.middleware.porter.task.transform.transformer;
 
+import cn.vbill.middleware.porter.common.task.exception.TaskDataException;
 import cn.vbill.middleware.porter.core.message.MessageAction;
 import com.alibaba.fastjson.JSON;
 import cn.vbill.middleware.porter.common.util.db.meta.TableColumn;
@@ -52,7 +53,7 @@ public class ETLRowTransformer implements Transformer {
     }
 
     @Override
-    public void transform(ETLBucket bucket, TaskWork work) throws Exception {
+    public void transform(ETLBucket bucket, TaskWork work) throws TaskStopTriggerException, InterruptedException {
         LOGGER.debug("start tranforming bucket:{},size:{}", bucket.getSequence(), bucket.getRows().size());
         for (ETLRow row : bucket.getRows()) {
             LOGGER.debug("try tranform row:{},{}", row.getPosition().render(), JSON.toJSONString(row));
@@ -101,7 +102,11 @@ public class ETLRowTransformer implements Transformer {
             }
 
             //DataLoader自定义处理
-            work.getDataLoader().mouldRow(row);
+            try {
+                work.getDataLoader().mouldRow(row);
+            } catch (TaskDataException e) {
+                throw new TaskStopTriggerException(e);
+            }
 
             LOGGER.debug("after tranform row:{},{}", row.getPosition().render(), JSON.toJSONString(row));
         }
@@ -192,7 +197,7 @@ public class ETLRowTransformer implements Transformer {
         });
 
         row.getColumns().removeAll(removeables);
-        LOGGER.info("remove columns:{}", removeables.stream().map(p -> JSONObject.toJSONString(p)).reduce((p, n) -> p + "," + n).orElse(""));
+        LOGGER.debug("remove columns:{}", removeables.stream().map(p -> JSONObject.toJSONString(p)).reduce((p, n) -> p + "," + n).orElse(""));
         return !removeables.isEmpty();
     }
 
@@ -211,7 +216,7 @@ public class ETLRowTransformer implements Transformer {
         } catch (InterruptedException e) {
             throw e;
         } catch (Throwable e) {
-            String error = "查询不到目标仓库表结构" + finalSchema + ". " + finalTable;
+            String error = "查询不到目标仓库表结构" + finalSchema + "." + finalTable;
             LOGGER.error(error, e);
             throw new TaskStopTriggerException(error + ";error:" + e.getMessage());
         }

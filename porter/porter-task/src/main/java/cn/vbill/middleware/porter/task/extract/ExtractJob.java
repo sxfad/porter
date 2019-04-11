@@ -18,6 +18,7 @@
 package cn.vbill.middleware.porter.task.extract;
 
 import cn.vbill.middleware.porter.common.node.statistics.NodeLog;
+import cn.vbill.middleware.porter.common.task.exception.TaskStopTriggerException;
 import cn.vbill.middleware.porter.core.NodeContext;
 import cn.vbill.middleware.porter.core.task.setl.ETLBucket;
 import cn.vbill.middleware.porter.core.task.job.StageType;
@@ -34,10 +35,7 @@ import org.slf4j.LoggerFactory;
 
 
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * 完成事件的进一步转换、过滤。多线程执行
@@ -100,15 +98,10 @@ public class ExtractJob extends AbstractStageJob {
     }
 
     @Override
-    protected void threadTraceLogic() {
-        TaskContext.trace(work.getTaskId(), work.getDataConsumer(), work.getDataLoader(), work.getReceivers());
-    }
-
-    @Override
     protected void loopLogic() throws InterruptedException {
         //只要队列有消息，持续读取
         Pair<String, List<MessageEvent>> events = null;
-        do {
+        while (getWorkingStat() && work.isWorking()) {
             try {
                 events = work.waitEvent(StageType.SELECT);
                 if (null != events) {
@@ -119,31 +112,26 @@ public class ExtractJob extends AbstractStageJob {
                     //暂无Extractor失败处理方案
                     executorService.submit(() -> {
                         try {
-                            threadTraceLogic();
                             //将MessageEvent转换为ETLBucket
                             ETLBucket bucket = ETLBucket.from(inThreadEvents);
                             extractorFactory.extract(bucket, metadata);
                             carrier.push(bucket);
                             LOGGER.debug("push bucket {} into carrier after extract.", inThreadEvents.getLeft());
                         } catch (Throwable e) {
-                            work.stopAndAlarm(e.getMessage());
+                            work.interruptWithWarning(e.getMessage());
                             LOGGER.error("批次[{}]执行ExtractJob失败!", inThreadEvents.getLeft(), e);
                         }
                     });
                 }
-            } catch (InterruptedException interrupt) {
-                throw interrupt;
-            } catch (Throwable e) {
-                e.printStackTrace();
-                TaskContext.warning(NodeLog.upload(NodeLog.LogType.INFO, work.getTaskId(),  work.getDataConsumer().getSwimlaneId(),
-                        "extract MessageEvent error" + e.getMessage()));
-                LOGGER.error("extract MessageEvent error!", e);
+            } catch (TaskStopTriggerException stopError) {
+                LOGGER.error("ExtractJob error", stopError);
+                work.interruptWithWarning(stopError.getMessage());
             }
-        } while (null != events && getWorkingStat());
+        }
     }
 
     @Override
-    public ETLBucket output() {
+    public ETLBucket output() throws InterruptedException {
         return carrier.pull();
     }
 
@@ -154,7 +142,7 @@ public class ExtractJob extends AbstractStageJob {
      * @param: []
      * @return: T
      */
-    public <T> T getNextSequence() {
+    public <T> T getNextSequence() throws InterruptedException {
         return orderedBucket.pull();
     }
 

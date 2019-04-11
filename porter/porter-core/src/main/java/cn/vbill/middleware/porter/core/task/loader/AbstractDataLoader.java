@@ -21,11 +21,17 @@ import cn.vbill.middleware.porter.common.task.loader.LoadClient;
 import cn.vbill.middleware.porter.common.task.consumer.MetaQueryClient;
 import cn.vbill.middleware.porter.common.util.db.meta.TableSchema;
 import cn.vbill.middleware.porter.core.task.setl.ETLRow;
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -40,6 +46,7 @@ public abstract class AbstractDataLoader implements DataLoader {
     private volatile MetaQueryClient metaQueryClient;
     //更新转插入策略开关
     private volatile boolean insertOnUpdateError = true;
+    private final Map<List<String>, TableSchema> tables = new ConcurrentHashMap<>();
 
     /**
      * 获取PluginName
@@ -100,8 +107,13 @@ public abstract class AbstractDataLoader implements DataLoader {
     }
 
     @Override
-    public TableSchema findTable(String finalSchema, String finalTable) throws Exception {
-        return metaQueryClient.getTable(finalSchema, finalTable);
+    public TableSchema findTable(String finalSchema, String finalTable) {
+        return tables.computeIfAbsent(Arrays.asList(finalSchema, finalTable), new Function<List<String>, TableSchema>() {
+            @SneakyThrows
+            public TableSchema apply(List<String> strings) {
+                return metaQueryClient.getTable(finalSchema, finalTable);
+            }
+        });
     }
 
     public boolean isInsertOnUpdateError() {

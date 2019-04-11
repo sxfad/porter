@@ -1,10 +1,18 @@
-/**
- * All rights Reserved, Designed By Suixingpay.
+/*
+ * Copyright ©2018 vbill.cn.
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
  *
- * @author: zhangkewei[zhang_kw@suixingpay.com]
- * @date: 2019年04月01日 11:06
- * @Copyright ©2019 Suixingpay. All rights reserved.
- * 注意：本内容仅限于随行付支付有限公司内部传阅，禁止外泄以及用于其他的商业用途。
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * </p>
  */
 
 package cn.vbill.middleware.porter.core.task;
@@ -20,6 +28,8 @@ import cn.vbill.middleware.porter.core.task.loader.DataLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -30,21 +40,24 @@ import java.util.List;
  * @review: zkevin/2019年04月01日 11:06
  */
 public class TaskContext {
-
-    private static final ThreadLocal<TaskInfo> CURRENT_TASK = new ThreadLocal<>();
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskContext.class);
+    private static final InheritableThreadLocal<TaskInfo> CURRENT_TASK = new InheritableThreadLocal();
+
+    public static void clearTrace() {
+        CURRENT_TASK.set(null);
+    }
+
     public static class TaskInfo {
         private String taskId;
         private String swimlaneId;
-        private DataConsumer consumer;
-        private DataLoader loader;
         private WarningReceiver[] receivers;
-
+        public TaskInfo() {
+            receivers = new WarningReceiver[0];
+        }
         public TaskInfo(String taskId, DataConsumer consumer, DataLoader loader, WarningReceiver[] receivers) {
+            this();
             this.taskId = taskId;
             this.swimlaneId = consumer.getSwimlaneId();
-            this.consumer = consumer;
-            this.loader = loader;
             this.receivers = receivers;
         }
 
@@ -61,7 +74,7 @@ public class TaskContext {
         }
     }
 
-    public static synchronized void trace(String taskId, DataConsumer consumer, DataLoader loader, List<WarningReceiver> receivers) {
+    public static void trace(String taskId, DataConsumer consumer, DataLoader loader, List<WarningReceiver> receivers) {
         CURRENT_TASK.set(new TaskInfo(taskId, consumer, loader, receivers.toArray(new WarningReceiver[] {})));
     }
 
@@ -69,17 +82,29 @@ public class TaskContext {
         return CURRENT_TASK.get();
     }
 
-    public static void warning(NodeLog log) {
+    public static WarningMessage warning(NodeLog log) {
+        return warning(log, new StringBuffer().append("【").append(log.getType().getTitle()).append("】")
+                .append("【").append(WarningErrorCode.match(log.getError()).name()).append("】")
+                .append(log.getTaskId()).append("-").append(log.getSwimlaneId()).toString());
+    }
+    public static WarningMessage warning(NodeLog log, String title) {
+        WarningMessage message = new WarningMessage(title, log.getError(), WarningErrorCode.match(log.getError()));
         try {
-            if (log.getType() == NodeLog.LogType.ERROR) {
-                WarningProviderFactory.INSTANCE.notice(new WarningMessage(log.getTitle(), log.getError(), WarningErrorCode.match(log.getError())), NodeContext.INSTANCE.getReceivers());
-                WarningProviderFactory.INSTANCE.notice(new WarningMessage(log.getTitle(), log.getError(), WarningErrorCode.match(log.getError())), trace().receivers);
+            //异常或告警
+            if (log.getType() == NodeLog.LogType.ERROR || log.getType() == NodeLog.LogType.WARNING) {
+                List<WarningReceiver> receivers = new ArrayList<>(Arrays.asList(trace().receivers));
+                if (log.getType() == NodeLog.LogType.ERROR || receivers.isEmpty()) {
+                    receivers.addAll(Arrays.asList(NodeContext.INSTANCE.getReceivers()));
+                }
+                WarningProviderFactory.INSTANCE.notice(message.bindReceivers(receivers.toArray(new WarningReceiver[0])));
             }
-            if (log.getType() == NodeLog.LogType.WARNING) {
-                WarningProviderFactory.INSTANCE.notice(new WarningMessage(log.getTitle(), log.getError(), WarningErrorCode.match(log.getError())), trace().receivers);
+            //在应用上下文标注任务异常
+            if (log.getType() == NodeLog.LogType.ERROR) {
+                NodeContext.INSTANCE.markTaskError(Arrays.asList(log.getTaskId(), log.getSwimlaneId()), message);
             }
         } catch (Throwable e) {
             LOGGER.error("fail to send warning", e);
         }
+        return message;
     }
 }

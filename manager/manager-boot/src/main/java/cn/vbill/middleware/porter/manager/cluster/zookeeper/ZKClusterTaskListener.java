@@ -18,6 +18,7 @@
 package cn.vbill.middleware.porter.manager.cluster.zookeeper;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -116,13 +117,13 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener {
                     return;
                 }
                 if (zkEvent.isDataChanged() || zkEvent.isOnline()) {
-                    ManagerContext.INSTANCE.newStoppedTask(taskAndSwimlane[0], taskAndSwimlane[1]);
+                    ManagerContext.INSTANCE.newStoppedTask(Arrays.asList(taskAndSwimlane[0], taskAndSwimlane[1]), zkEvent.getData());
                     logger.info("zk任务错误消息DataChanged or Online,内容:[{}]", JSON.toJSONString(taskAndSwimlane));
                     return;
                 }
                 if (zkEvent.isOffline()) {
                     logger.info("zk任务错误消息Offline,内容:[{}]", JSON.toJSONString(taskAndSwimlane));
-                    ManagerContext.INSTANCE.removeStoppedTask(taskAndSwimlane[0], taskAndSwimlane[1]);
+                    ManagerContext.INSTANCE.removeStoppedTask(Arrays.asList(taskAndSwimlane[0], taskAndSwimlane[1]));
                     return;
                 }
             }
@@ -191,9 +192,10 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener {
         taskUnsignedListener.scheduleAtFixedRate(() -> {
             String msg = unsignedTaskMsg();
             if (null != msg && !msg.trim().isEmpty()) {
-                NodeLog log = new NodeLog(NodeLog.LogType.WARNING, msg).bindTitle("【管理员告警】运行状态异常任务列表").upload();
+                NodeLog log = new NodeLog(NodeLog.LogType.WARNING, msg).upload();
                 try {
-                    WarningProviderFactory.INSTANCE.notice(new WarningMessage(log.getTitle(), log.getError(), WarningErrorCode.match(log.getError())), ManagerContext.INSTANCE.getReceivers());
+                    WarningProviderFactory.INSTANCE.notice(new WarningMessage("【管理员告警】运行状态异常任务列表",
+                            log.getError(), WarningErrorCode.match(log.getError())).bindReceivers(ManagerContext.INSTANCE.getReceivers()));
                 } catch (InterruptedException e) {
                 }
             }

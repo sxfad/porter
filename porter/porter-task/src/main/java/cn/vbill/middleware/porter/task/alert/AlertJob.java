@@ -64,25 +64,13 @@ public class AlertJob extends AbstractStageJob {
     }
 
     @Override
-    protected void threadTraceLogic() {
-        TaskContext.trace(work.getTaskId(), work.getDataConsumer(), work.getDataLoader(), work.getReceivers());
-    }
-
-    @Override
     protected void loopLogic() throws InterruptedException {
         //10秒执行一次
-        try {
-            alerterFactory.check(dataConsumer, dataLoader, work);
-        } catch (InterruptedException e) {
-            throw e;
-        } catch (Throwable e) {
-            TaskContext.warning(NodeLog.upload(NodeLog.LogType.INFO, work.getTaskId(), work.getDataConsumer().getSwimlaneId(), "db check error" + e.getMessage()));
-            LOGGER.error("[{}][{}]db check error!", work.getTaskId(), dataConsumer.getSwimlaneId(), e);
-        }
+        alerterFactory.check(dataConsumer, dataLoader, work);
     }
 
     @Override
-    public <T> T output() throws Exception {
-        throw new Exception("unsupported Method");
+    public <T> T output() throws UnsupportedOperationException {
+        throw new UnsupportedOperationException("unsupported Method");
     }
 }

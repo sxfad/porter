@@ -23,7 +23,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -37,6 +39,7 @@ public class FixedCapacityCarrier implements DataMapCarrier {
     private final int capacity;
     private final Semaphore resources;
     private final Map<Object, Object> container = new ConcurrentHashMap<>();
+    private final Map<Object, CountDownLatch> keyWaitLock = new ConcurrentHashMap<>();
 
     public FixedCapacityCarrier(int inputCapacity) {
         this.capacity = inputCapacity;
@@ -51,15 +54,28 @@ public class FixedCapacityCarrier implements DataMapCarrier {
     @Override
     public boolean push(Object key, Object value) throws InterruptedException {
         resources.acquire();
-        container.put(key, value);
+        container.compute(key, (k, v) -> {
+            keyWaitLock.computeIfPresent(k, (kk, vv) -> {
+                keyWaitLock.remove(kk);
+                vv.countDown();
+                return null;
+            });
+            return value;
+        });
         return true;
     }
 
-    @Override
-    public Object pull(Object key) {
+    public  Object pull(Object key) throws InterruptedException {
+        AtomicReference<CountDownLatch> valueCheck = new AtomicReference<>();
+        container.computeIfAbsent(key, k -> {
+            valueCheck.set(keyWaitLock.getOrDefault(key, new CountDownLatch(1)));
+            return null;
+        });
+        if (null != valueCheck) valueCheck.get().await();
         return container.computeIfPresent(key, (k, v) -> {
-            container.remove(key);
             resources.release();
+            container.remove(k);
+            keyWaitLock.remove(k);
             return v;
         });
     }

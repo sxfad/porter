@@ -28,6 +28,7 @@ import cn.vbill.middleware.porter.plugin.consumer.kafka.config.KafkaConfig;
 import com.alibaba.fastjson.JSONObject;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.kafka.clients.consumer.*;
@@ -138,7 +139,7 @@ public class KafkaClient extends AbstractClient<KafkaConfig> implements ConsumeC
         }
     }
 
-    @Override
+    @SneakyThrows
     public <F, O> List<F> fetch(FetchCallback<F, O> callback) throws InterruptedException {
         try {
             List<F> msgs = new ArrayList<>();
@@ -155,6 +156,8 @@ public class KafkaClient extends AbstractClient<KafkaConfig> implements ConsumeC
                         consumer.close();
                         consumer = null;
                         canFetch = new CountDownLatch(1);
+                    } catch (Throwable e) {
+                        throw new TaskStopTriggerException(e);
                     }
                 }
                 if (null != results && !results.isEmpty()) {

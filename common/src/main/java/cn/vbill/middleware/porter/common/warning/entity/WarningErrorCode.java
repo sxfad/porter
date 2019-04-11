@@ -17,6 +17,8 @@
 
 package cn.vbill.middleware.porter.common.warning.entity;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -57,9 +59,11 @@ public enum WarningErrorCode {
     }
 
     public static WarningErrorCode match(String msg) {
-        for (WarningErrorCode code : POOLS) {
-            if (code.character.matcher(msg).matches()) {
-                return code;
+        if (!StringUtils.isBlank(msg)) {
+            for (WarningErrorCode code : POOLS) {
+                if (code.character.matcher(msg).matches()) {
+                    return code;
+                }
             }
         }
         return UNRECOGNIZED_ERROR;

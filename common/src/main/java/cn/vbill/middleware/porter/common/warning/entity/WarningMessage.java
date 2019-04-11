@@ -17,6 +17,10 @@
 
 package cn.vbill.middleware.porter.common.warning.entity;
 
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.List;
+
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年02月23日 10:43
@@ -28,13 +32,16 @@ public class WarningMessage {
     private String title;
     private String content;
     private WarningErrorCode errorCode;
-
+    private WarningReceiver[] receivers;
     public WarningMessage(String title, String content, WarningErrorCode errorCode) {
-        this.title = title;
         this.content = content;
         this.errorCode = errorCode;
+        this.title = title;
     }
-
+    public WarningMessage bindReceivers(WarningReceiver[] receivers) {
+        this.receivers = receivers;
+        return this;
+    }
     public WarningErrorCode getErrorCode() {
         return errorCode;
     }
@@ -47,17 +54,20 @@ public class WarningMessage {
         return content;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-
     public void setErrorCode(WarningErrorCode errorCode) {
         this.errorCode = errorCode;
     }
 
+    public String shortMessage(List<String> prefix) {
+        WarningReceiver receiver = null != receivers && receivers.length > 0 ? receivers[0] : new WarningReceiver("系统管理员", "" ,"00000000000");
+        StringBuffer sb = new StringBuffer();
+        if (null != prefix && !prefix.isEmpty()) sb.append("[").append( StringUtils.join(prefix, "-")).append("]");
+        sb.append(receiver.getRealName()).append(receiver.getPhone());
+        sb.append("(").append(errorCode.getDesc()).append(")");
+        return sb.toString();
+    }
+
+    public WarningReceiver[] getReceivers() {
+        return receivers;
+    }
 }

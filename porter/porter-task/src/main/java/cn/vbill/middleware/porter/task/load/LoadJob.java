@@ -78,7 +78,8 @@ public class LoadJob extends AbstractStageJob {
                 //当前进度差值超过告警线
                 if (newestPositionDiffer >= alarmPositionCount) {
                     TaskContext.warning(new NodeLog(NodeLog.LogType.WARNING, taskId, swimlaneId,
-                            "未消费消息堆积:" + newestPositionDiffer + "条,告警阀值:" + alarmPositionCount).bindTitle("【关注】" + taskId + "-" + swimlaneId + "消息堆积" + newestPositionDiffer + "条").upload());
+                            "未消费消息堆积:" + newestPositionDiffer + "条,告警阀值:" + alarmPositionCount).upload(),
+                            "【关注】" + taskId + "-" + swimlaneId + "消息堆积" + newestPositionDiffer + "条");
                 }
                 //目标端数据库事务提交等待等原因造成的load等待
                 Calendar tmpCurrLoadStartTime = currentLoadStartTime;
@@ -87,19 +88,13 @@ public class LoadJob extends AbstractStageJob {
                     long minutesDiff = TimeUnit.MILLISECONDS.toMinutes(Calendar.getInstance().getTime().getTime() - currentLoadTime);
                     if (minutesDiff > 5) { //事务提交等待超过5分钟
                         TaskContext.warning(new NodeLog(NodeLog.LogType.WARNING, taskId, swimlaneId, "目标端提交事务等待"
-                                + minutesDiff + "分钟,告警阀值:5分钟").bindTitle("【告警】" + taskId + "-" + swimlaneId
-                                + "目标端提交事务等待" + minutesDiff + "分钟").upload());
+                                + minutesDiff + "分钟,告警阀值:5分钟").upload());
                     }
                 }
             }, positionCheckInterval, positionCheckInterval, TimeUnit.SECONDS);
         } else {
             positionCheckService = null;
         }
-    }
-
-    @Override
-    protected void threadTraceLogic() {
-        TaskContext.trace(work.getTaskId(), work.getDataConsumer(), work.getDataLoader(), work.getReceivers());
     }
 
     @Override
@@ -126,7 +121,7 @@ public class LoadJob extends AbstractStageJob {
         ETLBucket bucket = null;
         do {
             //确保任务出错停止后不执行do{}逻辑
-            if (work.triggerStopped()) {
+            if (!work.isWorking()) {
                 break;
             }
             //正常逻辑
@@ -170,27 +165,19 @@ public class LoadJob extends AbstractStageJob {
                     bucket.markUnUsed();
                 }
             } catch (TaskStopTriggerException stopException) {
-                LOGGER.error("Load ETLRow error", stopException);
-                stopException.printStackTrace();
-                work.stopAndAlarm(stopException.getMessage());
+                LOGGER.error("Load error", stopException);
+                work.interruptWithWarning(stopException.getMessage());
                 /**
                  * 立即停止目标端载入逻辑,理论上存在任务停止线程和当前载入线程同时执行的情况
                  */
                 break;
-            } catch (InterruptedException e) {
-                throw e;
-            } catch (Throwable e) {
-                e.printStackTrace();
-                NodeLog.upload(NodeLog.LogType.INFO, work.getTaskId(), work.getDataConsumer().getSwimlaneId(),
-                        "Load ETLRow error" + e.getMessage());
-                LOGGER.error("Load ETLRow error!", e);
             }
-        } while (null != bucket && !work.triggerStopped() && getWorkingStat()); //数据不为空并且当前任务没有触发停止告警
+        } while (null != bucket && work.isWorking() && getWorkingStat()); //数据不为空并且当前任务没有触发停止告警
     }
 
     @Override
-    public ETLBucket output() throws Exception {
-        throw new Exception("unsupported Method");
+    public ETLBucket output() throws UnsupportedOperationException {
+        throw new UnsupportedOperationException("unsupported Method");
     }
 
     @Override

@@ -19,7 +19,6 @@ package cn.vbill.middleware.porter.common.warning.provider;
 
 import cn.vbill.middleware.porter.common.warning.entity.WarningMessage;
 import cn.vbill.middleware.porter.common.warning.client.WarningClient;
-import cn.vbill.middleware.porter.common.warning.entity.WarningReceiver;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -42,8 +41,8 @@ public class NormalWarningProvider implements WarningProvider {
      * @param: [title, notice, receivers]
      * @return: boolean
      */
-    public boolean notice(WarningMessage message, WarningReceiver... receivers) {
-        client.send(message, receivers);
+    public boolean notice(WarningMessage message) {
+        client.send(message);
         return true;
     }
 }

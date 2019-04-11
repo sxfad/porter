@@ -30,6 +30,7 @@ import cn.vbill.middleware.porter.common.util.compile.JavaFileCompiler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.support.SpringFactoriesLoader;
+import org.springframework.util.ClassUtils;
 
 import java.util.List;
 
@@ -45,7 +46,7 @@ public enum DataLoaderFactory {
      * instance
      */
     INSTANCE();
-    private final List<DataLoader> loaderTemplate = SpringFactoriesLoader.loadFactories(DataLoader.class, JavaFileCompiler.getInstance());
+    private final List<String> loaderTemplate = SpringFactoriesLoader.loadFactoryNames(DataLoader.class, JavaFileCompiler.getInstance());
     private static final Logger LOGGER = LoggerFactory.getLogger(DataLoaderFactory.class);
 
     /**
@@ -81,16 +82,17 @@ public enum DataLoaderFactory {
      * @return: cn.vbill.middleware.porter.core.loader.DataLoader
      */
     public DataLoader newLoader(String loaderName) throws DataLoaderBuildException {
-        for (DataLoader t : loaderTemplate) {
-            if (t.isMatch(loaderName)) {
-                try {
-                    return t.getClass().newInstance();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    throw new DataLoaderBuildException(e.getMessage());
+        for (String t : loaderTemplate) {
+            try {
+                Class<DataLoader> clazz = (Class<DataLoader>) ClassUtils.forName(t, DataLoader.class.getClassLoader());
+                DataLoader tmpInstance = clazz.newInstance();
+                if (tmpInstance.isMatch(loaderName)) {
+                    return tmpInstance;
                 }
+            } catch (Throwable e) {
+                LOGGER.warn("{}不匹配{}", t, loaderName, e);
             }
         }
-        return null;
+        throw new DataLoaderBuildException();
     }
 }

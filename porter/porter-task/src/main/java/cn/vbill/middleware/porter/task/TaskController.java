@@ -166,13 +166,12 @@ public class TaskController implements TaskEventListener {
      * @return: void
      */
     public void stopTask(String taskId, String... swimlaneId) {
-        if (workerMap.containsKey(taskId)) {
-            TaskWorker worker = workerMap.get(taskId);
+        workerMap.computeIfPresent(taskId, (key, worker) -> {
             //停止worker的某个work
             worker.stopJob(swimlaneId);
-            //如果worker没有work可做就解雇worker
-            stopWorkerWhenNoWork(worker, taskId);
-        }
+            return worker;
+        });
+        clearWorker(taskId);
     }
 
     /**
@@ -183,17 +182,17 @@ public class TaskController implements TaskEventListener {
      * @return: void
      */
     private void startTask(TaskConfig task) {
-        TaskWorker worker = workerMap.computeIfAbsent(task.getTaskId(), s -> new TaskWorker());
+        TaskWorker worker = workerMap.computeIfAbsent(task.getTaskId(), s -> new TaskWorker(this));
         //尝试通过ClusterProvider的分布式锁功能锁定资源。
         try {
             worker.alloc(task);
             worker.start();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             TaskContext.warning(new NodeLog(NodeLog.LogType.ERROR, e.getMessage()).bindTaskId(task.getTaskId()).upload());
             LOGGER.error("failed to start task:{}", JSONObject.toJSONString(task), e);
         }
         //考虑到任务启动失败造成的worker闲置(内存、线程),检查worker是否有工作，如果空闲，释放worker资源
-        stopWorkerWhenNoWork(worker, task.getTaskId());
+        clearWorker(task.getTaskId());
     }
 
     /**
@@ -205,17 +204,11 @@ public class TaskController implements TaskEventListener {
      */
     private boolean stop() {
         if (stat.compareAndSet(true, false)) {
-            LOGGER.info("监工下线.......");
-            workerMap.keySet().stream().collect(Collectors.toList()).forEach(k -> {
-                TaskWorker worker = workerMap.getOrDefault(k, null);
-                if (null != worker) {
-                    worker.stop();
-                }
-                workerMap.remove(k);
-            });
+            LOGGER.info("unload task container.......");
+            workerMap.keySet().stream().collect(Collectors.toList()).forEach(worker -> workerMap.remove(worker).stop());
             return true;
         } else {
-            LOGGER.warn("Task controller has stopped already");
+            LOGGER.warn("task container has already unloaded.");
             return false;
         }
     }
@@ -239,15 +232,15 @@ public class TaskController implements TaskEventListener {
      * @param: [worker, taskId]
      * @return: void
      */
-    private void stopWorkerWhenNoWork(TaskWorker worker, String taskId) {
-        if (worker.isNoWork()) {
-            synchronized (workerMap) {
-                if (worker.isNoWork()) {
-                    worker.stop();
-                    workerMap.remove(taskId);
-                }
+    private void clearWorker(String taskId) {
+        workerMap.computeIfPresent(taskId, (key, worker) -> {
+            if (worker.isNoWork()) {
+                worker.stop();
+                workerMap.remove(key);
+                return null;
             }
-        }
+            return worker;
+        });
     }
 
     /**
@@ -279,5 +272,4 @@ public class TaskController implements TaskEventListener {
             LOGGER.warn("注册本地任务到集群失败:{}", taskConfig.getTaskId(), e);
         }
     }
-    
 }

@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.Map;
+import java.util.List;
 
 /**
  *
@@ -61,8 +61,8 @@ public class NodeController {
      */
     @GetMapping("/error")
     public String tasks() {
-        Map<String, String> errors = NodeContext.INSTANCE.getTaskErrorMarked();
-        return null != errors && !errors.isEmpty() ? errors.toString() : StringUtils.EMPTY;
+        List<String> errors = NodeContext.INSTANCE.getTaskErrorMarked();
+        return StringUtils.join(errors, "；");
     }
 
     /**

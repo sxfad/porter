@@ -17,8 +17,8 @@
 
 package cn.vbill.middleware.porter.common.warning;
 
+import cn.vbill.middleware.porter.common.util.DefaultNamedThreadFactory;
 import cn.vbill.middleware.porter.common.warning.entity.WarningMessage;
-import cn.vbill.middleware.porter.common.warning.entity.WarningReceiver;
 import cn.vbill.middleware.porter.common.warning.provider.WarningProvider;
 import cn.vbill.middleware.porter.common.warning.provider.NormalWarningProvider;
 import cn.vbill.middleware.porter.common.warning.client.WarningClient;
@@ -29,6 +29,8 @@ import cn.vbill.middleware.porter.common.warning.entity.WarningPlugin;
 import cn.vbill.middleware.porter.common.exception.ClientConnectionException;
 import cn.vbill.middleware.porter.common.exception.ConfigParseException;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -51,6 +53,7 @@ public enum WarningProviderFactory {
     INSTANCE();
     private final ReadWriteLock initializedLock = new ReentrantReadWriteLock();
     private volatile WarningProvider alert;
+    private final ExecutorService service = Executors.newSingleThreadExecutor(new DefaultNamedThreadFactory("warning-provider"));
 
     /**
      * initialize
@@ -85,11 +88,13 @@ public enum WarningProviderFactory {
      * @param: [title, msg, receiverList]
      * @return: void
      */
-    public void notice(WarningMessage message, WarningReceiver... receiver) throws InterruptedException {
+    public void notice(WarningMessage message) throws InterruptedException {
         if (initializedLock.readLock().tryLock(1, TimeUnit.MINUTES)) {
             try {
                 if (null != alert) {
-                    alert.notice(message, receiver);
+                    service.submit(() -> {
+                        alert.notice(message);
+                    });
                 }
             } finally {
                 initializedLock.readLock().unlock();

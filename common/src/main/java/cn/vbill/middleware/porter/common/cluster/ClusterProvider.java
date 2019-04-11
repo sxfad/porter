@@ -72,7 +72,7 @@ public interface ClusterProvider {
      * @param command
      * @throws Exception
      */
-    void broadcastEvent(ClusterCommand command) throws Exception;
+    void broadcastEvent(ClusterCommand command);
 
     /**
      * 集群插件是否有效

@@ -47,7 +47,7 @@ import java.util.List;
 public class ZKClusterConfigListener extends ZookeeperClusterListener {
     private static final String ZK_PATH = BASE_CATALOG + "/config";
     private static final String LOG_CONFIG_PATH = ZK_PATH + "/log";
-    private static final String ALERT_CONFIG_PATH = ZK_PATH + "/warning";
+    private static final String ALERT_CONFIG_PATH = ZK_PATH + "/alert";
     private static final String STATISTIC_CONFIG_PATH = ZK_PATH + "/statistic";
 
     @Override

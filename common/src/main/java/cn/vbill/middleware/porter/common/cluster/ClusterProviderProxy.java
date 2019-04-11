@@ -23,7 +23,10 @@ import cn.vbill.middleware.porter.common.cluster.config.ClusterConfig;
 import cn.vbill.middleware.porter.common.task.event.TaskEventListener;
 import cn.vbill.middleware.porter.common.cluster.event.command.ClusterCommand;
 import cn.vbill.middleware.porter.common.util.compile.JavaFileCompiler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.support.SpringFactoriesLoader;
+import org.springframework.util.ClassUtils;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -37,11 +40,12 @@ import java.util.function.Consumer;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月07日 11:25
  */
 public enum ClusterProviderProxy {
-
     /**
      * INSTANCE
      */
     INSTANCE();
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClusterProviderProxy.class);
+    private static final List<String> CLUSTER_PROVIDER = SpringFactoriesLoader.loadFactoryNames(ClusterProvider.class, JavaFileCompiler.getInstance());
     private final AtomicBoolean isConfig = new AtomicBoolean(false);
     private volatile ClusterProvider provider;
 
@@ -53,12 +57,17 @@ public enum ClusterProviderProxy {
      */
     public void initialize(ClusterConfig config) throws Exception {
         if (isConfig.compareAndSet(false, true)) {
-            List<ClusterProvider> providers = SpringFactoriesLoader.loadFactories(ClusterProvider.class, JavaFileCompiler.getInstance());
-
-            for (ClusterProvider tmp : providers) {
-                if (tmp.matches(config.getStrategy())) {
-                    tmp.start(config);
-                    provider = tmp;
+            for (String tmp : CLUSTER_PROVIDER) {
+                ClusterProvider clazzInstance = null;
+                try {
+                    Class<ClusterProvider> clazz = (Class<ClusterProvider>) ClassUtils.forName(tmp, ClusterProvider.class.getClassLoader());
+                    clazzInstance = clazz.newInstance();
+                } catch (Throwable e) {
+                    LOGGER.error("{}实例化失败", tmp, e);
+                }
+                if (clazzInstance.matches(config.getStrategy())) {
+                    clazzInstance.start(config);
+                    provider = clazzInstance;
                     break;
                 }
             }
@@ -71,7 +80,7 @@ public enum ClusterProviderProxy {
      * @param command
      * @throws Exception
      */
-    public void broadcastEvent(ClusterCommand command) throws Exception {
+    public void broadcastEvent(ClusterCommand command) {
         provider.broadcastEvent(command);
     }
 

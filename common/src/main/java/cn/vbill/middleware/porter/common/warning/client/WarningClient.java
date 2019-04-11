@@ -19,7 +19,6 @@ package cn.vbill.middleware.porter.common.warning.client;
 
 import cn.vbill.middleware.porter.common.client.Client;
 import cn.vbill.middleware.porter.common.warning.entity.WarningMessage;
-import cn.vbill.middleware.porter.common.warning.entity.WarningReceiver;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -36,5 +35,5 @@ public interface WarningClient extends Client {
      * @param: [message]
      * @return: void
      */
-    void send(WarningMessage msg, WarningReceiver... receivers);
+    void send(WarningMessage msg);
 }

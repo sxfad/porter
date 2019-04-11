@@ -33,6 +33,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.support.SpringFactoriesLoader;
+import org.springframework.util.ClassUtils;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -48,8 +49,8 @@ import java.util.Map;
 public abstract class SourceConfig implements SwamlaneSupport {
     //插件服务配置文件
     @JSONField(serialize = false, deserialize = false)
-    private static final List<PluginServiceConfig> PLUGIN_SERVICE_CONFIGS =
-            SpringFactoriesLoader.loadFactories(PluginServiceConfig.class, JavaFileCompiler.getInstance());
+    private static final List<String> PLUGIN_SERVICE_CONFIGS =
+            SpringFactoriesLoader.loadFactoryNames(PluginServiceConfig.class, JavaFileCompiler.getInstance());
 
     @JSONField(serialize = false, deserialize = false)
     protected static final Logger LOGGER = LoggerFactory.getLogger(SourceConfig.class);
@@ -136,10 +137,16 @@ public abstract class SourceConfig implements SwamlaneSupport {
 
             //如果配置文件对象仍不存在，尝试从插件服务SPI加载
             if (null == config && StringUtils.isNotBlank(sourceTypeCode)) {
-                for (PluginServiceConfig c : PLUGIN_SERVICE_CONFIGS) {
-                    if (c instanceof SourceConfig && c.isMatch(sourceTypeCode)) {
-                        config = (T) c.getClass().newInstance();
-                        break;
+                for (String cc : PLUGIN_SERVICE_CONFIGS) {
+                    try {
+                        Class<PluginServiceConfig> configClass = (Class<PluginServiceConfig>) ClassUtils.forName(cc, PluginServiceConfig.class.getClassLoader());
+                        PluginServiceConfig c = configClass.newInstance();
+                        if (c instanceof SourceConfig && c.isMatch(sourceTypeCode)) {
+                            config = (T) c.getClass().newInstance();
+                            break;
+                        }
+                    } catch (Throwable e) {
+                        LOGGER.warn("{}不匹配{}", properties, cc, e);
                     }
                 }
             }

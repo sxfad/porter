@@ -79,9 +79,6 @@ public class NodeLog extends StatisticData {
     @Setter
     @Getter
     private Date time = Calendar.getInstance().getTime();
-    @Setter
-    @Getter
-    private String title;
 
     public NodeLog() {
 
@@ -90,7 +87,6 @@ public class NodeLog extends StatisticData {
         this.type = type;
         this.error = error;
         setCategory(NAME);
-        this.title = this.type.title;
     }
 
     public NodeLog(LogType type, String taskId, String swimlaneId, String error) {
@@ -99,12 +95,6 @@ public class NodeLog extends StatisticData {
         this.error = error;
         this.swimlaneId = swimlaneId;
         setCategory(NAME);
-        this.title = this.type.title;
-    }
-
-    public NodeLog bindTitle(String title) {
-        this.title = title;
-        return this;
     }
 
     public NodeLog bindTaskId(String taskId) {

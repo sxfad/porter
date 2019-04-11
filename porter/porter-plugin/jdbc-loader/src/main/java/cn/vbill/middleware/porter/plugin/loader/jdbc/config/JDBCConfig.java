@@ -50,8 +50,8 @@ public class JDBCConfig extends SourceConfig implements PluginServiceConfig {
     @Setter @Getter private boolean testOnReturn = true;
     @Setter @Getter private boolean testOnBorrow = true;
 
-    //sql异常重试次数5*1 min
-    @Setter @Getter private int retries = 5;
+    //sql异常重试次数6*10s
+    @Setter @Getter private int retries = 6;
 
     @Override
     protected void childStuff() {

@@ -17,6 +17,7 @@
 
 package cn.vbill.middleware.porter.task.transform.transformer;
 
+import cn.vbill.middleware.porter.common.task.exception.TaskStopTriggerException;
 import cn.vbill.middleware.porter.core.task.setl.ETLBucket;
 import cn.vbill.middleware.porter.task.worker.TaskWork;
 
@@ -46,5 +47,5 @@ public interface Transformer {
      * @param: [bucket, work]
      * @return: void
      */
-    void transform(ETLBucket bucket, TaskWork work) throws Exception;
+    void transform(ETLBucket bucket, TaskWork work) throws TaskStopTriggerException, InterruptedException;
 }

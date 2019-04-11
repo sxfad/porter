@@ -28,7 +28,6 @@ public enum KafkaConsumerConst {
     CONSUMER_SOURCE_TYPE_NAME("KAFKA"), CONSUMER_PLUGIN_NAME("KafkaFetch");
     @Getter
     private String code;
-
     KafkaConsumerConst(String code) {
         this.code = code;
     }

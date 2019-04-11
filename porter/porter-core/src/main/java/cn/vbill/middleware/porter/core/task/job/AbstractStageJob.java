@@ -75,12 +75,6 @@ public abstract class AbstractStageJob implements StageJob {
      */
     protected abstract void doStart() throws Exception;
 
-    /**
-     * 跟踪逻辑
-     * @throws Exception
-     */
-    protected abstract void threadTraceLogic();
-
     @Override
     public void start() throws Exception {
         if (canStart() && stat.compareAndSet(false, true)) {
@@ -136,7 +130,6 @@ public abstract class AbstractStageJob implements StageJob {
     private  class LoopService implements Runnable {
         @Override
         public void run() {
-            threadTraceLogic();
             //如果线程没有中断信号并且服务可用，持续执行
             while (!Thread.currentThread().isInterrupted() && getWorkingStat()) {
                 try {

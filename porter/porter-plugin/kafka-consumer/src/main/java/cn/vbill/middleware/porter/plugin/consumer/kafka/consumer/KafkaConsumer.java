@@ -51,7 +51,6 @@ public class KafkaConsumer extends AbstractDataConsumer {
 
     @Override
     protected String getPluginName() {
-        new KafkaClient();
         return KafkaConsumerConst.CONSUMER_PLUGIN_NAME.getCode();
     }
 }

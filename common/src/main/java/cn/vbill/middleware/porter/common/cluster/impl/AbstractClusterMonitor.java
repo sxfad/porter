@@ -62,7 +62,7 @@ public abstract class AbstractClusterMonitor implements ClusterMonitor {
             try {
                 v.start();
             } catch (Exception e) {
-                logger.warn("集群监听器启动失败", e);
+                logger.warn("集群监听器启动失败:{}", v.getName(), e);
             }
         });
     }

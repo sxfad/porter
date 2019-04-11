@@ -32,6 +32,7 @@ import cn.vbill.middleware.porter.plugin.loader.jdbc.config.JDBCConfig;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.mysql.jdbc.AbandonedConnectionCleanupThread;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
@@ -50,10 +51,8 @@ import org.springframework.transaction.support.TransactionTemplate;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-import java.util.function.Function;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -63,8 +62,6 @@ import java.util.function.Function;
  */
 public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient, MetaQueryClient, PluginServiceClient {
     private static final Logger LOGGER = LoggerFactory.getLogger(JDBCClient.class);
-    private final Map<List<String>, TableSchema> tables = new ConcurrentHashMap<>();
-
     private final boolean makePrimaryKeyWhenNo;
     @Getter
     private SqlTemplate sqlTemplate;
@@ -94,33 +91,7 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
 
     @Override
     public final TableSchema getTable(String schema, String tableName) throws Exception {
-        return getTable(schema, tableName, true);
-    }
-
-    /**
-     * getTable
-     *
-     * @param schema
-     * @param tableName
-     * @param cache
-     * @return
-     * @throws Exception
-     */
-    private TableSchema getTable(String schema, String tableName, boolean cache) throws Exception {
-        List<String> keyList = Arrays.asList(schema, tableName);
-        if (!cache) {
-            TableSchema ts = getTableSchema(schema, tableName);
-            tables.put(keyList, ts);
-            return ts;
-        }
-
-        return tables.computeIfAbsent(keyList, new Function<List<String>, TableSchema>() {
-            //从代码块中抛出异常
-            @SneakyThrows(Exception.class)
-            public TableSchema apply(List<String> strings) {
-                return getTableSchema(schema, tableName);
-            }
-        });
+        return getTableSchema(schema, tableName);
     }
 
     /**
@@ -295,7 +266,6 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
 
     @Override
     public void reset() {
-        tables.clear();
     }
 
 
@@ -352,6 +322,7 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
         private void close() {
             connLock.writeLock().lock();
             try {
+                AbandonedConnectionCleanupThread.checkedShutdown();
                 dataSource.close();
             } catch (Throwable e) {
                 LOGGER.warn("关闭jdbc datasource", e);
@@ -371,7 +342,7 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
                     break;
                 } catch (Throwable e) {
                     LOGGER.warn("got error by findTable:{}.{},times:{}", catalogName, tableName, i, e);
-                    Thread.sleep(1000L * 60 * 1);
+                    Thread.sleep(1000L * 10 * 1);
                     reconnection();
                 }
             }
@@ -443,7 +414,7 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
                     break;
                 } catch (TaskStopTriggerException e) {
                     LOGGER.warn("got error by execute sql,times:{}", i, e);
-                    Thread.sleep(1000L * 60 * 1);
+                    Thread.sleep(1000L * 10 * 1);
                     reconnection();
                 }
             }

@@ -18,11 +18,10 @@
 package cn.vbill.middleware.porter.manager;
 
 import cn.vbill.middleware.porter.common.warning.entity.WarningReceiver;
-import org.apache.commons.collections.list.TreeList;
 import org.springframework.context.ApplicationContext;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -42,7 +41,7 @@ public enum ManagerContext {
     INSTANCE();
 
     private ApplicationContext context;
-    private final Map<String, List<String>> stoppedTask = new ConcurrentHashMap<>();
+    private final Map<List<String>, String> taskErrorMarked = new ConcurrentHashMap<>();
     private volatile WarningReceiver[] receivers = new WarningReceiver[0];
 
     /**
@@ -67,8 +66,8 @@ public enum ManagerContext {
      * @param: [taskId, swimlaneId]
      * @return: void
      */
-    public void newStoppedTask(String taskId, String swimlaneId) {
-        stoppedTask.computeIfAbsent(taskId, key -> new TreeList()).add(swimlaneId);
+    public void newStoppedTask(List<String> key, String message) {
+        taskErrorMarked.put(key, message);
     }
 
     /**
@@ -78,22 +77,18 @@ public enum ManagerContext {
      * @param: [taskId, swimlaneId]
      * @return: void
      */
-    public void removeStoppedTask(String taskId, String swimlaneId) {
-        List<String> swimlanes = stoppedTask.computeIfAbsent(taskId, key -> new TreeList());
-        swimlanes.remove(swimlaneId);
-        if (swimlanes.isEmpty()) {
-            stoppedTask.remove(taskId);
-        }
+    public void removeStoppedTask(List<String> key) {
+        taskErrorMarked.remove(key);
     }
 
-    public Map<String, List<String>> getStoppedTasks() {
-        return Collections.unmodifiableMap(stoppedTask);
+    public List<String> getStoppedTasks() {
+        return Arrays.asList(taskErrorMarked.values().toArray(new String[0]));
     }
 
 
 
     public synchronized void addWarningReceivers(WarningReceiver[] newReceivers) {
-        List<WarningReceiver> tmp = Arrays.asList(receivers);
+        List<WarningReceiver> tmp = new ArrayList<>(Arrays.asList(receivers));
         tmp.addAll(Arrays.asList(newReceivers));
         receivers = tmp.toArray(new WarningReceiver[0]);
     }

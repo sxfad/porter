@@ -175,8 +175,7 @@ public abstract class AbstractClusterProvider implements ClusterProvider {
         monitor = newMonitor();
         monitor.setClient(client);
         //通过spring框架的SPI loader加载服务
-        List<ClusterListener> listeners = SpringFactoriesLoader.loadFactories(getClusterListenerClass(), JavaFileCompiler.getInstance());
-        monitor.registerListener(listeners);
+        monitor.registerListener(SpringFactoriesLoader.loadFactories(getClusterListenerClass(), JavaFileCompiler.getInstance()));
         //初始化集群分布式锁功能
         if (client instanceof SupportDistributedLock) {
             lock = initiateLock(client);

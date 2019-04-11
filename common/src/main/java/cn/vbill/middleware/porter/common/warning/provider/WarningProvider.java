@@ -18,7 +18,6 @@
 package cn.vbill.middleware.porter.common.warning.provider;
 
 import cn.vbill.middleware.porter.common.warning.entity.WarningMessage;
-import cn.vbill.middleware.porter.common.warning.entity.WarningReceiver;
 
 /**
  * 告警提供者接口定义
@@ -32,6 +31,6 @@ public interface WarningProvider {
      * @param: [message]
      * @return: boolean
      */
-    boolean notice(WarningMessage message, WarningReceiver... receivers);
+    boolean notice(WarningMessage message);
 
 }

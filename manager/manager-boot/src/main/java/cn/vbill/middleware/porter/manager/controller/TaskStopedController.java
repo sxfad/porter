@@ -20,6 +20,7 @@ package cn.vbill.middleware.porter.manager.controller;
 
 import cn.vbill.middleware.porter.manager.ManagerContext;
 import io.swagger.annotations.Api;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -28,7 +29,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 告警配置表 controller控制器
@@ -54,10 +54,10 @@ public class TaskStopedController {
      */
     @GetMapping("/check")
     public void info(HttpServletResponse response) {
-        Map<String, List<String>> tasks = ManagerContext.INSTANCE.getStoppedTasks();
+        List<String> tasks = ManagerContext.INSTANCE.getStoppedTasks();
         if (null != tasks && !tasks.isEmpty()) {
             try {
-                response.getWriter().write(tasks.toString());
+                response.getWriter().write(StringUtils.join(tasks, "；"));
                 response.getWriter().flush();
             } catch (Throwable e) {
                 LOGGER.error("任务异常检查信息输出失败", e);

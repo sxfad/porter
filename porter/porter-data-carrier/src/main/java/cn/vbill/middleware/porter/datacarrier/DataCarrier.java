@@ -47,7 +47,7 @@ public interface DataCarrier<E>  extends DataContainer {
      * @param: []
      * @return: org.apache.commons.lang3.tuple.Pair<java.lang.String,E>
      */
-    Pair<String, E> pullByOrder();
+    Pair<String, E> pullByOrder() throws InterruptedException;
 
     /**
      * pull
@@ -56,5 +56,5 @@ public interface DataCarrier<E>  extends DataContainer {
      * @param: []
      * @return: E
      */
-    <E> E pull();
+    <E> E pull() throws InterruptedException;
 }

@@ -32,6 +32,9 @@ import com.alibaba.otter.canal.instance.manager.CanalInstanceWithManager;
 import com.alibaba.otter.canal.instance.manager.model.Canal;
 import com.alibaba.otter.canal.instance.manager.model.CanalParameter;
 import com.alibaba.otter.canal.instance.manager.model.CanalStatus;
+import com.alibaba.otter.canal.parse.inbound.AbstractEventParser;
+import com.alibaba.otter.canal.parse.inbound.mysql.MysqlEventParser;
+import com.alibaba.otter.canal.parse.inbound.mysql.MysqlMultiStageCoprocessor;
 import com.alibaba.otter.canal.protocol.ClientIdentity;
 import com.alibaba.otter.canal.protocol.Message;
 import com.alibaba.otter.canal.server.embedded.CanalServerWithEmbedded;
@@ -163,6 +166,9 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
                     canal.getCanalParameter().setMasterLogfileOffest(canalPosition.offset);
                 }
                 CanalInstanceWithManager instance = new CanalInstanceWithManager(canal, clientId.getFilter());
+                if (instance.getEventParser() instanceof AbstractEventParser) {
+                    ((AbstractEventParser)instance.getEventParser()).setParallel(false);
+                }
                 instance.setAlarmHandler(new CanalAlarmHandler() {
                     private volatile boolean isRun = false;
 

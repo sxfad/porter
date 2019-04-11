@@ -29,7 +29,9 @@ import cn.vbill.middleware.porter.common.config.SourceConfig;
 import cn.vbill.middleware.porter.common.exception.ClientException;
 import cn.vbill.middleware.porter.common.task.exception.DataConsumerBuildException;
 import cn.vbill.middleware.porter.common.util.compile.JavaFileCompiler;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.support.SpringFactoriesLoader;
+import org.springframework.util.ClassUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -46,8 +48,8 @@ public enum DataConsumerFactory {
      * INSTANCE
      */
     INSTANCE();
-    private final List<DataConsumer> consumerTemplate = SpringFactoriesLoader.loadFactories(DataConsumer.class, JavaFileCompiler.getInstance());
-
+    private final List<String> consumerTemplate = SpringFactoriesLoader.loadFactoryNames(DataConsumer.class, JavaFileCompiler.getInstance());
+    private final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(DataConsumerFactory.class);
 
     /**
      * 获取Consumer
@@ -127,16 +129,17 @@ public enum DataConsumerFactory {
      * @return: cn.vbill.middleware.porter.core.task.consumer.DataConsumer
      */
     public DataConsumer newConsumer(String consumerName) throws DataConsumerBuildException {
-        for (DataConsumer t : consumerTemplate) {
-            if (t.isMatch(consumerName)) {
-                try {
-                    return t.getClass().newInstance();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    throw new DataConsumerBuildException(e.getMessage());
+        for (String t : consumerTemplate) {
+            try {
+                Class<DataConsumer> tmp = (Class<DataConsumer>) ClassUtils.forName(t, DataConsumer.class.getClassLoader());
+                DataConsumer tmpInstance = tmp.newInstance();
+                if (tmpInstance.isMatch(consumerName)) {
+                    return tmpInstance;
                 }
+            } catch (Throwable e) {
+                LOGGER.warn("{}不匹配{}", t, consumerName, e);
             }
         }
-        return null;
+        throw new DataConsumerBuildException();
     }
 }

@@ -53,7 +53,7 @@ public class SimpleDataCarrier implements DataCarrier {
      * @return
      */
     @Override
-    public synchronized Pair pullByOrder() {
+    public Pair pullByOrder() throws InterruptedException {
         Object item = pull();
         return null != item ? new ImmutablePair(generateId(), item) : null;
     }
@@ -69,8 +69,8 @@ public class SimpleDataCarrier implements DataCarrier {
      * @return
      */
     @Override
-    public synchronized Object pull() {
-        return buffer.poll();
+    public Object pull() throws InterruptedException {
+        return buffer.take();
     }
 
     /**

@@ -17,6 +17,8 @@
 
 package cn.vbill.middleware.porter.task.worker;
 
+import cn.vbill.middleware.porter.common.task.exception.TaskLockException;
+import cn.vbill.middleware.porter.common.warning.entity.WarningMessage;
 import cn.vbill.middleware.porter.common.warning.entity.WarningReceiver;
 import cn.vbill.middleware.porter.common.cluster.ClusterProviderProxy;
 import cn.vbill.middleware.porter.common.cluster.event.command.StatisticUploadCommand;
@@ -33,7 +35,6 @@ import cn.vbill.middleware.porter.common.task.exception.TaskStopTriggerException
 import cn.vbill.middleware.porter.common.task.exception.WorkResourceAcquireException;
 import cn.vbill.middleware.porter.common.node.statistics.NodeLog;
 import cn.vbill.middleware.porter.common.task.statistics.TaskPerformance;
-import cn.vbill.middleware.porter.common.util.MachineUtils;
 import cn.vbill.middleware.porter.core.NodeContext;
 import cn.vbill.middleware.porter.core.task.TaskContext;
 import cn.vbill.middleware.porter.core.task.consumer.DataConsumer;
@@ -41,7 +42,6 @@ import cn.vbill.middleware.porter.core.task.loader.DataLoader;
 import cn.vbill.middleware.porter.core.task.job.StageJob;
 import cn.vbill.middleware.porter.core.task.job.StageType;
 import cn.vbill.middleware.porter.core.task.entity.TableMapper;
-import cn.vbill.middleware.porter.task.TaskController;
 import cn.vbill.middleware.porter.task.alert.AlertJob;
 import cn.vbill.middleware.porter.task.extract.ExtractJob;
 import cn.vbill.middleware.porter.task.load.LoadJob;
@@ -53,146 +53,101 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 /**
+ * 任务主线程
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月21日 14:48
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月21日 14:48
  */
-public class TaskWork {
+public class TaskWork extends Thread {
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskWork.class);
-    private final AtomicBoolean statAtomicBoolean = new AtomicBoolean(false);
-
+    //任务配置信息
     private final String taskId;
-
-    //单消费泳道
     private final DataConsumer dataConsumer;
     private final DataLoader dataLoader;
-    /**
-     * stageType -> job
-     */
-    private final Map<StageType, StageJob> stageJobs;
-    private final String basicThreadName;
-
-    /**
-     * schema_table -> TaskStat
-     */
-    private final Map<String, DTaskStat> stats;
     private final Map<String, TableMapper> mappers;
-    private final TaskWorker worker;
-
     private final List<WarningReceiver> receivers;
 
+    //stageType -> job
+    private final Map<StageType, StageJob> stageJobs = new LinkedHashMap<>();
+    //schema_table -> TaskStat
+    private final Map<String, DTaskStat> stats;
+
+    private final CountDownLatch stopToken = new CountDownLatch(1);
     /**
      * 触发任务停止标识，生命周期内，仅有一次
      */
-    private final AtomicBoolean stopTrigger = new AtomicBoolean(false);
+    private final AtomicBoolean stopTrigger;
+
+    private final String basicThreadName;
+    private final TaskWorker worker;
+    private final long positionCheckInterval;
+    private final long alarmPositionCount;
 
     public TaskWork(DataConsumer dataConsumer, DataLoader dataLoader, String taskId, List<WarningReceiver> receivers,
-                    TaskWorker worker, long positionCheckInterval, long alarmPositionCount) throws Exception {
+                    TaskWorker worker, long positionCheckInterval, long alarmPositionCount) {
+        basicThreadName = "TaskWork-[taskId:" + taskId + "]-[consumer:" + dataConsumer.getSwimlaneId() + "]";
+        setName(basicThreadName+ "-main");
         this.dataConsumer = dataConsumer;
         this.dataLoader = dataLoader;
-        basicThreadName = "TaskWork-[taskId:" + taskId + "]-[consumer:" + dataConsumer.getSwimlaneId() + "]";
         this.taskId = taskId;
         this.stats = new ConcurrentHashMap<>();
         this.mappers = new ConcurrentHashMap<>();
         this.worker = worker;
         this.receivers = Collections.unmodifiableList(receivers);
-        TaskWork work = this;
-        stageJobs = new LinkedHashMap<>();
+        this.positionCheckInterval = positionCheckInterval;
+        this.alarmPositionCount = alarmPositionCount;
+        this.stopTrigger = new AtomicBoolean(false);
+    }
 
-        stageJobs.put(StageType.SELECT, new SelectJob(work));
-        stageJobs.put(StageType.EXTRACT, new ExtractJob(work));
-        stageJobs.put(StageType.TRANSFORM, new TransformJob(work));
-        stageJobs.put(StageType.LOAD, new LoadJob(work, positionCheckInterval, alarmPositionCount));
+    private void initiate() {
+        stageJobs.put(StageType.SELECT, new SelectJob(this));
+        stageJobs.put(StageType.EXTRACT, new ExtractJob(this));
+        stageJobs.put(StageType.TRANSFORM, new TransformJob(this));
+        stageJobs.put(StageType.LOAD, new LoadJob(this, positionCheckInterval, alarmPositionCount));
         /**
          * 源端数据源支持元数据查询
          */
         if (dataConsumer.supportMetaQuery()) {
-            stageJobs.put(StageType.DB_CHECK, new AlertJob(work));
-        }
-
-        //从集群模块获取任务状态统计信息
-        ClusterProviderProxy.INSTANCE.broadcastEvent(new TaskStatQueryCommand(taskId, dataConsumer.getSwimlaneId(), new DCallback() {
-            @Override
-            public void callback(List<DObject> objects) {
-                for (DObject object : objects) {
-                    DTaskStat stat = (DTaskStat) object;
-                    getDTaskStat(stat.getSchema(), stat.getTable());
-                }
-            }
-        }));
-    }
-
-    /**
-     * stop
-     *
-     * @date 2018/8/9 下午2:15
-     * @param: []
-     * @return: void
-     */
-    protected void stop() {
-        if (statAtomicBoolean.compareAndSet(true, false)) {
-            try {
-                LOGGER.info("终止执行任务[{}-{}]", taskId, dataConsumer.getSwimlaneId());
-                //终止阶段性工作,需要
-                for (Map.Entry<StageType, StageJob> jobs : stageJobs.entrySet()) {
-                    //确保每个阶段工作都被执行
-                    try {
-                        LOGGER.info("终止执行工作[{}-{}-{}]", taskId, dataConsumer.getSwimlaneId(), jobs.getValue().getClass().getSimpleName());
-                        jobs.getValue().stop();
-                    } catch (Throwable e) {
-                        LOGGER.error("终止执行工作[{}-{}-{}]失败", taskId, dataConsumer.getSwimlaneId(), jobs.getValue().getClass().getSimpleName(), e);
-                    }
-                }
-                try {
-                    //上传消费进度
-                    submitStat();
-                } catch (Exception e) {
-                    TaskContext.warning(NodeLog.upload(NodeLog.LogType.INFO, taskId, dataConsumer.getSwimlaneId(), "停止上传消费进度失败:" + e.getMessage()));
-                }
-                try {
-                    //广播任务结束消息
-                    ClusterProviderProxy.INSTANCE.broadcastEvent(new TaskStopCommand(taskId, dataConsumer.getSwimlaneId()));
-                } catch (Exception e) {
-                    TaskContext.warning(NodeLog.upload(NodeLog.LogType.INFO, taskId, dataConsumer.getSwimlaneId(), "广播TaskStopCommand失败:" + e.getMessage()));
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                TaskContext.warning(NodeLog.upload(NodeLog.LogType.INFO, taskId, dataConsumer.getSwimlaneId(), "任务关闭失败:" + e.getMessage()));
-                LOGGER.error("终止执行任务[{}-{}]异常", taskId, dataConsumer.getSwimlaneId(), e);
-            } finally {
-                NodeContext.INSTANCE.releaseWork();
-            }
+            stageJobs.put(StageType.DB_CHECK, new AlertJob(this));
         }
     }
 
     /**
-     * start
-     *
-     * @date 2018/8/9 下午2:15
-     * @param: []
-     * @return: void
+     * 主线程逻辑
      */
-    protected void start() throws Exception {
-        if (statAtomicBoolean.compareAndSet(false, true)) {
+    public void run() {
+        try {
+            worker.register(dataConsumer.getSwimlaneId(), this);
+            TaskContext.trace(taskId, dataConsumer, dataLoader, receivers);
             LOGGER.info("开始执行任务[{}-{}]", taskId, dataConsumer.getSwimlaneId());
             //申请work资源
             if (!NodeContext.INSTANCE.acquireWork()) {
                 throw new WorkResourceAcquireException("未申请到可供任务执行的资源");
             }
 
-
             //会抛出分布式锁任务抢占异常
             ClusterProviderProxy.INSTANCE.broadcastEvent(new TaskRegisterCommand(taskId, dataConsumer.getSwimlaneId()));
+
+            //从集群模块获取任务状态统计信息
+            ClusterProviderProxy.INSTANCE.broadcastEvent(new TaskStatQueryCommand(taskId, dataConsumer.getSwimlaneId(), new DCallback() {
+                @Override
+                public void callback(List<DObject> objects) {
+                    for (DObject object : objects) {
+                        DTaskStat stat = (DTaskStat) object;
+                        getDTaskStat(stat.getSchema(), stat.getTable());
+                    }
+                }
+            }));
+
+            initiate();
             //开始阶段性工作
             for (Map.Entry<StageType, StageJob> jobs : stageJobs.entrySet()) {
                 jobs.getValue().start();
@@ -210,9 +165,56 @@ public class TaskWork {
                     dataConsumer.initializePosition(taskId, dataConsumer.getSwimlaneId(), position);
                 }
             }));
+            stopToken.await();
+        } catch (Throwable e) {
+            if (!(e instanceof TaskLockException)) {
+                LOGGER.error("任务[{}-{}]停止", taskId, dataConsumer.getSwimlaneId(), e);
+                TaskContext.warning(NodeLog.upload(NodeLog.LogType.WARNING, taskId, dataConsumer.getSwimlaneId(), e.getMessage()));
+            }
+            stopToken.countDown();
+        } finally {
+            clearWork();
         }
     }
 
+
+    /**
+     * 清理任务
+     */
+    private void clearWork() {
+        try {
+            LOGGER.info("终止执行任务[{}-{}]", taskId, dataConsumer.getSwimlaneId());
+            //终止阶段性工作,需要
+            for (Map.Entry<StageType, StageJob> jobs : stageJobs.entrySet()) {
+                //确保每个阶段工作都被执行
+                try {
+                    LOGGER.info("终止执行工作[{}-{}-{}]", taskId, dataConsumer.getSwimlaneId(), jobs.getValue().getClass().getSimpleName());
+                    jobs.getValue().stop();
+                } catch (Throwable e) {
+                    LOGGER.error("终止执行工作[{}-{}-{}]失败", taskId, dataConsumer.getSwimlaneId(), jobs.getValue().getClass().getSimpleName(), e);
+                }
+            }
+            try {
+                //上传消费进度
+                submitStat();
+            } catch (Exception e) {
+                TaskContext.warning(NodeLog.upload(NodeLog.LogType.INFO, taskId, dataConsumer.getSwimlaneId(), "停止上传消费进度失败:" + e.getMessage()));
+            }
+            try {
+                //广播任务结束消息
+                ClusterProviderProxy.INSTANCE.broadcastEvent(new TaskStopCommand(taskId, dataConsumer.getSwimlaneId()));
+            } catch (Exception e) {
+                TaskContext.warning(NodeLog.upload(NodeLog.LogType.INFO, taskId, dataConsumer.getSwimlaneId(), "广播TaskStopCommand失败:" + e.getMessage()));
+            }
+        } catch (Throwable e) {
+            TaskContext.warning(NodeLog.upload(NodeLog.LogType.INFO, taskId, dataConsumer.getSwimlaneId(), "任务关闭失败:" + e.getMessage()));
+            LOGGER.error("终止执行任务[{}-{}]异常", taskId, dataConsumer.getSwimlaneId(), e);
+        } finally {
+            NodeContext.INSTANCE.releaseWork();
+            worker.unregister(dataConsumer.getSwimlaneId());
+            TaskContext.clearTrace();
+        }
+    }
 
     public String getBasicThreadName() {
         return basicThreadName;
@@ -225,7 +227,7 @@ public class TaskWork {
      * @param: [type]
      * @return: T
      */
-    public <T> T waitEvent(StageType type) throws Exception {
+    public <T> T waitEvent(StageType type) throws TaskStopTriggerException, InterruptedException {
         return stageJobs.get(type).output();
     }
 
@@ -236,7 +238,7 @@ public class TaskWork {
      * @param: []
      * @return: T
      */
-    public <T> T waitSequence() {
+    public <T> T waitSequence() throws InterruptedException {
         return ((ExtractJob) stageJobs.get(StageType.EXTRACT)).getNextSequence();
     }
 
@@ -357,55 +359,41 @@ public class TaskWork {
     }
 
     /**
-     * stopAndAlarm
-     *
+     * interruptWithWarning
      * @date 2018/8/9 下午2:18
      * @param: [notice]
      * @return: void
      */
-    public void stopAndAlarm(final String notice) {
+    public void interruptWithWarning(final String notice) {
         if (stopTrigger.compareAndSet(false, true)) {
             new Thread("suixingpay-TaskStopByErrorTrigger-stopTask-" + taskId + "-" + dataConsumer.getSwimlaneId()) {
                 @Override
                 public void run() {
-                    StringBuffer alarmNoticeBuilder = new StringBuffer(notice);
-                    String alarmNotice = notice;
-                    //增加插件连接信息
-                    try {
-                        alarmNoticeBuilder.append(System.lineSeparator()).append("消费源:").append(dataConsumer.getClientInfo()).append(System.lineSeparator())
-                                .append("目标端:").append(dataLoader.getClientInfo());
-                        alarmNotice = alarmNoticeBuilder.toString();
-                    } catch (Throwable e) {
-                        LOGGER.error("拼接任务异常停止告警信息出错", e);
-                    }
-                    try {
-                        ClusterProviderProxy.INSTANCE.broadcastEvent(new TaskStoppedByErrorCommand(taskId, dataConsumer.getSwimlaneId(), alarmNotice));
-                    } catch (Throwable e) {
-                        LOGGER.error("在集群策略存储引擎标识任务因错误失败出错:{}", e.getMessage());
-                    }
                     try {
                         //停止任务
-                        NodeContext.INSTANCE.getBean(TaskController.class).stopTask(taskId, dataConsumer.getSwimlaneId());
+                        worker.stopWork(taskId, dataConsumer.getSwimlaneId());
                     } catch (Throwable e) {
                         LOGGER.error("停止任务失败", e);
                     }
-                    try {
-                        //调整节点健康级别
-                        NodeContext.INSTANCE.markTaskError(taskId, alarmNotice);
-                    } catch (Throwable e) {
-                        LOGGER.warn("调整节点健康级别失败", e);
-                    }
 
+                    String shortMessage = notice;
                     try {
                         LOGGER.info("开始发送日志通知.....");
-
+                        StringBuffer alarmNoticeBuilder = new StringBuffer(notice).append(System.lineSeparator()).append("消费源:")
+                                .append(dataConsumer.getClientInfo()).append(System.lineSeparator()).append("目标端:").append(dataLoader.getClientInfo());
+                        shortMessage = alarmNoticeBuilder.toString();
                         //上传日志
-                        NodeLog log = new NodeLog(NodeLog.LogType.ERROR, taskId, dataConsumer.getSwimlaneId(), alarmNotice);
-                        log.setTitle("【告警】【" + MachineUtils.IP_ADDRESS + "】" + taskId + "-" + dataConsumer.getSwimlaneId() + "任务异常停止");
-                        TaskContext.warning(log.upload());
+                        NodeLog log = new NodeLog(NodeLog.LogType.ERROR, taskId, dataConsumer.getSwimlaneId(), alarmNoticeBuilder.toString());
+                        shortMessage = TaskContext.warning(log.upload()).shortMessage(Arrays.asList(log.getTaskId(), log.getSwimlaneId()));
                         LOGGER.info("结束发送日志通知.....");
                     } catch (Throwable e) {
                         LOGGER.warn("停止告警发送失败", e);
+                    } finally {
+                        try {
+                            ClusterProviderProxy.INSTANCE.broadcastEvent(new TaskStoppedByErrorCommand(taskId, dataConsumer.getSwimlaneId(), shortMessage));
+                        } catch (Throwable e) {
+                            LOGGER.error("在集群策略存储引擎标识任务因错误失败出错:{}", e.getMessage());
+                        }
                     }
                 }
             }.start();
@@ -424,11 +412,7 @@ public class TaskWork {
         return receivers;
     }
 
-
-    /**
-     * 当前任务是否触发
-     */
-    public boolean triggerStopped() {
-        return stopTrigger.get();
+    public boolean isWorking() {
+        return !stopTrigger.get();
     }
 }

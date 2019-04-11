@@ -40,6 +40,10 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 
 import java.net.MalformedURLException;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
 
 /**
  * node launcher
@@ -97,9 +101,8 @@ public class NodeBootApplication {
         if (null != config.getAlert() && WarningPlugin.NONE != config.getAlert().getStrategy()) {
             try {
                 WarningProviderFactory.INSTANCE.initialize(config.getAlert());
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 LOGGER.error("fail to initiate warning properties", e.getMessage());
-                System.exit(-1);
             }
         }
 

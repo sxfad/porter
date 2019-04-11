@@ -45,7 +45,7 @@ public interface DataMapCarrier<K, V> extends DataContainer {
      * @param: [key]
      * @return: V
      */
-    V pull(K key);
+    V pull(K key) throws InterruptedException;
 
     /**
      * containsKey

@@ -89,56 +89,47 @@ public class SelectJob extends AbstractStageJob {
     }
 
     @Override
-    protected void threadTraceLogic() {
-        TaskContext.trace(work.getTaskId(), work.getDataConsumer(), work.getDataLoader(), work.getReceivers());
-    }
-
-    @Override
     protected void loopLogic() throws InterruptedException {
-        //只要队列有消息，持续读取
-        List<MessageEvent> events = null;
-        do {
-            try {
-                events = consumer.fetch();
-                if (null != events && !events.isEmpty()) {
-                    carrier.push(events);
-                    lastNoneFetchTime = null;
+        try {
+            //只要队列有消息，持续读取
+            List<MessageEvent> events = null;
+            do {
+                try {
+                    events = consumer.fetch();
+                    if (null != events && !events.isEmpty()) {
+                        carrier.push(events);
+                        lastNoneFetchTime = null;
+                    }
+                } catch (TaskStopTriggerException stopError) {
+                    LOGGER.error("SelectJob error", stopError);
+                    work.interruptWithWarning(stopError.getMessage());
                 }
-            } catch (TaskStopTriggerException stopError) {
-                stopError.printStackTrace();
-                work.stopAndAlarm(stopError.getMessage());
-            } catch (InterruptedException interrupt) {
-                throw interrupt;
+            } while (null != events && !events.isEmpty() && getWorkingStat() && work.isWorking());
+        } finally {
+            try {
+                //退出轮训循环，判断累计查不到数据时间，按照配置发送邮件告警
+                String taskId = work.getTaskId();
+                String swimlaneId = work.getDataConsumer().getSwimlaneId();
+                Date now = Calendar.getInstance().getTime();
+                long nofetchTime = null != lastNoneFetchTime
+                        ? TimeUnit.SECONDS.convert(Math.abs(now.getTime() - lastNoneFetchTime.getTime()), TimeUnit.MILLISECONDS) : -1;
+                boolean overThresHold = fetchNoticeThreshould > -1  && nofetchTime >= fetchNoticeThreshould;
+                boolean triggerNotice = null == lastNoneFetchNoticeTime
+                        || TimeUnit.SECONDS.convert(Math.abs(now.getTime() - lastNoneFetchNoticeTime.getTime()), TimeUnit.MILLISECONDS) >= fetchNoticeSpan;
+                //fetchNoticeThreshould，并且持续fetchNoticeSpan秒没有发送通知
+                if (overThresHold && triggerNotice) {
+                    TaskContext.warning(new NodeLog(NodeLog.LogType.WARNING, TaskContext.trace().getTaskId(), TaskContext.trace().getSwimlaneId(),
+                            "\"" + work.getDataConsumer().getClientInfo() + "\"已持续" + (nofetchTime / 60) + "分钟未消费到数据，通知间隔"
+                                    + (fetchNoticeSpan / 60) + "分钟"), "【关注】" + taskId + "-" + swimlaneId + "持续无数据消费" + (nofetchTime / 60) + "分钟");
+                    lastNoneFetchNoticeTime = now;
+                }
+                if (null == lastNoneFetchTime) {
+                    lastNoneFetchTime = now;
+                }
+                NodeContext.INSTANCE.flushConsumerIdle(taskId, swimlaneId, nofetchTime);
             } catch (Throwable e) {
                 e.printStackTrace();
-                TaskContext.warning(NodeLog.upload(NodeLog.LogType.INFO, work.getTaskId(), consumer.getSwimlaneId(), "fetch MessageEvent error" + e.getMessage()));
-                LOGGER.error("fetch MessageEvent error!", e);
             }
-        } while (null != events && !events.isEmpty() && getWorkingStat());
-
-        try {
-            //退出轮训循环，判断累计查不到数据时间，按照配置发送邮件告警
-            String taskId = work.getTaskId();
-            String swimlaneId = work.getDataConsumer().getSwimlaneId();
-            Date now = Calendar.getInstance().getTime();
-            long nofetchTime = null != lastNoneFetchTime
-                    ? TimeUnit.SECONDS.convert(Math.abs(now.getTime() - lastNoneFetchTime.getTime()), TimeUnit.MILLISECONDS) : -1;
-            boolean overThresHold = fetchNoticeThreshould > -1  && nofetchTime >= fetchNoticeThreshould;
-            boolean triggerNotice = null == lastNoneFetchNoticeTime
-                    || TimeUnit.SECONDS.convert(Math.abs(now.getTime() - lastNoneFetchNoticeTime.getTime()), TimeUnit.MILLISECONDS) >= fetchNoticeSpan;
-            //fetchNoticeThreshould，并且持续fetchNoticeSpan秒没有发送通知
-            if (overThresHold && triggerNotice) {
-                TaskContext.warning(new NodeLog(NodeLog.LogType.WARNING, TaskContext.trace().getTaskId(), TaskContext.trace().getSwimlaneId(),
-                        "\"" + work.getDataConsumer().getClientInfo() + "\"已持续" + (nofetchTime / 60) + "分钟未消费到数据，通知间隔"
-                                + (fetchNoticeSpan / 60) + "分钟").bindTitle("【关注】" + taskId + "-" + swimlaneId + "持续无数据消费" + (nofetchTime / 60) + "分钟"));
-                lastNoneFetchNoticeTime = now;
-            }
-            if (null == lastNoneFetchTime) {
-                lastNoneFetchTime = now;
-            }
-            NodeContext.INSTANCE.flushConsumerIdle(taskId, swimlaneId, nofetchTime);
-        } catch (Throwable e) {
-            e.printStackTrace();
         }
     }
 
@@ -148,7 +139,7 @@ public class SelectJob extends AbstractStageJob {
     }
 
     @Override
-    public Pair<String, List<MessageEvent>> output() {
+    public Pair<String, List<MessageEvent>> output() throws InterruptedException {
         return carrier.pullByOrder();
     }
 

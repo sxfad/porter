@@ -17,6 +17,10 @@
 
 package cn.vbill.middleware.porter.core.task.job;
 
+import cn.vbill.middleware.porter.common.task.exception.TaskStopTriggerException;
+
+import java.util.concurrent.ExecutionException;
+
 /**
  * 阶段性工作
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -62,7 +66,7 @@ public interface StageJob {
      * @param: []
      * @return: T
      */
-    <T> T output() throws Exception;
+    <T> T output() throws InterruptedException, TaskStopTriggerException;
 
     /**
      * 停止写入接口方法

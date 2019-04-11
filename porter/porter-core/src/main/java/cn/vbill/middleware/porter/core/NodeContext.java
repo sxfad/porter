@@ -22,6 +22,7 @@ import cn.vbill.middleware.porter.common.cluster.dic.ClusterPlugin;
 import cn.vbill.middleware.porter.common.node.dic.NodeHealthLevel;
 import cn.vbill.middleware.porter.common.node.dic.NodeStatusType;
 import cn.vbill.middleware.porter.common.node.entity.Node;
+import cn.vbill.middleware.porter.common.warning.entity.WarningMessage;
 import cn.vbill.middleware.porter.common.warning.entity.WarningReceiver;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -50,7 +51,7 @@ public enum NodeContext {
     private final ReadWriteLock nodeLock = new ReentrantReadWriteLock();
     private final Node node = new Node();
 
-    private final Map<String, String> taskErrorMarked = new ConcurrentHashMap<>();
+    private final Map<List<String>, WarningMessage> taskErrorMarked = new ConcurrentHashMap<>();
     private final Map<String, Object> consumeProcess = new ConcurrentHashMap<>();
     private final Map<String, Object> consumerIdle = new ConcurrentHashMap<>();
     private final List<String> startupArgs = new ArrayList<>();
@@ -314,8 +315,15 @@ public enum NodeContext {
      * @param: [taskId]
      * @return: void
      */
+    public void removeTaskError(List<String> key) {
+        taskErrorMarked.remove(key);
+        if (taskErrorMarked.isEmpty()) {
+            syncHealthLevel(NodeHealthLevel.GREEN, "");
+        }
+    }
+
     public void removeTaskError(String taskId) {
-        taskErrorMarked.remove(taskId);
+        taskErrorMarked.keySet().stream().filter(key -> key.get(0).equals(taskId)).forEach(key -> taskErrorMarked.remove(key));
         if (taskErrorMarked.isEmpty()) {
             syncHealthLevel(NodeHealthLevel.GREEN, "");
         }
@@ -328,9 +336,9 @@ public enum NodeContext {
      * @param: [taskId, e]
      * @return: void
      */
-    public void markTaskError(String taskId, String e) {
-        taskErrorMarked.put(taskId, taskId);
-        syncHealthLevel(NodeHealthLevel.RED, e);
+    public void markTaskError(List<String> key, WarningMessage e) {
+        taskErrorMarked.put(key, e);
+        syncHealthLevel(NodeHealthLevel.RED, e.getErrorCode().name());
     }
 
     /**
@@ -370,8 +378,10 @@ public enum NodeContext {
         }
     }
 
-    public Map<String, String> getTaskErrorMarked() {
-        return Collections.unmodifiableMap(taskErrorMarked);
+    public List<String> getTaskErrorMarked() {
+        List<String> warning = new ArrayList<>();
+        taskErrorMarked.forEach((k, v) -> warning.add(v.shortMessage(k)));
+        return warning;
     }
 
     /**
@@ -439,7 +449,8 @@ public enum NodeContext {
     }
 
     public synchronized void addWarningReceivers(WarningReceiver[] newReceivers) {
-        List<WarningReceiver> tmp = Arrays.asList(receivers);
+        List<WarningReceiver> tmp = new ArrayList<>();
+        tmp.addAll(Arrays.asList(receivers));
         tmp.addAll(Arrays.asList(newReceivers));
         receivers = tmp.toArray(new WarningReceiver[0]);
     }
