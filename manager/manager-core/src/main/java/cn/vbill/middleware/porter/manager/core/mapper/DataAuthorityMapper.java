@@ -1,5 +1,5 @@
 /*
- * Copyright ©2018 vbill.cn.
+吗 * Copyright ©2018 vbill.cn.
  * <p>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -102,5 +102,18 @@ public interface DataAuthorityMapper {
      * @param type
      * @return
      */
-    List<CUser> selectOwnersByObjectId(String ObjectName, Long ObjectId, Integer type);
+    List<CUser> selectOwnersByObjectId(@Param("objectName") String objectName, @Param("objectId") Long objectId,
+            @Param("type") Integer type);
+
+    /**
+     * 根据多个条件查询唯一数据
+     * 
+     * @param ObjectName
+     * @param ObjectId
+     * @param type
+     * @param ownerId
+     * @return
+     */
+    DataAuthority selectOneByConditions(@Param("objectName") String objectName, @Param("objectId") Long objectId,
+            @Param("ownerLevel") Integer ownerLevel, @Param("ownerId") Long ownerId);
 }

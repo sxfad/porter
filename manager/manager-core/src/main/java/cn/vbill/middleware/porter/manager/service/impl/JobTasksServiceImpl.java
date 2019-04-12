@@ -77,7 +77,7 @@ import cn.vbill.middleware.porter.manager.service.JobTasksUserService;
 import cn.vbill.middleware.porter.manager.web.page.Page;
 
 /**
- * 同步任务表 服务实现类 
+ * 同步任务表 服务实现类
  *
  * @author: FairyHood
  * @date: 2018-03-07 13:40:30
@@ -429,9 +429,9 @@ public class JobTasksServiceImpl implements JobTasksService {
         List<TableMapperConfig> tableList = new ArrayList<>();
         TableMapperConfig tableMapperConfig = null;
         for (JobTasksTable jobTasksTable : tables) {
-            String[] schema = { jobTasksTable.getSourceTableName().split("[.]")[0],
+            String[] schema = {jobTasksTable.getSourceTableName().split("[.]")[0],
                     jobTasksTable.getTargetTableName().split("[.]")[0] };
-            String[] table = { jobTasksTable.getSourceTableName().split("[.]")[1],
+            String[] table = {jobTasksTable.getSourceTableName().split("[.]")[1],
                     jobTasksTable.getTargetTableName().split("[.]")[1] };
 
             Map<String, String> column = null;
