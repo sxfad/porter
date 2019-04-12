@@ -21,7 +21,6 @@ import cn.vbill.middleware.porter.common.task.exception.TaskStopTriggerException
 import cn.vbill.middleware.porter.core.NodeContext;
 import cn.vbill.middleware.porter.core.task.job.StageType;
 import cn.vbill.middleware.porter.datacarrier.simple.FixedCapacityCarrier;
-import cn.vbill.middleware.porter.core.task.TaskContext;
 import cn.vbill.middleware.porter.task.transform.transformer.TransformFactory;
 import cn.vbill.middleware.porter.core.task.setl.ETLBucket;
 import cn.vbill.middleware.porter.core.task.job.AbstractStageJob;

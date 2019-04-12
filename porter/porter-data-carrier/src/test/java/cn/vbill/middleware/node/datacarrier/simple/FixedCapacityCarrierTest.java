@@ -41,6 +41,7 @@ public class FixedCapacityCarrierTest {
     }
     @Test
     public void pull() throws InterruptedException {
+        carrier.push("a", "1");
         String value = carrier.pull("a");
         System.out.println("key : a" + ", value : " + value);
         carrier.printState();
@@ -51,7 +52,6 @@ public class FixedCapacityCarrierTest {
         System.out.println("key : a, has : " + has);
         carrier.printState();
     }
-
     @Test
     public void unionTest() throws InterruptedException {
         carrier.push("a", "1");
@@ -71,6 +71,12 @@ public class FixedCapacityCarrierTest {
         for (int i = 0; i < 4; i++) {
             int finalI = i;
             (new Thread(() -> {
+
+                try {
+                    Thread.currentThread().sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 try {
                     carrier.push(finalI + "", finalI + "");
                 } catch (InterruptedException e) {
@@ -82,11 +88,6 @@ public class FixedCapacityCarrierTest {
         }
 
         (new Thread(() -> {
-            try {
-                Thread.currentThread().sleep(10000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
             try {
                 carrier.pull("0");
             } catch (InterruptedException e) {

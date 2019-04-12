@@ -18,7 +18,6 @@
 package cn.vbill.middleware.porter.task.worker;
 
 import cn.vbill.middleware.porter.common.task.exception.TaskLockException;
-import cn.vbill.middleware.porter.common.warning.entity.WarningMessage;
 import cn.vbill.middleware.porter.common.warning.entity.WarningReceiver;
 import cn.vbill.middleware.porter.common.cluster.ClusterProviderProxy;
 import cn.vbill.middleware.porter.common.cluster.event.command.StatisticUploadCommand;
@@ -94,7 +93,7 @@ public class TaskWork extends Thread {
     public TaskWork(DataConsumer dataConsumer, DataLoader dataLoader, String taskId, List<WarningReceiver> receivers,
                     TaskWorker worker, long positionCheckInterval, long alarmPositionCount) {
         basicThreadName = "TaskWork-[taskId:" + taskId + "]-[consumer:" + dataConsumer.getSwimlaneId() + "]";
-        setName(basicThreadName+ "-main");
+        setName(basicThreadName + "-main");
         this.dataConsumer = dataConsumer;
         this.dataLoader = dataLoader;
         this.taskId = taskId;

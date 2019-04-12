@@ -68,10 +68,10 @@ public class FixedCapacityCarrier implements DataMapCarrier {
     public  Object pull(Object key) throws InterruptedException {
         AtomicReference<CountDownLatch> valueCheck = new AtomicReference<>();
         container.computeIfAbsent(key, k -> {
-            valueCheck.set(keyWaitLock.getOrDefault(key, new CountDownLatch(1)));
+            valueCheck.set(keyWaitLock.compute(key, (kk, vv) -> null == vv ? new CountDownLatch(1) : vv));
             return null;
         });
-        if (null != valueCheck) valueCheck.get().await();
+        if (null != valueCheck && null != valueCheck.get()) valueCheck.get().await();
         return container.computeIfPresent(key, (k, v) -> {
             resources.release();
             container.remove(k);

@@ -166,7 +166,7 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
                     canal.getCanalParameter().setMasterLogfileOffest(canalPosition.offset);
                 }
                 CanalInstanceWithManager instance = new CanalInstanceWithManager(canal, clientId.getFilter());
-                if(instance.getEventParser() instanceof AbstractEventParser) {
+                if (instance.getEventParser() instanceof AbstractEventParser) {
                     ((AbstractEventParser) instance.getEventParser()).setParallel(parallel);
                 }
                 instance.setAlarmHandler(new CanalAlarmHandler() {

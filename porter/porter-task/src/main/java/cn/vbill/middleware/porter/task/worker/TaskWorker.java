@@ -166,10 +166,10 @@ public class TaskWorker {
     }
     protected void unregister(String swimlaneId) {
         ArrayBlockingQueue<TaskWork> queue = jobs.remove(swimlaneId);
-        if(null != queue) queue.poll();
+        if (null != queue) queue.poll();
     }
 
-    protected void  stopWork(String taskId, String ...swimlaneId) {
+    protected void  stopWork(String taskId, String...swimlaneId) {
         controller.stopTask(taskId, swimlaneId);
     }
 }

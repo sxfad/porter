@@ -17,12 +17,10 @@
 
 package cn.vbill.middleware.porter.task.alert;
 
-import cn.vbill.middleware.porter.common.node.statistics.NodeLog;
 import cn.vbill.middleware.porter.core.NodeContext;
 import cn.vbill.middleware.porter.core.task.consumer.DataConsumer;
 import cn.vbill.middleware.porter.core.task.loader.DataLoader;
 import cn.vbill.middleware.porter.core.task.job.AbstractStageJob;
-import cn.vbill.middleware.porter.core.task.TaskContext;
 import cn.vbill.middleware.porter.task.alert.alerter.AlerterFactory;
 import cn.vbill.middleware.porter.task.worker.TaskWork;
 import org.slf4j.Logger;
