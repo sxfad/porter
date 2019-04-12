@@ -99,7 +99,7 @@ public interface DataAuthorityService {
      * @param objectId
      * @return
      */
-    Boolean turnover(String objectTable, Long objectId);
+    Boolean turnover(String objectTable, Long objectId, Long ownerId);
 
     /**
      * 共享权限
@@ -108,7 +108,7 @@ public interface DataAuthorityService {
      * @param objectId
      * @return
      */
-    Boolean share(String objectTable, Long objectId);
+    Boolean share(String objectTable, Long objectId, Long[] ownerIds);
 
     /**
      * 放弃权限

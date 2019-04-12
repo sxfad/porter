@@ -113,36 +113,44 @@ public class DataAuthorityServiceImpl implements DataAuthorityService {
 
     // 移交
     @Override
-    public Boolean turnover(String objectTable, Long objectId) {
+    public Boolean turnover(String objectTable, Long objectId, Long ownerId) {
         Boolean key = true;
         try {
             // 当前用户
             Long userId = RoleCheckContext.getUserIdHolder().getUserId();
             // 先删除 delete objectTable objectId userId type=1
-
+            Integer i = dataAuthorityMapper.deleteByMores(objectTable, objectId, userId, 1);
+            if (i != 1) {
+                log.warn("数据标识：[{}] 数据标号：[{}] 当前用户：[{}] 不是数据权限所有者，特此告警！", objectTable, objectId, userId);
+            }
             // 再创建 insert objectTable objectId userId type=1
-
+            Integer j = dataAuthorityMapper.insert(new DataAuthority(objectTable, objectId, 1, ownerId, userId, 1));
+            if (j != 1) {
+                log.error("数据标识：[{}] 数据标号：[{}] 移交用户：[{}] 移交数据权限失败，特此告警！", objectTable, objectId, ownerId);
+            }
         } catch (Exception e) {
             key = false;
-            log.error("数据标识：[{}] 数据标号：[{}] 登陆用户：[{}] 权限移交失败，记录关注！", e);
+            log.error("数据标识：[{}] 数据标号：[{}] 登陆用户：[{}] 权限移交失败，记录关注！", objectTable, objectId, ownerId, e);
         }
         return key;
     }
 
     // 共享
     @Override
-    public Boolean share(String objectTable, Long objectId) {
+    public Boolean share(String objectTable, Long objectId, Long[] ownerIds) {
         Boolean key = true;
         try {
             // 当前用户
             Long userId = RoleCheckContext.getUserIdHolder().getUserId();
-            // 先删除 delete objectTable objectId userId type=2
-
+            // 先清空共享者 delete objectTable objectId userId type=2
+            dataAuthorityMapper.deleteByMores(objectTable, objectId, null, 2);
             // 再创建 insert objectTable objectId userId type=2
-
+            for (Long ownerId : ownerIds) {
+                dataAuthorityMapper.insert(new DataAuthority(objectTable, objectId, 1, ownerId, userId, 2));
+            }
         } catch (Exception e) {
             key = false;
-            log.error("数据标识：[{}] 数据标号：[{}] 登陆用户：[{}] 权限共享失败，记录关注！", e);
+            log.error("数据标识：[{}] 数据标号：[{}] 登陆用户：[{}] 权限共享失败，记录关注！", objectTable, objectId, ownerIds, e);
         }
         return key;
     }
@@ -155,7 +163,7 @@ public class DataAuthorityServiceImpl implements DataAuthorityService {
             // 当前用户
             Long userId = RoleCheckContext.getUserIdHolder().getUserId();
             // 直接删除 delete objectTable objectId userId
-
+            dataAuthorityMapper.deleteByMores(objectTable, objectId, userId, null);
         } catch (Exception e) {
             key = false;
             log.error("数据标识：[{}] 数据标号：[{}] 登陆用户：[{}] 放弃权限失败，记录关注！", e);

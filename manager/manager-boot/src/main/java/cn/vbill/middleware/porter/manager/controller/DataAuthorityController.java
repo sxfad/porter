@@ -97,7 +97,7 @@ public class DataAuthorityController {
      * 
      * @return
      */
-    @PostMapping
+    @PostMapping("/dataauthorityvo")
     @ApiOperation(value = "权限页面数据vo", notes = "权限页面数据vo")
     public ResponseMessage DataAuthorityVo(@RequestParam(value = "objectTable", required = true) String objectTable,
             @RequestParam(value = "objectId", required = true) Long objectId) {
@@ -110,11 +110,13 @@ public class DataAuthorityController {
      * 
      * @return
      */
-    @PostMapping
+    @PostMapping("/turnover")
     @ApiOperation(value = "移交权限", notes = "移交权限")
     public ResponseMessage turnover(@RequestParam(value = "objectTable", required = true) String objectTable,
-            @RequestParam(value = "objectId", required = true) Long objectId) {
-        Boolean key = dataAuthorityService.turnover(objectTable, objectId);
+            @RequestParam(value = "objectId", required = true) Long objectId,
+            @RequestParam(value = "ownerId", required = true) Long ownerId) {
+
+        Boolean key = dataAuthorityService.turnover(objectTable, objectId, ownerId);
         return key ? ok() : ResponseMessage.error("移交数据权限失败，请联系管理员！");
     }
 
@@ -123,11 +125,13 @@ public class DataAuthorityController {
      * 
      * @return
      */
-    @PostMapping
+    @PostMapping("/share")
     @ApiOperation(value = "共享权限", notes = "共享权限")
     public ResponseMessage share(@RequestParam(value = "objectTable", required = true) String objectTable,
-            @RequestParam(value = "objectId", required = true) Long objectId) {
-        Boolean key = dataAuthorityService.share(objectTable, objectId);
+            @RequestParam(value = "objectId", required = true) Long objectId,
+            @RequestParam(value = "ownerIds", required = true) Long[] ownerIds) {
+
+        Boolean key = dataAuthorityService.share(objectTable, objectId, ownerIds);
         return key ? ok() : ResponseMessage.error("共享数据权限失败，请联系管理员！");
     }
 
@@ -136,7 +140,7 @@ public class DataAuthorityController {
      * 
      * @return
      */
-    @PostMapping
+    @PostMapping("/waive")
     @ApiOperation(value = "放弃权限", notes = "放弃权限")
     public ResponseMessage waive(@RequestParam(value = "objectTable", required = true) String objectTable,
             @RequestParam(value = "objectId", required = true) Long objectId) {

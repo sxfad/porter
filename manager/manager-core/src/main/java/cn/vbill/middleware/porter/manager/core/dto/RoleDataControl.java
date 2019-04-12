@@ -17,15 +17,16 @@ public class RoleDataControl implements Serializable {
     /**
      * 登录用户id
      */
-    private Long userId;
+    private Long userId = -1L;
 
     /**
      * 登录用户角色
      */
-    private String roleCode;
+    private String roleCode = "-1";
 
     /**
      * 登录用户id.get
+     * 
      * @return
      */
     public Long getUserId() {
@@ -34,6 +35,7 @@ public class RoleDataControl implements Serializable {
 
     /**
      * 登录用户id.set
+     * 
      * @param userId
      */
     public void setUserId(Long userId) {
@@ -42,6 +44,7 @@ public class RoleDataControl implements Serializable {
 
     /**
      * 登录用户角色.get
+     * 
      * @return
      */
     public String getRoleCode() {
@@ -50,6 +53,7 @@ public class RoleDataControl implements Serializable {
 
     /**
      * 登录用户角色.set
+     * 
      * @param roleCode
      */
     public void setRoleCode(String roleCode) {

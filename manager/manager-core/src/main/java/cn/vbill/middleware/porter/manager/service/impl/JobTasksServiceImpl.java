@@ -151,9 +151,12 @@ public class JobTasksServiceImpl implements JobTasksService {
         LoaderPlugin targetLoadAdt = LoaderPlugin.enumByCode(task.getLoader().getLoaderName());
         jobTasks.setTargetLoadAdt(targetLoadAdt);
         // 创建人
-        jobTasks.setCreater(RoleCheckContext.getUserIdHolder().getUserId());
+        if (RoleCheckContext.getUserIdHolder() == null || RoleCheckContext.getUserIdHolder().getUserId() == null) {
+            jobTasks.setCreater(-1L);
+        } else {
+            jobTasks.setCreater(RoleCheckContext.getUserIdHolder().getUserId());
+        }
         Integer number = jobTasksMapper.insertZKCapture(jobTasks);
-
         // 新增 JobTasksOwner
         jobTasksOwnerService.insertByJobTasks(jobTasks.getId());
         return number;

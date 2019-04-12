@@ -73,6 +73,18 @@ public interface DataAuthorityMapper {
     Integer delete(Long id);
 
     /**
+     * 组合条件删除
+     * 
+     * @param objectTable
+     * @param objectId
+     * @param userId
+     * @param type
+     * @return
+     */
+    Integer deleteByMores(@Param("objectTable") String objectTable, @Param("objectId") Long objectId,
+            @Param("userId") Long userId, @Param("type") Integer type);
+
+    /**
      * 根據主鍵id查找數據
      *
      * @param id

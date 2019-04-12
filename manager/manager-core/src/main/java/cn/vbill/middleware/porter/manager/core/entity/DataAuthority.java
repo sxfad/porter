@@ -29,6 +29,20 @@ import java.util.Date;
  */
 public class DataAuthority implements Serializable {
 
+    public DataAuthority() {
+
+    }
+
+    public DataAuthority(String objectTable, Long objectId, Integer ownerLevel, Long ownerId, Long operator,
+            Integer type) {
+        this.objectTable = objectTable;
+        this.objectId = objectId;
+        this.ownerLevel = ownerLevel;
+        this.ownerId = ownerId;
+        this.operator = operator;
+        this.type = type;
+    }
+
     private static final long serialVersionUID = 1L;
 
     /**

@@ -1,6 +1,5 @@
 package cn.vbill.middleware.porter.manager.web.rcc;
 
-
 import cn.vbill.middleware.porter.manager.core.dto.LoginUserToken;
 import cn.vbill.middleware.porter.manager.core.dto.RoleDataControl;
 import cn.vbill.middleware.porter.manager.web.token.TokenUtil;
@@ -49,6 +48,9 @@ public class RoleCheckContext {
      * @return: java.lang.Long
      */
     public static RoleDataControl getUserIdHolder() {
+        if (USERIDHOLDER == null || USERIDHOLDER.get() == null) {
+            return new RoleDataControl();
+        }
         return USERIDHOLDER.get();
     }
 }

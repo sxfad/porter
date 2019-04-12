@@ -83,7 +83,14 @@
 
     <!-- 多条件删除数据 -->
     <delete id="deleteByMores">
-        delete from c_data_authority where id = #{id}
+        delete from c_data_authority 
+            where object_table = #{objectTable} and object_id = #{objectId}
+            <if test="userId != null and userId != ''">
+                 and owner_id = #{userId} 
+            </if>
+            <if test="type != null and type != ''">
+                and type = #{type} 
+            </if>
     </delete>
     
 	<!-- 根据主鍵查找 -->
