@@ -47,6 +47,15 @@ public class DataAuthorityServiceImpl implements DataAuthorityService {
 
     private Logger log = LoggerFactory.getLogger(DataAuthorityServiceImpl.class);
 
+    //顶配
+    private final static String A0001 = "A0001";
+
+    //普配
+    private final static String A0002 = "A0002";
+
+    //楼币
+    private final static String A9999 = "A9999";
+
     @Autowired
     private DataAuthorityMapper dataAuthorityMapper;
 
@@ -118,10 +127,12 @@ public class DataAuthorityServiceImpl implements DataAuthorityService {
         try {
             // 当前用户
             Long userId = RoleCheckContext.getUserIdHolder().getUserId();
+            // 当前角色组
+            String roleCode = RoleCheckContext.getUserIdHolder().getRoleCode();
             // 先删除 delete objectTable objectId userId type=1
             Integer i = dataAuthorityMapper.deleteByMores(objectTable, objectId, userId, 1);
             if (i != 1) {
-                log.warn("数据标识：[{}] 数据标号：[{}] 当前用户：[{}] 不是数据权限所有者，特此告警！", objectTable, objectId, userId);
+                log.warn("数据标识：[{}] 数据标号：[{}] 当前用户：[{}] 当前用户组：[{}] 不是数据权限所有者，特此告警！", objectTable, objectId, userId, roleCode);
             }
             // 再创建 insert objectTable objectId userId type=1
             Integer j = dataAuthorityMapper.insert(new DataAuthority(objectTable, objectId, 1, ownerId, userId, 1));
@@ -142,6 +153,19 @@ public class DataAuthorityServiceImpl implements DataAuthorityService {
         try {
             // 当前用户
             Long userId = RoleCheckContext.getUserIdHolder().getUserId();
+            // 当前角色组
+            String roleCode = RoleCheckContext.getUserIdHolder().getRoleCode();
+            if (!A0001.equals(roleCode) && !A0002.equals(roleCode) && !A9999.equals(roleCode)) {
+                log.error("数据标识：[{}] 数据标号：[{}] 登陆用户：[{}] 当前用户组：[{}] 非法操作，建议禁用此人账户！", objectTable, objectId, ownerIds, roleCode);
+                return false;
+            }
+            if (A9999.equals(roleCode)) {
+                DataAuthority dataAu = dataAuthorityMapper.selectOneByConditions(objectTable, objectId, 1, userId);
+                if(dataAu == null) {
+                    log.error("数据标识：[{}] 数据标号：[{}] 登陆用户：[{}] 当前用户组：[{}] 非法操作，建议禁用此人账户！", objectTable, objectId, ownerIds, roleCode);
+                    return false;
+                }
+            }
             // 先清空共享者 delete objectTable objectId userId type=2
             dataAuthorityMapper.deleteByMores(objectTable, objectId, null, 2);
             // 再创建 insert objectTable objectId userId type=2
@@ -174,13 +198,13 @@ public class DataAuthorityServiceImpl implements DataAuthorityService {
     @Override
     public List<AuthorityBtnEnum> selectBtns(String objectTable, Long objectId, String roleCode, Long userId) {
         List<AuthorityBtnEnum> btns = new ArrayList<>();
-        if ("A0001".equals(roleCode) || "A0002".equals(roleCode)) {
+        if (A0001.equals(roleCode) || A0002.equals(roleCode)) {
             // 移交权限所有人按钮
             btns.add(AuthorityBtnEnum.TURNOVER);
             // 共享权限所有人设置按钮
             btns.add(AuthorityBtnEnum.SHARE);
         }
-        if ("A9999".equals(roleCode)) {
+        if (A9999.equals(roleCode)) {
             DataAuthority daty = dataAuthorityMapper.selectOneByConditions(objectTable, objectId, 1, userId);
             if (daty == null) {
                 btns = null;
