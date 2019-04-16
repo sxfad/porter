@@ -81,6 +81,18 @@
 		delete from c_data_authority where id = #{id}
 	</delete>
 
+    <!-- 多条件删除数据 -->
+    <delete id="deleteByMores">
+        delete from c_data_authority 
+            where object_table = #{objectTable} and object_id = #{objectId}
+            <if test="userId != null and userId != ''">
+                 and owner_id = #{userId} 
+            </if>
+            <if test="type != null and type != ''">
+                and type = #{type} 
+            </if>
+    </delete>
+    
 	<!-- 根据主鍵查找 -->
 	<select id="selectById"
 		resultType="cn.vbill.middleware.porter.manager.core.entity.DataAuthority">
@@ -117,13 +129,26 @@
 
     <!-- 查询与ObjectId有关的权限所有者用户(type=null查询全部 type=1查询所有者 type=2查询共享者) -->
     <select id="selectOwnersByObjectId" resultType="cn.vbill.middleware.porter.manager.core.entity.CUser">
-        SELECT id, loginname, loginpw, nickname, email, mobile, state, remark from c_user
+        SELECT id, loginname, email, mobile from c_user
         WHERE id in (
-            SELECT t.owner_id FROM c_data_authority t WHERE LOWER(t.object_table) = LOWER(#{ObjectName}) AND t.object_id= #{ObjectId}
+            SELECT t.owner_id FROM c_data_authority t WHERE LOWER(t.object_table) = LOWER(#{objectName}) AND t.object_id= #{objectId}
             <if test="type != null and type != ''">
                 AND type = #{type}
             </if>
         )
+    </select>
+
+    <!-- 根据组合条件查找数据 -->
+    <select id="selectOneByConditions" resultType="cn.vbill.middleware.porter.manager.core.entity.DataAuthority">
+        select id, object_table AS objectTable, object_id AS
+        objectId, owner_level
+        AS ownerLevel, owner_id AS ownerId, create_time
+        AS createTime,
+        update_time AS updateTime, operator, type, iscancel,
+        remark from
+        c_data_authority
+        where LOWER(t.object_table) = LOWER(#{objectName}) AND t.object_id= #{objectId} AND owner_level = #{ownerLevel} 
+            AND owner_id = #{ownerId} 
     </select>
 
 	<!-- 验证新增 -->

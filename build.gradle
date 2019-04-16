@@ -62,6 +62,7 @@ subprojects {
             exclude group:'log4j',module:'log4j'
         }
         compileOnly 'org.projectlombok:lombok:1.16.20'
+        annotationProcessor 'org.projectlombok:lombok:1.16.20'
         testCompile "junit:junit:${junitVersion}"
     }
     //将子项目包复制到根目录

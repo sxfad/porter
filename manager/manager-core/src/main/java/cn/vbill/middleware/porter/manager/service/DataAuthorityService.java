@@ -18,8 +18,10 @@ package cn.vbill.middleware.porter.manager.service;
 
 import java.util.List;
 
+import cn.vbill.middleware.porter.manager.core.dto.DataAuthorityVo;
 import cn.vbill.middleware.porter.manager.core.entity.CUser;
 import cn.vbill.middleware.porter.manager.core.entity.DataAuthority;
+import cn.vbill.middleware.porter.manager.core.enums.AuthorityBtnEnum;
 import cn.vbill.middleware.porter.manager.web.page.Page;
 
 /**
@@ -71,10 +73,57 @@ public interface DataAuthorityService {
     /**
      * 查询与ObjectId有关的权限所有者用户(type=null查询全部 type=1查询所有者 type=2查询共享者)
      * 
-     * @param ObjectName 对象标识
-     * @param ObjectId 对象id
-     * @param type 类型
+     * @param ObjectName
+     *            对象标识
+     * @param ObjectId
+     *            对象id
+     * @param type
+     *            类型
      * @return
      */
-    List<CUser> selectOwnersByObjectId(String ObjectName, Long ObjectId, Integer type);
+    List<CUser> selectOwnersByObjectId(String objectName, Long objectId, Integer type);
+
+    /**
+     * 权限页面数据vo
+     * 
+     * @param objectTable
+     * @param objectId
+     * @return
+     */
+    DataAuthorityVo dataAuthorityVo(String objectTable, Long objectId);
+
+    /**
+     * 移交权限
+     * 
+     * @param objectTable
+     * @param objectId
+     * @return
+     */
+    Boolean turnover(String objectTable, Long objectId, Long ownerId);
+
+    /**
+     * 共享权限
+     * 
+     * @param objectTable
+     * @param objectId
+     * @return
+     */
+    Boolean share(String objectTable, Long objectId, Long[] ownerIds);
+
+    /**
+     * 放弃权限
+     * 
+     * @param objectTable
+     * @param objectId
+     * @return
+     */
+    Boolean waive(String objectTable, Long objectId);
+
+    /**
+     * 
+     * @param objectTable
+     * @param objectId
+     * @return
+     */
+    List<AuthorityBtnEnum> selectBtns(String objectTable, Long objectId, String roleCode, Long userId);
 }
