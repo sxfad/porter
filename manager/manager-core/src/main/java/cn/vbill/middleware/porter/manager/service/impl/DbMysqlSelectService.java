@@ -56,7 +56,7 @@ public class DbMysqlSelectService implements DbSelectService {
             }
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
-            throw new BaseException(String.valueOf(ExceptionCode.EXCEPTION_DATASOURCE), "数据源连接错误,请获取数据库权限、网络权限", e);
+            throw new BaseException(String.valueOf(ExceptionCode.EXCEPTION_DATASOURCE), "执行sql:[" + sql + "],数据源连接错误,请获取数据库权限、网络权限", e);
         } finally {
             DataSourceUtil.closed(connection, preparedStatement, results);
         }
@@ -90,7 +90,7 @@ public class DbMysqlSelectService implements DbSelectService {
             }
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
-            throw new BaseException(String.valueOf(ExceptionCode.EXCEPTION_DATASOURCE), "数据源连接错误,请获取数据库权限、网络权限", e);
+            throw new BaseException(String.valueOf(ExceptionCode.EXCEPTION_DATASOURCE), "执行sql:[" + executeSql + "],数据源连接错误,请获取数据库权限、网络权限", e);
         } finally {
             DataSourceUtil.closed(connection, preparedStatement, results);
         }
@@ -132,7 +132,7 @@ public class DbMysqlSelectService implements DbSelectService {
             }
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
-            throw new BaseException(String.valueOf(ExceptionCode.EXCEPTION_DATASOURCE), "数据源连接错误,请获取数据库权限、网络权限", e);
+            throw new BaseException(String.valueOf(ExceptionCode.EXCEPTION_DATASOURCE), "执行sql:[" + executeSql + "],数据源连接错误,请获取数据库权限、网络权限", e);
         } finally {
             DataSourceUtil.closed(connection, preparedStatement, results);
         }
@@ -156,7 +156,7 @@ public class DbMysqlSelectService implements DbSelectService {
             }
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
-            throw new BaseException(String.valueOf(ExceptionCode.EXCEPTION_DATASOURCE), "数据源连接错误,请获取数据库权限、网络权限", e);
+            throw new BaseException(String.valueOf(ExceptionCode.EXCEPTION_DATASOURCE), "执行sql:[" + sql + "],数据源连接错误,请获取数据库权限、网络权限", e);
         } finally {
             DataSourceUtil.closed(connection, preparedStatement, results);
         }
