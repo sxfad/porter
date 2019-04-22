@@ -19,5 +19,5 @@ if not defined JAVA_HOME (
 )
 
 set CLASSPATH=.
-start "%JAVA_PROCESS_TITLE%" %_EXECJAVA%  %JVM_OPTS%  -jar %JAR_PATH%\{{RUN_JAR}} {{MAIN_CLASS}} %CMD_LINE_ARGS%
+start "%JAVA_PROCESS_TITLE%" %_EXECJAVA%  %JVM_OPTS%  -jar %JAR_PATH%\{{RUN_JAR}} {{MAIN_CLASS}} %CMD_LINE_ARGS%  --spring.config.location=%APP_HOME%\config\
 endlocal

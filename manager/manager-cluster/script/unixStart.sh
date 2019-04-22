@@ -36,4 +36,4 @@ save_spring () {
 
 SPRING_ARGS=$(save_spring "$@")
 
-nohup $_EXECJAVA $JVM_OPTS -jar ${JAR_PATH}/{{RUN_JAR}} {{MAIN_CLASS}} $SPRING_ARGS > /dev/null 2>&1 &
+nohup $_EXECJAVA $JVM_OPTS -jar ${JAR_PATH}/{{RUN_JAR}} {{MAIN_CLASS}} $SPRING_ARGS  --spring.config.location=${APP_HOME}/config/ > /dev/null 2>&1 &
