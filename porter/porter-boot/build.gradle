@@ -2,8 +2,24 @@ group 'cn.vbill.middleware.porter'
 apply plugin: 'application'
 archivesBaseName = 'porter-node-boot'
 mainClassName = "cn.vbill.middleware.porter.boot.NodeBootApplication"
+ext {
+    runJars=archivesBaseName + "-" + version + ".jar"
+    runJarsPlaceHolder="{{RUN_JAR}}"
+    mainClassPlaceHolder="{{MAIN_CLASS}}"
+}
 
-applicationDefaultJvmArgs = ["-Dapp.home=DEFINE_APP_HOME/", "-Xms256M", "-Xmx256M"]
+jar {
+    doFirst {
+        manifest {
+            if (!configurations.compile.isEmpty()) {
+                attributes(
+                        'Class-Path': configurations.compile.collect{it.getName()}.join(' '),
+                        'Main-Class': mainClassName)
+            }
+        }
+    }
+}
+
 
 sourceSets {
     main {
@@ -11,7 +27,7 @@ sourceSets {
 }
 processResources {
     exclude(
-           // "**/**"
+            // "**/**"
     )
 }
 
@@ -29,7 +45,7 @@ processResources.dependsOn moveOutFromJar
 distributions {
     main {
         contents {
-            from ("script") {
+            from ("script/shutdown.sh") {
                 into "bin"
                 fileMode = 0755
             }
@@ -46,8 +62,10 @@ distributions {
 
 startScripts {
     doLast {
-        unixScript.text = unixScript.text.replace('CLASSPATH=', 'cd $APP_HOME;\nCLASSPATH=').replace("DEFINE_APP_HOME",'$APP_HOME')
-        windowsScript.text = windowsScript.text.replace('set CLASSPATH=', 'cd %APP_HOME%\nset CLASSPATH=').replace("DEFINE_APP_HOME",'%APP_HOME%')
+        unixScript.text = resources.text.fromFile('script/unixStart.sh').asString()
+                .replace(runJarsPlaceHolder, runJars).replace(mainClassPlaceHolder, mainClassName)
+        windowsScript.text = resources.text.fromFile('script/windowsStart.bat').asString()
+                .replace(runJarsPlaceHolder, runJars).replace(mainClassPlaceHolder, mainClassName)
     }
 }
 

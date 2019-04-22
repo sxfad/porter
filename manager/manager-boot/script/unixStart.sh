@@ -4,8 +4,12 @@
 # 后台启动脚本
 
 PRG="$0"
-PRGDIR=`dirname "$PRG"`
-EXECUTABLE=manager-boot
+BIN_HOME=`dirname "$PRG"`
+[ -z "$APP_HOME" ] && APP_HOME=`cd "$BIN_HOME/.." >/dev/null; pwd`
+JAR_PATH=$APP_HOME/lib
+_EXECJAVA=${JAVA_HOME}/bin/java
+[ -z "$JAVA_HOME" ] && _EXECJAVA=java
+JVM_OPTS=" -Xms256M -Xmx256M -Dapp.home=$APP_HOME/"
 
 if [ "$1" = "debug" ]; then
     if [ -z "$2" ]; then
@@ -15,6 +19,8 @@ if [ "$1" = "debug" ]; then
     fi
     export JAVA_OPTS=" $JAVA_OPTS -Xdebug -Xnoagent -Djava.compiler=NONE -Xrunjdwp:transport=dt_socket,address=$DEBUG_PORT,server=y,suspend=n"
 fi
+
+
 
 save_spring () {
     index=0
@@ -30,4 +36,4 @@ save_spring () {
 
 SPRING_ARGS=$(save_spring "$@")
 
-nohup "$PRGDIR/$EXECUTABLE" $SPRING_ARGS > /dev/null 2>&1 &
+nohup $_EXECJAVA $JVM_OPTS -jar ${JAR_PATH}/{{RUN_JAR}} {{MAIN_CLASS}} $SPRING_ARGS  --spring.config.location=${APP_HOME}/config/ > /dev/null 2>&1 &

@@ -2,8 +2,11 @@ group 'cn.vbill.middleware.porter.manager'
 apply plugin: 'application'
 archivesBaseName = 'porter-manager-cluster'
 mainClassName = "cn.vbill.middleware.porter.manager.ManagerClusterApplication"
-
-applicationDefaultJvmArgs = ["-Dapp.home=DEFINE_APP_HOME/", "-Xms256M", "-Xmx256M"]
+ext {
+    runJars=archivesBaseName + "-" + version + ".jar"
+    runJarsPlaceHolder="{{RUN_JAR}}"
+    mainClassPlaceHolder="{{MAIN_CLASS}}"
+}
 
 sourceSets {
     main {
@@ -24,21 +27,31 @@ task moveOutFromJar(type: Copy) {
 
 processResources.dependsOn moveOutFromJar
 
+jar {
+    doFirst {
+        manifest {
+            if (!configurations.compile.isEmpty()) {
+                attributes(
+                        'Class-Path': configurations.compile.collect{it.getName()}.join(' '),
+                        'Main-Class': mainClassName)
+            }
+        }
+    }
+}
+
 
 startScripts {
     doLast {
-        unixScript.text = unixScript.text.replace('CLASSPATH=', 'cd $APP_HOME;\nCLASSPATH=').replace("DEFINE_APP_HOME",'$APP_HOME')
-        windowsScript.text = windowsScript.text.replace('set CLASSPATH=', 'cd %APP_HOME%\nset CLASSPATH=').replace("DEFINE_APP_HOME",'%APP_HOME%')
+        unixScript.text = resources.text.fromFile('script/unixStart.sh').asString()
+                .replace(runJarsPlaceHolder, runJars).replace(mainClassPlaceHolder, mainClassName)
+        windowsScript.text = resources.text.fromFile('script/windowsStart.bat').asString()
+                .replace(runJarsPlaceHolder, runJars).replace(mainClassPlaceHolder, mainClassName)
     }
 }
 
 distributions {
     main {
         contents {
-            from ("script") {
-                into "bin"
-                fileMode = 0755
-            }
             from (buildDir.getPath() + "/config") {
                 into "config"
             }
@@ -58,3 +71,4 @@ dependencies {
     testImplementation "org.springframework.boot:spring-boot-starter-actuator:${springVersion}"
     testImplementation "org.springframework.boot:spring-boot-starter-test:${springVersion}"
 }
+
