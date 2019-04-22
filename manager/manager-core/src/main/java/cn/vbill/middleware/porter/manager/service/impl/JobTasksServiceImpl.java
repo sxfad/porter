@@ -21,15 +21,13 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
-import cn.vbill.middleware.porter.common.warning.entity.WarningReceiver;
-import cn.vbill.middleware.porter.manager.core.dto.RoleDataControl;
-import cn.vbill.middleware.porter.manager.core.enums.SourceType;
-import cn.vbill.middleware.porter.manager.service.JobTasksOwnerService;
-import cn.vbill.middleware.porter.manager.web.rcc.RoleCheckContext;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,17 +41,16 @@ import org.springframework.transaction.annotation.Transactional;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
-import cn.vbill.middleware.porter.common.task.config.DataConsumerConfig;
-import cn.vbill.middleware.porter.common.task.config.DataLoaderConfig;
 import cn.vbill.middleware.porter.common.config.JavaFileConfig;
 import cn.vbill.middleware.porter.common.config.SourceConfig;
+import cn.vbill.middleware.porter.common.task.config.DataConsumerConfig;
+import cn.vbill.middleware.porter.common.task.config.DataLoaderConfig;
 import cn.vbill.middleware.porter.common.task.config.TableMapperConfig;
 import cn.vbill.middleware.porter.common.task.config.TaskConfig;
-import cn.vbill.middleware.porter.manager.core.enums.ConsumeConverterPlugin;
-import cn.vbill.middleware.porter.manager.core.enums.ConsumerPlugin;
-import cn.vbill.middleware.porter.manager.core.enums.LoaderPlugin;
 import cn.vbill.middleware.porter.common.task.dic.TaskStatusType;
+import cn.vbill.middleware.porter.common.warning.entity.WarningReceiver;
 import cn.vbill.middleware.porter.manager.core.dto.JDBCVo;
+import cn.vbill.middleware.porter.manager.core.dto.RoleDataControl;
 import cn.vbill.middleware.porter.manager.core.entity.CUser;
 import cn.vbill.middleware.porter.manager.core.entity.DataSource;
 import cn.vbill.middleware.porter.manager.core.entity.DataSourcePlugin;
@@ -62,7 +59,11 @@ import cn.vbill.middleware.porter.manager.core.entity.JobTaskNodes;
 import cn.vbill.middleware.porter.manager.core.entity.JobTasks;
 import cn.vbill.middleware.porter.manager.core.entity.JobTasksField;
 import cn.vbill.middleware.porter.manager.core.entity.JobTasksTable;
+import cn.vbill.middleware.porter.manager.core.enums.ConsumeConverterPlugin;
+import cn.vbill.middleware.porter.manager.core.enums.ConsumerPlugin;
+import cn.vbill.middleware.porter.manager.core.enums.LoaderPlugin;
 import cn.vbill.middleware.porter.manager.core.enums.QuerySQL;
+import cn.vbill.middleware.porter.manager.core.enums.SourceType;
 import cn.vbill.middleware.porter.manager.core.mapper.JobTasksMapper;
 import cn.vbill.middleware.porter.manager.core.util.ApplicationContextUtil;
 import cn.vbill.middleware.porter.manager.service.CUserService;
@@ -71,10 +72,12 @@ import cn.vbill.middleware.porter.manager.service.DataTableService;
 import cn.vbill.middleware.porter.manager.service.DbSelectService;
 import cn.vbill.middleware.porter.manager.service.JobTaskNodesService;
 import cn.vbill.middleware.porter.manager.service.JobTasksFieldService;
+import cn.vbill.middleware.porter.manager.service.JobTasksOwnerService;
 import cn.vbill.middleware.porter.manager.service.JobTasksService;
 import cn.vbill.middleware.porter.manager.service.JobTasksTableService;
 import cn.vbill.middleware.porter.manager.service.JobTasksUserService;
 import cn.vbill.middleware.porter.manager.web.page.Page;
+import cn.vbill.middleware.porter.manager.web.rcc.RoleCheckContext;
 
 /**
  * 同步任务表 服务实现类
@@ -354,9 +357,15 @@ public class JobTasksServiceImpl implements JobTasksService {
         // 告警人id列表
         List<CUser> cusers = jobTasks.getUsers();
         // 权限所有者和共享者列表
-        // List<CUser> owners = null;//代码等待
+        // ownerType=1:任务所有者
+        List<CUser> userOwner = cUserService.selectOwnersByJobId(id, 1);
+        cusers.addAll(userOwner);
+        // shareType=2:任务共享者
+        List<CUser> userShares = cUserService.selectOwnersByJobId(id, 2);
+        cusers.addAll(userShares);
         // 告警用户信息(设置的告警人+任务权限所有者)
         WarningReceiver[] receiver = receiver(cusers);
+        // 任务类型
         if (jobTasks.getJobType() == 2) {
             TaskConfig task = JSONObject.parseObject(jobTasks.getJobJsonText(), TaskConfig.class);
             task.setStatus(status);
@@ -414,12 +423,31 @@ public class JobTasksServiceImpl implements JobTasksService {
      * @return
      */
     private WarningReceiver[] receiver(List<CUser> cusers) {
+        cusers = this.removeDuplicateWithOrder(cusers);
         WarningReceiver[] warningReceivers = new WarningReceiver[cusers.size()];
         for (int i = 0; i < cusers.size(); i++) {
             warningReceivers[i] = new WarningReceiver(cusers.get(i).getNickname(), cusers.get(i).getEmail(),
                     cusers.get(i).getMobile());
         }
         return warningReceivers;
+    }
+
+    /**
+     * 排重下邮箱
+     * @param list
+     * @return
+     */
+    private List<CUser> removeDuplicateWithOrder(List<CUser> list) {
+        Set<String> set = new HashSet<String>();
+        List<CUser> newList = new ArrayList<CUser>();
+        for (Iterator<CUser> iter = list.iterator(); iter.hasNext();) {
+            CUser element = iter.next();
+            if (set.add(element.getEmail()))
+                newList.add(element);
+        }
+        list.clear();
+        list.addAll(newList);
+        return list;
     }
 
     /**
