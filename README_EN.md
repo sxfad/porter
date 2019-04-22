@@ -62,16 +62,16 @@ porter.cluster.client.home=./.porter
 ### Run
 ```
 tar zxvf build/distributions/porter-boot-version.tar
-porter-boot-version/bin/startup.sh
+porter-boot-version/bin/porter-boot
 ```
 
 ### Debug
 ```
-porter-boot-version/bin/startup.sh  debug port
+porter-boot-version/bin/porter-boot  debug port
 ```
 ### Operating environment
 ```
-porter-boot-version/bin/startup.sh --spring.profiles.active=Operating environment
+porter-boot-version/bin/porter-boot --spring.profiles.active=Operating environment
 ```
 ### Elegant close
 ```

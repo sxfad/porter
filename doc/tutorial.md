@@ -69,13 +69,13 @@
     和/porter/manager/manager-boot/build/distributions/manager-boot-2.0.2.1.tar两个压缩包至/app/soft/porter/(看情况，自己指定)
 5. 配置管理UI
     + 下载源码（https://github.com/sxfad/porter-ui.git）
-    + 修改/porter-ui/local/local-ajax-base-url.js,注意此处端口为前面manager-boot指定的端口
+    + 修改/porter-ui/local/api-config.js,注意此处端口为前面manager-boot指定的端口
         ```
         export default 'http://IP:8081/api/manager';
         ```
-    + 修改/porter-ui/ajax-config.js
+    + 修改/porter-ui/api-config.js
         ```
-        'dev': 'http://IP:8081/api/manager'
+        'api': 'http://IP:8081/api/manager'
         ```
     + 修改/porter-ui/builder/config.js(只做开发环境配置，这里的端口是页面访问端口)
         ```

@@ -140,21 +140,12 @@
      git init 
      git clone https://github.com/sxfad/porter-ui.git
      ````
+   - 修改/porter-ui/api-config.js 'dev': 'http://IP:8081/api/manager'
 
-   - 修改/porter-ui/local/local-ajax-base-url.js,注意此处端⼝为前⾯manager-boot指定的端口 export default 'http://IP:8081/api/manager';
-
-   - 修改/porter-ui/ajax-config.js 'dev': 'http://IP:8081/api/manager'
-
-   - 修改/porter-ui/builder/config.js(只做开发环境配置，这⾥的端⼝是⻚⾯访问端⼝)
+   - 修改/porter-ui/package.json(只做开发环境配置，这⾥的端⼝是⻚⾯访问端⼝)
 
      ````
-     dev: { 
-             env: '"development"', 
-             port: 8082, 
-             assetsSubDirectory: 'static', 
-             assetsPublicPath: '/',
-             cssSourceMap: false
-         }
+     yarn run dll && cross-env NODE_ENV=development SERVER_PORT=8082 node ./builder/dev-server.js"
      ````
 
    - 复制修改后的porter-ui项⽬⾄服务器/app/soft/porter
@@ -212,7 +203,7 @@
    - 启动porter-boot
 
      ````
-     ./app/soft/porter/porter-boot.3.0.2/bin/startup.sh
+     ./app/soft/porter/porter-boot.3.0.2/bin/porter-boot
      ````
 
      1. 如果出现没有此文件或者目录则跟上述manager-boot解决方案相同
@@ -220,7 +211,7 @@
      2. 如果日志显示节点已经被注册则关闭porter-boot执行
 
         ````
-        ./porter-boot-3.0.2/bin/startup.sh --force
+        ./porter-boot-3.0.2/bin/porter-boot --force
         ````
 
 7. 恭喜，部署成功
