@@ -170,23 +170,9 @@
    - 启动manager-boot
 
      ````
-     ./app/soft/porter/manager-boot-3.0.2/bin/startup.sh
+     ./app/soft/porter/manager-boot-3.0.2/bin/manager-boot
      ````
 
-     如果出现执行startup.sh提示没有那个文件或者目录
-
-     解决方案:删除掉Linux下的manager-boot的startup.sh和shutdown.sh，之后新建文件startup.sh和shutdown.sh，并从github上把脚本的内容粘贴到文件中，并赋予文件执行的权限，之后执行脚本成功
-
-     ````
-     cd /app/soft/porter/manager-boot-3.0.2/bin
-     rm -rf startup.sh
-     mkdir startup.sh
-     vim startup.sh
-     chmod u+x startup.sh
-     ./startup.sh
-     ````
-
-     
 
    - 启动前端(启动后不要ctrl+c退出命令⾏，后续操作请再创建窗⼝)
 
@@ -212,7 +198,7 @@
    - 启动porter-boot
 
      ````
-     ./app/soft/porter/porter-boot.3.0.2/bin/startup.sh
+     ./app/soft/porter/porter-boot.3.0.2/bin/porter-boot
      ````
 
      1. 如果出现没有此文件或者目录则跟上述manager-boot解决方案相同
@@ -220,7 +206,7 @@
      2. 如果日志显示节点已经被注册则关闭porter-boot执行
 
         ````
-        ./porter-boot-3.0.2/bin/startup.sh --force
+        ./porter-boot-3.0.2/bin/porter-boot --force
         ````
 
 7. 恭喜，部署成功

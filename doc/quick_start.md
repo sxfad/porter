@@ -12,14 +12,14 @@ gradle build
 ## 运行
 ```
 tar zxvf build/distributions/porter-boot-版本.tar
-porter-boot-版本/bin/startup.sh
+porter-boot-版本/bin/porter-boot
 ```
 
 ### 调试
-- porter-boot-版本/bin/startup.sh  debug 端口号
+- porter-boot-版本/bin/porter-boot  debug 端口号
 
 ### 运行环境
-- porter-boot-版本/bin/startup.sh --spring.profiles.active=运行环境
+- porter-boot-版本/bin/porter-boot --spring.profiles.active=运行环境
 
 ## 优雅关闭
 - porter-boot-版本/bin/shutdown.sh

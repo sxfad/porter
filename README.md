@@ -64,16 +64,16 @@ porter.cluster.client.home=./.porter
 ### 运行
 ```
 tar zxvf build/distributions/porter-boot-版本.tar
-porter-boot-版本/bin/startup.sh
+porter-boot-版本/bin/porter-boot
 ```
 
 ### 调试
 ```
-porter-boot-版本/bin/startup.sh  debug 端口号
+porter-boot-版本/bin/porter-boot  debug 端口号
 ```
 ### 运行环境
 ```
-porter-boot-版本/bin/startup.sh --spring.profiles.active=运行环境
+porter-boot-版本/bin/porter-boot --spring.profiles.active=运行环境
 ```
 ### 关闭
 ```
@@ -85,7 +85,7 @@ porter-boot-版本/bin/shutdown.sh
 ```
 当porter-boot因jvm crash、kill -9强杀进程等原因造成节点、任务没有正常退出，再次启动porter-boot不成功、任务无法分配时使用。
 通过porter-boot的http接口http://ip:端口/inspect/node/info  查看参数"forceAssign"判断是否处于强制启动状态
-porter-boot-版本/bin/startup.sh --force
+porter-boot-版本/bin/porter-boot --force
 ```
 
 ## 文档
