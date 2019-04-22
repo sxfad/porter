@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import cn.vbill.middleware.porter.manager.core.dto.DataAuthorityVo;
 import cn.vbill.middleware.porter.manager.core.entity.DataAuthority;
+import cn.vbill.middleware.porter.manager.core.enums.DataSignEnum;
 import cn.vbill.middleware.porter.manager.service.DataAuthorityService;
 import cn.vbill.middleware.porter.manager.web.message.ResponseMessage;
 import cn.vbill.middleware.porter.manager.web.page.Page;
@@ -99,9 +100,9 @@ public class DataAuthorityController {
      */
     @PostMapping("/dataauthorityvo")
     @ApiOperation(value = "权限页面数据vo", notes = "权限页面数据vo")
-    public ResponseMessage DataAuthorityVo(@RequestParam(value = "objectTable", required = true) String objectTable,
+    public ResponseMessage dataAuthorityVo(@RequestParam(value = "dataSignEnum", required = true) DataSignEnum sign,
             @RequestParam(value = "objectId", required = true) Long objectId) {
-        DataAuthorityVo vo = dataAuthorityService.dataAuthorityVo(objectTable, objectId);
+        DataAuthorityVo vo = dataAuthorityService.dataAuthorityVo(sign.getTable(), objectId);
         return ok(vo);
     }
 
@@ -112,11 +113,11 @@ public class DataAuthorityController {
      */
     @PostMapping("/turnover")
     @ApiOperation(value = "移交权限", notes = "移交权限")
-    public ResponseMessage turnover(@RequestParam(value = "objectTable", required = true) String objectTable,
+    public ResponseMessage turnover(@RequestParam(value = "dataSignEnum", required = true) DataSignEnum sign,
             @RequestParam(value = "objectId", required = true) Long objectId,
             @RequestParam(value = "ownerId", required = true) Long ownerId) {
 
-        Boolean key = dataAuthorityService.turnover(objectTable, objectId, ownerId);
+        Boolean key = dataAuthorityService.turnover(sign.getTable(), objectId, ownerId);
         return key ? ok() : ResponseMessage.error("移交数据权限失败，请联系管理员！");
     }
 
@@ -127,11 +128,11 @@ public class DataAuthorityController {
      */
     @PostMapping("/share")
     @ApiOperation(value = "共享权限", notes = "共享权限")
-    public ResponseMessage share(@RequestParam(value = "objectTable", required = true) String objectTable,
+    public ResponseMessage share(@RequestParam(value = "dataSignEnum", required = true) DataSignEnum sign,
             @RequestParam(value = "objectId", required = true) Long objectId,
             @RequestParam(value = "ownerIds", required = true) Long[] ownerIds) {
 
-        Boolean key = dataAuthorityService.share(objectTable, objectId, ownerIds);
+        Boolean key = dataAuthorityService.share(sign.getTable(), objectId, ownerIds);
         return key ? ok() : ResponseMessage.error("共享数据权限失败，请联系管理员！");
     }
 
@@ -142,9 +143,9 @@ public class DataAuthorityController {
      */
     @PostMapping("/waive")
     @ApiOperation(value = "放弃权限", notes = "放弃权限")
-    public ResponseMessage waive(@RequestParam(value = "objectTable", required = true) String objectTable,
+    public ResponseMessage waive(@RequestParam(value = "dataSignEnum", required = true) DataSignEnum sign,
             @RequestParam(value = "objectId", required = true) Long objectId) {
-        Boolean key = dataAuthorityService.waive(objectTable, objectId);
+        Boolean key = dataAuthorityService.waive(sign.getTable(), objectId);
         return key ? ok() : ResponseMessage.error("放弃数据权限失败，请联系管理员！");
     }
 }

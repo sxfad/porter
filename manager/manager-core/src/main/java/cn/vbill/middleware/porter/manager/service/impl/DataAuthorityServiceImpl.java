@@ -48,13 +48,13 @@ public class DataAuthorityServiceImpl implements DataAuthorityService {
     private Logger log = LoggerFactory.getLogger(DataAuthorityServiceImpl.class);
 
     //顶配
-    private final static String A0001 = "A0001";
+    private static final String A0001 = "A0001";
 
     //普配
-    private final static String A0002 = "A0002";
+    private static final String A0002 = "A0002";
 
     //楼币
-    private final static String A9999 = "A9999";
+    private static final String A9999 = "A9999";
 
     @Autowired
     private DataAuthorityMapper dataAuthorityMapper;
@@ -161,7 +161,7 @@ public class DataAuthorityServiceImpl implements DataAuthorityService {
             }
             if (A9999.equals(roleCode)) {
                 DataAuthority dataAu = dataAuthorityMapper.selectOneByConditions(objectTable, objectId, 1, userId);
-                if(dataAu == null) {
+                if (dataAu == null) {
                     log.error("数据标识：[{}] 数据标号：[{}] 登陆用户：[{}] 当前用户组：[{}] 非法操作，建议禁用此人账户！", objectTable, objectId, ownerIds, roleCode);
                     return false;
                 }

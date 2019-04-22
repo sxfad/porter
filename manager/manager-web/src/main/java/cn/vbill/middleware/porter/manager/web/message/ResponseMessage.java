@@ -17,11 +17,6 @@
 
 package cn.vbill.middleware.porter.manager.web.message;
 
-import cn.vbill.middleware.porter.manager.core.util.DateFormatUtils;
-import com.alibaba.fastjson.JSON;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -30,6 +25,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.alibaba.fastjson.JSON;
+
+import cn.vbill.middleware.porter.manager.core.enums.DataSignEnum;
+import cn.vbill.middleware.porter.manager.core.util.DateFormatUtils;
 
 /**
  * 反馈
@@ -51,6 +54,9 @@ public class ResponseMessage implements Serializable {
      * 反馈数据
      */
     private Object data;
+
+    /** 数据标识. */
+    private DataSignEnum dataSign;
 
     /**
      * 反馈信息
@@ -108,37 +114,28 @@ public class ResponseMessage implements Serializable {
         this.success = success;
     }
 
+    protected ResponseMessage(boolean success, Object data, DataSignEnum dataSign) {
+        this.code = success ? 200 : 500;
+        this.data = data;
+        this.success = success;
+        this.dataSign = dataSign;
+    }
+
     protected ResponseMessage(boolean success, Object data, int code) {
         this(success, data);
         this.code = code;
     }
 
-    /**
-     * include
-     *
-     * @date 2018/8/9 下午3:30
-     * @param: [type, fields]
-     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
-     */
+    protected ResponseMessage(boolean success, Object data, int code, DataSignEnum dataSign) {
+        this(success, data);
+        this.code = code;
+        this.dataSign = dataSign;
+    }
+
     public ResponseMessage include(Class<?> type, String... fields) {
         return include(type, Arrays.asList(fields));
     }
-//
-//    public static void main(String[] args) {
-//        String o = "aaaaa.bbbbb.cccc.ddddd";
-//        String[] op = o.split("[.]", 2);
-//        for (String str : op) {
-//            System.out.println(str);
-//        }
-//    }
 
-    /**
-     * include
-     *
-     * @date 2018/8/9 下午3:31
-     * @param: [type, fields]
-     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
-     */
     public ResponseMessage include(Class<?> type, Collection<String> fields) {
         if (includes == null) {
             includes = new HashMap<>();
@@ -164,13 +161,6 @@ public class ResponseMessage implements Serializable {
         return this;
     }
 
-    /**
-     * exclude
-     *
-     * @date 2018/8/9 下午3:31
-     * @param: [type, fields]
-     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
-     */
     public ResponseMessage exclude(Class<?> type, Collection<String> fields) {
         if (excludes == null) {
             excludes = new HashMap<>();
@@ -196,13 +186,6 @@ public class ResponseMessage implements Serializable {
         return this;
     }
 
-    /**
-     * exclude
-     *
-     * @date 2018/8/9 下午3:31
-     * @param: [fields]
-     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
-     */
     public ResponseMessage exclude(Collection<String> fields) {
         if (excludes == null) {
             excludes = new HashMap<>();
@@ -220,13 +203,6 @@ public class ResponseMessage implements Serializable {
         return this;
     }
 
-    /**
-     * include
-     *
-     * @date 2018/8/9 下午3:31
-     * @param: [fields]
-     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
-     */
     public ResponseMessage include(Collection<String> fields) {
         if (includes == null) {
             includes = new HashMap<>();
@@ -244,46 +220,18 @@ public class ResponseMessage implements Serializable {
         return this;
     }
 
-    /**
-     * exclude
-     *
-     * @date 2018/8/9 下午3:32
-     * @param: [type, fields]
-     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
-     */
     public ResponseMessage exclude(Class<?> type, String... fields) {
         return exclude(type, Arrays.asList(fields));
     }
 
-    /**
-     * exclude
-     *
-     * @date 2018/8/9 下午3:32
-     * @param: [fields]
-     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
-     */
     public ResponseMessage exclude(String... fields) {
         return exclude(Arrays.asList(fields));
     }
 
-    /**
-     * include
-     *
-     * @date 2018/8/9 下午3:32
-     * @param: [fields]
-     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
-     */
     public ResponseMessage include(String... fields) {
         return include(Arrays.asList(fields));
     }
 
-    /**
-     * getStringListFormMap
-     *
-     * @date 2018/8/9 下午3:33
-     * @param: [map, type]
-     * @return: java.util.Set<java.lang.String>
-     */
     protected Set<String> getStringListFormMap(Map<Class<?>, Set<String>> map, Class<?> type) {
         Set<String> list = map.get(type);
         if (list == null) {
@@ -305,25 +253,11 @@ public class ResponseMessage implements Serializable {
         return data;
     }
 
-    /**
-     * setData
-     *
-     * @date 2018/8/9 下午3:33
-     * @param: [data]
-     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
-     */
     public ResponseMessage setData(Object data) {
         this.data = data;
         return this;
     }
 
-    /**
-     * toString
-     *
-     * @date 2018/8/9 下午3:33
-     * @param: []
-     * @return: java.lang.String
-     */
     @Override
     public String toString() {
         return JSON.toJSONStringWithDateFormat(this, DateFormatUtils.PATTERN_DEFAULT_ON_SECOND);
@@ -333,25 +267,11 @@ public class ResponseMessage implements Serializable {
         return code;
     }
 
-    /**
-     * setCode
-     *
-     * @date 2018/8/9 下午3:33
-     * @param: [code]
-     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
-     */
     public ResponseMessage setCode(int code) {
         this.code = code;
         return this;
     }
 
-    /**
-     * fromJson
-     *
-     * @date 2018/8/9 下午3:34
-     * @param: [json]
-     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
-     */
     public static ResponseMessage fromJson(String json) {
         return JSON.parseObject(json, ResponseMessage.class);
     }
@@ -364,13 +284,6 @@ public class ResponseMessage implements Serializable {
         return includes;
     }
 
-    /**
-     * onlyData
-     *
-     * @date 2018/8/9 下午3:34
-     * @param: []
-     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
-     */
     public ResponseMessage onlyData() {
         setOnlyData(true);
         return this;
@@ -384,16 +297,37 @@ public class ResponseMessage implements Serializable {
         return onlyData;
     }
 
-    /**
-     * callback
-     *
-     * @date 2018/8/9 下午3:35
-     * @param: [callback]
-     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
-     */
     public ResponseMessage callback(String callback) {
         this.callback = callback;
         return this;
+    }
+
+    public static ResponseMessage ok() {
+        return ok(null);
+    }
+
+    public static ResponseMessage ok(Object data) {
+        return new ResponseMessage(true, data);
+    }
+
+    public static ResponseMessage ok(Object data, DataSignEnum sign) {
+        return new ResponseMessage(true, data, sign);
+    }
+
+    public static ResponseMessage created(Object data) {
+        return new ResponseMessage(true, data, 201);
+    }
+
+    public static ResponseMessage created(Object data, DataSignEnum sign) {
+        return new ResponseMessage(true, data, 201, sign);
+    }
+
+    public static ResponseMessage error(String message) {
+        return new ResponseMessage(message);
+    }
+
+    public static ResponseMessage error(String message, int code) {
+        return new ResponseMessage(message).setCode(code);
     }
 
     public String getCallback() {
@@ -408,59 +342,12 @@ public class ResponseMessage implements Serializable {
         this.message = message;
     }
 
-    /**
-     * ok
-     *
-     * @date 2018/8/9 下午3:35
-     * @param: []
-     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
-     */
-    public static ResponseMessage ok() {
-        return ok(null);
+    public DataSignEnum getDataSign() {
+        return dataSign;
     }
 
-    /**
-     * ok
-     *
-     * @date 2018/8/9 下午3:36
-     * @param: [data]
-     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
-     */
-    public static ResponseMessage ok(Object data) {
-        return new ResponseMessage(true, data);
-    }
-
-    /**
-     * created
-     *
-     * @date 2018/8/9 下午3:36
-     * @param: [data]
-     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
-     */
-    public static ResponseMessage created(Object data) {
-        return new ResponseMessage(true, data, 201);
-    }
-
-    /**
-     * error
-     *
-     * @date 2018/8/9 下午3:36
-     * @param: [message]
-     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
-     */
-    public static ResponseMessage error(String message) {
-        return new ResponseMessage(message);
-    }
-
-    /**
-     * error
-     *
-     * @date 2018/8/9 下午3:36
-     * @param: [message, code]
-     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
-     */
-    public static ResponseMessage error(String message, int code) {
-        return new ResponseMessage(message).setCode(code);
+    public void setDataSign(DataSignEnum dataSign) {
+        this.dataSign = dataSign;
     }
 
 }
