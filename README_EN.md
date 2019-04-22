@@ -35,6 +35,9 @@ Porter began in 2017 and provides data synchronization, but it's not just limite
 git clone https://github.com/sxfad/porter.git
 cd porter
 git checkout version
+git submodule init
+git submodule update
+git submodule foreach git pull origin version
 gradle build
 Find the installation package from the build/distributions list
 ```
