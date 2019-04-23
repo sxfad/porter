@@ -78,7 +78,7 @@
    server.port=8081
    
    #log
-   logging.file=${app.home}/logs/manager-boot.log
+   logging.file=./logs/manager-boot.log
    ````
 
    - 初始化数据库:修改/porter/manager/manager-boot/src/main/resources/初始化脚本.sql
@@ -90,7 +90,7 @@
 
      ````properties
      logging.level.root=info
-     logging.file=${app.home:./}/logs/data-node.log
+     logging.file=./logs/data-node.log
      logging.level.com.alibaba.druid.pool.DruidDataSource=INFO
      server.port=8080
      
@@ -116,9 +116,17 @@
 
 4. 构建项目
 
-   - 点击idea右侧Gradle插件，选择porter(root)/Tasks/build/build
+   - ```git
+     git submodule init
+     git submodule update
+     git submodule foreach git pull origin 版本(porter-ui与manager-boot对应的前端UI版本)
+     // 如果发现port-ui下还是没有代码，可以输入 rm -rf port-ui删除port-ui，之后在github上重新拉取port-ui
+     gradle build
+     ```
 
-   - 待构建完成，拷⻉/porter/porter/porter-boot/build/distributions/porter-boot-3.0.tar 和/porter/manager/manager-boot/build/distributions/manager-boot-3.0.tar两个压缩包⾄/app/soft/porter/(看情况，⾃⼰指定)
+   - 待构建完成，拷⻉/porter/porter/porter-boot/build/distributions/porter-boot-3.0.2.tar 和/porter/manager/manager-boot/build/distributions/manager-boot-3.0.2.tar两个压缩包⾄/app/soft/porter/(看情况，⾃⼰指定)
+
+     **(windows下启动需要在windows上打包，Linux执行要在Linux/mac os上打包)**
 
      1. @Setter注解无法通过编译
 
@@ -134,23 +142,9 @@
 
 5. 配置管理UI
 
-   - 下载源码  
+   - 此时已经不需要单独部署port-ui，启动manager-boot-3.0.2则会自动启动port-ui
 
-     ````
-     git init 
-     git clone https://github.com/sxfad/porter-ui.git
-     ````
-   - 修改/porter-ui/api-config.js 'dev': 'http://IP:8081/api/manager'
-
-   - 修改/porter-ui/package.json(只做开发环境配置，这⾥的端⼝是⻚⾯访问端⼝)
-
-     ````
-     yarn run dll && cross-env NODE_ENV=development SERVER_PORT=8082 node ./builder/dev-server.js"
-     ````
-
-   - 复制修改后的porter-ui项⽬⾄服务器/app/soft/porter
-
-6. 启动准备目前/app/soft/porter/⽬录下有三个项⽬：porter-ui,manager-boot,porter-boot
+6. 启动准备目前/app/soft/porter/⽬录下有两个项⽬：manager-boot,porter-boot
 
    - 启动zokeeper，启动zkui
 
@@ -161,61 +155,31 @@
    - 启动manager-boot
 
      ````
-     ./app/soft/porter/manager-boot-3.0.2/bin/startup.sh
+     // linux
+     ./app/soft/porter/manager-boot-3.0.2/bin/manager-boot
+     // windows
+     manager-boot.bat
      ````
 
-     如果出现执行startup.sh提示没有那个文件或者目录
-
-     解决方案:删除掉Linux下的manager-boot的startup.sh和shutdown.sh，之后新建文件startup.sh和shutdown.sh，并从github上把脚本的内容粘贴到文件中，并赋予文件执行的权限，之后执行脚本成功
-
-     ````
-     cd /app/soft/porter/manager-boot-3.0.2/bin
-     rm -rf startup.sh
-     mkdir startup.sh
-     vim startup.sh
-     chmod u+x startup.sh
-     ./startup.sh
-     ````
-
-     
-
-   - 启动前端(启动后不要ctrl+c退出命令⾏，后续操作请再创建窗⼝)
-
-     ````
-     cd /app/soft/porter/port-ui
-     #安装环境
-     yarn
-     #启动
-     yarn run dev
-     ````
-
-     1. 如果执行yarn命令提示yarn:command not found，则需要执行 npm install -g yarn
-
-     2. 如果执行yarn成功，但是执行yarn run dev还是提示yarn:command not found，则需要执行
-
-        ````
-        export PATH=/usr/local/node-v10.15.0/bin/:$PATH
-        echo $PATH
-        ````
-
-     现在浏览器输入IP:8082 admin/admin则可登录管理系统
+     现在浏览器输入IP:8081     admin/admin则可登录管理系统
 
    - 启动porter-boot
 
      ````
+     // linux
      ./app/soft/porter/porter-boot.3.0.2/bin/porter-boot
+     // windows
+     porter-boot.bat
      ````
 
-     1. 如果出现没有此文件或者目录则跟上述manager-boot解决方案相同
+     如果日志显示节点已经被注册则关闭porter-boot执行
 
-     2. 如果日志显示节点已经被注册则关闭porter-boot执行
-
-        ````
-        ./porter-boot-3.0.2/bin/porter-boot --force
-        ````
+     ````
+     ./porter-boot-3.0.2/bin/porter-boot --force
+     ````
 
 7. 恭喜，部署成功
 
 **注意： 项⽬关闭或启动出错时，请登录zkui，清除⼀下suixingpay节点的数据再启动**
 
-**项⽬启动顺序建议：清理集群信息 -> 启动manager-boot -> 启动porter-ui -> 启动porter-boot**
+**项⽬启动顺序建议：清理集群信息 -> 启动manager-boot -> 启动porter-boot**
