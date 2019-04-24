@@ -64,7 +64,7 @@ porter.cluster.client.home=./.porter
 
 ### Run
 ```
-tar zxvf build/distributions/porter-boot-version.tar
+unzip build/distributions/porter-boot-version.zip
 porter-boot-version/bin/porter-boot
 ```
 
