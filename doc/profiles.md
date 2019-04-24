@@ -13,7 +13,7 @@
 
 ```
 	spring-boot配置文件，可配置运行环境(spring.profiles.active)等，详情参考spring-boot官方文档。
-	同样可通过startup.sh脚本指定上述参数,例如 startup.sh --logging.level.root=debug
+	同样可通过porter-boot脚本指定上述参数,例如 porter-boot --logging.level.root=debug
 ```
 
 - config/application-${env}.properties

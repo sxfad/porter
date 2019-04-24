@@ -26,6 +26,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import java.util.List;
@@ -52,6 +53,11 @@ public class WebMvcConfigAdapter extends WebMvcConfigurerAdapter {
      */
     public static final String ALARM_URL_PATTERNS = "/alarm/task/check,/manager/ogg/tables";
 
+    /**
+     * porter-ui
+     */
+    public static final String PORTER_UI_URL_PATTERNS = "/ui";
+
     @Autowired
     private XTokenInterceptor xtokenInterceptor;
 
@@ -60,7 +66,8 @@ public class WebMvcConfigAdapter extends WebMvcConfigurerAdapter {
         registry.addInterceptor(xtokenInterceptor).addPathPatterns("/**")
                 .excludePathPatterns(ALARM_URL_PATTERNS.split(","))
                 .excludePathPatterns(SWAGER_URL_PATTERNS.split(","))
-                .excludePathPatterns(LOGIN_URL_PATTERNS.split(","));
+                .excludePathPatterns(LOGIN_URL_PATTERNS.split(","))
+                .excludePathPatterns(PORTER_UI_URL_PATTERNS.split(","));
     }
 
     @Override
@@ -77,4 +84,9 @@ public class WebMvcConfigAdapter extends WebMvcConfigurerAdapter {
         super.configureMessageConverters(converters);
     }
 
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        registry.addResourceHandler("/ui/**").addResourceLocations("classpath*:/public/");
+        super.addResourceHandlers(registry);
+    }
 }

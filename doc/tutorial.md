@@ -100,7 +100,7 @@
     + 解压porter-boot-2.0.2.1.tar
     + 启动manage-boot
         ```
-        ./manage-boot-2.0.2.1/bin/startup.sh
+        ./manage-boot-2.0.2.1/bin/manager-boot
         ```
     + 启动前端(启动后不要ctrl+c退出命令行，后续操作请再创建窗口)
         ```
@@ -113,7 +113,7 @@
         现在浏览器输入IP:8082，admin/admin可登陆管理系统
     + 启动porter-boot
         ```
-        ./porter-boot-2.0.2.1/bin/startup.sh        
+        ./porter-boot-2.0.2.1/bin/porter-boot 
         ```
        启动后在/集群管理/同步节点管理中可以看到2019节点
 7. 恭喜你，到这里就部署完成了

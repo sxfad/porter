@@ -10,7 +10,7 @@
 
 ```
 	Spring-boot configuration file, configurable running environment (spring.profiles.active), etc. For details, please refer to the spring-boot official documentation.
-	The above parameters can also be specified via the startup.sh script, for example: startup.sh --logging.level.root=debug
+	The above parameters can also be specified via the porter-boot script, for example: porter-boot --logging.level.root=debug
 ```
 
 - config/application-${env}.properties
