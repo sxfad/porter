@@ -16,6 +16,7 @@
  */
 package cn.vbill.middleware.porter.manager.service;
 
+import cn.vbill.middleware.porter.manager.core.dto.ControlPageVo;
 import cn.vbill.middleware.porter.manager.core.dto.ControlSettingVo;
 import cn.vbill.middleware.porter.manager.core.entity.CUser;
 
@@ -62,4 +63,12 @@ public interface JobTasksOwnerService {
      * @return
      */
     Integer jobOwnerSetting(ControlSettingVo controlSettingVo);
+
+    /**
+     * 权限设置页面数据组
+     *
+     * @param jobId
+     * @return
+     */
+    ControlPageVo makeControlPage(Long jobId);
 }

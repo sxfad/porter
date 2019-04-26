@@ -14,8 +14,8 @@
     </sql>-->
 
     <!-- 查询全部对应关系 -->
-    <select id="findAll" resultType="cn.vbill.middleware.porter.manager.core.entity.OwnerControl">
-        select id, owner_type AS ownerType, control_type_id AS controlTypeId from r_owner_control
+    <select id="findAll" resultType="java.lang.Long">
+        select control_type_id AS controlTypeId from r_owner_control
         <where>
             <if test="type!= null">
                 owner_type = #{type}

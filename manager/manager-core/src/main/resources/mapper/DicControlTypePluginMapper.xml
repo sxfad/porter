@@ -27,4 +27,16 @@
         where iscancel = 0
         order by field_order
     </select>
+
+    <!-- 根据type获取操作类型字典 -->
+    <select id="findByType" resultType="cn.vbill.middleware.porter.manager.core.entity.DicControlTypePlugin">
+        select id, alert_type AS alertType, field_name AS fieldName, field_code AS fieldCode, field_order AS fieldOrder,
+        field_type AS fieldType, field_type_key AS fieldTypeKey, state, iscancel from d_control_type_plugin
+        where iscancel = 0 and
+        id in (
+            select control_type_id AS controlTypeId from r_owner_control
+            where owner_type = #{type}
+        )
+        order by field_order
+    </select>
 </mapper>
