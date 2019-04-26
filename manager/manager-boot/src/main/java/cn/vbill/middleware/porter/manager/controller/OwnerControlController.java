@@ -48,33 +48,33 @@ public class OwnerControlController {
     @Autowired
     protected OwnerControlService ownerControlService;
 
-    /**
-     * 查询全部对应关系
-     *
-     * @author MurasakiSeiFu
-     * @date 2019-04-03 14:52
-     * @param: []
-     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
-     */
-    @GetMapping("/findAll")
-    @ApiOperation(value = "查询全部对应关系", notes = "查询全部对应关系")
-    public ResponseMessage findAll() {
-        List<OwnerControl> list = ownerControlService.findAll(null);
-        return ok(list);
-    }
-
-    /**
-     * 根据权限类型查询
-     *
-     * @author MurasakiSeiFu
-     * @date 2019-04-03 14:56
-     * @param: []
-     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
-     */
-    @GetMapping("/findByType")
-    @ApiOperation(value = "根据权限类型查询", notes = "根据权限类型查询")
-    public ResponseMessage findByType(@RequestParam(value = "type", required = true) Integer type) {
-        List<OwnerControl> list = ownerControlService.findAll(type);
-        return ok(list);
-    }
+//    /**
+//     * 查询全部对应关系
+//     *
+//     * @author MurasakiSeiFu
+//     * @date 2019-04-03 14:52
+//     * @param: []
+//     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
+//     */
+//    @GetMapping("/findAll")
+//    @ApiOperation(value = "查询全部对应关系", notes = "查询全部对应关系")
+//    public ResponseMessage findAll() {
+//        List<OwnerControl> list = ownerControlService.findAll(null);
+//        return ok(list);
+//    }
+//
+//    /**
+//     * 根据权限类型查询
+//     *
+//     * @author MurasakiSeiFu
+//     * @date 2019-04-03 14:56
+//     * @param: []
+//     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
+//     */
+//    @GetMapping("/findByType")
+//    @ApiOperation(value = "根据权限类型查询", notes = "根据权限类型查询")
+//    public ResponseMessage findByType(@RequestParam(value = "type", required = true) Integer type) {
+//        List<OwnerControl> list = ownerControlService.findAll(type);
+//        return ok(list);
+//    }
 }
