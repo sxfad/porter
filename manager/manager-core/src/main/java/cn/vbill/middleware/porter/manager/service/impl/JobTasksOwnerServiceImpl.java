@@ -22,7 +22,6 @@ import cn.vbill.middleware.porter.manager.core.dto.OwnerVo;
 import cn.vbill.middleware.porter.manager.core.entity.CUser;
 import cn.vbill.middleware.porter.manager.core.entity.DicControlTypePlugin;
 import cn.vbill.middleware.porter.manager.core.entity.JobTasksOwner;
-import cn.vbill.middleware.porter.manager.core.entity.OwnerControl;
 import cn.vbill.middleware.porter.manager.core.mapper.JobTasksOwnerMapper;
 import cn.vbill.middleware.porter.manager.service.CUserService;
 import cn.vbill.middleware.porter.manager.service.DicControlTypePluginService;
@@ -34,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.List;
@@ -90,6 +90,7 @@ public class JobTasksOwnerServiceImpl implements JobTasksOwnerService {
     }
 
     @Override
+    @Transactional
     public Integer jobOwnerSetting(ControlSettingVo controlSettingVo) {
         String controlType = null;
         if (null != controlSettingVo.getControlTypeEnum()) {
