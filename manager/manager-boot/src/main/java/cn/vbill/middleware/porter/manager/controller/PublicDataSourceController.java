@@ -200,7 +200,7 @@ public class PublicDataSourceController {
     }
 
     /**
-     * 推送数据源
+     * 回收公共数据源
      * 
      * @param id
      * @return

@@ -102,6 +102,24 @@ public interface DataAuthorityService {
     Boolean turnover(String objectTable, Long objectId, Long ownerId);
 
     /**
+     * add共享权限
+     * 
+     * @param objectTable
+     * @param objectId
+     * @return
+     */
+    Boolean addShare(String objectTable, Long objectId, Long ownerId);
+
+    /**
+     * del共享权限
+     * 
+     * @param objectTable
+     * @param objectId
+     * @return
+     */
+    Boolean delShare(String objectTable, Long objectId, Long ownerId);
+
+    /**
      * 共享权限
      * 
      * @param objectTable

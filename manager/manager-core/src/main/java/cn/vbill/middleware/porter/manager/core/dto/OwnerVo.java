@@ -31,11 +31,14 @@ public class OwnerVo {
 
     public OwnerVo(CUser user, Integer authorityType) {
         if (user != null) {
+            this.ownerId = user.getId();
             this.name = user.getNickname();
             this.email = user.getEmail();
             this.authorityType = authorityType;
         }
     }
+
+    private Long ownerId;
 
     private String name;
 
@@ -43,6 +46,14 @@ public class OwnerVo {
 
     /** 权限类型 1 所有者 2共享者. */
     private Integer authorityType;
+
+    public Long getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(Long ownerId) {
+        this.ownerId = ownerId;
+    }
 
     public String getName() {
         return name;

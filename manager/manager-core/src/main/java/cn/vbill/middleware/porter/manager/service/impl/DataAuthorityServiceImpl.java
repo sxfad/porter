@@ -146,23 +146,69 @@ public class DataAuthorityServiceImpl implements DataAuthorityService {
         return key;
     }
 
+    @Override
+    public Boolean addShare(String objectTable, Long objectId, Long ownerId) {
+        Boolean key = true;
+        // 当前用户
+        Long userId = RoleCheckContext.getUserIdHolder().getUserId();
+        // 当前角色组
+        String roleCode = RoleCheckContext.getUserIdHolder().getRoleCode();
+        if (!A0001.equals(roleCode) && !A0002.equals(roleCode) && !A9999.equals(roleCode)) {
+            log.error("数据标识：[{}] 数据标号：[{}] 登陆用户：[{}] 当前用户组：[{}] 非法操作，建议禁用此人账户！", objectTable, objectId, userId, roleCode);
+            return false;
+        }
+        if (A9999.equals(roleCode)) {
+            DataAuthority dataAu = dataAuthorityMapper.selectOneByConditions(objectTable, objectId, 1, userId);
+            if (dataAu == null) {
+                log.error("数据标识：[{}] 数据标号：[{}] 登陆用户：[{}] 当前用户组：[{}] 非法操作，建议禁用此人账户！", objectTable, objectId, userId, roleCode);
+                return false;
+            }
+        }
+        //增加共享者
+        dataAuthorityMapper.insert(new DataAuthority(objectTable, objectId, 1, ownerId, userId, 2));
+        return key;
+    }
+
+    @Override
+    public Boolean delShare(String objectTable, Long objectId, Long ownerId) {
+        Boolean key = true;
+        // 当前用户
+        Long userId = RoleCheckContext.getUserIdHolder().getUserId();
+        // 当前角色组
+        String roleCode = RoleCheckContext.getUserIdHolder().getRoleCode();
+        if (!A0001.equals(roleCode) && !A0002.equals(roleCode) && !A9999.equals(roleCode)) {
+            log.error("数据标识：[{}] 数据标号：[{}] 登陆用户：[{}] 当前用户组：[{}] 非法操作，建议禁用此人账户！", objectTable, objectId, userId, roleCode);
+            return false;
+        }
+        if (A9999.equals(roleCode)) {
+            DataAuthority dataAu = dataAuthorityMapper.selectOneByConditions(objectTable, objectId, 1, userId);
+            if (dataAu == null) {
+                log.error("数据标识：[{}] 数据标号：[{}] 登陆用户：[{}] 当前用户组：[{}] 非法操作，建议禁用此人账户！", objectTable, objectId, userId, roleCode);
+                return false;
+            }
+        }
+        //清空共享者
+        dataAuthorityMapper.deleteByMores(objectTable, objectId, ownerId, 2);
+        return key;
+    }
+
     // 共享
     @Override
     public Boolean share(String objectTable, Long objectId, Long[] ownerIds) {
         Boolean key = true;
+        // 当前用户
+        Long userId = RoleCheckContext.getUserIdHolder().getUserId();
+        // 当前角色组
+        String roleCode = RoleCheckContext.getUserIdHolder().getRoleCode();
         try {
-            // 当前用户
-            Long userId = RoleCheckContext.getUserIdHolder().getUserId();
-            // 当前角色组
-            String roleCode = RoleCheckContext.getUserIdHolder().getRoleCode();
             if (!A0001.equals(roleCode) && !A0002.equals(roleCode) && !A9999.equals(roleCode)) {
-                log.error("数据标识：[{}] 数据标号：[{}] 登陆用户：[{}] 当前用户组：[{}] 非法操作，建议禁用此人账户！", objectTable, objectId, ownerIds, roleCode);
+                log.error("数据标识：[{}] 数据标号：[{}] 登陆用户：[{}] 当前用户组：[{}] 非法操作，建议禁用此人账户！", objectTable, objectId, userId, roleCode);
                 return false;
             }
             if (A9999.equals(roleCode)) {
                 DataAuthority dataAu = dataAuthorityMapper.selectOneByConditions(objectTable, objectId, 1, userId);
                 if (dataAu == null) {
-                    log.error("数据标识：[{}] 数据标号：[{}] 登陆用户：[{}] 当前用户组：[{}] 非法操作，建议禁用此人账户！", objectTable, objectId, ownerIds, roleCode);
+                    log.error("数据标识：[{}] 数据标号：[{}] 登陆用户：[{}] 当前用户组：[{}] 非法操作，建议禁用此人账户！", objectTable, objectId, userId, roleCode);
                     return false;
                 }
             }
@@ -174,7 +220,7 @@ public class DataAuthorityServiceImpl implements DataAuthorityService {
             }
         } catch (Exception e) {
             key = false;
-            log.error("数据标识：[{}] 数据标号：[{}] 登陆用户：[{}] 权限共享失败，记录关注！", objectTable, objectId, ownerIds, e);
+            log.error("数据标识：[{}] 数据标号：[{}] 登陆用户：[{}] 权限共享失败，记录关注！", objectTable, objectId, userId, e);
         }
         return key;
     }
