@@ -36,4 +36,12 @@ public interface DicControlTypePluginService {
      * @return
      */
     List<DicControlTypePlugin> findAll();
+
+    /**
+     * 根据Type值对应关系查询字典数据详情
+     *
+     * @param type
+     * @return
+     */
+    List<DicControlTypePlugin> findByType(Integer type);
 }

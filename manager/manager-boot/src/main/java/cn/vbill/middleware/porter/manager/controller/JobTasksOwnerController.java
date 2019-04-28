@@ -16,6 +16,7 @@
  */
 package cn.vbill.middleware.porter.manager.controller;
 
+import cn.vbill.middleware.porter.manager.core.dto.ControlPageVo;
 import cn.vbill.middleware.porter.manager.core.dto.ControlSettingVo;
 import cn.vbill.middleware.porter.manager.core.entity.CUser;
 import cn.vbill.middleware.porter.manager.service.JobTasksOwnerService;
@@ -79,6 +80,21 @@ public class JobTasksOwnerController {
     public ResponseMessage findOwnerType(@PathVariable("jobId") Long jobId) {
         Integer type = jobTasksOwnerService.findOwnerTypeByJobId(jobId);
         return ok(type);
+    }
+
+    /**
+     * 权限设置页面数据
+     *
+     * @author MurasakiSeiFu
+     * @date 2019-04-26 10:09
+     * @param: [jobId]
+     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
+     */
+    @GetMapping("/setPage/{jobId}")
+    @ApiOperation(value = "权限设置页面数据组", notes = "权限设置页面数据组")
+    public ResponseMessage jobOwnerPage(@PathVariable("jobId") Long jobId) {
+        ControlPageVo controlPageVo = jobTasksOwnerService.makeControlPage(jobId);
+        return ok(controlPageVo);
     }
 
     /**

@@ -35,5 +35,5 @@ public interface OwnerControlService {
      *
      * @return
      */
-    List<OwnerControl> findAll(Integer type);
+    List<Long> findAll(Integer type);
 }

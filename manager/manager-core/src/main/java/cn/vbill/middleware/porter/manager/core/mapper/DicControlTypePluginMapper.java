@@ -17,6 +17,7 @@
 package cn.vbill.middleware.porter.manager.core.mapper;
 
 import cn.vbill.middleware.porter.manager.core.entity.DicControlTypePlugin;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -36,4 +37,12 @@ public interface DicControlTypePluginMapper {
      * @return
      */
     List<DicControlTypePlugin> findAll();
+
+    /**
+     * 根据type获取操作类型字典
+     *
+     * @param type
+     * @return
+     */
+    List<DicControlTypePlugin> findByType(@Param("type") Integer type);
 }

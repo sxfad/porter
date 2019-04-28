@@ -19,24 +19,15 @@ package cn.vbill.middleware.porter.manager.controller;
 import static cn.vbill.middleware.porter.manager.web.message.ResponseMessage.ok;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import cn.vbill.middleware.porter.manager.core.dto.DataAuthorityVo;
-import cn.vbill.middleware.porter.manager.core.entity.DataAuthority;
 import cn.vbill.middleware.porter.manager.core.enums.DataSignEnum;
 import cn.vbill.middleware.porter.manager.service.DataAuthorityService;
 import cn.vbill.middleware.porter.manager.web.message.ResponseMessage;
-import cn.vbill.middleware.porter.manager.web.page.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
@@ -55,43 +46,6 @@ public class DataAuthorityController {
 
     @Autowired
     protected DataAuthorityService dataAuthorityService;
-
-    @PostMapping
-    @ApiOperation(value = "新增", notes = "新增")
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseMessage add(@RequestBody DataAuthority dataAuthority) {
-        Integer number = dataAuthorityService.insert(dataAuthority);
-        return ok(number);
-    }
-
-    @PutMapping("/{id}")
-    @ApiOperation(value = "修改", notes = "修改")
-    public ResponseMessage update(@PathVariable("id") Long id, @RequestBody DataAuthority dataAuthority) {
-        Integer number = dataAuthorityService.update(id, dataAuthority);
-        return ok(number);
-    }
-
-    @DeleteMapping("/{id}")
-    @ApiOperation(value = "删除", notes = "删除")
-    public ResponseMessage delete(@PathVariable("id") Long id) {
-        dataAuthorityService.delete(id);
-        return ok();
-    }
-
-    @GetMapping("/{id}")
-    @ApiOperation(value = "查询明细", notes = "查询明细")
-    public ResponseMessage info(@PathVariable("id") Long id) {
-        DataAuthority dataAuthority = dataAuthorityService.selectById(id);
-        return ok(dataAuthority);
-    }
-
-    @GetMapping
-    @ApiOperation(value = "查询列表", notes = "查询列表")
-    public ResponseMessage list(@RequestParam(value = "pageNum", required = false) Integer pageNum,
-            @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-        Page<DataAuthority> page = dataAuthorityService.page(new Page<DataAuthority>(pageNum, pageSize));
-        return ok(page);
-    }
 
     /**
      * 权限管理页面
@@ -118,7 +72,35 @@ public class DataAuthorityController {
             @RequestParam(value = "ownerId", required = true) Long ownerId) {
 
         Boolean key = dataAuthorityService.turnover(sign.getTable(), objectId, ownerId);
-        return key ? ok() : ResponseMessage.error("移交数据权限失败，请联系管理员！");
+        return key ? ok() : ResponseMessage.error("移交数据所有人失败，请联系管理员！");
+    }
+
+    /**
+     * add共享权限
+     * 
+     * @return
+     */
+    @PostMapping("/addshare")
+    @ApiOperation(value = "add共享权限", notes = "add共享权限")
+    public ResponseMessage addShare(@RequestParam(value = "dataSignEnum", required = true) DataSignEnum sign,
+            @RequestParam(value = "objectId", required = true) Long objectId,
+            @RequestParam(value = "ownerId", required = true) Long ownerId) {
+        Boolean key = dataAuthorityService.addShare(sign.getTable(), objectId, ownerId);
+        return key ? ok() : ResponseMessage.error("添加数据共享人失败，请联系管理员！");
+    }
+
+    /**
+     * del共享权限
+     * 
+     * @return
+     */
+    @PostMapping("/delshare")
+    @ApiOperation(value = "del共享权限", notes = "del共享权限")
+    public ResponseMessage delShare(@RequestParam(value = "dataSignEnum", required = true) DataSignEnum sign,
+            @RequestParam(value = "objectId", required = true) Long objectId,
+            @RequestParam(value = "ownerId", required = true) Long ownerId) {
+        Boolean key = dataAuthorityService.delShare(sign.getTable(), objectId, ownerId);
+        return key ? ok() : ResponseMessage.error("删除数据共享人失败，请联系管理员！");
     }
 
     /**
@@ -131,9 +113,8 @@ public class DataAuthorityController {
     public ResponseMessage share(@RequestParam(value = "dataSignEnum", required = true) DataSignEnum sign,
             @RequestParam(value = "objectId", required = true) Long objectId,
             @RequestParam(value = "ownerIds", required = true) Long[] ownerIds) {
-
         Boolean key = dataAuthorityService.share(sign.getTable(), objectId, ownerIds);
-        return key ? ok() : ResponseMessage.error("共享数据权限失败，请联系管理员！");
+        return key ? ok() : ResponseMessage.error("数据共享人更新失败，请联系管理员！");
     }
 
     /**

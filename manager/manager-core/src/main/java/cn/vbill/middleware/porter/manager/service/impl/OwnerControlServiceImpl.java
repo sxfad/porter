@@ -39,7 +39,7 @@ public class OwnerControlServiceImpl implements OwnerControlService {
     private OwnerControlMapper ownerControlMapper;
 
     @Override
-    public List<OwnerControl> findAll(Integer type) {
+    public List<Long> findAll(Integer type) {
         return ownerControlMapper.findAll(type);
     }
 }

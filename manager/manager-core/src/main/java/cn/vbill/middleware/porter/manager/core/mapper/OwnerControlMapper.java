@@ -37,5 +37,5 @@ public interface OwnerControlMapper {
      * @param type
      * @return
      */
-    List<OwnerControl> findAll(@Param("type") Integer type);
+    List<Long> findAll(@Param("type") Integer type);
 }

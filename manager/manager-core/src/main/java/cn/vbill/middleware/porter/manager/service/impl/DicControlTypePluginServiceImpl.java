@@ -42,4 +42,11 @@ public class DicControlTypePluginServiceImpl implements DicControlTypePluginServ
     public List<DicControlTypePlugin> findAll() {
         return dicControlTypePluginMapper.findAll();
     }
+
+    @Override
+    public List<DicControlTypePlugin> findByType(Integer type) {
+        return dicControlTypePluginMapper.findByType(type);
+    }
+
+
 }

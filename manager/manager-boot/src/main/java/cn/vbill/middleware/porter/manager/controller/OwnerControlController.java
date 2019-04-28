@@ -16,20 +16,11 @@
  */
 package cn.vbill.middleware.porter.manager.controller;
 
-import cn.vbill.middleware.porter.manager.core.entity.OwnerControl;
 import cn.vbill.middleware.porter.manager.service.OwnerControlService;
-import cn.vbill.middleware.porter.manager.web.message.ResponseMessage;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
-
-import static cn.vbill.middleware.porter.manager.web.message.ResponseMessage.ok;
 
 
 /**
@@ -48,33 +39,33 @@ public class OwnerControlController {
     @Autowired
     protected OwnerControlService ownerControlService;
 
-    /**
-     * 查询全部对应关系
-     *
-     * @author MurasakiSeiFu
-     * @date 2019-04-03 14:52
-     * @param: []
-     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
-     */
-    @GetMapping("/findAll")
-    @ApiOperation(value = "查询全部对应关系", notes = "查询全部对应关系")
-    public ResponseMessage findAll() {
-        List<OwnerControl> list = ownerControlService.findAll(null);
-        return ok(list);
-    }
-
-    /**
-     * 根据权限类型查询
-     *
-     * @author MurasakiSeiFu
-     * @date 2019-04-03 14:56
-     * @param: []
-     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
-     */
-    @GetMapping("/findByType")
-    @ApiOperation(value = "根据权限类型查询", notes = "根据权限类型查询")
-    public ResponseMessage findByType(@RequestParam(value = "type", required = true) Integer type) {
-        List<OwnerControl> list = ownerControlService.findAll(type);
-        return ok(list);
-    }
+//    /**
+//     * 查询全部对应关系
+//     *
+//     * @author MurasakiSeiFu
+//     * @date 2019-04-03 14:52
+//     * @param: []
+//     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
+//     */
+//    @GetMapping("/findAll")
+//    @ApiOperation(value = "查询全部对应关系", notes = "查询全部对应关系")
+//    public ResponseMessage findAll() {
+//        List<OwnerControl> list = ownerControlService.findAll(null);
+//        return ok(list);
+//    }
+//
+//    /**
+//     * 根据权限类型查询
+//     *
+//     * @author MurasakiSeiFu
+//     * @date 2019-04-03 14:56
+//     * @param: []
+//     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
+//     */
+//    @GetMapping("/findByType")
+//    @ApiOperation(value = "根据权限类型查询", notes = "根据权限类型查询")
+//    public ResponseMessage findByType(@RequestParam(value = "type", required = true) Integer type) {
+//        List<OwnerControl> list = ownerControlService.findAll(type);
+//        return ok(list);
+//    }
 }
