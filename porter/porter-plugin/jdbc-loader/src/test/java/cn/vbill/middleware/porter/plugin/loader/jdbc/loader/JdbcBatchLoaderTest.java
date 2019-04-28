@@ -14,11 +14,9 @@
  * limitations under the License.
  * </p>
  */
-
-package cn.vbill.middleware.porter.task.transform.transformer;
+package cn.vbill.middleware.porter.plugin.loader.jdbc.loader;
 
 import cn.vbill.middleware.porter.core.message.MessageAction;
-import cn.vbill.middleware.porter.common.task.consumer.Position;
 import cn.vbill.middleware.porter.core.task.setl.ETLBucket;
 import cn.vbill.middleware.porter.core.task.setl.ETLRow;
 import org.junit.Assert;
@@ -30,16 +28,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * jdbc多线程并发Load
  * @author: zhangkewei[zhang_kw@suixingpay.com]
- * @date: 2018年01月09日 17:52
+ * @date: 2018年02月04日 11:38
  * @version: V1.0
- * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年01月09日 17:52
+ * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月04日 11:38
  */
-@RunWith(JUnit4.class)
-public class BatchPrePareTransformerTest {
 
+@RunWith(JUnit4.class)
+public class JdbcBatchLoaderTest {
     @Test
-    public void transform() {
+    public void sort() {
         List<ETLRow> rows = new ArrayList<>();
         rows.add(new ETLRow(0, 0, "s", "t", MessageAction.DELETE, null, null, null));
         rows.add(new ETLRow(0, 0, "s", "t", MessageAction.DELETE, null, null, null));
@@ -55,16 +54,8 @@ public class BatchPrePareTransformerTest {
         rows.add(new ETLRow(0, 0, "s", "t", MessageAction.INSERT, null, null, null));
         rows.add(new ETLRow(0, 0, "s", "t", MessageAction.INSERT, null, null, null));
 
-        ETLBucket bucket = new ETLBucket("0", rows, new Position() {
-            @Override
-            public boolean checksum() {
-                return true;
-            }
-        });
-
-        BatchPrePareTransformer t = new BatchPrePareTransformer();
-        t.transform(bucket, null);
-
-        Assert.assertEquals(bucket.getBatchRows().size(), 8);
+        ETLBucket bucket = new ETLBucket("0", rows, null);
+        new JdbcBatchLoader().sort(bucket);
+        Assert.assertEquals(bucket.getParallelRows().stream().mapToLong(r -> r.size()).sum(), rows.size());
     }
 }

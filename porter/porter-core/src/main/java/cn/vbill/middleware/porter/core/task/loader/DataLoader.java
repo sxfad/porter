@@ -27,8 +27,7 @@ import cn.vbill.middleware.porter.core.task.setl.ETLRow;
 import cn.vbill.middleware.porter.core.task.statistics.DSubmitStatObject;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -141,4 +140,14 @@ public interface DataLoader {
      * @return: java.lang.String
      */
     String getClientInfo();
+
+    /**
+     * 分拣ETLRow，使相互不影响的ETLRow在Load阶段并行执行
+     * @param bucket
+     */
+    default void sort(ETLBucket bucket) {
+        Map<List<String>, List<ETLRow>> parallel = new HashMap<>();
+        bucket.getRows().forEach(r -> parallel.getOrDefault(Arrays.asList(r.getFinalSchema(), r.getFinalTable()), new ArrayList<>()).add(r));
+        bucket.getParallelRows().addAll(parallel.values());
+    }
 }

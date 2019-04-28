@@ -17,7 +17,6 @@
 
 package cn.vbill.middleware.porter.plugin.loader.kudu.loader;
 
-import cn.vbill.middleware.porter.common.task.exception.TaskDataException;
 import cn.vbill.middleware.porter.common.task.exception.TaskStopTriggerException;
 import cn.vbill.middleware.porter.core.message.MessageAction;
 import cn.vbill.middleware.porter.core.task.setl.ETLBucket;
@@ -27,7 +26,6 @@ import cn.vbill.middleware.porter.core.task.loader.AbstractDataLoader;
 import cn.vbill.middleware.porter.core.task.statistics.DSubmitStatObject;
 import cn.vbill.middleware.porter.plugin.loader.kudu.KuduLoaderConst;
 import cn.vbill.middleware.porter.plugin.loader.kudu.client.KUDUClient;
-import lombok.SneakyThrows;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Pair;
@@ -36,7 +34,6 @@ import org.apache.commons.lang3.tuple.Triple;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Consumer;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -56,82 +53,41 @@ public class KuduLoader extends AbstractDataLoader {
     public Pair<Boolean, List<DSubmitStatObject>> load(ETLBucket bucket) throws TaskStopTriggerException {
         List<DSubmitStatObject> affectRow = new ArrayList<>();
         KUDUClient client = getLoadClient();
-        bucket.getBatchRows().forEach(new Consumer<List<ETLRow>>() {
-            @Override
-            @SneakyThrows(TaskStopTriggerException.class)
-            public void accept(List<ETLRow> l) {
-                if (l.isEmpty()) {
-                    return;
-                }
-                //批次操作类型
-                MessageAction type = l.get(0).getFinalOpType();
-                String tableName = l.get(0).getFinalTable();
-                String schemaName = l.get(0).getFinalSchema();
-
-                //所有字段
-                List<List<Triple<String, Integer, String>>> rows = new ArrayList<>();
-                //主键字段
-                List<List<Triple<String, Integer, String>>> keyRows = new ArrayList<>();
-                l.forEach(r -> {
-                    List<Triple<String, Integer, String>> row = new ArrayList<>();
-                    row.addAll(KuduCustomETLRowField.getKeys(r));
-                    row.addAll(KuduCustomETLRowField.getColumns(r));
-                    rows.add(row);
-                    keyRows.add(KuduCustomETLRowField.getKeys(r));
-                });
-                int[] result = new int[0];
-                try {
-                    switch (type) {
-                        case INSERT:
-                            result = client.insert(schemaName, tableName, rows);
-                            break;
-                        case UPDATE:
-                            result = new int[l.size()];
-                            for (int i = 0; i < l.size(); i++) {
-                                ETLRow r = l.get(i);
-                                //如果主键存在变更
-                                if (KuduCustomETLRowField.isKeyChanged(r)) {
-                                    client.delete(schemaName, tableName, Arrays.asList(KuduCustomETLRowField.getOldKeys(r)));
-                                    //主键+非主键
-                                    List<Triple<String, Integer, String>> row = new ArrayList<>();
-                                    row.addAll(KuduCustomETLRowField.getKeys(r));
-                                    row.addAll(KuduCustomETLRowField.getColumns(r));
-                                    result = client.insert(schemaName, tableName, Arrays.asList(row));
-                                } else {
-                                    List<Triple<String, Integer, String>> row = new ArrayList<>();
-                                    row.addAll(KuduCustomETLRowField.getKeys(r));
-                                    row.addAll(KuduCustomETLRowField.getColumns(r));
-                                    result = client.update(schemaName, tableName, Arrays.asList(row));
-                                }
-                            }
-                            break;
-                        case DELETE:
-                            result = client.delete(schemaName, tableName, keyRows);
-                            break;
-                        case TRUNCATE:
-                            result = client.truncate(schemaName, tableName);
-                            break;
-                        default:
-
+        for (ETLRow r : bucket.getRows()) {
+            int[] result = new int[0];
+            switch (r.getFinalOpType()) {
+                case INSERT:
+                    result = client.insert(r.getFinalSchema(), r.getFinalTable(), Arrays.asList(KuduCustomETLRowField.getKeys(r),
+                            KuduCustomETLRowField.getColumns(r)));
+                    break;
+                case UPDATE:
+                    //如果主键存在变更
+                    if (KuduCustomETLRowField.isKeyChanged(r)) {
+                        client.delete(r.getFinalSchema(), r.getFinalTable(), Arrays.asList(KuduCustomETLRowField.getOldKeys(r)));
+                        //主键+非主键
+                        result = client.insert(r.getFinalSchema(), r.getFinalTable(), Arrays.asList(KuduCustomETLRowField.getKeys(r),
+                                KuduCustomETLRowField.getColumns(r)));
+                    } else {
+                        result = client.update(r.getFinalSchema(), r.getFinalTable(), Arrays.asList(KuduCustomETLRowField.getKeys(r),
+                                KuduCustomETLRowField.getColumns(r)));
                     }
-
-                    //更新进度信息
-                    for (int affect = 0; affect < l.size(); affect++) {
-                        ETLRow row = l.get(affect);
-                        affectRow.add(new DSubmitStatObject(schemaName, tableName, type,
-                                result[affect], row.getPosition(), row.getOpTime()));
-                    }
-
-                } catch (Exception e) {
-                    throw new TaskStopTriggerException(e);
-                }
+                    break;
+                case DELETE:
+                    result = client.delete(r.getFinalSchema(), r.getFinalTable(), Arrays.asList(KuduCustomETLRowField.getKeys(r)));
+                    break;
+                case TRUNCATE:
+                    result = client.truncate(r.getFinalSchema(), r.getFinalTable());
+                    break;
+                default:
             }
-        });
+            //更新进度信息
+            affectRow.add(new DSubmitStatObject(r.getFinalSchema(), r.getFinalTable(), r.getFinalOpType(), result[0], r.getPosition(), r.getOpTime()));
+        }
         return new ImmutablePair(Boolean.TRUE, affectRow);
     }
 
     @Override
-    public void mouldRow(ETLRow row) throws TaskDataException {
+    public void mouldRow(ETLRow row) {
         if (null != row.getColumns()) {
             List<Triple<String, Integer, String>> oldKeys = KuduCustomETLRowField.getOldKeys(row);
             List<Triple<String, Integer, String>> keys = KuduCustomETLRowField.getKeys(row);

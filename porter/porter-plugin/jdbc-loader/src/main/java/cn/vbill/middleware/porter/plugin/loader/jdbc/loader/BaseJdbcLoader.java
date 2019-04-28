@@ -24,7 +24,6 @@ import cn.vbill.middleware.porter.core.message.MessageAction;
 import cn.vbill.middleware.porter.core.task.statistics.DSubmitStatObject;
 import cn.vbill.middleware.porter.plugin.loader.jdbc.client.JDBCClient;
 import com.alibaba.fastjson.JSONObject;
-import cn.vbill.middleware.porter.common.util.db.SqlTemplate;
 import cn.vbill.middleware.porter.common.util.db.SqlUtils;
 import cn.vbill.middleware.porter.core.task.setl.ETLColumn;
 import cn.vbill.middleware.porter.core.task.setl.ETLRow;
@@ -33,9 +32,7 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 
-import java.lang.reflect.Array;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -44,154 +41,25 @@ import java.util.stream.Collectors;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月04日 11:57
  */
 public abstract class BaseJdbcLoader extends AbstractDataLoader {
-    /**
-     * 用于一条记录有多个加载补偿策略。这种情况下
-     * @param sqlList
-     * @return
-     */
-    protected int loadSql(List<Pair<String, Object[]>> sqlList, MessageAction action) throws TaskStopTriggerException, InterruptedException {
-        int affect = 0;
-        int times = 0;
+    protected SqlBuilder sqlBuilder;
+
+    public BaseJdbcLoader() {
+        sqlBuilder = new SqlBuilder(((JDBCClient) getLoadClient()).getSqlTemplate(), isInsertOnUpdateError());
+    }
+
+    @Override
+    public Pair<Boolean, List<DSubmitStatObject>> load(ETLBucket bucket) throws TaskStopTriggerException, InterruptedException {
         try {
-            JDBCClient client = getLoadClient();
-            for (Pair<String, Object[]> sqlOnce : sqlList) {
-                times++;
-                affect = client.update(action.getValue(), sqlOnce.getLeft(), sqlOnce.getRight());
-                if (affect > 0) break;
-            }
+            return doLoad(bucket);
         } catch (TaskStopTriggerException e) {
-            //单条消息多种策略执行时，如果执行次数多于一次，不抛出异常
-            if (times <= 1) throw e;
+            if (e.getMessage().contains("interrupt") && e.getMessage().contains("CannotCreateTransactionException")) throw new InterruptedException(e.getMessage());
+            throw e;
         }
-        return affect;
     }
 
-    /**
-     * 正常来说批量执行的sql是完全一样的，但为了程序健壮性需要再次排序分组
-     * @param sqlList
-     * @return
-     */
-    protected int[] batchLoadSql(List<Pair<String, Object[]>> sqlList, MessageAction action) throws TaskStopTriggerException, InterruptedException {
-        JDBCClient client = getLoadClient();
-        List<Pair<String, List<Object[]>>> reGroupList = new ArrayList<Pair<String, List<Object[]>>>();
-        groupSql4Batch(reGroupList, sqlList, 0);
-        int[] allAffects = new int[]{};
-        for (Pair<String, List<Object[]>> batch : reGroupList) {
-            int[] subResult = client.batchUpdate(action.getValue(), batch.getLeft(), batch.getRight());
-            allAffects = ArrayUtils.addAll(allAffects, subResult);
-        }
-        return allAffects;
-    }
-
-    private void groupSql4Batch(List<Pair<String, List<Object[]>>> reGroupList, List<Pair<String, Object[]>> sqlList, int from) {
-        List<Object[]> currentGroup = new ArrayList<>();
-        String currentSql = null;
-        int count = sqlList.size();
-        while (from < count) {
-            Pair<String, Object[]> sql = sqlList.get(from);
-            currentGroup.add(sql.getRight());
-            currentSql = sql.getLeft().intern();
-            from++;
-            Pair<String, Object[]> nextSql = null;
-            if (from < count) nextSql = sqlList.get(from);
-            //如果下个sql和当前相同，继续添加当前批量sql参数
-            if (null != nextSql && nextSql.getLeft().intern() == currentSql) {
-                continue;
-            } else {
-                break;
-            }
-        }
-        if (!currentGroup.isEmpty()) reGroupList.add(new ImmutablePair<>(currentSql, currentGroup));
-        if (from < count) groupSql4Batch(reGroupList, sqlList, from);
-    }
+    public abstract Pair<Boolean, List<DSubmitStatObject>> doLoad(ETLBucket bucket) throws TaskStopTriggerException, InterruptedException;
 
 
-    /**
-     * 生成Load SQL
-     * @param row
-     * @return
-     */
-    protected List<Pair<String, Object[]>> buildSql(ETLRow row) {
-        //build sql
-        List<Pair<String, Object[]>> sqlList = new ArrayList<>();
-
-        //获取自定义字段
-        Map<String, Pair<Object, Object>> sqlKeys = CustomETLRowField.getSqlKeys(row);
-        //数组组建类型
-        Class strArrayComponent = new String[0].getClass().getComponentType();
-
-        Map<String, Object> oldColumns = CustomETLRowField.getOldColumns(row);
-        Map<String, Object> newColumns = CustomETLRowField.getNewColumns(row);
-
-        JDBCClient client = getLoadClient();
-        SqlTemplate template = client.getSqlTemplate();
-
-        //主键名
-        String[] keyNames = sqlKeys.keySet().toArray(new String[]{});
-        //主键新值
-        Object[] keyNewValues = sqlKeys.values().stream().map(p -> p.getRight()).toArray();
-        //主键旧值
-        Object[] keyOldValues = sqlKeys.values().stream().map(p -> p.getLeft()).toArray();
-
-        if (row.getFinalOpType() == MessageAction.DELETE) {
-            //主键删除
-            if (keyNames.length > 0) {
-                sqlList.add(new ImmutablePair<>(template.getDeleteSql(row.getFinalSchema(), row.getFinalTable(), keyNames), keyNewValues));
-            }
-
-            //全字段删除
-            //1.数组条件
-            String[] allColumnNames = addArray(strArrayComponent, keyNames, newColumns.keySet().toArray(new String[0]));
-            //所有字段新值
-            Object[] allNewValues = addArray(keyNewValues, newColumns.values().toArray());
-            //拼接sql
-            sqlList.add(new ImmutablePair<>(template.getDeleteSql(row.getFinalSchema(), row.getFinalTable(), allColumnNames), allNewValues));
-        } else if (row.getFinalOpType() == MessageAction.INSERT) {
-            //1.数组条件
-            String[] allColumnNames = addArray(strArrayComponent, keyNames, newColumns.keySet().toArray(new String[0]));
-            //所有字段新值
-            Object[] allNewValues = addArray(keyNewValues, newColumns.values().toArray());
-            //插入sql
-            sqlList.add(new ImmutablePair<>(template.getInsertSql(row.getFinalSchema(), row.getFinalTable(), allColumnNames), allNewValues));
-        } else if (row.getFinalOpType() == MessageAction.UPDATE) {
-            String[] columnNames = newColumns.keySet().toArray(new String[0]);
-            Object[] columnValues = newColumns.values().toArray();
-            //存在主键，主键值没变，根据主键更新
-            if (!row.isKeyChangedOnUpdate() && keyNames.length > 0 && null != columnNames && columnNames.length > 0) {
-                sqlList.add(new ImmutablePair<>(template.getUpdateSql(row.getFinalSchema(), row.getFinalTable(), keyNames, columnNames),
-                        addArray(columnValues, keyOldValues)));
-            }
-            //全字段更新
-            Object[] oldColumnValues = oldColumns.values().toArray();
-            String[] oldColumnNames = oldColumns.keySet().toArray(new String[0]);
-            sqlList.add(new ImmutablePair<>(template.getUpdateSql(row.getFinalSchema(), row.getFinalTable(),
-                    addArray(strArrayComponent, keyNames, oldColumnNames), addArray(strArrayComponent, keyNames, columnNames)),
-                    addArray(keyNewValues, columnValues, keyOldValues, oldColumnValues)));
-
-            //更新转插入
-            if (isInsertOnUpdateError()) {
-                sqlList.add(new ImmutablePair<>(template.getInsertSql(row.getFinalSchema(), row.getFinalTable(),
-                        addArray(strArrayComponent, keyNames, columnNames)), addArray(keyNewValues, columnValues)));
-            }
-        } else if (row.getFinalOpType() == MessageAction.TRUNCATE) {
-            sqlList.add(new ImmutablePair<>(template.getTruncateSql(row.getFinalSchema(), row.getFinalTable()), new Object[]{}));
-        }
-        return sqlList;
-    }
-
-    private <T> T[] addArray(T[]... array) {
-        return addArray(Object.class, array);
-    }
-
-    private <T> T[] addArray(Class componentType, T[]... array) {
-        List<T> newArray = new ArrayList<>();
-        Arrays.stream(array).forEach(a -> {
-            if (null != a && a.length > 0) {
-                newArray.addAll(Arrays.stream(a).collect(Collectors.toList()));
-            }
-        });
-        return newArray.toArray((T[]) Array.newInstance(componentType, 0));
-    }
     @Override
     public void mouldRow(ETLRow row) throws TaskDataException {
         if (null != row.getColumns()) {
@@ -221,6 +89,7 @@ public abstract class BaseJdbcLoader extends AbstractDataLoader {
         }
     }
 
+
     /**
      * 自定义扩展字段
      */
@@ -246,15 +115,77 @@ public abstract class BaseJdbcLoader extends AbstractDataLoader {
         }
     }
 
-    @Override
-    public Pair<Boolean, List<DSubmitStatObject>> load(ETLBucket bucket) throws TaskStopTriggerException, InterruptedException {
+    /**
+     * 执行sql
+     * @param row
+     * @return
+     */
+    protected int execSql(ETLRow row) throws TaskStopTriggerException, InterruptedException {
+        int affect = 0;
+        int times = 0;
         try {
-            return doLoad(bucket);
+            List<Pair<String, Object[]>> sqlList = sqlBuilder.build(row);
+            MessageAction action = row.getFinalOpType();
+            JDBCClient client = getLoadClient();
+            for (Pair<String, Object[]> sqlOnce : sqlList) {
+                times++;
+                affect = client.update(action.getValue(), sqlOnce.getLeft(), sqlOnce.getRight());
+                if (affect > 0) break;
+            }
         } catch (TaskStopTriggerException e) {
-            if (e.getMessage().contains("interrupt") && e.getMessage().contains("CannotCreateTransactionException")) throw new InterruptedException(e.getMessage());
-            throw e;
+            //单条消息多种策略执行时，如果执行次数多于一次，不抛出异常
+            if (times <= 1) throw e;
         }
+        return affect;
     }
 
-    public abstract Pair<Boolean, List<DSubmitStatObject>> doLoad(ETLBucket bucket) throws TaskStopTriggerException, InterruptedException;
+    /**
+     * 以batch方式执行sql
+     * @param rows
+     * @return
+     */
+    protected int[] execBatchSql(List<ETLRow> rows) throws TaskStopTriggerException, InterruptedException {
+        JDBCClient client = getLoadClient();
+        List<Pair<String, List<Object[]>>> reGroupList = new ArrayList<Pair<String, List<Object[]>>>();
+
+        List<Pair<String, Object[]>> subList = new ArrayList<>();
+        MessageAction action = rows.get(0).getFinalOpType();
+
+        //生成sql
+        for (int i = 0; i < rows.size(); i++) {
+            List<Pair<String, Object[]>> tmpSql = sqlBuilder.build(rows.get(i));
+            subList.add(tmpSql.get(0));
+        }
+
+        orderBatchRow(reGroupList, subList, 0);
+
+        int[] allAffects = new int[]{};
+        for (Pair<String, List<Object[]>> batch : reGroupList) {
+            int[] subResult = client.batchUpdate(action.getValue(), batch.getLeft(), batch.getRight());
+            allAffects = ArrayUtils.addAll(allAffects, subResult);
+        }
+        return allAffects;
+    }
+
+    private void orderBatchRow(List<Pair<String, List<Object[]>>> reGroupList, List<Pair<String, Object[]>> sqlList, int from) {
+        List<Object[]> currentGroup = new ArrayList<>();
+        String currentSql = null;
+        int count = sqlList.size();
+        while (from < count) {
+            Pair<String, Object[]> sql = sqlList.get(from);
+            currentGroup.add(sql.getRight());
+            currentSql = sql.getLeft().intern();
+            from++;
+            Pair<String, Object[]> nextSql = null;
+            if (from < count) nextSql = sqlList.get(from);
+            //如果下个sql和当前相同，继续添加当前批量sql参数
+            if (null != nextSql && nextSql.getLeft().intern() == currentSql) {
+                continue;
+            } else {
+                break;
+            }
+        }
+        if (!currentGroup.isEmpty()) reGroupList.add(new ImmutablePair<>(currentSql, currentGroup));
+        if (from < count) orderBatchRow(reGroupList, sqlList, from);
+    }
 }

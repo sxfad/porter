@@ -25,8 +25,11 @@ import lombok.Getter;
  * @review: zkevin/2019年03月19日 11:22
  */
 public enum JdbcLoaderConst {
-    LOADER_SOURCE_TYPE_NAME("JDBC"), LOADER_PLUGIN_JDBC_SINGLE("JdbcSingle"), LOADER_PLUGIN_JDBC_SQL_PRINT(
-            "JDBC_SQL_PRINT"), LOADER_PLUGIN_JDBC_BATCH("JdbcBatch");
+    LOADER_SOURCE_TYPE_NAME("JDBC"),
+    LOADER_PLUGIN_JDBC_SINGLE("JdbcSingle"),
+    LOADER_PLUGIN_JDBC_SQL_DEBUG("JdbcSqlDebug"),
+    LOADER_PLUGIN_JDBC_BATCH("JdbcBatch"),
+    LOADER_PLUGIN_JDBC_MULTI_THREAD("JdbcMultiThread");
     @Getter
     private String code;
 

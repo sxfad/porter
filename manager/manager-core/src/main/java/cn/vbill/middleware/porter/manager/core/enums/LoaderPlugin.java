@@ -54,7 +54,7 @@ public enum LoaderPlugin {
     /**
      * SQL打印测试
      */
-    JDBC_SQL_PRINT("JDBC_SQL_PRINT", "SQL打印测试"),
+    JDBC_SQL_DEBUG("JdbcSqlDebug", "SQL打印测试"),
 
     /**
      * kafka同步
@@ -64,7 +64,12 @@ public enum LoaderPlugin {
     /**
      * kafka异步
      */
-    KAFKA_ASYNC("KAFKA_ASYNC", "kafka异步");
+    KAFKA_ASYNC("KAFKA_ASYNC", "kafka异步"),
+
+    /**
+     * jdbc多线程
+     */
+    JDBC_MULTI_THREAD("JdbcMultiThread", "jdbc多线程");
 
     /**
      * LINKMAP
@@ -75,9 +80,10 @@ public enum LoaderPlugin {
         LINKMAP.put("JDBC_BATCH", JDBC_BATCH.name);
         LINKMAP.put("JDBC_SINGLE", JDBC_SINGLE.name);
         LINKMAP.put(JDBC_SINGLE.code, KUDU_NATIVE.name);
-        LINKMAP.put(JDBC_SQL_PRINT.code, JDBC_SQL_PRINT.name);
+        LINKMAP.put(JDBC_SQL_DEBUG.code, JDBC_SQL_DEBUG.name);
         LINKMAP.put(KAFKA_SYNC.code, KAFKA_SYNC.name);
         LINKMAP.put(KAFKA_ASYNC.code, KAFKA_ASYNC.name);
+        LINKMAP.put(JDBC_MULTI_THREAD.code, JDBC_MULTI_THREAD.name);
     }
 
     @Getter

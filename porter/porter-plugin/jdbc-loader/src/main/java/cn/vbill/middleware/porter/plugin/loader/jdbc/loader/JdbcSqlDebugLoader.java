@@ -38,13 +38,13 @@ import java.util.List;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月04日 11:38
  */
-public class JdbcPrintSqlLoader extends BaseJdbcLoader {
+public class JdbcSqlDebugLoader extends BaseJdbcLoader {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JdbcPrintSqlLoader.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JdbcSqlDebugLoader.class);
 
     @Override
     protected String getPluginName() {
-        return JdbcLoaderConst.LOADER_PLUGIN_JDBC_SQL_PRINT.getCode();
+        return JdbcLoaderConst.LOADER_PLUGIN_JDBC_SQL_DEBUG.getCode();
     }
 
     @Override
@@ -54,7 +54,7 @@ public class JdbcPrintSqlLoader extends BaseJdbcLoader {
         for (ETLRow row : bucket.getRows()) {
             LOGGER.info(JSONObject.toJSONString(row));
             //更新目标仓储
-            List<Pair<String, Object[]>> sqlList = buildSql(row);
+            List<Pair<String, Object[]>> sqlList = sqlBuilder.build(row);
             sqlList.forEach(p -> {
                 LOGGER.info("sql:{}-{}", p.getLeft(), StringUtils.join(p.getRight(), ","));
             });

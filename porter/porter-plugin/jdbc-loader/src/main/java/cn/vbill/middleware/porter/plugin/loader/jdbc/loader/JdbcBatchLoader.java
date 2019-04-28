@@ -37,7 +37,6 @@ import java.util.List;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月04日 11:38
  */
 public class JdbcBatchLoader extends BaseJdbcLoader {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(JdbcBatchLoader.class);
 
     @Override
@@ -49,28 +48,18 @@ public class JdbcBatchLoader extends BaseJdbcLoader {
     public Pair<Boolean, List<DSubmitStatObject>> doLoad(ETLBucket bucket) throws TaskStopTriggerException, InterruptedException {
         LOGGER.info("start loading bucket:{},size:{}", bucket.getSequence(), bucket.getRows().size());
         List<DSubmitStatObject> affectRow = new ArrayList<>();
-        for (List<ETLRow> rows : bucket.getBatchRows()) {
+        for (List<ETLRow> rows : bucket.getParallelRows()) {
             if (rows.size() == 1) {
                 ETLRow row = rows.get(0);
                 //更新目标仓储
-                int affect = loadSql(buildSql(row), row.getFinalOpType());
+                int affect = execSql(row);
 
                 //插入影响行数
                 affectRow.add(new DSubmitStatObject(row.getFinalSchema(), row.getFinalTable(), row.getFinalOpType(),
                         affect, row.getPosition(), row.getOpTime()));
             } else if (rows.size() > 1) { //仅支持单条记录生成一个sql的情况
-                List<Pair<String, Object[]>> subList = new ArrayList<>();
-
-                //生成sql
-                for (int i = 0; i < rows.size(); i++) {
-                    List<Pair<String, Object[]>> tmpSql = buildSql(rows.get(i));
-                    subList.add(tmpSql.get(0));
-                }
-
                 //执行sql
-                int[] results = batchLoadSql(subList, rows.get(0).getFinalOpType());
-
-
+                int[] results = execBatchSql(rows);
                 //处理状态变更
                 for (int rindex = 0; rindex < rows.size(); rindex++) {
                     int affect = rindex < results.length ? results[rindex] : 0;
@@ -84,5 +73,43 @@ public class JdbcBatchLoader extends BaseJdbcLoader {
             printTimeTaken(bucket.getRows().get(0));
         }
         return new ImmutablePair(Boolean.TRUE, affectRow);
+    }
+
+    @Override
+    public void sort(ETLBucket bucket) {
+        sortETLRows(bucket, 0);
+    }
+
+    /**
+     * sortETLRows
+     * @date 2018/8/9 下午2:11
+     * @param: [bucket, from]
+     * @return: void
+     */
+    private void sortETLRows(ETLBucket bucket, int from) {
+        List<ETLRow> groupOne = new ArrayList<>();
+        int size = bucket.getRows().size();
+        while (from < size) {
+            ETLRow row = bucket.getRows().get(from);
+            groupOne.add(row);
+            from++;
+            ETLRow nextRow = null;
+            if (from < size) {
+                nextRow = bucket.getRows().get(from);
+            }
+            //下个操作类型和该类型相同
+            if (null != nextRow && nextRow.getFinalOpType() == row.getFinalOpType() && nextRow.getFinalSchema().equals(row.getFinalSchema())
+                    && nextRow.getFinalTable().equals(row.getFinalTable())) {
+                continue;
+            } else {
+                break;
+            }
+        }
+        if (!groupOne.isEmpty()) {
+            bucket.getParallelRows().add(groupOne);
+        }
+        if (from < size) {
+            sortETLRows(bucket, from);
+        }
     }
 }

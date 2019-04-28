@@ -27,7 +27,8 @@ task moveOutFromJar(type: Copy) {
     }
 }
 
-processResources.dependsOn moveOutFromJar,yarn_run
+//processResources.dependsOn moveOutFromJar,yarn_run
+processResources.dependsOn moveOutFromJar
 
 
 jar {

@@ -48,6 +48,7 @@ public abstract class AbstractDataLoader implements DataLoader {
     private volatile boolean insertOnUpdateError = true;
     private final Map<List<String>, TableSchema> tables = new ConcurrentHashMap<>();
 
+
     /**
      * 获取PluginName
      *

@@ -7,7 +7,7 @@ com.suixingpay.datas.node.task.load.loader.Loader = \
   com.suixingpay.datas.node.task.load.loader.SQLBatchLoader
 
 cn.vbill.middleware.porter.task.transform.transformer.Transformer = \
-  cn.vbill.middleware.porter.task.transform.transformer.BatchPrePareTransformer,\
+  cn.vbill.middleware.porter.task.transform.transformer.ParallelSortTransformer,\
   cn.vbill.middleware.porter.task.transform.transformer.ETLRowTransformer
 
 cn.vbill.middleware.porter.task.alert.alerter.Alerter = \

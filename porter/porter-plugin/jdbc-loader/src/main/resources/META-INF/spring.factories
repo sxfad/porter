@@ -1,7 +1,8 @@
 cn.vbill.middleware.porter.core.task.loader.DataLoader=\
   cn.vbill.middleware.porter.plugin.loader.jdbc.loader.JdbcBatchLoader,\
   cn.vbill.middleware.porter.plugin.loader.jdbc.loader.JdbcSingleLoader,\
-  cn.vbill.middleware.porter.plugin.loader.jdbc.loader.JdbcPrintSqlLoader
+  cn.vbill.middleware.porter.plugin.loader.jdbc.loader.JdbcPrintSqlLoader,\
+  cn.vbill.middleware.porter.plugin.loader.jdbc.loader.JdbcMultiThreadLoader
 
 cn.vbill.middleware.porter.common.plugin.PluginServiceClient=\
   cn.vbill.middleware.porter.plugin.loader.jdbc.client.JDBCClient

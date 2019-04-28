@@ -18,6 +18,7 @@
 package cn.vbill.middleware.porter.plugin.loader.kudu.client;
 
 import cn.vbill.middleware.porter.common.client.AbstractClient;
+import cn.vbill.middleware.porter.common.task.exception.TaskStopTriggerException;
 import cn.vbill.middleware.porter.common.task.loader.LoadClient;
 import cn.vbill.middleware.porter.common.task.consumer.MetaQueryClient;
 import cn.vbill.middleware.porter.common.plugin.PluginServiceClient;
@@ -113,7 +114,7 @@ public class KUDUClient extends AbstractClient<KuduConfig> implements PluginServ
      * @return
      * @throws KuduException
      */
-    public int[] insert(String schemaName, String table, List<List<Triple<String, Integer, String>>> rows) throws KuduException {
+    public int[] insert(String schemaName, String table, List<List<Triple<String, Integer, String>>> rows) throws TaskStopTriggerException {
         return operation(schemaName, table, rows, OperationType.INSERT);
     }
 
@@ -126,7 +127,7 @@ public class KUDUClient extends AbstractClient<KuduConfig> implements PluginServ
      * @return
      * @throws KuduException
      */
-    public int[] delete(String schemaName, String table, List<List<Triple<String, Integer, String>>> rows) throws KuduException {
+    public int[] delete(String schemaName, String table, List<List<Triple<String, Integer, String>>> rows) throws TaskStopTriggerException {
         return operation(schemaName, table, rows, OperationType.DELETE);
     }
 
@@ -139,7 +140,7 @@ public class KUDUClient extends AbstractClient<KuduConfig> implements PluginServ
      * @return
      * @throws KuduException
      */
-    public int[] update(String schemaName, String table, List<List<Triple<String, Integer, String>>> rows) throws KuduException {
+    public int[] update(String schemaName, String table, List<List<Triple<String, Integer, String>>> rows) throws TaskStopTriggerException {
         return operation(schemaName, table, rows, OperationType.UPDATE);
     }
 
@@ -151,7 +152,7 @@ public class KUDUClient extends AbstractClient<KuduConfig> implements PluginServ
      * @return
      * @throws KuduException
      */
-    public int[] truncate(String schemaName, String finalTableName) throws KuduException {
+    public int[] truncate(String schemaName, String finalTableName) throws TaskStopTriggerException {
         KuduSession session = client.newSession();
         try {
             Schema schema = client.openTable(getTableName(schemaName, finalTableName)).getSchema();
@@ -167,9 +168,14 @@ public class KUDUClient extends AbstractClient<KuduConfig> implements PluginServ
 
             //重新建表
             client.createTable(finalTableName, schema, new CreateTableOptions().setRangePartitionColumns(list));
+        } catch (KuduException e) {
+            throw new TaskStopTriggerException(e);
         } finally {
             if (null != session) {
-                session.close();
+                try {
+                    session.close();
+                } catch (KuduException e) {
+                }
             }
         }
         return new int[]{1};
@@ -185,7 +191,7 @@ public class KUDUClient extends AbstractClient<KuduConfig> implements PluginServ
      * @return
      * @throws KuduException
      */
-    public int[] operation(String schema, String table, List<List<Triple<String, Integer, String>>> rows, OperationType type) throws KuduException {
+    public int[] operation(String schema, String table, List<List<Triple<String, Integer, String>>> rows, OperationType type) throws TaskStopTriggerException {
         int[] result = new int[rows.size()];
         KuduSession session = client.newSession();
         //同步刷新
@@ -215,9 +221,14 @@ public class KUDUClient extends AbstractClient<KuduConfig> implements PluginServ
                 result[i] = response.hasRowError() ? 0 : 1;
             }
             session.flush();
+        } catch (KuduException e) {
+            throw new TaskStopTriggerException(e);
         } finally {
             if (null != session) {
-                session.close();
+                try {
+                    session.close();
+                } catch (KuduException e) {
+                }
             }
         }
         return result;

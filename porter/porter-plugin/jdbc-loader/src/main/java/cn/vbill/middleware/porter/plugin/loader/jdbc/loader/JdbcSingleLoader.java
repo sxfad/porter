@@ -51,7 +51,7 @@ public class JdbcSingleLoader extends BaseJdbcLoader {
         List<DSubmitStatObject> affectRow = new ArrayList<>();
         for (ETLRow row : bucket.getRows()) {
             //更新目标仓储
-            int affect = loadSql(buildSql(row), row.getFinalOpType());
+            int affect = execSql(row);
             //插入影响行数
             affectRow.add(new DSubmitStatObject(row.getFinalSchema(), row.getFinalTable(), row.getFinalOpType(),
                     affect, row.getPosition(), row.getOpTime()));

@@ -50,7 +50,7 @@ public class ETLBucket {
     /**
      * 拆分为批次处理的行
      */
-    private final List<List<ETLRow>> batchRows;
+    private final List<List<ETLRow>> parallelRows;
 
     /**
      * 在SETL过程中的异常,如果有值，意味着改批次的数据就要回滚
@@ -62,7 +62,7 @@ public class ETLBucket {
     public ETLBucket(String sequence, List<ETLRow> rows, Position position) {
         this.sequence = sequence;
         this.rows = rows;
-        this.batchRows = new ArrayList<>();
+        this.parallelRows = new ArrayList<>();
         this.position = position;
     }
 
@@ -157,8 +157,8 @@ public class ETLBucket {
         return new ETLBucket(events.getKey(), rows, position);
     }
 
-    public List<List<ETLRow>> getBatchRows() {
-        return batchRows;
+    public List<List<ETLRow>> getParallelRows() {
+        return parallelRows;
     }
 
     public Throwable getException() {
@@ -195,7 +195,7 @@ public class ETLBucket {
                 r.getAdditionalRequired().clear();
             });
             rows.clear();
-            batchRows.clear();
+            parallelRows.clear();
         } catch (Throwable e) {
             LOGGER.warn("标记批次数据不可用出错", e);
         }
