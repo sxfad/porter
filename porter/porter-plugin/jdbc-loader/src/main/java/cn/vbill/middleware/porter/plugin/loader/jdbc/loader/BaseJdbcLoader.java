@@ -44,7 +44,7 @@ public abstract class BaseJdbcLoader extends AbstractDataLoader {
     protected SqlBuilder sqlBuilder;
 
     public BaseJdbcLoader() {
-        sqlBuilder = new SqlBuilder(((JDBCClient) getLoadClient()).getSqlTemplate(), isInsertOnUpdateError());
+        if (null != getLoadClient()) sqlBuilder = new SqlBuilder(((JDBCClient) getLoadClient()).getSqlTemplate(), isInsertOnUpdateError());
     }
 
     @Override

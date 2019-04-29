@@ -18,6 +18,7 @@
 package cn.vbill.middleware.porter.plugin.loader.jdbc.loader;
 
 import cn.vbill.middleware.porter.common.task.exception.TaskStopTriggerException;
+import cn.vbill.middleware.porter.core.message.MessageAction;
 import cn.vbill.middleware.porter.core.task.setl.ETLBucket;
 import cn.vbill.middleware.porter.core.task.setl.ETLColumn;
 import cn.vbill.middleware.porter.core.task.setl.ETLRow;
@@ -54,7 +55,7 @@ public class JdbcMultiThreadLoader extends BaseJdbcLoader {
         List<ForkJoinTask<List<DSubmitStatObject>>> futures = new ArrayList<>(bucket.getParallelRows().size());
         bucket.getParallelRows().stream().forEach(rows -> {
             futures.add(pool.submit(() -> {
-                int result[] = execBatchSql(rows);
+                int[] result = execBatchSql(rows);
                 List<DSubmitStatObject> subResult = new ArrayList<>();
                 for (int i = 0; i < rows.size(); i++) {
                     ETLRow row = rows.get(i);
@@ -82,7 +83,11 @@ public class JdbcMultiThreadLoader extends BaseJdbcLoader {
         //表并行
         Map<List<String>, List<ETLRow>> tables = new HashMap<>();
         bucket.getRows().stream().forEach(row -> {
-            tables.getOrDefault(Arrays.asList(row.getFinalSchema(), row.getFinalTable()), new ArrayList<>()).add(row);
+            tables.compute(Arrays.asList(row.getFinalSchema(), row.getFinalTable()), (k, v) -> {
+                if (null == v) v = new ArrayList<>();
+                v.add(row);
+                return v;
+            });
         });
 
         //表内数据并行
@@ -94,24 +99,38 @@ public class JdbcMultiThreadLoader extends BaseJdbcLoader {
 
     private void groupRows(ETLBucket bucket, List<ETLRow> rows) {
         int rowSize = rows.size();
-        int span = rowSize/2 == 0 ? rowSize / 2 : rowSize / 2 + 1;
+        int span = rowSize % 2 == 0 ? rowSize / 2 : rowSize / 2 + 1;
         for (int i = 0; i < rowSize; i += span) {
             int endIndex = (span + i) > rowSize ? rowSize : span + i;
-            List<ETLRow> subRow = rows.subList(i, endIndex);
-            List<String> keys = subRow.stream().flatMap(r -> rowKeyList(r).stream()).collect(Collectors.toList());
-            if (subRow.stream().filter(r -> rowKeyList(r).stream().filter(k -> keys.contains(k)).count() > 0).count() > 0) {
-                groupRows(bucket, subRow);
+            List<ETLRow> currentRow = rows.subList(i, endIndex);
+            if (i == 0) {
+                List<ETLRow> nextRow = rows.subList(endIndex, rowSize);
+                List<String> nextKeys = nextRow.stream().flatMap(r -> rowKeyList(r).stream()).distinct().collect(Collectors.toList());
+                if (currentRow.stream().filter(r -> rowKeyList(r).stream().filter(k -> nextKeys.contains(k)).count() > 0).count() > 0) {
+                    bucket.getParallelRows().add(rows);
+                    break;
+                }
+            }
+
+            if (currentRow.size() < 2 || currentRow.stream().filter(r -> rowKeyList(r).stream().filter(k ->
+                    currentRow.stream().filter(z -> z != r).flatMap(z -> rowKeyList(z).stream()).distinct()
+                            .collect(Collectors.toList()).contains(k)
+            ).count() > 0).count() > 0) {
+                bucket.getParallelRows().add(currentRow);
             } else {
-                bucket.getParallelRows().add(subRow);
+                groupRows(bucket, currentRow);
             }
         }
     }
 
     private List<String> rowKeyList(ETLRow row) {
-        return Arrays.asList(
-                row.getColumns().stream().filter(c -> c.isKey()).sorted(Comparator.comparing(ETLColumn::getFinalName)).
-                        map(c-> c.getFinalName() + "_" + c.getFinalOldValue()).reduce((p, n) -> p + "@" + n).get(),
-                row.getColumns().stream().filter(c -> c.isKey()).sorted(Comparator.comparing(ETLColumn::getFinalName)).
-                        map(c-> c.getFinalName() + "_" + c.getFinalValue()).reduce((p, n) -> p + "@" + n).get());
+        List<String> keys = new ArrayList<>(2);
+        keys.add(row.getColumns().stream().filter(c -> c.isKey()).sorted(Comparator.comparing(ETLColumn::getFinalName)).
+                map(c -> c.getFinalName() + "_" + (null != c.getFinalValue() ? c.getFinalValue() : "")).reduce((p, n) -> p + "@" + n).get());
+        if (row.getFinalOpType() != MessageAction.INSERT) {
+            keys.add(row.getColumns().stream().filter(c -> c.isKey()).sorted(Comparator.comparing(ETLColumn::getFinalName)).
+                    map(c -> c.getFinalName() + "_" + (null != c.getFinalOldValue() ? c.getFinalOldValue() : "")).reduce((p, n) -> p + "@" + n).get());
+        }
+        return keys;
     }
 }

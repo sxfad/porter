@@ -18,6 +18,7 @@ package cn.vbill.middleware.porter.plugin.loader.jdbc.loader;
 
 import cn.vbill.middleware.porter.core.message.MessageAction;
 import cn.vbill.middleware.porter.core.task.setl.ETLBucket;
+import cn.vbill.middleware.porter.core.task.setl.ETLColumn;
 import cn.vbill.middleware.porter.core.task.setl.ETLRow;
 import org.junit.Assert;
 import org.junit.Test;
@@ -25,7 +26,9 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.LongStream;
 
 /**
  * jdbc多线程并发Load
@@ -40,22 +43,46 @@ public class JdbcMultiThreadLoaderTest {
     @Test
     public void sort() {
         List<ETLRow> rows = new ArrayList<>();
-        rows.add(new ETLRow(0, 0, "s", "t", MessageAction.DELETE, null, null, null));
-        rows.add(new ETLRow(0, 0, "s", "t", MessageAction.DELETE, null, null, null));
-        rows.add(new ETLRow(0, 0, "s", "t", MessageAction.INSERT, null, null, null));
-        rows.add(new ETLRow(0, 0, "s", "t", MessageAction.DELETE, null, null, null));
-        rows.add(new ETLRow(0, 0, "s", "t", MessageAction.INSERT, null, null, null));
-        rows.add(new ETLRow(0, 0, "s", "t", MessageAction.INSERT, null, null, null));
-        rows.add(new ETLRow(0, 0, "s", "t", MessageAction.INSERT, null, null, null));
-        rows.add(new ETLRow(0, 0, "s", "t", MessageAction.TRUNCATE, null, null, null));
-        rows.add(new ETLRow(0, 0, "s", "t", MessageAction.TRUNCATE, null, null, null));
-        rows.add(new ETLRow(0, 0, "s", "t", MessageAction.UPDATE, null, null, null));
-        rows.add(new ETLRow(0, 0, "s", "t", MessageAction.TRUNCATE, null, null, null));
-        rows.add(new ETLRow(0, 0, "s", "t", MessageAction.INSERT, null, null, null));
-        rows.add(new ETLRow(0, 0, "s", "t", MessageAction.INSERT, null, null, null));
+        rows.add(new ETLRow(0, 0, "s", "t", MessageAction.INSERT,
+                Arrays.asList(new ETLColumn("id", "1", "", "1", true),
+                        new ETLColumn("name", "zkevin", "", "zkevin", true)
+                ), null, null));
+        rows.add(new ETLRow(0, 0, "s", "t", MessageAction.UPDATE,
+                Arrays.asList(new ETLColumn("id", "1", "1", "1", true),
+                        new ETLColumn("name", "zkevin00", "zkevin", "zkevin00", true)), null, null));
+
+        rows.add(new ETLRow(0, 0, "s", "t", MessageAction.INSERT,
+                Arrays.asList(new ETLColumn("id", "2", "", "2", true),
+                        new ETLColumn("name", "zkevin1", "", "zkevin1", true)
+                ), null, null));
+
+        rows.add(new ETLRow(0, 0, "s", "t", MessageAction.UPDATE,
+                Arrays.asList(new ETLColumn("id", "2", "2", "2", true),
+                        new ETLColumn("name", "zkevin11", "zkevin1", "zkevin11", true)
+                ), null, null));
+
+        rows.add(new ETLRow(0, 0, "s", "t", MessageAction.INSERT,
+                Arrays.asList(new ETLColumn("id", "3", "", "3", true),
+                        new ETLColumn("name", "zkevin", "", "zkevin", true)
+                ), null, null));
+        rows.add(new ETLRow(0, 0, "s", "t", MessageAction.INSERT,
+                Arrays.asList(new ETLColumn("id", "4", "", "4", true),
+                        new ETLColumn("name", "zkevin", "", "zkevin", true)
+                ), null, null));
+
+
+        rows.add(new ETLRow(0, 0, "s", "t", MessageAction.INSERT,
+                Arrays.asList(new ETLColumn("id", "5", "", "5", true),
+                        new ETLColumn("name", "zkevin", "", "zkevin", true)
+                ), null, null));
+        rows.add(new ETLRow(0, 0, "s", "t", MessageAction.INSERT,
+                Arrays.asList(new ETLColumn("id", "6", "", "6", true),
+                        new ETLColumn("name", "zkevin", "", "zkevin", true)
+                ), null, null));
 
         ETLBucket bucket = new ETLBucket("0", rows, null);
         new JdbcMultiThreadLoader().sort(bucket);
-        Assert.assertEquals(bucket.getParallelRows().stream().mapToLong(r -> r.size()).sum(), rows.size());
+        System.out.println(bucket.getParallelRows().size() + "---------");
+        Assert.assertEquals(bucket.getParallelRows().stream().flatMapToLong(r -> LongStream.of(r.size())).sum(), rows.size());
     }
 }
