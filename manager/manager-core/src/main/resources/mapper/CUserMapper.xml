@@ -267,7 +267,7 @@
 
     <!-- 注册用户列表 -->
     <select id="findRegister" resultType="cn.vbill.middleware.porter.manager.core.entity.CUser">
-        select id, nickname, role_code AS roleCode from c_user
+        select id, nickname, role_code AS roleCode, depart_ment AS departMent from c_user
         where  state = 1 and role_code = 'A9999'
     </select>
 
