@@ -17,6 +17,7 @@
 package cn.vbill.middleware.porter.manager.cluster.kafka;
 
 import cn.vbill.middleware.porter.common.statistics.StatisticData;
+import cn.vbill.middleware.porter.common.task.statistics.DTaskPerformance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,6 @@ import org.springframework.stereotype.Component;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.vbill.middleware.porter.common.node.statistics.NodeLog;
-import cn.vbill.middleware.porter.common.task.statistics.TaskPerformance;
 import cn.vbill.middleware.porter.manager.service.MrJobTasksMonitorService;
 import cn.vbill.middleware.porter.manager.service.MrLogMonitorService;
 import cn.vbill.middleware.porter.manager.service.MrNodesMonitorService;
@@ -55,14 +55,14 @@ public class TaskPerKafkaListener {
             LOGGER.error("Listener-StatisticData-null.....[{}]", content);
             return;
         }
-        if (TaskPerformance.NAME.equalsIgnoreCase(statisticData.getCategory())) {
+        if (DTaskPerformance.NAME.equalsIgnoreCase(statisticData.getCategory())) {
             try {
-                LOGGER.info("Listener-TaskPerformance....." + content);
-                TaskPerformance taskPerformance = JSONObject.parseObject(content, TaskPerformance.class);
+                LOGGER.info("Listener-DTaskPerformance....." + content);
+                DTaskPerformance taskPerformance = JSONObject.parseObject(content, DTaskPerformance.class);
                 mrJobTasksMonitorService.dealTaskPerformance(taskPerformance);
                 mrNodesMonitorService.dealTaskPerformance(taskPerformance);
             } catch (Exception e) {
-                LOGGER.error("Listener-TaskPerformance-Error....出错,请追寻...", e);
+                LOGGER.error("Listener-DTaskPerformance-Error....出错,请追寻...", e);
             }
         } else if (NodeLog.NAME.equalsIgnoreCase(statisticData.getCategory())) {
             try {

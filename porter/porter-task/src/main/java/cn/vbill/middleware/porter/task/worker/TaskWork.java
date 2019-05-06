@@ -33,7 +33,7 @@ import cn.vbill.middleware.porter.common.task.statistics.DTaskStat;
 import cn.vbill.middleware.porter.common.task.exception.TaskStopTriggerException;
 import cn.vbill.middleware.porter.common.task.exception.WorkResourceAcquireException;
 import cn.vbill.middleware.porter.common.node.statistics.NodeLog;
-import cn.vbill.middleware.porter.common.task.statistics.TaskPerformance;
+import cn.vbill.middleware.porter.common.task.statistics.DTaskPerformance;
 import cn.vbill.middleware.porter.core.NodeContext;
 import cn.vbill.middleware.porter.core.task.TaskContext;
 import cn.vbill.middleware.porter.core.task.consumer.DataConsumer;
@@ -298,9 +298,9 @@ public class TaskWork extends Thread {
 
             //上传统计
             try {
-                //TaskPerformance
+                //DTaskPerformance
                 if (NodeContext.INSTANCE.isUploadStatistic()) {
-                    ClusterProviderProxy.INSTANCE.broadcastEvent(new StatisticUploadCommand(new TaskPerformance(newStat)));
+                    ClusterProviderProxy.INSTANCE.broadcastEvent(new StatisticUploadCommand(new DTaskPerformance(newStat)));
                 }
             } catch (Throwable e) {
                 TaskContext.warning(NodeLog.upload(NodeLog.LogType.INFO, taskId, dataConsumer.getSwimlaneId(), "上传任务统计信息失败:" + e.getMessage()));

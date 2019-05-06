@@ -18,8 +18,6 @@
 package cn.vbill.middleware.porter.manager.config;
 
 import cn.vbill.middleware.porter.common.cluster.config.ClusterConfig;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 
@@ -32,7 +30,48 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "manager")
 @Component
 public class ManagerConfig {
-    @Setter
-    @Getter
     private ClusterConfig cluster;
+
+    /***允许默认定时GC***/
+    private boolean gc = false;
+    private Integer gcDelayOfMinutes = 30;
+    /***允许默认定时GC***/
+
+
+    /***允许任务出错重试***/
+    private boolean taskRestart = true;
+    /***允许任务出错重试***/
+
+
+    public ClusterConfig getCluster() {
+        return cluster;
+    }
+
+    public void setCluster(ClusterConfig cluster) {
+        this.cluster = cluster;
+    }
+
+    public boolean isGc() {
+        return gc;
+    }
+
+    public void setGc(boolean gc) {
+        this.gc = gc;
+    }
+
+    public Integer getGcDelayOfMinutes() {
+        return gcDelayOfMinutes;
+    }
+
+    public void setGcDelayOfMinutes(Integer gcDelayOfMinutes) {
+        this.gcDelayOfMinutes = gcDelayOfMinutes;
+    }
+
+    public boolean isTaskRestart() {
+        return taskRestart;
+    }
+
+    public void setTaskRestart(boolean taskRestart) {
+        this.taskRestart = taskRestart;
+    }
 }

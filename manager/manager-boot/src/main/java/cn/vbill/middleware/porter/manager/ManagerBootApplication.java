@@ -19,6 +19,8 @@ package cn.vbill.middleware.porter.manager;
 
 import cn.vbill.middleware.porter.manager.config.ManagerConfig;
 import cn.vbill.middleware.porter.common.cluster.ClusterProviderProxy;
+import cn.vbill.middleware.porter.manager.helper.ErrorTaskRestartHelper;
+import cn.vbill.middleware.porter.manager.helper.GCHelper;
 import org.mybatis.spring.annotation.MapperScan;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,11 +52,10 @@ public class ManagerBootApplication {
      * @param args
      * @throws Exception
      */
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         SpringApplication app = new SpringApplication(ManagerBootApplication.class);
         app.setBannerMode(Banner.Mode.OFF);
         ConfigurableApplicationContext context = app.run(args);
-        LOGGER.info("ManagerApplication is success!");
         // 注入spring工具类
         ManagerContext.INSTANCE.setApplicationContext(context);
         // 获取配置
@@ -66,5 +67,14 @@ public class ManagerBootApplication {
             LOGGER.error("集群模块初始化失败, 数据同步管理后台退出!error:" + e.getMessage());
             throw new RuntimeException("集群模块初始化失败, 数据同步管理后台退出!error:" + e.getMessage());
         }
+        if (config.isGc()) {
+            GCHelper.run(config.getGcDelayOfMinutes());
+        }
+
+        if (config.isTaskRestart()) {
+            ErrorTaskRestartHelper.run();
+        }
+
+        LOGGER.info("ManagerApplication is success!");
     }
 }

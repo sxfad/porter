@@ -17,9 +17,9 @@
 
 package cn.vbill.middleware.porter.manager.service;
 
+import cn.vbill.middleware.porter.common.task.statistics.DTaskPerformance;
 import cn.vbill.middleware.porter.manager.core.entity.MrJobTasksMonitor;
 import cn.vbill.middleware.porter.manager.core.icon.MrJobMonitor;
-import cn.vbill.middleware.porter.common.task.statistics.TaskPerformance;
 import cn.vbill.middleware.porter.manager.web.page.Page;
 
 /**
@@ -78,7 +78,7 @@ public interface MrJobTasksMonitorService {
     Page<MrJobTasksMonitor> page(Page<MrJobTasksMonitor> page);
 
     /** 解析任务每秒统计信息. */
-    void dealTaskPerformance(TaskPerformance performance);
+    void dealTaskPerformance(DTaskPerformance performance);
 
     /** 获取实时监控数据 . */
     MrJobMonitor obMrJobMonitor(String jobId, String swimlaneId, String schemaTable, Long intervalTime, Long intervalCount);

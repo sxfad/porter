@@ -91,9 +91,23 @@ public class TaskConfig {
 
 
     /**
-     * 是否本地任务文件
+     * 是否单例模式下本地任务文件
      */
     @Getter
     @Setter
     private boolean localTask = false;
+
+    /**
+     * 是否允许任务出错重启
+     */
+    @Getter
+    @Setter
+    private int  restartRetries = 20;
+
+    /**
+     * 每次重启失败递增延时
+     */
+    @Getter
+    @Setter
+    private int restartIncreaseBySecond = 60 * 5;
 }

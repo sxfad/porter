@@ -17,7 +17,7 @@
 
 package cn.vbill.middleware.porter.manager.service;
 
-import cn.vbill.middleware.porter.common.task.statistics.TaskPerformance;
+import cn.vbill.middleware.porter.common.task.statistics.DTaskPerformance;
 import cn.vbill.middleware.porter.manager.core.entity.MrNodesMonitor;
 import cn.vbill.middleware.porter.manager.core.icon.MrNodeMonitor;
 import cn.vbill.middleware.porter.manager.web.page.Page;
@@ -80,7 +80,7 @@ public interface MrNodesMonitorService {
     /**
      * 节点区间数据统计.
      */
-    void dealTaskPerformance(TaskPerformance performance);
+    void dealTaskPerformance(DTaskPerformance performance);
 
     /**
      * obNodeMonitor

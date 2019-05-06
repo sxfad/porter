@@ -48,7 +48,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * 任务信息监听,一期配置文件配置
+ * 任务信息监听
  *
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2017年12月15日 10:09

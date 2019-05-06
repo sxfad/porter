@@ -90,11 +90,9 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
         try {
             children = zk.getChildren(path, true);
         } catch (InterruptedException e) {
-            e.printStackTrace();
             children = new ArrayList<>();
         } catch (KeeperException e) {
             children = new ArrayList<>();
-            LOGGER.error("%s", e);
         }
         return children;
     }

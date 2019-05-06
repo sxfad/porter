@@ -20,7 +20,7 @@ package cn.vbill.middleware.porter.manager.core.entity;
 import java.util.Calendar;
 import java.util.Date;
 
-import cn.vbill.middleware.porter.common.task.statistics.TaskPerformance;
+import cn.vbill.middleware.porter.common.task.statistics.DTaskPerformance;
 import cn.vbill.middleware.porter.manager.core.init.ResourceUtils;
 
 /**
@@ -39,7 +39,7 @@ public class MrJobTasksMonitor implements java.io.Serializable {
 
     }
 
-    public MrJobTasksMonitor(TaskPerformance performance) {
+    public MrJobTasksMonitor(DTaskPerformance performance) {
         // 任务id
         this.jobId = performance.getTaskId();
         // 节点id

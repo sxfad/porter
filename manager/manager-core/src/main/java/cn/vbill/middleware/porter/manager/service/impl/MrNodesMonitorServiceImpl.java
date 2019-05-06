@@ -30,7 +30,7 @@ import cn.vbill.middleware.porter.manager.service.MrNodesMonitorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import cn.vbill.middleware.porter.common.task.statistics.TaskPerformance;
+import cn.vbill.middleware.porter.common.task.statistics.DTaskPerformance;
 import cn.vbill.middleware.porter.manager.core.util.DateFormatUtils;
 import cn.vbill.middleware.porter.manager.web.page.Page;
 
@@ -81,7 +81,7 @@ public class MrNodesMonitorServiceImpl implements MrNodesMonitorService {
     }
 
     @Override
-    public void dealTaskPerformance(TaskPerformance performance) {
+    public void dealTaskPerformance(DTaskPerformance performance) {
         MrNodesMonitor mrNodesMonitor = new MrNodesMonitor(performance);
         String nodeId = mrNodesMonitor.getNodeId();
         String dataTimes = DateFormatUtils.formatDate("yyyy-MM-dd HH:mm:ss", mrNodesMonitor.getMonitorDate());

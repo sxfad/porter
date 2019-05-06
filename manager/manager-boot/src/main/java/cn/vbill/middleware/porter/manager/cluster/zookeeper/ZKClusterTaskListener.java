@@ -36,6 +36,7 @@ import cn.vbill.middleware.porter.common.config.SourceConfig;
 import cn.vbill.middleware.porter.common.exception.ConfigParseException;
 import cn.vbill.middleware.porter.common.node.statistics.NodeLog;
 
+import cn.vbill.middleware.porter.common.task.statistics.DTaskError;
 import cn.vbill.middleware.porter.common.warning.WarningProviderFactory;
 import cn.vbill.middleware.porter.common.warning.entity.WarningErrorCode;
 import cn.vbill.middleware.porter.common.warning.entity.WarningMessage;
@@ -106,24 +107,22 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener {
             }
             // 任务错误
             if (TASK_ERROR_PATTERN.matcher(zkPath).matches()) {
-                String[] taskAndSwimlane = null;
+                DTaskError error;
                 try {
-                    taskAndSwimlane = zkPath.replace(listenPath(), "").substring(1).split("/error/");
+                    error = DTaskError.fromString(zkEvent.getData(), DTaskError.class);
                 } catch (Throwable e) {
-                    logger.error("zk任务错误消息解析失败！", e);
+                    String[] taskAndSwimlane = zkPath.replace(listenPath(), "").substring(1).split("/error/");
+                    error = new DTaskError(taskAndSwimlane[0], taskAndSwimlane[1], zkEvent.getData());
                 }
-                if (null == taskAndSwimlane || taskAndSwimlane.length != 2) {
-                    logger.error("zk任务错误消息未解析出合规的内容 [{}]", JSON.toJSONString(taskAndSwimlane));
-                    return;
-                }
+
                 if (zkEvent.isDataChanged() || zkEvent.isOnline()) {
-                    ManagerContext.INSTANCE.newStoppedTask(Arrays.asList(taskAndSwimlane[0], taskAndSwimlane[1]), zkEvent.getData());
-                    logger.info("zk任务错误消息DataChanged or Online,内容:[{}]", JSON.toJSONString(taskAndSwimlane));
+                    ManagerContext.INSTANCE.newStoppedTask(Arrays.asList(error.getTaskId(), error.getSwimlaneId()), zkEvent.getData());
+                    logger.info("zk任务错误消息DataChanged or Online,内容:[{}]", error.getMessage());
                     return;
                 }
                 if (zkEvent.isOffline()) {
-                    logger.info("zk任务错误消息Offline,内容:[{}]", JSON.toJSONString(taskAndSwimlane));
-                    ManagerContext.INSTANCE.removeStoppedTask(Arrays.asList(taskAndSwimlane[0], taskAndSwimlane[1]));
+                    logger.info("zk任务错误消息Offline,内容:[{}]", error.getMessage());
+                    ManagerContext.INSTANCE.removeStoppedTask(Arrays.asList(error.getTaskId(), error.getSwimlaneId()));
                     return;
                 }
             }

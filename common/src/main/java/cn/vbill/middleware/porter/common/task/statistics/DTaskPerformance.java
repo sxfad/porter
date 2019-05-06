@@ -31,7 +31,7 @@ import java.util.Date;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月09日 16:16
  */
-public class TaskPerformance extends StatisticData {
+public class DTaskPerformance extends StatisticData {
     @JSONField(serialize = false, deserialize = false)
     public static final String NAME = "task";
     //任务ID
@@ -60,11 +60,11 @@ public class TaskPerformance extends StatisticData {
     @JSONField(format = "yyyyMMddHHmm")
     @Setter @Getter private Date time;
 
-    public TaskPerformance() {
+    public DTaskPerformance() {
         setCategory(NAME);
     }
 
-    public TaskPerformance(DTaskStat stat) {
+    public DTaskPerformance(DTaskStat stat) {
         this();
         this.taskId = stat.getTaskId();
         this.swimlaneId = stat.getSwimlaneId();

@@ -82,7 +82,6 @@ public class JdbcMultiThreadLoaderTest {
 
         ETLBucket bucket = new ETLBucket("0", rows, null);
         new JdbcMultiThreadLoader().sort(bucket);
-        System.out.println(bucket.getParallelRows().size() + "---------");
         Assert.assertEquals(bucket.getParallelRows().stream().flatMapToLong(r -> LongStream.of(r.size())).sum(), rows.size());
     }
 }

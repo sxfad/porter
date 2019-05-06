@@ -20,7 +20,7 @@ package cn.vbill.middleware.porter.manager.core.entity;
 import java.util.Calendar;
 import java.util.Date;
 
-import cn.vbill.middleware.porter.common.task.statistics.TaskPerformance;
+import cn.vbill.middleware.porter.common.task.statistics.DTaskPerformance;
 
 /**
  * 节点任务实时监控表 实体Entity
@@ -37,7 +37,7 @@ public class MrNodesMonitor implements java.io.Serializable {
     public MrNodesMonitor() {
     }
 
-    public MrNodesMonitor(TaskPerformance performance) {
+    public MrNodesMonitor(DTaskPerformance performance) {
         // 节点id
         this.nodeId = performance.getNodeId();
         // 实际监控日期

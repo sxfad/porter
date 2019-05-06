@@ -74,9 +74,11 @@ public class ZookeeperClusterMonitor extends AbstractClusterMonitor implements W
             } else if (eventType == Event.EventType.NodeDeleted) {
                 onEvent(new ClusterTreeNodeEvent(TreeNodeEventType.OFFLINE, null, path));
             } else if (eventType == Event.EventType.NodeCreated) {
-                onEvent(new ClusterTreeNodeEvent(TreeNodeEventType.ONLINE, getClient().getData(path).getData(), path));
+                ClusterClient.TreeNode node =  getClient().getData(path);
+                onEvent(new ClusterTreeNodeEvent(TreeNodeEventType.ONLINE, null != node ? node.getData() : "", path));
             } else if (eventType == Event.EventType.NodeDataChanged) {
-                onEvent(new ClusterTreeNodeEvent(TreeNodeEventType.DATA_CHANGED, getClient().getData(path).getData(), path));
+                ClusterClient.TreeNode node =  getClient().getData(path);
+                onEvent(new ClusterTreeNodeEvent(TreeNodeEventType.DATA_CHANGED, null != node ? node.getData() : "", path));
             } else if (eventType == Event.EventType.NodeChildrenChanged) { //子节点创建、删除会触发该事件
                 triggerWatch(path);
             }
@@ -108,7 +110,8 @@ public class ZookeeperClusterMonitor extends AbstractClusterMonitor implements W
                 //only for trigger watcher "getChildren"
                 getClient().getChildren(childFullPath);
                 localChildren.add(childFullPath);
-                onEvent(new ClusterTreeNodeEvent(TreeNodeEventType.ONLINE, getClient().getData(childFullPath).getData(), childFullPath));
+                ClusterClient.TreeNode node = getClient().getData(childFullPath);
+                onEvent(new ClusterTreeNodeEvent(TreeNodeEventType.ONLINE, null != node ? node.getData() : "", childFullPath));
             }
         }
 

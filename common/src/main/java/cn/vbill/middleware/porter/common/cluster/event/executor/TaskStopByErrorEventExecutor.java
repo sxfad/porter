@@ -22,6 +22,7 @@ import cn.vbill.middleware.porter.common.cluster.event.ClusterListenerEventExecu
 import cn.vbill.middleware.porter.common.cluster.event.ClusterListenerEventType;
 import cn.vbill.middleware.porter.common.cluster.event.command.ClusterCommand;
 import cn.vbill.middleware.porter.common.cluster.event.command.TaskStoppedByErrorCommand;
+import cn.vbill.middleware.porter.common.task.statistics.DTaskError;
 import lombok.SneakyThrows;
 
 import java.util.function.BiConsumer;
@@ -44,7 +45,7 @@ public class TaskStopByErrorEventExecutor extends ClusterListenerEventExecutor {
         return (clusterCommand, client) -> {
             TaskStoppedByErrorCommand command = (TaskStoppedByErrorCommand) clusterCommand;
             String errorPath = treeNodePath + "/" + command.getTaskId() + "/error/" + command.getSwimlaneId();
-            client.create(errorPath, command.getMsg(), false, false);
+            client.create(errorPath, new DTaskError(command.getTaskId(), command.getSwimlaneId(), command.getMsg()).toString(), false, false);
         };
     }
 }

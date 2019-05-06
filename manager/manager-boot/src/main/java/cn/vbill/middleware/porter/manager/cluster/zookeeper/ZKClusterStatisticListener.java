@@ -21,7 +21,7 @@ import cn.vbill.middleware.porter.common.cluster.event.ClusterTreeNodeEvent;
 import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListener;
 import cn.vbill.middleware.porter.common.cluster.ClusterListenerFilter;
 import cn.vbill.middleware.porter.common.node.statistics.NodeLog;
-import cn.vbill.middleware.porter.common.task.statistics.TaskPerformance;
+import cn.vbill.middleware.porter.common.task.statistics.DTaskPerformance;
 import cn.vbill.middleware.porter.manager.core.util.ApplicationContextUtil;
 import cn.vbill.middleware.porter.manager.service.MrJobTasksMonitorService;
 import cn.vbill.middleware.porter.manager.service.MrLogMonitorService;
@@ -83,11 +83,11 @@ public class ZKClusterStatisticListener extends ZookeeperClusterListener {
                 }
                 // 性能指标数据
                 if (TASK_PATTERN.matcher(zkPath).matches()) {
-                    TaskPerformance performance = JSONObject.parseObject(zkEvent.getData(), TaskPerformance.class);
+                    DTaskPerformance performance = JSONObject.parseObject(zkEvent.getData(), DTaskPerformance.class);
                     if (performance == null) {
-                        logger.error("3-TaskPerformance....." + JSON.toJSON(performance));
+                        logger.error("3-DTaskPerformance....." + JSON.toJSON(performance));
                     } else {
-                        logger.info("3-TaskPerformance....." + JSON.toJSON(performance));
+                        logger.info("3-DTaskPerformance....." + JSON.toJSON(performance));
                         // do something
                         try {
                             // 任务泳道实时监控表 服务接口类
@@ -99,13 +99,13 @@ public class ZKClusterStatisticListener extends ZookeeperClusterListener {
                                     .getBean(MrNodesMonitorServiceImpl.class);
                             mrNodesMonitorService.dealTaskPerformance(performance);
                         } catch (Exception e) {
-                            logger.error("3-TaskPerformance-Error....出错,请追寻...", e);
+                            logger.error("3-DTaskPerformance-Error....出错,请追寻...", e);
                         }
                     }
                 }
             } catch (Throwable e) {
                 e.printStackTrace();
-                logger.error("3-TaskPerformance-Error....出错,请追寻...", e);
+                logger.error("3-DTaskPerformance-Error....出错,请追寻...", e);
             } finally {
                 // 删除已获取的事件
                 client.delete(zkPath);
