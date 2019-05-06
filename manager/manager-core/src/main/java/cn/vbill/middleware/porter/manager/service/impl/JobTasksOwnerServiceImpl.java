@@ -35,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -148,7 +149,7 @@ public class JobTasksOwnerServiceImpl implements JobTasksOwnerService {
         if (userShares.isEmpty()) {
             return null;
         }
-        List<OwnerVo> shareOnwer = null;
+        List<OwnerVo> shareOnwer = new ArrayList<>();
         for (CUser userShare : userShares) {
             OwnerVo owner = new OwnerVo(userShare, 2);
             shareOnwer.add(owner);
