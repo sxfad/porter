@@ -17,8 +17,7 @@
 package cn.vbill.middleware.porter.manager.service;
 
 import cn.vbill.middleware.porter.manager.core.dto.ControlPageVo;
-import cn.vbill.middleware.porter.manager.core.entity.NodesOwner;
-import cn.vbill.middleware.porter.manager.web.page.Page;
+import cn.vbill.middleware.porter.manager.core.dto.ControlSettingVo;
 
 /**
  * 节点所有权控制表 服务接口类
@@ -37,6 +36,14 @@ public interface NodesOwnerService {
      * @return
      */
     ControlPageVo makeControlPage(Long nodeId);
+
+    /**
+     * 权限设置
+     *
+     * @param controlSettingVo
+     * @return
+     */
+    Integer nodeOwnerSetting(ControlSettingVo controlSettingVo);
 
     /**
      * 新增节点同时更新节点所有权控制

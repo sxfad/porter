@@ -17,7 +17,6 @@
 package cn.vbill.middleware.porter.manager.core.mapper;
 
 import cn.vbill.middleware.porter.manager.core.entity.NodesOwner;
-import cn.vbill.middleware.porter.manager.web.page.Page;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -48,4 +47,22 @@ public interface NodesOwnerMapper {
      */
     Integer insert(NodesOwner nodesOwner);
 
+    /**
+     * 逻辑删除
+     *
+     * @param nodeId
+     * @param type
+     * @param userId
+     * @return
+     */
+    Integer delete(@Param("nodeId") Long nodeId, @Param("type") Integer type, @Param("userId") Long userId);
+
+    /**
+     * 批量新增
+     *
+     * @param toUserIds
+     * @param nodeId
+     * @param type
+     */
+    void batchInsert(@Param("toUserIds") List<Long> toUserIds, @Param("nodeId") Long nodeId, @Param("type") Integer type);
 }

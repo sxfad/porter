@@ -17,6 +17,7 @@
 package cn.vbill.middleware.porter.manager.service.impl;
 
 import cn.vbill.middleware.porter.manager.core.dto.ControlPageVo;
+import cn.vbill.middleware.porter.manager.core.dto.ControlSettingVo;
 import cn.vbill.middleware.porter.manager.core.dto.OwnerVo;
 import cn.vbill.middleware.porter.manager.core.entity.CUser;
 import cn.vbill.middleware.porter.manager.core.entity.DicControlTypePlugin;
@@ -26,8 +27,9 @@ import cn.vbill.middleware.porter.manager.service.CUserService;
 import cn.vbill.middleware.porter.manager.service.DicControlTypePluginService;
 import cn.vbill.middleware.porter.manager.service.DictService;
 import cn.vbill.middleware.porter.manager.service.NodesOwnerService;
-import cn.vbill.middleware.porter.manager.web.page.Page;
 import cn.vbill.middleware.porter.manager.web.rcc.RoleCheckContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -45,6 +47,8 @@ import java.util.Map;
  */
 @Service
 public class NodesOwnerServiceImpl implements NodesOwnerService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(NodesOwnerServiceImpl.class);
 
     @Autowired
     private NodesOwnerMapper nodesOwnerMapper;
@@ -78,6 +82,56 @@ public class NodesOwnerServiceImpl implements NodesOwnerService {
         // 组装ControlPageVo并返回
         ControlPageVo controlPageVo = new ControlPageVo(owner, shareOwner, dictControlType, dicControlTypePlugins);
         return controlPageVo;
+    }
+
+    @Override
+    public Integer nodeOwnerSetting(ControlSettingVo controlSettingVo) {
+        String controlType = null;
+        if (null != controlSettingVo.getControlTypeEnum()) {
+            controlType = controlSettingVo.getControlTypeEnum().getCode();
+        }
+        switch (controlType) {
+            // 移交
+            case "CHANGE":
+                Integer changeNum = nodesOwnerMapper.delete(controlSettingVo.getId(), 1, null);
+                if (!controlSettingVo.getToUserIds().isEmpty()) {
+                    // 查询预移交者是否为该任务的共享者
+                    Integer type = nodesOwnerMapper.findOwnerTypeByNodeIdAndUserId(controlSettingVo.getId(), controlSettingVo.getToUserIds().get(0));
+                    if (type != null && type == 2) {
+                        // 提升权限
+                        nodesOwnerMapper.delete(controlSettingVo.getId(), 2, controlSettingVo.getToUserIds().get(0));
+                    }
+                    nodesOwnerMapper.batchInsert(controlSettingVo.getToUserIds(), controlSettingVo.getId(), 1);
+                }
+                return changeNum;
+            // 共享
+            case "SHARE":
+                Integer shareNum = nodesOwnerMapper.delete(controlSettingVo.getId(), 2, null);
+                if (!controlSettingVo.getToUserIds().isEmpty()) {
+                    nodesOwnerMapper.batchInsert(controlSettingVo.getToUserIds(), controlSettingVo.getId(), 2);
+                }
+                return shareNum;
+            // 作废
+            case "CANCEL":
+                Integer type = nodesOwnerMapper.findOwnerTypeByNodeIdAndUserId(controlSettingVo.getId(), RoleCheckContext.getUserIdHolder().getUserId());
+                return nodesOwnerMapper.delete(controlSettingVo.getId(), type, RoleCheckContext.getUserIdHolder().getUserId());
+            ;
+            // 回收所有者
+            case "RECYCLE_C":
+                LOGGER.info("回收节点所有者，节点id[{}]，操作者管理员ID:[{}]", controlSettingVo.getId(), RoleCheckContext.getUserIdHolder().getUserId());
+                return nodesOwnerMapper.delete(controlSettingVo.getId(), 1, null);
+            // 回收共享者
+            case "RECYCLE_S":
+                LOGGER.info("回收节点所有者，节点id[{}]，操作者管理员ID:[{}]", controlSettingVo.getId(), RoleCheckContext.getUserIdHolder().getUserId());
+                return nodesOwnerMapper.delete(controlSettingVo.getId(), 2, null);
+            // 回收所有权限
+            case "RECYCLE_A":
+                LOGGER.info("回收节点权限，节点id[{}]，操作者管理员ID:[{}]", controlSettingVo.getId(), RoleCheckContext.getUserIdHolder().getUserId());
+                return nodesOwnerMapper.delete(controlSettingVo.getId(), null, null);
+            default:
+                LOGGER.error("ControlType为null!!");
+                return null;
+        }
     }
 
     /**

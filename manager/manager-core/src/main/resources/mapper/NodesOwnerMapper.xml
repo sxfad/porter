@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.vbill.middleware.porter.manager.core.mapper.NodesOwnerMapper">
-    <!-- 通用查询映射结果 
+    <!-- 通用查询映射结果
     <resultMap id="BaseResultMap" type="cn.vbill.middleware.porter.manager.core.event.NodesOwner">
         <result column="id" property="id" />
         <result column="node_id" property="nodeId" />
@@ -37,5 +37,37 @@
             #{ownerId}
         )
     </insert>
+
+    <!-- 批量新增 -->
+    <insert id="batchInsert">
+        insert into b_nodes_owner(
+        node_id,
+            owner_id,
+            type
+        )
+        values
+        <foreach collection="toUserIds" item="userId" index="index" separator=",">
+            (#{nodeId}, #{userId}, #{type})
+        </foreach>
+
+    </insert>
+
+    <!-- 逻辑删除 -->
+    <update id="delete">
+        update b_nodes_owner
+        set iscancel = 1
+        <where>
+            1=1
+            <if test="nodeId != null">
+                and node_id = #{nodeId}
+            </if>
+            <if test="type != null">
+                and type = #{type}
+            </if>
+            <if test="userId != null">
+                and owner_id = #{userId}
+            </if>
+        </where>
+    </update>
 
 </mapper>
