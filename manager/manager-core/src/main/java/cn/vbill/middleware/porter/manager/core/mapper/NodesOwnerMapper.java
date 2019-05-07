@@ -33,46 +33,19 @@ import java.util.List;
 public interface NodesOwnerMapper {
 
     /**
+     * 根据节点id和用户id查询该用户type
+     *
+     * @param nodeId
+     * @param userId
+     * @return
+     */
+    Integer findOwnerTypeByNodeIdAndUserId(@Param("nodeId") Long nodeId, @Param("userId") Long userId);
+
+    /**
      * 新增
      *
      * @param nodesOwner
      */
     Integer insert(NodesOwner nodesOwner);
 
-    /**
-     * 修改
-     *
-     * @param nodesOwner
-     */
-    Integer update(@Param("id") Long id, @Param("nodesOwner") NodesOwner nodesOwner);
-
-    /**
-     * 刪除
-     *
-     * @param id
-     * @return
-     */
-    Integer delete(Long id);
-
-    /**
-     * 根據主鍵id查找數據
-     *
-     * @param id
-     * @return
-     */
-    NodesOwner selectById(Long id);
-
-    /**
-     * 分頁
-     *
-     * @return
-     */
-    List<NodesOwner> page(@Param("page") Page<NodesOwner> page, @Param("state") Integer state);
-
-    /**
-     * 分頁All
-     *
-     * @return
-     */
-    Integer pageAll(@Param("state") Integer state);
 }

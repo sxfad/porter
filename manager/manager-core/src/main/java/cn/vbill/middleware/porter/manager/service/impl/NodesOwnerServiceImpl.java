@@ -16,12 +16,24 @@
  */
 package cn.vbill.middleware.porter.manager.service.impl;
 
+import cn.vbill.middleware.porter.manager.core.dto.ControlPageVo;
+import cn.vbill.middleware.porter.manager.core.dto.OwnerVo;
+import cn.vbill.middleware.porter.manager.core.entity.CUser;
+import cn.vbill.middleware.porter.manager.core.entity.DicControlTypePlugin;
 import cn.vbill.middleware.porter.manager.core.entity.NodesOwner;
 import cn.vbill.middleware.porter.manager.core.mapper.NodesOwnerMapper;
+import cn.vbill.middleware.porter.manager.service.CUserService;
+import cn.vbill.middleware.porter.manager.service.DicControlTypePluginService;
+import cn.vbill.middleware.porter.manager.service.DictService;
 import cn.vbill.middleware.porter.manager.service.NodesOwnerService;
 import cn.vbill.middleware.porter.manager.web.page.Page;
+import cn.vbill.middleware.porter.manager.web.rcc.RoleCheckContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 节点所有权控制表 服务实现类
@@ -37,34 +49,87 @@ public class NodesOwnerServiceImpl implements NodesOwnerService {
     @Autowired
     private NodesOwnerMapper nodesOwnerMapper;
 
-    @Override
-    public Integer insert(NodesOwner nodesOwner) {
-        return nodesOwnerMapper.insert(nodesOwner);
-    }
+    @Autowired
+    private CUserService cUserService;
+
+    @Autowired
+    private DictService dictService;
+
+    @Autowired
+    protected DicControlTypePluginService dicControlTypePluginService;
 
     @Override
-    public Integer update(Long id, NodesOwner nodesOwner) {
-        return nodesOwnerMapper.update(id, nodesOwner);
+    public ControlPageVo makeControlPage(Long nodeId) {
+
+        // ownerType=1:节点所有者  shareType=2:节点共享者
+        OwnerVo owner = checkOwner(cUserService.selectOwnersByNodeId(nodeId, 1));
+        List<OwnerVo> shareOwner = checkShares(cUserService.selectOwnersByNodeId(nodeId, 2));
+
+        // 操作类型枚举
+        Map<String, Object> dictControlType = dictService.dictControlType();
+
+        // 查询当前登录人type
+        Boolean isManager = checkLoginRole();
+        Integer type = isManager ? 0 : nodesOwnerMapper.findOwnerTypeByNodeIdAndUserId(nodeId, RoleCheckContext.getUserIdHolder().getUserId());
+
+        // 根据Type查出操作按钮字典
+        List<DicControlTypePlugin> dicControlTypePlugins = dicControlTypePluginService.findByType(type);
+
+        // 组装ControlPageVo并返回
+        ControlPageVo controlPageVo = new ControlPageVo(owner, shareOwner, dictControlType, dicControlTypePlugins);
+        return controlPageVo;
     }
 
-    @Override
-    public Integer delete(Long id) {
-        return nodesOwnerMapper.delete(id);
+    /**
+     * 组装任务所有者
+     *
+     * @author MurasakiSeiFu
+     * @date 2019-05-07 13:55
+     * @param: [userOwner]
+     * @return: cn.vbill.middleware.porter.manager.core.dto.OwnerVo
+     */
+    private OwnerVo checkOwner(List<CUser> userOwner) {
+        return userOwner.isEmpty() ? null : new OwnerVo(userOwner.get(0), 1);
     }
 
-    @Override
-    public NodesOwner selectById(Long id) {
-        return nodesOwnerMapper.selectById(id);
-    }
-
-    @Override
-    public Page<NodesOwner> page(Page<NodesOwner> page) {
-        Integer total = nodesOwnerMapper.pageAll(1);
-        if (total > 0) {
-            page.setTotalItems(total);
-            page.setResult(nodesOwnerMapper.page(page, 1));
+    /**
+     * 组装任务共享者
+     *
+     * @author MurasakiSeiFu
+     * @date 2019-05-07 13:59
+     * @param: [userShares]
+     * @return: java.util.List<cn.vbill.middleware.porter.manager.core.dto.OwnerVo>
+     */
+    private List<OwnerVo> checkShares(List<CUser> userShares) {
+        if (userShares.isEmpty()) {
+            return null;
         }
-        return page;
+        List<OwnerVo> shareOnwer = new ArrayList<>();
+        for (CUser userShare : userShares) {
+            OwnerVo owner = new OwnerVo(userShare, 2);
+            shareOnwer.add(owner);
+        }
+        return shareOnwer;
     }
 
+    /**
+     * 判断当前登录用户是否为管理员
+     *
+     * @author MurasakiSeiFu
+     * @date 2019-04-04 13:48
+     * @param: []
+     * @return: java.lang.Boolean
+     */
+    private Boolean checkLoginRole() {
+        String roleCode = RoleCheckContext.getUserIdHolder().getRoleCode();
+        return ("A0001".equals(roleCode) || "A0002".equals(roleCode));
+    }
+
+    @Override
+    public void insertByNodes(Long nodeId) {
+        NodesOwner nodesOwner = new NodesOwner();
+        nodesOwner.setNodeId(nodeId);
+        nodesOwner.setOwnerId(RoleCheckContext.getUserIdHolder().getUserId());
+        nodesOwnerMapper.insert(nodesOwner);
+    }
 }

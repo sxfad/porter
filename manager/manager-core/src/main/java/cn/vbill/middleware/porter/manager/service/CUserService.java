@@ -161,4 +161,12 @@ public interface CUserService {
      * @return
      */
     List<CUser> findRegister();
+
+    /**
+     * 根据NodeId查询b_nodes_owner用户详细信息
+     *
+     * @param nodeId
+     * @return
+     */
+    List<CUser> selectOwnersByNodeId(Long nodeId, Integer type);
 }

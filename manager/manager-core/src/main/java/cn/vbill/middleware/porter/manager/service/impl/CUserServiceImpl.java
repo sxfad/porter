@@ -133,4 +133,12 @@ public class CUserServiceImpl implements CUserService {
         return cuserMapper.findRegister();
     }
 
+    @Override
+    public List<CUser> selectOwnersByNodeId(Long nodeId, Integer type) {
+        if (null == nodeId) {
+            return null;
+        }
+        return cuserMapper.selectOwnersByNodeId(nodeId, type);
+    }
+
 }

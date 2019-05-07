@@ -16,11 +16,18 @@
  */
 package cn.vbill.middleware.porter.manager.controller;
 
+import cn.vbill.middleware.porter.manager.core.dto.ControlPageVo;
 import cn.vbill.middleware.porter.manager.service.NodesOwnerService;
+import cn.vbill.middleware.porter.manager.web.message.ResponseMessage;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import static cn.vbill.middleware.porter.manager.web.message.ResponseMessage.ok;
 
 /**
  * 节点所有权控制表 controller控制器
@@ -39,4 +46,18 @@ public class NodesOwnerController {
     protected NodesOwnerService nodesOwnerService;
 
 
+    /**
+     * 权限设置页面数据组
+     *
+     * @author MurasakiSeiFu
+     * @date 2019-05-07 13:43
+     * @param: [jobId]
+     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
+     */
+    @GetMapping("/setPage/{nodeId}")
+    @ApiOperation(value = "权限设置页面数据组", notes = "权限设置页面数据组")
+    public ResponseMessage nodeOwnerPage(@PathVariable("nodeId") Long nodeId) {
+        ControlPageVo controlPageVo = nodesOwnerService.makeControlPage(nodeId);
+        return ok(controlPageVo);
+    }
 }
