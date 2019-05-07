@@ -54,6 +54,10 @@ startScripts {
 distributions {
     main {
         contents {
+            from ("script/shutdown.sh") {
+                into "bin"
+                fileMode = 0755
+            }
             from (buildDir.getPath() + "/config") {
                 into "config"
             }
