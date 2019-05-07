@@ -130,17 +130,17 @@ public class JobTasksOwnerServiceImpl implements JobTasksOwnerService {
                 return jobTasksOwnerMapper.delete(controlSettingVo.getJobId(), type, RoleCheckContext.getUserIdHolder().getUserId());
             // 回收所有者
             case "RECYCLE_C":
-                LOGGER.info("回收任务所有者[{}]，操作者管理员ID:[{}]",
+                LOGGER.info("回收任务所有者，任务id[{}]，操作者管理员ID:[{}]",
                         controlSettingVo.getJobId(), RoleCheckContext.getUserIdHolder().getUserId());
                 return jobTasksOwnerMapper.delete(controlSettingVo.getJobId(), 1, null);
             // 回收共享者
             case "RECYCLE_S":
-                LOGGER.info("回收任务所有者[{}]，操作者管理员ID:[{}]",
+                LOGGER.info("回收任务所有者，任务id[{}]，操作者管理员ID:[{}]",
                         controlSettingVo.getJobId(), RoleCheckContext.getUserIdHolder().getUserId());
                 return jobTasksOwnerMapper.delete(controlSettingVo.getJobId(), 2, null);
             // 回收所有权限
             case "RECYCLE_A":
-                LOGGER.info("回收所有权限[{}]，操作者管理员ID:[{}]",
+                LOGGER.info("回收所有权限，任务id[{}]，操作者管理员ID:[{}]",
                         controlSettingVo.getJobId(), RoleCheckContext.getUserIdHolder().getUserId());
                 return jobTasksOwnerMapper.delete(controlSettingVo.getJobId(), null, null);
             default:
