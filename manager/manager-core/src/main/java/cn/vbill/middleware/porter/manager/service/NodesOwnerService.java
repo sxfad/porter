@@ -16,8 +16,8 @@
  */
 package cn.vbill.middleware.porter.manager.service;
 
-import cn.vbill.middleware.porter.manager.core.entity.NodesOwner;
-import cn.vbill.middleware.porter.manager.web.page.Page;
+import cn.vbill.middleware.porter.manager.core.dto.ControlPageVo;
+import cn.vbill.middleware.porter.manager.core.dto.ControlSettingVo;
 
 /**
  * 节点所有权控制表 服务接口类
@@ -30,37 +30,25 @@ import cn.vbill.middleware.porter.manager.web.page.Page;
 public interface NodesOwnerService {
 
     /**
-     * 新增
+     * 权限设置页面数据组
      *
-     * @param nodesOwner
+     * @param nodeId
+     * @return
      */
-    Integer insert(NodesOwner nodesOwner);
+    ControlPageVo makeControlPage(Long nodeId);
 
     /**
-     * 修改
+     * 权限设置
      *
-     * @param id, nodesOwner
+     * @param controlSettingVo
+     * @return
      */
-    Integer update(Long id, NodesOwner nodesOwner);
+    Integer nodeOwnerSetting(ControlSettingVo controlSettingVo);
 
     /**
-     * 删除
+     * 新增节点同时更新节点所有权控制
      *
-     * @param id
+     * @param nodeId
      */
-    Integer delete(Long id);
-
-    /**
-     * 查询详情
-     *
-     * @param id
-     */
-    NodesOwner selectById(Long id);
-
-    /**
-     * 分页查询
-     *
-     * @param page
-     */
-    Page<NodesOwner> page(Page<NodesOwner> page);
+    void insertByNodes(Long nodeId);
 }

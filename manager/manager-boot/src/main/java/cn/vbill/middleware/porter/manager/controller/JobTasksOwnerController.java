@@ -18,7 +18,6 @@ package cn.vbill.middleware.porter.manager.controller;
 
 import cn.vbill.middleware.porter.manager.core.dto.ControlPageVo;
 import cn.vbill.middleware.porter.manager.core.dto.ControlSettingVo;
-import cn.vbill.middleware.porter.manager.core.entity.CUser;
 import cn.vbill.middleware.porter.manager.service.JobTasksOwnerService;
 import cn.vbill.middleware.porter.manager.web.message.ResponseMessage;
 import io.swagger.annotations.Api;
@@ -30,9 +29,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
-import java.util.Map;
 
 import static cn.vbill.middleware.porter.manager.web.message.ResponseMessage.ok;
 
@@ -51,36 +47,6 @@ public class JobTasksOwnerController {
 
     @Autowired
     protected JobTasksOwnerService jobTasksOwnerService;
-
-    /**
-     * 回显任务所有者、任务共享者
-     *
-     * @author MurasakiSeiFu
-     * @date 2019-04-02 14:57
-     * @param: [jobId]
-     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
-     */
-    @GetMapping("/ownerAll/{jobId}")
-    @ApiOperation(value = "回显任务所有者、任务共享者")
-    public ResponseMessage jobOwnerTypeAll(@PathVariable("jobId") Long jobId) {
-        Map<Integer, List<CUser>> map = jobTasksOwnerService.jobOwnerTypeAll(jobId);
-        return ok(map);
-    }
-
-    /**
-     * 获取用户type值
-     *
-     * @author MurasakiSeiFu
-     * @date 2019-04-03 15:06
-     * @param: [jobId]
-     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
-     */
-    @GetMapping("/findType/{jobId}")
-    @ApiOperation(value = "获取用户type", notes = "获取用户type")
-    public ResponseMessage findOwnerType(@PathVariable("jobId") Long jobId) {
-        Integer type = jobTasksOwnerService.findOwnerTypeByJobId(jobId);
-        return ok(type);
-    }
 
     /**
      * 权限设置页面数据

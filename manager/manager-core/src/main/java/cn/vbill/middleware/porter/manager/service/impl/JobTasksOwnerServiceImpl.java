@@ -35,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -99,25 +100,49 @@ public class JobTasksOwnerServiceImpl implements JobTasksOwnerService {
         switch (controlType) {
             // 移交
             case "CHANGE":
-                Integer changeNum = jobTasksOwnerMapper.delete(controlSettingVo.getJobId(), 1, null);
+                Integer changeNum = jobTasksOwnerMapper.delete(controlSettingVo.getId(), 1, null);
                 if (!controlSettingVo.getToUserIds().isEmpty()) {
-                    jobTasksOwnerMapper.batchInsert(controlSettingVo.getToUserIds(), controlSettingVo.getJobId(), 1);
+                    // 查询预移交者是否为该任务的共享者
+                    Integer type = jobTasksOwnerMapper.findOwnerTypeByJobIdAndUserId(controlSettingVo.getId(), controlSettingVo.getToUserIds().get(0));
+                    if (type != null && type == 2) {
+                        // 提升权限
+                        jobTasksOwnerMapper.delete(controlSettingVo.getId(), 2, controlSettingVo.getToUserIds().get(0));
+                    }
+                    jobTasksOwnerMapper.batchInsert(controlSettingVo.getToUserIds(), controlSettingVo.getId(), 1);
                 }
+                LOGGER.info("移交任务[{}]，操作者用户ID:[{}]，授权者用户ID:[{}]",
+                        controlSettingVo.getId(), RoleCheckContext.getUserIdHolder().getUserId(), controlSettingVo.getToUserIds().get(0));
                 return changeNum;
             // 共享
             case "SHARE":
-                Integer shareNum = jobTasksOwnerMapper.delete(controlSettingVo.getJobId(), 2, null);
+                Integer shareNum = jobTasksOwnerMapper.delete(controlSettingVo.getId(), 2, null);
                 if (!controlSettingVo.getToUserIds().isEmpty()) {
-                    jobTasksOwnerMapper.batchInsert(controlSettingVo.getToUserIds(), controlSettingVo.getJobId(), 2);
+                    jobTasksOwnerMapper.batchInsert(controlSettingVo.getToUserIds(), controlSettingVo.getId(), 2);
                 }
+                LOGGER.info("共享任务[{}]，操作者用户ID:[{}]，授权者用户ID:[{}]",
+                        controlSettingVo.getId(), RoleCheckContext.getUserIdHolder().getUserId(), controlSettingVo.getToUserIds());
                 return shareNum;
             // 作废
             case "CANCEL":
-                Integer type = jobTasksOwnerMapper.findOwnerTypeByJobIdAndUserId(controlSettingVo.getJobId(), RoleCheckContext.getUserIdHolder().getUserId());
-                return jobTasksOwnerMapper.delete(controlSettingVo.getJobId(), type, RoleCheckContext.getUserIdHolder().getUserId());
-            // 回收
-            case "RECYCLE":
-                return jobTasksOwnerMapper.delete(controlSettingVo.getJobId(), null, null);
+                Integer type = jobTasksOwnerMapper.findOwnerTypeByJobIdAndUserId(controlSettingVo.getId(), RoleCheckContext.getUserIdHolder().getUserId());
+                LOGGER.info("放弃任务[{}]，操作者用户ID:[{}]",
+                        controlSettingVo.getId(), RoleCheckContext.getUserIdHolder().getUserId());
+                return jobTasksOwnerMapper.delete(controlSettingVo.getId(), type, RoleCheckContext.getUserIdHolder().getUserId());
+            // 回收所有者
+            case "RECYCLE_C":
+                LOGGER.info("回收任务所有者，任务id[{}]，操作者管理员ID:[{}]",
+                        controlSettingVo.getId(), RoleCheckContext.getUserIdHolder().getUserId());
+                return jobTasksOwnerMapper.delete(controlSettingVo.getId(), 1, null);
+            // 回收共享者
+            case "RECYCLE_S":
+                LOGGER.info("回收任务所有者，任务id[{}]，操作者管理员ID:[{}]",
+                        controlSettingVo.getId(), RoleCheckContext.getUserIdHolder().getUserId());
+                return jobTasksOwnerMapper.delete(controlSettingVo.getId(), 2, null);
+            // 回收所有权限
+            case "RECYCLE_A":
+                LOGGER.info("回收所有权限，任务id[{}]，操作者管理员ID:[{}]",
+                        controlSettingVo.getId(), RoleCheckContext.getUserIdHolder().getUserId());
+                return jobTasksOwnerMapper.delete(controlSettingVo.getId(), null, null);
             default:
                 LOGGER.error("ControlType为null!!");
                 return null;
@@ -148,7 +173,7 @@ public class JobTasksOwnerServiceImpl implements JobTasksOwnerService {
         if (userShares.isEmpty()) {
             return null;
         }
-        List<OwnerVo> shareOnwer = null;
+        List<OwnerVo> shareOnwer = new ArrayList<>();
         for (CUser userShare : userShares) {
             OwnerVo owner = new OwnerVo(userShare, 2);
             shareOnwer.add(owner);

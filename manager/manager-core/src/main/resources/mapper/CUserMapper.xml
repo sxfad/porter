@@ -267,8 +267,26 @@
 
     <!-- 注册用户列表 -->
     <select id="findRegister" resultType="cn.vbill.middleware.porter.manager.core.entity.CUser">
-        select id, nickname, role_code AS roleCode from c_user
+        select id, nickname, role_code AS roleCode, depart_ment AS departMent from c_user
         where  state = 1 and role_code = 'A9999'
+    </select>
+
+    <!-- 根据jobId查询job_tasks_owner用户详细信息 -->
+    <select id="selectOwnersByNodeId" resultType="cn.vbill.middleware.porter.manager.core.entity.CUser">
+        select id, loginname, nickname, email, role_code AS roleCode from c_user
+        where state = 1 and
+        id in
+        (
+        select owner_id
+        from b_nodes_owner
+        <where>
+            node_id = #{nodeId}
+            and iscancel = 0
+            <if test="type != null">
+                and type = #{type}
+            </if>
+        </where>
+        )
     </select>
 
 </mapper>

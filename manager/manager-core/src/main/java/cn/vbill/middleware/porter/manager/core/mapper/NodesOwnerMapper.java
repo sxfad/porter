@@ -17,7 +17,6 @@
 package cn.vbill.middleware.porter.manager.core.mapper;
 
 import cn.vbill.middleware.porter.manager.core.entity.NodesOwner;
-import cn.vbill.middleware.porter.manager.web.page.Page;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -33,6 +32,15 @@ import java.util.List;
 public interface NodesOwnerMapper {
 
     /**
+     * 根据节点id和用户id查询该用户type
+     *
+     * @param nodeId
+     * @param userId
+     * @return
+     */
+    Integer findOwnerTypeByNodeIdAndUserId(@Param("nodeId") Long nodeId, @Param("userId") Long userId);
+
+    /**
      * 新增
      *
      * @param nodesOwner
@@ -40,39 +48,21 @@ public interface NodesOwnerMapper {
     Integer insert(NodesOwner nodesOwner);
 
     /**
-     * 修改
+     * 逻辑删除
      *
-     * @param nodesOwner
-     */
-    Integer update(@Param("id") Long id, @Param("nodesOwner") NodesOwner nodesOwner);
-
-    /**
-     * 刪除
-     *
-     * @param id
+     * @param nodeId
+     * @param type
+     * @param userId
      * @return
      */
-    Integer delete(Long id);
+    Integer delete(@Param("nodeId") Long nodeId, @Param("type") Integer type, @Param("userId") Long userId);
 
     /**
-     * 根據主鍵id查找數據
+     * 批量新增
      *
-     * @param id
-     * @return
+     * @param toUserIds
+     * @param nodeId
+     * @param type
      */
-    NodesOwner selectById(Long id);
-
-    /**
-     * 分頁
-     *
-     * @return
-     */
-    List<NodesOwner> page(@Param("page") Page<NodesOwner> page, @Param("state") Integer state);
-
-    /**
-     * 分頁All
-     *
-     * @return
-     */
-    Integer pageAll(@Param("state") Integer state);
+    void batchInsert(@Param("toUserIds") List<Long> toUserIds, @Param("nodeId") Long nodeId, @Param("type") Integer type);
 }

@@ -51,7 +51,17 @@ public enum ControlTypeEnum {
     /**
      * RECYCLE
      */
-    RECYCLE("RECYCLE", "回收");
+    RECYCLE_C("RECYCLE_C", "回收所有者"),
+
+    /**
+     * RECYCLE
+     */
+    RECYCLE_S("RECYCLE_S", "回收共享者"),
+
+    /**
+     * RECYCLE
+     */
+    RECYCLE_A("RECYCLE_A", "回收所有权限");
 
     @Getter
     private final String code;
@@ -70,7 +80,9 @@ public enum ControlTypeEnum {
             put(CHANGE.code, CHANGE.name);
             put(SHARE.code, SHARE.name);
             put(CANCEL.code, CANCEL.name);
-            put(RECYCLE.code, RECYCLE.name);
+            put(RECYCLE_C.code, RECYCLE_C.name);
+            put(RECYCLE_S.code, RECYCLE_S.name);
+            put(RECYCLE_A.code, RECYCLE_A.name);
         }
     };
 }

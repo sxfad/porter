@@ -67,6 +67,11 @@ public class NodesOwner implements Serializable {
     private Long operator;
 
     /**
+     * 类型(1：权限所有人 2：权限共享者).
+     */
+    private Integer type;
+
+    /**
      * 是否作废.
      */
     private Integer iscancel;
@@ -172,6 +177,20 @@ public class NodesOwner implements Serializable {
      */
     public void setOperator(Long operator) {
         this.operator = operator;
+    }
+
+    /**
+     * 类型(1：权限所有人 2：权限共享者).get
+     */
+    public void setType(Integer type) {
+        this.type = type;
+    }
+
+    /**
+     * 类型(1：权限所有人 2：权限共享者).set
+     */
+    public Integer getType() {
+        return type;
     }
 
     /**

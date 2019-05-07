@@ -18,6 +18,7 @@
 package cn.vbill.middleware.porter.manager.service.impl;
 
 import cn.vbill.middleware.porter.manager.core.dto.RoleDataControl;
+import cn.vbill.middleware.porter.manager.service.NodesOwnerService;
 import cn.vbill.middleware.porter.manager.service.NodesService;
 import cn.vbill.middleware.porter.common.statistics.DNode;
 import cn.vbill.middleware.porter.common.node.dic.NodeStatusType;
@@ -30,6 +31,7 @@ import java.util.List;
 import cn.vbill.middleware.porter.manager.web.rcc.RoleCheckContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 节点信息表 服务实现类
@@ -45,7 +47,11 @@ public class NodesServiceImpl implements NodesService {
     @Autowired
     private NodesMapper nodesMapper;
 
+    @Autowired
+    private NodesOwnerService nodesOwnerService;
+
     @Override
+    @Transactional
     public Integer insert(Nodes nodes) {
         // 验证nodeId是否重复
         Integer total = nodesMapper.testNodeId(nodes.getNodeId());
@@ -57,6 +63,7 @@ public class NodesServiceImpl implements NodesService {
             nodes.setTaskPushState(NodeStatusType.SUSPEND);
             nodes.setState(-1);
             number = nodesMapper.insert(nodes);
+            nodesOwnerService.insertByNodes(nodes.getId());
             return number;
         }
     }

@@ -16,14 +16,19 @@
  */
 package cn.vbill.middleware.porter.manager.controller;
 
-import cn.vbill.middleware.porter.manager.core.entity.NodesOwner;
+import cn.vbill.middleware.porter.manager.core.dto.ControlPageVo;
+import cn.vbill.middleware.porter.manager.core.dto.ControlSettingVo;
 import cn.vbill.middleware.porter.manager.service.NodesOwnerService;
 import cn.vbill.middleware.porter.manager.web.message.ResponseMessage;
-import cn.vbill.middleware.porter.manager.web.page.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import static cn.vbill.middleware.porter.manager.web.message.ResponseMessage.ok;
 
@@ -43,72 +48,34 @@ public class NodesOwnerController {
     @Autowired
     protected NodesOwnerService nodesOwnerService;
 
+
     /**
-     * 新增节点owner
+     * 权限设置页面数据组
      *
-     * @param nodesOwner
-     * @return
+     * @author MurasakiSeiFu
+     * @date 2019-05-07 13:43
+     * @param: [jobId]
+     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
      */
-    @PostMapping
-    @ApiOperation(value = "新增", notes = "新增")
-    public ResponseMessage add(@RequestBody NodesOwner nodesOwner) {
-        Integer number = nodesOwnerService.insert(nodesOwner);
+    @GetMapping("/setPage/{nodeId}")
+    @ApiOperation(value = "权限设置页面数据组", notes = "权限设置页面数据组")
+    public ResponseMessage nodeOwnerPage(@PathVariable("nodeId") Long nodeId) {
+        ControlPageVo controlPageVo = nodesOwnerService.makeControlPage(nodeId);
+        return ok(controlPageVo);
+    }
+
+    /**
+     * 权限设置
+     *
+     * @author MurasakiSeiFu
+     * @date 2019-05-07 14:18
+     * @param: [controlSettingVo]
+     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
+     */
+    @PutMapping
+    @ApiOperation(value = "权限设置", notes = "权限设置")
+    public ResponseMessage nodeOwnerSetting(@RequestBody ControlSettingVo controlSettingVo) {
+        Integer number = nodesOwnerService.nodeOwnerSetting(controlSettingVo);
         return ok(number);
     }
-
-    /**
-     * 修改节点owner
-     *
-     * @param id
-     * @param nodesOwner
-     * @return
-     */
-    @PutMapping("/{id}")
-    @ApiOperation(value = "修改", notes = "修改")
-    public ResponseMessage update(@PathVariable("id") Long id, @RequestBody NodesOwner nodesOwner) {
-        Integer number = nodesOwnerService.update(id, nodesOwner);
-        return ok(number);
-    }
-
-    /**
-     * 删除节点owner
-     *
-     * @param id
-     * @return
-     */
-    @DeleteMapping("/{id}")
-    @ApiOperation(value = "删除", notes = "删除")
-    public ResponseMessage delete(@PathVariable("id") Long id) {
-        nodesOwnerService.delete(id);
-        return ok();
-    }
-
-    /**
-     * 查询明细
-     *
-     * @param id
-     * @return
-     */
-    @GetMapping("/{id}")
-    @ApiOperation(value = "查询明细", notes = "查询明细")
-    public ResponseMessage info(@PathVariable("id") Long id) {
-        NodesOwner nodesOwner = nodesOwnerService.selectById(id);
-        return ok(nodesOwner);
-    }
-
-    /**
-     * 查询列表
-     *
-     * @param pageNum
-     * @param pageSize
-     * @return
-     */
-    @GetMapping
-    @ApiOperation(value = "查询列表", notes = "查询列表")
-    public ResponseMessage list(@RequestParam(value = "pageNum", required = false) Integer pageNum,
-            @RequestParam(value = "pageSize", required = false) Integer pageSize) {
-        Page<NodesOwner> page = nodesOwnerService.page(new Page<NodesOwner>(pageNum, pageSize));
-        return ok(page);
-    }
-
 }

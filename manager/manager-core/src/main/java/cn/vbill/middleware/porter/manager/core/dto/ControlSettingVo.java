@@ -17,7 +17,7 @@ public class ControlSettingVo {
     /**
      * 任务id
      */
-    private Long jobId;
+    private Long id;
 
     /**
      * 任务权限操作类型枚举
@@ -32,15 +32,15 @@ public class ControlSettingVo {
     /**
      * 任务id.get
      */
-    public Long getJobId() {
-        return jobId;
+    public Long getId() {
+        return id;
     }
 
     /**
      * 任务id.set
      */
-    public void setJobId(Long jobId) {
-        this.jobId = jobId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     /**

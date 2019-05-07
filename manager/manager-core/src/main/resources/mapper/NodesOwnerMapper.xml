@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.vbill.middleware.porter.manager.core.mapper.NodesOwnerMapper">
-    <!-- 通用查询映射结果 
+    <!-- 通用查询映射结果
     <resultMap id="BaseResultMap" type="cn.vbill.middleware.porter.manager.core.event.NodesOwner">
         <result column="id" property="id" />
         <result column="node_id" property="nodeId" />
@@ -19,153 +19,55 @@
         select id, node_id AS nodeId, owner_level AS ownerLevel, owner_id AS ownerId, create_time AS createTime, update_time AS updateTime, operator, iscancel, remark from b_nodes_owner
     </sql>-->
 
+    <!-- 根据节点id和用户id查询该用户type -->
+    <select id="findOwnerTypeByNodeIdAndUserId" resultType="java.lang.Integer">
+        select type from b_nodes_owner
+        where
+            iscancel = 0
+            and node_id = #{nodeId} and owner_id = #{userId}
+    </select>
+
     <!-- 新增 -->
     <insert id="insert">
         insert into b_nodes_owner(
             node_id,
-            owner_level,
-            owner_id,
-            operator
+            owner_id
         ) values (
             #{nodeId},
-            #{ownerLevel},
-            #{ownerId},
-            #{operator}
+            #{ownerId}
         )
     </insert>
 
-    <!-- 修改 -->
-    <update id="update">
-        update b_nodes_owner
-        set
-            node_id = #{nodesOwner.nodeId},
-            owner_level = #{nodesOwner.ownerLevel},
-            owner_id = #{nodesOwner.ownerId},
-            update_time = now(),
-            operator = #{nodesOwner.operator},
-            iscancel = #{nodesOwner.iscancel},
-            remark = #{nodesOwner.remark}
-        where id = #{id}
-    </update>
+    <!-- 批量新增 -->
+    <insert id="batchInsert">
+        insert into b_nodes_owner(
+        node_id,
+            owner_id,
+            type
+        )
+        values
+        <foreach collection="toUserIds" item="userId" index="index" separator=",">
+            (#{nodeId}, #{userId}, #{type})
+        </foreach>
 
-    <!-- 刪除 -->
-    <delete id="delete">
-        delete from b_nodes_owner where id = #{id}
-    </delete>
-
-    <!-- 根据主鍵查找 -->
-    <select id="selectById" resultType="cn.vbill.middleware.porter.manager.core.entity.NodesOwner">
-        select id, node_id AS nodeId, owner_level AS ownerLevel, owner_id AS ownerId, create_time AS createTime, update_time AS updateTime, operator, iscancel, remark from b_nodes_owner
-        where id = #{id}
-    </select>
-
-    <!-- 分页All -->
-    <select id="pageAll" resultType="java.lang.Integer">
-        select count(id) from b_nodes_owner
-        where 1=1
-    </select>
-
-    <!-- 分页 -->
-    <select id="page" resultType="cn.vbill.middleware.porter.manager.core.entity.NodesOwner">
-        select id, node_id AS nodeId, owner_level AS ownerLevel, owner_id AS ownerId, create_time AS createTime, update_time AS updateTime, operator, iscancel, remark from b_nodes_owner
-        where 1=1 limit #{page.offset},#{page.pageSize}
-    </select>
-
-    <!-- 验证新增 -->
-    <insert id="insertSelective">
-        insert into b_nodes_owner
-        <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="id != null">
-                id,
-            </if>
-            <if test="nodeId != null">
-                node_id,
-            </if>
-            <if test="ownerLevel != null">
-                owner_level,
-            </if>
-            <if test="ownerId != null">
-                owner_id,
-            </if>
-            <if test="createTime != null">
-                create_time,
-            </if>
-            <if test="updateTime != null">
-                update_time,
-            </if>
-            <if test="operator != null">
-                operator,
-            </if>
-            <if test="iscancel != null">
-                iscancel,
-            </if>
-            <if test="remark != null">
-                remark,
-            </if>
-        </trim>
-        <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="id != null">
-                #{id,jdbcType=${field.mybatisType}},
-            </if>
-            <if test="nodeId != null">
-                #{nodeId,jdbcType=${field.mybatisType}},
-            </if>
-            <if test="ownerLevel != null">
-                #{ownerLevel,jdbcType=${field.mybatisType}},
-            </if>
-            <if test="ownerId != null">
-                #{ownerId,jdbcType=${field.mybatisType}},
-            </if>
-            <if test="createTime != null">
-                #{createTime,jdbcType=${field.mybatisType}},
-            </if>
-            <if test="updateTime != null">
-                #{updateTime,jdbcType=${field.mybatisType}},
-            </if>
-            <if test="operator != null">
-                #{operator,jdbcType=${field.mybatisType}},
-            </if>
-            <if test="iscancel != null">
-                #{iscancel,jdbcType=${field.mybatisType}},
-            </if>
-            <if test="remark != null">
-                #{remark,jdbcType=${field.mybatisType}},
-            </if>
-        </trim>
     </insert>
 
-    <!-- 验证修改 -->
-    <update id="updateSelective">
+    <!-- 逻辑删除 -->
+    <update id="delete">
         update b_nodes_owner
-        <set>
-            <if test="nodesOwner.id != null">
-                id = #{nodesOwner.id,jdbcType=${field.mybatisType}},
+        set iscancel = 1
+        <where>
+            1=1
+            <if test="nodeId != null">
+                and node_id = #{nodeId}
             </if>
-            <if test="nodesOwner.nodeId != null">
-                node_id = #{nodesOwner.nodeId,jdbcType=${field.mybatisType}},
+            <if test="type != null">
+                and type = #{type}
             </if>
-            <if test="nodesOwner.ownerLevel != null">
-                owner_level = #{nodesOwner.ownerLevel,jdbcType=${field.mybatisType}},
+            <if test="userId != null">
+                and owner_id = #{userId}
             </if>
-            <if test="nodesOwner.ownerId != null">
-                owner_id = #{nodesOwner.ownerId,jdbcType=${field.mybatisType}},
-            </if>
-            <if test="nodesOwner.createTime != null">
-                create_time = #{nodesOwner.createTime,jdbcType=${field.mybatisType}},
-            </if>
-            <if test="nodesOwner.updateTime != null">
-                update_time = #{nodesOwner.updateTime,jdbcType=${field.mybatisType}},
-            </if>
-            <if test="nodesOwner.operator != null">
-                operator = #{nodesOwner.operator,jdbcType=${field.mybatisType}},
-            </if>
-            <if test="nodesOwner.iscancel != null">
-                iscancel = #{nodesOwner.iscancel,jdbcType=${field.mybatisType}},
-            </if>
-            <if test="nodesOwner.remark != null">
-                remark = #{nodesOwner.remark,jdbcType=${field.mybatisType}},
-            </if>
-        </set>
-        where id = #{id}
+        </where>
     </update>
+
 </mapper>

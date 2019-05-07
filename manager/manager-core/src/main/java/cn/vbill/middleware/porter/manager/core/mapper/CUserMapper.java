@@ -158,4 +158,13 @@ public interface CUserMapper {
      * @return
      */
     List<CUser> findRegister();
+
+    /**
+     * 根据jobId查询job_tasks_owner用户详细信息
+     *
+     * @param nodeId
+     * @param type
+     * @return
+     */
+    List<CUser> selectOwnersByNodeId(@Param("nodeId") Long nodeId, @Param("type") Integer type);
 }
