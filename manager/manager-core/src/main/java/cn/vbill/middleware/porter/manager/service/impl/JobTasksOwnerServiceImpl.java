@@ -102,6 +102,12 @@ public class JobTasksOwnerServiceImpl implements JobTasksOwnerService {
             case "CHANGE":
                 Integer changeNum = jobTasksOwnerMapper.delete(controlSettingVo.getJobId(), 1, null);
                 if (!controlSettingVo.getToUserIds().isEmpty()) {
+                    // 查询预移交者是否为该任务的共享者
+                    Integer type = jobTasksOwnerMapper.findOwnerTypeByJobIdAndUserId(controlSettingVo.getJobId(), controlSettingVo.getToUserIds().get(0));
+                    if (type == 2) {
+                        // 提升权限
+                        jobTasksOwnerMapper.delete(controlSettingVo.getJobId(), 2, controlSettingVo.getToUserIds().get(0));
+                    }
                     jobTasksOwnerMapper.batchInsert(controlSettingVo.getToUserIds(), controlSettingVo.getJobId(), 1);
                 }
                 return changeNum;
