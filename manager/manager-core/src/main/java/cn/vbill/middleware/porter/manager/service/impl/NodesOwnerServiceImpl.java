@@ -103,6 +103,8 @@ public class NodesOwnerServiceImpl implements NodesOwnerService {
                     }
                     nodesOwnerMapper.batchInsert(controlSettingVo.getToUserIds(), controlSettingVo.getId(), 1);
                 }
+                LOGGER.info("移交节点[{}]，操作者用户ID:[{}]，授权者用户ID:[{}]",
+                        controlSettingVo.getId(), RoleCheckContext.getUserIdHolder().getUserId(), controlSettingVo.getToUserIds().get(0));
                 return changeNum;
             // 共享
             case "SHARE":
@@ -110,12 +112,15 @@ public class NodesOwnerServiceImpl implements NodesOwnerService {
                 if (!controlSettingVo.getToUserIds().isEmpty()) {
                     nodesOwnerMapper.batchInsert(controlSettingVo.getToUserIds(), controlSettingVo.getId(), 2);
                 }
+                LOGGER.info("共享节点[{}]，操作者用户ID:[{}]，授权者用户ID:[{}]",
+                        controlSettingVo.getId(), RoleCheckContext.getUserIdHolder().getUserId(), controlSettingVo.getToUserIds());
                 return shareNum;
             // 作废
             case "CANCEL":
                 Integer type = nodesOwnerMapper.findOwnerTypeByNodeIdAndUserId(controlSettingVo.getId(), RoleCheckContext.getUserIdHolder().getUserId());
+                LOGGER.info("放弃节点[{}]，操作者用户ID:[{}]",
+                        controlSettingVo.getId(), RoleCheckContext.getUserIdHolder().getUserId());
                 return nodesOwnerMapper.delete(controlSettingVo.getId(), type, RoleCheckContext.getUserIdHolder().getUserId());
-            ;
             // 回收所有者
             case "RECYCLE_C":
                 LOGGER.info("回收节点所有者，节点id[{}]，操作者管理员ID:[{}]", controlSettingVo.getId(), RoleCheckContext.getUserIdHolder().getUserId());
