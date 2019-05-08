@@ -34,9 +34,7 @@ import cn.vbill.middleware.porter.manager.service.impl.MrNodesScheduleServiceImp
 import cn.vbill.middleware.porter.manager.service.impl.NodesServiceImpl;
 import com.alibaba.fastjson.JSON;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -91,18 +89,22 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener {
             // 节点状态更新
             if (NODE_STAT_PATTERN.matcher(zkEvent.getId()).matches()) {
                 DNode node = getDNode(zkEvent.getId());
-                String heartBeatTime = DateFormatUtils.formatDate(DateFormatUtils.PATTERN_DEFAULT, node.getHeartbeat());
-                logger.info("节点[{}]状态上报", node.getNodeId());
-                logger.info("2-DNode...." + node.getNodeId() + "..." + JSON.toJSONString(node));
-                // do something 心跳时间记录 并且表示节点在线
-                int i = nodesService.updateHeartBeatTime(node, heartBeatTime);
-                if (i == 0) {
-                    logger.warn("节点[{}]尚未完善管理后台节点信息，请及时配置！", node.getNodeId());
-                    nodesService.insertState(node, heartBeatTime, 1);
+                //一分钟内的心跳数据
+                if ((new Date().getTime() - node.getHeartbeat().getTime())/1000/60 > 1) {
+                    String heartBeatTime = DateFormatUtils.formatDate(DateFormatUtils.PATTERN_DEFAULT, node.getHeartbeat());
+
+                    logger.info("节点[{}]状态上报", node.getNodeId());
+                    logger.info("2-DNode...." + node.getNodeId() + "..." + JSON.toJSONString(node));
+                    // do something 心跳时间记录 并且表示节点在线
+                    int i = nodesService.updateHeartBeatTime(node, heartBeatTime);
+                    if (i == 0) {
+                        logger.warn("节点[{}]尚未完善管理后台节点信息，请及时配置！", node.getNodeId());
+                        nodesService.insertState(node, heartBeatTime, 1);
+                    }
+                    MrNodesScheduleService mrNodesScheduleService = ApplicationContextUtil
+                            .getBean(MrNodesScheduleServiceImpl.class);
+                    mrNodesScheduleService.dealDNode(node);
                 }
-                MrNodesScheduleService mrNodesScheduleService = ApplicationContextUtil
-                        .getBean(MrNodesScheduleServiceImpl.class);
-                mrNodesScheduleService.dealDNode(node);
             }
         } catch (Throwable e) {
             e.printStackTrace();
