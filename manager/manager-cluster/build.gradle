@@ -29,8 +29,10 @@ processResources.dependsOn moveOutFromJar
 
 startScripts {
     doLast {
-        unixScript.text = unixScript.text.replace('CLASSPATH=', 'cd $APP_HOME;\nCLASSPATH=').replace("DEFINE_APP_HOME",'$APP_HOME')
-        windowsScript.text = windowsScript.text.replace('set CLASSPATH=', 'cd %APP_HOME%\nset CLASSPATH=').replace("DEFINE_APP_HOME",'%APP_HOME%')
+        unixScript.text = resources.text.fromFile('script/unixStart.sh').asString()
+                .replace(runJarsPlaceHolder, runJars).replace(mainClassPlaceHolder, mainClassName)
+        windowsScript.text = resources.text.fromFile('script/windowsStart.bat').asString()
+                .replace(runJarsPlaceHolder, runJars).replace(mainClassPlaceHolder, mainClassName)
     }
 }
 
