@@ -20,6 +20,7 @@ package cn.vbill.middleware.porter.common.task.config;
 
 import cn.vbill.middleware.porter.common.config.SourceConfig;
 import cn.vbill.middleware.porter.common.exception.ConfigParseException;
+import com.alibaba.fastjson.annotation.JSONField;
 
 import java.util.List;
 
@@ -45,6 +46,7 @@ public interface SwamlaneSupport {
      * getSwimlaneId
      * @return
      */
+    @JSONField(serialize=false)
     default String getSwimlaneId() {
         throw new UnsupportedOperationException("不支持的方法调用");
     }
