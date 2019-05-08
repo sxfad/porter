@@ -22,7 +22,6 @@ import cn.vbill.middleware.porter.manager.core.entity.Nodes;
 import cn.vbill.middleware.porter.manager.core.util.ApplicationContextUtil;
 import cn.vbill.middleware.porter.manager.service.JobTasksService;
 import cn.vbill.middleware.porter.manager.service.NodesService;
-import cn.vbill.middleware.porter.manager.service.impl.NodesServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
