@@ -86,7 +86,7 @@ public class ResourceUtils {
      * @return: void
      */
     private void loadIpNameMap() {
-        NodesService nodesService = ApplicationContextUtil.getBean(NodesServiceImpl.class);
+        NodesService nodesService = ApplicationContextUtil.getBean(NodesService.class);
         List<Nodes> nodesList = nodesService.selectList();
         for (Nodes nodes : nodesList) {
             NODEIDNAME_MAP.put(nodes.getNodeId(), nodes.getIpAddress());
