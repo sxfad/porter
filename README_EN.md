@@ -37,7 +37,7 @@ cd porter
 git checkout version
 git submodule init
 git submodule update
-git submodule foreach git pull origin version
+
 gradle build
 Find the installation package from the build/distributions list
 ```

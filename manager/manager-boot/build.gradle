@@ -39,7 +39,6 @@ task moveOutFromJar(type: Copy) {
     }
 }
 
-processResources.dependsOn moveOutFromJar,yarn_run
 
 startScripts {
     doLast {
@@ -67,14 +66,6 @@ dependencies {
     testCompile "org.springframework.boot:spring-boot-starter-test:${springVersion}"
 }
 
-yarn_run {
-    environment = System.getenv() + [
-            'OUTPUT': project.buildDir.path  + "/classes/java/main/public",
-            'API' : '/manager'
-            ]
-    args = ["build"]
-}
-
 
 buildscript {
     repositories {
@@ -88,7 +79,22 @@ buildscript {
 }
 
 node {
+    version = '10.15.3'
+    yarnVersion = '1.15.2'
+    download = true
     nodeModulesDir = file("${rootProject.projectDir}/porter-ui")
-    yarnWorkDir = file("${project.buildDir}/porter-ui")
+    yarnWorkDir = file("${project.buildDir}/yarn")
+    npmWorkDir = file("${project.buildDir}/npm")
+    workDir = file("${project.buildDir}/node")
 }
 
+task buildPorterUI(type: YarnTask) {
+    environment = System.getenv() + [
+            'OUTPUT': project.buildDir.path  + "/classes/java/main/public",
+            'API' : '/manager',
+            'NODE_ENV' : 'production'
+    ]
+    args= ["node", "${rootProject.projectDir}/porter-ui/builder/build.js"]
+}
+buildPorterUI.dependsOn yarn_install
+processResources.dependsOn moveOutFromJar,buildPorterUI

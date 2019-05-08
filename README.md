@@ -38,7 +38,6 @@ git checkout 版本
 
 git submodule init
 git submodule update
-git submodule foreach git pull origin 版本(porter-ui与manager-boot对应的前端UI版本)
 gradle build
 从build/distributions目录查找安装包
 ```
