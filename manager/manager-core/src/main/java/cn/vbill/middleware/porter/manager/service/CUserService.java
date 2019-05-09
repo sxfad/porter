@@ -168,5 +168,5 @@ public interface CUserService {
      * @param nodeId
      * @return
      */
-    List<CUser> selectOwnersByNodeId(Long nodeId, Integer type);
+    List<CUser> selectOwnersByNodeId(String nodeId, Integer type);
 }
