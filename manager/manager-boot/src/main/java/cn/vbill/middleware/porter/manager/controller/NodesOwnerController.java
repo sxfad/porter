@@ -87,7 +87,7 @@ public class NodesOwnerController {
      * @param: [nodeId]
      * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
      */
-    @GetMapping("/findOwner/{nodeId}")
+    @GetMapping("/findNodeOwner/{nodeId}")
     @ApiOperation(value = "回显所有者、共享者", notes = "回显所有者、共享者")
     public ResponseMessage findOwnerByJobId(@PathVariable("nodeId") String nodeId) {
         ControlPageVo controlPageVo = nodesOwnerService.findOwnerByNodeId(nodeId);

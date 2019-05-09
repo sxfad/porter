@@ -86,7 +86,7 @@ public class JobTasksOwnerController {
      * @param: [jobId]
      * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
      */
-    @GetMapping("/findOwner/{jobId}")
+    @GetMapping("/findJobOwner/{jobId}")
     @ApiOperation(value = "回显所有者、共享者", notes = "回显所有者、共享者")
     public ResponseMessage findOwnerByJobId(@PathVariable("jobId") Long jobId) {
         ControlPageVo controlPageVo = jobTasksOwnerService.findOwnerByJobId(jobId);
