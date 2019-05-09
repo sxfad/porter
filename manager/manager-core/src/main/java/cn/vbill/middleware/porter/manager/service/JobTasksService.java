@@ -21,7 +21,7 @@ import java.util.List;
 
 import cn.vbill.middleware.porter.common.task.config.TaskConfig;
 import cn.vbill.middleware.porter.common.task.dic.TaskStatusType;
-import cn.vbill.middleware.porter.common.warning.owner.TaskOwner;
+import cn.vbill.middleware.porter.common.warning.entity.WarningOwner;
 import cn.vbill.middleware.porter.manager.core.entity.JobTasks;
 import cn.vbill.middleware.porter.manager.web.page.Page;
 
@@ -203,5 +203,5 @@ public interface JobTasksService {
      * @param id
      * @return
      */
-    TaskOwner selectJobTaskOwner(Long id);
+    WarningOwner selectJobWarningOwner(Long id);
 }

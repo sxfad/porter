@@ -1,7 +1,7 @@
 /**
  * 
  */
-package cn.vbill.middleware.porter.common.warning.owner;
+package cn.vbill.middleware.porter.common.warning.entity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,13 +12,12 @@ import cn.vbill.middleware.porter.common.warning.entity.WarningReceiver;
  * @author guohongjian[guo_hj@suixingpay.com]
  *
  */
-public class TaskOwner {
+public class WarningOwner {
 
-    public TaskOwner() {
+    public WarningOwner() {
 
     }
 
-    
     /** 权限所有人. */
     private WarningReceiver owner;
 

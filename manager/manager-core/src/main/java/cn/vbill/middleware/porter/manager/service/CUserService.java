@@ -17,11 +17,11 @@
 
 package cn.vbill.middleware.porter.manager.service;
 
-import cn.vbill.middleware.porter.common.warning.owner.TaskOwner;
+import java.util.List;
+
+import cn.vbill.middleware.porter.common.warning.entity.WarningOwner;
 import cn.vbill.middleware.porter.manager.core.entity.CUser;
 import cn.vbill.middleware.porter.manager.web.page.Page;
-
-import java.util.List;
 
 /**
  * 登陆用户表 服务接口类
@@ -177,5 +177,13 @@ public interface CUserService {
      * @param id
      * @return
      */
-    TaskOwner selectJobTaskOwner(Long id);
+    WarningOwner selectJobWarningOwner(Long jobId);
+
+    /**
+     * 节点所有人和共享者
+     * 
+     * @param id
+     * @return
+     */
+    WarningOwner selectNodeWarningOwner(String nodeId);
 }

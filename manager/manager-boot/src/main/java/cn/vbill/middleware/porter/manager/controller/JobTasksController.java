@@ -43,7 +43,7 @@ import cn.vbill.middleware.porter.common.cluster.event.command.TaskPushCommand;
 import cn.vbill.middleware.porter.common.cluster.impl.AbstractClusterListener;
 import cn.vbill.middleware.porter.common.task.config.TaskConfig;
 import cn.vbill.middleware.porter.common.task.dic.TaskStatusType;
-import cn.vbill.middleware.porter.common.warning.owner.TaskOwner;
+import cn.vbill.middleware.porter.common.warning.entity.WarningOwner;
 import cn.vbill.middleware.porter.manager.core.entity.JobTasks;
 import cn.vbill.middleware.porter.manager.service.JobTasksService;
 import cn.vbill.middleware.porter.manager.web.message.ResponseMessage;
@@ -271,14 +271,14 @@ public class JobTasksController {
             }
             //权限信息(附邮箱)
             try {
-                TaskOwner jobTaskOwner = jobTasksService.selectJobTaskOwner(id);
+                WarningOwner warningOwner = jobTasksService.selectJobWarningOwner(id);
                 ClusterProviderProxy.INSTANCE.broadcastEvent(client -> {
                     String nodePath = AbstractClusterListener.BASE_CATALOG + "/task/" + id + "/owner";
                     if (!StringUtils.isBlank(nodePath)) {
-                        client.changeData(nodePath, false, false, JSON.toJSONString(jobTaskOwner));
+                        client.changeData(nodePath, false, false, JSON.toJSONString(warningOwner));
                     }
                 });
-                log.info("zk变更任务id[{}]权限数据到zk成功,详细信息[{}]!", id, JSON.toJSONString(jobTaskOwner));
+                log.info("zk变更任务id[{}]权限数据到zk成功,详细信息[{}]!", id, JSON.toJSONString(warningOwner));
             } catch (Exception e) {
                 log.error("zk变更任务id[{}]权限数据到zk失败,请关注！", id, e);
                 return ResponseMessage.error("变更任务权限失败，请关注！");

@@ -24,14 +24,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import cn.vbill.middleware.porter.manager.service.CUserService;
-import cn.vbill.middleware.porter.manager.core.mapper.CUserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import cn.vbill.middleware.porter.common.warning.entity.WarningOwner;
 import cn.vbill.middleware.porter.common.warning.entity.WarningReceiver;
-import cn.vbill.middleware.porter.common.warning.owner.TaskOwner;
 import cn.vbill.middleware.porter.manager.core.entity.CUser;
+import cn.vbill.middleware.porter.manager.core.mapper.CUserMapper;
+import cn.vbill.middleware.porter.manager.service.CUserService;
 import cn.vbill.middleware.porter.manager.web.page.Page;
 
 /**
@@ -149,20 +149,37 @@ public class CUserServiceImpl implements CUserService {
     }
 
     @Override
-    public TaskOwner selectJobTaskOwner(Long id) {
-        TaskOwner jobTaskOwner = new TaskOwner();
+    public WarningOwner selectJobWarningOwner(Long jobId) {
+        WarningOwner warningOwner = new WarningOwner();
         // ownerType=1:任务所有者
-        List<CUser> userOwner = this.selectOwnersByJobId(id, 1);
+        List<CUser> userOwner = this.selectOwnersByJobId(jobId, 1);
         // shareType=2:任务共享者
-        List<CUser> userShares = this.selectOwnersByJobId(id, 2);
+        List<CUser> userShares = this.selectOwnersByJobId(jobId, 2);
         if (userOwner != null && userOwner.size() == 1) {
             CUser user = userOwner.get(0);
-            jobTaskOwner.setOwner(new WarningReceiver(user.getNickname(), user.getEmail(), user.getMobile()));
+            warningOwner.setOwner(new WarningReceiver(user.getNickname(), user.getEmail(), user.getMobile()));
         }
         if (userShares != null && userShares.size() > 0) {
-            jobTaskOwner.setShareOwner(Arrays.asList(this.receiver(userShares)));
+            warningOwner.setShareOwner(Arrays.asList(this.receiver(userShares)));
         }
-        return jobTaskOwner;
+        return warningOwner;
+    }
+
+    @Override
+    public WarningOwner selectNodeWarningOwner(String nodeId) {
+        WarningOwner warningOwner = new WarningOwner();
+        // ownerType=1:任务所有者
+        List<CUser> userOwner = this.selectOwnersByNodeId(nodeId, 1);
+        // shareType=2:任务共享者
+        List<CUser> userShares = this.selectOwnersByNodeId(nodeId, 2);
+        if (userOwner != null && userOwner.size() == 1) {
+            CUser user = userOwner.get(0);
+            warningOwner.setOwner(new WarningReceiver(user.getNickname(), user.getEmail(), user.getMobile()));
+        }
+        if (userShares != null && userShares.size() > 0) {
+            warningOwner.setShareOwner(Arrays.asList(this.receiver(userShares)));
+        }
+        return warningOwner;
     }
 
     private WarningReceiver[] receiver(List<CUser> cusers) {
