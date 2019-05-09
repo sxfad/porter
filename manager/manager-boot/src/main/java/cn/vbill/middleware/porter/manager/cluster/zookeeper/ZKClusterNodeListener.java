@@ -17,26 +17,23 @@
 
 package cn.vbill.middleware.porter.manager.cluster.zookeeper;
 
+import cn.vbill.middleware.porter.common.cluster.ClusterListenerFilter;
 import cn.vbill.middleware.porter.common.cluster.client.ClusterClient;
 import cn.vbill.middleware.porter.common.cluster.event.ClusterListenerEventExecutor;
 import cn.vbill.middleware.porter.common.cluster.event.ClusterListenerEventType;
-import cn.vbill.middleware.porter.common.cluster.event.command.NodeOrderPushCommand;
-import cn.vbill.middleware.porter.common.statistics.DNode;
 import cn.vbill.middleware.porter.common.cluster.event.ClusterTreeNodeEvent;
+import cn.vbill.middleware.porter.common.cluster.event.command.NodeOrderPushCommand;
 import cn.vbill.middleware.porter.common.cluster.event.executor.TaskPushEventExecutor;
 import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListener;
-import cn.vbill.middleware.porter.common.cluster.ClusterListenerFilter;
+import cn.vbill.middleware.porter.common.statistics.DNode;
 import cn.vbill.middleware.porter.manager.core.util.ApplicationContextUtil;
 import cn.vbill.middleware.porter.manager.core.util.DateFormatUtils;
 import cn.vbill.middleware.porter.manager.service.MrNodesScheduleService;
 import cn.vbill.middleware.porter.manager.service.NodesService;
 import cn.vbill.middleware.porter.manager.service.impl.MrNodesScheduleServiceImpl;
-import cn.vbill.middleware.porter.manager.service.impl.NodesServiceImpl;
 import com.alibaba.fastjson.JSON;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.regex.Pattern;
 
 /**
@@ -62,13 +59,15 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener {
         logger.debug("NodeListener:{},{},{}", zkEvent.getId(), zkEvent.getData(), zkEvent.getEventType());
         try {
             // 当前时间
-            NodesService nodesService = ApplicationContextUtil.getBean(NodesServiceImpl.class);
+            NodesService nodesService = ApplicationContextUtil.getBean(NodesService.class);
             // 节点上下线
             if (NODE_LOCK_PATTERN.matcher(zkEvent.getId()).matches()) {
                 String nodeInfoPath = zkEvent.getId().replace("/lock", "/stat");
                 DNode node = getDNode(nodeInfoPath);
                 String heartBeatTime = DateFormatUtils.formatDate(DateFormatUtils.PATTERN_DEFAULT, node.getHeartbeat());
-                if (zkEvent.isOnline()) { // 节点上线
+                //最后心跳时间距离现在的差值，单位分钟
+                long lastHeartbeatDiffOnMinutes = (new Date().getTime() - node.getHeartbeat().getTime())/1000/60;
+                if (zkEvent.isOnline() && lastHeartbeatDiffOnMinutes < 5) { // 节点上线
                     logger.info("节点[{}]上线", node.getNodeId());
                     // 服务启动，在线通知
                     int i = nodesService.updateState(node, heartBeatTime, 1);
@@ -77,7 +76,7 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener {
                         logger.warn("节点[{}]尚未完善管理后台节点信息，请及时配置！", node.getNodeId());
                     }
                 }
-                if (zkEvent.isOffline()) { // 节点下线
+                if (zkEvent.isOffline() || (lastHeartbeatDiffOnMinutes >= 5 && zkEvent.isOnline())) { // 节点下线
                     // do something 服务停止，离线通知
                     int i = nodesService.updateState(node, heartBeatTime, -1);
                     logger.info("节点[{}]下线", node.getNodeId());
@@ -91,18 +90,22 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener {
             // 节点状态更新
             if (NODE_STAT_PATTERN.matcher(zkEvent.getId()).matches()) {
                 DNode node = getDNode(zkEvent.getId());
-                String heartBeatTime = DateFormatUtils.formatDate(DateFormatUtils.PATTERN_DEFAULT, node.getHeartbeat());
-                logger.info("节点[{}]状态上报", node.getNodeId());
-                logger.info("2-DNode...." + node.getNodeId() + "..." + JSON.toJSONString(node));
-                // do something 心跳时间记录 并且表示节点在线
-                int i = nodesService.updateHeartBeatTime(node, heartBeatTime);
-                if (i == 0) {
-                    logger.warn("节点[{}]尚未完善管理后台节点信息，请及时配置！", node.getNodeId());
-                    nodesService.insertState(node, heartBeatTime, 1);
+                //一分钟内的心跳数据
+                if ((new Date().getTime() - node.getHeartbeat().getTime())/1000/60 > 1) {
+                    String heartBeatTime = DateFormatUtils.formatDate(DateFormatUtils.PATTERN_DEFAULT, node.getHeartbeat());
+
+                    logger.info("节点[{}]状态上报", node.getNodeId());
+                    logger.info("2-DNode...." + node.getNodeId() + "..." + JSON.toJSONString(node));
+                    // do something 心跳时间记录 并且表示节点在线
+                    int i = nodesService.updateHeartBeatTime(node, heartBeatTime);
+                    if (i == 0) {
+                        logger.warn("节点[{}]尚未完善管理后台节点信息，请及时配置！", node.getNodeId());
+                        nodesService.insertState(node, heartBeatTime, 1);
+                    }
+                    MrNodesScheduleService mrNodesScheduleService = ApplicationContextUtil
+                            .getBean(MrNodesScheduleServiceImpl.class);
+                    mrNodesScheduleService.dealDNode(node);
                 }
-                MrNodesScheduleService mrNodesScheduleService = ApplicationContextUtil
-                        .getBean(MrNodesScheduleServiceImpl.class);
-                mrNodesScheduleService.dealDNode(node);
             }
         } catch (Throwable e) {
             e.printStackTrace();

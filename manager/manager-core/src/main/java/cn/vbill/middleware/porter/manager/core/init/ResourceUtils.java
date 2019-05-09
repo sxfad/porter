@@ -22,7 +22,6 @@ import cn.vbill.middleware.porter.manager.core.entity.Nodes;
 import cn.vbill.middleware.porter.manager.core.util.ApplicationContextUtil;
 import cn.vbill.middleware.porter.manager.service.JobTasksService;
 import cn.vbill.middleware.porter.manager.service.NodesService;
-import cn.vbill.middleware.porter.manager.service.impl.NodesServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,7 +85,7 @@ public class ResourceUtils {
      * @return: void
      */
     private void loadIpNameMap() {
-        NodesService nodesService = ApplicationContextUtil.getBean(NodesServiceImpl.class);
+        NodesService nodesService = ApplicationContextUtil.getBean(NodesService.class);
         List<Nodes> nodesList = nodesService.selectList();
         for (Nodes nodes : nodesList) {
             NODEIDNAME_MAP.put(nodes.getNodeId(), nodes.getIpAddress());

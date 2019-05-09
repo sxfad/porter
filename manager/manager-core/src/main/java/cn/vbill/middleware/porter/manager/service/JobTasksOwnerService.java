@@ -71,4 +71,12 @@ public interface JobTasksOwnerService {
      * @return
      */
     ControlPageVo makeControlPage(Long jobId);
+
+    /**
+     * 回显所有者、共享者
+     *
+     * @param jobId
+     * @return
+     */
+    ControlPageVo findOwnerByJobId(Long jobId);
 }

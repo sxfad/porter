@@ -180,6 +180,7 @@ public class CUserServiceImpl implements CUserService {
      * @param list
      * @return
      */
+    
     private List<CUser> removeDuplicateWithOrder(List<CUser> list) {
         Set<String> set = new HashSet<String>();
         List<CUser> newList = new ArrayList<CUser>();

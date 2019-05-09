@@ -63,7 +63,7 @@ public class NodesServiceImpl implements NodesService {
             nodes.setTaskPushState(NodeStatusType.SUSPEND);
             nodes.setState(-1);
             number = nodesMapper.insert(nodes);
-            nodesOwnerService.insertByNodes(nodes.getId());
+            nodesOwnerService.insertByNodes(nodes.getNodeId());
             return number;
         }
     }

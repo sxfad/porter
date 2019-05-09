@@ -166,5 +166,5 @@ public interface CUserMapper {
      * @param type
      * @return
      */
-    List<CUser> selectOwnersByNodeId(@Param("nodeId") Long nodeId, @Param("type") Integer type);
+    List<CUser> selectOwnersByNodeId(@Param("nodeId") String nodeId, @Param("type") Integer type);
 }
