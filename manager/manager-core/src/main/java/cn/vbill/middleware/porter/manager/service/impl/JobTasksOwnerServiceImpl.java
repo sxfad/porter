@@ -69,6 +69,16 @@ public class JobTasksOwnerServiceImpl implements JobTasksOwnerService {
     protected DicControlTypePluginService dicControlTypePluginService;
 
     @Override
+    public ControlPageVo findOwnerByJobId(Long jobId) {
+        // ownerType=1:任务所有者  shareType=2:任务共享者
+        OwnerVo owner = checkOwner(cUserService.selectOwnersByJobId(jobId, 1));
+        List<OwnerVo> shareOwner = checkShares(cUserService.selectOwnersByJobId(jobId, 2));
+
+        ControlPageVo controlPageVo = new ControlPageVo(owner, shareOwner, null, null);
+        return controlPageVo;
+    }
+
+    @Override
     public ControlPageVo makeControlPage(Long jobId) {
 
         // ownerType=1:任务所有者  shareType=2:任务共享者
