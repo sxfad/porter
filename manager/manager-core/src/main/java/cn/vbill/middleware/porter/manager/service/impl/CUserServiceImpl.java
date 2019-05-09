@@ -141,7 +141,7 @@ public class CUserServiceImpl implements CUserService {
     }
 
     @Override
-    public List<CUser> selectOwnersByNodeId(Long nodeId, Integer type) {
+    public List<CUser> selectOwnersByNodeId(String nodeId, Integer type) {
         if (null == nodeId) {
             return null;
         }
