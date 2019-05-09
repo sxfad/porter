@@ -17,6 +17,7 @@
 
 package cn.vbill.middleware.porter.manager.service;
 
+import cn.vbill.middleware.porter.common.warning.owner.TaskOwner;
 import cn.vbill.middleware.porter.manager.core.entity.CUser;
 import cn.vbill.middleware.porter.manager.web.page.Page;
 
@@ -169,4 +170,12 @@ public interface CUserService {
      * @return
      */
     List<CUser> selectOwnersByNodeId(Long nodeId, Integer type);
+
+    /**
+     * 任务所有人和共享者
+     * 
+     * @param id
+     * @return
+     */
+    TaskOwner selectJobTaskOwner(Long id);
 }

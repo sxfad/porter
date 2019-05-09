@@ -17,13 +17,20 @@
 
 package cn.vbill.middleware.porter.manager.service.impl;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import cn.vbill.middleware.porter.manager.service.CUserService;
 import cn.vbill.middleware.porter.manager.core.mapper.CUserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import cn.vbill.middleware.porter.common.warning.entity.WarningReceiver;
+import cn.vbill.middleware.porter.common.warning.owner.TaskOwner;
 import cn.vbill.middleware.porter.manager.core.entity.CUser;
 import cn.vbill.middleware.porter.manager.web.page.Page;
 
@@ -139,6 +146,51 @@ public class CUserServiceImpl implements CUserService {
             return null;
         }
         return cuserMapper.selectOwnersByNodeId(nodeId, type);
+    }
+
+    @Override
+    public TaskOwner selectJobTaskOwner(Long id) {
+        TaskOwner jobTaskOwner = new TaskOwner();
+        // ownerType=1:任务所有者
+        List<CUser> userOwner = this.selectOwnersByJobId(id, 1);
+        // shareType=2:任务共享者
+        List<CUser> userShares = this.selectOwnersByJobId(id, 2);
+        if (userOwner != null && userOwner.size() == 1) {
+            CUser user = userOwner.get(0);
+            jobTaskOwner.setOwner(new WarningReceiver(user.getNickname(), user.getEmail(), user.getMobile()));
+        }
+        if (userShares != null && userShares.size() > 0) {
+            jobTaskOwner.setShareOwner(Arrays.asList(this.receiver(userShares)));
+        }
+        return jobTaskOwner;
+    }
+
+    private WarningReceiver[] receiver(List<CUser> cusers) {
+        cusers = this.removeDuplicateWithOrder(cusers);
+        WarningReceiver[] warningReceivers = new WarningReceiver[cusers.size()];
+        for (int i = 0; i < cusers.size(); i++) {
+            warningReceivers[i] = new WarningReceiver(cusers.get(i).getNickname(), cusers.get(i).getEmail(),
+                    cusers.get(i).getMobile());
+        }
+        return warningReceivers;
+    }
+
+    /**
+     * 排重下邮箱
+     * @param list
+     * @return
+     */
+    private List<CUser> removeDuplicateWithOrder(List<CUser> list) {
+        Set<String> set = new HashSet<String>();
+        List<CUser> newList = new ArrayList<CUser>();
+        for (Iterator<CUser> iter = list.iterator(); iter.hasNext();) {
+            CUser element = iter.next();
+            if (set.add(element.getEmail()))
+                newList.add(element);
+        }
+        list.clear();
+        list.addAll(newList);
+        return list;
     }
 
 }

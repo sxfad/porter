@@ -49,6 +49,7 @@ import cn.vbill.middleware.porter.common.task.config.TableMapperConfig;
 import cn.vbill.middleware.porter.common.task.config.TaskConfig;
 import cn.vbill.middleware.porter.common.task.dic.TaskStatusType;
 import cn.vbill.middleware.porter.common.warning.entity.WarningReceiver;
+import cn.vbill.middleware.porter.common.warning.owner.TaskOwner;
 import cn.vbill.middleware.porter.manager.core.dto.JDBCVo;
 import cn.vbill.middleware.porter.manager.core.dto.RoleDataControl;
 import cn.vbill.middleware.porter.manager.core.entity.CUser;
@@ -542,5 +543,11 @@ public class JobTasksServiceImpl implements JobTasksService {
     @Override
     public List<Long> showjobIdList() {
         return jobTasksMapper.showjobIdList();
+    }
+
+    @Override
+    public TaskOwner selectJobTaskOwner(Long id) {
+        TaskOwner jobTaskOwner = cUserService.selectJobTaskOwner(id);
+        return jobTaskOwner;
     }
 }
