@@ -74,7 +74,7 @@ CREATE TABLE `b_data_source_plugin` (
   `source_id` BIGINT(20) NOT NULL COMMENT '数据源id',
   `field_name` VARCHAR(100) DEFAULT NULL COMMENT '页面字段名称',
   `field_code` VARCHAR(100) DEFAULT NULL COMMENT '字段code',
-  `field_value` VARCHAR(100) DEFAULT NULL COMMENT '页面传入的实际值',
+  `field_value` VARCHAR(200) DEFAULT NULL COMMENT '页面传入的实际值',
   PRIMARY KEY (`id`)
 ) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='数据源字段信息表';
 -- 数据表组信息表
