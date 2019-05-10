@@ -57,10 +57,10 @@ public enum DataLoaderFactory {
      * @return: cn.vbill.middleware.porter.core.loader.DataLoader
      */
     public DataLoader getLoader(DataLoaderConfig config) throws ConfigParseException, ClientException, DataLoaderBuildException {
-        Client client = AbstractClient.getClient(SourceConfig.getConfig(config.getSource()));
-        if (null == client) throw new ConfigParseException(config.getSource() + "不能识别的目标端链接信息");
         //获取源数据查询配置
         DataLoader loader = newLoader(config.getLoaderName());
+        Client client = AbstractClient.getClient(SourceConfig.getConfig(config.getSource(), loader.getDefaultClientType()));
+        if (null == client) throw new ConfigParseException(config.getSource() + "不能识别的目标端链接信息");
         if (!(client instanceof LoadClient)) {
             throw new ClientException(config.getSource() + "无法识别为目标端链接客户端");
         }

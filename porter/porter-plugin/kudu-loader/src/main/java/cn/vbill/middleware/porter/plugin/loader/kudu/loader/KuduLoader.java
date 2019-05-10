@@ -107,6 +107,11 @@ public class KuduLoader extends AbstractDataLoader {
         }
     }
 
+    @Override
+    public String getDefaultClientType() {
+        return KuduLoaderConst.LOADER_SOURCE_TYPE_NAME.getCode();
+    }
+
     /**
      * 自定义扩展字段
      */

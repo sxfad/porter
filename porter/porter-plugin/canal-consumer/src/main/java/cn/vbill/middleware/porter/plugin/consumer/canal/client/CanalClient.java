@@ -20,9 +20,11 @@ package cn.vbill.middleware.porter.plugin.consumer.canal.client;
 import cn.vbill.middleware.porter.common.client.AbstractClient;
 import cn.vbill.middleware.porter.common.plugin.PluginServiceClient;
 import cn.vbill.middleware.porter.common.task.consumer.ConsumeClient;
+import cn.vbill.middleware.porter.common.task.consumer.MetaQueryClient;
 import cn.vbill.middleware.porter.common.task.consumer.Position;
 import cn.vbill.middleware.porter.common.task.exception.TaskStopTriggerException;
 import cn.vbill.middleware.porter.common.node.statistics.NodeLog;
+import cn.vbill.middleware.porter.common.util.db.meta.TableSchema;
 import cn.vbill.middleware.porter.plugin.consumer.canal.config.CanalConfig;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.otter.canal.common.alarm.CanalAlarmHandler;
@@ -45,6 +47,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -59,7 +62,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月02日 15:14
  */
-public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeClient, PluginServiceClient {
+public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeClient, PluginServiceClient, MetaQueryClient {
     private int perPullSize;
     private long pollTimeOut;
     private final CanalServerWithEmbedded canalServer;
@@ -310,6 +313,19 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
             return false;
         }
     }
+
+
+    @Override
+    public TableSchema getTable(String schema, String tableName) throws Exception {
+        return null;
+    }
+
+    @Override
+    public int getDataCount(String schema, String table, String updateDateColumn, Date startTime, Date endTime) {
+        return 0;
+    }
+
+
 
 
     /**

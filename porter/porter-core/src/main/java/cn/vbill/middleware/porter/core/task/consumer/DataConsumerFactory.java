@@ -59,6 +59,8 @@ public enum DataConsumerFactory {
      * @return: java.util.List<cn.vbill.middleware.porter.core.task.consumer.DataConsumer>
      */
     public List<DataConsumer> getConsumer(DataConsumerConfig config) throws ClientException, ConfigParseException, DataConsumerBuildException {
+        //创建consumer对象
+        DataConsumer tmpConsumer = newConsumer(config.getConsumerName());
         //消息转换器
         EventConverter converter = ConverterFactory.INSTANCE.getConverter(config.getConverter());
 
@@ -71,7 +73,7 @@ public enum DataConsumerFactory {
         //获取源数据查询配置
         MetaQueryClient metaQueryClient = null;
         if (null != config.getMetaSource() && !config.getMetaSource().isEmpty()) {
-            Client client = AbstractClient.getClient(SourceConfig.getConfig(config.getMetaSource()));
+            Client client = AbstractClient.getClient(SourceConfig.getConfig(config.getMetaSource(), tmpConsumer.getDefaultMetaClientType()));
             if (client instanceof MetaQueryClient) {
                 metaQueryClient = (MetaQueryClient) client;
             } else {
@@ -79,6 +81,7 @@ public enum DataConsumerFactory {
             }
 
         }
+
 
         //自定义消费数据处理器
         EventProcessor processor = null;
@@ -90,8 +93,9 @@ public enum DataConsumerFactory {
             }
         }
 
+
         //消费数据获取来源
-        SourceConfig configSet = SourceConfig.getConfig(config.getSource());
+        SourceConfig configSet = SourceConfig.getConfig(config.getSource(), tmpConsumer.getDefaultClientType());
         if (null == configSet) throw new ConfigParseException(config.getSource() + "不能识别的数据源");
         List<SourceConfig> configs = configSet.swamlanes();
         for (SourceConfig sourceConfig : configs) {
@@ -102,10 +106,14 @@ public enum DataConsumerFactory {
             ConsumeClient consumeClient = (ConsumeClient) tempClient;
 
             //创建consumer对象
-            DataConsumer consumer = newConsumer(config.getConsumerName());
+            DataConsumer consumer = newConsumer(tmpConsumer);
             consumer.setClient(consumeClient);
             consumer.setConverter(converter);
-            consumer.setMetaQueryClient(metaQueryClient);
+
+            if (null == metaQueryClient && tempClient instanceof MetaQueryClient) {
+                consumer.setMetaQueryClient((MetaQueryClient) tempClient);
+            }
+
             consumer.setExcludes(config.getExcludes());
             consumer.setIncludes(config.getIncludes());
             consumer.setEventProcessor(processor);
@@ -141,5 +149,13 @@ public enum DataConsumerFactory {
             }
         }
         throw new DataConsumerBuildException();
+    }
+
+    public DataConsumer newConsumer(DataConsumer clazz) throws DataConsumerBuildException {
+        try {
+            return clazz.getClass().newInstance();
+        } catch (Throwable e) {
+            throw new DataConsumerBuildException();
+        }
     }
 }

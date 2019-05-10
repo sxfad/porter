@@ -91,14 +91,12 @@ public class KafkaConfig extends SourceConfig implements PluginServiceConfig {
     protected boolean doCheck() {
         return !topics.isEmpty() && (partition == 0 || (partition > 0 && topics.size() == 1));
     }
-
     @Override
-    public String getInstanceClientType() {
-        return KafkaClient.class.getName();
-    }
-
-    @Override
-    public String getInstanceConfigType() {
-        return KafkaConsumerConst.CONSUMER_PLUGIN_NAME.getCode();
+    public Map<String, Class> getInstance() {
+        return new HashMap<String, Class>() {
+            {
+                put(KafkaConsumerConst.CONSUMER_PLUGIN_NAME.getCode(), KafkaClient.class);
+            }
+        };
     }
 }

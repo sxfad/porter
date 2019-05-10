@@ -11,6 +11,8 @@ dependencies {
             project(":porter:porter-plugin:canal-consumer"),
             project(":porter:porter-plugin:kafka-loader"),
             project(":porter:porter-plugin:canal-row-converter"),
-            project(":porter:porter-plugin:ogg-json-converter")
+            project(":porter:porter-plugin:ogg-json-converter"),
+            project(":porter:porter-plugin:jdbc-consumer"),
+            project(":porter:porter-plugin:jdbc-connector")
     )
 }

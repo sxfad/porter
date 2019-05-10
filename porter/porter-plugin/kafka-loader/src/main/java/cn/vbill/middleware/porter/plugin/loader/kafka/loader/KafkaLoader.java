@@ -104,6 +104,11 @@ public class KafkaLoader extends AbstractDataLoader {
         }
     }
 
+    @Override
+    public String getDefaultClientType() {
+        return KafkaLoaderConst.LOADER_SOURCE_TYPE_NAME.getCode();
+    }
+
     /**
      * 自定义扩展字段
      */

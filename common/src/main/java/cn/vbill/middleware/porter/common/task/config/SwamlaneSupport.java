@@ -46,7 +46,7 @@ public interface SwamlaneSupport {
      * getSwimlaneId
      * @return
      */
-    @JSONField(serialize=false)
+    @JSONField(serialize = false)
     default String getSwimlaneId() {
         throw new UnsupportedOperationException("不支持的方法调用");
     }

@@ -92,4 +92,14 @@ public class CanalConsumer extends AbstractDataConsumer {
     protected String getPluginName() {
         return CanalConsumerConst.CONSUMER_PLUGIN_NAME.getCode();
     }
+
+    @Override
+    public String getDefaultClientType() {
+        return CanalConsumerConst.CONSUMER_SOURCE_TYPE_NAME.getCode();
+    }
+
+    @Override
+    public String getDefaultMetaClientType() {
+        return CanalConsumerConst.CONSUMER_SOURCE_TYPE_NAME.getCode();
+    }
 }

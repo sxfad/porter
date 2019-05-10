@@ -22,7 +22,7 @@ import cn.vbill.middleware.porter.common.task.exception.TaskStopTriggerException
 import cn.vbill.middleware.porter.core.task.setl.ETLBucket;
 import cn.vbill.middleware.porter.core.message.MessageAction;
 import cn.vbill.middleware.porter.core.task.statistics.DSubmitStatObject;
-import cn.vbill.middleware.porter.plugin.loader.jdbc.client.JDBCClient;
+import cn.vbill.middleware.porter.plugin.connector.jdbc.JdbcConnectorConst;
 import com.alibaba.fastjson.JSONObject;
 import cn.vbill.middleware.porter.common.util.db.SqlUtils;
 import cn.vbill.middleware.porter.core.task.setl.ETLColumn;
@@ -44,7 +44,7 @@ public abstract class BaseJdbcLoader extends AbstractDataLoader {
     protected SqlBuilder sqlBuilder;
 
     public BaseJdbcLoader() {
-        if (null != getLoadClient()) sqlBuilder = new SqlBuilder(((JDBCClient) getLoadClient()).getSqlTemplate(), isInsertOnUpdateError());
+        if (null != getLoadClient()) sqlBuilder = new SqlBuilder(getLoadClient().getSqlTemplate(), isInsertOnUpdateError());
     }
 
     @Override
@@ -126,10 +126,9 @@ public abstract class BaseJdbcLoader extends AbstractDataLoader {
         try {
             List<Pair<String, Object[]>> sqlList = sqlBuilder.build(row);
             MessageAction action = row.getFinalOpType();
-            JDBCClient client = getLoadClient();
             for (Pair<String, Object[]> sqlOnce : sqlList) {
                 times++;
-                affect = client.update(action.getValue(), sqlOnce.getLeft(), sqlOnce.getRight());
+                affect = getLoadClient().update(action.getValue(), sqlOnce.getLeft(), sqlOnce.getRight());
                 if (affect > 0) break;
             }
         } catch (TaskStopTriggerException e) {
@@ -145,7 +144,6 @@ public abstract class BaseJdbcLoader extends AbstractDataLoader {
      * @return
      */
     protected int[] execBatchSql(List<ETLRow> rows) throws TaskStopTriggerException, InterruptedException {
-        JDBCClient client = getLoadClient();
         List<Pair<String, List<Object[]>>> reGroupList = new ArrayList<Pair<String, List<Object[]>>>();
 
         List<Pair<String, Object[]>> subList = new ArrayList<>();
@@ -161,7 +159,7 @@ public abstract class BaseJdbcLoader extends AbstractDataLoader {
 
         int[] allAffects = new int[]{};
         for (Pair<String, List<Object[]>> batch : reGroupList) {
-            int[] subResult = client.batchUpdate(action.getValue(), batch.getLeft(), batch.getRight());
+            int[] subResult = getLoadClient().batchUpdate(action.getValue(), batch.getLeft(), batch.getRight());
             allAffects = ArrayUtils.addAll(allAffects, subResult);
         }
         return allAffects;
@@ -187,5 +185,10 @@ public abstract class BaseJdbcLoader extends AbstractDataLoader {
         }
         if (!currentGroup.isEmpty()) reGroupList.add(new ImmutablePair<>(currentSql, currentGroup));
         if (from < count) orderBatchRow(reGroupList, sqlList, from);
+    }
+
+    @Override
+    public String getDefaultClientType() {
+        return JdbcConnectorConst.LOAD_SOURCE_TYPE_NAME.getCode();
     }
 }

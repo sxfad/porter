@@ -27,6 +27,8 @@ import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 
 import java.net.InetSocketAddress;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -86,13 +88,11 @@ public class CanalConfig extends SourceConfig implements PluginServiceConfig {
     }
 
     @Override
-    public String getInstanceClientType() {
-        return CanalClient.class.getName();
-    }
-
-
-    @Override
-    public String getInstanceConfigType() {
-        return CanalConsumerConst.CONSUMER_SOURCE_TYPE_NAME.getCode();
+    public Map<String, Class> getInstance() {
+        return new HashMap<String, Class>() {
+            {
+                put(CanalConsumerConst.CONSUMER_SOURCE_TYPE_NAME.getCode(), CanalClient.class);
+            }
+        };
     }
 }

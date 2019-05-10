@@ -17,7 +17,11 @@
 
 package cn.vbill.middleware.porter.common.task.loader;
 
-import cn.vbill.middleware.porter.common.client.Client;
+import cn.vbill.middleware.porter.common.task.consumer.MetaQueryClient;
+import cn.vbill.middleware.porter.common.task.exception.TaskStopTriggerException;
+import cn.vbill.middleware.porter.common.util.db.SqlTemplate;
+
+import java.util.List;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -25,11 +29,21 @@ import cn.vbill.middleware.porter.common.client.Client;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月09日 15:46
  */
-public interface LoadClient extends Client {
+public interface LoadClient extends MetaQueryClient {
     /**
      * 公共数据源重置
      */
     default void reset() {
 
+    }
+    default int update(String type, String sql, Object... args) throws TaskStopTriggerException, InterruptedException {
+        throw new UnsupportedOperationException();
+    }
+    default int[] batchUpdate(String sqlType, String sql, List<Object[]> batchArgs) throws TaskStopTriggerException, InterruptedException {
+        throw new UnsupportedOperationException();
+    }
+
+    default SqlTemplate getSqlTemplate() {
+        throw new UnsupportedOperationException();
     }
 }

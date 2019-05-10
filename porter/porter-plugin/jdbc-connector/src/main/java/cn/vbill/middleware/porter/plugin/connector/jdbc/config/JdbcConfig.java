@@ -15,16 +15,20 @@
  * </p>
  */
 
-package cn.vbill.middleware.porter.plugin.loader.jdbc.config;
+package cn.vbill.middleware.porter.plugin.connector.jdbc.config;
 
-import cn.vbill.middleware.porter.common.plugin.config.PluginServiceConfig;
 import cn.vbill.middleware.porter.common.config.SourceConfig;
 import cn.vbill.middleware.porter.common.dic.DbType;
-import cn.vbill.middleware.porter.plugin.loader.jdbc.JdbcLoaderConst;
-import cn.vbill.middleware.porter.plugin.loader.jdbc.client.JDBCClient;
+import cn.vbill.middleware.porter.common.plugin.config.PluginServiceConfig;
+import cn.vbill.middleware.porter.plugin.connector.jdbc.JdbcConnectorConst;
+import cn.vbill.middleware.porter.plugin.connector.jdbc.client.JdbcConsumeClient;
+import cn.vbill.middleware.porter.plugin.connector.jdbc.client.JdbcLoadClient;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -32,7 +36,7 @@ import org.apache.commons.lang3.StringUtils;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月02日 14:24
  */
-public class JDBCConfig extends SourceConfig implements PluginServiceConfig {
+public class JdbcConfig extends SourceConfig  implements PluginServiceConfig {
     //驱动类型
     @Setter @Getter private String driverClassName;
     @Setter @Getter private String url;
@@ -74,13 +78,12 @@ public class JDBCConfig extends SourceConfig implements PluginServiceConfig {
     }
 
     @Override
-    public String getInstanceClientType() {
-        return JDBCClient.class.getName();
-    }
-
-
-    @Override
-    public String getInstanceConfigType() {
-        return JdbcLoaderConst.LOADER_SOURCE_TYPE_NAME.getCode();
+    public Map<String, Class> getInstance() {
+        return new HashMap<String, Class>() {
+            {
+                put(JdbcConnectorConst.CONSUME_SOURCE_TYPE_NAME.getCode(), JdbcConsumeClient.class);
+                put(JdbcConnectorConst.LOAD_SOURCE_TYPE_NAME.getCode(), JdbcLoadClient.class);
+            }
+        };
     }
 }

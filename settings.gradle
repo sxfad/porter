@@ -39,3 +39,8 @@ findProject(':porter:porter-plugin:canal-row-converter')?.name = 'canal-row-conv
 include 'porter:porter-plugin:ogg-json-converter'
 findProject(':porter:porter-plugin:ogg-json-converter')?.name = 'ogg-json-converter'
 
+include 'porter:porter-plugin:jdbc-consumer'
+findProject(':porter:porter-plugin:jdbc-consumer')?.name = 'jdbc-consumer'
+
+include 'porter:porter-plugin:jdbc-connector'
+findProject(':porter:porter-plugin:jdbc-connector')?.name = 'jdbc-connector'

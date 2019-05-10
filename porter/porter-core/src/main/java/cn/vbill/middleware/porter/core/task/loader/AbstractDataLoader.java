@@ -70,7 +70,7 @@ public abstract class AbstractDataLoader implements DataLoader {
      * @param: []
      * @return: T
      */
-    public <T> T getLoadClient() {
+    public <T extends LoadClient> T getLoadClient() {
         return (T) loadClient;
     }
 

@@ -1,0 +1,7 @@
+group 'cn.vbill.middleware.porter.plugin'
+jar.baseName = 'porter-plugin-jdbc-connector'
+dependencies {
+    implementation (
+            project(":porter:porter-core")
+    )
+}

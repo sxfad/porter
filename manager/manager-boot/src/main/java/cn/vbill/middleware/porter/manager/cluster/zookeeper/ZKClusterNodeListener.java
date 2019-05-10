@@ -68,7 +68,7 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener {
                 String heartBeatTime = DateFormatUtils.formatDate(DateFormatUtils.PATTERN_DEFAULT, node.getHeartbeat());
                 //最后心跳时间距离现在的差值，单位分钟
                 long lastHeartbeatDiffOnMinutes = (new Date().getTime() - node.getHeartbeat().getTime())/1000/60;
-                if (zkEvent.isOnline() && lastHeartbeatDiffOnMinutes < 5) { // 节点上线
+                if (zkEvent.isOnline() && lastHeartbeatDiffOnMinutes <= 5) { // 节点上线
                     logger.info("节点[{}]上线", node.getNodeId());
                     // 服务启动，在线通知
                     int i = nodesService.updateState(node, heartBeatTime, 1);
@@ -77,7 +77,7 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener {
                         logger.warn("节点[{}]尚未完善管理后台节点信息，请及时配置！", node.getNodeId());
                     }
                 }
-                if (zkEvent.isOffline() || (lastHeartbeatDiffOnMinutes >= 5 && zkEvent.isOnline())) { // 节点下线
+                if (zkEvent.isOffline() || (lastHeartbeatDiffOnMinutes > 5 && zkEvent.isOnline())) { // 节点下线
                     // do something 服务停止，离线通知
                     int i = nodesService.updateState(node, heartBeatTime, -1);
                     logger.info("节点[{}]下线", node.getNodeId());
@@ -92,7 +92,7 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener {
             if (NODE_STAT_PATTERN.matcher(zkEvent.getId()).matches()) {
                 DNode node = getDNode(zkEvent.getId());
                 //一分钟内的心跳数据
-                if ((new Date().getTime() - node.getHeartbeat().getTime())/1000/60 > 1) {
+                if ((new Date().getTime() - node.getHeartbeat().getTime())/1000/60 <= 5) {
                     String heartBeatTime = DateFormatUtils.formatDate(DateFormatUtils.PATTERN_DEFAULT, node.getHeartbeat());
 
                     logger.info("节点[{}]状态上报", node.getNodeId());

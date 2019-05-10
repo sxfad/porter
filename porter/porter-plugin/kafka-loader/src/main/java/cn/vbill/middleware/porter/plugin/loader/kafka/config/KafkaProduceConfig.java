@@ -71,13 +71,11 @@ public class KafkaProduceConfig extends SourceConfig implements PluginServiceCon
     }
 
     @Override
-    public String getInstanceClientType() {
-        return KafkaProduceClient.class.getName();
-    }
-
-
-    @Override
-    public String getInstanceConfigType() {
-        return KafkaLoaderConst.LOADER_SOURCE_TYPE_NAME.getCode();
+    public Map<String, Class> getInstance() {
+        return new HashMap<String, Class>() {
+            {
+                put(KafkaLoaderConst.LOADER_SOURCE_TYPE_NAME.getCode(), KafkaProduceClient.class);
+            }
+        };
     }
 }

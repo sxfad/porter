@@ -15,12 +15,10 @@
  * </p>
  */
 
-package cn.vbill.middleware.porter.plugin.loader.jdbc.client;
+package cn.vbill.middleware.porter.plugin.connector.jdbc.client;
 
 import cn.vbill.middleware.porter.common.client.AbstractClient;
-import cn.vbill.middleware.porter.common.task.loader.LoadClient;
 import cn.vbill.middleware.porter.common.task.consumer.MetaQueryClient;
-import cn.vbill.middleware.porter.common.plugin.PluginServiceClient;
 import cn.vbill.middleware.porter.common.util.db.DdlUtils;
 import cn.vbill.middleware.porter.common.util.db.SqlTemplate;
 import cn.vbill.middleware.porter.common.util.db.SqlTemplateImpl;
@@ -28,9 +26,8 @@ import cn.vbill.middleware.porter.common.util.db.meta.TableColumn;
 import cn.vbill.middleware.porter.common.util.db.meta.TableSchema;
 import cn.vbill.middleware.porter.common.dic.DbType;
 import cn.vbill.middleware.porter.common.task.exception.TaskStopTriggerException;
-import cn.vbill.middleware.porter.plugin.loader.jdbc.config.JDBCConfig;
+import cn.vbill.middleware.porter.plugin.connector.jdbc.config.JdbcConfig;
 import com.alibaba.druid.pool.DruidDataSource;
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.mysql.jdbc.AbandonedConnectionCleanupThread;
 import lombok.Getter;
@@ -60,19 +57,20 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * @version: V1.0
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月02日 15:14
  */
-public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient, MetaQueryClient, PluginServiceClient {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JDBCClient.class);
-    private final boolean makePrimaryKeyWhenNo;
+public abstract class JdbcClient extends AbstractClient<JdbcConfig> implements MetaQueryClient {
+    private static final Logger LOGGER = LoggerFactory.getLogger(JdbcClient.class);
+    @Getter
+    private final JdbcWapper jdbcProxy;
     @Getter
     private SqlTemplate sqlTemplate;
-    private final JdbcWapper jdbcProxy;
+    private final boolean makePrimaryKeyWhenNo;
     private final int connRetries;
 
-    public JDBCClient(JDBCConfig config) {
+    public JdbcClient(JdbcConfig config) {
         super(config);
-        this.makePrimaryKeyWhenNo = config.isMakePrimaryKeyWhenNo();
-        sqlTemplate = new SqlTemplateImpl();
         jdbcProxy = new JdbcWapper();
+        sqlTemplate = new SqlTemplateImpl();
+        this.makePrimaryKeyWhenNo = config.isMakePrimaryKeyWhenNo();
         connRetries = config.getRetries();
     }
 
@@ -156,47 +154,6 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
         return  null == results || results.isEmpty() ? null : results.get(0);
     }
 
-    /**
-     * batchUpdate
-     *
-     * @param sqlType
-     * @param sql
-     * @param batchArgs
-     * @return
-     * @throws TaskStopTriggerException
-     */
-    public int[] batchUpdate(String sqlType, String sql, List<Object[]> batchArgs) throws TaskStopTriggerException, InterruptedException {
-        int[] affect = jdbcProxy.batchUpdate(sql, batchArgs);
-
-        if (null == affect || affect.length == 0) {
-            List<Integer> affectList = new ArrayList<>();
-            //分组执行
-            batchErroUpdate(sqlType, 50, sql, batchArgs, 0, affectList);
-
-            affect = Arrays.stream(affectList.toArray(new Integer[]{})).mapToInt(Integer::intValue).toArray();
-        }
-        LOGGER.debug("sql:{},params:{},affect:{}", sql, JSON.toJSONString(batchArgs), affect);
-        return affect;
-    }
-
-    /**
-     * update
-     *
-     * @param type
-     * @param sql
-     * @param args
-     * @return
-     * @throws TaskStopTriggerException
-     */
-    public int update(String type, String sql, Object... args) throws TaskStopTriggerException, InterruptedException {
-        int affect = jdbcProxy.update(sql, args);
-        if (affect < 1) {
-            LOGGER.error("sql:{},params:{},affect:{}", sql, JSON.toJSONString(Arrays.asList(args)), affect);
-        } else {
-            LOGGER.debug("sql:{},params:{},affect:{}", sql, JSON.toJSONString(Arrays.asList(args)), affect);
-        }
-        return affect;
-    }
 
     /**
      * query
@@ -218,58 +175,17 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
         }
     }
 
-    /**
-     * batchErroUpdate
-     *
-     * @param sqlType
-     * @param batchSize
-     * @param sql
-     * @param batchArgs
-     * @param from
-     * @param affect
-     * @throws TaskStopTriggerException
-     */
-    private void batchErroUpdate(String sqlType, int batchSize, String sql, List<Object[]> batchArgs, int from, List<Integer> affect)
-            throws TaskStopTriggerException, InterruptedException {
-        int size = batchArgs.size();
-        int batchEnd = from + batchSize;
-        //获取当前分组
-        List<Object[]> subArgs = new ArrayList<>();
-        while (from < batchEnd && from < size) {
-            subArgs.add(batchArgs.get(from));
-            from++;
-        }
 
-        //根据当前分组批量插入
-        int[] reGroupAffect = jdbcProxy.batchUpdate(sql, subArgs, true);
-
-        //如果仍然插入失败,改为单条插入
-        if (null == reGroupAffect || reGroupAffect.length == 0) {
-            for (int i = 0; i < subArgs.size(); i++) {
-                affect.add(update(sqlType, sql, subArgs.get(i)));
-            }
-        } else {
-            Arrays.stream(reGroupAffect).boxed().forEach(i -> affect.add(i));
-        }
-        //递归下次分组
-        if (batchEnd < size) {
-            batchErroUpdate(sqlType, batchSize, sql, batchArgs, from, affect);
-        }
-    }
 
     @Override
     public String getClientInfo() {
-        JDBCConfig config = getConfig();
+        JdbcConfig config = getConfig();
         return new StringBuilder().append("数据库地址->").append(config.getUrl()).append(",用户->").append(config.getUserName())
                 .toString();
     }
 
-    @Override
-    public void reset() {
-    }
 
-
-    private final class JdbcWapper {
+    protected final class JdbcWapper {
         private volatile DruidDataSource dataSource;
         private volatile JdbcTemplate jdbcTemplate;
         private volatile TransactionTemplate transactionTemplate;
@@ -280,7 +196,7 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
         private JdbcWapper start() {
             connLock.writeLock().lock();
             try {
-                JDBCConfig config = getConfig();
+                JdbcConfig config = getConfig();
                 dataSource = new DruidDataSource();
                 dataSource.setDriverClassName(config.getDriverClassName());
                 dataSource.setUrl(config.getUrl());
@@ -364,7 +280,7 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
 
         }
 
-        private void query(String sql, RowCallbackHandler rch, Object[] args) {
+        protected void query(String sql, RowCallbackHandler rch, Object[] args) {
             connLock.readLock().lock();
             try {
                 jdbcTemplate.query(sql, rch, args);
@@ -373,11 +289,11 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
             }
         }
 
-        private int[] batchUpdate(String sql, List<Object[]> batchArgs) throws TaskStopTriggerException, InterruptedException {
+        protected int[] batchUpdate(String sql, List<Object[]> batchArgs) throws TaskStopTriggerException, InterruptedException {
             return batchUpdate(sql, batchArgs, false);
         }
 
-        private int[] batchUpdate(String sql, List<Object[]> batchArgs, boolean capture) throws TaskStopTriggerException, InterruptedException {
+        protected int[] batchUpdate(String sql, List<Object[]> batchArgs, boolean capture) throws TaskStopTriggerException, InterruptedException {
             int[] result = atomicExecute(new TransactionCallback<int[]>() {
                 @Override
                 @SneakyThrows(Throwable.class)
@@ -388,11 +304,11 @@ public class JDBCClient extends AbstractClient<JDBCConfig> implements LoadClient
             return null != result ? result : new int[] {};
         }
 
-        private int update(String sql, Object... args) throws TaskStopTriggerException, InterruptedException {
+        protected int update(String sql, Object... args) throws TaskStopTriggerException, InterruptedException {
             return update(sql, false, args);
         }
 
-        private int update(String sql, boolean capture, Object... args) throws TaskStopTriggerException, InterruptedException {
+        protected int update(String sql, boolean capture, Object... args) throws TaskStopTriggerException, InterruptedException {
             Integer result = atomicExecute(new TransactionCallback<Integer>() {
                 @Override
                 @SneakyThrows(Throwable.class)

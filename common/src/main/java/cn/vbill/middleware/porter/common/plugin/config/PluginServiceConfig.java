@@ -19,6 +19,8 @@ package cn.vbill.middleware.porter.common.plugin.config;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Map;
+
 /**
  * 插件服务配置文件
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -33,9 +35,8 @@ public interface PluginServiceConfig {
      * @return
      */
     default boolean isMatch(String configName) {
-        return StringUtils.trimToEmpty(getInstanceConfigType()).equals(StringUtils.trimToEmpty(configName));
+        return getInstance().containsKey(StringUtils.trimToEmpty(configName));
     }
 
-    String getInstanceConfigType();
-    String getInstanceClientType();
+    Map<String, Class> getInstance();
 }

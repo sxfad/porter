@@ -1,8 +1,5 @@
 cn.vbill.middleware.porter.core.task.loader.DataLoader=\
   cn.vbill.middleware.porter.plugin.loader.kafka.loader.KafkaLoader
 
-cn.vbill.middleware.porter.common.plugin.PluginServiceClient=\
-  cn.vbill.middleware.porter.plugin.loader.kafka.client.KafkaProduceClient
-
 cn.vbill.middleware.porter.common.plugin.config.PluginServiceConfig=\
   cn.vbill.middleware.porter.plugin.loader.kafka.config.KafkaProduceConfig

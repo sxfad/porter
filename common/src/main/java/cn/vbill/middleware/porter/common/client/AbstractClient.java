@@ -24,19 +24,13 @@ import cn.vbill.middleware.porter.common.config.SourceConfig;
 import cn.vbill.middleware.porter.common.config.source.NameSourceConfig;
 import cn.vbill.middleware.porter.common.exception.ClientException;
 import cn.vbill.middleware.porter.common.exception.ClientMatchException;
-import cn.vbill.middleware.porter.common.plugin.PluginServiceClient;
 import cn.vbill.middleware.porter.common.task.loader.PublicClientContext;
-import cn.vbill.middleware.porter.common.util.compile.JavaFileCompiler;
 import cn.vbill.middleware.porter.common.warning.client.EmailClient;
 import cn.vbill.middleware.porter.common.warning.config.EmailConfig;
-import com.alibaba.fastjson.annotation.JSONField;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.io.support.SpringFactoriesLoader;
-import org.springframework.util.ClassUtils;
 
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -49,11 +43,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public abstract class AbstractClient<T extends SourceConfig> implements Client {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractClient.class);
-
-    //插件服务配置文件
-    @JSONField(serialize = false, deserialize = false)
-    private static final List<String> PLUGIN_SERVICE_CLIENTS =
-            SpringFactoriesLoader.loadFactoryNames(PluginServiceClient.class, JavaFileCompiler.getInstance());
 
     private final AtomicBoolean status = new AtomicBoolean(false);
     private boolean isPublic = false;
@@ -146,16 +135,11 @@ public abstract class AbstractClient<T extends SourceConfig> implements Client {
 
         //自定义插件配置文件
         if (config instanceof PluginServiceConfig) {
-            //如果仍不能匹配客户端，尝试从插件服务SPI加载
-            for (String c : PLUGIN_SERVICE_CLIENTS) {
-                if (c.equals(((PluginServiceConfig) config).getInstanceClientType())) {
-                    try {
-
-                        return (Client) ClassUtils.forName(c, JavaFileCompiler.getInstance()).getConstructor(config.getClass()).newInstance(config);
-                    } catch (Throwable e) {
-                        continue;
-                    }
-                }
+            Class clazz = ((PluginServiceConfig) config).getInstance().get(config.getClientType());
+            try {
+                clazz.getConstructor(config.getClass()).newInstance(config);
+            } catch (Throwable e) {
+                throw new ClientException(e.getMessage());
             }
         }
         throw new ClientMatchException();

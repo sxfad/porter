@@ -1,0 +1,8 @@
+group 'cn.vbill.middleware.porter.plugin'
+jar.baseName = 'porter-plugin-jdbc-consumer'
+dependencies {
+    compileOnly (
+            project(":porter:porter-core"),
+            project(":porter:porter-plugin:jdbc-connector")
+    )
+}

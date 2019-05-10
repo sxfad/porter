@@ -28,6 +28,8 @@ import cn.vbill.middleware.porter.common.task.config.SwamlaneSupport;
 import cn.vbill.middleware.porter.common.util.BeanUtils;
 import cn.vbill.middleware.porter.common.util.compile.JavaFileCompiler;
 import com.alibaba.fastjson.annotation.JSONField;
+import lombok.Getter;
+import lombok.Setter;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -58,14 +60,34 @@ public abstract class SourceConfig implements SwamlaneSupport {
     /**
      * SOURCE_TYPE_KEY
      */
+    @Deprecated
     @JSONField(serialize = false, deserialize = false)
     public static final String SOURCE_TYPE_KEY = "sourceType";
 
     /**
-     * NAME_SOURCE_KEY
+     * CLIENT_TYPE_KEY
      */
     @JSONField(serialize = false, deserialize = false)
+    public static final String CLIENT_TYPE_KEY = "clientType";
+
+    /**
+     * NAME_SOURCE_KEY
+     */
+    @Deprecated
+    @JSONField(serialize = false, deserialize = false)
     public static final String NAME_SOURCE_KEY = "sourceName";
+
+    /**
+     * NAME_CLIENT_KEY
+     */
+    @JSONField(serialize = false, deserialize = false)
+    public static final String NAME_CLIENT_KEY = "clientName";
+
+
+    @Setter @Getter
+    private String clientType;
+
+    @Deprecated
     protected SourceType sourceType;
 
     private Map<String, String> properties;
@@ -100,6 +122,10 @@ public abstract class SourceConfig implements SwamlaneSupport {
         }
     }
 
+    public static <T extends SourceConfig> T getConfig(Map<String, String> properties) throws ConfigParseException {
+        return getConfig(properties, null);
+    }
+
     /**
      * 获取config
      *
@@ -108,11 +134,11 @@ public abstract class SourceConfig implements SwamlaneSupport {
      * @return
      * @throws ConfigParseException
      */
-    public static <T extends SourceConfig> T getConfig(Map<String, String> properties) throws ConfigParseException {
-        String sourceTypeCode = properties.getOrDefault(SOURCE_TYPE_KEY, "");
+    public static <T extends SourceConfig> T getConfig(Map<String, String> properties, String clientType) throws ConfigParseException {
+        clientType = properties.getOrDefault(CLIENT_TYPE_KEY, properties.getOrDefault(SOURCE_TYPE_KEY, clientType));
         T config = null;
         try {
-            SourceType sourceType = !StringUtils.isBlank(sourceTypeCode) ? SourceType.getSourceType(sourceTypeCode) : null;
+            SourceType sourceType = !StringUtils.isBlank(clientType) ? SourceType.getSourceType(clientType) : null;
             if (null != sourceType) {
                 switch (sourceType) {
                     case ZOOKEEPER:
@@ -131,18 +157,18 @@ public abstract class SourceConfig implements SwamlaneSupport {
                         break;
                 }
             }
-            if (null == config && properties.containsKey(NAME_SOURCE_KEY)) {
+            if (null == config && (properties.containsKey(NAME_SOURCE_KEY) || properties.containsKey(NAME_CLIENT_KEY))) {
                 config = (T) new NameSourceConfig();
             }
 
             //如果配置文件对象仍不存在，尝试从插件服务SPI加载
-            if (null == config && StringUtils.isNotBlank(sourceTypeCode)) {
+            if (null == config && StringUtils.isNotBlank(clientType)) {
                 for (String cc : PLUGIN_SERVICE_CONFIGS) {
                     try {
                         Class<PluginServiceConfig> configClass = (Class<PluginServiceConfig>) ClassUtils.forName(cc, PluginServiceConfig.class.getClassLoader());
                         PluginServiceConfig c = configClass.newInstance();
-                        if (c instanceof SourceConfig && c.isMatch(sourceTypeCode)) {
-                            config = (T) c.getClass().newInstance();
+                        if (c instanceof SourceConfig && c.isMatch(clientType)) {
+                            config = (T) c;
                             break;
                         }
                     } catch (Throwable e) {
@@ -154,6 +180,7 @@ public abstract class SourceConfig implements SwamlaneSupport {
             if (null != config) {
                 config.setProperties(properties);
                 config.stuff();
+                config.setClientType(clientType);
                 if (!config.check()) {
                     throw new ConfigParseException("参数格式不正确:" + properties);
                 }
@@ -195,7 +222,6 @@ public abstract class SourceConfig implements SwamlaneSupport {
      */
     protected abstract boolean doCheck();
 
-    public SourceType getSourceType() {
-        return sourceType;
-    }
+
+
 }

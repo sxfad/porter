@@ -2,6 +2,7 @@ group 'cn.vbill.middleware.porter.plugin'
 jar.baseName = 'porter-plugin-jdbc-loader'
 dependencies {
     implementation (
-            project(":porter:porter-core")
+            project(":porter:porter-core"),
+            project(":porter:porter-plugin:jdbc-connector")
     )
 }

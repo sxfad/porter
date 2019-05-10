@@ -25,9 +25,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -63,12 +61,11 @@ public class KuduConfig extends SourceConfig implements PluginServiceConfig {
     }
 
     @Override
-    public String getInstanceClientType() {
-        return KUDUClient.class.getName();
-    }
-
-    @Override
-    public String getInstanceConfigType() {
-        return KuduLoaderConst.LOADER_SOURCE_TYPE_NAME.getCode();
+    public Map<String, Class> getInstance() {
+        return new HashMap<String, Class>() {
+            {
+                put(KuduLoaderConst.LOADER_SOURCE_TYPE_NAME.getCode(), KUDUClient.class);
+            }
+        };
     }
 }

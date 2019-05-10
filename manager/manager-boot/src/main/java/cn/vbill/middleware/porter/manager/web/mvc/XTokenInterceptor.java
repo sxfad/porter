@@ -66,7 +66,11 @@ public class XTokenInterceptor extends HandlerInterceptorAdapter {
             if (StringUtils.isEmpty(token) || !TokenUtil.isValid(token)) {
                 log.info("token校验错误");
                 response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                response.getWriter().append(JSON.toJSONString(new AuthorizedBody("401", "token Check the error")));
+                if(uri.startsWith("/alarm") || uri.startsWith("/manager")) {
+                    response.getWriter().append(JSON.toJSONString(new AuthorizedBody("401", "token Check the error")));
+                } else {
+                    response.sendRedirect("/");
+                }
                 return false;
             }
             WebToeknContext.initToken(token);

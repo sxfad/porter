@@ -245,4 +245,8 @@ public interface DataConsumer {
      */
     String getInitiatePosition();
     void setOffset(String offset);
+
+    String getDefaultClientType();
+
+    String getDefaultMetaClientType();
 }

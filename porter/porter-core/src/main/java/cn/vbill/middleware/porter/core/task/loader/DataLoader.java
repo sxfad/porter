@@ -150,4 +150,10 @@ public interface DataLoader {
         bucket.getRows().forEach(r -> parallel.getOrDefault(Arrays.asList(r.getFinalSchema(), r.getFinalTable()), new ArrayList<>()).add(r));
         bucket.getParallelRows().addAll(parallel.values());
     }
+
+    /**
+     * 默认客户端类型
+     * @return
+     */
+    String getDefaultClientType();
 }
