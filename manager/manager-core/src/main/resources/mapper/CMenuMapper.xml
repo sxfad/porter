@@ -100,7 +100,7 @@
         t.menu_image AS menuImage, t.level, t.sort, t.iscancel, t.type, t.isleaf
         from c_menu t
         <where>
-            1 = 1
+            1 = 1 and iscancel = 0 and state = 1
             <if test=" roleCode != 'A0001'">
                 AND code IN (select menu_code from c_role_menu a where role_code = #{roleCode})
             </if> 

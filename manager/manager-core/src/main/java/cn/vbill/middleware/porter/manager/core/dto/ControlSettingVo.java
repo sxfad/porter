@@ -17,7 +17,12 @@ public class ControlSettingVo {
     /**
      * 任务id
      */
-    private Long id;
+    private Long jobId;
+
+    /**
+     * 节点id
+     */
+    private String nodeId;
 
     /**
      * 任务权限操作类型枚举
@@ -29,18 +34,19 @@ public class ControlSettingVo {
      */
     private List<Long> toUserIds;
 
+
     /**
      * 任务id.get
      */
-    public Long getId() {
-        return id;
+    public Long getJobId() {
+        return jobId;
     }
 
     /**
      * 任务id.set
      */
-    public void setId(Long id) {
-        this.id = id;
+    public void setJobId(Long jobId) {
+        this.jobId = jobId;
     }
 
     /**
@@ -69,5 +75,19 @@ public class ControlSettingVo {
      */
     public void setToUserIds(List<Long> toUserIds) {
         this.toUserIds = toUserIds;
+    }
+
+    /**
+     * 节点id.get
+     */
+    public String getNodeId() {
+        return nodeId;
+    }
+
+    /**
+     * 节点id.set
+     */
+    public void setNodeId(String nodeId) {
+        this.nodeId = nodeId;
     }
 }

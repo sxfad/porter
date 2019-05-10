@@ -63,7 +63,18 @@ public class NodesOwnerServiceImpl implements NodesOwnerService {
     protected DicControlTypePluginService dicControlTypePluginService;
 
     @Override
-    public ControlPageVo makeControlPage(Long nodeId) {
+    public ControlPageVo findOwnerByNodeId(String nodeId) {
+        // ownerType=1:节点所有者  shareType=2:节点共享者
+        OwnerVo owner = checkOwner(cUserService.selectOwnersByNodeId(nodeId, 1));
+        List<OwnerVo> shareOwner = checkShares(cUserService.selectOwnersByNodeId(nodeId, 2));
+
+        // 组装ControlPageVo并返回
+        ControlPageVo controlPageVo = new ControlPageVo(owner, shareOwner, null, null);
+        return controlPageVo;
+    }
+
+    @Override
+    public ControlPageVo makeControlPage(String nodeId) {
 
         // ownerType=1:节点所有者  shareType=2:节点共享者
         OwnerVo owner = checkOwner(cUserService.selectOwnersByNodeId(nodeId, 1));
@@ -93,46 +104,46 @@ public class NodesOwnerServiceImpl implements NodesOwnerService {
         switch (controlType) {
             // 移交
             case "CHANGE":
-                Integer changeNum = nodesOwnerMapper.delete(controlSettingVo.getId(), 1, null);
+                Integer changeNum = nodesOwnerMapper.delete(controlSettingVo.getNodeId(), 1, null);
                 if (!controlSettingVo.getToUserIds().isEmpty()) {
                     // 查询预移交者是否为该任务的共享者
-                    Integer type = nodesOwnerMapper.findOwnerTypeByNodeIdAndUserId(controlSettingVo.getId(), controlSettingVo.getToUserIds().get(0));
+                    Integer type = nodesOwnerMapper.findOwnerTypeByNodeIdAndUserId(controlSettingVo.getNodeId(), controlSettingVo.getToUserIds().get(0));
                     if (type != null && type == 2) {
                         // 提升权限
-                        nodesOwnerMapper.delete(controlSettingVo.getId(), 2, controlSettingVo.getToUserIds().get(0));
+                        nodesOwnerMapper.delete(controlSettingVo.getNodeId(), 2, controlSettingVo.getToUserIds().get(0));
                     }
-                    nodesOwnerMapper.batchInsert(controlSettingVo.getToUserIds(), controlSettingVo.getId(), 1);
+                    nodesOwnerMapper.batchInsert(controlSettingVo.getToUserIds(), controlSettingVo.getNodeId(), 1);
                 }
                 LOGGER.info("移交节点[{}]，操作者用户ID:[{}]，授权者用户ID:[{}]",
-                        controlSettingVo.getId(), RoleCheckContext.getUserIdHolder().getUserId(), controlSettingVo.getToUserIds().get(0));
+                        controlSettingVo.getNodeId(), RoleCheckContext.getUserIdHolder().getUserId(), controlSettingVo.getToUserIds().get(0));
                 return changeNum;
             // 共享
             case "SHARE":
-                Integer shareNum = nodesOwnerMapper.delete(controlSettingVo.getId(), 2, null);
+                Integer shareNum = nodesOwnerMapper.delete(controlSettingVo.getNodeId(), 2, null);
                 if (!controlSettingVo.getToUserIds().isEmpty()) {
-                    nodesOwnerMapper.batchInsert(controlSettingVo.getToUserIds(), controlSettingVo.getId(), 2);
+                    nodesOwnerMapper.batchInsert(controlSettingVo.getToUserIds(), controlSettingVo.getNodeId(), 2);
                 }
                 LOGGER.info("共享节点[{}]，操作者用户ID:[{}]，授权者用户ID:[{}]",
-                        controlSettingVo.getId(), RoleCheckContext.getUserIdHolder().getUserId(), controlSettingVo.getToUserIds());
+                        controlSettingVo.getNodeId(), RoleCheckContext.getUserIdHolder().getUserId(), controlSettingVo.getToUserIds());
                 return shareNum;
             // 作废
             case "CANCEL":
-                Integer type = nodesOwnerMapper.findOwnerTypeByNodeIdAndUserId(controlSettingVo.getId(), RoleCheckContext.getUserIdHolder().getUserId());
+                Integer type = nodesOwnerMapper.findOwnerTypeByNodeIdAndUserId(controlSettingVo.getNodeId(), RoleCheckContext.getUserIdHolder().getUserId());
                 LOGGER.info("放弃节点[{}]，操作者用户ID:[{}]",
-                        controlSettingVo.getId(), RoleCheckContext.getUserIdHolder().getUserId());
-                return nodesOwnerMapper.delete(controlSettingVo.getId(), type, RoleCheckContext.getUserIdHolder().getUserId());
+                        controlSettingVo.getNodeId(), RoleCheckContext.getUserIdHolder().getUserId());
+                return nodesOwnerMapper.delete(controlSettingVo.getNodeId(), type, RoleCheckContext.getUserIdHolder().getUserId());
             // 回收所有者
             case "RECYCLE_C":
-                LOGGER.info("回收节点所有者，节点id[{}]，操作者管理员ID:[{}]", controlSettingVo.getId(), RoleCheckContext.getUserIdHolder().getUserId());
-                return nodesOwnerMapper.delete(controlSettingVo.getId(), 1, null);
+                LOGGER.info("回收节点所有者，节点id[{}]，操作者管理员ID:[{}]", controlSettingVo.getNodeId(), RoleCheckContext.getUserIdHolder().getUserId());
+                return nodesOwnerMapper.delete(controlSettingVo.getNodeId(), 1, null);
             // 回收共享者
             case "RECYCLE_S":
-                LOGGER.info("回收节点所有者，节点id[{}]，操作者管理员ID:[{}]", controlSettingVo.getId(), RoleCheckContext.getUserIdHolder().getUserId());
-                return nodesOwnerMapper.delete(controlSettingVo.getId(), 2, null);
+                LOGGER.info("回收节点所有者，节点id[{}]，操作者管理员ID:[{}]", controlSettingVo.getNodeId(), RoleCheckContext.getUserIdHolder().getUserId());
+                return nodesOwnerMapper.delete(controlSettingVo.getNodeId(), 2, null);
             // 回收所有权限
             case "RECYCLE_A":
-                LOGGER.info("回收节点权限，节点id[{}]，操作者管理员ID:[{}]", controlSettingVo.getId(), RoleCheckContext.getUserIdHolder().getUserId());
-                return nodesOwnerMapper.delete(controlSettingVo.getId(), null, null);
+                LOGGER.info("回收节点权限，节点id[{}]，操作者管理员ID:[{}]", controlSettingVo.getNodeId(), RoleCheckContext.getUserIdHolder().getUserId());
+                return nodesOwnerMapper.delete(controlSettingVo.getNodeId(), null, null);
             default:
                 LOGGER.error("ControlType为null!!");
                 return null;
@@ -185,7 +196,7 @@ public class NodesOwnerServiceImpl implements NodesOwnerService {
     }
 
     @Override
-    public void insertByNodes(Long nodeId) {
+    public void insertByNodes(String nodeId) {
         NodesOwner nodesOwner = new NodesOwner();
         nodesOwner.setNodeId(nodeId);
         nodesOwner.setOwnerId(RoleCheckContext.getUserIdHolder().getUserId());

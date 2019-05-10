@@ -38,7 +38,7 @@ public interface NodesOwnerMapper {
      * @param userId
      * @return
      */
-    Integer findOwnerTypeByNodeIdAndUserId(@Param("nodeId") Long nodeId, @Param("userId") Long userId);
+    Integer findOwnerTypeByNodeIdAndUserId(@Param("nodeId") String nodeId, @Param("userId") Long userId);
 
     /**
      * 新增
@@ -55,7 +55,7 @@ public interface NodesOwnerMapper {
      * @param userId
      * @return
      */
-    Integer delete(@Param("nodeId") Long nodeId, @Param("type") Integer type, @Param("userId") Long userId);
+    Integer delete(@Param("nodeId") String nodeId, @Param("type") Integer type, @Param("userId") Long userId);
 
     /**
      * 批量新增
@@ -64,5 +64,5 @@ public interface NodesOwnerMapper {
      * @param nodeId
      * @param type
      */
-    void batchInsert(@Param("toUserIds") List<Long> toUserIds, @Param("nodeId") Long nodeId, @Param("type") Integer type);
+    void batchInsert(@Param("toUserIds") List<Long> toUserIds, @Param("nodeId") String nodeId, @Param("type") Integer type);
 }

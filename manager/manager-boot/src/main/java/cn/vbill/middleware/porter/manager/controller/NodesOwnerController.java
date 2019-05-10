@@ -59,7 +59,7 @@ public class NodesOwnerController {
      */
     @GetMapping("/setPage/{nodeId}")
     @ApiOperation(value = "权限设置页面数据组", notes = "权限设置页面数据组")
-    public ResponseMessage nodeOwnerPage(@PathVariable("nodeId") Long nodeId) {
+    public ResponseMessage nodeOwnerPage(@PathVariable("nodeId") String nodeId) {
         ControlPageVo controlPageVo = nodesOwnerService.makeControlPage(nodeId);
         return ok(controlPageVo);
     }
@@ -77,5 +77,20 @@ public class NodesOwnerController {
     public ResponseMessage nodeOwnerSetting(@RequestBody ControlSettingVo controlSettingVo) {
         Integer number = nodesOwnerService.nodeOwnerSetting(controlSettingVo);
         return ok(number);
+    }
+
+    /**
+     * 回显所有者、共享者
+     *
+     * @author MurasakiSeiFu
+     * @date 2019-05-09 09:08
+     * @param: [nodeId]
+     * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
+     */
+    @GetMapping("/findNodeOwner/{nodeId}")
+    @ApiOperation(value = "回显所有者、共享者", notes = "回显所有者、共享者")
+    public ResponseMessage findOwnerByJobId(@PathVariable("nodeId") String nodeId) {
+        ControlPageVo controlPageVo = nodesOwnerService.findOwnerByNodeId(nodeId);
+        return ok(controlPageVo);
     }
 }

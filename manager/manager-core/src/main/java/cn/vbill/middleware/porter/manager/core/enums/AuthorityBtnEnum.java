@@ -29,8 +29,8 @@ import lombok.AllArgsConstructor;
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum AuthorityBtnEnum {
 
-    TURNOVER("TURNOVER", "移交"),
-    SHARE("SHARE", "共享"),
+    TURNOVER("TURNOVER", "责任人"),
+    SHARE("SHARE", "共享者"),
     WAIVE("WAIVE", "放弃");
 
     private final String code;

@@ -37,9 +37,9 @@ public class NodesOwner implements Serializable {
     private Long id;
 
     /**
-     * 任务id.
+     * 节点id.
      */
-    private Long nodeId;
+    private String nodeId;
 
     /**
      * 权限控制类型(1:人2:部门3:角色组).
@@ -98,14 +98,14 @@ public class NodesOwner implements Serializable {
     /**
      * 任务id get方法.
      */
-    public Long getNodeId() {
+    public String getNodeId() {
         return nodeId;
     }
 
     /**
      * 任务id set方法.
      */
-    public void setNodeId(Long nodeId) {
+    public void setNodeId(String nodeId) {
         this.nodeId = nodeId;
     }
 

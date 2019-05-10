@@ -22,6 +22,7 @@ import static cn.vbill.middleware.porter.manager.web.message.ResponseMessage.ok;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,8 +40,10 @@ import com.alibaba.fastjson.JSON;
 
 import cn.vbill.middleware.porter.common.cluster.ClusterProviderProxy;
 import cn.vbill.middleware.porter.common.cluster.event.command.TaskPushCommand;
+import cn.vbill.middleware.porter.common.cluster.impl.AbstractClusterListener;
 import cn.vbill.middleware.porter.common.task.config.TaskConfig;
 import cn.vbill.middleware.porter.common.task.dic.TaskStatusType;
+import cn.vbill.middleware.porter.common.warning.entity.WarningOwner;
 import cn.vbill.middleware.porter.manager.core.entity.JobTasks;
 import cn.vbill.middleware.porter.manager.service.JobTasksService;
 import cn.vbill.middleware.porter.manager.web.message.ResponseMessage;
@@ -257,6 +260,7 @@ public class JobTasksController {
             @RequestParam("taskStatusType") TaskStatusType taskStatusType) {
         Integer number = jobTasksService.updateState(id, taskStatusType);
         if (taskStatusType == TaskStatusType.WORKING || taskStatusType == TaskStatusType.STOPPED) {
+            //任务信息
             try {
                 TaskPushCommand config = new TaskPushCommand(jobTasksService.fitJobTask(id, taskStatusType));
                 ClusterProviderProxy.INSTANCE.broadcastEvent(config);
@@ -264,6 +268,20 @@ public class JobTasksController {
             } catch (Exception e) {
                 log.error("zk变更任务Id[{}] 状态[{}]失败,请关注！", id, taskStatusType);
                 return ResponseMessage.error("变更任务失败！");
+            }
+            //权限信息(附邮箱)
+            try {
+                WarningOwner warningOwner = jobTasksService.selectJobWarningOwner(id);
+                ClusterProviderProxy.INSTANCE.broadcastEvent(client -> {
+                    String nodePath = AbstractClusterListener.BASE_CATALOG + "/task/" + id + "/owner";
+                    if (!StringUtils.isBlank(nodePath)) {
+                        client.changeData(nodePath, false, false, JSON.toJSONString(warningOwner));
+                    }
+                });
+                log.info("zk变更任务id[{}]权限数据到zk成功,详细信息[{}]!", id, JSON.toJSONString(warningOwner));
+            } catch (Exception e) {
+                log.error("zk变更任务id[{}]权限数据到zk失败,请关注！", id, e);
+                return ResponseMessage.error("变更任务权限失败，请关注！");
             }
         }
         return ok(number);
@@ -282,12 +300,26 @@ public class JobTasksController {
     public ResponseMessage delete(@PathVariable("id") Long id) {
         Integer number = jobTasksService.delete(id);
         if (number == 1) {
+            //任务信息
             try {
                 ClusterProviderProxy.INSTANCE
                         .broadcastEvent(new TaskPushCommand(jobTasksService.fitJobTask(id, TaskStatusType.DELETED)));
             } catch (Exception e) {
                 log.error("zk删除任务节点[{}]失败,请关注！", id, e);
                 return ResponseMessage.error("zk删除任务节点失败！");
+            }
+            //权限信息(附邮箱)
+            try {
+                ClusterProviderProxy.INSTANCE.broadcastEvent(client -> {
+                    String nodePath = AbstractClusterListener.BASE_CATALOG + "/task/" + id + "/owner";
+                    if (!StringUtils.isBlank(nodePath)) {
+                        client.delete(nodePath);
+                    }
+                });
+                log.info("zk删除任务id[{}]权限数据成功!", id);
+            } catch (Exception e) {
+                log.error("zk删除任务id[{}]权限数据失败,请关注！", id, e);
+                return ResponseMessage.error("删除任务权限失败，请关注！");
             }
         }
         return ok(number);

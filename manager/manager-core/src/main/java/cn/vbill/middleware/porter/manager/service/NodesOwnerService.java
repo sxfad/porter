@@ -35,7 +35,7 @@ public interface NodesOwnerService {
      * @param nodeId
      * @return
      */
-    ControlPageVo makeControlPage(Long nodeId);
+    ControlPageVo makeControlPage(String nodeId);
 
     /**
      * 权限设置
@@ -50,5 +50,13 @@ public interface NodesOwnerService {
      *
      * @param nodeId
      */
-    void insertByNodes(Long nodeId);
+    void insertByNodes(String nodeId);
+
+    /**
+     * 回显所有者、共享者
+     *
+     * @param nodeId
+     * @return
+     */
+    ControlPageVo findOwnerByNodeId(String nodeId);
 }

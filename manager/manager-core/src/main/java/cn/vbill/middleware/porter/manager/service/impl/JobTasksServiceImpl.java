@@ -48,6 +48,7 @@ import cn.vbill.middleware.porter.common.task.config.DataLoaderConfig;
 import cn.vbill.middleware.porter.common.task.config.TableMapperConfig;
 import cn.vbill.middleware.porter.common.task.config.TaskConfig;
 import cn.vbill.middleware.porter.common.task.dic.TaskStatusType;
+import cn.vbill.middleware.porter.common.warning.entity.WarningOwner;
 import cn.vbill.middleware.porter.common.warning.entity.WarningReceiver;
 import cn.vbill.middleware.porter.manager.core.dto.JDBCVo;
 import cn.vbill.middleware.porter.manager.core.dto.RoleDataControl;
@@ -542,5 +543,11 @@ public class JobTasksServiceImpl implements JobTasksService {
     @Override
     public List<Long> showjobIdList() {
         return jobTasksMapper.showjobIdList();
+    }
+
+    @Override
+    public WarningOwner selectJobWarningOwner(Long id) {
+        WarningOwner warningOwner = cUserService.selectJobWarningOwner(id);
+        return warningOwner;
     }
 }

@@ -19,6 +19,7 @@ package cn.vbill.middleware.porter.manager.controller;
 import static cn.vbill.middleware.porter.manager.web.message.ResponseMessage.ok;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -94,7 +95,7 @@ public class DataAuthorityController {
      * 
      * @return
      */
-    @PostMapping("/delshare")
+    @DeleteMapping("/delshare")
     @ApiOperation(value = "del共享权限", notes = "del共享权限")
     public ResponseMessage delShare(@RequestParam(value = "dataSignEnum", required = true) DataSignEnum sign,
             @RequestParam(value = "objectId", required = true) Long objectId,
