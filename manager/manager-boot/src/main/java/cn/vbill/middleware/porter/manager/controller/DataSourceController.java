@@ -19,9 +19,6 @@ package cn.vbill.middleware.porter.manager.controller;
 
 import static cn.vbill.middleware.porter.manager.web.message.ResponseMessage.ok;
 
-import cn.vbill.middleware.porter.manager.core.entity.DataSource;
-import cn.vbill.middleware.porter.manager.service.DataSourceService;
-import cn.vbill.middleware.porter.manager.web.page.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,8 +30,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import cn.vbill.middleware.porter.manager.core.entity.DataSource;
+import cn.vbill.middleware.porter.manager.core.enums.DataSignEnum;
+import cn.vbill.middleware.porter.manager.service.DataSourceService;
 import cn.vbill.middleware.porter.manager.web.message.ResponseMessage;
-
+import cn.vbill.middleware.porter.manager.web.page.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
@@ -150,7 +150,7 @@ public class DataSourceController {
                                 @RequestParam(value = "dataType", required = false) String dataType) {
         Page<DataSource> page = dataSourceService.page(new Page<DataSource>(pageNo, pageSize), name, beginTime,
                 endTime, dataType);
-        return ok(page);
+        return ok(page, DataSignEnum.DATASOURCE);
     }
 
 

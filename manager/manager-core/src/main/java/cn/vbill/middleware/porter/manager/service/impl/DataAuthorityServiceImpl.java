@@ -102,7 +102,7 @@ public class DataAuthorityServiceImpl implements DataAuthorityService {
         String roleCode = RoleCheckContext.getUserIdHolder().getRoleCode();
         List<CUser> cusers = this.selectOwnersByObjectId(objectTable, objectId, 1);
         // 权限所有人
-        OwnerVo owner = new OwnerVo((cusers == null || cusers.size() == 0) ? null : cusers.get(0), 1);
+        OwnerVo owner = (cusers == null || cusers.size() == 0) ? null : new OwnerVo(cusers.get(0), 1);
         // 权限共享者
         List<OwnerVo> shareOwner = userToVO(this.selectOwnersByObjectId(objectTable, objectId, 2), 2);
         // 展现按钮

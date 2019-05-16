@@ -20,7 +20,6 @@ import static cn.vbill.middleware.porter.manager.web.message.ResponseMessage.ok;
 
 import java.io.UnsupportedEncodingException;
 
-import cn.vbill.middleware.porter.common.task.config.PublicSourceConfig;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +39,9 @@ import com.alibaba.fastjson.JSONObject;
 
 import cn.vbill.middleware.porter.common.cluster.ClusterProviderProxy;
 import cn.vbill.middleware.porter.common.cluster.impl.AbstractClusterListener;
+import cn.vbill.middleware.porter.common.task.config.PublicSourceConfig;
 import cn.vbill.middleware.porter.manager.core.entity.PublicDataSource;
+import cn.vbill.middleware.porter.manager.core.enums.DataSignEnum;
 import cn.vbill.middleware.porter.manager.service.PublicDataSourceService;
 import cn.vbill.middleware.porter.manager.web.message.ResponseMessage;
 import cn.vbill.middleware.porter.manager.web.page.Page;
@@ -145,7 +146,7 @@ public class PublicDataSourceController {
             @RequestParam(value = "ipsite", required = false) String ipsite) {
         Page<PublicDataSource> page = publicDataSourceService.page(new Page<PublicDataSource>(pageNum, pageSize), id,
                 code, name, ipsite);
-        return ok(page);
+        return ok(page, DataSignEnum.PUBLICDATASOURCE);
     }
 
     /**
