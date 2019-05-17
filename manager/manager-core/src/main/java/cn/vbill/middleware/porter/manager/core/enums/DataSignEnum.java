@@ -31,11 +31,9 @@ import lombok.AllArgsConstructor;
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum DataSignEnum {
 
-    JOBTASK("JOBTASK", "任务数据", "job_tasks"),
-    NODE("NODE", "节点数据", "b_nodes"),
-    DATASOURCE("DATASOURCE", "数据源数据","b_data_source"),
-    DATATABLE("DATATABLE", "数据表组数据", "b_data_table"),
-    PUBLICDATASOURCE("PUBLICDATASOURCE","公共数据源数据","b_public_data_source");
+    JOBTASK("JOBTASK", "任务数据", "job_tasks"), NODE("NODE", "节点数据", "b_nodes"), DATASOURCE("DATASOURCE", "数据源数据",
+            "b_data_source"), DATATABLE("DATATABLE", "数据表组数据",
+                    "b_data_table"), PUBLICDATASOURCE("PUBLICDATASOURCE", "公共数据源数据", "b_public_data_source");
 
     private final String code;
 

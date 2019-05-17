@@ -53,20 +53,20 @@ public class XTokenInterceptor extends HandlerInterceptorAdapter {
             if (!(handler instanceof HandlerMethod)) {
                 return true;
             }
-//            // 从切点上获取目标方法
-//            HandlerMethod handlerMethod = (HandlerMethod) handler;
-//            Method method = handlerMethod.getMethod();
-//            // 若目标方法忽略了安全性检查，则直接调用目标方法
-//            if (method.isAnnotationPresent(IgnoreToken.class)) {
-//                return true;
-//            }
+            // // 从切点上获取目标方法
+            // HandlerMethod handlerMethod = (HandlerMethod) handler;
+            // Method method = handlerMethod.getMethod();
+            // // 若目标方法忽略了安全性检查，则直接调用目标方法
+            // if (method.isAnnotationPresent(IgnoreToken.class)) {
+            // return true;
+            // }
             // 校验token
             String token = request.getHeader("X-Token");
             log.info("传入的token值:{}", token);
             if (StringUtils.isEmpty(token) || !TokenUtil.isValid(token)) {
                 log.info("token校验错误");
                 response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                if(uri.startsWith("/alarm") || uri.startsWith("/manager")) {
+                if (uri.startsWith("/alarm") || uri.startsWith("/manager")) {
                     response.getWriter().append(JSON.toJSONString(new AuthorizedBody("401", "token Check the error")));
                 } else {
                     response.sendRedirect("/");

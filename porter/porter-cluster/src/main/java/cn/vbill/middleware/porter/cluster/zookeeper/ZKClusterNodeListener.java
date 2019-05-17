@@ -69,8 +69,8 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements T
     private static final Pattern NODE_ORDER_PATTERN = Pattern.compile(ZK_PATH + "/.*/order/.*");
 
     private final List<TaskEventListener> taskListener = new ArrayList<>();
-    private final ScheduledExecutorService heartbeatWorker =
-            Executors.newSingleThreadScheduledExecutor(new DefaultNamedThreadFactory("node-heartbeat"));
+    private final ScheduledExecutorService heartbeatWorker = Executors
+            .newSingleThreadScheduledExecutor(new DefaultNamedThreadFactory("node-heartbeat"));
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ZKClusterNodeListener.class);
     private static final String STAT_PATH = "/stat";
@@ -83,8 +83,6 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements T
         blockProxy = new CommonCodeBlock(client);
     }
 
-
-
     @Override
     public String listenPath() {
         return ZK_PATH;
@@ -93,23 +91,25 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements T
     @Override
     public void onEvent(ClusterTreeNodeEvent event) {
         LOGGER.debug("集群节点监听->{},{},{}", event.getId(), event.getData(), event.getEventType());
-        //下发命令
+        // 下发命令
         if (NODE_ORDER_PATTERN.matcher(event.getId()).matches() && (event.isOnline() || event.isDataChanged())) {
             NodeCommandConfig commandConfig = JSONObject.parseObject(event.getData(), NodeCommandConfig.class);
-            //释放当前节点正在执行的任务
+            // 释放当前节点正在执行的任务
             if (null != commandConfig && commandConfig.getCommand() == NodeCommandType.RELEASE_WORK) {
-                //查询出来当前节点正在执行的任务
-                DNode nodeData = DNode.fromString(client.getData(listenPath() + "/" + NodeContext.INSTANCE.getNodeId() + STAT_PATH).getData(), DNode.class);
+                // 查询出来当前节点正在执行的任务
+                DNode nodeData = DNode.fromString(
+                        client.getData(listenPath() + "/" + NodeContext.INSTANCE.getNodeId() + STAT_PATH).getData(),
+                        DNode.class);
                 if (null != nodeData) {
-                    //遍历节点任务
+                    // 遍历节点任务
                     nodeData.getTasks().forEach((taskId, swimlaneId) -> {
                         swimlaneId.forEach(s -> {
-                            //获取任务配置
+                            // 获取任务配置
                             TaskConfig config = getTaskConfig(taskId, s);
                             if (null != config) {
-                                //设置为停止任务配置文件
+                                // 设置为停止任务配置文件
                                 config.setStatus(TaskStatusType.STOPPED);
-                                //停止任务
+                                // 停止任务
                                 triggerTaskEvent(config);
                             }
                         });
@@ -117,11 +117,11 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements T
                 }
             }
 
-            //节点状态变更
+            // 节点状态变更
             if (null != commandConfig && commandConfig.getCommand() == NodeCommandType.CHANGE_STATUS) {
                 NodeStatusType oldStat = NodeContext.INSTANCE.getNodeStatus();
                 NodeContext.INSTANCE.syncNodeStatus(commandConfig.getStatus());
-                //节点开始接收新任务
+                // 节点开始接收新任务
                 if (commandConfig.getStatus().isWorking() && !oldStat.isWorking()) {
                     String taskNode = BASE_CATALOG + "/task";
                     List<String> taskPathList = client.getChildren(taskNode);
@@ -131,7 +131,7 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements T
                             TaskConfig taskConfig = getTaskConfig(id, swimlaneId);
                             if (!isTaskStoppedByError(id, swimlaneId) && !isTaskLocked(id, swimlaneId)
                                     && null != taskConfig && taskConfig.getStatus().isWorking()) {
-                                //分配任务
+                                // 分配任务
                                 triggerTaskEvent(taskConfig);
                             }
                         });
@@ -139,15 +139,14 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements T
                 }
             }
 
-            //调整节点可执行工作数量
+            // 调整节点可执行工作数量
             if (null != commandConfig && commandConfig.getCommand() == NodeCommandType.WORK_LIMIT
                     && null != commandConfig.getWorkLimit() && commandConfig.getWorkLimit() > -1) {
                 NodeContext.INSTANCE.updateWorkLimit(commandConfig.getWorkLimit());
             }
-            //删除指令
+            // 删除指令
             client.delete(event.getId());
         }
-
 
     }
 
@@ -162,8 +161,8 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements T
             @Override
             public boolean doFilter(ClusterTreeNodeEvent event) {
                 boolean access = false;
-                //仅仅监控应用自身
-                //event.getEventType() == MessageAction.ONLINE &&
+                // 仅仅监控应用自身
+                // event.getEventType() == MessageAction.ONLINE &&
                 if (event.getId().contains(getPath() + "/" + NodeContext.INSTANCE.getNodeId())) {
                     access = true;
                 }
@@ -171,6 +170,7 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements T
             }
         };
     }
+
     /**
      * 触发TaskEvent
      *
@@ -196,7 +196,8 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements T
      * 获取TaskConfig
      *
      * @date 2018/8/8 下午4:20
-     * @param: [taskId, swimlaneId]
+     * @param: [taskId,
+     *             swimlaneId]
      * @return: cn.vbill.middleware.porter.common.config.TaskConfig
      */
     private TaskConfig getTaskConfig(String taskId, String swimlaneId) {
@@ -204,7 +205,7 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements T
         TaskConfig config = null;
         ClusterClient.TreeNode treeNode = client.getData(swimPath);
         if (null != treeNode && !StringUtils.isBlank(treeNode.getData())) {
-            //将json转换为java对象
+            // 将json转换为java对象
             config = JSONObject.parseObject(treeNode.getData(), TaskConfig.class);
         }
         return config;
@@ -214,7 +215,8 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements T
      * 是否为TaskLocked
      *
      * @date 2018/8/8 下午4:21
-     * @param: [taskId, swimlaneId]
+     * @param: [taskId,
+     *             swimlaneId]
      * @return: boolean
      */
     private boolean isTaskLocked(String taskId, String swimlaneId) {
@@ -222,14 +224,14 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements T
         try {
             ClusterClient.LockVersion lockStat = client.exists(lockPath, true);
             boolean isLocked = null != lockStat;
-            if (isLocked && NodeContext.INSTANCE.forceAssign()) { //如果是任务已占用，则进一步检查是否需要清除锁定状态
-                //获取锁信息
+            if (isLocked && NodeContext.INSTANCE.forceAssign()) { // 如果是任务已占用，则进一步检查是否需要清除锁定状态
+                // 获取锁信息
                 ClusterClient.TreeNode treeNode = client.getData(lockPath);
-                //判断锁状态
+                // 判断锁状态
                 if (null != treeNode && StringUtils.isNotBlank(treeNode.getData())) {
                     DTaskLock lockInfo = JSONObject.parseObject(treeNode.getData(), DTaskLock.class);
-                    isLocked = !(lockInfo.getNodeId().equals(NodeContext.INSTANCE.getNodeId()) //节点Id相符
-                            && lockInfo.getAddress().equals(NodeContext.INSTANCE.getAddress())); //IP地址相符
+                    isLocked = !(lockInfo.getNodeId().equals(NodeContext.INSTANCE.getNodeId()) // 节点Id相符
+                            && lockInfo.getAddress().equals(NodeContext.INSTANCE.getAddress())); // IP地址相符
                 }
             }
             return isLocked;
@@ -244,7 +246,8 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements T
      * 任务是否停止ByError
      *
      * @date 2018/8/8 下午4:22
-     * @param: [taskId, swimlaneId]
+     * @param: [taskId,
+     *             swimlaneId]
      * @return: boolean
      */
     private boolean isTaskStoppedByError(String taskId, String swimlaneId) {
@@ -261,84 +264,89 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements T
     @Override
     public List<ClusterListenerEventExecutor> watchedEvents() {
         List<ClusterListenerEventExecutor> executors = new ArrayList<>();
-        //节点注册
-        executors.add(new ClusterListenerEventExecutor(this.getClass(), ClusterListenerEventType.NodeRegister).bind(new BiConsumer<ClusterCommand, ClusterClient>() {
-            @SneakyThrows
-            public void accept(ClusterCommand clusterCommand, ClusterClient client) {
-                NodeRegisterCommand nrCommend = (NodeRegisterCommand) clusterCommand;
-                NodeContext.INSTANCE.syncNodeId(nrCommend.getId());
-                NodeContext.INSTANCE.syncUploadStatistic(nrCommend.isUploadStatistic());
-                //重置任务状态
-                NodeContext.INSTANCE.resetHealthLevel();
-                String nodePath = listenPath() + "/" + nrCommend.getId();
-                String lockPath = nodePath + "/lock";
-                String statPath = nodePath + STAT_PATH;
+        // 节点注册
+        executors.add(new ClusterListenerEventExecutor(this.getClass(), ClusterListenerEventType.NodeRegister)
+                .bind(new BiConsumer<ClusterCommand, ClusterClient>() {
+                    @SneakyThrows
+                    public void accept(ClusterCommand clusterCommand, ClusterClient client) {
+                        NodeRegisterCommand nrCommend = (NodeRegisterCommand) clusterCommand;
+                        NodeContext.INSTANCE.syncNodeId(nrCommend.getId());
+                        NodeContext.INSTANCE.syncUploadStatistic(nrCommend.isUploadStatistic());
+                        // 重置任务状态
+                        NodeContext.INSTANCE.resetHealthLevel();
+                        String nodePath = listenPath() + "/" + nrCommend.getId();
+                        String lockPath = nodePath + "/lock";
+                        String statPath = nodePath + STAT_PATH;
 
-                client.create(nodePath, null, false, false);
+                        client.create(nodePath, null, false, false);
 
-                ClusterClient.LockVersion oldVersion = client.exists(lockPath, false);
-                if (null == oldVersion) {
-                    client.create(lockPath, false, new DNode(NodeContext.INSTANCE.getNodeId()).toString());
-                    client.create(statPath, new DNode(NodeContext.INSTANCE.getNodeId()).toString(), false, false);
+                        ClusterClient.LockVersion oldVersion = client.exists(lockPath, false);
+                        if (null == oldVersion) {
+                            client.create(lockPath, false, new DNode(NodeContext.INSTANCE.getNodeId()).toString());
+                            client.create(statPath, new DNode(NodeContext.INSTANCE.getNodeId()).toString(), false,
+                                    false);
 
-                    /**
-                     * 定时一分钟上传一次心跳
-                     */
-                    heartbeatWorker.scheduleAtFixedRate(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                synchronized (statPath.intern()) {
-                                    ClusterClient.TreeNode treeNode = client.isExists(statPath, false) ? client.getData(statPath) : null;
-                                    if (null != treeNode && null != treeNode.getVersion()) {
-                                        DNode nodeData = DNode.fromString(treeNode.getData(), DNode.class);
-                                        //设置心跳时间
-                                        nodeData.setHeartbeat(new Date());
-                                        //设置节点工作状态
-                                        nodeData.setStatus(NodeContext.INSTANCE.getNodeStatus());
-                                        //设置节点健康状态
-                                        Pair<NodeHealthLevel, String> level = NodeContext.INSTANCE.getHealthLevel();
-                                        nodeData.setHealthLevel(level.getLeft());
-                                        nodeData.setHealthLevelDesc(level.getRight());
-                                        //设置机器信息
-                                        nodeData.setAddress(MachineUtils.IP_ADDRESS);
-                                        nodeData.setProcessId(MachineUtils.CURRENT_JVM_PID + "");
-                                        nodeData.setHostName(MachineUtils.HOST_NAME);
-                                        NodeContext.INSTANCE.flushClusterNode(nodeData);
-                                        //通知数据到zookeeper
-                                        client.setData(statPath, nodeData.toString(), treeNode.getVersion());
+                            /**
+                             * 定时一分钟上传一次心跳
+                             */
+                            heartbeatWorker.scheduleAtFixedRate(new Runnable() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        synchronized (statPath.intern()) {
+                                            ClusterClient.TreeNode treeNode = client.isExists(statPath, false)
+                                                    ? client.getData(statPath)
+                                                    : null;
+                                            if (null != treeNode && null != treeNode.getVersion()) {
+                                                DNode nodeData = DNode.fromString(treeNode.getData(), DNode.class);
+                                                // 设置心跳时间
+                                                nodeData.setHeartbeat(new Date());
+                                                // 设置节点工作状态
+                                                nodeData.setStatus(NodeContext.INSTANCE.getNodeStatus());
+                                                // 设置节点健康状态
+                                                Pair<NodeHealthLevel, String> level = NodeContext.INSTANCE
+                                                        .getHealthLevel();
+                                                nodeData.setHealthLevel(level.getLeft());
+                                                nodeData.setHealthLevelDesc(level.getRight());
+                                                // 设置机器信息
+                                                nodeData.setAddress(MachineUtils.IP_ADDRESS);
+                                                nodeData.setProcessId(MachineUtils.CURRENT_JVM_PID + "");
+                                                nodeData.setHostName(MachineUtils.HOST_NAME);
+                                                NodeContext.INSTANCE.flushClusterNode(nodeData);
+                                                // 通知数据到zookeeper
+                                                client.setData(statPath, nodeData.toString(), treeNode.getVersion());
+                                            }
+                                        }
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
                                     }
                                 }
-                            } catch (Exception e) {
-                                e.printStackTrace();
+                            }, 10, 30, TimeUnit.SECONDS);
+                        } else {
+                            if (blockProxy.nodeAssignCheck(lockPath)) {
+                                this.accept(clusterCommand, client);
+                            } else {
+                                String lockPathMsg = lockPath + ",节点已注册";
+                                LOGGER.error(lockPathMsg);
+                                throw new Exception(lockPathMsg);
                             }
                         }
-                    }, 10, 30, TimeUnit.SECONDS);
-                } else {
-                    if (blockProxy.nodeAssignCheck(lockPath)) {
-                        this.accept(clusterCommand, client);
-                    } else {
-                        String lockPathMsg = lockPath + ",节点已注册";
-                        LOGGER.error(lockPathMsg);
-                        throw new Exception(lockPathMsg);
                     }
-                }
-            }
-        }, client));
+                }, client));
 
+        // 任务已经被分配
+        executors.add(
+                new NodeTaskAssignedEventExecutor(this.getClass(), NodeContext.INSTANCE.getNodeId(), listenPath()));
 
-        //任务已经被分配
-        executors.add(new NodeTaskAssignedEventExecutor(this.getClass(), NodeContext.INSTANCE.getNodeId(), listenPath()));
+        // 服务进程停止
+        executors.add(new ClusterListenerEventExecutor(this.getClass(), ClusterListenerEventType.Shutdown)
+                .bind((clusterCommand, client) -> {
+                    NodeContext.INSTANCE.syncNodeStatus(NodeStatusType.SUSPEND);
+                    client.delete(listenPath() + "/" + NodeContext.INSTANCE.getNodeId() + "/lock");
+                    heartbeatWorker.shutdownNow();
+                }, client));
 
-        //服务进程停止
-        executors.add(new ClusterListenerEventExecutor(this.getClass(), ClusterListenerEventType.Shutdown).bind((clusterCommand, client) -> {
-            NodeContext.INSTANCE.syncNodeStatus(NodeStatusType.SUSPEND);
-            client.delete(listenPath() + "/" + NodeContext.INSTANCE.getNodeId() + "/lock");
-            heartbeatWorker.shutdownNow();
-        }, client));
-
-
-        //任务停止
+        // 任务停止
         executors.add(new NodeStopTaskEventExecutor(this.getClass(), NodeContext.INSTANCE.getNodeId(), listenPath()));
 
         return executors;
