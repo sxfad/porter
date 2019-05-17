@@ -34,8 +34,6 @@
 		object_id,
 		owner_level,
 		owner_id,
-		create_time,
-		update_time,
 		operator,
 		type,
 		iscancel,
@@ -45,8 +43,6 @@
 		#{objectId},
 		#{ownerLevel},
 		#{ownerId},
-		#{createTime},
-		#{updateTime},
 		#{operator},
 		#{type},
 		#{iscancel},
@@ -146,9 +142,9 @@
         AS createTime,
         update_time AS updateTime, operator, type, iscancel,
         remark from
-        c_data_authority
+        c_data_authority t
         where LOWER(t.object_table) = LOWER(#{objectName}) AND t.object_id= #{objectId} AND owner_level = #{ownerLevel} 
-            AND owner_id = #{ownerId} 
+            AND owner_id = #{ownerId} order by type limit 1
     </select>
 
 	<!-- 验证新增 -->
