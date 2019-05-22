@@ -66,7 +66,7 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements N
         LOGGER.debug("NodeListener:{},{},{}", zkEvent.getPath(), zkEvent.getData(), zkEvent.getEventType());
         try {
             // 当前时间
-            NodesService nodesService = ApplicationContextUtil.getBean(NodesServiceImpl.class);
+            NodesService nodesService = ApplicationContextUtil.getBean(NodesService.class);
             // 节点上下线
             if (NODE_LOCK_PATTERN.matcher(zkEvent.getPath()).matches()) {
                 String nodeInfoPath = zkEvent.getPath().replace("/lock", "/stat");
