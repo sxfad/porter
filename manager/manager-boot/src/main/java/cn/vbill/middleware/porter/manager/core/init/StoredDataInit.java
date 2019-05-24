@@ -37,7 +37,6 @@ public class StoredDataInit implements CommandLineRunner {
         try {
             ResourceUtils.getInstance().init();
             MenuUtils.getInstance().init();
-            OggUtils.getInstance().init();
         } catch (Exception e) {
             logger.error("ResourceInit run...error!!!!");
         }
