@@ -102,7 +102,7 @@ public class DataAuthorityServiceImpl implements DataAuthorityService {
         String roleCode = RoleCheckContext.getUserIdHolder().getRoleCode();
         List<CUser> cusers = this.selectOwnersByObjectId(objectTable, objectId, 1);
         // 权限所有人
-        OwnerVo owner = new OwnerVo((cusers == null || cusers.size() == 0) ? null : cusers.get(0), 1);
+        OwnerVo owner = (cusers == null || cusers.size() == 0) ? null : new OwnerVo(cusers.get(0), 1);
         // 权限共享者
         List<OwnerVo> shareOwner = userToVO(this.selectOwnersByObjectId(objectTable, objectId, 2), 2);
         // 展现按钮
@@ -129,11 +129,26 @@ public class DataAuthorityServiceImpl implements DataAuthorityService {
             Long userId = RoleCheckContext.getUserIdHolder().getUserId();
             // 当前角色组
             String roleCode = RoleCheckContext.getUserIdHolder().getRoleCode();
-            // 先删除 delete objectTable objectId userId type=1
-            Integer i = dataAuthorityMapper.deleteByMores(objectTable, objectId, userId, 1);
-            if (i != 1) {
-                log.warn("数据标识：[{}] 数据标号：[{}] 当前用户：[{}] 当前用户组：[{}] 不是数据权限所有者，特此告警！", objectTable, objectId, userId, roleCode);
+            // 非固定角色组直接报错
+            if (!A0001.equals(roleCode) && !A0002.equals(roleCode) && !A9999.equals(roleCode)) {
+                log.error("数据标识：[{}] 数据标号：[{}] 当前用户：[{}] 当前用户组：[{}] 非法操作，建议禁用此人账户！", objectTable, objectId, userId, roleCode);
+                return false;
             }
+            // 先删除 delete objectTable objectId userId type=1
+            if (A9999.equals(roleCode)) {
+                Integer i = dataAuthorityMapper.deleteByMores(objectTable, objectId, userId, 1);
+                if (i != 1) {
+                    log.warn("数据标识：[{}] 数据标号：[{}] 当前用户：[{}] 当前用户组：[{}] 不是数据权限所有者，特此告警！", objectTable, objectId, userId,
+                            roleCode);
+                }
+            } else {
+                Integer i = dataAuthorityMapper.deleteByMores(objectTable, objectId, null, 1);
+                if (i != 1) {
+                    log.warn("数据标识：[{}] 数据标号：[{}] 当前用户：[{}] 当前用户组：[{}] 被管理员移交权限，特此记录！", objectTable, objectId, userId,
+                            roleCode);
+                }
+            }
+            
             // 再创建 insert objectTable objectId userId type=1
             Integer j = dataAuthorityMapper.insert(new DataAuthority(objectTable, objectId, 1, ownerId, userId, 1));
             if (j != 1) {
@@ -252,8 +267,8 @@ public class DataAuthorityServiceImpl implements DataAuthorityService {
         }
         if (A9999.equals(roleCode)) {
             DataAuthority daty = dataAuthorityMapper.selectOneByConditions(objectTable, objectId, 1, userId);
-            if (daty == null) {
-                btns = null;
+            if (daty == null || daty.getType() == null) {
+                return null;
             }
             switch (daty.getType()) {
                 case 1:

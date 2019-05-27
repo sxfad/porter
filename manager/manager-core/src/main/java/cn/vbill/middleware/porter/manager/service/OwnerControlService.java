@@ -16,8 +16,6 @@
  */
 package cn.vbill.middleware.porter.manager.service;
 
-import cn.vbill.middleware.porter.manager.core.entity.OwnerControl;
-
 import java.util.List;
 
 /**

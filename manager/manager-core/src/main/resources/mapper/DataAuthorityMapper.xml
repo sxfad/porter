@@ -34,8 +34,6 @@
 		object_id,
 		owner_level,
 		owner_id,
-		create_time,
-		update_time,
 		operator,
 		type,
 		iscancel,
@@ -45,8 +43,6 @@
 		#{objectId},
 		#{ownerLevel},
 		#{ownerId},
-		#{createTime},
-		#{updateTime},
 		#{operator},
 		#{type},
 		#{iscancel},
@@ -129,7 +125,7 @@
 
     <!-- 查询与ObjectId有关的权限所有者用户(type=null查询全部 type=1查询所有者 type=2查询共享者) -->
     <select id="selectOwnersByObjectId" resultType="cn.vbill.middleware.porter.manager.core.entity.CUser">
-        SELECT id, loginname, email, mobile from c_user
+        SELECT id, loginname, email, mobile, nickname from c_user
         WHERE id in (
             SELECT t.owner_id FROM c_data_authority t WHERE LOWER(t.object_table) = LOWER(#{objectName}) AND t.object_id= #{objectId}
             <if test="type != null and type != ''">
@@ -146,9 +142,9 @@
         AS createTime,
         update_time AS updateTime, operator, type, iscancel,
         remark from
-        c_data_authority
+        c_data_authority t
         where LOWER(t.object_table) = LOWER(#{objectName}) AND t.object_id= #{objectId} AND owner_level = #{ownerLevel} 
-            AND owner_id = #{ownerId} 
+            AND owner_id = #{ownerId} order by type limit 1
     </select>
 
 	<!-- 验证新增 -->

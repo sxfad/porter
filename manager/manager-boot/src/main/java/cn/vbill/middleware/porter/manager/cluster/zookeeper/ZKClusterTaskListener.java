@@ -22,32 +22,28 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Pattern;
 
-import cn.vbill.middleware.porter.common.cluster.client.ClusterClient;
+import com.alibaba.fastjson.JSONObject;
+
 import cn.vbill.middleware.porter.common.cluster.ClusterListenerFilter;
+import cn.vbill.middleware.porter.common.cluster.client.ClusterClient;
 import cn.vbill.middleware.porter.common.cluster.event.ClusterListenerEventExecutor;
-import cn.vbill.middleware.porter.common.cluster.event.executor.*;
+import cn.vbill.middleware.porter.common.cluster.event.ClusterTreeNodeEvent;
+import cn.vbill.middleware.porter.common.cluster.event.executor.TaskPushEventExecutor;
+import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListener;
 import cn.vbill.middleware.porter.common.config.SourceConfig;
 import cn.vbill.middleware.porter.common.exception.ConfigParseException;
 import cn.vbill.middleware.porter.common.node.statistics.NodeLog;
-
+import cn.vbill.middleware.porter.common.task.config.TaskConfig;
+import cn.vbill.middleware.porter.common.task.dic.TaskStatusType;
 import cn.vbill.middleware.porter.common.task.statistics.DTaskError;
 import cn.vbill.middleware.porter.common.warning.WarningProviderFactory;
 import cn.vbill.middleware.porter.common.warning.entity.WarningErrorCode;
 import cn.vbill.middleware.porter.common.warning.entity.WarningMessage;
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-
-import cn.vbill.middleware.porter.common.task.statistics.DTaskStat;
-import cn.vbill.middleware.porter.common.cluster.event.ClusterTreeNodeEvent;
-import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListener;
-import cn.vbill.middleware.porter.common.task.config.TaskConfig;
-import cn.vbill.middleware.porter.common.task.dic.TaskStatusType;
 import cn.vbill.middleware.porter.manager.ManagerContext;
 import cn.vbill.middleware.porter.manager.core.util.ApplicationContextUtil;
 import cn.vbill.middleware.porter.manager.core.util.DealStrCutUtils;
@@ -65,22 +61,22 @@ import cn.vbill.middleware.porter.manager.service.impl.MrJobTasksScheduleService
 public class ZKClusterTaskListener extends ZookeeperClusterListener {
 
     private static final String ZK_PATH = BASE_CATALOG + "/task";
-    private static final Pattern TASK_STAT_PATTERN = Pattern.compile(ZK_PATH + "/.*/stat/.*");
     private static final Pattern TASK_ERROR_PATTERN = Pattern.compile(ZK_PATH + "/.*/error/.*");
     private static final Pattern TASK_LOCK_PATTERN = Pattern.compile(ZK_PATH + "/.*/lock/.*");
     private static final Pattern TASK_DIST_PATTERN = Pattern.compile(ZK_PATH + "/.*/dist/.*");
 
     // 未分配任务定时检查
-    private final ScheduledExecutorService taskUnsignedListener = Executors.newSingleThreadScheduledExecutor(new ThreadFactory() {
-        private final AtomicInteger seq = new AtomicInteger();
-        @Override
-        public Thread newThread(Runnable r) {
-            Thread t = new Thread(r);
-            t.setDaemon(false);
-            t.setName("UnsignedTask-Listener-" + seq.incrementAndGet());
-            return t;
-        }
-    });
+    private final ScheduledExecutorService taskUnsignedListener = Executors
+            .newSingleThreadScheduledExecutor(new ThreadFactory() {
+                private final AtomicInteger seq = new AtomicInteger();
+                @Override
+                public Thread newThread(Runnable r) {
+                    Thread t = new Thread(r);
+                    t.setDaemon(false);
+                    t.setName("UnsignedTask-Listener-" + seq.incrementAndGet());
+                    return t;
+                }
+            });
 
     @Override
     public String listenPath() {
@@ -92,19 +88,6 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener {
         String zkPath = zkEvent.getId();
         logger.debug("TaskListener:{},{},{}", zkPath, zkEvent.getData(), zkEvent.getEventType());
         try {
-            // 任务进度更新
-            if (TASK_STAT_PATTERN.matcher(zkPath).matches() && zkEvent.isDataChanged()) {
-                DTaskStat stat = DTaskStat.fromString(zkEvent.getData(), DTaskStat.class);
-                logger.info("4-DTaskStat.... " + JSON.toJSON(stat));
-                // do something
-                try {
-                    MrJobTasksScheduleService mrJobTasksScheduleService = ApplicationContextUtil
-                            .getBean(MrJobTasksScheduleServiceImpl.class);
-                    mrJobTasksScheduleService.dealDTaskStat(stat);
-                } catch (Exception e) {
-                    logger.error("4-DTaskStat-Error....出错,请追寻...", e);
-                }
-            }
             // 任务错误
             if (TASK_ERROR_PATTERN.matcher(zkPath).matches()) {
                 DTaskError error;
@@ -116,7 +99,8 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener {
                 }
 
                 if (zkEvent.isDataChanged() || zkEvent.isOnline()) {
-                    ManagerContext.INSTANCE.newStoppedTask(Arrays.asList(error.getTaskId(), error.getSwimlaneId()), zkEvent.getData());
+                    ManagerContext.INSTANCE.newStoppedTask(Arrays.asList(error.getTaskId(), error.getSwimlaneId()),
+                            zkEvent.getData());
                     logger.info("zk任务错误消息DataChanged or Online,内容:[{}]", error.getMessage());
                     return;
                 }
@@ -178,6 +162,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener {
             public String getPath() {
                 return listenPath();
             }
+
             @Override
             public boolean doFilter(ClusterTreeNodeEvent event) {
                 return true;
@@ -193,8 +178,9 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener {
             if (null != msg && !msg.trim().isEmpty()) {
                 NodeLog log = new NodeLog(NodeLog.LogType.WARNING, msg).upload();
                 try {
-                    WarningProviderFactory.INSTANCE.notice(new WarningMessage("【管理员告警】运行状态异常任务列表",
-                            log.getError(), WarningErrorCode.match(log.getError())).bindReceivers(ManagerContext.INSTANCE.getReceivers()));
+                    WarningProviderFactory.INSTANCE.notice(new WarningMessage("【管理员告警】运行状态异常任务列表", log.getError(),
+                            WarningErrorCode.match(log.getError()))
+                                    .bindReceivers(ManagerContext.INSTANCE.getReceivers()));
                 } catch (InterruptedException e) {
                 }
             }
@@ -249,8 +235,9 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener {
                 for (SourceConfig source : sourceConfigs) {
                     String swimlaneLock = ZK_PATH + "/" + config.getTaskId() + "/lock/" + source.getSwimlaneId();
                     if (config.getStatus() == TaskStatusType.WORKING && !client.isExists(swimlaneLock, true)) {
-                        messages.append(System.lineSeparator()).append("预分配节点:").append(config.getNodeId()).append(",任务Id:").append(config.getTaskId())
-                                .append(",泳道:").append(source.getSwimlaneId()).append(System.lineSeparator());
+                        messages.append(System.lineSeparator()).append("预分配节点:").append(config.getNodeId())
+                                .append(",任务Id:").append(config.getTaskId()).append(",泳道:")
+                                .append(source.getSwimlaneId()).append(System.lineSeparator());
                     }
                 }
             } catch (Exception e) {
@@ -260,11 +247,10 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener {
         return messages.toString();
     }
 
-
     @Override
     public List<ClusterListenerEventExecutor> watchedEvents() {
         List<ClusterListenerEventExecutor> executors = new ArrayList<>();
-        //任务上传事件
+        // 任务上传事件
         executors.add(new TaskPushEventExecutor(this.getClass(), true, true, listenPath()));
         return executors;
     }

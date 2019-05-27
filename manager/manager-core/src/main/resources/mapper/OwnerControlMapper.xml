@@ -1,25 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="cn.vbill.middleware.porter.manager.core.mapper.OwnerControlMapper">
-    <!-- 通用查询映射结果 
-    <resultMap id="BaseResultMap" type="cn.vbill.middleware.porter.manager.core.entity.OwnerControl">
-        <result column="id" property="id" />
-        <result column="owner_type" property="ownerType" />
-        <result column="control_type_id" property="controlTypeId" />
-    </resultMap>-->
+<mapper
+	namespace="cn.vbill.middleware.porter.manager.core.mapper.OwnerControlMapper">
+	<!-- 通用查询映射结果 <resultMap id="BaseResultMap" type="cn.vbill.middleware.porter.manager.core.entity.OwnerControl"> 
+		<result column="id" property="id" /> <result column="owner_type" property="ownerType" 
+		/> <result column="control_type_id" property="controlTypeId" /> </resultMap> -->
 
-    <!-- 通用查询结果列 
-    <sql id="Base_Column_List">
-        select id, owner_type AS ownerType, control_type_id AS controlTypeId from r_owner_control
-    </sql>-->
+	<!-- 通用查询结果列 <sql id="Base_Column_List"> select id, owner_type AS ownerType, 
+		control_type_id AS controlTypeId from r_owner_control </sql> -->
 
-    <!-- 查询全部对应关系 -->
-    <select id="findAll" resultType="java.lang.Long">
-        select control_type_id AS controlTypeId from r_owner_control
-        <where>
-            <if test="type!= null">
-                owner_type = #{type}
-            </if>
-        </where>
-    </select>
+	<!-- 查询全部对应关系 -->
+	<select id="findAll" resultType="java.lang.Long">
+		select control_type_id AS controlTypeId from r_owner_control
+		<where>
+			<if test="type!= null">
+				owner_type = #{type}
+			</if>
+		</where>
+	</select>
 </mapper>

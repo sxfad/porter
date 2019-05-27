@@ -16,10 +16,9 @@
  */
 package cn.vbill.middleware.porter.manager.core.mapper;
 
-import cn.vbill.middleware.porter.manager.core.entity.OwnerControl;
-import org.apache.ibatis.annotations.Param;
-
 import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
 
 /**
  * 权限控制操作类型表 Mapper接口

@@ -444,22 +444,6 @@ CREATE TABLE `s_log_grade` (
   `remark` VARCHAR(100) DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`)
 ) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='日志级别表';
--- ogg表数据信息
-DROP TABLE IF EXISTS `ogg_tables`;
-CREATE TABLE `ogg_tables` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
-  `ip_address` varchar(100) DEFAULT NULL COMMENT 'ip地址',
-  `ip_name` varchar(100) DEFAULT NULL COMMENT 'ip名称',
-  `table_name` varchar(200) DEFAULT NULL COMMENT '表名汉字',
-  `table_value` varchar(200) DEFAULT NULL COMMENT '表名字段',
-  `table_marker` varchar(200) DEFAULT NULL COMMENT '表名标识',
-  `heart_beat_time` varchar(100) DEFAULT '0000-00-00 00:00:00' COMMENT '心跳时间',
-  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `iscancel` int(2) DEFAULT '0' COMMENT '是否作废',
-  `remark` varchar(500) DEFAULT NULL COMMENT '备注',
-  `related_task_info` varchar(500) DEFAULT NULL COMMENT '关联任务信息',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='ogg表数据信息'; 
 
 -- 初始用户
 INSERT  INTO `c_user`(`id`,`loginname`,`loginpw`,`nickname`,`email`,`mobile`,`depart_ment`,`role_code`,`state`,`remark`) VALUES 
@@ -486,10 +470,7 @@ INSERT INTO `c_menu` VALUES (12, 'M001002', 'M001', '任务监控', '/taskMonito
 INSERT INTO `c_menu` VALUES (13, 'M001003', 'M001', '节点监控', '/nodeMonitor', 'dot-chart', 2, 3, 1, 0, 1, 1, NULL);
 INSERT INTO `c_menu` VALUES (14, 'C001', '-1', '系统设置', '#', 'setting', 1, 10, 0, 0, 1, 1, NULL);
 INSERT INTO `c_menu` VALUES (15, 'C001001', 'C001', '用户管理', '/user', 'fa-user-md', 2, 1, 1, 0, 1, 1, NULL);
-    -- ogg管理模块新增
-INSERT INTO `c_menu` VALUES (18, 'O001', '-1', 'OGG管理', '#', 'fa-legal', 1, 6, 0, 0, 1, 1, NULL);
-INSERT INTO `c_menu` VALUES (19, 'O001001', 'O001', '表名查询', '/oggTables', 'fa-table', 2, 1, 1, 0, 1, 1, NULL);
-    -- 新增本地任务抓取
+-- 新增本地任务抓取
 INSERT INTO `c_menu` VALUES (20, 'J001002', 'J001', '本地任务', '/specialTask', 'fa-tags', 2, 2, 1, 0, 1, 1, NULL);
 -- 初始化菜单权限
 INSERT INTO `c_role_menu` VALUES (1, 'A0002', 'F001');
