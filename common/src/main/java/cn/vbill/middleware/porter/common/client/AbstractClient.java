@@ -96,7 +96,7 @@ public abstract class AbstractClient<T extends SourceConfig> implements Client {
     protected abstract void doShutdown() throws Exception;
 
     @Override
-    public boolean isStarted() {
+    public boolean isStarted() throws InterruptedException {
         return status.get() && isAlready();
     }
 
@@ -111,7 +111,7 @@ public abstract class AbstractClient<T extends SourceConfig> implements Client {
      *
      * @return
      */
-    protected boolean isAlready() {
+    protected boolean isAlready() throws InterruptedException {
         return true;
     }
 
@@ -137,7 +137,7 @@ public abstract class AbstractClient<T extends SourceConfig> implements Client {
         if (config instanceof PluginServiceConfig) {
             Class clazz = ((PluginServiceConfig) config).getInstance().get(config.getClientType());
             try {
-                clazz.getConstructor(config.getClass()).newInstance(config);
+                return (Client) clazz.getConstructor(config.getClass()).newInstance(config);
             } catch (Throwable e) {
                 throw new ClientException(e.getMessage());
             }

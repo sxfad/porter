@@ -18,6 +18,7 @@
 package cn.vbill.middleware.porter.core.message.converter;
 
 import cn.vbill.middleware.porter.common.util.compile.JavaFileCompiler;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 
 import java.util.List;
@@ -52,6 +53,7 @@ public enum  ConverterFactory {
      * @return: cn.vbill.middleware.porter.core.message.converter.EventConverter
      */
     public  EventConverter getConverter(String name) {
+        if (StringUtils.isBlank(name)) return null;
         for (EventConverter converter : converters) {
             if (converter.getName().equals(name)) {
                 return converter;

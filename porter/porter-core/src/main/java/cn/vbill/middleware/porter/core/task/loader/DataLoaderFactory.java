@@ -89,10 +89,12 @@ public enum DataLoaderFactory {
                 if (tmpInstance.isMatch(loaderName)) {
                     return tmpInstance;
                 }
+            } catch (ClassNotFoundException ex) {
+                LOGGER.warn("插件类{}不存在", t, ex);
             } catch (Throwable e) {
                 LOGGER.warn("{}不匹配{}", t, loaderName, e);
             }
         }
-        throw new DataLoaderBuildException();
+        throw new DataLoaderBuildException("插件" + loaderName + "不存在");
     }
 }

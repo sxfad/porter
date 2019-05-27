@@ -21,7 +21,6 @@ import cn.vbill.middleware.porter.common.config.SourceConfig;
 import cn.vbill.middleware.porter.common.dic.DbType;
 import cn.vbill.middleware.porter.common.plugin.config.PluginServiceConfig;
 import cn.vbill.middleware.porter.plugin.connector.jdbc.JdbcConnectorConst;
-import cn.vbill.middleware.porter.plugin.connector.jdbc.client.JdbcConsumeClient;
 import cn.vbill.middleware.porter.plugin.connector.jdbc.client.JdbcLoadClient;
 import lombok.Getter;
 import lombok.Setter;
@@ -81,7 +80,6 @@ public class JdbcConfig extends SourceConfig  implements PluginServiceConfig {
     public Map<String, Class> getInstance() {
         return new HashMap<String, Class>() {
             {
-                put(JdbcConnectorConst.CONSUME_SOURCE_TYPE_NAME.getCode(), JdbcConsumeClient.class);
                 put(JdbcConnectorConst.LOAD_SOURCE_TYPE_NAME.getCode(), JdbcLoadClient.class);
             }
         };

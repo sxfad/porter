@@ -25,8 +25,8 @@ import lombok.Getter;
  * @review: zkevin/2019年03月19日 11:22
  */
 public enum JdbcConnectorConst {
-    CONSUME_SOURCE_TYPE_NAME("JdbcConsume"),
-    LOAD_SOURCE_TYPE_NAME("JdbcLoad");
+    CONSUME_SOURCE_TYPE_NAME("JDBCConsume"),
+    LOAD_SOURCE_TYPE_NAME("JDBC");
     @Getter
     private String code;
 

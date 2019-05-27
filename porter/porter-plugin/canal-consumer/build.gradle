@@ -1,9 +1,9 @@
 group 'cn.vbill.middleware.porter.plugin'
 jar.baseName = 'porter-plugin-canal-consumer'
 dependencies {
-    compileOnly (
-            project(":porter:porter-core")
-
+    implementation (
+        project(":porter:porter-core"),
+        project(":porter:porter-plugin:canal-row-converter")
     )
 
     compile("com.alibaba.otter:canal.server:${canalVersion}"){

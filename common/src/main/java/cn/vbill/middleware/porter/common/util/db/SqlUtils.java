@@ -130,6 +130,8 @@ public class SqlUtils {
             }
         }
     }
+
+
     /**
      * Check whether the given SQL type is numeric.
      */

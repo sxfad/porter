@@ -36,7 +36,7 @@ import java.util.List;
  */
 public class CanalRowConverter implements EventConverter {
 
-    private static final String CONVERTER_NAME = "canalRow";
+    public static final String CONVERTER_NAME = "canalRow";
 
     @Override
     public String getName() {

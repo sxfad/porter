@@ -1,2 +1,2 @@
-cn.vbill.middleware.porter.core.task.consumer.DataConsumer=\
-  cn.vbill.middleware.porter.plugin.consumer.jdbc.consumer.JdbcConsumer
+cn.vbill.middleware.porter.core.task.consumer.DataConsumer=cn.vbill.middleware.porter.plugin.jdbc.consumer.JdbcConsumer
+cn.vbill.middleware.porter.core.message.converter.EventConverter = cn.vbill.middleware.porter.plugin.jdbc.converter.JdbcConverter

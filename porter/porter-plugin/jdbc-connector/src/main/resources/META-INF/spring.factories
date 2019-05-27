@@ -1,3 +1,3 @@
 cn.vbill.middleware.porter.common.plugin.config.PluginServiceConfig=\
-  cn.vbill.middleware.porter.plugin.connector.jdbc.config.JdbcLoadConfig,\
-  cn.vbill.middleware.porter.plugin.connector.jdbc.config.JdbcConsumeConfig
+  cn.vbill.middleware.porter.plugin.connector.jdbc.config.JdbcConfig,\
+  cn.vbill.middleware.porter.plugin.connector.jdbc.config.JdbcConsumerConfig

@@ -1,8 +1,9 @@
 group 'cn.vbill.middleware.porter.plugin'
 jar.baseName = 'porter-plugin-kafka-consumer'
 dependencies {
-    compileOnly (
-            project(":porter:porter-core")
+    implementation (
+            project(":porter:porter-core"),
+            project(":porter:porter-plugin:ogg-json-converter")
     )
     compile('org.apache.kafka:kafka-clients:1.0.0'){
         exclude group:'org.slf4j',module:'slf4j-api'

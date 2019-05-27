@@ -243,10 +243,12 @@ public interface DataConsumer {
      * 获取初始化消费点
      * @return
      */
-    String getInitiatePosition();
+    String getInitiatePosition() throws TaskStopTriggerException;
     void setOffset(String offset);
 
     String getDefaultClientType();
 
     String getDefaultMetaClientType();
+
+    String getDefaultEventConverter();
 }

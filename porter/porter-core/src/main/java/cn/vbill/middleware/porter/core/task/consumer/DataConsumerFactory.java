@@ -29,6 +29,7 @@ import cn.vbill.middleware.porter.common.config.SourceConfig;
 import cn.vbill.middleware.porter.common.exception.ClientException;
 import cn.vbill.middleware.porter.common.task.exception.DataConsumerBuildException;
 import cn.vbill.middleware.porter.common.util.compile.JavaFileCompiler;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 import org.springframework.util.ClassUtils;
@@ -62,7 +63,8 @@ public enum DataConsumerFactory {
         //创建consumer对象
         DataConsumer tmpConsumer = newConsumer(config.getConsumerName());
         //消息转换器
-        EventConverter converter = ConverterFactory.INSTANCE.getConverter(config.getConverter());
+        EventConverter converter = ConverterFactory.INSTANCE.getConverter(StringUtils.isNotBlank(config.getConverter())
+                ? config.getConverter() : tmpConsumer.getDefaultEventConverter());
 
         List<DataConsumer> consumers = new ArrayList<>();
 

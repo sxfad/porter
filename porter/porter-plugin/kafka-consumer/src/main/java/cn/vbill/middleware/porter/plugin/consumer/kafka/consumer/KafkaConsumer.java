@@ -25,6 +25,7 @@ import cn.vbill.middleware.porter.core.task.consumer.AbstractDataConsumer;
 import cn.vbill.middleware.porter.core.message.MessageEvent;
 import cn.vbill.middleware.porter.plugin.consumer.kafka.KafkaConsumerConst;
 import cn.vbill.middleware.porter.plugin.consumer.kafka.client.KafkaClient;
+import cn.vbill.middleware.porter.plugin.converter.ogg.OggJsonConverter;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
 import java.util.List;
@@ -62,5 +63,10 @@ public class KafkaConsumer extends AbstractDataConsumer {
     @Override
     public String getDefaultMetaClientType() {
         return KafkaConsumerConst.CONSUMER_SOURCE_TYPE_NAME.getCode();
+    }
+
+    @Override
+    public String getDefaultEventConverter() {
+        return OggJsonConverter.CONVERTER_NAME;
     }
 }

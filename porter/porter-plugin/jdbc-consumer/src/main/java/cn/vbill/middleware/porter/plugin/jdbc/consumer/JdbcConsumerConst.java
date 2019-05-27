@@ -14,7 +14,7 @@
  * limitations under the License.
  * </p>
  */
-package cn.vbill.middleware.porter.plugin.consumer.jdbc;
+package cn.vbill.middleware.porter.plugin.jdbc.consumer;
 
 import lombok.Getter;
 

@@ -103,7 +103,7 @@ public class TaskContext {
                 NodeContext.INSTANCE.markTaskError(Arrays.asList(log.getTaskId(), log.getSwimlaneId()), message);
             }
         } catch (Throwable e) {
-            LOGGER.error("fail to send warning", e);
+            LOGGER.error("fail to send warning message.", e);
         }
         return message;
     }

@@ -45,7 +45,7 @@ public class OggJsonConverter implements EventConverter {
 
     private FastDateFormat opTsF = FastDateFormat.getInstance("yyyy-MM-dd hh:mm:ss.SSS");
     private FastDateFormat ctsf = FastDateFormat.getInstance("yyyy-MM-dd'T'hh:mm:ss.SSS");
-    private static final String CONVERTER_NAME = "oggJson";
+    public static final String CONVERTER_NAME = "oggJson";
     private static final Map<String, MessageAction> EVENT_MAPPING = new HashMap<String, MessageAction>() {{
             put("I", MessageAction.INSERT);
             put("U", MessageAction.UPDATE);

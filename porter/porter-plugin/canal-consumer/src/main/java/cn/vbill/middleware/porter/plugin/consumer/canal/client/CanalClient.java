@@ -45,10 +45,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -255,12 +252,9 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
              }
              **/
             if (null != msg && msg.getId() != -1) {
-                try {
-                    List<F> f = callback.acceptAll(msg);
-                    if (null != f && !f.isEmpty()) {
-                        msgList.addAll(f);
-                    }
-                } catch (Throwable e) {
+                List<F> f = callback.acceptAll(msg);
+                if (null != f && !f.isEmpty()) {
+                    msgList.addAll(f);
                 }
 
                 //没有要处理的数据时需要直接ack
@@ -305,13 +299,9 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
     }
 
     @Override
-    protected boolean isAlready() {
-        try {
-            canFetch.await();
-            return true;
-        } catch (InterruptedException e) {
-            return false;
-        }
+    protected boolean isAlready() throws InterruptedException {
+        canFetch.await();
+        return true;
     }
 
 

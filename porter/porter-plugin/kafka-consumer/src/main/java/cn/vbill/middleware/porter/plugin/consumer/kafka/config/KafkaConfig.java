@@ -55,6 +55,10 @@ public class KafkaConfig extends SourceConfig implements PluginServiceConfig {
     @Setter @Getter private int partition = 0;
 
 
+    //允许自动重置offset
+    @Setter @Getter private boolean allowOffsetReset = false;
+
+
     @Override
     protected void childStuff() {
         String topicStr = getProperties().getOrDefault(TOPICS_KEY, "");

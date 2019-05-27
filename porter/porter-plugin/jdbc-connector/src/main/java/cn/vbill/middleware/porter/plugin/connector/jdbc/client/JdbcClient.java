@@ -32,6 +32,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.mysql.jdbc.AbandonedConnectionCleanupThread;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ddlutils.model.Table;
 import org.slf4j.Logger;
@@ -45,7 +46,7 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -65,7 +66,7 @@ public abstract class JdbcClient extends AbstractClient<JdbcConfig> implements M
     private SqlTemplate sqlTemplate;
     private final boolean makePrimaryKeyWhenNo;
     private final int connRetries;
-
+    private final WeakHashMap<List, TableSchema> tableMap = new WeakHashMap<>();
     public JdbcClient(JdbcConfig config) {
         super(config);
         jdbcProxy = new JdbcWapper();
@@ -124,34 +125,57 @@ public abstract class JdbcClient extends AbstractClient<JdbcConfig> implements M
     @Override
     public int getDataCount(String schema, String table, String updateDateColumn, Date startTime, Date endTime) {
         String sql = sqlTemplate.getDataChangedCountSql(schema, table, updateDateColumn);
-        return uniqueValueQuery(sql, Integer.class, startTime, endTime);
+        return uniqueValueQuery(sql, startTime, endTime);
+    }
+
+    /**
+     * multiValueQuery
+     *
+     * @param sql
+     * @param args
+     * @return
+     */
+    public List<RowInfo> multiValueQuery(String sql, Object... args) throws TaskStopTriggerException {
+        List<RowInfo> results = new ArrayList<>();
+        this.query(sql, rs -> {
+            if (null != rs) {
+                ResultSetMetaData meta = rs.getMetaData();
+                String table = meta.getTableName(1);
+                String schema = meta.getSchemaName(1);
+                schema = StringUtils.isBlank(schema) ? meta.getCatalogName(1) : schema;
+                List<ColumnInfo> columns = new ArrayList<>(meta.getColumnCount());
+                for (int i = 1; i <= meta.getColumnCount(); i++) {
+                    columns.add(new ColumnInfo(meta.getColumnClassName(i), meta.getColumnName(i), meta.getColumnType(i), false));
+                }
+                rs.beforeFirst();
+                while (rs.next()) {
+                    List<ColumnInfo> row = new ArrayList<>();
+                    for (ColumnInfo c : columns) {
+                        row.add(c.newColumn().setValue(rs.getObject(c.columnName)));
+                    }
+                    results.add(new RowInfo(row, schema, table));
+                }
+            }
+        }, args);
+        return results;
     }
 
     /**
      * uniqueValueQuery
      *
      * @param sql
-     * @param returnType
      * @param args
      * @param <T>
      * @return
      */
-    public  <T> T uniqueValueQuery(String sql, Class<T> returnType, Object... args) {
-        //数组形式仅仅是为了处理回调代码块儿对final局部变量的要求
-        List<T> results = new ArrayList<>(1);
+    public  <T> T uniqueValueQuery(String sql, Object... args) {
         try {
-            this.query(sql, new RowCallbackHandler() {
-                @Override
-                public void processRow(ResultSet rs) throws SQLException {
-                    if (null != rs) {
-                        results.add(rs.getObject(1, returnType));
-                    }
-                }
-            }, args);
+            List<RowInfo> results = multiValueQuery(sql, args);
+            return results.isEmpty() || null == results.get(0).columns || results.get(0).columns.isEmpty() ? null : (T) results.get(0).columns.get(0).value;
         } catch (Throwable e) {
             LOGGER.error("sql执行出错:{}", sql, e);
+            return null;
         }
-        return  null == results || results.isEmpty() ? null : results.get(0);
     }
 
 
@@ -360,6 +384,113 @@ public abstract class JdbcClient extends AbstractClient<JdbcConfig> implements M
         synchronized void reconnection() {
             close();
             start();
+        }
+    }
+
+    public class RowInfo {
+        private List<ColumnInfo> columns;
+        private String schema;
+        private String table;
+        private Date currentTime = Calendar.getInstance().getTime();
+
+        public RowInfo(List<ColumnInfo> columns, String schema, String table) {
+            this.columns = columns;
+            this.schema = schema;
+            this.table = table;
+        }
+
+        public List<ColumnInfo> getColumns() {
+            return columns;
+        }
+
+        public void setColumns(List<ColumnInfo> columns) {
+            this.columns = columns;
+        }
+
+        public String getSchema() {
+            return schema;
+        }
+
+        public void setSchema(String schema) {
+            this.schema = schema;
+        }
+
+        public String getTable() {
+            return table;
+        }
+
+        public void setTable(String table) {
+            this.table = table;
+        }
+
+        public Date getCurrentTime() {
+            return currentTime;
+        }
+    }
+
+    public class ColumnInfo {
+        private String columnClassName;
+        private Class columnClass;
+        private String columnName;
+        private int columnType;
+        private Object value;
+        private boolean isKey;
+
+        public ColumnInfo(String columnClassName, String columnName, int columnType, boolean isKey) {
+            this.columnClassName = columnClassName;
+            this.columnName = columnName;
+            this.columnType = columnType;
+            this.isKey = isKey;
+            try {
+                this.columnClass = ClassUtils.getClass(columnClassName);
+            } catch (ClassNotFoundException e) {
+                this.columnClass = String.class;
+            }
+        }
+
+        public String getColumnClassName() {
+            return columnClassName;
+        }
+
+        public void setColumnClassName(String columnClassName) {
+            this.columnClassName = columnClassName;
+        }
+
+        public String getColumnName() {
+            return columnName;
+        }
+
+        public void setColumnName(String columnName) {
+            this.columnName = columnName;
+        }
+
+        public int getColumnType() {
+            return columnType;
+        }
+
+        public void setColumnType(int columnType) {
+            this.columnType = columnType;
+        }
+
+        public Object getValue() {
+            return value;
+        }
+
+        public ColumnInfo setValue(Object value) {
+            this.value = value;
+            return this;
+        }
+
+        public Class getColumnClass() {
+            return columnClass;
+        }
+
+        public ColumnInfo newColumn() {
+            return new ColumnInfo(columnClassName, columnName, columnType, isKey);
+        }
+
+        public boolean isKey() {
+            return isKey;
         }
     }
 }

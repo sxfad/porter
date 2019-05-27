@@ -15,15 +15,18 @@
  * </p>
  */
 
-package cn.vbill.middleware.porter.plugin.consumer.jdbc.consumer;
+package cn.vbill.middleware.porter.plugin.jdbc.consumer;
 
 
 import cn.vbill.middleware.porter.common.task.consumer.ConsumeClient;
+import cn.vbill.middleware.porter.common.task.consumer.Position;
 import cn.vbill.middleware.porter.common.task.exception.TaskStopTriggerException;
 import cn.vbill.middleware.porter.core.task.consumer.AbstractDataConsumer;
 import cn.vbill.middleware.porter.core.message.MessageEvent;
 import cn.vbill.middleware.porter.plugin.connector.jdbc.JdbcConnectorConst;
-import cn.vbill.middleware.porter.plugin.consumer.jdbc.JdbcConsumerConst;
+import cn.vbill.middleware.porter.plugin.connector.jdbc.client.JdbcClient;
+import cn.vbill.middleware.porter.plugin.jdbc.converter.JdbcConverter;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.List;
 
@@ -39,11 +42,10 @@ public class JdbcConsumer extends AbstractDataConsumer {
     public List<MessageEvent> doFetch() throws TaskStopTriggerException, InterruptedException {
         return consumeClient.fetch(new ConsumeClient.FetchCallback<MessageEvent, Object>() {
             @Override
-            public <F, O> F accept(O o) {
-                //ConsumerRecord<String, String> record = (ConsumerRecord<String, String>) o;
-                //Position position = new KafkaClient.KafkaPosition(record.topic(), record.offset(), record.partition());
-                //return (F) getConverter().convert(record.timestamp(), position, record.value());
-                return null;
+            public <F, O> List<F> acceptAll(O o) {
+                Pair<Position, List<JdbcClient.RowInfo>> record = (Pair<Position, List<JdbcClient.RowInfo>>) o;
+                Position position = record.getKey();
+                return (List<F>) getConverter().convertList(position, record.getRight());
             }
         });
     }
@@ -61,5 +63,10 @@ public class JdbcConsumer extends AbstractDataConsumer {
     @Override
     public String getDefaultMetaClientType() {
         return JdbcConnectorConst.CONSUME_SOURCE_TYPE_NAME.getCode();
+    }
+
+    @Override
+    public String getDefaultEventConverter() {
+        return JdbcConverter.CONVERTER_NAME;
     }
 }

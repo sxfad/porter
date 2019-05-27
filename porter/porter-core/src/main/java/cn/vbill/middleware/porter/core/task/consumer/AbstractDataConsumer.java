@@ -195,7 +195,13 @@ public abstract class AbstractDataConsumer implements DataConsumer {
     }
 
     @Override
-    public String getInitiatePosition() {
+    public String getInitiatePosition() throws TaskStopTriggerException {
         return consumeClient.getInitiatePosition(offset);
+    }
+
+
+    @Override
+    public String getDefaultEventConverter() {
+        return null;
     }
 }

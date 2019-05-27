@@ -111,6 +111,10 @@ public class KafkaClient extends AbstractClient<KafkaConfig> implements ConsumeC
                         long endOffset = consumer.endOffsets(Arrays.asList(tp)).get(tp);
                         long beginOffset = consumer.beginningOffsets(Arrays.asList(tp)).get(tp);
                         long tryOffset = kafkaPosition.offset + 1;
+                        //任务配置允许重置offset
+                        if ((endOffset < tryOffset || beginOffset > tryOffset) && getConfig().isAllowOffsetReset()) {
+                            tryOffset = beginOffset;
+                        }
                         if (endOffset >= tryOffset && beginOffset <= tryOffset) {
                             /**
                              * ---------为避免因上次停止任务造成的消费同步点异常,从而丢失数据，往前消费一个批次---------

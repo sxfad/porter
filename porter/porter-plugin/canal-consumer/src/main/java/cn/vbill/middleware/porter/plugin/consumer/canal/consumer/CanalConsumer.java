@@ -23,6 +23,7 @@ import cn.vbill.middleware.porter.common.task.exception.TaskStopTriggerException
 import cn.vbill.middleware.porter.core.task.consumer.AbstractDataConsumer;
 import cn.vbill.middleware.porter.plugin.consumer.canal.CanalConsumerConst;
 import cn.vbill.middleware.porter.plugin.consumer.canal.client.CanalClient;
+import cn.vbill.middleware.porter.plugin.converter.canal.CanalRowConverter;
 import com.alibaba.otter.canal.protocol.CanalEntry;
 import com.alibaba.otter.canal.protocol.Message;
 import cn.vbill.middleware.porter.core.message.MessageEvent;
@@ -46,7 +47,7 @@ public class CanalConsumer extends AbstractDataConsumer {
     public List<MessageEvent> doFetch() throws TaskStopTriggerException, InterruptedException {
         return consumeClient.fetch(new ConsumeClient.FetchCallback<MessageEvent, Object>() {
             @Override
-            public <F, O> List<F> acceptAll(O o) throws InvalidProtocolBufferException {
+            public <F, O> List<F> acceptAll(O o) throws TaskStopTriggerException {
                 List<MessageEvent> events = new ArrayList<>();
                 Message msg = (Message) o;
 
@@ -54,7 +55,11 @@ public class CanalConsumer extends AbstractDataConsumer {
                 if (msg.isRaw()) {
                     entries =  new ArrayList<>();
                     for (ByteString e : msg.getRawEntries()) {
-                        entries.add(CanalEntry.Entry.parseFrom(e));
+                        try {
+                            entries.add(CanalEntry.Entry.parseFrom(e));
+                        } catch (InvalidProtocolBufferException ex) {
+                            throw new TaskStopTriggerException(ex);
+                        }
                     }
                 } else {
                     entries = msg.getEntries();
@@ -101,5 +106,10 @@ public class CanalConsumer extends AbstractDataConsumer {
     @Override
     public String getDefaultMetaClientType() {
         return CanalConsumerConst.CONSUMER_SOURCE_TYPE_NAME.getCode();
+    }
+
+    @Override
+    public String getDefaultEventConverter() {
+        return CanalRowConverter.CONVERTER_NAME;
     }
 }

@@ -101,11 +101,11 @@ public interface ConsumeClient extends Client {
          * @return
          * @throws Exception
          */
-        default <F, O> List<F> acceptAll(O o) throws Exception {
+        default <F, O> List<F> acceptAll(O o) throws TaskStopTriggerException {
             return null;
         }
     }
 
 
-    String getInitiatePosition(String offset);
+    String getInitiatePosition(String offset) throws TaskStopTriggerException;
 }

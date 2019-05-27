@@ -53,7 +53,7 @@ public interface Client {
      * @param: []
      * @return: boolean
      */
-    boolean isStarted();
+    boolean isStarted() throws InterruptedException;
 
     /**
      * getConfig
