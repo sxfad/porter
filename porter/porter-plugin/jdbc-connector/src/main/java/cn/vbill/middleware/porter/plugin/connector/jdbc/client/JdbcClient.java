@@ -49,6 +49,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -66,7 +67,7 @@ public abstract class JdbcClient extends AbstractClient<JdbcConfig> implements M
     private SqlTemplate sqlTemplate;
     private final boolean makePrimaryKeyWhenNo;
     private final int connRetries;
-    private final WeakHashMap<List, TableSchema> tableMap = new WeakHashMap<>();
+    private final Map<List<String>, TableSchema> tableMap = Collections.synchronizedMap(new WeakHashMap<>());
     public JdbcClient(JdbcConfig config) {
         super(config);
         jdbcProxy = new JdbcWapper();
@@ -89,8 +90,27 @@ public abstract class JdbcClient extends AbstractClient<JdbcConfig> implements M
     }
 
     @Override
-    public final TableSchema getTable(String schema, String tableName) throws Exception {
+    public TableSchema getTable(String schema, String tableName) throws Exception {
         return getTableSchema(schema, tableName);
+    }
+
+    public TableSchema getWeakTable(String schema, String table) {
+        List<String> tableKey = Arrays.asList(schema, table);
+        AtomicReference<TableSchema> ts = new AtomicReference<>();
+
+        tableMap.computeIfAbsent(tableKey, k -> {
+            try {
+                ts.set(getTable(k.get(0), k.get(1)));
+            } catch (Exception e) {
+            }
+            return ts.get();
+        });
+
+        tableMap.computeIfPresent(tableKey, (k, v) -> {
+            ts.set(v);
+            return v;
+        });
+        return ts.get();
     }
 
     /**
@@ -136,6 +156,7 @@ public abstract class JdbcClient extends AbstractClient<JdbcConfig> implements M
      * @return
      */
     public List<RowInfo> multiValueQuery(String sql, Object... args) throws TaskStopTriggerException {
+
         List<RowInfo> results = new ArrayList<>();
         this.query(sql, rs -> {
             if (null != rs) {
@@ -143,9 +164,14 @@ public abstract class JdbcClient extends AbstractClient<JdbcConfig> implements M
                 String table = meta.getTableName(1);
                 String schema = meta.getSchemaName(1);
                 schema = StringUtils.isBlank(schema) ? meta.getCatalogName(1) : schema;
+                TableSchema tableSchema = getWeakTable(schema, table);
+
                 List<ColumnInfo> columns = new ArrayList<>(meta.getColumnCount());
                 for (int i = 1; i <= meta.getColumnCount(); i++) {
-                    columns.add(new ColumnInfo(meta.getColumnClassName(i), meta.getColumnName(i), meta.getColumnType(i), false));
+                    String columnName = meta.getColumnName(i);
+                    boolean isKey = null != tableSchema && tableSchema.getColumns().stream().filter(c -> c.getName().equalsIgnoreCase(columnName) &&
+                            c.isPrimaryKey()).count() > 0;
+                    columns.add(new ColumnInfo(meta.getColumnClassName(i),columnName , meta.getColumnType(i), isKey));
                 }
                 rs.beforeFirst();
                 while (rs.next()) {
@@ -159,6 +185,8 @@ public abstract class JdbcClient extends AbstractClient<JdbcConfig> implements M
         }, args);
         return results;
     }
+
+
 
     /**
      * uniqueValueQuery

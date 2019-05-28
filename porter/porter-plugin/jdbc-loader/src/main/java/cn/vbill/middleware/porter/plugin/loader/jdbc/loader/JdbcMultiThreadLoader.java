@@ -41,15 +41,15 @@ import java.util.stream.Collectors;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月04日 11:38
  */
 public class JdbcMultiThreadLoader extends BaseJdbcLoader {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(JdbcMultiThreadLoader.class);
     @Override
     protected String getPluginName() {
-        return JdbcLoaderConst.LOADER_PLUGIN_JDBC_MULTI_THREAD.name();
+        return JdbcLoaderConst.LOADER_PLUGIN_JDBC_MULTI_THREAD.getCode();
     }
 
     @Override
     public Pair<Boolean, List<DSubmitStatObject>> doLoad(ETLBucket bucket) throws InterruptedException, TaskStopTriggerException {
+        LOGGER.info("批次:{},数据条数:{},并行度:{}", bucket.getSequence(), bucket.getRows().size(), bucket.getParallelRows().size());
         List<DSubmitStatObject> affectRow = new ArrayList<>();
         ForkJoinPool pool = new ForkJoinPool();
         List<ForkJoinTask<List<DSubmitStatObject>>> futures = new ArrayList<>(bucket.getParallelRows().size());

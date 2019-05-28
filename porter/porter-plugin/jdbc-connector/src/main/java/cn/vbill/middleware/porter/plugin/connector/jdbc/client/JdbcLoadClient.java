@@ -121,4 +121,6 @@ public class JdbcLoadClient extends JdbcClient implements LoadClient {
             batchErroUpdate(sqlType, batchSize, sql, batchArgs, from, affect);
         }
     }
+
+
 }

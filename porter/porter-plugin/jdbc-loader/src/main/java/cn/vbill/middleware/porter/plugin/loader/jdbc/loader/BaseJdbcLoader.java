@@ -19,6 +19,7 @@ package cn.vbill.middleware.porter.plugin.loader.jdbc.loader;
 
 import cn.vbill.middleware.porter.common.task.exception.TaskDataException;
 import cn.vbill.middleware.porter.common.task.exception.TaskStopTriggerException;
+import cn.vbill.middleware.porter.common.task.loader.LoadClient;
 import cn.vbill.middleware.porter.core.task.setl.ETLBucket;
 import cn.vbill.middleware.porter.core.message.MessageAction;
 import cn.vbill.middleware.porter.core.task.statistics.DSubmitStatObject;
@@ -43,10 +44,11 @@ import java.util.*;
 public abstract class BaseJdbcLoader extends AbstractDataLoader {
     protected SqlBuilder sqlBuilder;
 
-    public BaseJdbcLoader() {
-        if (null != getLoadClient()) sqlBuilder = new SqlBuilder(getLoadClient().getSqlTemplate(), isInsertOnUpdateError());
+    @Override
+    public void setLoadClient(LoadClient loadClient) {
+        super.setLoadClient(loadClient);
+        sqlBuilder = new SqlBuilder(getLoadClient().getSqlTemplate(), isInsertOnUpdateError());
     }
-
     @Override
     public Pair<Boolean, List<DSubmitStatObject>> load(ETLBucket bucket) throws TaskStopTriggerException, InterruptedException {
         try {

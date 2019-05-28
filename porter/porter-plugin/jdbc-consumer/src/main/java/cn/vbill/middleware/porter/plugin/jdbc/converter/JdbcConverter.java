@@ -44,8 +44,10 @@ public class JdbcConverter implements EventConverter {
 
     @Override
     public MessageEvent convert(Object... params) {
-        Position position = (Position) params[0];
-        JdbcClient.RowInfo row  = (JdbcClient.RowInfo) params[1];
+        throw new UnsupportedOperationException();
+    }
+
+    private MessageEvent convertEvent(Position position, JdbcClient.RowInfo row, MessageAction expectAction) {
         MessageEvent event = new MessageEvent();
         event.setBucketPosition(position);
         event.setRowPosition(position);
@@ -53,7 +55,7 @@ public class JdbcConverter implements EventConverter {
         event.setSchema(row.getSchema());
         event.setCurrentTs(row.getCurrentTime());
         event.setOpTs(row.getCurrentTime());
-        event.setOpType(MessageAction.UPDATE);
+        event.setOpType(expectAction);
         row.getColumns().forEach(c -> {
             if (c.isKey()) event.getPrimaryKeys().add(c.getColumnName());
             event.getAfter().put(c.getColumnName(), c.getValue());
@@ -67,7 +69,8 @@ public class JdbcConverter implements EventConverter {
         Position position = (Position) params[0];
         List<JdbcClient.RowInfo> rows  = (List<JdbcClient.RowInfo>) params[1];
         for (JdbcClient.RowInfo row : rows) {
-            events.add(convert(position, row));
+            events.add(convertEvent(position, row, MessageAction.INSERT));
+            events.add(convertEvent(position, row, MessageAction.UPDATE));
         }
         return events;
     }
