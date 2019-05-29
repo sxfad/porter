@@ -459,6 +459,29 @@ CREATE TABLE `s_log_grade` (
   `remark` VARCHAR(100) DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`)
 ) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='日志级别表';
+-- 任务权限操作类型表
+DROP TABLE IF EXISTS `d_control_type_plugin`;
+CREATE TABLE `d_control_type_plugin` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `alert_type` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '告警策略',
+  `field_name` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '页面字段名称',
+  `field_code` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '字段实际名',
+  `field_order` int(10) DEFAULT NULL COMMENT '页面展示顺序',
+  `field_type` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '页面字段类型',
+  `field_type_key` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '页面字段类型对应字典',
+  `state` int(10) DEFAULT NULL COMMENT '状态',
+  `iscancel` int(10) DEFAULT NULL COMMENT '是否删除',
+  `remark` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '备注',
+  PRIMARY KEY (`id`)
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='任务权限操作类型表';
+-- 权限控制操作类型表
+DROP TABLE IF EXISTS `r_owner_control`;
+CREATE TABLE `r_owner_control` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `owner_type` int(10) DEFAULT NULL COMMENT '所有者权限类型(1:所有者 2.共享者 0:管理员).',
+  `control_type_id` bigint(20) DEFAULT NULL COMMENT '操作类型id.',
+  PRIMARY KEY (`id`)
+) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='权限控制操作类型表';
 
 -- 初始用户
 INSERT  INTO `c_user`(`id`,`loginname`,`loginpw`,`nickname`,`email`,`mobile`,`depart_ment`,`role_code`,`state`,`remark`) VALUES 
@@ -487,6 +510,9 @@ INSERT INTO `c_menu` VALUES (14, 'C001', '-1', '系统设置', '#', 'setting', 1
 INSERT INTO `c_menu` VALUES (15, 'C001001', 'C001', '用户管理', '/user', 'fa-user-md', 2, 1, 1, 0, 1, 1, NULL);
 -- 新增本地任务抓取
 INSERT INTO `c_menu` VALUES (20, 'J001002', 'J001', '本地任务', '/specialTask', 'fa-tags', 2, 2, 1, 0, 1, 1, NULL);
+-- 新增菜单管理、菜单权限配置
+INSERT INTO `c_menu` VALUES (21, 'C001002', 'C001', '菜单管理', '/menus','fa-table', 2, 2, 1, 0, 1, 1, NULL);
+INSERT INTO `c_menu` VALUES (22, 'C001003', 'C001', '菜单权限配置', '/permission','fa-table', 2, 3, 1, 0, 1, 1, NULL);
 -- 初始化菜单权限
 INSERT INTO `c_role_menu` VALUES (1, 'A0002', 'F001');
 INSERT INTO `c_role_menu` VALUES (2, 'A0002', 'J001');
@@ -549,6 +575,23 @@ insert  into `s_alarm_plugin`(`id`,`alarm_id`,`alarm_type`,`plugin_code`,`plugin
 (2,1,'EMAIL','username','邮件账户','1@163.com'),
 (3,1,'EMAIL','password','邮箱密码','account');
 insert  into `s_alarm_user`(`id`,`alarm_id`,`user_id`) values (1,1,1);
+-- 初始化任务权限操作类型
+INSERT INTO `d_control_type_plugin` VALUES (1, 'CHANGE', '移交', 'CHANGE', 1, 'RADIO', NULL, 1, 0, NULL);
+INSERT INTO `d_control_type_plugin` VALUES (2, 'SHARE', '共享', 'SHARE', 2, 'RADIO', NULL, 1, 0, NULL);
+INSERT INTO `d_control_type_plugin` VALUES (3, 'CANCEL', '作废', 'CANCEL', 3, 'RADIO', NULL, 1, 0, NULL);
+INSERT INTO `d_control_type_plugin` VALUES (4, 'RECYCLE_C', '回收所有者', 'RECYCLE_C', 4, 'RADIO', NULL, 1, 0, NULL);
+INSERT INTO `d_control_type_plugin` VALUES (5, 'RECYCLE_S', '回收共享者', 'RECYCLE_S', 5, 'RADIO', NULL, 1, 0, NULL);
+INSERT INTO `d_control_type_plugin` VALUES (6, 'RECYCLE_A', '回收所有权限', 'RECYCLE_A', 6, 'RADIO', NULL, 1, 0, NULL);
+-- 权限控制操作类型
+INSERT INTO `r_owner_control` VALUES (1, 1, 1);
+INSERT INTO `r_owner_control` VALUES (2, 1, 2);
+INSERT INTO `r_owner_control` VALUES (3, 1, 3);
+INSERT INTO `r_owner_control` VALUES (4, 2, 3);
+INSERT INTO `r_owner_control` VALUES (5, 0, 1);
+INSERT INTO `r_owner_control` VALUES (6, 0, 2);
+INSERT INTO `r_owner_control` VALUES (7, 0, 4);
+INSERT INTO `r_owner_control` VALUES (8, 0, 5);
+INSERT INTO `r_owner_control` VALUES (9, 0, 6);
 
 -- 复制统计数据表结构(需要创建今明两天的数据表)
 -- CREATE TABLE mr_job_tasks_monitor_yyyymmdd SELECT * FROM mr_job_tasks_monitor WHERE 1=2;
