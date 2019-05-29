@@ -69,9 +69,12 @@ public enum SourceType {
     /**
      * kafkaProduce
      */
-    KAFKA_PRODUCE("", "kafkaProduce", 1),
+    KAFKA_PRODUCE("KAFKA_PRODUCE", "kafkaProduce", 1),
 
-    FILE("FILE", "file", 1);
+    FILE("FILE", "file", 1),
+
+    JDBC_CONSUME("JDBC_CONSUME", "jdbcConsume", 1);
+
     /**
      * LINKMAP
      */
@@ -107,6 +110,9 @@ public enum SourceType {
         }
         if (FILE.state == 1) {
             LINKMAP.put(FILE.code, FILE.name);
+        }
+        if (JDBC_CONSUME.state == 1) {
+            LINKMAP.put(JDBC_CONSUME.code, JDBC_CONSUME.name);
         }
     }
 

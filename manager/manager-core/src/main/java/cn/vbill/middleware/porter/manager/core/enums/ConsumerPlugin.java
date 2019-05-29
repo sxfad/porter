@@ -44,7 +44,11 @@ public enum ConsumerPlugin {
     /**
      * KAFKA
      */
-    KAFKA("KafkaFetch", "Kafka");
+    KAFKA("KafkaFetch", "Kafka"),
+    /**
+     * JDBC
+     */
+    JDBC("JdbcFetch", "JDBCConsume");
 
     /**
      * LINKMAP
@@ -53,6 +57,7 @@ public enum ConsumerPlugin {
     static {
         LINKMAP.put("CANAL", CANAL.name);
         LINKMAP.put("KAFKA", KAFKA.name);
+        LINKMAP.put("JDBC", JDBC.name);
     }
 
     @Getter

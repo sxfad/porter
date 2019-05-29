@@ -62,11 +62,6 @@ public enum LoaderPlugin {
     KAFKA_SYNC("KAFKA_SYNC", "kafka同步"),
 
     /**
-     * kafka异步
-     */
-    KAFKA_ASYNC("KAFKA_ASYNC", "kafka异步"),
-
-    /**
      * jdbc多线程
      */
     JDBC_MULTI_THREAD("JdbcMultiThread", "jdbc多线程");
@@ -82,7 +77,6 @@ public enum LoaderPlugin {
         LINKMAP.put(JDBC_SINGLE.code, KUDU_NATIVE.name);
         LINKMAP.put(JDBC_SQL_DEBUG.code, JDBC_SQL_DEBUG.name);
         LINKMAP.put(KAFKA_SYNC.code, KAFKA_SYNC.name);
-        LINKMAP.put(KAFKA_ASYNC.code, KAFKA_ASYNC.name);
         LINKMAP.put(JDBC_MULTI_THREAD.code, JDBC_MULTI_THREAD.name);
     }
 

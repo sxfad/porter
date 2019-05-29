@@ -301,7 +301,7 @@ public class JobTasks implements java.io.Serializable {
      * 来源数据-消费插件 set方法.
      */
     public void setSourceConsumeAdt(ConsumerPlugin sourceConsumeAdt) {
-        this.sourceConsumeAdtName = sourceConsumeAdt.toString();
+        this.sourceConsumeAdtName = null != sourceConsumeAdt ? sourceConsumeAdt.toString() : null;
         this.sourceConsumeAdt = sourceConsumeAdt;
     }
 
@@ -316,7 +316,7 @@ public class JobTasks implements java.io.Serializable {
      * 来源数据-消费转换插件 set方法.
      */
     public void setSourceConvertAdt(ConsumeConverterPlugin sourceConvertAdt) {
-        this.sourceConvertAdtName = sourceConvertAdt.toString();
+        this.sourceConvertAdtName = null != sourceConvertAdt ? sourceConvertAdt.toString() : null;
         this.sourceConvertAdt = sourceConvertAdt;
     }
 
@@ -387,7 +387,7 @@ public class JobTasks implements java.io.Serializable {
      * 目标数据-载入插件 set方法.
      */
     public void setTargetLoadAdt(LoaderPlugin targetLoadAdt) {
-        this.targetLoadAdtName = targetLoadAdt.toString();
+        this.targetLoadAdtName = null != targetLoadAdt ? targetLoadAdt.toString() :null;
         this.targetLoadAdt = targetLoadAdt;
     }
 

@@ -27,6 +27,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apache.commons.beanutils.ConvertUtilsBean;
 import org.apache.commons.lang3.StringUtils;
@@ -216,6 +217,7 @@ public class JdbcConsumeClient  extends JdbcClient implements ConsumeClient {
     /**
      * jdbc位点信息
      */
+    @NoArgsConstructor
     public static class JdbcPosition extends Position {
         private static String TABLE_KEY = "table";
         private static String INCREMENTCOLUMN_KEY = "incrementColumn";
@@ -234,10 +236,8 @@ public class JdbcConsumeClient  extends JdbcClient implements ConsumeClient {
         @Getter @Setter
         private Long timestampValue;
 
-        @JSONField(serialize=false)
+        @JSONField(serialize = false)
         private long queryTimes = 1;
-        public JdbcPosition() {
-        }
         public JdbcPosition(String table, String incrementColumn, Long incrementColumnValue, String timestampColumn, Long timestampValue) {
             this.table = table.toUpperCase();
             this.incrementColumn = null != incrementColumn ? incrementColumn.toUpperCase() : "";
