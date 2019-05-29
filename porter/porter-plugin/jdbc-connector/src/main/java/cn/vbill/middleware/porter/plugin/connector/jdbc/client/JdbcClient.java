@@ -169,9 +169,9 @@ public abstract class JdbcClient extends AbstractClient<JdbcConfig> implements M
                 List<ColumnInfo> columns = new ArrayList<>(meta.getColumnCount());
                 for (int i = 1; i <= meta.getColumnCount(); i++) {
                     String columnName = meta.getColumnName(i);
-                    boolean isKey = null != tableSchema && tableSchema.getColumns().stream().filter(c -> c.getName().equalsIgnoreCase(columnName) &&
-                            c.isPrimaryKey()).count() > 0;
-                    columns.add(new ColumnInfo(meta.getColumnClassName(i),columnName , meta.getColumnType(i), isKey));
+                    boolean isKey = null != tableSchema && tableSchema.getColumns().stream().filter(c -> c.getName().equalsIgnoreCase(columnName)
+                            && c.isPrimaryKey()).count() > 0;
+                    columns.add(new ColumnInfo(meta.getColumnClassName(i), columnName, meta.getColumnType(i), isKey));
                 }
                 rs.beforeFirst();
                 while (rs.next()) {
@@ -232,8 +232,7 @@ public abstract class JdbcClient extends AbstractClient<JdbcConfig> implements M
     @Override
     public String getClientInfo() {
         JdbcConfig config = getConfig();
-        return new StringBuilder().append("数据库地址->").append(config.getUrl()).append(",用户->").append(config.getUserName())
-                .toString();
+        return new StringBuilder().append("数据库地址->").append(config.getUrl()).append(",用户->").append(config.getUserName()).toString();
     }
 
 

@@ -65,11 +65,12 @@ public class XTokenInterceptor extends HandlerInterceptorAdapter {
             log.info("传入的token值:{}", token);
             if (StringUtils.isEmpty(token) || !TokenUtil.isValid(token)) {
                 log.info("token校验错误");
-                response.setStatus(HttpStatus.UNAUTHORIZED.value());
-                if (uri.startsWith("/alarm") || uri.startsWith("/manager")) {
+                if(uri.startsWith("/alarm") || uri.startsWith("/manager")) {
+                    response.setStatus(HttpStatus.UNAUTHORIZED.value());
                     response.getWriter().append(JSON.toJSONString(new AuthorizedBody("401", "token Check the error")));
                 } else {
-                    response.sendRedirect("/");
+                    request.getRequestDispatcher("/index.html").forward(request, response);
+                    response.setStatus(HttpStatus.OK.value());
                 }
                 return false;
             }

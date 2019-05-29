@@ -44,7 +44,12 @@ public enum ConsumeConverterPlugin {
     /**
      * oggJson
      */
-    OGG_JSON("oggJson", "oggJson格式");
+    OGG_JSON("oggJson", "oggJson格式"),
+    /**
+     * jdbc
+     */
+    JDBC("jdbcConnector", "jdbc格式");
+
 
     /**
      * LINKMAP
@@ -54,6 +59,7 @@ public enum ConsumeConverterPlugin {
     static {
         LINKMAP.put("CANAL_ROW", CANAL_ROW.name);
         LINKMAP.put("OGG_JSON", OGG_JSON.name);
+        LINKMAP.put("JDBC", JDBC.name);
     }
 
     @Getter
