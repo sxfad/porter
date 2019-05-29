@@ -52,8 +52,23 @@ CREATE TABLE `c_role_menu` (
   `role_code` VARCHAR(100) DEFAULT NULL COMMENT '角色id',
   `menu_code` VARCHAR(100) DEFAULT NULL COMMENT '菜单code',
   PRIMARY KEY (`id`)
-) ENGINE=INNODB DEFAULT CHARSET=utf8 COMMENT='角色菜单关联表';
-
+) ENGINE=INNODB AUTO_INCREMENT=1  DEFAULT CHARSET=utf8 COMMENT='角色菜单关联表';
+-- 数据权限控制表
+DROP TABLE IF EXISTS `c_data_authority`;
+CREATE TABLE `c_data_authority` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `object_table` char(30) DEFAULT null COMMENT '目标表',
+  `object_id` bigint(20) DEFAULT '-1' COMMENT '目标id',  
+  `owner_level` int(2) DEFAULT '1' COMMENT '权限控制类型(1:人2:部门3:角色组)',
+  `owner_id` bigint(20) DEFAULT '-1' COMMENT '所有者id',
+  `create_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime DEFAULT CURRENT_TIMESTAMP COMMENT '修改时间',
+  `operator` bigint(20) DEFAULT '-1' COMMENT '操作人',
+  `type` int(5) DEFAULT '1' COMMENT '类型(1：权限所有人 2：权限共享者)',
+  `iscancel` int(2) DEFAULT '0' COMMENT '是否作废',
+  `remark` varchar(200) DEFAULT NULL COMMENT '备注',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='数据权限控制表';
 -- 数据源信息表
 DROP TABLE IF EXISTS `b_data_source`;
 CREATE TABLE `b_data_source` (
@@ -125,7 +140,7 @@ CREATE TABLE `b_nodes_owner` (
   `iscancel` int(2) DEFAULT '0' COMMENT '是否作废',
   `remark` varchar(200) DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='节点所有权控制表'
+) ENGINE=InnoDB AUTO_INCREMENT=1  DEFAULT CHARSET=utf8 COMMENT='节点所有权控制表';
 -- 告警字段字典
 DROP TABLE IF EXISTS `d_alarm_plugin`;
 CREATE TABLE `d_alarm_plugin` (
@@ -191,7 +206,7 @@ CREATE TABLE `b_public_data_source` (
   `remark` varchar(500) DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`),
   UNIQUE KEY `UNIQUE_CODE` (`code`)
-) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8 COMMENT='公共数据源配置表'
+) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8 COMMENT='公共数据源配置表';
 
 -- 同步任务表
 DROP TABLE IF EXISTS `job_tasks`;
@@ -237,7 +252,7 @@ CREATE TABLE `job_tasks_owner` (
   `iscancel` int(2) DEFAULT '0' COMMENT '是否作废',
   `remark` varchar(200) DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='任务所有权控制表'
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='任务所有权控制表';
 -- 任务节点分发表
 DROP TABLE IF EXISTS `job_task_nodes`;
 CREATE TABLE `job_task_nodes` (
@@ -534,3 +549,8 @@ insert  into `s_alarm_plugin`(`id`,`alarm_id`,`alarm_type`,`plugin_code`,`plugin
 (2,1,'EMAIL','username','邮件账户','1@163.com'),
 (3,1,'EMAIL','password','邮箱密码','account');
 insert  into `s_alarm_user`(`id`,`alarm_id`,`user_id`) values (1,1,1);
+
+-- 复制统计数据表结构(需要创建今明两天的数据表)
+-- CREATE TABLE mr_job_tasks_monitor_yyyymmdd SELECT * FROM mr_job_tasks_monitor WHERE 1=2;
+-- CREATE TABLE mr_log_monitor_yyyymmdd SELECT * FROM mr_log_monitor WHERE 1=2;
+-- CREATE TABLE mr_nodes_monitor_yyyymmdd SELECT * FROM mr_nodes_monitor WHERE 1=2;
