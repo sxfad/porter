@@ -45,4 +45,9 @@ public interface MonitorScheduledService {
      * 创建后天的表并且判断如果明天的表没创建则创建明天的表
      */
     void createTableTask();
+
+    /**
+     * 在项目初始化时 创建今天和明天的监控表
+     */
+    void initMonitorTable();
 }
