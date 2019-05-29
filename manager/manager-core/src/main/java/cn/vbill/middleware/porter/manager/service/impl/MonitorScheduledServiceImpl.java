@@ -142,6 +142,57 @@ public class MonitorScheduledServiceImpl implements MonitorScheduledService {
         }
     }
 
+    @Override
+    public void initMonitorTable() {
+        Date today = new Date();
+        Date tomorrowDate = DateMathUtils.dateAddDays(today, +1);
+        //判断今天和明天表有没有建立 如果没有就建立
+        Map<String, Map<String, String>> dataMap = makeTableName(today, tomorrowDate);
+        for (Map.Entry<String, String> entry : dataMap.get("now").entrySet()) {
+            String nowTable = monitorScheduledMapper.checkTomorrowTable(entry.getValue());
+            if (nowTable == null) {
+                logger.info("未查到今日：[{}]表，开始初始化...", entry.getValue());
+                monitorScheduledMapper.createTable(entry.getValue(), entry.getKey());
+            }
+        }
+        for (Map.Entry<String, String> entry : dataMap.get("tomorrow").entrySet()) {
+            String tomorrowTable = monitorScheduledMapper.checkTomorrowTable(entry.getValue());
+            if (tomorrowTable == null) {
+                logger.info("未查到明日：[{}]表，开始初始化...", entry.getValue());
+                monitorScheduledMapper.createTable(entry.getValue(), entry.getKey());
+            }
+        }
+    }
+
+    /**
+     * 拼出今天和明天的表名
+     *
+     * @param today
+     * @param tomorrowDate
+     * @return map
+     */
+    private Map<String, Map<String, String>> makeTableName(Date today, Date tomorrowDate) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        String nowTime = sdf.format(today);
+        String tomorrowTime = sdf.format(tomorrowDate);
+
+        Map<String, Map<String, String>> dateMap =new HashMap<>();
+
+        Map<String, String> nowTableName = new HashMap<>();
+        nowTableName.put("mr_job_tasks_monitor", "mr_job_tasks_monitor_" + nowTime);
+        nowTableName.put("mr_nodes_monitor", "mr_nodes_monitor_" + nowTime);
+        nowTableName.put("mr_log_monitor", "mr_log_monitor_" + nowTime);
+        dateMap.put("now", nowTableName);
+
+        Map<String, String> tomorrowTableName = new HashMap<>();
+        tomorrowTableName.put("mr_job_tasks_monitor", "mr_job_tasks_monitor_" + tomorrowTime);
+        tomorrowTableName.put("mr_nodes_monitor", "mr_nodes_monitor_" + tomorrowTime);
+        tomorrowTableName.put("mr_log_monitor", "mr_log_monitor_" + tomorrowTime);
+        dateMap.put("tomorrow", tomorrowTableName);
+
+        return dateMap;
+    }
+
     /**
      * 拼出表名，放在map中
      *

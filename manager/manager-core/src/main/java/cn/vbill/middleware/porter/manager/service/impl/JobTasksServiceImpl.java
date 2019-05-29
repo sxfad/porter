@@ -505,7 +505,7 @@ public class JobTasksServiceImpl implements JobTasksService {
         for (DataSourcePlugin dataSourcePlugin : plugins) {
             sourceMap.put(dataSourcePlugin.getFieldCode(), dataSourcePlugin.getFieldValue());
         }
-        sourceMap.put(SourceConfig.SOURCE_TYPE_KEY, souDataSource.getDataType().getCode());
+        sourceMap.put(SourceConfig.CLIENT_TYPE_KEY, souDataSource.getDataType().getCode());
         if (souDataSource.getDataType() == SourceType.KAFKA
                 || souDataSource.getDataType() == SourceType.KAFKA_PRODUCE) {
             if (sourceMap.get("group") == null || "".equals(sourceMap.get("group"))) {
