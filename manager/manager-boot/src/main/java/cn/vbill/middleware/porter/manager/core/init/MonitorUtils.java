@@ -41,7 +41,11 @@ public class MonitorUtils {
     }
 
     private void createMonitorTable() {
-        MonitorScheduledService monitorScheduledService = ApplicationContextUtil.getBean(MonitorScheduledService.class);
-        monitorScheduledService.initMonitorTable();
+        try {
+            MonitorScheduledService monitorScheduledService = ApplicationContextUtil.getBean(MonitorScheduledService.class);
+            monitorScheduledService.initMonitorTable();
+        } catch (Exception e) {
+            logger.error("MonitorUtils 初始化异常...！！！异常信息：[{}]", e);
+        }
     }
 }
