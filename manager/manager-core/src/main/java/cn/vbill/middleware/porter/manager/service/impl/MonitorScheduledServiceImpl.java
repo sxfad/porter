@@ -151,14 +151,14 @@ public class MonitorScheduledServiceImpl implements MonitorScheduledService {
         for (Map.Entry<String, String> entry : dataMap.get("now").entrySet()) {
             String nowTable = monitorScheduledMapper.checkTomorrowTable(entry.getValue());
             if (nowTable == null) {
-                logger.info("未查到今日：[{}]表，开始初始化...", nowTable);
+                logger.info("未查到今日：[{}]表，开始初始化...", entry.getValue());
                 monitorScheduledMapper.createTable(entry.getValue(), entry.getKey());
             }
         }
         for (Map.Entry<String, String> entry : dataMap.get("tomorrow").entrySet()) {
             String tomorrowTable = monitorScheduledMapper.checkTomorrowTable(entry.getValue());
             if (tomorrowTable == null) {
-                logger.info("未查到明日：[{}]表，开始初始化...", tomorrowTable);
+                logger.info("未查到明日：[{}]表，开始初始化...", entry.getValue());
                 monitorScheduledMapper.createTable(entry.getValue(), entry.getKey());
             }
         }
@@ -174,7 +174,7 @@ public class MonitorScheduledServiceImpl implements MonitorScheduledService {
     private Map<String, Map<String, String>> makeTableName(Date today, Date tomorrowDate) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
         String nowTime = sdf.format(today);
-        String tomorrowTime = sdf.format(today);
+        String tomorrowTime = sdf.format(tomorrowDate);
 
         Map<String, Map<String, String>> dateMap =new HashMap<>();
 
