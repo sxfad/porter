@@ -152,14 +152,14 @@ public class MonitorScheduledServiceImpl implements MonitorScheduledService {
             String nowTable = monitorScheduledMapper.checkTomorrowTable(entry.getValue());
             if (nowTable == null) {
                 logger.info("未查到今日：[{}]表，开始初始化...", nowTable);
-                monitorScheduledMapper.createTable(nowTable, entry.getKey());
+                monitorScheduledMapper.createTable(entry.getValue(), entry.getKey());
             }
         }
         for (Map.Entry<String, String> entry : dataMap.get("tomorrow").entrySet()) {
             String tomorrowTable = monitorScheduledMapper.checkTomorrowTable(entry.getValue());
             if (tomorrowTable == null) {
                 logger.info("未查到明日：[{}]表，开始初始化...", tomorrowTable);
-                monitorScheduledMapper.createTable(tomorrowTable, entry.getKey());
+                monitorScheduledMapper.createTable(entry.getValue(), entry.getKey());
             }
         }
     }
