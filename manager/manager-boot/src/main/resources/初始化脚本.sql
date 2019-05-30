@@ -218,7 +218,7 @@ CREATE TABLE `job_tasks` (
   `job_state` VARCHAR(100) NOT NULL DEFAULT 'NEW' COMMENT '任务状态',
   `job_type` int(2) DEFAULT '1' COMMENT '任务类型',
   `source_consume_adt` VARCHAR(100) NOT NULL COMMENT '来源数据-消费插件',
-  `source_convert_adt` VARCHAR(100) NOT NULL COMMENT '来源数据-消费转换插件',
+  `source_convert_adt` VARCHAR(100) DEFAULT NULL COMMENT '来源数据-消费转换插件',
   `source_data_source_id` BIGINT(20) NOT NULL COMMENT '来源数据-元数据表数据源id',
   `source_data_tables_id` BIGINT(20) NOT NULL COMMENT '来源数据-元数据表分组id',
   `source_data_tables_name` VARCHAR(800) DEFAULT NULL COMMENT '来源数据-元数据表分组名称',
