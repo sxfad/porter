@@ -266,7 +266,7 @@ public class JobTasksController {
                 ClusterProviderProxy.INSTANCE.broadcastEvent(config);
                 log.info("zk任务Id:[{}] 状态:[{}] 详情:[{}].", id, taskStatusType, JSON.toJSONString(config));
             } catch (Exception e) {
-                log.error("zk变更任务Id[{}] 状态[{}]失败,请关注！", id, taskStatusType);
+                log.error("zk变更任务Id[{}] 状态[{}]失败,请关注！", id, taskStatusType, e);
                 return ResponseMessage.error("变更任务失败！");
             }
             //权限信息(附邮箱)
