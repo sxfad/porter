@@ -71,4 +71,9 @@ public class AlertJob extends AbstractStageJob {
     public <T> T output() throws UnsupportedOperationException {
         throw new UnsupportedOperationException("unsupported Method");
     }
+
+    @Override
+    protected boolean workingStat() {
+        return work.isWorking();
+    }
 }

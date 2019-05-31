@@ -101,7 +101,7 @@ public class ExtractJob extends AbstractStageJob {
     protected void loopLogic() throws InterruptedException {
         //只要队列有消息，持续读取
         Pair<String, List<MessageEvent>> events = null;
-        while (getWorkingStat() && work.isWorking()) {
+        while (getWorkingStat()) {
             try {
                 events = work.waitEvent(StageType.SELECT);
                 if (null != events) {
@@ -160,5 +160,10 @@ public class ExtractJob extends AbstractStageJob {
     @Override
     public boolean stopWaiting() {
         return work.getDataConsumer().isAutoCommitPosition();
+    }
+
+    @Override
+    protected boolean workingStat() {
+        return work.isWorking();
     }
 }

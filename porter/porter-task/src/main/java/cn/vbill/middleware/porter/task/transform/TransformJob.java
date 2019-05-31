@@ -81,7 +81,7 @@ public class TransformJob extends AbstractStageJob {
     @Override
     protected void loopLogic() throws InterruptedException {
         //只要队列有消息，持续读取
-        while (getWorkingStat() && work.isWorking()) {
+        while (getWorkingStat()) {
             try {
                 ETLBucket bucket = work.waitEvent(StageType.EXTRACT);
                 if (null != bucket) {
@@ -137,5 +137,10 @@ public class TransformJob extends AbstractStageJob {
     @Override
     public boolean stopWaiting() {
         return work.getDataConsumer().isAutoCommitPosition();
+    }
+
+    @Override
+    protected boolean workingStat() {
+        return work.isWorking();
     }
 }

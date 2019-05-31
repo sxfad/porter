@@ -105,7 +105,7 @@ public class SelectJob extends AbstractStageJob {
                     work.interruptWithWarning(stopError.getMessage());
                     break;
                 }
-            } while (null != events && !events.isEmpty() && getWorkingStat() && work.isWorking());
+            } while (null != events && !events.isEmpty() && getWorkingStat());
         } finally {
             try {
                 //退出轮训循环，判断累计查不到数据时间，按照配置发送邮件告警
@@ -135,6 +135,11 @@ public class SelectJob extends AbstractStageJob {
     }
 
     @Override
+    protected boolean workingStat() {
+        return work.isWorking();
+    }
+
+    @Override
     public boolean canStart() {
         return null != consumer && consumer.canStart();
     }
@@ -148,4 +153,5 @@ public class SelectJob extends AbstractStageJob {
     public boolean isPoolEmpty() {
         return carrier.size() == 0;
     }
+
 }

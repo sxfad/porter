@@ -120,10 +120,6 @@ public class LoadJob extends AbstractStageJob {
         //只要队列有消息，持续读取
         ETLBucket bucket = null;
         do {
-            //确保任务出错停止后不执行do{}逻辑
-            if (!work.isWorking()) {
-                break;
-            }
             //正常逻辑
             try {
                 bucket = work.waitEvent(StageType.TRANSFORM);
@@ -172,7 +168,7 @@ public class LoadJob extends AbstractStageJob {
                  */
                 break;
             }
-        } while (null != bucket && work.isWorking() && getWorkingStat()); //数据不为空并且当前任务没有触发停止告警
+        } while (null != bucket && getWorkingStat()); //数据不为空并且当前任务没有触发停止告警
     }
 
     @Override
@@ -253,5 +249,10 @@ public class LoadJob extends AbstractStageJob {
         if (!hit) {
             LOGGER.error("{}.{} {} {}", object.getSchema(), object.getTable(), object.getType().getValue(), object.getPosition().render());
         }
+    }
+
+    @Override
+    protected boolean workingStat() {
+        return work.isWorking();
     }
 }

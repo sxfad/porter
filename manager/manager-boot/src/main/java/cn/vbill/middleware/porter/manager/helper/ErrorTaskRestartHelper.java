@@ -61,20 +61,23 @@ public class ErrorTaskRestartHelper {
                         String error_state_key = t + "_" + d;
                         if (config.getRestartRetries() > 0 && client.isExists(errPath, false)) {
                             Calendar calendar = Calendar.getInstance();
-                            ImmutablePair<Calendar, Integer> triggerInfo = ERR_STATE.getOrDefault(error_state_key, new ImmutablePair<>(null, 0));
-                            //DTaskError error = DTaskError.fromString(client.getData(errPath).getData(), DTaskError.class);
-                            //如果任务有效,出错任务错误类型可重启
+                            ImmutablePair<Calendar, Integer> triggerInfo = ERR_STATE.computeIfAbsent(error_state_key, key -> new ImmutablePair<>(null, 0));
+                            /**
+                             * 任务工作中
+                             * 出错任务错误类型可重启(暂未实现)
+                             * 达到重启时间间隔要求
+                             */
                             if (config.getStatus() == TaskStatusType.WORKING
-                                    && (null == triggerInfo.getLeft() || triggerInfo.getLeft().before(calendar)) && triggerInfo.right < config.getRestartRetries()
-                            ) {
+                                    && (null == triggerInfo.getLeft() || triggerInfo.getLeft().before(calendar))
+                                    && triggerInfo.right < config.getRestartRetries()) {
+                                if (triggerInfo.right >= 1) {
+                                    //触发任务重启
+                                    client.delete(errPath);
+                                }
                                 //下次触发时间
                                 Calendar nextTime = null != triggerInfo.left ? triggerInfo.left : calendar;
-                                nextTime.add(Calendar.SECOND, config.getRestartIncreaseBySecond());
-
+                                nextTime.add(Calendar.SECOND, config.getRestartIncreaseBySecond() * (triggerInfo.right + 1));
                                 ERR_STATE.put(error_state_key, new ImmutablePair<>(nextTime, triggerInfo.right + 1));
-
-                                //触发任务重启
-                                client.delete(errPath);
                             }
                         } else {
                             ERR_STATE.remove(error_state_key);

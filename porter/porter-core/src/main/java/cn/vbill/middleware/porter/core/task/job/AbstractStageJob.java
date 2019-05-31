@@ -157,7 +157,8 @@ public abstract class AbstractStageJob implements StageJob {
         return threadFactory;
     }
 
+    protected abstract boolean workingStat();
     public final boolean getWorkingStat() {
-        return stat.get();
+        return stat.get() && workingStat();
     }
 }
