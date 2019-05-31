@@ -103,6 +103,7 @@ public class SelectJob extends AbstractStageJob {
                 } catch (TaskStopTriggerException stopError) {
                     LOGGER.error("SelectJob error", stopError);
                     work.interruptWithWarning(stopError.getMessage());
+                    break;
                 }
             } while (null != events && !events.isEmpty() && getWorkingStat() && work.isWorking());
         } finally {

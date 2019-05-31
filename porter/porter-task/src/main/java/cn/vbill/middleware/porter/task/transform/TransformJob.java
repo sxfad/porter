@@ -108,6 +108,7 @@ public class TransformJob extends AbstractStageJob {
             } catch (TaskStopTriggerException stopError) {
                 LOGGER.error("TransformJob error", stopError);
                 work.interruptWithWarning(stopError.getMessage());
+                break;
             }
         }
     }

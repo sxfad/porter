@@ -126,6 +126,7 @@ public class ExtractJob extends AbstractStageJob {
             } catch (TaskStopTriggerException stopError) {
                 LOGGER.error("ExtractJob error", stopError);
                 work.interruptWithWarning(stopError.getMessage());
+                break;
             }
         }
     }
