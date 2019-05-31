@@ -159,7 +159,7 @@ public class TaskWorker {
     }
 
     protected void register(String swimlaneId, TaskWork work) throws InterruptedException {
-        ArrayBlockingQueue<TaskWork> queue = jobs.getOrDefault(swimlaneId, new ArrayBlockingQueue<>(1));
+        ArrayBlockingQueue<TaskWork> queue = jobs.computeIfAbsent(swimlaneId, key -> new ArrayBlockingQueue<>(1));
         queue.put(work);
         jobs.put(swimlaneId, queue);
 
