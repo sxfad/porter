@@ -98,12 +98,13 @@ public class TaskContext {
                 }
                 WarningProviderFactory.INSTANCE.notice(message.bindReceivers(receivers.toArray(new WarningReceiver[0])));
             }
+        } catch (Throwable e) {
+            LOGGER.error("fail to send warning message.", e);
+        } finally {
             //在应用上下文标注任务异常
             if (log.getType() == NodeLog.LogType.ERROR) {
                 NodeContext.INSTANCE.markTaskError(Arrays.asList(log.getTaskId(), log.getSwimlaneId()), message);
             }
-        } catch (Throwable e) {
-            LOGGER.error("fail to send warning message.", e);
         }
         return message;
     }

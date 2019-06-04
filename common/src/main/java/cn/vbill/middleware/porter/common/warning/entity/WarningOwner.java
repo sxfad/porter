@@ -6,8 +6,6 @@ package cn.vbill.middleware.porter.common.warning.entity;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.vbill.middleware.porter.common.warning.entity.WarningReceiver;
-
 /**
  * @author guohongjian[guo_hj@suixingpay.com]
  *

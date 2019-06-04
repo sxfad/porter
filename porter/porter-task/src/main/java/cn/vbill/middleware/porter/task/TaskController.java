@@ -45,6 +45,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 /**
@@ -64,6 +66,7 @@ public class TaskController implements TaskEventListener {
      * taskId -> worker
      */
     private final Map<String, TaskWorker> workerMap = new ConcurrentHashMap<>();
+    private final Lock workerLock = new ReentrantLock();
 
     /**
      * start
@@ -166,12 +169,13 @@ public class TaskController implements TaskEventListener {
      * @return: void
      */
     public void stopTask(String taskId, String... swimlaneId) {
-        workerMap.computeIfPresent(taskId, (key, worker) -> {
-            //停止worker的某个work
+        workerLock.lock();
+        TaskWorker worker = workerMap.get(taskId);
+        if (null != worker) {
             worker.stopJob(swimlaneId);
-            return worker;
-        });
-        clearWorker(taskId);
+            if (worker.isNoWork()) workerMap.remove(taskId).stop();
+        }
+        workerLock.unlock();
     }
 
     /**
@@ -182,6 +186,7 @@ public class TaskController implements TaskEventListener {
      * @return: void
      */
     private void startTask(TaskConfig task) {
+        workerLock.lock();
         TaskWorker worker = workerMap.computeIfAbsent(task.getTaskId(), s -> new TaskWorker(this));
         //尝试通过ClusterProvider的分布式锁功能锁定资源。
         try {
@@ -192,7 +197,8 @@ public class TaskController implements TaskEventListener {
             LOGGER.error("failed to start task:{}", JSONObject.toJSONString(task), e);
         }
         //考虑到任务启动失败造成的worker闲置(内存、线程),检查worker是否有工作，如果空闲，释放worker资源
-        clearWorker(task.getTaskId());
+        if (worker.isNoWork()) workerMap.remove(task.getTaskId()).stop();
+        workerLock.unlock();
     }
 
     /**
@@ -223,24 +229,6 @@ public class TaskController implements TaskEventListener {
     private void stopTask(Task task) {
         List<String> swimlaneIdList = task.getConsumers().stream().map(DataConsumer::getSwimlaneId).collect(Collectors.toList());
         stopTask(task.getTaskId(), swimlaneIdList.toArray(new String[0]));
-    }
-
-    /**
-     * 没有任务停止工人
-     *
-     * @date 2018/8/9 下午2:01
-     * @param: [worker, taskId]
-     * @return: void
-     */
-    private void clearWorker(String taskId) {
-        workerMap.computeIfPresent(taskId, (key, worker) -> {
-            if (worker.isNoWork()) {
-                worker.stop();
-                workerMap.remove(key);
-                return null;
-            }
-            return worker;
-        });
     }
 
     /**

@@ -17,11 +17,17 @@
 
 package cn.vbill.middleware.porter.task.worker;
 
+import cn.vbill.middleware.porter.common.cluster.ClusterProviderProxy;
+import cn.vbill.middleware.porter.common.cluster.event.command.TaskRegisterCommand;
 import cn.vbill.middleware.porter.common.exception.ClientException;
 import cn.vbill.middleware.porter.common.exception.ConfigParseException;
 import cn.vbill.middleware.porter.common.task.exception.DataConsumerBuildException;
 import cn.vbill.middleware.porter.common.task.exception.DataLoaderBuildException;
+import cn.vbill.middleware.porter.common.task.exception.TaskLockException;
+import cn.vbill.middleware.porter.common.task.exception.WorkResourceAcquireException;
 import cn.vbill.middleware.porter.common.util.DefaultNamedThreadFactory;
+import cn.vbill.middleware.porter.core.NodeContext;
+import cn.vbill.middleware.porter.core.task.consumer.DataConsumer;
 import cn.vbill.middleware.porter.core.task.entity.Task;
 import cn.vbill.middleware.porter.common.task.config.TaskConfig;
 import cn.vbill.middleware.porter.core.task.entity.TableMapper;
@@ -103,7 +109,7 @@ public class TaskWorker {
             LOGGER.info("工人下线.......");
             workerStatJob.shutdownNow();
             for (ArrayBlockingQueue<TaskWork> job : jobs.values()) {
-                job.peek().interrupt();
+                job.peek().stopWork();
             }
         } else {
             LOGGER.warn("TaskWorker[] has stopped already", workerSequence);
@@ -120,7 +126,7 @@ public class TaskWorker {
     public void stopJob(String... swimlaneId) {
         Arrays.stream(swimlaneId).forEach(c -> {
             if (jobs.containsKey(c)) {
-                jobs.get(c).peek().interrupt();
+                jobs.get(c).peek().stopWork();
             }
         });
     }
@@ -140,14 +146,16 @@ public class TaskWorker {
             tableMappers.putIfAbsent(m.getUniqueKey(task.getTaskId()), m);
         });
         //根据DataConsumer所使用ConsumeClient的消费拆分细则拆分consumer
-        task.getConsumers().forEach(c -> {
-            TaskWork job = null;
-            //启动JOB
-            job = new TaskWork(c, task.getLoader(), task.getTaskId(), task.getReceivers(), this, task.getPositionCheckInterval(),
-                    task.getAlarmPositionCount());
-            job.start();
-        });
-
+        for (DataConsumer c : task.getConsumers()) {
+            try {
+                TaskWork job = new TaskWork(c, task.getLoader(), task.getTaskId(), task.getReceivers(), this, task.getPositionCheckInterval(),
+                        task.getAlarmPositionCount());
+                register(c.getSwimlaneId(), job);
+                job.start();
+            } catch (Throwable e) {
+                LOGGER.info("work[{}-{}]启动失败", task.getTaskId(), c.getSwimlaneId());
+            }
+        }
     }
 
     public Map<String, TableMapper> getTableMapper() {
@@ -158,15 +166,29 @@ public class TaskWorker {
         return jobs.isEmpty();
     }
 
-    protected void register(String swimlaneId, TaskWork work) throws InterruptedException {
-        ArrayBlockingQueue<TaskWork> queue = jobs.computeIfAbsent(swimlaneId, key -> new ArrayBlockingQueue<>(1));
-        queue.put(work);
-        jobs.put(swimlaneId, queue);
-
+    private void register(String swimlaneId, TaskWork work) throws InterruptedException, TaskLockException, WorkResourceAcquireException {
+        jobs.computeIfAbsent(swimlaneId, key -> new ArrayBlockingQueue<>(1)).put(work);
+        //申请work资源
+        if (!NodeContext.INSTANCE.acquireWork()) {
+            jobs.remove(swimlaneId);
+            throw new WorkResourceAcquireException("申请worker资源失败,未申请到可供任务执行的资源");
+        }
+        try {
+            //会抛出分布式锁任务抢占异常
+            ClusterProviderProxy.INSTANCE.broadcastEvent(new TaskRegisterCommand(work.getTaskId(), swimlaneId));
+        } catch (Throwable e) {
+            jobs.remove(swimlaneId);
+            NodeContext.INSTANCE.releaseWork();
+            throw new TaskLockException(e);
+        }
     }
+
     protected void unregister(String swimlaneId) {
         ArrayBlockingQueue<TaskWork> queue = jobs.remove(swimlaneId);
-        if (null != queue) queue.poll();
+        if (null != queue) {
+            queue.poll();
+            NodeContext.INSTANCE.releaseWork();
+        }
     }
 
     protected void  stopWork(String taskId, String...swimlaneId) {

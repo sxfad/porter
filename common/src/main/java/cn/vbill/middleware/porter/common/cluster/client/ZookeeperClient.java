@@ -106,6 +106,8 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
             byte[] dataBytes = new byte[0];
             dataBytes = zk.getData(path, true, stat);
             content = new String(dataBytes);
+        } catch (KeeperException.ConnectionLossException e) {
+            clientSpinning();
         } catch (KeeperException.NoNodeException e) {
             LOGGER.warn("获取{}值失败", path);
             stat = null;
@@ -145,6 +147,8 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
             if (null != stat) {
                 zk.delete(path, stat.getVersion());
             }
+        } catch (KeeperException.ConnectionLossException e) {
+            clientSpinning();
         } catch (Throwable e) {
             LOGGER.error("zookeeper delete error", e);
         }
@@ -205,11 +209,7 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
         if (null != statisticClient && statisticClient != this) {
             statisticClient.uploadStatistic(target, key, data);
         } else {
-            try {
-                changeData(target, true, false, data);
-            } catch (Throwable e) {
-                LOGGER.warn("上传统计信息失败,忽略异常", e);
-            }
+            changeData(target, true, false, data);
         }
     }
 

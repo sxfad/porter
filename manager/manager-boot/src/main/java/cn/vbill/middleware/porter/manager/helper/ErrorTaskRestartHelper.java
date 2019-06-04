@@ -58,10 +58,10 @@ public class ErrorTaskRestartHelper {
                         TaskConfig config =  JSON.parseObject(client.getData(taskDist).getData(), TaskConfig.class);
                         //获取异常信息
                         String errPath = taskErrorPath + "/" + d;
-                        String error_state_key = t + "_" + d;
+                        String errorStateKey = t + "_" + d;
                         if (config.getRestartRetries() > 0 && client.isExists(errPath, false)) {
                             Calendar calendar = Calendar.getInstance();
-                            ImmutablePair<Calendar, Integer> triggerInfo = ERR_STATE.computeIfAbsent(error_state_key, key -> new ImmutablePair<>(null, 0));
+                            ImmutablePair<Calendar, Integer> triggerInfo = ERR_STATE.computeIfAbsent(errorStateKey, key -> new ImmutablePair<>(null, 0));
                             /**
                              * 任务工作中
                              * 出错任务错误类型可重启(暂未实现)
@@ -77,10 +77,10 @@ public class ErrorTaskRestartHelper {
                                 //下次触发时间
                                 Calendar nextTime = null != triggerInfo.left ? triggerInfo.left : calendar;
                                 nextTime.add(Calendar.SECOND, config.getRestartIncreaseBySecond() * (triggerInfo.right + 1));
-                                ERR_STATE.put(error_state_key, new ImmutablePair<>(nextTime, triggerInfo.right + 1));
+                                ERR_STATE.put(errorStateKey, new ImmutablePair<>(nextTime, triggerInfo.right + 1));
                             }
                         } else {
-                            ERR_STATE.remove(error_state_key);
+                            ERR_STATE.remove(errorStateKey);
                         }
                     });
                 });

@@ -95,17 +95,17 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener {
                     error = DTaskError.fromString(zkEvent.getData(), DTaskError.class);
                 } catch (Throwable e) {
                     String[] taskAndSwimlane = zkPath.replace(listenPath(), "").substring(1).split("/error/");
-                    error = new DTaskError(taskAndSwimlane[0], taskAndSwimlane[1], zkEvent.getData());
+                    error = new DTaskError(taskAndSwimlane[0], taskAndSwimlane[1], null != zkEvent.getData() ? zkEvent.getData() : "");
                 }
 
                 if (zkEvent.isDataChanged() || zkEvent.isOnline()) {
                     ManagerContext.INSTANCE.newStoppedTask(Arrays.asList(error.getTaskId(), error.getSwimlaneId()),
                             zkEvent.getData());
-                    logger.info("zk任务错误消息DataChanged or Online,内容:[{}]", error.getMessage());
+                    logger.info("zk任务错误消息DataChanged or Online,内容:[{}]", error.toString());
                     return;
                 }
                 if (zkEvent.isOffline()) {
-                    logger.info("zk任务错误消息Offline,内容:[{}]", error.getMessage());
+                    logger.info("zk任务错误消息Offline,内容:[{}-{}]", error.toString());
                     ManagerContext.INSTANCE.removeStoppedTask(Arrays.asList(error.getTaskId(), error.getSwimlaneId()));
                     return;
                 }

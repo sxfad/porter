@@ -24,6 +24,9 @@ package cn.vbill.middleware.porter.common.task.exception;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月08日 11:08
  */
 public class TaskLockException extends TaskException {
+    public TaskLockException(Throwable e) {
+        super(e);
+    }
     public TaskLockException(String message) {
         super(message);
     }
