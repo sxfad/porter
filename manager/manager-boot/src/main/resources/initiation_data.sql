@@ -6,7 +6,8 @@ INSERT  INTO `c_role`(`id`,`role_code`,`role_name`,`sort`,`iscancel`,`type`,`sta
 (1,'A0001','超级管理员',0,0,1,1,'超级管理员'),
 (2,'A0002','普通管理员',1,0,1,1,'普通管理员'),
 (3,'B0001','监控观察者',2,0,1,1,'观察者'),
-(4,'C0001','访客',4,0,1,1,'访客');
+(4,'C0001','访客',4,0,1,1,'访客'),
+(5,'A9999','注册用户',5,0,1,1,'注册用户');
 -- 初始化菜单
 INSERT INTO `c_menu` VALUES (1, 'F001', '-1', '首页', '/', 'home', 1, 1, 1, 0, 1, 1, NULL);
 INSERT INTO `c_menu` VALUES (2, 'J001', '-1', '同步管理', '#', 'sync', 1, 2, 0, 0, 1, 1, NULL);
@@ -53,6 +54,22 @@ INSERT INTO `c_role_menu` VALUES (21, 'C0001', 'M001002');
 INSERT INTO `c_role_menu` VALUES (22, 'C0001', 'M001003');
     -- 新增本地任务
 INSERT INTO `c_role_menu` VALUES (29, 'A0002', 'J001002');
+    -- 新增注册用户
+INSERT INTO `c_role_menu` VALUES (30, 'A9999', 'F001');
+INSERT INTO `c_role_menu` VALUES (31, 'A9999', 'J001');
+INSERT INTO `c_role_menu` VALUES (32, 'A9999', 'J002');
+INSERT INTO `c_role_menu` VALUES (33, 'A9999', 'J001001');
+INSERT INTO `c_role_menu` VALUES (34, 'A9999', 'J001002');
+INSERT INTO `c_role_menu` VALUES (35, 'A9999', 'N001');
+INSERT INTO `c_role_menu` VALUES (36, 'A9999', 'N001001');
+INSERT INTO `c_role_menu` VALUES (37, 'A9999', 'M001');
+INSERT INTO `c_role_menu` VALUES (38, 'A9999', 'M001001');
+INSERT INTO `c_role_menu` VALUES (39, 'A9999', 'M001002');
+INSERT INTO `c_role_menu` VALUES (40, 'A9999', 'M001003');
+INSERT INTO `c_role_menu` VALUES (41, 'A9999', 'B001');
+INSERT INTO `c_role_menu` VALUES (42, 'A9999', 'B001001');
+INSERT INTO `c_role_menu` VALUES (43, 'A9999', 'B001003');
+INSERT INTO `c_role_menu` VALUES (44, 'A9999', 'B001002');
 -- 初始化告警数据字典
 INSERT  INTO `d_alarm_plugin`(`id`,`alert_type`,`field_name`,`field_code`,`field_order`,`field_type`,`field_type_key`,`state`,`iscancel`,`remark`) VALUES
 (1,'EMAIL','邮件服务器','host',2,'TEXT',NULL,1,0,NULL),
