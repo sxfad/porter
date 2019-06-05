@@ -289,8 +289,8 @@ public abstract class JdbcClient extends AbstractClient<JdbcConfig> implements M
         private void close() {
             connLock.writeLock().lock();
             try {
-                AbandonedConnectionCleanupThread.checkedShutdown();
-                dataSource.close();
+                if (null != dataSource) dataSource.close();
+                AbandonedConnectionCleanupThread.uncheckedShutdown();
             } catch (Throwable e) {
                 LOGGER.warn("关闭jdbc datasource", e);
             } finally {

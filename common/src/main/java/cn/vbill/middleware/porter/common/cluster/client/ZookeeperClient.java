@@ -91,6 +91,12 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
             children = zk.getChildren(path, true);
         } catch (InterruptedException e) {
             children = new ArrayList<>();
+        } catch (KeeperException.SessionExpiredException e) {
+            clientSpinning();
+        } catch (KeeperException.SessionMovedException e) {
+            clientSpinning();
+        } catch (KeeperException.ConnectionLossException e) {
+            clientSpinning();
         } catch (KeeperException e) {
             children = new ArrayList<>();
         }
@@ -106,6 +112,10 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
             byte[] dataBytes = new byte[0];
             dataBytes = zk.getData(path, true, stat);
             content = new String(dataBytes);
+        } catch (KeeperException.SessionExpiredException e) {
+            clientSpinning();
+        } catch (KeeperException.SessionMovedException e) {
+            clientSpinning();
         } catch (KeeperException.ConnectionLossException e) {
             clientSpinning();
         } catch (KeeperException.NoNodeException e) {
@@ -147,6 +157,10 @@ public class ZookeeperClient extends AbstractClient<ZookeeperConfig> implements 
             if (null != stat) {
                 zk.delete(path, stat.getVersion());
             }
+        } catch (KeeperException.SessionExpiredException e) {
+            clientSpinning();
+        } catch (KeeperException.SessionMovedException e) {
+            clientSpinning();
         } catch (KeeperException.ConnectionLossException e) {
             clientSpinning();
         } catch (Throwable e) {

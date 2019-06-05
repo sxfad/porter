@@ -21,6 +21,7 @@ import cn.vbill.middleware.porter.common.node.statistics.NodeLog;
 import cn.vbill.middleware.porter.common.warning.WarningProviderFactory;
 import cn.vbill.middleware.porter.common.warning.entity.WarningErrorCode;
 import cn.vbill.middleware.porter.common.warning.entity.WarningMessage;
+import cn.vbill.middleware.porter.common.warning.entity.WarningOwner;
 import cn.vbill.middleware.porter.common.warning.entity.WarningReceiver;
 import cn.vbill.middleware.porter.core.NodeContext;
 import cn.vbill.middleware.porter.core.task.consumer.DataConsumer;
@@ -28,7 +29,6 @@ import cn.vbill.middleware.porter.core.task.loader.DataLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -41,7 +41,7 @@ import java.util.List;
  */
 public class TaskContext {
     private static final Logger LOGGER = LoggerFactory.getLogger(TaskContext.class);
-    private static final InheritableThreadLocal<TaskInfo> CURRENT_TASK = new InheritableThreadLocal();
+    private static final ThreadLocal<TaskInfo> CURRENT_TASK = new InheritableThreadLocal();
 
     public static void clearTrace() {
         CURRENT_TASK.set(null);
@@ -50,15 +50,15 @@ public class TaskContext {
     public static class TaskInfo {
         private String taskId;
         private String swimlaneId;
-        private WarningReceiver[] receivers;
+        private WarningOwner owner;
         public TaskInfo() {
-            receivers = new WarningReceiver[0];
+            owner = new WarningOwner();
         }
-        public TaskInfo(String taskId, DataConsumer consumer, DataLoader loader, WarningReceiver[] receivers) {
+        public TaskInfo(String taskId, DataConsumer consumer, DataLoader loader, WarningOwner owner) {
             this();
             this.taskId = taskId;
             this.swimlaneId = consumer.getSwimlaneId();
-            this.receivers = receivers;
+            this.owner = owner;
         }
 
         public String getTaskId() {
@@ -69,14 +69,26 @@ public class TaskContext {
             return swimlaneId;
         }
 
-        public WarningReceiver[] getReceivers() {
-            return receivers;
+        public WarningOwner getOwner() {
+            return owner;
+        }
+        public void setOwner(WarningOwner owner) {
+            this.owner = owner;
         }
     }
 
     public static void trace(String taskId, DataConsumer consumer, DataLoader loader, List<WarningReceiver> receivers) {
-        CURRENT_TASK.set(new TaskInfo(taskId, consumer, loader, receivers.toArray(new WarningReceiver[] {})));
+        WarningOwner owner = new WarningOwner();
+        if (null != receivers && receivers.size() > 0) owner.setOwner(receivers.get(0));
+        if (null != receivers && receivers.size() > 1) owner.setShareOwner(receivers.subList(1, receivers.size()));
+        CURRENT_TASK.set(new TaskInfo(taskId, consumer, loader, owner));
     }
+    public static void trace(WarningOwner owner) {
+        TaskInfo info = CURRENT_TASK.get();
+        if (null == info) CURRENT_TASK.set(new TaskInfo());
+        info.setOwner(owner);
+    }
+
 
     public static  TaskInfo trace() {
         return CURRENT_TASK.get();
@@ -88,15 +100,14 @@ public class TaskContext {
                 .append(log.getTaskId()).append("-").append(log.getSwimlaneId()).toString());
     }
     public static WarningMessage warning(NodeLog log, String title) {
-        WarningMessage message = new WarningMessage(title, log.getError(), WarningErrorCode.match(log.getError()));
+        WarningMessage message = new WarningMessage(title, log.getError(), WarningErrorCode.match(log.getError()), null != trace() ? trace().getOwner() : null);
         try {
             //异常或告警
             if (log.getType() == NodeLog.LogType.ERROR || log.getType() == NodeLog.LogType.WARNING) {
-                List<WarningReceiver> receivers = new ArrayList<>(Arrays.asList(trace().receivers));
-                if (log.getType() == NodeLog.LogType.ERROR || receivers.isEmpty()) {
-                    receivers.addAll(Arrays.asList(NodeContext.INSTANCE.getReceivers()));
+                if (log.getType() == NodeLog.LogType.ERROR) {
+                    message.bindCopy(NodeContext.INSTANCE.getReceivers());
                 }
-                WarningProviderFactory.INSTANCE.notice(message.bindReceivers(receivers.toArray(new WarningReceiver[0])));
+                WarningProviderFactory.INSTANCE.notice(message);
             }
         } catch (Throwable e) {
             LOGGER.error("fail to send warning message.", e);

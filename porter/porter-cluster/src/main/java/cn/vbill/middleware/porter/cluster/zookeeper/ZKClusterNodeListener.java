@@ -24,6 +24,7 @@ import cn.vbill.middleware.porter.common.cluster.event.ClusterListenerEventExecu
 import cn.vbill.middleware.porter.common.cluster.event.ClusterListenerEventType;
 import cn.vbill.middleware.porter.common.cluster.event.command.*;
 import cn.vbill.middleware.porter.common.statistics.DNode;
+import cn.vbill.middleware.porter.common.task.event.TaskConfigEvent;
 import cn.vbill.middleware.porter.common.task.statistics.DTaskLock;
 import cn.vbill.middleware.porter.common.cluster.event.ClusterTreeNodeEvent;
 import cn.vbill.middleware.porter.common.cluster.event.executor.NodeStopTaskEventExecutor;
@@ -179,7 +180,7 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener implements T
      * @return: void
      */
     private void triggerTaskEvent(TaskConfig event) {
-        taskListener.forEach(l -> l.onEvent(event));
+        taskListener.forEach(l -> l.onEvent(new TaskConfigEvent(event)));
     }
 
     @Override

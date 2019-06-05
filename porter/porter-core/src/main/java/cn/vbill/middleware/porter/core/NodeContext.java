@@ -59,7 +59,7 @@ public enum NodeContext {
     private volatile ApplicationContext context;
 
     private volatile boolean force;
-    private volatile WarningReceiver[] receivers = new WarningReceiver[0];
+    private volatile List<WarningReceiver> receivers = new ArrayList<>();
 
     /**
      * 获取Bean
@@ -449,13 +449,10 @@ public enum NodeContext {
     }
 
     public synchronized void addWarningReceivers(WarningReceiver[] newReceivers) {
-        List<WarningReceiver> tmp = new ArrayList<>();
-        tmp.addAll(Arrays.asList(receivers));
-        tmp.addAll(Arrays.asList(newReceivers));
-        receivers = tmp.toArray(new WarningReceiver[0]);
+        receivers.addAll(Arrays.asList(newReceivers));
     }
 
-    public WarningReceiver[] getReceivers() {
+    public final List<WarningReceiver> getReceivers() {
         return receivers;
     }
 }

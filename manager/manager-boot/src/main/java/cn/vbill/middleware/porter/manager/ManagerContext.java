@@ -42,7 +42,7 @@ public enum ManagerContext {
 
     private ApplicationContext context;
     private final Map<List<String>, String> taskErrorMarked = new ConcurrentHashMap<>();
-    private volatile WarningReceiver[] receivers = new WarningReceiver[0];
+    private volatile List<WarningReceiver> receivers = new ArrayList<>();
 
     /**
      * 获取Bean
@@ -88,12 +88,10 @@ public enum ManagerContext {
 
 
     public synchronized void addWarningReceivers(WarningReceiver[] newReceivers) {
-        List<WarningReceiver> tmp = new ArrayList<>(Arrays.asList(receivers));
-        tmp.addAll(Arrays.asList(newReceivers));
-        receivers = tmp.toArray(new WarningReceiver[0]);
+        receivers.addAll(Arrays.asList(newReceivers));
     }
 
-    public WarningReceiver[] getReceivers() {
+    public List<WarningReceiver> getReceivers() {
         return receivers;
     }
 }

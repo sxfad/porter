@@ -27,22 +27,12 @@ package cn.vbill.middleware.porter.common.task.event;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月19日 10:12
  */
 public enum TaskEventType {
-
     /**
-     * CREATE
+     * 任务配置
      */
-    CREATE,
-
+    TASK_CONFIG,
     /**
-     * DELETE
+     * 任务权属
      */
-    DELETE;
-
-    public boolean isCreate() {
-        return this == TaskEventType.CREATE;
-    }
-
-    public boolean isDelete() {
-        return this == TaskEventType.DELETE;
-    }
+    TASK_OWNER;
 }

@@ -19,6 +19,7 @@ package cn.vbill.middleware.porter.common.warning.entity;
 
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -32,14 +33,16 @@ public class WarningMessage {
     private String title;
     private String content;
     private WarningErrorCode errorCode;
-    private WarningReceiver[] receivers;
-    public WarningMessage(String title, String content, WarningErrorCode errorCode) {
+    private WarningOwner receiver;
+    private List<WarningReceiver> copy = new ArrayList<>();
+    public WarningMessage(String title, String content, WarningErrorCode errorCode, WarningOwner receiver) {
         this.content = content;
         this.errorCode = errorCode;
         this.title = title;
+        this.receiver =  receiver;
     }
-    public WarningMessage bindReceivers(WarningReceiver[] receivers) {
-        this.receivers = receivers;
+    public WarningMessage bindCopy(List<WarningReceiver> copy) {
+        this.copy.addAll(copy);
         return this;
     }
     public WarningErrorCode getErrorCode() {
@@ -59,7 +62,7 @@ public class WarningMessage {
     }
 
     public String shortMessage(List<String> prefix) {
-        WarningReceiver receiver = null != receivers && receivers.length > 0 ? receivers[0] : new WarningReceiver("系统管理员", "", "00000000000");
+        WarningReceiver receiver = null != this.receiver && null != this.receiver.getOwner() ? this.receiver.getOwner() : new WarningReceiver("系统管理员", "", "00000000000");
         StringBuffer sb = new StringBuffer();
         if (null != prefix && !prefix.isEmpty()) sb.append("[").append(StringUtils.join(prefix, "-")).append("]");
         sb.append(receiver.getRealName()).append(receiver.getPhone());
@@ -67,7 +70,10 @@ public class WarningMessage {
         return sb.toString();
     }
 
-    public WarningReceiver[] getReceivers() {
-        return receivers;
+    public WarningOwner getReceiver() {
+        return receiver;
+    }
+    public List<WarningReceiver> getCopy() {
+        return copy;
     }
 }

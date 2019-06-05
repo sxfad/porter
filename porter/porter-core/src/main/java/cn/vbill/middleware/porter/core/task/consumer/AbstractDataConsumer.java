@@ -111,7 +111,7 @@ public abstract class AbstractDataConsumer implements DataConsumer {
 
     @Override
     public void shutdown() throws Exception {
-        if (!consumeClient.isPublic()) {
+        if (null != consumeClient && !consumeClient.isPublic()) {
             consumeClient.shutdown();
         }
         if (null != metaQueryClient && !metaQueryClient.isPublic()) {

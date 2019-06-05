@@ -22,11 +22,12 @@ import cn.vbill.middleware.porter.core.task.loader.DataLoader;
 import cn.vbill.middleware.porter.common.util.compile.JavaFileCompiler;
 import cn.vbill.middleware.porter.core.task.consumer.DataConsumer;
 import cn.vbill.middleware.porter.core.task.entity.TableMapper;
-import cn.vbill.middleware.porter.core.task.TaskContext;
 import cn.vbill.middleware.porter.task.worker.TaskWork;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.core.io.support.SpringFactoriesLoader;
 import org.springframework.stereotype.Component;
@@ -45,6 +46,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 @Scope("singleton")
 public class AlerterFactory {
+    private static final Logger LOGGER = LoggerFactory.getLogger(AlerterFactory.class);
     //线程池线程数量
     private static final int CHECK_POOL_THREADS = 3;
     //当每次需要检查的表的数据量大于多少时，通过线程池执行
@@ -78,7 +80,6 @@ public class AlerterFactory {
                 service.submit(new Runnable() {
                     @SneakyThrows(InterruptedException.class)
                     public void run() {
-                        TaskContext.trace(work.getTaskId(), work.getDataConsumer(), work.getDataLoader(), work.getReceivers());
                         alerter.check(dataConsumer, dataLoader, stat, getCheckMeta(work, stat.getSchema(), stat.getTable()));
                     }
                 });

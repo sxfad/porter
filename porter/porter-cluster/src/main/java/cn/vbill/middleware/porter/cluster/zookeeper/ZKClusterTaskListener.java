@@ -26,14 +26,14 @@ import cn.vbill.middleware.porter.common.cluster.event.ClusterListenerEventType;
 import cn.vbill.middleware.porter.common.cluster.event.executor.*;
 import cn.vbill.middleware.porter.common.cluster.event.command.*;
 import cn.vbill.middleware.porter.common.statistics.DObject;
+import cn.vbill.middleware.porter.common.task.event.*;
 import cn.vbill.middleware.porter.common.task.statistics.DTaskLock;
 import cn.vbill.middleware.porter.common.task.statistics.DTaskStat;
 import cn.vbill.middleware.porter.common.cluster.event.ClusterTreeNodeEvent;
 import cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListener;
 import cn.vbill.middleware.porter.common.task.config.TaskConfig;
 import cn.vbill.middleware.porter.common.task.exception.TaskLockException;
-import cn.vbill.middleware.porter.common.task.event.TaskEventListener;
-import cn.vbill.middleware.porter.common.task.event.TaskEventProvider;
+import cn.vbill.middleware.porter.common.warning.entity.WarningOwner;
 import cn.vbill.middleware.porter.core.NodeContext;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
@@ -59,6 +59,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
     private static final String ZK_PATH = BASE_CATALOG + "/task";
     private static final Pattern TASK_DIST_PATTERN = Pattern.compile(ZK_PATH + "/.*/dist/.*");
     private static final Pattern TASK_UNLOCKED_PATTERN = Pattern.compile(ZK_PATH + "/.*/lock/.*");
+    private static final Pattern TASK_OWNER_PATTERN = Pattern.compile(ZK_PATH + "/.*/owner");
     private final List<TaskEventListener> taskListener;
 
     private static final String LOCK_PATH = "/lock/";
@@ -91,7 +92,8 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
             TaskConfig config = JSONObject.parseObject(event.getData(), TaskConfig.class);
             NodeContext.INSTANCE.removeTaskError(config.getTaskId());
             if (event.isOnline() || event.isDataChanged()) { //任务创建 、任务修改
-                triggerTaskEvent(config);
+                triggerTaskEvent(new TaskConfigEvent(config));
+                triggerTaskEvent(new TaskOwnerEvent(JSONObject.parseObject(client.getData(listenPath() + "/" + config.getTaskId() + "/owner").getData(), WarningOwner.class), config.getTaskId()));
             }
 
         }
@@ -107,9 +109,15 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
                 if (null != taskConfig && !StringUtils.isBlank(taskConfig.getData())) {
                     TaskConfig config = JSONObject.parseObject(taskConfig.getData(), TaskConfig.class);
                     NodeContext.INSTANCE.removeTaskError(config.getTaskId());
-                    triggerTaskEvent(config);
+                    triggerTaskEvent(new TaskConfigEvent(config));
                 }
             }
+        }
+
+        //任务接收人变更
+        if (TASK_OWNER_PATTERN.matcher(event.getId()).matches() && (event.isDataChanged() || event.isOnline())) {
+            String taskId = event.getId().replace(listenPath() + "/", "").replace("/owner", "");
+            triggerTaskEvent(new TaskOwnerEvent(JSONObject.parseObject(event.getData(), WarningOwner.class), taskId));
         }
     }
 
@@ -145,7 +153,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
      * @param: [event]
      * @return: void
      */
-    private void triggerTaskEvent(TaskConfig event) {
+    private void triggerTaskEvent(TaskEvent event) {
         taskListener.forEach(l -> l.onEvent(event));
     }
 

@@ -33,7 +33,6 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
@@ -116,11 +115,17 @@ public class EmailClient  extends AbstractClient<EmailConfig> implements Warning
         message.setText(msg.getContent());
 
         List<String> emails = new ArrayList<>();
-        Arrays.asList(msg.getReceivers()).stream().filter(r -> !StringUtils.isBlank(r.getEmail())).forEach(r -> emails.add(r.getEmail()));
-
+        if (null != msg.getReceiver() && null != msg.getReceiver().getOwner()) emails.add(msg.getReceiver().getOwner().getEmail());
+        if (null != msg.getReceiver() && null != msg.getReceiver().getShareOwner())msg.getReceiver().getShareOwner().stream()
+                .filter(r -> !StringUtils.isBlank(r.getEmail())).forEach(r -> emails.add(r.getEmail()));
+        List<String> cc = new ArrayList<>();
+        if (null != msg.getReceiver() && null != msg.getCopy() && !msg.getCopy().isEmpty()) {
+            msg.getCopy().stream().filter(r -> !StringUtils.isBlank(r.getEmail())).forEach(r -> cc.add(r.getEmail()));
+        }
         LOGGER.info("判断待发送邮件通知名单.....");
-        if (!emails.isEmpty()) {
-            message.setTo(emails.toArray(new String[0]));
+        if (!emails.isEmpty() || !cc.isEmpty()) {
+            message.setTo(!emails.isEmpty() ? emails.toArray(new String[0]) : cc.toArray(new String[0]));
+            if (!emails.isEmpty() && !cc.isEmpty()) message.setCc(cc.toArray(new String[0]));
             LOGGER.info("正式发送邮件.....");
             sender.send(message);
         }

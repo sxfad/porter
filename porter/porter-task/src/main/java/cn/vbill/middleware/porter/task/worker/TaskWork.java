@@ -21,7 +21,6 @@ import cn.vbill.middleware.porter.common.warning.entity.WarningReceiver;
 import cn.vbill.middleware.porter.common.cluster.ClusterProviderProxy;
 import cn.vbill.middleware.porter.common.cluster.event.command.StatisticUploadCommand;
 import cn.vbill.middleware.porter.common.cluster.event.command.TaskPositionQueryCommand;
-import cn.vbill.middleware.porter.common.cluster.event.command.TaskRegisterCommand;
 import cn.vbill.middleware.porter.common.cluster.event.command.TaskStatCommand;
 import cn.vbill.middleware.porter.common.cluster.event.command.TaskStatQueryCommand;
 import cn.vbill.middleware.porter.common.cluster.event.command.TaskStopCommand;
@@ -45,15 +44,18 @@ import cn.vbill.middleware.porter.task.load.LoadJob;
 import cn.vbill.middleware.porter.task.select.SelectJob;
 import cn.vbill.middleware.porter.task.transform.TransformJob;
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import lombok.SneakyThrows;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 
 /**
@@ -76,7 +78,7 @@ public class TaskWork extends Thread {
     private final Map<StageType, StageJob> stageJobs = new LinkedHashMap<>();
     //schema_table -> TaskStat
     private final Map<String, DTaskStat> stats;
-    private final CountDownLatch stopToken = new CountDownLatch(1);
+    private final ArrayBlockingQueue<SignalType> threadSignal = new ArrayBlockingQueue<>(1);
     /**
      * 触发任务停止标识，生命周期内，仅有一次
      */
@@ -86,6 +88,12 @@ public class TaskWork extends Thread {
     private final TaskWorker worker;
     private final long positionCheckInterval;
     private final long alarmPositionCount;
+
+    /**
+     * 线程运行过程中的信号
+     */
+    private volatile SignalType signal;
+    private final ReentrantReadWriteLock signalLock = new ReentrantReadWriteLock();
 
     public TaskWork(DataConsumer dataConsumer, DataLoader dataLoader, String taskId, List<WarningReceiver> receivers,
                     TaskWorker worker, long positionCheckInterval, long alarmPositionCount) {
@@ -101,7 +109,6 @@ public class TaskWork extends Thread {
         this.positionCheckInterval = positionCheckInterval;
         this.alarmPositionCount = alarmPositionCount;
         this.stopTrigger = new AtomicBoolean(false);
-        initiate();
     }
 
     private void initiate() {
@@ -118,7 +125,20 @@ public class TaskWork extends Thread {
     }
 
     public void stopWork() {
-        stopToken.countDown();
+        threadSignal.clear();
+        try {
+            threadSignal.put(SignalType.STOP);
+        } catch (InterruptedException e) {
+            stopWork();
+        }
+    }
+
+    public void transmit() {
+        threadSignal.offer(SignalType.TRANSMIT);
+    }
+
+    public String getSignal() throws InterruptedException {
+        return threadSignal.take().name();
     }
 
     /**
@@ -127,6 +147,7 @@ public class TaskWork extends Thread {
     public void run() {
         try {
             TaskContext.trace(taskId, dataConsumer, dataLoader, receivers);
+            initiate();
             LOGGER.info("从注册中心拉取任务状态信息[{}-{}]", taskId, dataConsumer.getSwimlaneId());
             //从集群模块获取任务状态统计信息
             ClusterProviderProxy.INSTANCE.broadcastEvent(new TaskStatQueryCommand(taskId, dataConsumer.getSwimlaneId(), new DCallback() {
@@ -155,21 +176,33 @@ public class TaskWork extends Thread {
                     dataConsumer.initializePosition(taskId, dataConsumer.getSwimlaneId(), position);
                 }
             }));
-            try {
-                stopToken.await();
-            } catch (InterruptedException e) {
-                LOGGER.info("线程中断，任务停止[{}-{}]", taskId, dataConsumer.getSwimlaneId());
-                stopToken.countDown();
+            while (true) {
+                String signalType = null;
+                try {
+                    //获取信号量当前状态
+                    signalType = getSignal();
+                    LOGGER.info("任务信号量[{}-{}]:{}", taskId, dataConsumer.getSwimlaneId(), signalType);
+                } catch (InterruptedException e) {
+                    LOGGER.info("线程中断，任务停止[{}-{}]", taskId, dataConsumer.getSwimlaneId());
+                    break;
+                }
+
+                //如果当前获取信号量是线程间通信造成的，保持线程不退出
+                if (null != signalType && signalType.equals(SignalType.TRANSMIT.name())) {
+                    TaskContext.trace(worker.getOwner());
+                    continue;
+                } else {
+                    break;
+                }
             }
         } catch (Throwable e) {
-            stopToken.countDown();
             LOGGER.error("任务[{}-{}]停止", taskId, dataConsumer.getSwimlaneId(), e);
             TaskContext.warning(NodeLog.upload(NodeLog.LogType.WARNING, taskId, dataConsumer.getSwimlaneId(), e.getMessage()));
+            interruptWithWarning(e.getMessage());
         } finally {
             clearWork();
         }
     }
-
 
     /**
      * 清理任务
@@ -363,10 +396,10 @@ public class TaskWork extends Thread {
                         LOGGER.error("停止任务失败", e);
                     }
 
-                    String shortMessage = notice;
+                    String shortMessage = null == notice ? "" : notice;
                     try {
                         LOGGER.info("开始发送日志通知.....");
-                        StringBuffer alarmNoticeBuilder = new StringBuffer(notice).append(System.lineSeparator()).append("消费源:")
+                        StringBuffer alarmNoticeBuilder = new StringBuffer(shortMessage).append(System.lineSeparator()).append("消费源:")
                                 .append(dataConsumer.getClientInfo()).append(System.lineSeparator()).append("目标端:").append(dataLoader.getClientInfo());
                         shortMessage = alarmNoticeBuilder.toString();
                         //上传日志
@@ -401,5 +434,9 @@ public class TaskWork extends Thread {
 
     public boolean isWorking() {
         return !stopTrigger.get();
+    }
+
+    public enum SignalType {
+        STOP, TRANSMIT
     }
 }

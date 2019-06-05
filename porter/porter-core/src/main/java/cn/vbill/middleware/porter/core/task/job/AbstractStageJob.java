@@ -18,6 +18,8 @@
 package cn.vbill.middleware.porter.core.task.job;
 
 import cn.vbill.middleware.porter.common.util.DefaultNamedThreadFactory;
+import cn.vbill.middleware.porter.core.task.TaskContext;
+import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

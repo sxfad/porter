@@ -19,8 +19,9 @@ package cn.vbill.middleware.porter.task;
 
 import cn.vbill.middleware.porter.common.cluster.event.command.TaskPushCommand;
 import cn.vbill.middleware.porter.common.cluster.dic.ClusterPlugin;
-import cn.vbill.middleware.porter.common.task.event.TaskEventListener;
+import cn.vbill.middleware.porter.common.task.event.*;
 import cn.vbill.middleware.porter.common.util.MachineUtils;
+import cn.vbill.middleware.porter.common.warning.entity.WarningOwner;
 import cn.vbill.middleware.porter.core.NodeContext;
 import cn.vbill.middleware.porter.core.task.TaskContext;
 import cn.vbill.middleware.porter.core.task.entity.Task;
@@ -140,24 +141,38 @@ public class TaskController implements TaskEventListener {
     }
 
     @Override
-    public void onEvent(TaskConfig event) {
-        if (event.getStatus().isWorking() && NodeContext.INSTANCE.getNodeStatus().isWorking()) {
-            //新建任务如果指定了节点ID,但与当前节点不符时，停止抢占任务
-            if (!StringUtils.isBlank(event.getNodeId())
-                    && !("," + event.getNodeId() + ",").contains(("," + NodeContext.INSTANCE.getNodeId() + ","))) {
-                return;
-            }
-            try {
-                startTask(event);
-            } catch (Exception e) {
-                LOGGER.error("启动任务出错!", e);
-            }
-        } else if (event.getStatus().isStopped()) {
-            try {
-                stopTask(Task.fromConfig(event));
-            } catch (Exception e) {
-                LOGGER.error("停止任务出错!", e);
-            }
+    public void onEvent(TaskEvent taskEvent) {
+        switch (taskEvent.getType()) {
+            case TASK_CONFIG:
+                TaskConfig event = ((TaskConfigEvent) taskEvent).getConfig();
+                if (event.getStatus().isWorking() && NodeContext.INSTANCE.getNodeStatus().isWorking()) {
+                    //新建任务如果指定了节点ID,但与当前节点不符时，停止抢占任务
+                    if (!StringUtils.isBlank(event.getNodeId())
+                            && !("," + event.getNodeId() + ",").contains(("," + NodeContext.INSTANCE.getNodeId() + ","))) {
+                        return;
+                    }
+                    try {
+                        startTask(event);
+                    } catch (Exception e) {
+                        LOGGER.error("启动任务出错!", e);
+                    }
+                } else if (event.getStatus().isStopped()) {
+                    try {
+                        stopTask(Task.fromConfig(event));
+                    } catch (Exception e) {
+                        LOGGER.error("停止任务出错!", e);
+                    }
+                }
+                break;
+            case TASK_OWNER:
+                TaskOwnerEvent taskOwner = (TaskOwnerEvent) taskEvent;
+                TaskWorker worker = workerMap.get(taskOwner.getTaskId());
+                if (null != worker) {
+                    worker.transmit(taskOwner.getOwner());
+                }
+                break;
+            default:
+                break;
         }
     }
 
@@ -197,7 +212,9 @@ public class TaskController implements TaskEventListener {
             LOGGER.error("failed to start task:{}", JSONObject.toJSONString(task), e);
         }
         //考虑到任务启动失败造成的worker闲置(内存、线程),检查worker是否有工作，如果空闲，释放worker资源
-        if (worker.isNoWork()) workerMap.remove(task.getTaskId()).stop();
+        if (worker.isNoWork()) {
+            workerMap.remove(task.getTaskId()).stop();
+        }
         workerLock.unlock();
     }
 

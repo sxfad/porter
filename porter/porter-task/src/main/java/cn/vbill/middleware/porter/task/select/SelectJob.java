@@ -77,7 +77,7 @@ public class SelectJob extends AbstractStageJob {
     @Override
     protected void doStop() {
         try {
-            consumer.shutdown();
+            if (null != consumer) consumer.shutdown();
         } catch (Throwable e) {
             e.printStackTrace();
         }

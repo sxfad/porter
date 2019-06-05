@@ -179,8 +179,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener {
                 NodeLog log = new NodeLog(NodeLog.LogType.WARNING, msg).upload();
                 try {
                     WarningProviderFactory.INSTANCE.notice(new WarningMessage("【管理员告警】运行状态异常任务列表", log.getError(),
-                            WarningErrorCode.match(log.getError()))
-                                    .bindReceivers(ManagerContext.INSTANCE.getReceivers()));
+                            WarningErrorCode.match(log.getError()), null).bindCopy(ManagerContext.INSTANCE.getReceivers()));
                 } catch (InterruptedException e) {
                 }
             }

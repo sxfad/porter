@@ -67,7 +67,7 @@ public class JdbcConsumeClient  extends JdbcClient implements ConsumeClient {
 
     @Override
     protected void doShutdown() throws SQLException {
-        fetchPool.shutdownNow();
+        if (null != fetchPool) fetchPool.shutdownNow();
         super.doShutdown();
     }
 
@@ -161,7 +161,7 @@ public class JdbcConsumeClient  extends JdbcClient implements ConsumeClient {
             }
             //任务配置传入进度
             for (int i = 0; i < array.size(); i++) {
-                JSONObject o = array.getJSONObject(i);
+                JSONObject o = JSONObject.parseObject(array.getString(i));
                 String tableKey = o.getString(JdbcPosition.TABLE_KEY).toUpperCase();
                 if (fetchMeta.containsKey(tableKey)) {
                     initiatePosition.put(tableKey, JdbcPosition.getPosition(o));

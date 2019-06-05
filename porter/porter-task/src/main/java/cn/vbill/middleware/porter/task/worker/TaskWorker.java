@@ -26,6 +26,8 @@ import cn.vbill.middleware.porter.common.task.exception.DataLoaderBuildException
 import cn.vbill.middleware.porter.common.task.exception.TaskLockException;
 import cn.vbill.middleware.porter.common.task.exception.WorkResourceAcquireException;
 import cn.vbill.middleware.porter.common.util.DefaultNamedThreadFactory;
+import cn.vbill.middleware.porter.common.util.db.meta.TableSchema;
+import cn.vbill.middleware.porter.common.warning.entity.WarningOwner;
 import cn.vbill.middleware.porter.core.NodeContext;
 import cn.vbill.middleware.porter.core.task.consumer.DataConsumer;
 import cn.vbill.middleware.porter.core.task.entity.Task;
@@ -64,6 +66,7 @@ public class TaskWorker {
      */
     private final Map<String, ArrayBlockingQueue<TaskWork>> jobs;
     private final Map<String, TableMapper> tableMappers;
+    private volatile WarningOwner owner;
 
     public TaskWorker(TaskController controller) {
         workerStatJob = Executors.newSingleThreadScheduledExecutor(new DefaultNamedThreadFactory("TaskStat"));
@@ -93,7 +96,7 @@ public class TaskWorker {
                 }
             }, 0, 1, TimeUnit.MINUTES);
         } else {
-            LOGGER.warn("TaskWorker[] has started already", workerSequence);
+            LOGGER.warn("TaskWorker[{}] has started already", workerSequence);
         }
     }
 
@@ -193,5 +196,18 @@ public class TaskWorker {
 
     protected void  stopWork(String taskId, String...swimlaneId) {
         controller.stopTask(taskId, swimlaneId);
+    }
+
+    public void  transmit(WarningOwner owner) {
+        this.owner = owner;
+        jobs.forEach((k, v) -> {
+            TaskWork work = v.peek();
+            if (null != work) {
+                work.transmit();
+            }
+        });
+    }
+    protected final WarningOwner getOwner() {
+        return owner;
     }
 }

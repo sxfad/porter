@@ -17,18 +17,17 @@
 
 package cn.vbill.middleware.porter.common.task.event;
 
-import cn.vbill.middleware.porter.common.task.config.TaskConfig;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 /**
+ * 任务事件
  * @author: zhangkewei[zhang_kw@suixingpay.com]
- * @date: 2017年12月21日 17:19
- * @version: V1.0
- * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月21日 17:19
  */
-@AllArgsConstructor
-public class TaskEvent {
-    @Getter private final TaskConfig config;
-    @Getter private final TaskEventType type;
+public abstract class TaskEvent {
+    @Getter
+    private final TaskEventType type;
+
+    protected TaskEvent(TaskEventType type) {
+        this.type = type;
+    }
 }

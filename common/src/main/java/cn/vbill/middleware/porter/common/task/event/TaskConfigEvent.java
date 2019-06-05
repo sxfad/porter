@@ -17,20 +17,20 @@
 
 package cn.vbill.middleware.porter.common.task.event;
 
-/**
- * 一期任务发布采用配置文件形式，后期增加管理节点配置实现
- * 没采用管理节点轮询实现,基于ZOOKEEPER监听实现
- *
- * @author: zhangkewei[zhang_kw@suixingpay.com]
- * @date: 2017年12月21日 17:13
- * @version: V1.0
- * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月21日 17:13
- */
-public interface TaskEventListener {
+import cn.vbill.middleware.porter.common.task.config.TaskConfig;
+import lombok.Getter;
 
-    /**
-     * onEvent
-     * @param event
-     */
-    void onEvent(TaskEvent event);
+/**
+ * @author: zhangkewei[zhang_kw@suixingpay.com]
+ * @date: 2017年12月21日 17:19
+ * @version: V1.0
+ * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月21日 17:19
+ */
+public class TaskConfigEvent extends TaskEvent {
+    @Getter private final TaskConfig config;
+
+    public TaskConfigEvent(TaskConfig config) {
+        super(TaskEventType.TASK_CONFIG);
+        this.config = config;
+    }
 }
