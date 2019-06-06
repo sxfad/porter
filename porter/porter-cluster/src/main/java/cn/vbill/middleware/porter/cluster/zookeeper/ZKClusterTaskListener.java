@@ -26,6 +26,7 @@ import cn.vbill.middleware.porter.common.cluster.event.ClusterListenerEventType;
 import cn.vbill.middleware.porter.common.cluster.event.executor.*;
 import cn.vbill.middleware.porter.common.cluster.event.command.*;
 import cn.vbill.middleware.porter.common.statistics.DObject;
+import cn.vbill.middleware.porter.common.task.dic.TaskStatusType;
 import cn.vbill.middleware.porter.common.task.event.*;
 import cn.vbill.middleware.porter.common.task.statistics.DTaskLock;
 import cn.vbill.middleware.porter.common.task.statistics.DTaskStat;
@@ -93,9 +94,10 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
             NodeContext.INSTANCE.removeTaskError(config.getTaskId());
             if (event.isOnline() || event.isDataChanged()) { //任务创建 、任务修改
                 triggerTaskEvent(new TaskConfigEvent(config));
-                triggerTaskEvent(new TaskOwnerEvent(JSONObject.parseObject(client.getData(listenPath() + "/" + config.getTaskId() + "/owner").getData(), WarningOwner.class), config.getTaskId()));
+                if (config.getStatus() == TaskStatusType.WORKING) {
+                    triggerTaskEvent(new TaskOwnerEvent(JSONObject.parseObject(client.getData(listenPath() + "/" + config.getTaskId() + "/owner").getData(), WarningOwner.class), config.getTaskId()));
+                }
             }
-
         }
 
         //任务释放

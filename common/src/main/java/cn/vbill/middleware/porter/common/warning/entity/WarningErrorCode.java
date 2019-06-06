@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
 public enum WarningErrorCode {
     HARDWARE_MEMORY(WarningCategory.PLATFORM, "内存不足或溢出", Pattern.compile(".*(OutOfMemoryError|GC overhead limit exceeded).*")),
     NETWORK_UNAVAILABLE(WarningCategory.TASK, "网络不可达", Pattern.compile(".*(Connection timed out|Timeout|timeout|CannotGetJdbcConnectionException).*")),
-    TABLE_NOT_EXIST(WarningCategory.TASK, "表名不存在", Pattern.compile(".*(ORA-00942|table or view does not exist|查询不到目标仓库表结构).*")),
+    TABLE_NOT_EXIST(WarningCategory.TASK, "表名不存在", Pattern.compile(".*(ORA-00942|table or view does not exist|查询不到目标仓库表结构|Table.*doesn't exist).*")),
     COLUMN_NOT_EXIST(WarningCategory.TASK, "字段不存在", Pattern.compile(".*(ORA-01747|table.column|列说明无效|Unknown column).*")),
     DB_BUSY(WarningCategory.TASK, "数据库忙碌", Pattern.compile(".*(提交事务等待).*")),
     MYSQL_BINLOG_ERROR(WarningCategory.TASK, "读取binlog出错", Pattern.compile(".*(sqlstate = HY000 errmsg = log event entry exceeded max_allowed_packet).*")),
@@ -57,9 +57,9 @@ public enum WarningErrorCode {
         this.character = character;
         this.category = category;
     }
-
     public static WarningErrorCode match(String msg) {
         if (!StringUtils.isBlank(msg)) {
+            msg = msg.replaceAll("\t|\n|\r", "");
             for (WarningErrorCode code : POOLS) {
                 if (code.character.matcher(msg).matches()) {
                     return code;

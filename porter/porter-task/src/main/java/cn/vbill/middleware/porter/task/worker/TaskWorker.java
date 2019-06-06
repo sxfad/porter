@@ -156,7 +156,7 @@ public class TaskWorker {
                 register(c.getSwimlaneId(), job);
                 job.start();
             } catch (Throwable e) {
-                LOGGER.info("work[{}-{}]启动失败", task.getTaskId(), c.getSwimlaneId());
+                LOGGER.info("work[{}-{}]启动失败:{}", task.getTaskId(), c.getSwimlaneId(), e.getMessage());
             }
         }
     }
@@ -170,7 +170,8 @@ public class TaskWorker {
     }
 
     private void register(String swimlaneId, TaskWork work) throws InterruptedException, TaskLockException, WorkResourceAcquireException {
-        jobs.computeIfAbsent(swimlaneId, key -> new ArrayBlockingQueue<>(1)).put(work);
+        boolean offer = jobs.computeIfAbsent(swimlaneId, key -> new ArrayBlockingQueue<>(1)).offer(work);
+        if (!offer) throw new WorkResourceAcquireException("已有运行中的任务" + swimlaneId);
         //申请work资源
         if (!NodeContext.INSTANCE.acquireWork()) {
             jobs.remove(swimlaneId);
