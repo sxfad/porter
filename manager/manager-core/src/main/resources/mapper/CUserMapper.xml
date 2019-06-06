@@ -249,7 +249,7 @@
 
     <!-- 根据jobId查询job_tasks_owner用户详细信息 -->
     <select id="selectOwnersByJobId" resultType="cn.vbill.middleware.porter.manager.core.entity.CUser">
-        select id, loginname, nickname, email, role_code AS roleCode from c_user
+        select id, loginname, nickname, mobile, email, depart_ment, role_code AS roleCode from c_user
         where state = 1 and
         id in
           (
@@ -271,9 +271,9 @@
         where  state = 1 and role_code = 'A9999'
     </select>
 
-    <!-- 根据jobId查询job_tasks_owner用户详细信息 -->
+    <!-- 根据 nodeId 查询 b_nodes_owner 用户详细信息 -->
     <select id="selectOwnersByNodeId" resultType="cn.vbill.middleware.porter.manager.core.entity.CUser">
-        select id, loginname, nickname, email, role_code AS roleCode from c_user
+        select id, loginname, nickname, mobile, email, depart_ment, role_code AS roleCode from c_user
         where state = 1 and
         id in
         (
