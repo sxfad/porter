@@ -100,7 +100,7 @@ public class TaskContext {
                 .append(log.getTaskId()).append("-").append(log.getSwimlaneId()).toString());
     }
     public static WarningMessage warning(NodeLog log, String title) {
-        WarningMessage message = new WarningMessage(title, log.getError(), WarningErrorCode.match(log.getError()), null != trace() ? trace().getOwner() : null);
+        WarningMessage message = new WarningMessage(title, log.toPrintln(), WarningErrorCode.match(log.getError()), null != trace() ? trace().getOwner() : null);
         try {
             //异常或告警
             if (log.getType() == NodeLog.LogType.ERROR || log.getType() == NodeLog.LogType.WARNING) {

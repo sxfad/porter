@@ -449,6 +449,7 @@ public enum NodeContext {
     }
 
     public synchronized void addWarningReceivers(WarningReceiver[] newReceivers) {
+        receivers.clear();
         receivers.addAll(Arrays.asList(newReceivers));
     }
 
