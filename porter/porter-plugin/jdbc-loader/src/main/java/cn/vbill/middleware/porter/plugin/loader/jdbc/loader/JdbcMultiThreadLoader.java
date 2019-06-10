@@ -24,6 +24,7 @@ import cn.vbill.middleware.porter.core.task.setl.ETLColumn;
 import cn.vbill.middleware.porter.core.task.setl.ETLRow;
 import cn.vbill.middleware.porter.core.task.statistics.DSubmitStatObject;
 import cn.vbill.middleware.porter.plugin.loader.jdbc.JdbcLoaderConst;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
@@ -31,7 +32,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.stream.Collectors;
 
 /**
  * jdbc多线程并发Load
@@ -96,29 +96,25 @@ public class JdbcMultiThreadLoader extends BaseJdbcLoader {
         });
     }
 
-
     private void groupRows(ETLBucket bucket, List<ETLRow> rows) {
         int rowSize = rows.size();
-        int span = rowSize % 2 == 0 ? rowSize / 2 : rowSize / 2 + 1;
-        for (int i = 0; i < rowSize; i += span) {
-            int endIndex = (span + i) > rowSize ? rowSize : span + i;
-            List<ETLRow> currentRow = rows.subList(i, endIndex);
-            if (i == 0) {
-                List<ETLRow> nextRow = rows.subList(endIndex, rowSize);
-                List<String> nextKeys = nextRow.stream().flatMap(r -> rowKeyList(r).stream()).distinct().collect(Collectors.toList());
-                if (currentRow.stream().filter(r -> rowKeyList(r).stream().filter(k -> nextKeys.contains(k)).count() > 0).count() > 0) {
-                    bucket.getParallelRows().add(rows);
+        //rows主键集合
+        List<String>  nextKeys = new ArrayList<>();
+        rows.forEach(rs -> nextKeys.add(StringUtils.join(rowKeyList(rs), ",")));
+        int i = 0;
+        while (i < rowSize) {
+            int j = i + 1;
+            while (j <= rowSize) {
+                List<ETLRow> currentRow = rows.subList(i, j);
+                String nextKeysMatch = j >= rowSize ? "" : "," + StringUtils.join(nextKeys.subList(j, rowSize), ",") + ",";
+                if (nextKeys.isEmpty() || currentRow.stream().parallel().filter(r -> rowKeyList(r).stream().parallel().filter(k -> nextKeysMatch.contains("," + k + ",")).count() > 0).count() < 1) {
+                    bucket.getParallelRows().add(currentRow);
+                    i = j;
                     break;
+                } else {
+                    j++;
+                    continue;
                 }
-            }
-
-            if (currentRow.size() < 2 || currentRow.stream().filter(r -> rowKeyList(r).stream().filter(k ->
-                    currentRow.stream().filter(z -> z != r).flatMap(z -> rowKeyList(z).stream()).distinct()
-                            .collect(Collectors.toList()).contains(k)
-            ).count() > 0).count() > 0) {
-                bucket.getParallelRows().add(currentRow);
-            } else {
-                groupRows(bucket, currentRow);
             }
         }
     }

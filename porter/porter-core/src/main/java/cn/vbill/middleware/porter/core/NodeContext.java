@@ -380,7 +380,7 @@ public enum NodeContext {
 
     public List<String> getTaskErrorMarked() {
         List<String> warning = new ArrayList<>();
-        taskErrorMarked.forEach((k, v) -> warning.add(v.shortMessage(k)));
+        taskErrorMarked.forEach((k, v) -> warning.add(v.getTitle()));
         return warning;
     }
 

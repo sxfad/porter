@@ -25,6 +25,7 @@ import cn.vbill.middleware.porter.common.task.consumer.Position;
 import cn.vbill.middleware.porter.common.task.exception.TaskStopTriggerException;
 import cn.vbill.middleware.porter.common.node.statistics.NodeLog;
 import cn.vbill.middleware.porter.common.util.db.meta.TableSchema;
+import cn.vbill.middleware.porter.core.task.TaskContext;
 import cn.vbill.middleware.porter.plugin.consumer.canal.config.CanalConfig;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.otter.canal.common.alarm.CanalAlarmHandler;
@@ -191,7 +192,10 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
                         }
 
                         try {
-                            new NodeLog(NodeLog.LogType.INFO, getClientInfo() + ", error:" + msg).upload();
+                            new NodeLog(NodeLog.LogType.INFO, getClientInfo() + ", error:" + msg)
+                                    .bindTaskId(TaskContext.taskId())
+                                    .bindSwimlaneId(TaskContext.swimlaneId())
+                                    .bindRelationship(TaskContext.taskOwnerInfo()).upload();
                         } catch (Throwable e) {
                             e.printStackTrace();
                             LOGGER.error("上传canal异常日志失败", e);
@@ -369,7 +373,7 @@ public class CanalClient extends AbstractClient<CanalConfig> implements ConsumeC
     @Override
     public String getClientInfo() {
         CanalConfig config = getConfig();
-        return new StringBuilder().append("数据库地址->").append(config.getAddress()).append(",数据库->").append(config.getDatabase())
-                .append(",用户->").append(config.getUsername()).toString();
+        return new StringBuilder().append("host->").append(config.getAddress()).append(",database->").append(config.getDatabase())
+                .append(",user->").append(config.getUsername()).toString();
     }
 }

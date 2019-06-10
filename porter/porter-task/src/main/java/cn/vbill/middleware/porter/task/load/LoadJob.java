@@ -78,7 +78,7 @@ public class LoadJob extends AbstractStageJob {
                 //当前进度差值超过告警线
                 if (newestPositionDiffer >= alarmPositionCount) {
                     TaskContext.warning(new NodeLog(NodeLog.LogType.WARNING, taskId, swimlaneId,
-                            "未消费消息堆积:" + newestPositionDiffer + "条,告警阀值:" + alarmPositionCount).upload(),
+                            "未消费消息堆积:" + newestPositionDiffer + "条,告警阀值:" + alarmPositionCount).bindRelationship(TaskContext.taskOwnerInfo()).upload(),
                             "【关注】" + taskId + "-" + swimlaneId + "消息堆积" + newestPositionDiffer + "条");
                 }
                 //目标端数据库事务提交等待等原因造成的load等待
@@ -88,7 +88,7 @@ public class LoadJob extends AbstractStageJob {
                     long minutesDiff = TimeUnit.MILLISECONDS.toMinutes(Calendar.getInstance().getTime().getTime() - currentLoadTime);
                     if (minutesDiff > 5) { //事务提交等待超过5分钟
                         TaskContext.warning(new NodeLog(NodeLog.LogType.WARNING, taskId, swimlaneId, "目标端提交事务等待"
-                                + minutesDiff + "分钟,告警阀值:5分钟").upload());
+                                + minutesDiff + "分钟,告警阀值:5分钟").bindRelationship(TaskContext.taskOwnerInfo()).upload());
                     }
                 }
             }, positionCheckInterval, positionCheckInterval, TimeUnit.SECONDS);

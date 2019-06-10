@@ -17,6 +17,7 @@
 
 package cn.vbill.middleware.porter.manager;
 
+import cn.vbill.middleware.porter.common.warning.entity.WarningMessage;
 import cn.vbill.middleware.porter.common.warning.entity.WarningReceiver;
 import org.springframework.context.ApplicationContext;
 
@@ -25,6 +26,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * @author: zhangkewei[zhang_kw@suixingpay.com]
@@ -41,7 +43,7 @@ public enum ManagerContext {
     INSTANCE();
 
     private ApplicationContext context;
-    private final Map<List<String>, String> taskErrorMarked = new ConcurrentHashMap<>();
+    private final Map<List<String>, WarningMessage> taskErrorMarked = new ConcurrentHashMap<>();
     private volatile List<WarningReceiver> receivers = new ArrayList<>();
 
     /**
@@ -66,7 +68,7 @@ public enum ManagerContext {
      * @param: [taskId, swimlaneId]
      * @return: void
      */
-    public void newStoppedTask(List<String> key, String message) {
+    public void newStoppedTask(List<String> key, WarningMessage message) {
         taskErrorMarked.put(key, message);
     }
 
@@ -82,7 +84,7 @@ public enum ManagerContext {
     }
 
     public List<String> getStoppedTasks() {
-        return Arrays.asList(taskErrorMarked.values().toArray(new String[0]));
+        return taskErrorMarked.values().stream().map(WarningMessage::getTitle).collect(Collectors.toList());
     }
 
 

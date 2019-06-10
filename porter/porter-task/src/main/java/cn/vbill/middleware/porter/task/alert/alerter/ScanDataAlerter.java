@@ -127,8 +127,8 @@ public class ScanDataAlerter implements Alerter {
             //更新同步检查次数
             stat.incrementAlertedTimes();
             String title = "[" + noticeDateFormat.format(new Date()) + "][" + MachineUtils.localhost() + ":" + MachineUtils.getPID() + "]数据同步告警";
-            TaskContext.warning(new NodeLog(NodeLog.LogType.WARNING, notice).bindTaskId(TaskContext.trace().getTaskId())
-                    .bindSwimlaneId(TaskContext.trace().getSwimlaneId()).upload(), title);
+            TaskContext.warning(new NodeLog(NodeLog.LogType.WARNING, notice).bindTaskId(TaskContext.taskId())
+                    .bindSwimlaneId(TaskContext.swimlaneId()).bindRelationship(TaskContext.taskOwnerInfo()).upload(), title);
         }
     }
 

@@ -80,8 +80,11 @@ public class NodeLog extends StatisticData {
     @Getter
     private Date time = Calendar.getInstance().getTime();
 
-    public NodeLog() {
+    @Setter @Getter
+    private String relationship;
 
+
+    public NodeLog() {
     }
     public NodeLog(LogType type, String error) {
         this.type = type;
@@ -104,6 +107,11 @@ public class NodeLog extends StatisticData {
 
     public NodeLog bindSwimlaneId(String swimlaneId) {
         this.swimlaneId = swimlaneId;
+        return this;
+    }
+
+    public NodeLog bindRelationship(String relationship) {
+        this.relationship = relationship;
         return this;
     }
 

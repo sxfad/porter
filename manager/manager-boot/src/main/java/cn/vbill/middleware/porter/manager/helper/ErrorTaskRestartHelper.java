@@ -24,6 +24,8 @@ import cn.vbill.middleware.porter.common.task.dic.TaskStatusType;
 import cn.vbill.middleware.porter.common.util.DefaultNamedThreadFactory;
 import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Calendar;
 import java.util.List;
@@ -40,7 +42,8 @@ import java.util.concurrent.TimeUnit;
  * @review: zkevin/2019年03月11日 10:34
  */
 public class ErrorTaskRestartHelper {
-    private static final Map<String, ImmutablePair<Calendar, Integer>> ERR_STATE = new ConcurrentHashMap<>();
+    private static final Logger LOGGER = LoggerFactory.getLogger(ErrorTaskRestartHelper.class);
+    public static final Map<String, ImmutablePair<Calendar, Integer>> ERR_STATE = new ConcurrentHashMap<>();
     public static void run() {
         Executors.newSingleThreadScheduledExecutor(new DefaultNamedThreadFactory("task-restart-check")).schedule(() -> {
             ClusterProviderProxy.INSTANCE.broadcastEvent(client -> {
@@ -71,6 +74,7 @@ public class ErrorTaskRestartHelper {
                                     && (null == triggerInfo.getLeft() || triggerInfo.getLeft().before(calendar))
                                     && triggerInfo.right < config.getRestartRetries()) {
                                 if (triggerInfo.right >= 1) {
+                                    LOGGER.info("任务{}符合重启条件，触发重启操作", errorStateKey);
                                     //触发任务重启
                                     client.delete(errPath);
                                 }
@@ -78,8 +82,10 @@ public class ErrorTaskRestartHelper {
                                 Calendar nextTime = null != triggerInfo.left ? triggerInfo.left : calendar;
                                 nextTime.add(Calendar.SECOND, config.getRestartIncreaseBySecond() * (triggerInfo.right + 1));
                                 ERR_STATE.put(errorStateKey, new ImmutablePair<>(nextTime, triggerInfo.right + 1));
+                                LOGGER.info("任务{}已启动次数:{},下次重启时间:{}", errorStateKey, triggerInfo.right, null == triggerInfo.left ? "---" : triggerInfo.left.getTime().toLocaleString());
                             }
                         } else {
+                            LOGGER.info("清除任务错误标记{}", errorStateKey);
                             ERR_STATE.remove(errorStateKey);
                         }
                     });
