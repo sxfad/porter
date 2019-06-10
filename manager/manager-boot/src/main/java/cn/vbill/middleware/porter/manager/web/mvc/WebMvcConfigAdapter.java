@@ -50,7 +50,7 @@ public class WebMvcConfigAdapter extends WebMvcConfigurerAdapter {
     /**
      * ALARM_URL_PATTERNS
      */
-    public static final String ALARM_URL_PATTERNS = "/alarm/task/check,/manager/ogg/tables";
+    public static final String ALARM_URL_PATTERNS = "/alarm";
 
 
     /**

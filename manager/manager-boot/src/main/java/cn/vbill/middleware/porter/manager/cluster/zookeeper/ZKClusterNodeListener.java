@@ -89,9 +89,6 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener {
                      *     nodesService.insertState(node, heartBeatTime, -1);
                      * }
                      */
-
-
-
                 }
             }
 

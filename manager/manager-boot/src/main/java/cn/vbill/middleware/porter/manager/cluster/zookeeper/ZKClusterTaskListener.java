@@ -99,8 +99,14 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener {
                 }
 
                 if (zkEvent.isDataChanged() || zkEvent.isOnline()) {
-                    ManagerContext.INSTANCE.newStoppedTask(Arrays.asList(error.getTaskId(), error.getSwimlaneId()),
-                            zkEvent.getData());
+                    WarningMessage message = null;
+                    try {
+                        message = JSONObject.parseObject(error.getMessage(), WarningMessage.class);
+                    } catch (Throwable e) {
+                        message = new WarningMessage(e.getMessage(), WarningErrorCode.match(e.getMessage()), null)
+                                .appendTitlePrefix(Arrays.asList(error.getTaskId(), error.getSwimlaneId()));
+                    }
+                    ManagerContext.INSTANCE.newStoppedTask(Arrays.asList(error.getTaskId(), error.getSwimlaneId()), message);
                     logger.info("zk任务错误消息DataChanged or Online,内容:[{}]", error.toString());
                     return;
                 }

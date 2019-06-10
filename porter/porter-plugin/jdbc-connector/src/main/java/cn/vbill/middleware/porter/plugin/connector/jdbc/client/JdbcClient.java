@@ -232,7 +232,7 @@ public abstract class JdbcClient extends AbstractClient<JdbcConfig> implements M
     @Override
     public String getClientInfo() {
         JdbcConfig config = getConfig();
-        return new StringBuilder().append("数据库地址->").append(config.getUrl()).append(",用户->").append(config.getUserName()).toString();
+        return new StringBuilder().append("url->").append(config.getUrl()).append(",user->").append(config.getUserName()).toString();
     }
 
 
