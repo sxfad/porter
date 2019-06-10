@@ -176,7 +176,7 @@ public class MonitorScheduledServiceImpl implements MonitorScheduledService {
         String nowTime = sdf.format(today);
         String tomorrowTime = sdf.format(tomorrowDate);
 
-        Map<String, Map<String, String>> dateMap =new HashMap<>();
+        Map<String, Map<String, String>> dateMap = new HashMap<>();
 
         Map<String, String> nowTableName = new HashMap<>();
         nowTableName.put("mr_job_tasks_monitor", "mr_job_tasks_monitor_" + nowTime);

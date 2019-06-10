@@ -303,6 +303,6 @@ public class KUDUClient extends AbstractClient<KuduConfig> implements PluginServ
     @Override
     public String getClientInfo() {
         KuduConfig config = getConfig();
-        return new StringBuilder().append("数据库地址->").append(config.getServers()).toString();
+        return new StringBuilder().append("host->").append(config.getServers()).toString();
     }
 }

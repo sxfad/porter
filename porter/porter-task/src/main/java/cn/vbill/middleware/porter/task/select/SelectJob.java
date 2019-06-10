@@ -119,9 +119,10 @@ public class SelectJob extends AbstractStageJob {
                         || TimeUnit.SECONDS.convert(Math.abs(now.getTime() - lastNoneFetchNoticeTime.getTime()), TimeUnit.MILLISECONDS) >= fetchNoticeSpan;
                 //fetchNoticeThreshould，并且持续fetchNoticeSpan秒没有发送通知
                 if (overThresHold && triggerNotice) {
-                    TaskContext.warning(new NodeLog(NodeLog.LogType.WARNING, TaskContext.trace().getTaskId(), TaskContext.trace().getSwimlaneId(),
+                    NodeLog log = new NodeLog(NodeLog.LogType.WARNING, TaskContext.taskId(), TaskContext.swimlaneId(),
                             "\"" + work.getDataConsumer().getClientInfo() + "\"已持续" + (nofetchTime / 60) + "分钟未消费到数据，通知间隔"
-                                    + (fetchNoticeSpan / 60) + "分钟"), "【关注】" + taskId + "-" + swimlaneId + "持续无数据消费" + (nofetchTime / 60) + "分钟");
+                                    + (fetchNoticeSpan / 60) + "分钟").bindRelationship(TaskContext.taskOwnerInfo()).upload();
+                    TaskContext.warning(log, "【关注】" + taskId + "-" + swimlaneId + "持续无数据消费" + (nofetchTime / 60) + "分钟");
                     lastNoneFetchNoticeTime = now;
                 }
                 if (null == lastNoneFetchTime) {

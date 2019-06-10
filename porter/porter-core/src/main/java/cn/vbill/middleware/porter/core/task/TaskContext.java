@@ -26,6 +26,7 @@ import cn.vbill.middleware.porter.common.warning.entity.WarningReceiver;
 import cn.vbill.middleware.porter.core.NodeContext;
 import cn.vbill.middleware.porter.core.task.consumer.DataConsumer;
 import cn.vbill.middleware.porter.core.task.loader.DataLoader;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -89,19 +90,46 @@ public class TaskContext {
         info.setOwner(owner);
     }
 
-
     public static  TaskInfo trace() {
         return CURRENT_TASK.get();
     }
 
+    public static  String taskOwnerInfo() {
+        TaskInfo taskInfo = trace();
+        StringBuilder sb = new StringBuilder();
+        if (null != taskInfo && null != taskInfo.getOwner() && null != taskInfo.getOwner().getOwner()) {
+            sb.append(StringUtils.trimToEmpty(taskInfo.getOwner().getOwner().getRealName())).append("-");
+            sb.append(StringUtils.trimToEmpty(taskInfo.getOwner().getOwner().getPhone())).append("-");
+            sb.append(StringUtils.trimToEmpty(taskInfo.getOwner().getOwner().getEmail()));
+        }
+        return sb.toString();
+    }
+
+    public static  String taskId() {
+        TaskInfo taskInfo = trace();
+        if (null != taskInfo) {
+            return StringUtils.trimToEmpty(taskInfo.taskId);
+        }
+        return StringUtils.EMPTY;
+    }
+    public static  String swimlaneId() {
+        TaskInfo taskInfo = trace();
+        if (null != taskInfo) {
+            return StringUtils.trimToEmpty(taskInfo.swimlaneId);
+        }
+        return StringUtils.EMPTY;
+    }
+
+
+
     public static WarningMessage warning(NodeLog log) {
-        return warning(log, new StringBuffer().append("【").append(log.getType().getTitle()).append("】")
-                .append("【").append(WarningErrorCode.match(log.getError()).name()).append("】")
-                .append(log.getTaskId()).append("-").append(log.getSwimlaneId()).toString());
+        return warning(log, null);
     }
     public static WarningMessage warning(NodeLog log, String title) {
         WarningMessage message = new WarningMessage(title, log.toPrintln(), WarningErrorCode.match(log.getError()), null != trace() ? trace().getOwner() : null);
         try {
+            //任务信息
+            message.appendTitlePrefix(Arrays.asList(log.getTaskId(), log.getSwimlaneId()));
             //异常或告警
             if (log.getType() == NodeLog.LogType.ERROR || log.getType() == NodeLog.LogType.WARNING) {
                 if (log.getType() == NodeLog.LogType.ERROR) {

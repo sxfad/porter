@@ -19,6 +19,7 @@ package cn.vbill.middleware.porter.manager.controller;
 
 
 import cn.vbill.middleware.porter.manager.ManagerContext;
+import cn.vbill.middleware.porter.manager.helper.ErrorTaskRestartHelper;
 import io.swagger.annotations.Api;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -57,11 +58,30 @@ public class TaskStopedController {
         List<String> tasks = ManagerContext.INSTANCE.getStoppedTasks();
         if (null != tasks && !tasks.isEmpty()) {
             try {
-                response.getWriter().write(StringUtils.join(tasks, "；"));
+                response.setCharacterEncoding("utf-8");
+                response.setContentType("text/plain;charset=utf-8");
+                response.getWriter().write(StringUtils.join(tasks, ";"));
                 response.getWriter().flush();
             } catch (Throwable e) {
                 LOGGER.error("任务异常检查信息输出失败", e);
             }
         }
     }
+
+    @GetMapping("/restart")
+    public void active(HttpServletResponse response) {
+        List<String> tasks = ManagerContext.INSTANCE.getStoppedTasks();
+        if (null != tasks && !tasks.isEmpty()) {
+            try {
+                response.setCharacterEncoding("utf-8");
+                response.setContentType("text/plain;charset=utf-8");
+                response.getWriter().write(ErrorTaskRestartHelper.ERR_STATE.toString());
+                response.getWriter().flush();
+            } catch (Throwable e) {
+                LOGGER.error("任务异常检查信息输出失败", e);
+            }
+        }
+    }
+
+
 }

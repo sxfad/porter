@@ -80,7 +80,8 @@ public class ExtractJob extends AbstractStageJob {
         } catch (Throwable e) {
             LOGGER.error("自定义Extract processor关闭出错", e);
             TaskContext.warning(new NodeLog(NodeLog.LogType.WARNING, "自定义Extract processor关闭出错:" + e.getMessage())
-                    .bindTaskId(TaskContext.trace().getTaskId()).bindSwimlaneId(TaskContext.trace().getSwimlaneId())
+                    .bindTaskId(TaskContext.taskId()).bindSwimlaneId(TaskContext.swimlaneId())
+                    .bindRelationship(TaskContext.taskOwnerInfo())
                     .upload());
         }
     }
@@ -92,8 +93,8 @@ public class ExtractJob extends AbstractStageJob {
         } catch (Throwable e) {
             LOGGER.error("自定义Extract processor启动出错", e);
             TaskContext.warning(new NodeLog(NodeLog.LogType.WARNING, "自定义Extract processor启动出错:" + e.getMessage())
-                    .bindTaskId(TaskContext.trace().getTaskId()).bindSwimlaneId(TaskContext.trace().getSwimlaneId())
-                    .upload());
+                    .bindTaskId(TaskContext.taskId()).bindSwimlaneId(TaskContext.swimlaneId())
+                    .bindRelationship(TaskContext.taskOwnerInfo()).upload());
         }
     }
 

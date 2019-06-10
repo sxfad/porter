@@ -386,31 +386,43 @@ public class TaskWork extends Thread {
             new Thread("suixingpay-TaskStopByErrorTrigger-stopTask-" + taskId + "-" + dataConsumer.getSwimlaneId()) {
                 @Override
                 public void run() {
+                    //1.构造日志及告警信息
+                    NodeLog log = new NodeLog(NodeLog.LogType.ERROR, notice);
+                    String warning = notice;
                     try {
-                        //停止任务
+                        //构造日志
+                        String logContent = new StringBuilder(notice).append(System.lineSeparator()).append("source:").append(dataConsumer.getClientInfo())
+                                .append(System.lineSeparator()).append("target:").append(dataLoader.getClientInfo()).toString();
+                        ////上传日志
+                        log = new NodeLog(NodeLog.LogType.ERROR, taskId, dataConsumer.getSwimlaneId(), logContent).bindRelationship(TaskContext.taskOwnerInfo());
+                        //构造告警信息
+                        warning = JSONObject.toJSONString(TaskContext.warning(log));
+                    } catch (Throwable e) {
+                    }
+
+                    //2.标记任务异常停止
+                    try {
+                        LOGGER.info("开始标记错误告警.....");
+                        ClusterProviderProxy.INSTANCE.broadcastEvent(new TaskStoppedByErrorCommand(taskId, dataConsumer.getSwimlaneId(), warning));
+                        LOGGER.info("结束标记错误告警.....");
+                    } catch (Throwable e) {
+                        LOGGER.error("标记错误告警失败", e);
+                    }
+
+                    //3.停止任务
+                    try {
                         worker.stopWork(taskId, dataConsumer.getSwimlaneId());
                     } catch (Throwable e) {
                         LOGGER.error("停止任务失败", e);
                     }
 
-                    String shortMessage = null == notice ? "" : notice;
+                    //4.上传运行态错误日志
                     try {
-                        LOGGER.info("开始发送日志通知.....");
-                        StringBuffer alarmNoticeBuilder = new StringBuffer(shortMessage).append(System.lineSeparator()).append("消费源:")
-                                .append(dataConsumer.getClientInfo()).append(System.lineSeparator()).append("目标端:").append(dataLoader.getClientInfo());
-                        shortMessage = alarmNoticeBuilder.toString();
-                        //上传日志
-                        NodeLog log = new NodeLog(NodeLog.LogType.ERROR, taskId, dataConsumer.getSwimlaneId(), alarmNoticeBuilder.toString());
-                        shortMessage = TaskContext.warning(log.upload()).shortMessage(Arrays.asList(log.getTaskId(), log.getSwimlaneId()));
-                        LOGGER.info("结束发送日志通知.....");
+                        LOGGER.info("开始上传错误日志.....");
+                        log.upload();
+                        LOGGER.info("结束上传错误日志.....");
                     } catch (Throwable e) {
-                        LOGGER.warn("停止告警发送失败", e);
-                    } finally {
-                        try {
-                            ClusterProviderProxy.INSTANCE.broadcastEvent(new TaskStoppedByErrorCommand(taskId, dataConsumer.getSwimlaneId(), shortMessage));
-                        } catch (Throwable e) {
-                            LOGGER.error("在集群策略存储引擎标识任务因错误失败出错:{}", e.getMessage());
-                        }
+                        LOGGER.error("上传错误日志失败", e);
                     }
                 }
             }.start();
