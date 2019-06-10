@@ -26,7 +26,6 @@ import cn.vbill.middleware.porter.common.task.exception.DataLoaderBuildException
 import cn.vbill.middleware.porter.common.task.exception.TaskLockException;
 import cn.vbill.middleware.porter.common.task.exception.WorkResourceAcquireException;
 import cn.vbill.middleware.porter.common.util.DefaultNamedThreadFactory;
-import cn.vbill.middleware.porter.common.util.db.meta.TableSchema;
 import cn.vbill.middleware.porter.common.warning.entity.WarningOwner;
 import cn.vbill.middleware.porter.core.NodeContext;
 import cn.vbill.middleware.porter.core.task.consumer.DataConsumer;

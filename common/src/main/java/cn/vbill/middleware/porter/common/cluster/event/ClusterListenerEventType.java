@@ -51,5 +51,7 @@ public enum ClusterListenerEventType {
     /**任务异常停止**/
     TaskStoppedByError,
     TaskPositionQuery,
-    TaskPositionUpload;
+    TaskPositionUpload,
+    /**任务Owner信息查询**/
+    TaskOwnerQuery;
 }

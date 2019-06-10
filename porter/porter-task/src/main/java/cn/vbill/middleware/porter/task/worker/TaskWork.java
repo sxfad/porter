@@ -17,14 +17,10 @@
 
 package cn.vbill.middleware.porter.task.worker;
 
+import cn.vbill.middleware.porter.common.cluster.event.command.*;
+import cn.vbill.middleware.porter.common.warning.entity.WarningOwner;
 import cn.vbill.middleware.porter.common.warning.entity.WarningReceiver;
 import cn.vbill.middleware.porter.common.cluster.ClusterProviderProxy;
-import cn.vbill.middleware.porter.common.cluster.event.command.StatisticUploadCommand;
-import cn.vbill.middleware.porter.common.cluster.event.command.TaskPositionQueryCommand;
-import cn.vbill.middleware.porter.common.cluster.event.command.TaskStatCommand;
-import cn.vbill.middleware.porter.common.cluster.event.command.TaskStatQueryCommand;
-import cn.vbill.middleware.porter.common.cluster.event.command.TaskStopCommand;
-import cn.vbill.middleware.porter.common.cluster.event.command.TaskStoppedByErrorCommand;
 import cn.vbill.middleware.porter.common.statistics.DCallback;
 import cn.vbill.middleware.porter.common.statistics.DObject;
 import cn.vbill.middleware.porter.common.task.statistics.DTaskStat;
@@ -53,9 +49,7 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 
 /**
@@ -88,12 +82,6 @@ public class TaskWork extends Thread {
     private final TaskWorker worker;
     private final long positionCheckInterval;
     private final long alarmPositionCount;
-
-    /**
-     * 线程运行过程中的信号
-     */
-    private volatile SignalType signal;
-    private final ReentrantReadWriteLock signalLock = new ReentrantReadWriteLock();
 
     public TaskWork(DataConsumer dataConsumer, DataLoader dataLoader, String taskId, List<WarningReceiver> receivers,
                     TaskWorker worker, long positionCheckInterval, long alarmPositionCount) {
@@ -176,6 +164,15 @@ public class TaskWork extends Thread {
                     dataConsumer.initializePosition(taskId, dataConsumer.getSwimlaneId(), position);
                 }
             }));
+
+            //查询任务关联告警人信息
+            ClusterProviderProxy.INSTANCE.broadcastEvent(new TaskOwnerQueryCommand(taskId, new DCallback() {
+                @Override
+                public void callback(String owner) {
+                    TaskContext.trace(JSONObject.parseObject(owner, WarningOwner.class));
+                }
+            }));
+
             while (true) {
                 String signalType = null;
                 try {

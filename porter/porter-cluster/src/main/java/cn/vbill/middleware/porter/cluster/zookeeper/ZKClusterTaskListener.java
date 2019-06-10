@@ -26,7 +26,6 @@ import cn.vbill.middleware.porter.common.cluster.event.ClusterListenerEventType;
 import cn.vbill.middleware.porter.common.cluster.event.executor.*;
 import cn.vbill.middleware.porter.common.cluster.event.command.*;
 import cn.vbill.middleware.porter.common.statistics.DObject;
-import cn.vbill.middleware.porter.common.task.dic.TaskStatusType;
 import cn.vbill.middleware.porter.common.task.event.*;
 import cn.vbill.middleware.porter.common.task.statistics.DTaskLock;
 import cn.vbill.middleware.porter.common.task.statistics.DTaskStat;
@@ -64,6 +63,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
     private final List<TaskEventListener> taskListener;
 
     private static final String LOCK_PATH = "/lock/";
+    private static final String OWNER_PATH = "/owner";
 
     private CommonCodeBlock blockProxy;
 
@@ -94,9 +94,6 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
             NodeContext.INSTANCE.removeTaskError(config.getTaskId());
             if (event.isOnline() || event.isDataChanged()) { //任务创建 、任务修改
                 triggerTaskEvent(new TaskConfigEvent(config));
-                if (config.getStatus() == TaskStatusType.WORKING) {
-                    triggerTaskEvent(new TaskOwnerEvent(JSONObject.parseObject(client.getData(listenPath() + "/" + config.getTaskId() + "/owner").getData(), WarningOwner.class), config.getTaskId()));
-                }
             }
         }
 
@@ -118,7 +115,7 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
 
         //任务接收人变更
         if (TASK_OWNER_PATTERN.matcher(event.getId()).matches() && (event.isDataChanged() || event.isOnline())) {
-            String taskId = event.getId().replace(listenPath() + "/", "").replace("/owner", "");
+            String taskId = event.getId().replace(listenPath() + "/", "").replace(OWNER_PATH, "");
             triggerTaskEvent(new TaskOwnerEvent(JSONObject.parseObject(event.getData(), WarningOwner.class), taskId));
         }
     }
@@ -289,6 +286,16 @@ public class ZKClusterTaskListener extends ZookeeperClusterListener implements T
                 }
             }
         }, client));
+
+        //任务Owner查询
+        executors.add(new ClusterListenerEventExecutor(this.getClass(), ClusterListenerEventType.TaskOwnerQuery).bind((clusterCommand, client) -> {
+            TaskOwnerQueryCommand command = (TaskOwnerQueryCommand) clusterCommand;
+            String ownerPath = listenPath() + "/" + command.getTaskId() + OWNER_PATH;
+            ClusterClient.TreeNode  node = client.getData(ownerPath);
+            if (null != node) command.getCallback().callback(node.getData());
+        }, client));
+
+
         return executors;
     }
 }

@@ -78,19 +78,27 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener {
                 }
                 if (zkEvent.isOffline() || (lastHeartbeatDiffOnMinutes > 5 && zkEvent.isOnline())) { // 节点下线
                     // do something 服务停止，离线通知
-                    int i = nodesService.updateState(node, heartBeatTime, -1);
-                    logger.info("节点[{}]下线", node.getNodeId());
-                    if (i == 0) {
-                        logger.warn("节点[{}]尚未完善管理后台节点信息，请及时配置！", node.getNodeId());
-                        nodesService.insertState(node, heartBeatTime, -1);
-                    }
+                    nodesService.updateState(node, heartBeatTime, -1);
+
+                    /**
+                     * 如果更新失败，不再插入节点信息
+                     * 2019-06-10 11:04  张科伟
+                     * logger.info("节点[{}]下线", node.getNodeId());
+                     * if (i == 0) {
+                     * logger.warn("节点[{}]尚未完善管理后台节点信息，请及时配置！", node.getNodeId());
+                     *     nodesService.insertState(node, heartBeatTime, -1);
+                     * }
+                     */
+
+
+
                 }
             }
 
             // 节点状态更新
             if (NODE_STAT_PATTERN.matcher(zkEvent.getId()).matches()) {
                 DNode node = getDNode(zkEvent.getId());
-                //一分钟内的心跳数据
+                //五分钟内的心跳数据
                 if ((new Date().getTime() - node.getHeartbeat().getTime()) / 1000 / 60 <= 5) {
                     String heartBeatTime = DateFormatUtils.formatDate(DateFormatUtils.PATTERN_DEFAULT, node.getHeartbeat());
 
@@ -102,8 +110,7 @@ public class ZKClusterNodeListener extends ZookeeperClusterListener {
                         logger.warn("节点[{}]尚未完善管理后台节点信息，请及时配置！", node.getNodeId());
                         nodesService.insertState(node, heartBeatTime, 1);
                     }
-                    MrNodesScheduleService mrNodesScheduleService = ApplicationContextUtil
-                            .getBean(MrNodesScheduleServiceImpl.class);
+                    MrNodesScheduleService mrNodesScheduleService = ApplicationContextUtil.getBean(MrNodesScheduleServiceImpl.class);
                     mrNodesScheduleService.dealDNode(node);
                 }
             }

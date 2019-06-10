@@ -24,7 +24,6 @@ import cn.vbill.middleware.porter.core.task.TaskContext;
 import cn.vbill.middleware.porter.core.task.consumer.DataConsumer;
 import cn.vbill.middleware.porter.core.task.loader.DataLoader;
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.apache.commons.lang3.tuple.Triple;
