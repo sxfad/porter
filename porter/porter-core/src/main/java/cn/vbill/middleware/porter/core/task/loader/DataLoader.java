@@ -147,7 +147,7 @@ public interface DataLoader {
      */
     default void sort(ETLBucket bucket) {
         Map<List<String>, List<ETLRow>> parallel = new HashMap<>();
-        bucket.getRows().forEach(r -> parallel.getOrDefault(Arrays.asList(r.getFinalSchema(), r.getFinalTable()), new ArrayList<>()).add(r));
+        bucket.getRows().forEach(r -> parallel.computeIfAbsent(Arrays.asList(r.getFinalSchema(), r.getFinalTable()), key -> new ArrayList<>()).add(r));
         bucket.getParallelRows().addAll(parallel.values());
     }
 

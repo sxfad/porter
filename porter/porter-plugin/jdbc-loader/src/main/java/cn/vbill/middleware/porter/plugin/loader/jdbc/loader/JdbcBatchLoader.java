@@ -74,42 +74,30 @@ public class JdbcBatchLoader extends BaseJdbcLoader {
         }
         return new ImmutablePair(Boolean.TRUE, affectRow);
     }
-
     @Override
     public void sort(ETLBucket bucket) {
-        sortETLRows(bucket, 0);
-    }
-
-    /**
-     * sortETLRows
-     * @date 2018/8/9 下午2:11
-     * @param: [bucket, from]
-     * @return: void
-     */
-    private void sortETLRows(ETLBucket bucket, int from) {
-        List<ETLRow> groupOne = new ArrayList<>();
-        int size = bucket.getRows().size();
-        while (from < size) {
-            ETLRow row = bucket.getRows().get(from);
+        int i = 0;
+        while (i < bucket.getRows().size()) {
+            System.out.println(i);
+            List<ETLRow> groupOne = new ArrayList<>();
+            ETLRow row = bucket.getRows().get(i);
             groupOne.add(row);
-            from++;
-            ETLRow nextRow = null;
-            if (from < size) {
-                nextRow = bucket.getRows().get(from);
+            i++;
+            int j = i;
+            while (j < bucket.getRows().size()) {
+                ETLRow nextRow = bucket.getRows().get(j);
+                //下个操作类型和该类型相同
+                if (null != nextRow && nextRow.getFinalOpType() == row.getFinalOpType() && nextRow.getFinalSchema().equals(row.getFinalSchema())
+                        && nextRow.getFinalTable().equals(row.getFinalTable())) {
+                    groupOne.add(nextRow);
+                    System.out.println(i + "-" + j);
+                    j++;
+                    i=j;
+                } else {
+                    break;
+                }
             }
-            //下个操作类型和该类型相同
-            if (null != nextRow && nextRow.getFinalOpType() == row.getFinalOpType() && nextRow.getFinalSchema().equals(row.getFinalSchema())
-                    && nextRow.getFinalTable().equals(row.getFinalTable())) {
-                continue;
-            } else {
-                break;
-            }
-        }
-        if (!groupOne.isEmpty()) {
             bucket.getParallelRows().add(groupOne);
-        }
-        if (from < size) {
-            sortETLRows(bucket, from);
         }
     }
 }
