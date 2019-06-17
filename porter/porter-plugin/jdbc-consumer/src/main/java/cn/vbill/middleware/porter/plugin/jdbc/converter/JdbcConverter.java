@@ -56,6 +56,7 @@ public class JdbcConverter implements EventConverter {
         event.setCurrentTs(row.getCurrentTime());
         event.setOpTs(row.getCurrentTime());
         event.setOpType(expectAction);
+        event.setFullColumnValue(true);
         row.getColumns().forEach(c -> {
             if (c.isKey()) event.getPrimaryKeys().add(c.getColumnName());
             event.getAfter().put(c.getColumnName(), c.getValue());
@@ -69,8 +70,7 @@ public class JdbcConverter implements EventConverter {
         Position position = (Position) params[0];
         List<JdbcClient.RowInfo> rows  = (List<JdbcClient.RowInfo>) params[1];
         for (JdbcClient.RowInfo row : rows) {
-            events.add(convertEvent(position, row, MessageAction.INSERT));
-            events.add(convertEvent(position, row, MessageAction.UPDATE));
+            events.add(convertEvent(position, row, MessageAction.REPLACE));
         }
         return events;
     }

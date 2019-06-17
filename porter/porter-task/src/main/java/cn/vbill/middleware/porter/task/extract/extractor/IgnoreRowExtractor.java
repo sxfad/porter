@@ -66,7 +66,7 @@ public class IgnoreRowExtractor implements Extractor {
 
             //当前仅支持插入、更新、删除、截断表
             if (row.getFinalOpType() == MessageAction.INSERT || row.getFinalOpType() == MessageAction.UPDATE
-                    || row.getFinalOpType() == MessageAction.DELETE || row.getFinalOpType() == MessageAction.TRUNCATE) {
+                    || row.getFinalOpType() == MessageAction.DELETE || row.getFinalOpType() == MessageAction.TRUNCATE || row.getFinalOpType() == MessageAction.REPLACE) {
                 //插入、删除、更新字段为空
                 if ((null == row.getColumns() || row.getColumns().isEmpty()) && row.getFinalOpType() != MessageAction.TRUNCATE) {
                     LOGGER.debug("removing row:{}", JSON.toJSONString(row));

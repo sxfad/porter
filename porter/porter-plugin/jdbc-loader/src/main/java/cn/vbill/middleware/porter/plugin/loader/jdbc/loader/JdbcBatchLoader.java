@@ -76,28 +76,6 @@ public class JdbcBatchLoader extends BaseJdbcLoader {
     }
     @Override
     public void sort(ETLBucket bucket) {
-        int i = 0;
-        while (i < bucket.getRows().size()) {
-            System.out.println(i);
-            List<ETLRow> groupOne = new ArrayList<>();
-            ETLRow row = bucket.getRows().get(i);
-            groupOne.add(row);
-            i++;
-            int j = i;
-            while (j < bucket.getRows().size()) {
-                ETLRow nextRow = bucket.getRows().get(j);
-                //下个操作类型和该类型相同
-                if (null != nextRow && nextRow.getFinalOpType() == row.getFinalOpType() && nextRow.getFinalSchema().equals(row.getFinalSchema())
-                        && nextRow.getFinalTable().equals(row.getFinalTable())) {
-                    groupOne.add(nextRow);
-                    System.out.println(i + "-" + j);
-                    j++;
-                    i=j;
-                } else {
-                    break;
-                }
-            }
-            bucket.getParallelRows().add(groupOne);
-        }
+        bucket.getParallelRows().addAll(batchGroup(bucket.getRows()));
     }
 }

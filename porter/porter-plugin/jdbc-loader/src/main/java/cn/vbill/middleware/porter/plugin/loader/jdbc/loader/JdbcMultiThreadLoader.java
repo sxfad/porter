@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 /**
  * jdbc多线程并发Load
@@ -92,34 +93,49 @@ public class JdbcMultiThreadLoader extends BaseJdbcLoader {
 
         //表内数据并行
         tables.forEach((k, v) -> {
-            groupRows(bucket, v);
+            int span = 500;
+            for (int i = 0; i < v.size(); i += span) {
+                int endIndex = i + span;
+                endIndex = endIndex >= v.size() ? v.size() : endIndex;
+                groupRows(bucket, v.subList(i, endIndex));
+            }
         });
     }
+    private static void groupRows(ETLBucket bucket, List<ETLRow> rowList) {
+        //批量操作逻辑判断
+        List<List<ETLRow>> batchGroup = batchGroup(rowList);
+        //各分组之间是否可并行执行判断
+        int groupSize = batchGroup.size();
+        if (groupSize > 1) {
+            List<ETLRow> unableParallel = new ArrayList<>();
+            List<String> allKeys = new ArrayList<>();
+            batchGroup.forEach(rs -> allKeys.add(StringUtils.join(rowKeyList(rs), ",")));
+            for (int i = 0; i < groupSize; i++) {
+                List<String> otherkeys = new ArrayList<>();
+                otherkeys.addAll(allKeys.subList(0, i));
+                if (i + 1 < groupSize) otherkeys.addAll(allKeys.subList(i + 1, groupSize));
+                String flatOtherKeys = new StringBuilder(",").append(StringUtils.join(otherkeys, ",")).append(",").toString();
+                String[] currentKeys = allKeys.get(i).split(",");
 
-    private void groupRows(ETLBucket bucket, List<ETLRow> rows) {
-        int rowSize = rows.size();
-        //rows主键集合
-        List<String>  nextKeys = new ArrayList<>();
-        rows.forEach(rs -> nextKeys.add(StringUtils.join(rowKeyList(rs), ",")));
-        int i = 0;
-        while (i < rowSize) {
-            int j = i + 1;
-            while (j <= rowSize) {
-                List<ETLRow> currentRow = rows.subList(i, j);
-                String nextKeysMatch = j >= rowSize ? "" : "," + StringUtils.join(nextKeys.subList(j, rowSize), ",") + ",";
-                if (nextKeys.isEmpty() || currentRow.stream().parallel().filter(r -> rowKeyList(r).stream().parallel().filter(k -> nextKeysMatch.contains("," + k + ",")).count() > 0).count() < 1) {
-                    bucket.getParallelRows().add(currentRow);
-                    i = j;
-                    break;
+                if (Arrays.stream(currentKeys).filter(s -> flatOtherKeys.contains("," + s + ",")).count() < 1) {
+                    bucket.getParallelRows().add(batchGroup.get(i));
                 } else {
-                    j++;
-                    continue;
+                    unableParallel.addAll(batchGroup.get(i));
                 }
             }
+            if (!unableParallel.isEmpty()) bucket.getParallelRows().add(unableParallel);
+        } else if (groupSize == 1) {
+            bucket.getParallelRows().add(batchGroup.get(0));
         }
     }
 
-    private List<String> rowKeyList(ETLRow row) {
+    private static List<String> rowKeyList(List<ETLRow> rows) {
+        Map<String, String> keys = new HashMap<>();
+        rows.forEach(k -> rowKeyList(k).forEach(e -> keys.put(e, "1")));
+        return keys.keySet().stream().collect(Collectors.toList());
+    }
+
+    private static List<String> rowKeyList(ETLRow row) {
         List<String> keys = new ArrayList<>(2);
         keys.add(row.getColumns().stream().filter(c -> c.isKey()).sorted(Comparator.comparing(ETLColumn::getFinalName)).
                 map(c -> c.getFinalName() + "_" + (null != c.getFinalValue() ? c.getFinalValue() : "")).reduce((p, n) -> p + "@" + n).get());

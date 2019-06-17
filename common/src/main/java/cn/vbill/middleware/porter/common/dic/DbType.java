@@ -45,7 +45,22 @@ public enum DbType {
     /**
      * ORACLE
      */
-    ORACLE("ORACLE", "ORACLE", "oracle.jdbc.driver.OracleDriver");
+    ORACLE("ORACLE", "ORACLE", "oracle.jdbc.driver.OracleDriver"),
+
+    /**
+     * DB2
+     */
+    DB2("DB2", "DB2", "com.ibm.db2.jdbc.app.DB2Driver"),
+
+    /**
+     * SQLSERVER
+     */
+    SQLSERVER("SQLSERVER", "SQLSERVER", "com.microsoft.jdbc.sqlserver.SQLServerDriver"),
+
+    /**
+     * SQLSERVER
+     */
+    POSTGRESQL("POSTGRESQL", "POSTGRESQL", "org.postgresql.Driver");
 
     /**
      * LINKMAP
@@ -64,4 +79,24 @@ public enum DbType {
     @Getter
     private final String driverName;
 
+
+    public static DbType match(DbType dbType, String url) {
+        if (null != dbType) return dbType;
+        if (url.startsWith("jdbc:oracle:thin")) {
+            return ORACLE;
+        }
+        if (url.startsWith("jdbc:db2")) {
+            return DB2;
+        }
+        if (url.startsWith("jdbc:microsoft:sqlserver")) {
+            return SQLSERVER;
+        }
+        if (url.startsWith("jdbc:mysql")) {
+            return MYSQL;
+        }
+        if (url.startsWith("jdbc:postgresql")) {
+            return POSTGRESQL;
+        }
+        return null;
+    }
 }

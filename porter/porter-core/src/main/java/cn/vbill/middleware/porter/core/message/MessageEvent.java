@@ -56,4 +56,5 @@ public class MessageEvent {
     //修改之前的值
     @Getter @Setter private Map<String, Object> before = new HashMap<>();
     @Getter @Setter private List<String> primaryKeys = new ArrayList<>();
+    @Getter @Setter private boolean fullColumnValue = false;
 }
