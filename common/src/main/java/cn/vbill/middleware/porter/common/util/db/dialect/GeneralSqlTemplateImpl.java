@@ -15,14 +15,16 @@
  * </p>
  */
 
-package cn.vbill.middleware.porter.common.util.db;
+package cn.vbill.middleware.porter.common.util.db.dialect;
+
+import cn.vbill.middleware.porter.common.util.db.SqlTemplate;
 
 /**
  * 
  * @author guohongjian[guo_hj@suixingpay.com]
  *
  */
-public class SqlTemplateImpl implements SqlTemplate {
+public class GeneralSqlTemplateImpl implements SqlTemplate {
 
     private static final String DOT = ".";
 

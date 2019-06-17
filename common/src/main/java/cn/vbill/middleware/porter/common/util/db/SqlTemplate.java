@@ -85,4 +85,8 @@ public interface SqlTemplate {
      * @return
      */
     String getDataChangedCountSql(String schemaName, String tableName, String autoUpdateColumn);
+
+    default String getReplaceSql(String schemaName, String tableName, String[] allColumns) {
+        throw new UnsupportedOperationException("不支持的方法调用");
+    }
 }

@@ -57,41 +57,16 @@ public enum MessageAction {
     TRUNCATE(5, "TRUNCATE"),
 
     /**
+     * replace
+     */
+    REPLACE(6, "REPLACE"),
+
+    /**
      * unknown
      */
     UNKNOWN(-1, "UNKNOWN");
     private int index;
     private String value;
-
-    /**
-     * insert index
-     */
-    public static final int INSERT_INDEX = 0;
-
-    /**
-     * update index
-     */
-    public static final int UPDATE_INDEX = 1;
-
-    /**
-     * delete index
-     */
-    public static final int DELETE_INDEX = 2;
-
-    /**
-     * begin index
-     */
-    public static final int BEGIN_INDEX = 3;
-
-    /**
-     * end index
-     */
-    public static final int END_INDEX = 4;
-
-    /**
-     * truncate index
-     */
-    public static final int TRUNCATE_INDEX = 5;
     MessageAction(int index, String value) {
         this.index =  index;
         this.value = value;

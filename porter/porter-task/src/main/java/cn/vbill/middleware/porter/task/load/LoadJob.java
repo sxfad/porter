@@ -150,7 +150,7 @@ public class LoadJob extends AbstractStageJob {
                         }
 
                         NodeContext.INSTANCE.flushConsumeProcess(
-                                work.getTaskId() + "-" + work.getDataConsumer().getSwimlaneId(),
+                                work.getTaskId(), work.getDataConsumer().getSwimlaneId(),
                                 newestPositionDiffer + "");
                     }
                     currentLoadStartTime = null;
@@ -197,34 +197,40 @@ public class LoadJob extends AbstractStageJob {
      * @param object
      */
     private void updateStat(DSubmitStatObject object) {
-        int affect = object.getAffect();
-        boolean hit = affect > 0 || affect == -2;
+        boolean hit = object.isAffect();
         MessageAction action = object.getType();
         //虽然每个状态值的变更都有stat对象锁，但在最外层加对象锁避免了多次请求的问题（锁可重入），同时保证状态各字段变更一致性
         DTaskStat stat = work.getDTaskStat(object.getSchema(), object.getTable());
-        switch (action.getIndex()) {
-            case MessageAction.DELETE_INDEX:
+        switch (action) {
+            case DELETE:
                 if (hit) {
                     stat.incrementDeleteRow();
                 } else {
                     stat.incrementErrorDeleteRow();
                 }
                 break;
-            case MessageAction.UPDATE_INDEX:
+            case UPDATE:
                 if (hit) {
                     stat.incrementUpdateRow();
                 } else {
                     stat.incrementErrorUpdateRow();
                 }
                 break;
-            case MessageAction.INSERT_INDEX:
+            case INSERT:
                 if (hit) {
                     stat.incrementInsertRow();
                 } else {
                     stat.incrementErrorInsertRow();
                 }
                 break;
-            case MessageAction.TRUNCATE_INDEX:
+            case REPLACE:
+                if (hit) {
+                    stat.incrementInsertRow();
+                } else {
+                    stat.incrementErrorInsertRow();
+                }
+                break;
+            case TRUNCATE:
                 if (hit) {
                     stat.incrementDeleteRow();
                 } else {

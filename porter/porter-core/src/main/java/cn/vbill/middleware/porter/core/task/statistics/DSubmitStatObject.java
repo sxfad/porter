@@ -19,7 +19,6 @@ package cn.vbill.middleware.porter.core.task.statistics;
 
 import cn.vbill.middleware.porter.core.message.MessageAction;
 import cn.vbill.middleware.porter.common.task.consumer.Position;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -33,12 +32,24 @@ import java.util.Date;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年03月13日 14:53
  */
 
-@AllArgsConstructor
 public class DSubmitStatObject {
     @Setter @Getter private String schema;
     @Setter @Getter private String table;
     @Setter @Getter private MessageAction type;
-    @Setter @Getter private int affect;
+    @Setter @Getter private boolean affect;
     @Setter @Getter private Position position;
     @Setter @Getter private Date opTime;
+
+
+    public DSubmitStatObject(String schema, String table, MessageAction type, boolean affect, Position position, Date opTime) {
+        this.schema = schema;
+        this.table = table;
+        this.type = type;
+        this.affect = affect;
+        this.position = position;
+        this.opTime = opTime;
+    }
+    public DSubmitStatObject(String schema, String table, MessageAction type, int affect, Position position, Date opTime) {
+        this(schema, table, type, affect > 0 || affect == -2, position, opTime);
+    }
 }

@@ -359,8 +359,12 @@ public enum NodeContext {
      * @param: [key, position]
      * @return: void
      */
-    public void flushConsumeProcess(String key, String position) {
-        consumeProcess.put(key, position);
+    public void flushConsumeProcess(String taskId, String swimlaneId, String position) {
+        consumeProcess.put(taskId + "_" +swimlaneId, position);
+    }
+
+    public void clearConsumeProcess(String taskId, String swimlaneId) {
+        consumeProcess.remove(taskId + "_" +swimlaneId);
     }
 
     /**

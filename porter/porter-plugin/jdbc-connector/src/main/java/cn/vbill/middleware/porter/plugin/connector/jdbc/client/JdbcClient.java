@@ -21,7 +21,7 @@ import cn.vbill.middleware.porter.common.client.AbstractClient;
 import cn.vbill.middleware.porter.common.task.consumer.MetaQueryClient;
 import cn.vbill.middleware.porter.common.util.db.DdlUtils;
 import cn.vbill.middleware.porter.common.util.db.SqlTemplate;
-import cn.vbill.middleware.porter.common.util.db.SqlTemplateImpl;
+import cn.vbill.middleware.porter.common.util.db.SqlTemplateFactory;
 import cn.vbill.middleware.porter.common.util.db.meta.TableColumn;
 import cn.vbill.middleware.porter.common.util.db.meta.TableSchema;
 import cn.vbill.middleware.porter.common.dic.DbType;
@@ -64,14 +64,14 @@ public abstract class JdbcClient extends AbstractClient<JdbcConfig> implements M
     @Getter
     private final JdbcWapper jdbcProxy;
     @Getter
-    private SqlTemplate sqlTemplate;
+    private volatile SqlTemplate sqlTemplate;
     private final boolean makePrimaryKeyWhenNo;
     private final int connRetries;
     private final Map<List<String>, TableSchema> tableMap = Collections.synchronizedMap(new WeakHashMap<>());
     public JdbcClient(JdbcConfig config) {
         super(config);
         jdbcProxy = new JdbcWapper();
-        sqlTemplate = new SqlTemplateImpl();
+        sqlTemplate = SqlTemplateFactory.newSqlTemplate(DbType.match(config.getDbType(), config.getUrl()));
         this.makePrimaryKeyWhenNo = config.isMakePrimaryKeyWhenNo();
         connRetries = config.getRetries();
     }

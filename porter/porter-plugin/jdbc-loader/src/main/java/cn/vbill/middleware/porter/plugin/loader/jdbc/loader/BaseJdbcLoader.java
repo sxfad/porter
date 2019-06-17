@@ -140,6 +140,7 @@ public abstract class BaseJdbcLoader extends AbstractDataLoader {
         return affect;
     }
 
+
     /**
      * 以batch方式执行sql
      * @param rows
@@ -159,13 +160,27 @@ public abstract class BaseJdbcLoader extends AbstractDataLoader {
 
         orderBatchRow(reGroupList, subList, 0);
 
+
         int[] allAffects = new int[]{};
         for (Pair<String, List<Object[]>> batch : reGroupList) {
             int[] subResult = getLoadClient().batchUpdate(action.getValue(), batch.getLeft(), batch.getRight());
             allAffects = ArrayUtils.addAll(allAffects, subResult);
         }
+
+
+        //批量更新出错的sql单行执行
+        for (int j = 0; j < allAffects.length; j++) {
+            //oracle批量更新时影响行数是-2
+            if (j < 1 && j != -2 ) {
+                allAffects[j] = execSql(rows.get(j));
+            }
+        }
+
         return allAffects;
     }
+
+
+
 
     private void orderBatchRow(List<Pair<String, List<Object[]>>> reGroupList, List<Pair<String, Object[]>> sqlList, int from) {
         List<Object[]> currentGroup = new ArrayList<>();
@@ -192,5 +207,32 @@ public abstract class BaseJdbcLoader extends AbstractDataLoader {
     @Override
     public String getDefaultClientType() {
         return JdbcConnectorConst.LOAD_SOURCE_TYPE_NAME.getCode();
+    }
+
+
+    public static List<List<ETLRow>> batchGroup(List<ETLRow> rows) {
+        List<List<ETLRow>> group = new ArrayList<>();
+        int i = 0;
+        while (i < rows.size()) {
+            List<ETLRow> groupOne = new ArrayList<>();
+            ETLRow row = rows.get(i);
+            groupOne.add(row);
+            i++;
+            int j = i;
+            while (j < rows.size()) {
+                ETLRow nextRow = rows.get(j);
+                //下个操作类型和该类型相同
+                if (null != nextRow && nextRow.getFinalOpType() == row.getFinalOpType() && nextRow.getFinalSchema().equals(row.getFinalSchema())
+                        && nextRow.getFinalTable().equals(row.getFinalTable())) {
+                    groupOne.add(nextRow);
+                    j++;
+                    i = j;
+                } else {
+                    break;
+                }
+            }
+            group.add(groupOne);
+        }
+        return group;
     }
 }

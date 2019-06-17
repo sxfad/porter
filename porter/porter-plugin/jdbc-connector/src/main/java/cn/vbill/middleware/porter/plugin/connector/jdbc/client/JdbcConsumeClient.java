@@ -32,7 +32,9 @@ import lombok.Setter;
 import org.apache.commons.beanutils.ConvertUtilsBean;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,40 +102,54 @@ public class JdbcConsumeClient  extends JdbcClient implements ConsumeClient {
         List<F> msgs = new ArrayList<>();
         if (isStarted()) {
             List<RowInfo> naiveRows = new ArrayList<>();
-            List<Pair<JdbcPosition, Future<List<RowInfo>>>> futures = new ArrayList<>(positions.size());
+            List<Pair<JdbcPosition, Future<Pair<List<RowInfo>, Pair<Long, Long>>>>> futures = new ArrayList<>(positions.size());
             //并行查询
             for (JdbcPosition p : positions) {
-                Future<List<RowInfo>> future = fetchPool.submit(() -> {
-                    Pair<String, List<Object>> sql = p.buildSql(fetchMeta.get(p.table));
-                    LOGGER.debug("sql:{}, params:{}", sql.getLeft(), StringUtils.join(sql.getValue(), ","));
-                    return multiValueQuery(sql.getLeft(), sql.getValue().toArray());
+                Future<Pair<List<RowInfo>, Pair<Long, Long>>> future = fetchPool.submit(() -> {
+                    Triple<String, List<Object>, Pair<Long, Long>> sql = p.buildSql(fetchMeta.get(p.table));
+                    LOGGER.debug("sql:{}, params:{}", sql.getLeft(), StringUtils.join(sql.getMiddle(), ","));
+                    return new ImmutablePair<>(multiValueQuery(sql.getLeft(), sql.getMiddle().toArray()), sql.getRight());
                 });
                 futures.add(new ImmutablePair<>(p, future));
             }
             //更新position
-            for (Pair<JdbcPosition, Future<List<RowInfo>>> future : futures) {
+            for (Pair<JdbcPosition, Future<Pair<List<RowInfo>, Pair<Long, Long>>>> future : futures) {
                 try {
-                    List<RowInfo> results = future.getValue().get();
+                    Pair<List<RowInfo>, Pair<Long, Long>> resultPair = future.getValue().get();
+                    List<RowInfo> results = resultPair.getLeft();
+                    Pair<Long, Long> queryValueCeiling = resultPair.getRight();
                     JdbcPosition position = future.getKey();
                     if (!results.isEmpty()) {
                         //汇总行
                         naiveRows.addAll(results);
 
                         //更新position
-
                         RowInfo row = results.get(results.size() - 1);
-                        row.getColumns().forEach(c -> {
+                        Long incrementColumnValue = null;
+                        Long timestampColumnValue = null;
+                        for (ColumnInfo c : row.getColumns()) {
                             if (c.getColumnName().equalsIgnoreCase(position.incrementColumn)) {
-                                position.changeIncrementColumnValue((Long) c.getValue());
+                                incrementColumnValue = (Long) c.getValue();
                             }
                             if (c.getColumnName().equalsIgnoreCase(position.timestampColumn)) {
                                 try {
-                                    position.changeTimestampValue((Long) c.getValue());
+                                    timestampColumnValue = (Long) c.getValue();
                                 } catch (Throwable e) {
-                                    position.changeTimestampValue((Long) TIME_TO_TIMESTAMP.convert(c.getValue(), Long.class));
+                                    timestampColumnValue = (Long) TIME_TO_TIMESTAMP.convert(c.getValue(), Long.class);
                                 }
                             }
-                        });
+                        }
+
+                        //两者条件都存在
+                        if (null != queryValueCeiling.getLeft() && null != queryValueCeiling.getRight()) {
+                            incrementColumnValue = null != incrementColumnValue && incrementColumnValue > queryValueCeiling.getLeft()
+                                    ? queryValueCeiling.getLeft() : incrementColumnValue;
+                            timestampColumnValue = null != timestampColumnValue && timestampColumnValue > queryValueCeiling.getRight()
+                                    ? queryValueCeiling.getRight() : timestampColumnValue;
+                        }
+
+                        position.changeIncrementColumnValue(incrementColumnValue);
+                        position.changeTimestampValue(timestampColumnValue);
                         position.clearQueryTimes();
                     } else {
                         position.increaseQueryTimes();
@@ -236,8 +252,10 @@ public class JdbcConsumeClient  extends JdbcClient implements ConsumeClient {
         @Getter @Setter
         private Long timestampValue;
 
+
         @JSONField(serialize = false)
         private long queryTimes = 1;
+
         public JdbcPosition(String table, String incrementColumn, Long incrementColumnValue, String timestampColumn, Long timestampValue) {
             this.table = table.toUpperCase();
             this.incrementColumn = null != incrementColumn ? incrementColumn.toUpperCase() : "";
@@ -283,7 +301,9 @@ public class JdbcConsumeClient  extends JdbcClient implements ConsumeClient {
             return StringUtils.isBlank(table) || (StringUtils.isBlank(incrementColumn) && StringUtils.isBlank(timestampColumn));
         }
 
-        private Pair<String, List<Object>> buildSql(JdbcConsumerConfig.TableFetchConfig meta) {
+        private Triple<String, List<Object>, Pair<Long, Long>> buildSql(JdbcConsumerConfig.TableFetchConfig meta) {
+            Long nextIncrementColumnValue = null;
+            Long nextTimestampValue = null;
             List<Object> args = new ArrayList<>();
             StringBuilder sb = new StringBuilder("select distinct * from ");
             sb.append(table);
@@ -295,31 +315,34 @@ public class JdbcConsumeClient  extends JdbcClient implements ConsumeClient {
                 sb.append(timestampColumnCondition ? " (" : "");
                 sb.append(" ").append(incrementColumn).append(" > ? and ").append(incrementColumn).append("  <= ?");
                 args.add(incrementColumnValue);
-                args.add(incrementColumnValue + meta.getIncrementColumnSpan() * queryTimes);
+                nextIncrementColumnValue = incrementColumnValue + meta.getIncrementColumnSpan() * queryTimes;
+                args.add(nextIncrementColumnValue);
                 if (timestampColumnCondition) sb.append(" )");
             }
 
             if (timestampColumnCondition) {
                 sb.append(incrementColumnCondition ? " or ( " : " ");
                 String columnCast = StringUtils.isNotBlank(meta.getTimestampColumnCast()) ? meta.getTimestampColumnCast() : timestampColumn;
-                timestampValue = null == timestampValue ? -1 : timestampValue;
+                timestampValue = null == timestampValue || timestampValue < 0 ? System.currentTimeMillis() - 1000 * 60 * 5 : timestampValue;
                 sb.append(columnCast).append(" > ? and ").append(columnCast).append(" <= ?");
                 args.add(timestampValue);
-                args.add(timestampValue + meta.getTimestampSpan() * queryTimes);
+                nextTimestampValue = timestampValue + meta.getTimestampSpan() * queryTimes;
+                args.add(nextTimestampValue);
                 if (incrementColumnCondition)  sb.append(" )");
             }
 
             //order by
             sb.append(" order by ");
-            if (StringUtils.isNotBlank(timestampColumn)) {
-                sb.append(timestampColumn);
-            }
             if (StringUtils.isNotBlank(incrementColumn)) {
-                if (StringUtils.isNotBlank(timestampColumn)) sb.append(",");
                 sb.append(incrementColumn);
             }
+
+            if (StringUtils.isNotBlank(timestampColumn)) {
+                if (StringUtils.isNotBlank(incrementColumn)) sb.append(",");
+                sb.append(timestampColumn);
+            }
             sb.append(" asc");
-            return new ImmutablePair<>(sb.toString(), args);
+            return new ImmutableTriple<>(sb.toString(), args, new ImmutablePair<>(nextIncrementColumnValue, nextTimestampValue));
         }
 
 

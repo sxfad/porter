@@ -150,6 +150,7 @@ public class ETLBucket {
                 columns.add(column);
             }
             ETLRow row = new ETLRow(event.getConsumedTime(), event.getConsumerTime(), event.getSchema(), event.getTable(), event.getOpType(), columns, event.getOpTs(), event.getRowPosition());
+            row.setFullColumnValue(event.isFullColumnValue());
             rows.add(row.toUpperCase());
             LOGGER.debug(JSON.toJSONString(row));
         }

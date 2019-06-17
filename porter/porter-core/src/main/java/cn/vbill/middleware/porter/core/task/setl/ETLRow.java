@@ -73,9 +73,18 @@ public class ETLRow {
 
     private boolean isKeyChangedOnUpdate = false;
 
+    /**
+     * 源端字段值是否齐全
+     */
+    private boolean fullColumnValue = false;
+
 
 
     public ETLRow(long consumedTime, long consumerTime, String schema, String table, MessageAction opType, List<ETLColumn> columns, Date opTime, Position position) {
+        this(consumedTime, consumerTime, schema, table, opType, columns, opTime, position, false);
+    }
+
+    public ETLRow(long consumedTime, long consumerTime, String schema, String table, MessageAction opType, List<ETLColumn> columns, Date opTime, Position position, boolean fullColumnValue) {
         this.schema = schema;
         this.table = table;
         this.opType = opType;
@@ -88,6 +97,7 @@ public class ETLRow {
         this.finalSchema = schema;
         this.finalTable = table;
         this.position = position;
+        this.fullColumnValue = fullColumnValue;
     }
 
     /**
@@ -154,5 +164,13 @@ public class ETLRow {
 
     public void setFinalOpType(MessageAction finalOpType) {
         this.finalOpType = finalOpType;
+    }
+
+    public void setFullColumnValue(boolean fullColumnValue) {
+        this.fullColumnValue = fullColumnValue;
+    }
+
+    public boolean isFullColumnValue() {
+        return fullColumnValue;
     }
 }

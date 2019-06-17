@@ -229,6 +229,8 @@ public class TaskWork extends Thread {
             LOGGER.error("终止执行任务[{}-{}]异常", taskId, dataConsumer.getSwimlaneId(), e);
         } finally {
             TaskContext.clearTrace();
+            NodeContext.INSTANCE.clearConsumeProcess(taskId, dataConsumer.getSwimlaneId());
+            NodeContext.INSTANCE.flushConsumerIdle(taskId, dataConsumer.getSwimlaneId(), -1);
         }
     }
 

@@ -89,6 +89,19 @@ public class SqlBuilder {
             Object[] allNewValues = addArray(keyNewValues, newColumns.values().toArray());
             //插入sql
             sqlList.add(new ImmutablePair<>(template.getInsertSql(row.getFinalSchema(), row.getFinalTable(), allColumnNames), allNewValues));
+        } else if (row.getFinalOpType() == MessageAction.REPLACE) {
+            //1.数组条件
+            String[] allColumnNames = addArray(strArrayComponent, keyNames, newColumns.keySet().toArray(new String[0]));
+            //所有字段新值
+            Object[] allNewValues = addArray(keyNewValues, newColumns.values().toArray());
+            try {
+                //插入sql
+                sqlList.add(new ImmutablePair<>(template.getReplaceSql(row.getFinalSchema(), row.getFinalTable(), allColumnNames), allNewValues));
+            } catch (UnsupportedOperationException e) {
+                row.setFinalOpType(MessageAction.UPDATE);
+                sqlList.addAll(build(row));
+                row.setFinalOpType(MessageAction.REPLACE);
+            }
         } else if (row.getFinalOpType() == MessageAction.UPDATE) {
             String[] columnNames = newColumns.keySet().toArray(new String[0]);
             Object[] columnValues = newColumns.values().toArray();
@@ -97,18 +110,18 @@ public class SqlBuilder {
                 sqlList.add(new ImmutablePair<>(template.getUpdateSql(row.getFinalSchema(), row.getFinalTable(), keyNames, columnNames),
                         addArray(columnValues, keyOldValues)));
             }
+            //更新转插入
+            if (isInsertOnUpdateError && row.isFullColumnValue()) {
+                sqlList.add(new ImmutablePair<>(template.getInsertSql(row.getFinalSchema(), row.getFinalTable(),
+                        addArray(strArrayComponent, keyNames, columnNames)), addArray(keyNewValues, columnValues)));
+            }
+
             //全字段更新
             Object[] oldColumnValues = oldColumns.values().toArray();
             String[] oldColumnNames = oldColumns.keySet().toArray(new String[0]);
             sqlList.add(new ImmutablePair<>(template.getUpdateSql(row.getFinalSchema(), row.getFinalTable(),
                     addArray(strArrayComponent, keyNames, oldColumnNames), addArray(strArrayComponent, keyNames, columnNames)),
                     addArray(keyNewValues, columnValues, keyOldValues, oldColumnValues)));
-
-            //更新转插入
-            if (isInsertOnUpdateError) {
-                sqlList.add(new ImmutablePair<>(template.getInsertSql(row.getFinalSchema(), row.getFinalTable(),
-                        addArray(strArrayComponent, keyNames, columnNames)), addArray(keyNewValues, columnValues)));
-            }
         } else if (row.getFinalOpType() == MessageAction.TRUNCATE) {
             sqlList.add(new ImmutablePair<>(template.getTruncateSql(row.getFinalSchema(), row.getFinalTable()), new Object[]{}));
         }
