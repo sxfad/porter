@@ -52,7 +52,6 @@ public class WebMvcConfigAdapter extends WebMvcConfigurerAdapter {
      */
     public static final String ALARM_URL_PATTERNS = "/alarm/task/check,/alarm/task/restart";
 
-
     /**
      * porter-ui
      */
