@@ -26,6 +26,17 @@ task moveOutFromJar(type: Copy) {
 
 processResources.dependsOn moveOutFromJar
 
+jar {
+    doFirst {
+        manifest {
+            if (!configurations.compile.isEmpty()) {
+                attributes(
+                        'Class-Path': configurations.compile.collect{it.getName()}.join(' '),
+                        'Main-Class': mainClassName)
+            }
+        }
+    }
+}
 
 startScripts {
     doLast {
