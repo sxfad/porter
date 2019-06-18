@@ -22,8 +22,10 @@ import cn.vbill.middleware.porter.common.client.Client;
 import cn.vbill.middleware.porter.common.config.SourceConfig;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -42,7 +44,7 @@ public enum PublicClientContext {
      */
     INSTANCE();
     private final Map<String, Client> allSources = new ConcurrentHashMap<>();
-    private final Map<String, Client> unusedSources = new ConcurrentHashMap<>();
+    private final Map<String, Client> unusedSources = Collections.synchronizedMap(new WeakHashMap<>());
 
     /**
      * 初始化公用DataSource
