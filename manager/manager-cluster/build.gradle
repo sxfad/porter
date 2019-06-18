@@ -64,7 +64,7 @@ distributions {
 
 dependencies {
     compile project(':manager:manager-core')
-    implementation "org.springframework.boot:spring-boot-starter:${springVersion}"
+    implementation "org.springframework.boot:spring-boot-starter-web:${springVersion}"
     implementation("org.springframework.kafka:spring-kafka:2.2.4.RELEASE")
     implementation('org.apache.kafka:kafka-clients:1.0.0'){
         exclude group:'org.slf4j',module:'slf4j-api'
