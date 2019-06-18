@@ -457,7 +457,7 @@ CREATE TABLE `s_log_grade` (
   `remark` VARCHAR(100) DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`)
 ) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='日志级别表';
--- 任务权限操作类型表
+-- 任务权限操作类型表 2019-05-10
 DROP TABLE IF EXISTS `d_control_type_plugin`;
 CREATE TABLE `d_control_type_plugin` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
@@ -472,7 +472,7 @@ CREATE TABLE `d_control_type_plugin` (
   `remark` varchar(100) DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`)
 ) ENGINE=INNODB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='任务权限操作类型表';
--- 权限控制操作类型表
+-- 权限控制操作类型表 2019-05-10
 DROP TABLE IF EXISTS `r_owner_control`;
 CREATE TABLE `r_owner_control` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '主键',
