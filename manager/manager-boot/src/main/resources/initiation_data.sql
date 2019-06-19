@@ -107,14 +107,14 @@ insert  into `s_alarm_plugin`(`id`,`alarm_id`,`alarm_type`,`plugin_code`,`plugin
 (2,1,'EMAIL','username','邮件账户','1@163.com'),
 (3,1,'EMAIL','password','邮箱密码','account');
 insert  into `s_alarm_user`(`id`,`alarm_id`,`user_id`) values (1,1,1);
--- 初始化任务权限操作类型
+-- 初始化任务权限操作类型  2019-05-10
 INSERT INTO `d_control_type_plugin` VALUES (1, 'CHANGE', '移交', 'CHANGE', 1, 'RADIO', NULL, 1, 0, NULL);
 INSERT INTO `d_control_type_plugin` VALUES (2, 'SHARE', '共享', 'SHARE', 2, 'RADIO', NULL, 1, 0, NULL);
 INSERT INTO `d_control_type_plugin` VALUES (3, 'CANCEL', '作废', 'CANCEL', 3, 'RADIO', NULL, 1, 0, NULL);
 INSERT INTO `d_control_type_plugin` VALUES (4, 'RECYCLE_C', '回收所有者', 'RECYCLE_C', 4, 'RADIO', NULL, 1, 0, NULL);
 INSERT INTO `d_control_type_plugin` VALUES (5, 'RECYCLE_S', '回收共享者', 'RECYCLE_S', 5, 'RADIO', NULL, 1, 0, NULL);
 INSERT INTO `d_control_type_plugin` VALUES (6, 'RECYCLE_A', '回收所有权限', 'RECYCLE_A', 6, 'RADIO', NULL, 1, 0, NULL);
--- 权限控制操作类型
+-- 权限控制操作类型 2019-05-10
 INSERT INTO `r_owner_control` VALUES (1, 1, 1);
 INSERT INTO `r_owner_control` VALUES (2, 1, 2);
 INSERT INTO `r_owner_control` VALUES (3, 1, 3);

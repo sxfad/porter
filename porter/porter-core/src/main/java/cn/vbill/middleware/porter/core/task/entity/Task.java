@@ -98,13 +98,16 @@ public class Task {
     }
 
     /**
-     * fromConfig
      *
-     * @date 2018/8/9 上午9:54
-     * @param: [config]
-     * @return: cn.vbill.middleware.porter.core.task.entity.Task
+     * @param config
+     * @param parseLoader  公共数据源状态变更可能会导致DataLoader数据源无法识别，继而导致任务无法停止，故在任务停止时可以不用解析不必要的dataLoader
+     * @return
+     * @throws ConfigParseException
+     * @throws ClientException
+     * @throws DataLoaderBuildException
+     * @throws DataConsumerBuildException
      */
-    public static Task fromConfig(TaskConfig config) throws ConfigParseException, ClientException, DataLoaderBuildException,
+    public static Task fromConfig(TaskConfig config, boolean parseLoader) throws ConfigParseException, ClientException, DataLoaderBuildException,
             DataConsumerBuildException {
         Task task = new Task();
         task.setTaskId(config.getTaskId());
@@ -114,10 +117,25 @@ public class Task {
         });
         List<DataConsumer> consumers = DataConsumerFactory.INSTANCE.getConsumer(config.getConsumer());
         task.setConsumers(consumers);
-        task.setLoader(DataLoaderFactory.INSTANCE.getLoader(config.getLoader()));
+        if (parseLoader) {
+            task.setLoader(DataLoaderFactory.INSTANCE.getLoader(config.getLoader()));
+        }
         task.getReceivers().addAll(Arrays.stream(config.getReceiver()).collect(Collectors.toList()));
         task.setAlarmPositionCount(config.getAlarmPositionCount());
         task.setPositionCheckInterval(config.getPositionCheckInterval());
         return task;
+    }
+
+
+    /**
+     * fromConfig
+     *
+     * @date 2018/8/9 上午9:54
+     * @param: [config]
+     * @return: cn.vbill.middleware.porter.core.task.entity.Task
+     */
+    public static Task fromConfig(TaskConfig config) throws ConfigParseException, ClientException, DataLoaderBuildException,
+            DataConsumerBuildException {
+        return fromConfig(config, true);
     }
 }
