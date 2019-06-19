@@ -157,7 +157,7 @@ public class TaskController implements TaskEventListener {
                     }
                 } else if (event.getStatus().isStopped()) {
                     try {
-                        stopTask(Task.fromConfig(event));
+                        stopTask(Task.fromConfig(event, false));
                     } catch (Exception e) {
                         LOGGER.error("停止任务出错!", e);
                     }
