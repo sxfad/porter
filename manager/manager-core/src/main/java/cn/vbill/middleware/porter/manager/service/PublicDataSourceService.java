@@ -94,5 +94,5 @@ public interface PublicDataSourceService {
      * @param xmlTextStr
      * @return
      */
-    PublicSourceConfig dealxml(String xmlTextStr);
+    PublicSourceConfig dealxml(String code, String xmlTextStr);
 }

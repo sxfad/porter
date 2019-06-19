@@ -37,7 +37,7 @@ public class PublicDataSource implements Serializable {
     private Long id;
 
     /**
-     * 数据源编码.
+     * 数据源编码(唯一识别码).
      */
     private String code;
 

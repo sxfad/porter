@@ -108,7 +108,7 @@ public class PublicDataSourceServiceImpl implements PublicDataSourceService {
     }
 
     @Override
-    public PublicSourceConfig dealxml(String xmlTextStr) {
+    public PublicSourceConfig dealxml(String code, String xmlTextStr) {
         PublicSourceConfig config = new PublicSourceConfig();
         Properties properties = new Properties();
         try {
@@ -119,6 +119,7 @@ public class PublicDataSourceServiceImpl implements PublicDataSourceService {
         } catch (IOException e) {
             logger.error("解析xmlTextStr失败，请注意！！", e);
         }
+        config.setCode(code);
         return config;
     }
 

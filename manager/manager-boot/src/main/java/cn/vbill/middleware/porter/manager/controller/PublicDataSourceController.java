@@ -163,7 +163,7 @@ public class PublicDataSourceController {
         try {
             String xmlTextStr = java.net.URLDecoder.decode(xmlText, "UTF-8");
             log.info("dealxml转移后字符串:[{}]", xmlTextStr);
-            PublicSourceConfig config = publicDataSourceService.dealxml(xmlTextStr);
+            PublicSourceConfig config = publicDataSourceService.dealxml(publicDataSource.getCode(), xmlTextStr);
             log.info("dealxml解析后字符串:[{}]", JSON.toJSON(config));
             return ok(config);
         } catch (UnsupportedEncodingException e) {
