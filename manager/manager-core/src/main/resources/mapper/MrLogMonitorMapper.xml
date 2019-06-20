@@ -95,9 +95,9 @@
             </if>
             <if test="roleDataControl.roleCode == 'A9999'">
                 and
-                (node_id in (select p.node_id from b_nodes_owner p where p.owner_id = #{roleDataControl.userId} and p.owner_level = 1)
+                (node_id in (select p.node_id from b_nodes_owner p where p.owner_id = #{roleDataControl.userId} and p.owner_level = 1 and iscancel = 0)
                 or
-                job_id in (select t.job_id from job_tasks_owner t where t.owner_id = #{roleDataControl.userId} and t.owner_level = 1))
+                job_id in (select t.job_id from job_tasks_owner t where t.owner_id = #{roleDataControl.userId} and t.owner_level = 1 and iscancel = 0))
             </if>
         </where>
     </select>
@@ -116,9 +116,9 @@
             </if>
             <if test="roleDataControl.roleCode == 'A9999'">
                 and
-                (node_id in (select p.node_id from b_nodes_owner p where p.owner_id = #{roleDataControl.userId} and p.owner_level = 1)
+                (node_id in (select p.node_id from b_nodes_owner p where p.owner_id = #{roleDataControl.userId} and p.owner_level = 1 and iscancel = 0)
                 or
-                job_id in (select t.job_id from job_tasks_owner t where t.owner_id = #{roleDataControl.userId} and t.owner_level = 1))
+                job_id in (select t.job_id from job_tasks_owner t where t.owner_id = #{roleDataControl.userId} and t.owner_level = 1 and iscancel = 0))
             </if>
         </where>
         order by log_date desc

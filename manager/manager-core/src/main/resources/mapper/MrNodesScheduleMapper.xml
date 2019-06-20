@@ -109,7 +109,7 @@
                 and computer_name LIKE CONCAT('%',#{computerName},'%')
             </if>
             <if test="roleDataControl.roleCode == 'A9999'">
-                and node_id in (select node_id from b_nodes_owner where owner_level = 1 and owner_id = #{roleDataControl.userId})
+                and node_id in (select node_id from b_nodes_owner where owner_level = 1 and owner_id = #{roleDataControl.userId} and iscancel = 0)
             </if>
         </where>
     </select>
@@ -130,7 +130,7 @@
                 and computer_name LIKE CONCAT('%',#{computerName},'%')
             </if>
             <if test="roleDataControl.roleCode == 'A9999'">
-                and node_id in (select node_id from b_nodes_owner where owner_level = 1 and owner_id = #{roleDataControl.userId})
+                and node_id in (select node_id from b_nodes_owner where owner_level = 1 and owner_id = #{roleDataControl.userId} and iscancel = 0)
             </if>
         </where>
         ORDER by heart_beat_date DESC
