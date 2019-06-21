@@ -159,11 +159,11 @@ public class PublicDataSourceController {
     @ApiOperation(value = "解析字符串", notes = "解析字符串")
     public ResponseMessage dealxml(@RequestBody PublicDataSource publicDataSource) {
         String xmlText = publicDataSource.getXmlText();
-        log.info("dealxml传入字符串:[{}]", xmlText);
+        log.info("code编码:[{}] dealxml传入字符串:[{}]", publicDataSource.getCode(), xmlText);
         try {
             String xmlTextStr = java.net.URLDecoder.decode(xmlText, "UTF-8");
             log.info("dealxml转移后字符串:[{}]", xmlTextStr);
-            PublicSourceConfig config = publicDataSourceService.dealxml(xmlTextStr);
+            PublicSourceConfig config = publicDataSourceService.dealxml(publicDataSource.getCode(), xmlTextStr);
             log.info("dealxml解析后字符串:[{}]", JSON.toJSON(config));
             return ok(config);
         } catch (UnsupportedEncodingException e) {

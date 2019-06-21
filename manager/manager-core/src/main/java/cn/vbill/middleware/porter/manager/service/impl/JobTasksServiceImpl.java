@@ -126,7 +126,7 @@ public class JobTasksServiceImpl implements JobTasksService {
         // 新增 JobTasks
         Integer number = jobTasksMapper.insert(jobTasks);
         // 新增 JobTasksUser
-        jobTasksUserService.insertList(jobTasks);
+//        jobTasksUserService.insertList(jobTasks);
         // 新增 JobTasksTable
         jobTasksTableService.insertList(jobTasks);
         // 新增 jobtaskNode
