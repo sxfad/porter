@@ -189,7 +189,7 @@ public class JobTasksServiceImpl implements JobTasksService {
         // 修改主表
         Integer number = jobTasksMapper.update(jobTasks);
         // 新增 JobTasksUser
-        jobTasksUserService.insertList(jobTasks);
+//        jobTasksUserService.insertList(jobTasks);
         // 新增 JobTasksTable
         jobTasksTableService.insertList(jobTasks);
         // 新增 jobtaskNode
