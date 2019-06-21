@@ -58,9 +58,7 @@ public class PublicDataSourceServiceImpl implements PublicDataSourceService {
         // 等权限类代码
         publicDataSource.setCreator(-1L);
         if (StringUtils.isBlank(publicDataSource.getCode())) {
-            PublicSourceConfig config = JSONObject.parseObject(publicDataSource.getJsonText(),
-                    PublicSourceConfig.class);
-            publicDataSource.setCode(config.getCode());
+            logger.error("接口未传入数据识别码，请注意！！");
         }
         return publicDataSourceMapper.insert(publicDataSource);
     }
@@ -108,7 +106,7 @@ public class PublicDataSourceServiceImpl implements PublicDataSourceService {
     }
 
     @Override
-    public PublicSourceConfig dealxml(String xmlTextStr) {
+    public PublicSourceConfig dealxml(String code, String xmlTextStr) {
         PublicSourceConfig config = new PublicSourceConfig();
         Properties properties = new Properties();
         try {
@@ -119,6 +117,7 @@ public class PublicDataSourceServiceImpl implements PublicDataSourceService {
         } catch (IOException e) {
             logger.error("解析xmlTextStr失败，请注意！！", e);
         }
+        config.setCode(code);
         return config;
     }
 

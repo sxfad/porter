@@ -26,6 +26,7 @@ import cn.vbill.middleware.porter.common.cluster.event.ClusterListenerEventType;
 import cn.vbill.middleware.porter.common.cluster.event.executor.*;
 import cn.vbill.middleware.porter.common.cluster.event.command.*;
 import cn.vbill.middleware.porter.common.statistics.DObject;
+import cn.vbill.middleware.porter.common.task.dic.TaskStatusType;
 import cn.vbill.middleware.porter.common.task.event.*;
 import cn.vbill.middleware.porter.common.task.statistics.DTaskLock;
 import cn.vbill.middleware.porter.common.task.statistics.DTaskStat;
