@@ -99,7 +99,7 @@ public class KafkaConfig extends SourceConfig implements PluginServiceConfig {
     public Map<String, Class> getInstance() {
         return new HashMap<String, Class>() {
             {
-                put(KafkaConsumerConst.CONSUMER_PLUGIN_NAME.getCode(), KafkaClient.class);
+                put(KafkaConsumerConst.CONSUMER_SOURCE_TYPE_NAME.getCode(), KafkaClient.class);
             }
         };
     }
