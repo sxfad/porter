@@ -28,6 +28,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.text.ParseException;
+
 import static cn.vbill.middleware.porter.manager.web.message.ResponseMessage.ok;
 
 /**
@@ -77,7 +79,7 @@ public class MrNodesMonitorController {
     public ResponseMessage nodeMonitorDetail(@RequestParam(value = "nodeId", required = false) String nodeId,
                                              @RequestParam(value = "date", required = true) String date,
                                              @RequestParam(value = "intervalTime", required = false) int intervalTime,
-                                             @RequestParam(value = "intervalCount", required = false) int intervalCount) {
+                                             @RequestParam(value = "intervalCount", required = false) int intervalCount) throws ParseException {
         MrNodeMonitor mrNodeMonitor = mrNodesMonitorService.obNodeMonitorDetail(nodeId, date, intervalTime, intervalCount);
         return ok(mrNodeMonitor);
     }
