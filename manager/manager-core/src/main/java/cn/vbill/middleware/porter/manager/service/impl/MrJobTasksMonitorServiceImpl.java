@@ -98,11 +98,13 @@ public class MrJobTasksMonitorServiceImpl implements MrJobTasksMonitorService {
 
     @Override
     public MrJobMonitor obMrJobMonitorDetail(String jobId, String swimlaneId, String schemaTable, String date, int intervalTime, int intervalCount) throws ParseException {
-        String newDate = newDate = DateFormatUtils.formatDate("yyyy-MM-dd", new Date());
+        String newDate = null;
         // 如果是当前日期则显示最近的时间，否则显示一天的数据
-        if (!newDate.equals(date)) {
+        if (!DateFormatUtils.formatDate("yyyy-MM-dd", new Date()).equals(date)) {
             intervalTime = 1440;
             newDate = date + " 23:59";
+        } else {
+            newDate = DateFormatUtils.formatDate("yyyy-MM-dd HH:mm", new Date());
         }
         //todo 获取查看的时间区间 当前时间往前推 如果超过了一天则显示到00：00
         Date endDate = DateFormatUtils.pareDate("yyyy-MM-dd HH:mm", newDate);
