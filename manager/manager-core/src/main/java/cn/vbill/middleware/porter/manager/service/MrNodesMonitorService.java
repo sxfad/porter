@@ -22,6 +22,8 @@ import cn.vbill.middleware.porter.manager.core.entity.MrNodesMonitor;
 import cn.vbill.middleware.porter.manager.core.icon.MrNodeMonitor;
 import cn.vbill.middleware.porter.manager.web.page.Page;
 
+import java.text.ParseException;
+
 /**
  * 节点任务实时监控表 服务接口类
  *
@@ -100,6 +102,6 @@ public interface MrNodesMonitorService {
      * @param intervalCount
      * @return
      */
-    MrNodeMonitor obNodeMonitorDetail(String nodeId, String date, Long intervalTime, Long intervalCount);
+    MrNodeMonitor obNodeMonitorDetail(String nodeId, String date, int intervalTime, int intervalCount) throws ParseException;
 
 }

@@ -19,6 +19,7 @@ package cn.vbill.middleware.porter.manager.service.impl;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -26,6 +27,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import cn.vbill.middleware.porter.manager.core.entity.MrNodesMonitor;
 import cn.vbill.middleware.porter.manager.core.icon.MrNodeMonitor;
 import cn.vbill.middleware.porter.manager.core.mapper.MrNodesMonitorMapper;
+import cn.vbill.middleware.porter.manager.core.util.DateMathUtils;
 import cn.vbill.middleware.porter.manager.service.MrNodesMonitorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -113,17 +115,40 @@ public class MrNodesMonitorServiceImpl implements MrNodesMonitorService {
     }
 
     @Override
-    public MrNodeMonitor obNodeMonitorDetail(String nodeId, String date, Long intervalTime, Long intervalCount) {
-        String newDate = DateFormatUtils.formatDate("yyyy-MM-dd", new Date());
+    public MrNodeMonitor obNodeMonitorDetail(String nodeId, String date, int intervalTime, int intervalCount) throws ParseException {
+        String newDate = null;
         // 如果是当前日期则显示最近的时间，否则显示一天的数据
-        if (!newDate.equals(date)) {
-            intervalTime = 1440L;
+        if (!DateFormatUtils.formatDate("yyyy-MM-dd", new Date()).equals(date)) {
+            intervalTime = 1440;
+            newDate = date + " 23:59";
+        } else {
+            newDate = DateFormatUtils.formatDate("yyyy-MM-dd HH:mm", new Date());
         }
-        Long startRow = intervalTime * intervalCount;
+        //获取查看的时间区间 当前时间往前推 如果超过了一天则显示到00：00
+        Date endDate = DateFormatUtils.pareDate("yyyy-MM-dd HH:mm", newDate);
+        Date startDate = getDateByIntervalTime(newDate, intervalTime);
         // 拼出表名
         String monitorTable = convert(date);
-        List<MrNodesMonitor> mrNodesMonitors = mrNodesMonitorMapper.selectByNodeIdDetail(nodeId, startRow, intervalTime, date, monitorTable);
+        List<MrNodesMonitor> mrNodesMonitors = mrNodesMonitorMapper.selectByNodeIdDetail(nodeId, monitorTable, startDate, endDate);
         return new MrNodeMonitor(mrNodesMonitors);
+    }
+
+    /**
+     * 根据intervalTime获取起始时间
+     *
+     * @param intervalTime
+     * @return
+     */
+    private Date getDateByIntervalTime(String date, int intervalTime) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        Date endDate = sdf.parse(date);
+        Date startDate = DateMathUtils.mathDate(endDate, Calendar.MINUTE, -intervalTime);
+        //判断时间是否超出一天
+        if (!DateFormatUtils.formatDate("yyyy-MM-dd", startDate).equals(DateFormatUtils.formatDate("yyyy-MM-dd", endDate))) {
+            String startDateStr = (DateFormatUtils.formatDate("yyyy-MM-dd", endDate) + " 00:00");
+            startDate = sdf.parse(startDateStr);
+        }
+        return startDate;
     }
 
     /**

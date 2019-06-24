@@ -76,8 +76,8 @@ public class MrNodesMonitorController {
     @ApiOperation(value = "节点实时数据(按分)", notes = "节点实时数据(按分),增加查看过去某一天的节点数据")
     public ResponseMessage nodeMonitorDetail(@RequestParam(value = "nodeId", required = false) String nodeId,
                                              @RequestParam(value = "date", required = true) String date,
-                                             @RequestParam(value = "intervalTime", required = false) Long intervalTime,
-                                             @RequestParam(value = "intervalCount", required = false) Long intervalCount) {
+                                             @RequestParam(value = "intervalTime", required = false) int intervalTime,
+                                             @RequestParam(value = "intervalCount", required = false) int intervalCount) {
         MrNodeMonitor mrNodeMonitor = mrNodesMonitorService.obNodeMonitorDetail(nodeId, date, intervalTime, intervalCount);
         return ok(mrNodeMonitor);
     }
