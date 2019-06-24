@@ -1,0 +1,3 @@
+cn.vbill.middleware.porter.common.cluster.impl.zookeeper.ZookeeperClusterListener=\
+  cn.vbill.middleware.porter.manager.cluster.zookeeper.ZKClusterStatisticListener,\
+  cn.vbill.middleware.porter.manager.cluster.zookeeper.ZKClusterTaskListener

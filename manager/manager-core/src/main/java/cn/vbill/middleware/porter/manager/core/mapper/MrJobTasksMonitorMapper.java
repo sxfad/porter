@@ -21,6 +21,7 @@ import cn.vbill.middleware.porter.manager.core.entity.MrJobTasksMonitor;
 import cn.vbill.middleware.porter.manager.web.page.Page;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -95,17 +96,15 @@ public interface MrJobTasksMonitorMapper {
      * @param jobId
      * @param swimlaneId
      * @param schemaTable
-     * @param date
-     * @param startRow
-     * @param intervalSize
      * @param monitorTable
+     * @param startDate
+     * @param endDate
      * @return
      */
     List<MrJobTasksMonitor> selectByJobSwimlaneDetail(@Param("jobId") String jobId,
                                                       @Param("swimlaneId") String swimlaneId,
                                                       @Param("schemaTable") String schemaTable,
-                                                      @Param("monitorDate") String date,
-                                                      @Param("startRow") Long startRow,
-                                                      @Param("intervalSize") Long intervalSize,
-                                                      @Param("monitorTable") String monitorTable);
+                                                      @Param("monitorTable") String monitorTable,
+                                                      @Param("startDate") Date startDate,
+                                                      @Param("endDate") Date endDate);
 }

@@ -22,16 +22,17 @@ import cn.vbill.middleware.porter.manager.core.entity.MrJobTasksMonitor;
 import cn.vbill.middleware.porter.manager.core.icon.MrJobMonitor;
 import cn.vbill.middleware.porter.manager.core.mapper.MrJobTasksMonitorMapper;
 import cn.vbill.middleware.porter.manager.core.util.DateFormatUtils;
-import cn.vbill.middleware.porter.manager.web.page.Page;
+import cn.vbill.middleware.porter.manager.core.util.DateMathUtils;
 import cn.vbill.middleware.porter.manager.service.MrJobTasksMonitorService;
+import cn.vbill.middleware.porter.manager.web.page.Page;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 /**
  * 任务泳道实时监控表 服务实现类
@@ -91,22 +92,45 @@ public class MrJobTasksMonitorServiceImpl implements MrJobTasksMonitorService {
     @Override
     public MrJobMonitor obMrJobMonitor(String jobId, String swimlaneId, String schemaTable, Long intervalTime, Long intervalCount) {
         Long startRow = intervalTime * intervalCount;
-        List<MrJobTasksMonitor> list =  mrJobTasksMonitorMapper.selectByJobSwimlane(jobId, swimlaneId, schemaTable, startRow, intervalTime);
+        List<MrJobTasksMonitor> list = mrJobTasksMonitorMapper.selectByJobSwimlane(jobId, swimlaneId, schemaTable, startRow, intervalTime);
         return new MrJobMonitor(list);
     }
 
     @Override
-    public MrJobMonitor obMrJobMonitorDetail(String jobId, String swimlaneId, String schemaTable, String date, Long intervalTime, Long intervalCount) {
-        String newDate = DateFormatUtils.formatDate("yyyy-MM-dd", new Date());
+    public MrJobMonitor obMrJobMonitorDetail(String jobId, String swimlaneId, String schemaTable, String date, int intervalTime, int intervalCount) throws ParseException {
+        String newDate = null;
         // 如果是当前日期则显示最近的时间，否则显示一天的数据
-        if (!newDate.equals(date)) {
-            intervalTime = 1440L;
+        if (!DateFormatUtils.formatDate("yyyy-MM-dd", new Date()).equals(date)) {
+            intervalTime = 1440;
+            newDate = date + " 23:59";
+        } else {
+            newDate = DateFormatUtils.formatDate("yyyy-MM-dd HH:mm", new Date());
         }
-        Long startRow = intervalTime * intervalCount;
+        //todo 获取查看的时间区间 当前时间往前推 如果超过了一天则显示到00：00
+        Date endDate = DateFormatUtils.pareDate("yyyy-MM-dd HH:mm", newDate);
+        Date startDate = getDateByIntervalTime(newDate, intervalTime);
         // 拼出表名
         String monitorTable = convert(date);
-        List<MrJobTasksMonitor> list = mrJobTasksMonitorMapper.selectByJobSwimlaneDetail(jobId, swimlaneId, schemaTable, date, startRow, intervalTime, monitorTable);
+        List<MrJobTasksMonitor> list = mrJobTasksMonitorMapper.selectByJobSwimlaneDetail(jobId, swimlaneId, schemaTable, monitorTable, startDate, endDate);
         return new MrJobMonitor(list);
+    }
+
+    /**
+     * 根据intervalTime获取起始时间
+     *
+     * @param intervalTime
+     * @return
+     */
+    private Date getDateByIntervalTime(String date, int intervalTime) throws ParseException {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        Date endDate = sdf.parse(date);
+        Date startDate = DateMathUtils.mathDate(endDate, Calendar.MINUTE, -intervalTime);
+        //判断时间是否超出一天
+        if (!DateFormatUtils.formatDate("yyyy-MM-dd", startDate).equals(DateFormatUtils.formatDate("yyyy-MM-dd", endDate))) {
+            String startDateStr = (DateFormatUtils.formatDate("yyyy-MM-dd", endDate) + " 00:00");
+            startDate = sdf.parse(startDateStr);
+        }
+        return startDate;
     }
 
     /**

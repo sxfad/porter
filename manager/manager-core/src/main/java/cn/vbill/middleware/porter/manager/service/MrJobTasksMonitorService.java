@@ -22,6 +22,8 @@ import cn.vbill.middleware.porter.manager.core.entity.MrJobTasksMonitor;
 import cn.vbill.middleware.porter.manager.core.icon.MrJobMonitor;
 import cn.vbill.middleware.porter.manager.web.page.Page;
 
+import java.text.ParseException;
+
 /**
  * 任务泳道实时监控表 服务接口类
  *
@@ -94,5 +96,5 @@ public interface MrJobTasksMonitorService {
      * @param intervalCount
      * @return
      */
-    MrJobMonitor obMrJobMonitorDetail(String jobId, String swimlaneId, String schemaTable, String date, Long intervalTime, Long intervalCount);
+    MrJobMonitor obMrJobMonitorDetail(String jobId, String swimlaneId, String schemaTable, String date, int intervalTime, int intervalCount) throws ParseException;
 }

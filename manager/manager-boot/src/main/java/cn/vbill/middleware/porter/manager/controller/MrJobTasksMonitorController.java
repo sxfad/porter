@@ -30,6 +30,8 @@ import cn.vbill.middleware.porter.manager.web.message.ResponseMessage;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 
+import java.text.ParseException;
+
 /**
  * 任务泳道实时监控表 controller控制器
  *
@@ -82,8 +84,8 @@ public class MrJobTasksMonitorController {
                                             @RequestParam(value = "swimlaneId", required = true) String swimlaneId,
                                             @RequestParam(value = "schemaTable", required = true) String schemaTable,
                                             @RequestParam(value = "monitorDate", required = true) String date,
-                                            @RequestParam(value = "intervalTime", required = false) Long intervalTime,
-                                            @RequestParam(value = "intervalCount", required = true) Long intervalCount) {
+                                            @RequestParam(value = "intervalTime", required = false) int intervalTime,
+                                            @RequestParam(value = "intervalCount", required = true) int intervalCount) throws ParseException {
         MrJobMonitor mrJobMonitor = mrJobTasksMonitorService.obMrJobMonitorDetail(jobId, swimlaneId, schemaTable, date, intervalTime, intervalCount);
         return ResponseMessage.ok(mrJobMonitor);
     }
