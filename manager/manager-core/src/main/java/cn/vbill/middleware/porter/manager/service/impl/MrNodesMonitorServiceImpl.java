@@ -115,11 +115,13 @@ public class MrNodesMonitorServiceImpl implements MrNodesMonitorService {
     }
 
     @Override
-    public MrNodeMonitor obNodeMonitorDetail(String nodeId, String date, int intervalTime, int intervalCount) throws ParseException {
+    public MrNodeMonitor obNodeMonitorDetail(String nodeId, String date, Integer intervalTime, Integer intervalCount) throws ParseException {
         String newDate = null;
         // 如果是当前日期则显示最近的时间，否则显示一天的数据
         if (!DateFormatUtils.formatDate("yyyy-MM-dd", new Date()).equals(date)) {
-            intervalTime = 1440;
+            if (null == intervalTime) {
+                intervalTime = 1440;
+            }
             newDate = date + " 23:59";
         } else {
             newDate = DateFormatUtils.formatDate("yyyy-MM-dd HH:mm", new Date());

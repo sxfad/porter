@@ -102,6 +102,6 @@ public interface MrNodesMonitorService {
      * @param intervalCount
      * @return
      */
-    MrNodeMonitor obNodeMonitorDetail(String nodeId, String date, int intervalTime, int intervalCount) throws ParseException;
+    MrNodeMonitor obNodeMonitorDetail(String nodeId, String date, Integer intervalTime, Integer intervalCount) throws ParseException;
 
 }
