@@ -61,7 +61,7 @@ public class WarningMessage {
         StringBuffer sb = new StringBuffer();
         if (null != prefix && !prefix.isEmpty()) sb.append("[").append(prefix).append("]");
         sb.append("[").append(errorCode.name()).append("(").append(errorCode.getDesc()).append(")]");
-        sb.append(receiver.getRealName()).append(receiver.getPhone());
+        sb.append(receiver.getRealName()).append("(").append(receiver.getPhone()).append(")");
         return sb.toString();
     }
 
