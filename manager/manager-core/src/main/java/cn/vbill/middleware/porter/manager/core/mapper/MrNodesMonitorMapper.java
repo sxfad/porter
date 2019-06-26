@@ -21,6 +21,7 @@ import cn.vbill.middleware.porter.manager.core.entity.MrNodesMonitor;
 import cn.vbill.middleware.porter.manager.web.page.Page;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -73,7 +74,7 @@ public interface MrNodesMonitorMapper {
      * @param: [nodeId, dataTimes]
      * @return: cn.vbill.middleware.porter.manager.core.event.MrNodesMonitor
      */
-    MrNodesMonitor selectByNodeIdAndTime(@Param("nodeId") String nodeId, @Param("dataTimes") String dataTimes);
+    MrNodesMonitor selectByNodeIdAndTime(@Param("monitorTable") String monitorTable, @Param("nodeId") String nodeId, @Param("dataTimes") String dataTimes);
 
     /**
      * 分頁
@@ -103,16 +104,14 @@ public interface MrNodesMonitorMapper {
      * 分頁All
      *
      * @param nodeId
-     * @param startRow
-     * @param intervalTime
-     * @param monitorDate
      * @param monitorTable
+     * @param startDate
+     * @param endDate
      * @return
      */
     List<MrNodesMonitor> selectByNodeIdDetail(@Param("nodeId") String nodeId,
-                                              @Param("startRow") Long startRow,
-                                              @Param("intervalTime") Long intervalTime,
-                                              @Param("monitorDate") String monitorDate,
-                                              @Param("monitorTable") String monitorTable);
+                                              @Param("monitorTable") String monitorTable,
+                                              @Param("startDate") Date startDate,
+                                              @Param("endDate") Date endDate);
 
 }

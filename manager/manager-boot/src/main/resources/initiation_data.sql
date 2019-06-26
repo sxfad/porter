@@ -29,6 +29,8 @@ INSERT INTO `c_menu` VALUES (20, 'J001002', 'J001', '本地任务', '/specialTas
 -- 新增菜单管理、菜单权限配置
 INSERT INTO `c_menu` VALUES (21, 'C001002', 'C001', '菜单管理', '/menus','fa-table', 2, 2, 1, 0, 1, 1, NULL);
 INSERT INTO `c_menu` VALUES (22, 'C001003', 'C001', '菜单权限配置', '/permission','fa-table', 2, 3, 1, 0, 1, 1, NULL);
+INSERT INTO `c_menu` VALUES (23, 'B001004', 'B001', '公共数据源', '/publicDataSource','fa-table', 2, 1, 1, 0, 1, 1, NULL);
+
 -- 初始化菜单权限
 INSERT INTO `c_role_menu` VALUES (1, 'A0002', 'F001');
 INSERT INTO `c_role_menu` VALUES (2, 'A0002', 'J001');
@@ -54,6 +56,7 @@ INSERT INTO `c_role_menu` VALUES (21, 'C0001', 'M001002');
 INSERT INTO `c_role_menu` VALUES (22, 'C0001', 'M001003');
     -- 新增本地任务
 INSERT INTO `c_role_menu` VALUES (29, 'A0002', 'J001002');
+INSERT INTO `c_role_menu` VALUES (30, 'A0002', 'B001004');
     -- 新增注册用户
 INSERT INTO `c_role_menu` VALUES (30, 'A9999', 'F001');
 INSERT INTO `c_role_menu` VALUES (31, 'A9999', 'J001');

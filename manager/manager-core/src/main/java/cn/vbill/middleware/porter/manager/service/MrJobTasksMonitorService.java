@@ -96,5 +96,5 @@ public interface MrJobTasksMonitorService {
      * @param intervalCount
      * @return
      */
-    MrJobMonitor obMrJobMonitorDetail(String jobId, String swimlaneId, String schemaTable, String date, int intervalTime, int intervalCount) throws ParseException;
+    MrJobMonitor obMrJobMonitorDetail(String jobId, String swimlaneId, String schemaTable, String date, Integer intervalTime, Integer intervalCount) throws ParseException;
 }

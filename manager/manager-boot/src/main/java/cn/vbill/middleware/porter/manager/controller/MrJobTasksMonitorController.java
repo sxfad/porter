@@ -84,8 +84,8 @@ public class MrJobTasksMonitorController {
                                             @RequestParam(value = "swimlaneId", required = true) String swimlaneId,
                                             @RequestParam(value = "schemaTable", required = true) String schemaTable,
                                             @RequestParam(value = "monitorDate", required = true) String date,
-                                            @RequestParam(value = "intervalTime", required = false) int intervalTime,
-                                            @RequestParam(value = "intervalCount", required = true) int intervalCount) throws ParseException {
+                                            @RequestParam(value = "intervalTime", required = false) Integer intervalTime,
+                                            @RequestParam(value = "intervalCount", required = true) Integer intervalCount) throws ParseException {
         MrJobMonitor mrJobMonitor = mrJobTasksMonitorService.obMrJobMonitorDetail(jobId, swimlaneId, schemaTable, date, intervalTime, intervalCount);
         return ResponseMessage.ok(mrJobMonitor);
     }

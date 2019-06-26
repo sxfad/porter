@@ -82,7 +82,7 @@ public class MrJobTasksMonitorServiceImpl implements MrJobTasksMonitorService {
     public void dealTaskPerformance(DTaskPerformance performance) {
         MrJobTasksMonitor mrJobTasksMonitor = new MrJobTasksMonitor(performance);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
-        String date = simpleDateFormat.format(new Date());
+        String date = simpleDateFormat.format(mrJobTasksMonitor.getMonitorYmd());
         // 拼出表名
         StringBuffer monitorTable = new StringBuffer("mr_job_tasks_monitor_");
         monitorTable.append(date);
@@ -97,11 +97,13 @@ public class MrJobTasksMonitorServiceImpl implements MrJobTasksMonitorService {
     }
 
     @Override
-    public MrJobMonitor obMrJobMonitorDetail(String jobId, String swimlaneId, String schemaTable, String date, int intervalTime, int intervalCount) throws ParseException {
+    public MrJobMonitor obMrJobMonitorDetail(String jobId, String swimlaneId, String schemaTable, String date, Integer intervalTime, Integer intervalCount) throws ParseException {
         String newDate = null;
         // 如果是当前日期则显示最近的时间，否则显示一天的数据
         if (!DateFormatUtils.formatDate("yyyy-MM-dd", new Date()).equals(date)) {
-            intervalTime = 1440;
+            if (null == intervalTime) {
+                intervalTime = 1440;
+            }
             newDate = date + " 23:59";
         } else {
             newDate = DateFormatUtils.formatDate("yyyy-MM-dd HH:mm", new Date());

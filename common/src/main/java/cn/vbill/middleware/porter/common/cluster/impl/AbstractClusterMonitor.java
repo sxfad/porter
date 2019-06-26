@@ -109,7 +109,11 @@ public abstract class AbstractClusterMonitor implements ClusterMonitor {
             for (ClusterListener listener : listeners.values()) {
                 ClusterListenerFilter filter = listener.filter();
                 if (null == filter || filter.onFilter(e)) {
-                    listener.onEvent(e);
+                    try {
+                        listener.onEvent(e);
+                    } catch (Throwable eventError) {
+                        logger.error("ClusterListener.onEvent error", e);
+                    }
                 }
             }
         }
