@@ -179,12 +179,13 @@ public class MrNodesMonitorServiceImpl implements MrNodesMonitorService {
      * @param mrNodesMonitor
      */
     private void dealTaskPerformanceSync(String nodeId, String dataTimes, MrNodesMonitor mrNodesMonitor) {
-        MrNodesMonitor old = mrNodesMonitorMapper.selectByNodeIdAndTime(nodeId, dataTimes);
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
         String date = simpleDateFormat.format(new Date());
         // 拼出表名
         StringBuffer monitorTable = new StringBuffer("mr_nodes_monitor_");
         monitorTable.append(date);
+        // 回查数据库是否存在分钟数据
+        MrNodesMonitor old = mrNodesMonitorMapper.selectByNodeIdAndTime(monitorTable.toString(), nodeId, dataTimes);
         if (old == null || old.getId() == null) {
             mrNodesMonitorMapper.insert(mrNodesMonitor, monitorTable.toString());
         } else {
