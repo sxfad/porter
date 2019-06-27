@@ -83,7 +83,7 @@ public class MrLogMonitorServiceImpl implements MrLogMonitorService {
     public void dealNodeLog(NodeLog log) {
         MrLogMonitor mrLogMonitor = new MrLogMonitor(log);
         //拼接当日表名
-        String nowTableName = getTableName(null);
+        String nowTableName = getTableName(mrLogMonitor.getPartitionDay());
         mrLogMonitorMapper.insert(mrLogMonitor, nowTableName);
     }
 
@@ -95,15 +95,11 @@ public class MrLogMonitorServiceImpl implements MrLogMonitorService {
      * @param: [date]
      * @return: java.lang.String
      */
-    private String getTableName(String date) {
+    private String getTableName(Date date) {
         String newDate = null;
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-//        newDate = (date != null ? date.replace("-", "") : sdf.format(new Date()));
-        if (date != null) {
-            newDate = date.replace("-", "");
-        } else {
-            newDate = sdf.format(new Date());
-        }
+//        newDate = (date != null ? date.replace("-", "") : sdf.format(new Date()))
+        newDate = sdf.format(date);
         // 日志信息表实时表
         return "mr_log_monitor_" + newDate;
     }
