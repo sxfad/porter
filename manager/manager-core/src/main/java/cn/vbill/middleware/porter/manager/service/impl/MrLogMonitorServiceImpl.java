@@ -69,7 +69,8 @@ public class MrLogMonitorServiceImpl implements MrLogMonitorService {
         //数据权限
         RoleDataControl roleDataControl = RoleCheckContext.getUserIdHolder();
         //拼接表名
-        String nowTableName = getTableName(date);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+        String nowTableName = sdf.format(date);
 
         Integer total = mrLogMonitorMapper.pageAll(ipAddress, state, roleDataControl, nowTableName);
         if (total > 0) {
