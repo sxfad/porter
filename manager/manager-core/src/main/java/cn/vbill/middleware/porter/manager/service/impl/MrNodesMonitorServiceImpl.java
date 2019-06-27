@@ -180,7 +180,7 @@ public class MrNodesMonitorServiceImpl implements MrNodesMonitorService {
      */
     private void dealTaskPerformanceSync(String nodeId, String dataTimes, MrNodesMonitor mrNodesMonitor) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
-        String date = simpleDateFormat.format(new Date());
+        String date = simpleDateFormat.format(mrNodesMonitor.getMonitorYmd());
         // 拼出表名
         StringBuffer monitorTable = new StringBuffer("mr_nodes_monitor_");
         monitorTable.append(date);
