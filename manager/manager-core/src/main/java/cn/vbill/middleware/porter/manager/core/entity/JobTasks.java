@@ -49,7 +49,7 @@ public class JobTasks implements java.io.Serializable {
 
     public JobTasks(TaskConfig task, String taskConfigJson) {
         this.id = Long.valueOf(task.getTaskId());
-        this.jobName = "本地任务:" + task.getTaskId();
+        this.jobName = "高级任务配置:" + task.getTaskId();
         this.jobJsonText = taskConfigJson;
     }
 

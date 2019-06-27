@@ -75,7 +75,6 @@ public class ETLRowTransformer implements Transformer {
                 throw new TaskStopTriggerException("目标端与源端表结构不一致。"
                         + "映射表:" + JSON.toJSONString(tableMapper) + ",目标端表:" + JSON.toJSONString(table));
             }
-
             /**
              * 为了减少表结构造成的数据问题，增加人工介入机会。
              * 默认TableMapper为绝对正确的输入，当前ETLRow数据类型为Insert时，如果有不存在预配置字段项的映射，任务停止，人工介入
@@ -101,13 +100,18 @@ public class ETLRowTransformer implements Transformer {
                 row.setKeyChangedOnUpdate(isChanged);
             }
 
+
+            if (null == row.getColumns() || row.getColumns().isEmpty()) {
+                throw new TaskStopTriggerException("区分数据库大小写的情况下必须填写字段映射关系。"
+                        + "映射表:" + JSON.toJSONString(tableMapper));
+            }
+
             //DataLoader自定义处理
             try {
                 work.getDataLoader().mouldRow(row);
             } catch (TaskDataException e) {
                 throw new TaskStopTriggerException(e);
             }
-
             LOGGER.debug("after tranform row:{},{}", row.getPosition().render(), JSON.toJSONString(row));
         }
     }

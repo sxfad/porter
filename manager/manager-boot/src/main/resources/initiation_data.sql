@@ -25,7 +25,7 @@ INSERT INTO `c_menu` VALUES (13, 'M001003', 'M001', '节点监控', '/nodeMonito
 INSERT INTO `c_menu` VALUES (14, 'C001', '-1', '系统设置', '#', 'setting', 1, 10, 0, 0, 1, 1, NULL);
 INSERT INTO `c_menu` VALUES (15, 'C001001', 'C001', '用户管理', '/user', 'fa-user-md', 2, 1, 1, 0, 1, 1, NULL);
 -- 新增本地任务抓取
-INSERT INTO `c_menu` VALUES (20, 'J001002', 'J001', '本地任务', '/specialTask', 'fa-tags', 2, 2, 1, 0, 1, 1, NULL);
+INSERT INTO `c_menu` VALUES (20, 'J001002', 'J001', '高级任务配置', '/specialTask', 'fa-tags', 2, 2, 1, 0, 1, 1, NULL);
 -- 新增菜单管理、菜单权限配置
 INSERT INTO `c_menu` VALUES (21, 'C001002', 'C001', '菜单管理', '/menus','fa-table', 2, 2, 1, 0, 1, 1, NULL);
 INSERT INTO `c_menu` VALUES (22, 'C001003', 'C001', '菜单权限配置', '/permission','fa-table', 2, 3, 1, 0, 1, 1, NULL);

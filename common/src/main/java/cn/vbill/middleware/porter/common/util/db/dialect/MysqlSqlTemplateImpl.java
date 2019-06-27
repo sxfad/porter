@@ -33,7 +33,7 @@ public class MysqlSqlTemplateImpl extends GeneralSqlTemplateImpl {
      * @return
      */
     public String getInsertSql(String schemaName, String tableName, String[] allColumns) {
-        return getInsertSql("insert ignore", schemaName, tableName, allColumns);
+        return getInsertSql("insert ", schemaName, tableName, allColumns);
     }
 
     public String getReplaceSql(String schemaName, String tableName, String[] allColumns) {
