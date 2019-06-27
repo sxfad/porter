@@ -51,8 +51,8 @@ public enum WarningErrorCode {
     private String desc;
     private Pattern character;
     private WarningCategory category;
-    private static final List<WarningErrorCode> POOLS = Arrays.asList(HARDWARE_MEMORY, NETWORK_UNAVAILABLE, TABLE_NOT_EXIST, COLUMN_NOT_EXIST, DB_BUSY,
-            MYSQL_BINLOG_ERROR, MYSQL_BINLOG_NOT_EXIST, TABLE_PARTITION_NOT_EXIST, TABLE_NOT_MAPPING, VIOLATE_DATA_INTEGRITY, BAD_SQL_GRAMMAR);
+    private static final List<WarningErrorCode> POOLS = Arrays.asList(HARDWARE_MEMORY, NETWORK_UNAVAILABLE, TASK_CONFIG_ERROR, TABLE_NOT_EXIST, COLUMN_NOT_EXIST, DB_BUSY,
+            MYSQL_BINLOG_ERROR, MYSQL_BINLOG_NOT_EXIST, TABLE_PARTITION_NOT_EXIST, TABLE_NOT_MAPPING, VIOLATE_DATA_INTEGRITY, BAD_SQL_GRAMMAR, NO_PRIVILEGES, KAFKA_ESTABLISH_ERROR);
     WarningErrorCode(WarningCategory category, String desc, Pattern character) {
         this.desc = desc;
         this.character = character;

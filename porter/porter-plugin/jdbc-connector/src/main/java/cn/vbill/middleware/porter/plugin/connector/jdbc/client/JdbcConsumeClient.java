@@ -306,7 +306,7 @@ public class JdbcConsumeClient  extends JdbcClient implements ConsumeClient {
             Long nextTimestampValue = null;
             List<Object> args = new ArrayList<>();
             StringBuilder sb = new StringBuilder("select distinct * from ");
-            sb.append(table);
+            sb.append(meta.getTable());
             sb.append(" where ");
             boolean incrementColumnCondition = StringUtils.isNotBlank(incrementColumn);
             boolean timestampColumnCondition = StringUtils.isNotBlank(timestampColumn);
