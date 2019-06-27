@@ -69,8 +69,7 @@ public class MrLogMonitorServiceImpl implements MrLogMonitorService {
         //数据权限
         RoleDataControl roleDataControl = RoleCheckContext.getUserIdHolder();
         //拼接表名
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-        String nowTableName = sdf.format(date);
+        String nowTableName = getTableName(date);
 
         Integer total = mrLogMonitorMapper.pageAll(ipAddress, state, roleDataControl, nowTableName);
         if (total > 0) {
@@ -84,7 +83,7 @@ public class MrLogMonitorServiceImpl implements MrLogMonitorService {
     public void dealNodeLog(NodeLog log) {
         MrLogMonitor mrLogMonitor = new MrLogMonitor(log);
         //拼接当日表名
-        String nowTableName = getTableName(mrLogMonitor.getPartitionDay());
+        String nowTableName = getTableName(null);
         mrLogMonitorMapper.insert(mrLogMonitor, nowTableName);
     }
 
@@ -96,11 +95,15 @@ public class MrLogMonitorServiceImpl implements MrLogMonitorService {
      * @param: [date]
      * @return: java.lang.String
      */
-    private String getTableName(Date date) {
+    private String getTableName(String date) {
         String newDate = null;
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-//        newDate = (date != null ? date.replace("-", "") : sdf.format(new Date()))
-        newDate = sdf.format(date);
+//        newDate = (date != null ? date.replace("-", "") : sdf.format(new Date()));
+        if (date != null) {
+            newDate = date.replace("-", "");
+        } else {
+            newDate = sdf.format(new Date());
+        }
         // 日志信息表实时表
         return "mr_log_monitor_" + newDate;
     }
