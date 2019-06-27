@@ -33,6 +33,7 @@ import java.util.regex.Pattern;
 public enum WarningErrorCode {
     HARDWARE_MEMORY(WarningCategory.PLATFORM, "内存不足或溢出", Pattern.compile(".*(OutOfMemoryError|GC overhead limit exceeded).*")),
     NETWORK_UNAVAILABLE(WarningCategory.TASK, "网络不可达", Pattern.compile(".*(Connection timed out|Timeout|timeout|CannotGetJdbcConnectionException).*")),
+    TASK_CONFIG_ERROR(WarningCategory.TASK, "任务配置错误", Pattern.compile(".*(ConfigParseException|区分数据库大小写的情况下必须填写字段映射关系).*")),
     TABLE_NOT_EXIST(WarningCategory.TASK, "表名不存在", Pattern.compile(".*(ORA-00942|table or view does not exist|查询不到目标仓库表结构|Table.*doesn't exist).*")),
     COLUMN_NOT_EXIST(WarningCategory.TASK, "字段不存在", Pattern.compile(".*(ORA-01747|table.column|列说明无效|Unknown column).*")),
     DB_BUSY(WarningCategory.TASK, "数据库忙碌", Pattern.compile(".*(提交事务等待).*")),
