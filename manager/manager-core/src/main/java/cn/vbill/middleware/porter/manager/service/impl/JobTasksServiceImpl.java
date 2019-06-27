@@ -143,7 +143,7 @@ public class JobTasksServiceImpl implements JobTasksService {
         TaskConfig task = JSONObject.parseObject(jobTasks.getJobJsonText(), TaskConfig.class);
         jobTasks.setId(Long.valueOf(task.getTaskId()));
         if (jobTasks.getJobName() == null) {
-            jobTasks.setJobName("本地任务-" + task.getTaskId());
+            jobTasks.setJobName("高级任务配置-" + task.getTaskId());
         }
         // 来源数据-消费插件
         ConsumerPlugin sourceConsumeAdt = ConsumerPlugin.enumByCode(task.getConsumer().getConsumerName());

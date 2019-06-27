@@ -17,6 +17,7 @@
 
 package cn.vbill.middleware.porter.core.task.entity;
 
+import cn.vbill.middleware.porter.common.task.config.TableMapperConfig;
 import cn.vbill.middleware.porter.common.task.exception.DataLoaderBuildException;
 import cn.vbill.middleware.porter.common.warning.entity.WarningReceiver;
 import cn.vbill.middleware.porter.common.task.config.TaskConfig;
@@ -112,9 +113,12 @@ public class Task {
         Task task = new Task();
         task.setTaskId(config.getTaskId());
         task.setMappers(new ArrayList<>());
-        config.getMapper().stream().forEach(m -> {
+        for(TableMapperConfig m : config.getMapper()) {
+            if (!m.isIgnoreTargetCase() && (null == m.getColumn() || m.getColumn().isEmpty())) {
+                throw new ConfigParseException("区分数据库大小写的情况下必须填写字段映射关系");
+            }
             task.getMappers().add(TableMapper.fromConfig(m).toUpperCase());
-        });
+        }
         List<DataConsumer> consumers = DataConsumerFactory.INSTANCE.getConsumer(config.getConsumer());
         task.setConsumers(consumers);
         if (parseLoader) {
