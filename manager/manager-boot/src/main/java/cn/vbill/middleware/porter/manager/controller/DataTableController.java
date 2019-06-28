@@ -19,6 +19,7 @@ package cn.vbill.middleware.porter.manager.controller;
 
 
 import cn.vbill.middleware.porter.manager.core.entity.DataTable;
+import cn.vbill.middleware.porter.manager.core.enums.DataSignEnum;
 import cn.vbill.middleware.porter.manager.service.DataTableService;
 import cn.vbill.middleware.porter.manager.web.message.ResponseMessage;
 import cn.vbill.middleware.porter.manager.web.page.Page;
@@ -116,7 +117,7 @@ public class DataTableController {
 
         Page<DataTable> page = dataTableService.page(new Page<DataTable>(pageNo, pageSize), bankName, beginTime,
                 endTime);
-        return ResponseMessage.ok(page);
+        return ResponseMessage.ok(page, DataSignEnum.DATATABLE);
     }
 
     /**
