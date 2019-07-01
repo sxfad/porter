@@ -36,9 +36,7 @@ import cn.vbill.middleware.porter.task.TaskController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -106,16 +104,21 @@ public class TaskWorker {
      * @param: []
      * @return: void
      */
-    public void stop() {
+    public List<TaskWork> stop() {
         if (stat.compareAndSet(true, false)) {
+            List<TaskWork> works = new ArrayList<>(jobs.size());
             LOGGER.info("工人下线.......");
             workerStatJob.shutdownNow();
             for (ArrayBlockingQueue<TaskWork> job : jobs.values()) {
-                job.peek().stopWork();
+                TaskWork work = job.peek();
+                work.stopWork();
+                works.add(work);
             }
+            return works;
         } else {
             LOGGER.warn("TaskWorker[] has stopped already", workerSequence);
         }
+        return Collections.emptyList();
     }
 
     /**
