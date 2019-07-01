@@ -108,4 +108,3 @@ task buildPorterUI(type: YarnTask) {
 }
 buildPorterUI.dependsOn yarn_install
 processResources.dependsOn moveOutFromJar,buildPorterUI
-
