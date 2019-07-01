@@ -1,5 +1,6 @@
 group 'cn.vbill.middleware.porter.manager'
 apply plugin: 'application'
+apply plugin: 'com.github.node-gradle.node'
 archivesBaseName = 'porter-manager-boot'
 mainClassName = "cn.vbill.middleware.porter.manager.ManagerBootApplication"
 ext {
@@ -74,5 +75,36 @@ dependencies {
     testImplementation "org.springframework.boot:spring-boot-starter-test:${springVersion}"
 }
 
-processResources.dependsOn moveOutFromJar
 
+
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+    }
+    dependencies {
+        classpath "com.github.node-gradle:gradle-node-plugin:1.3.0"
+    }
+}
+
+node {
+    version = '10.15.3'
+    yarnVersion = '1.15.2'
+    download = true
+    nodeModulesDir = file("${rootProject.projectDir}/porter-ui")
+    yarnWorkDir = file("${project.buildDir}/yarn")
+    npmWorkDir = file("${project.buildDir}/npm")
+    workDir = file("${project.buildDir}/node")
+}
+
+task buildPorterUI(type: YarnTask) {
+    environment = System.getenv() + [
+            'OUTPUT': project.buildDir.path  + "/classes/java/main/public",
+            'API' : '/manager',
+            'NODE_ENV' : 'production'
+    ]
+    args= ["node", "${rootProject.projectDir}/porter-ui/builder/build.js"]
+}
+buildPorterUI.dependsOn yarn_install
+processResources.dependsOn moveOutFromJar,buildPorterUI
