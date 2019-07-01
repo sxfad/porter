@@ -24,6 +24,7 @@ import cn.vbill.middleware.porter.common.util.MachineUtils;
 import cn.vbill.middleware.porter.core.NodeContext;
 import cn.vbill.middleware.porter.core.task.TaskContext;
 import cn.vbill.middleware.porter.core.task.entity.Task;
+import cn.vbill.middleware.porter.task.worker.TaskWork;
 import com.alibaba.fastjson.JSONObject;
 import cn.vbill.middleware.porter.common.cluster.ClusterProviderProxy;
 import cn.vbill.middleware.porter.common.task.config.TaskConfig;
@@ -41,6 +42,7 @@ import org.springframework.stereotype.Component;
 import sun.misc.Signal;
 import sun.misc.SignalHandler;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -227,7 +229,23 @@ public class TaskController implements TaskEventListener {
     private boolean stop() {
         if (stat.compareAndSet(true, false)) {
             LOGGER.info("unload task container.......");
-            workerMap.keySet().stream().collect(Collectors.toList()).forEach(worker -> workerMap.remove(worker).stop());
+            List<TaskWork> works = new ArrayList<>();
+            /**
+             * 任务停止的方式是给任务发送停止信号,stop方法调用返回并不代表任务已经停止
+             * TaskWork本质上是一个线程，线程DEAD是判断任务停止的条件
+             * 张科伟 2019-07-01
+             */
+            workerMap.values().stream().forEach(worker -> works.addAll(worker.stop()));
+            LOGGER.info("need stop tasks:{}", works.size());
+            while (works.stream().parallel().filter(c -> c.isAlive()).count() > 0) {
+                try {
+                    LOGGER.info("need stop tasks:{}", works.stream().parallel().filter(c -> c.isAlive()).count());
+                    Thread.sleep(500L);
+                } catch (InterruptedException e) {
+                    break;
+                }
+            }
+            LOGGER.info("need stop tasks:{}", works.stream().parallel().filter(c -> c.isAlive()).count());
             return true;
         } else {
             LOGGER.warn("task container has already unloaded.");
