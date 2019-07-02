@@ -1,6 +1,6 @@
 # Porter | [中文](./README.md)
 
-[![GitHub release](https://img.shields.io/badge/release-3.0-blue.svg)](https://github.com/sxfad/porter)
+[![GitHub release](https://img.shields.io/badge/release-4.0-blue.svg)](https://github.com/sxfad/porter)
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
 
@@ -92,6 +92,12 @@ porter-boot-version/bin/shutdown.sh
 
 ![Home](doc/img/Home.png)
 + [Manager Manual](./doc/manager_manual.md)
+
+
+```
+	manager-boot default website: http://127.0.0.1:8081
+	manager-boot default account: admin admin
+```
 
 
 ## Contact Us

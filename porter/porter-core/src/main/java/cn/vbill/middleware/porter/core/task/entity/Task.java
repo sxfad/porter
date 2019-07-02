@@ -113,7 +113,7 @@ public class Task {
         Task task = new Task();
         task.setTaskId(config.getTaskId());
         task.setMappers(new ArrayList<>());
-        for(TableMapperConfig m : config.getMapper()) {
+        for (TableMapperConfig m : config.getMapper()) {
             if (parseLoader && !m.isIgnoreTargetCase() && (null == m.getColumn() || m.getColumn().isEmpty())) {
                 throw new ConfigParseException("区分数据库大小写的情况下必须填写字段映射关系");
             }

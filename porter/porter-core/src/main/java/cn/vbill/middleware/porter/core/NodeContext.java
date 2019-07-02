@@ -360,11 +360,11 @@ public enum NodeContext {
      * @return: void
      */
     public void flushConsumeProcess(String taskId, String swimlaneId, String position) {
-        consumeProcess.put(taskId + "_" +swimlaneId, position);
+        consumeProcess.put(taskId + "_" + swimlaneId, position);
     }
 
     public void clearConsumeProcess(String taskId, String swimlaneId) {
-        consumeProcess.remove(taskId + "_" +swimlaneId);
+        consumeProcess.remove(taskId + "_" + swimlaneId);
     }
 
     /**

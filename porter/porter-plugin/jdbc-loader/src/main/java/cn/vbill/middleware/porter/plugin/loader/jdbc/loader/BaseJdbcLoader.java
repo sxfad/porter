@@ -171,7 +171,7 @@ public abstract class BaseJdbcLoader extends AbstractDataLoader {
         //批量更新出错的sql单行执行
         for (int j = 0; j < allAffects.length; j++) {
             //oracle批量更新时影响行数是-2
-            if (j < 1 && j != -2 ) {
+            if (j < 1 && j != -2) {
                 allAffects[j] = execSql(rows.get(j));
             }
         }

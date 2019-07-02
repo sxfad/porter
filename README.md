@@ -1,6 +1,6 @@
 # Porter | [English](./README_EN.md)
 
-[![GitHub release](https://img.shields.io/badge/release-3.0-blue.svg)](https://github.com/sxfad/porter)
+[![GitHub release](https://img.shields.io/badge/release-4.0-blue.svg)](https://github.com/sxfad/porter)
 [![License](https://img.shields.io/badge/license-Apache%202-4EB1BA.svg)](https://www.apache.org/licenses/LICENSE-2.0.html)
 
 
@@ -102,6 +102,14 @@ porter-boot-版本/bin/porter-boot --force
 
 ![首页](doc/img/Home.png)
 + [管理员手册](./doc/manager_manual.md)
+
+```
+	管理后台默认地址: http://127.0.0.1:8081
+	管理后台默认账户密码: admin admin
+```
+
+
+
 
 ## 联系我们
 
