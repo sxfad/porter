@@ -48,7 +48,7 @@ public class TaskPerKafkaListener {
     @Autowired
     private MrLogMonitorService mrLogMonitorService;
 
-    @KafkaListener(topics = "${spring.kafka.consumer.topics}")
+    @KafkaListener(topics = "${spring.kafka.consumer.topics}", autoStartup = "${manager.statistics.kafka}")
     public void processMessage(String content) {
         StatisticData statisticData = JSONObject.parseObject(content, StatisticData.class);
         if (statisticData == null) {
