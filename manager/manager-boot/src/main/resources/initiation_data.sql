@@ -55,8 +55,8 @@ INSERT INTO `c_role_menu` VALUES (20, 'C0001', 'M001001');
 INSERT INTO `c_role_menu` VALUES (21, 'C0001', 'M001002');
 INSERT INTO `c_role_menu` VALUES (22, 'C0001', 'M001003');
     -- 新增本地任务
-INSERT INTO `c_role_menu` VALUES (29, 'A0002', 'J001002');
-INSERT INTO `c_role_menu` VALUES (30, 'A0002', 'B001004');
+INSERT INTO `c_role_menu` VALUES (23, 'A0002', 'J001002');
+INSERT INTO `c_role_menu` VALUES (24, 'A0002', 'B001004');
     -- 新增注册用户
 INSERT INTO `c_role_menu` VALUES (30, 'A9999', 'F001');
 INSERT INTO `c_role_menu` VALUES (31, 'A9999', 'J001');
