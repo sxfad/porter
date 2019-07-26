@@ -17,13 +17,12 @@
 
 package cn.vbill.middleware.porter.common.warning.client;
 
-import cn.vbill.middleware.porter.common.client.AbstractClient;
-import cn.vbill.middleware.porter.common.warning.WarningFrequency;
-import cn.vbill.middleware.porter.common.warning.config.EmailConfig;
-import cn.vbill.middleware.porter.common.warning.entity.WarningMessage;
-import cn.vbill.middleware.porter.common.exception.ClientConnectionException;
-import com.alibaba.fastjson.JSONObject;
-import com.sun.mail.util.MailSSLSocketFactory;
+import java.security.GeneralSecurityException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+import java.util.UUID;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,24 +30,34 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 
-import java.security.GeneralSecurityException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import com.alibaba.fastjson.JSON;
+import com.sun.mail.util.MailSSLSocketFactory;
+
+import cn.vbill.middleware.porter.common.client.AbstractClient;
+import cn.vbill.middleware.porter.common.cluster.ClusterProviderProxy;
+import cn.vbill.middleware.porter.common.cluster.impl.AbstractClusterListener;
+import cn.vbill.middleware.porter.common.exception.ClientConnectionException;
+import cn.vbill.middleware.porter.common.warning.WarningFrequency;
+import cn.vbill.middleware.porter.common.warning.config.EmailConfig;
+import cn.vbill.middleware.porter.common.warning.entity.WarningMessage;
 
 /**
- * @author: zhangkewei[zhang_kw@suixingpay.com]
- * @date: 2018年02月23日 11:58
+ * 通过控制台发送告警信息，先发送邮件到zk，控制台接收后发送邮件
+ * 
+ * @author: guohongjian[guohongjian@suixingpay.com]
+ * @date: 2019年07月26日 11:48
  * @version: V1.0
- * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月23日 11:58
  */
-public class EmailClient  extends AbstractClient<EmailConfig> implements WarningClient {
+public class ConsoleEmailClient extends AbstractClient<EmailConfig> implements WarningClient {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConsoleEmailClient.class);
+
     private final JavaMailSender sender;
     private final WarningFrequency frequencyStat = new WarningFrequency();
+    // 邮箱客户端是否成功标识
+    private volatile boolean islink = true;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(EmailClient.class);
-
-    public EmailClient(EmailConfig config, int frequencyOfSecond) throws ClientConnectionException {
+    public ConsoleEmailClient(EmailConfig config, int frequencyOfSecond) throws ClientConnectionException {
         super(config);
 
         Properties properties = new Properties();
@@ -61,7 +70,7 @@ public class EmailClient  extends AbstractClient<EmailConfig> implements Warning
 
         if (config.isSmtpSslEnable()) {
             properties.put("mail.smtp.ssl.enable", "true");
-            //开启安全协议
+            // 开启安全协议
             MailSSLSocketFactory sf = null;
             try {
                 sf = new MailSSLSocketFactory();
@@ -71,7 +80,7 @@ public class EmailClient  extends AbstractClient<EmailConfig> implements Warning
             }
             properties.put("mail.smtp.ssl.socketFactory", sf);
         }
-        JavaMailSenderImpl  senderImpl = new JavaMailSenderImpl();
+        JavaMailSenderImpl senderImpl = new JavaMailSenderImpl();
 
         senderImpl.setHost(config.getHost());
         senderImpl.setUsername(config.getUsername());
@@ -81,31 +90,44 @@ public class EmailClient  extends AbstractClient<EmailConfig> implements Warning
             senderImpl.testConnection();
             LOGGER.info("邮件客户端测试连接成功！");
         } catch (Exception e) {
-            LOGGER.error("邮件客户端连接失败", e);
-            throw new ClientConnectionException("邮件客户端连接失败:" + JSONObject.toJSONString(config));
+            islink = false;
+            LOGGER.error("邮件客户端连接测试失败!", e.getMessage());
         }
         sender = senderImpl;
         frequencyStat.setFrequencyOfSecond(frequencyOfSecond);
     }
 
-    public EmailClient(EmailConfig config)  throws ClientConnectionException {
+    public ConsoleEmailClient(EmailConfig config) throws ClientConnectionException {
         this(config, 60);
     }
 
     @Override
-    protected void doStart() {
-    }
-
-    @Override
-    protected void doShutdown() {
-
-    }
-
-    @Override
     public void send(WarningMessage msg) {
+        // 如果连接没成功，转移数据到zk节点
+        if (!islink && msg != null && 0 == msg.getStreamTime()) {
+            LOGGER.info("邮件告警信息按照规则上传到zk节点,详细信息:[{}]", JSON.toJSONString(msg));
+            try {
+                // 开始1次流转
+                msg.setStreamTime(1);
+                // 流转到zk
+                ClusterProviderProxy.INSTANCE.broadcastEvent(client -> {
+                    String warnPath = AbstractClusterListener.BASE_CATALOG + "/warning/" + UUID.randomUUID().toString();
+                    if (!StringUtils.isBlank(warnPath))
+                        client.changeData(warnPath, false, false, JSON.toJSONString(msg));
+                });
+            } catch (Exception e) {
+                LOGGER.error("邮件告警信息流转到zk节点失败，信息数据:[{}]", JSON.toJSONString(msg), e.getMessage());
+            }
+            return;
+        }
+        if (!islink) {
+            LOGGER.warn("邮件客户端连接失败,邮件告警策略到此结束！数据信息:[{}]", JSON.toJSONString(msg));
+            return;
+        }
+        // 正常发送邮件
         LOGGER.info("开始发送邮件通知.....");
-        String checkContent = new StringBuffer(StringUtils.trimToEmpty(msg.getContent())).append(StringUtils.trimToEmpty(msg.getTitle()))
-                .toString();
+        String checkContent = new StringBuffer(StringUtils.trimToEmpty(msg.getContent()))
+                .append(StringUtils.trimToEmpty(msg.getTitle())).toString();
         if (!frequencyStat.canSend(checkContent)) {
             return;
         }
@@ -116,9 +138,11 @@ public class EmailClient  extends AbstractClient<EmailConfig> implements Warning
         message.setText(msg.getContent());
 
         List<String> emails = new ArrayList<>();
-        if (null != msg.getReceiver() && null != msg.getReceiver().getOwner()) emails.add(msg.getReceiver().getOwner().getEmail());
-        if (null != msg.getReceiver() && null != msg.getReceiver().getShareOwner())msg.getReceiver().getShareOwner().stream()
-                .filter(r -> !StringUtils.isBlank(r.getEmail())).forEach(r -> emails.add(r.getEmail()));
+        if (null != msg.getReceiver() && null != msg.getReceiver().getOwner())
+            emails.add(msg.getReceiver().getOwner().getEmail());
+        if (null != msg.getReceiver() && null != msg.getReceiver().getShareOwner())
+            msg.getReceiver().getShareOwner().stream().filter(r -> !StringUtils.isBlank(r.getEmail()))
+                    .forEach(r -> emails.add(r.getEmail()));
         List<String> cc = new ArrayList<>();
         if (null != msg.getReceiver() && null != msg.getCopy() && !msg.getCopy().isEmpty()) {
             msg.getCopy().stream().filter(r -> !StringUtils.isBlank(r.getEmail())).forEach(r -> cc.add(r.getEmail()));
@@ -126,11 +150,24 @@ public class EmailClient  extends AbstractClient<EmailConfig> implements Warning
         LOGGER.info("判断待发送邮件通知名单.....");
         if (!emails.isEmpty() || !cc.isEmpty()) {
             message.setTo(!emails.isEmpty() ? emails.toArray(new String[0]) : cc.toArray(new String[0]));
-            if (!emails.isEmpty() && !cc.isEmpty()) message.setCc(cc.toArray(new String[0]));
+            if (!emails.isEmpty() && !cc.isEmpty())
+                message.setCc(cc.toArray(new String[0]));
             LOGGER.info("正式发送邮件.....");
             sender.send(message);
         }
         frequencyStat.updateFrequency(checkContent);
         LOGGER.info("结束发送邮件通知.....");
+
     }
+
+    @Override
+    protected void doStart() throws Exception {
+
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+
+    }
+
 }
