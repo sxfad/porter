@@ -78,8 +78,13 @@ INSERT  INTO `d_alarm_plugin`(`id`,`alert_type`,`field_name`,`field_code`,`field
 (1,'EMAIL','邮件服务器','host',2,'TEXT',NULL,1,0,NULL),
 (2,'EMAIL','邮件账户','username',3,'TEXT',NULL,1,0,NULL),
 (3,'EMAIL','邮箱密码','password',4,'TEXT',NULL,1,0,NULL),
-(4,'MOBILE','手机号','phone',1,'TEXT',NULL,1,0,NULL),
-('5', 'EMAIL', '安全协议', 'smtpSslEnable', '5', 'RADIO', 'EnableType', '1', '0', NULL);
+(4, 'EMAIL', '安全协议', 'smtpSslEnable', '5', 'RADIO', 'EnableType', '1', '0', NULL),
+(11,'MOBILE','手机号','phone',1,'TEXT',NULL,1,0,NULL),
+(21,'CONSOLEEMAIL','邮件服务器','host',2,'TEXT',NULL,1,0,NULL),
+(22,'CONSOLEEMAIL','邮件账户','username',3,'TEXT',NULL,1,0,NULL),
+(23,'CONSOLEEMAIL','邮箱密码','password',4,'TEXT',NULL,1,0,NULL),
+(24, 'CONSOLEEMAIL', '安全协议', 'smtpSslEnable', '5', 'RADIO', 'EnableType', '1', '0', NULL);
+
 -- 初始化数据源数据字典
 INSERT  INTO `d_data_source_plugin`(`id`,`source_type`,`field_name`,`field_code`,`field_order`,`field_type`,`field_type_key`,`field_validate`,`field_explain`,`state`,`iscancel`,`remark`) VALUES
 (1,'JDBC','数据库类型','dbtype',1,'RADIO','DbType','','',1,0,NULL),
@@ -108,7 +113,8 @@ insert  into `s_alarm`(`id`,`alarm_type`,`create_user_id`,`update_user_id`,`crea
 insert  into `s_alarm_plugin`(`id`,`alarm_id`,`alarm_type`,`plugin_code`,`plugin_name`,`plugin_value`) values 
 (1,1,'EMAIL','host','邮件服务器','smtp.163.com'),
 (2,1,'EMAIL','username','邮件账户','1@163.com'),
-(3,1,'EMAIL','password','邮箱密码','account');
+(3,1,'EMAIL','password','邮箱密码','account'),
+(4,1,'EMAIL','smtpSslEnable','安全协议','false');
 insert  into `s_alarm_user`(`id`,`alarm_id`,`user_id`) values (1,1,1);
 -- 初始化任务权限操作类型  2019-05-10
 INSERT INTO `d_control_type_plugin` VALUES (1, 'CHANGE', '移交', 'CHANGE', 1, 'RADIO', NULL, 1, 0, NULL);
