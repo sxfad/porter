@@ -65,7 +65,7 @@ public enum WarningProviderFactory {
      */
     public void initialize(WarningConfig config) throws ConfigParseException, ClientConnectionException, InterruptedException {
         //校验配置文件参数
-        if (null == config || null == config.getStrategy() ) {  //|| null == config.getClient() || config.getClient().isEmpty()
+        if (null == config || null == config.getStrategy()) {  //|| null == config.getClient() || config.getClient().isEmpty()
             return;
         }
 
