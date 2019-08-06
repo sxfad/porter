@@ -43,9 +43,15 @@ public enum WarningPlugin {
     NONE("NONE", "无"),
 
     /**
+     * CONSOLEEMAIL 
+     * 此种模式下如果porter-boot节点邮件连接测试失败，将通过流转数据进入控制台再次发送邮件
+     * 应对运维不给porter-boot节点开放外网的特殊情况
+     */
+    CONSOLEEMAIL("CONSOLEEMAIL", "集群邮件"),
+    /**
      * EMAIL
      */
-    EMAIL("EMAIL", "邮件"),
+    EMAIL("EMAIL", "常规邮件"),
 
     /**
      * MOBILE
@@ -59,6 +65,7 @@ public enum WarningPlugin {
 
     static {
         LINKMAP.put(EMAIL.code, EMAIL.name);
+        LINKMAP.put(CONSOLEEMAIL.code, CONSOLEEMAIL.name);
     }
 
     @Getter

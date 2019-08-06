@@ -32,13 +32,17 @@ import java.util.List;
  * @review: zhangkewei[zhang_kw@suixingpay.com]/2018年02月23日 10:43
  */
 @NoArgsConstructor
-@Getter @Setter
+@Getter
+@Setter
 public class WarningMessage {
+
     private String title;
     private String content;
     private WarningErrorCode errorCode;
     private WarningOwner receiver;
     private List<WarningReceiver> copy = new ArrayList<>();
+    /** 流传次数标识 .*/
+    private Integer streamTime = 0;
 
     public WarningMessage(String content, WarningErrorCode errorCode, WarningOwner receiver) {
         this(null, content, errorCode, receiver);
@@ -47,7 +51,7 @@ public class WarningMessage {
     public WarningMessage(String title, String content, WarningErrorCode errorCode, WarningOwner receiver) {
         this.content = content;
         this.errorCode = errorCode;
-        this.receiver =  receiver;
+        this.receiver = receiver;
         this.title = StringUtils.isNotBlank(title) ? title : buildTitle(null);
     }
 
@@ -57,9 +61,11 @@ public class WarningMessage {
     }
 
     private String buildTitle(String prefix) {
-        WarningReceiver receiver = null != this.receiver && null != this.receiver.getOwner() ? this.receiver.getOwner() : new WarningReceiver("系统管理员", "", "00000000000");
+        WarningReceiver receiver = null != this.receiver && null != this.receiver.getOwner() ? this.receiver.getOwner()
+                : new WarningReceiver("系统管理员", "", "00000000000");
         StringBuffer sb = new StringBuffer();
-        if (null != prefix && !prefix.isEmpty()) sb.append("[").append(prefix).append("]");
+        if (null != prefix && !prefix.isEmpty())
+            sb.append("[").append(prefix).append("]");
         sb.append("[").append(errorCode.name()).append("(").append(errorCode.getDesc()).append(")]");
         sb.append(receiver.getRealName()).append("(").append(receiver.getPhone()).append(")");
         return sb.toString();
@@ -67,7 +73,8 @@ public class WarningMessage {
 
     public WarningMessage appendTitlePrefix(List<String> prefix) {
         StringBuffer sb = new StringBuffer();
-        if (null != prefix && !prefix.isEmpty()) sb.append("[").append(StringUtils.join(prefix, "-")).append("]");
+        if (null != prefix && !prefix.isEmpty())
+            sb.append("[").append(StringUtils.join(prefix, "-")).append("]");
         sb.append(title);
         title = sb.toString();
         return this;

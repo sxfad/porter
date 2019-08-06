@@ -18,6 +18,7 @@
 package cn.vbill.middleware.porter.common.warning;
 
 import cn.vbill.middleware.porter.common.util.DefaultNamedThreadFactory;
+import cn.vbill.middleware.porter.common.warning.client.ConsoleEmailClient;
 import cn.vbill.middleware.porter.common.warning.entity.WarningMessage;
 import cn.vbill.middleware.porter.common.warning.provider.WarningProvider;
 import cn.vbill.middleware.porter.common.warning.provider.NormalWarningProvider;
@@ -64,8 +65,7 @@ public enum WarningProviderFactory {
      */
     public void initialize(WarningConfig config) throws ConfigParseException, ClientConnectionException, InterruptedException {
         //校验配置文件参数
-        if (null == config || null == config.getStrategy() || null == config.getClient()
-                || config.getClient().isEmpty()) {
+        if (null == config || null == config.getStrategy()) {  //|| null == config.getClient() || config.getClient().isEmpty()
             return;
         }
 
@@ -73,6 +73,10 @@ public enum WarningProviderFactory {
             try {
                 if (config.getStrategy() == WarningPlugin.EMAIL) {
                     WarningClient client = new EmailClient(new EmailConfig(config.getClient()).stuff(), config.getFrequencyOfSeconds());
+                    alert = new NormalWarningProvider(client);
+                }
+                if (config.getStrategy() == WarningPlugin.CONSOLEEMAIL) {
+                    WarningClient client = new ConsoleEmailClient(new EmailConfig(config.getClient()).stuff(), config.getFrequencyOfSeconds());
                     alert = new NormalWarningProvider(client);
                 }
             } finally {

@@ -71,7 +71,7 @@ public enum SourceType {
      */
     KAFKA_PRODUCE("KAFKA_PRODUCE", "kafkaProduce", 1),
 
-    FILE("FILE", "file", 1),
+    FILE("FILE", "file", -1),
 
     JDBC_CONSUME("JDBC_CONSUME", "jdbcConsume", 1);
 

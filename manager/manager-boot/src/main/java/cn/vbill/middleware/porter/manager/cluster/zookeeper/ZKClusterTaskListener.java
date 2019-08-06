@@ -53,10 +53,10 @@ import cn.vbill.middleware.porter.manager.service.impl.MrJobTasksScheduleService
 /**
  * 任务信息监听
  *
- * @author: zhangkewei[zhang_kw@suixingpay.com]
+ * @author: guohongjian[wszghj@aliyun.com]
  * @date: 2017年12月15日 10:09
  * @version: V1.0
- * @review: zhangkewei[zhang_kw@suixingpay.com]/2017年12月15日 10:09
+ * @review: guohongjian[wszghj@aliyun.com]/2017年12月15日 11:19
  */
 public class ZKClusterTaskListener extends ZookeeperClusterListener {
 

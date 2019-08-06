@@ -25,6 +25,7 @@ import lombok.Setter;
 import java.util.Map;
 
 /**
+ * 数据消费配置类(数据来源配置信息)
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年02月03日 16:43
  * @version: V1.0

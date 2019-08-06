@@ -29,11 +29,13 @@ import cn.vbill.middleware.porter.common.warning.entity.WarningMessage;
 public interface WarningClient extends Client {
 
     /**
-     * send
+     * 发送
      *
      * @date 2018/8/10 下午2:51
      * @param: [message]
      * @return: void
      */
     void send(WarningMessage msg);
+    
+    
 }

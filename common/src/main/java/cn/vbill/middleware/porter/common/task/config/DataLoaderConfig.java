@@ -24,6 +24,7 @@ import lombok.Setter;
 import java.util.Map;
 
 /**
+ * 数据目标配置实体
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年02月03日 16:44
  * @version: V1.0

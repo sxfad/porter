@@ -63,7 +63,7 @@
    - 修改porter/manager/manager-boot/src/main/resources/application.properties 数据库连接信息
 
    ````properties
-   #单机配置，集群只需要在url后边用逗号隔开填写多个ip即可
+   #单机zookeeper配置，配置zookeeper集群只需要在url后边用逗号隔开填写多个ip即可
    manager.cluster.strategy=ZOOKEEPER
    manager.cluster.client.url=127.0.0.1:2181
    manager.cluster.client.sessionTimeout=100000
@@ -97,7 +97,7 @@
      #节点描述
      porter.id=1
      porter.gc=true
-     #单机配置，集群只需要在url后边用逗号隔开填写多个ip即可
+     #单机zookeeper配置，配置zookeeper集群只需要在url后边用逗号隔开填写多个ip即可
      porter.cluster.strategy=ZOOKEEPER
      porter.cluster.client.url=127.0.0.1:2181
      porter.cluster.client.sessionTimeout=100000

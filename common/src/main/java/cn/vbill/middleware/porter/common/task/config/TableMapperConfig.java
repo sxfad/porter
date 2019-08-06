@@ -24,6 +24,7 @@ import lombok.Setter;
 import java.util.Map;
 
 /**
+ * 表、表字段对应关系配置实体
  * @author: zhangkewei[zhang_kw@suixingpay.com]
  * @date: 2018年02月04日 19:07
  * @version: V1.0

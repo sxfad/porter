@@ -28,6 +28,9 @@ import cn.vbill.middleware.porter.manager.web.message.ResponseMessage;
 import cn.vbill.middleware.porter.manager.web.page.Page;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -52,6 +55,8 @@ import static cn.vbill.middleware.porter.manager.web.message.ResponseMessage.ok;
 @RestController
 @RequestMapping("/manager/nodes")
 public class NodesController {
+
+    private Logger log = LoggerFactory.getLogger(NodesController.class);
 
     @Autowired
     protected NodesService nodesService;
@@ -123,7 +128,7 @@ public class NodesController {
     }
 
     /**
-     * 任务状态推送
+     * 节点状态推送
      *
      * @author FuZizheng
      * @date 2018/7/25 下午5:34
@@ -131,16 +136,24 @@ public class NodesController {
      * @return: cn.vbill.middleware.porter.manager.web.message.ResponseMessage
      */
     @PostMapping("/taskpushstate")
-    @ApiOperation(value = "任务状态推送", notes = "任务状态推送")
+    @ApiOperation(value = "节点状态推送", notes = "节点状态推送")
     public ResponseMessage taskPushState(@RequestParam(value = "id", required = true) Long id,
-                                         @RequestParam(value = "taskPushState", required = true) NodeStatusType taskPushState) throws Exception {
+            @RequestParam(value = "taskPushState", required = true) NodeStatusType taskPushState) {
         Integer i = nodesService.taskPushState(id, taskPushState);
         if (i == 1) {
-            Nodes nodes = nodesService.selectById(id);
-            ClusterProviderProxy.INSTANCE.broadcastEvent(new NodeOrderPushCommand(
-                    new NodeCommandConfig(nodes.getNodeId().toString(), taskPushState, NodeCommandType.CHANGE_STATUS)));
-            return ok(nodes);
+            try {
+                Nodes nodes = nodesService.selectById(id);
+                ClusterProviderProxy.INSTANCE
+                        .broadcastEvent(new NodeOrderPushCommand(new NodeCommandConfig(nodes.getNodeId().toString(),
+                                taskPushState, NodeCommandType.CHANGE_STATUS)));
+                log.debug("节点id[{}],节点状态[{}]推送zk成功！", id, taskPushState.getName());
+                return ok(nodes);
+            } catch (Exception e) {
+                log.error("节点id[{}],节点状态[{}]推送zk失败！", id, taskPushState.getName(), e);
+                return ok(false);
+            }
         }
+        log.warn("节点id[{}]未找到相应数据,无法完成推送！", id, taskPushState.getName());
         return ok(false);
     }
 
