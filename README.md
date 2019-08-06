@@ -43,20 +43,26 @@ gradle build
 [配置文档](https://github.com/sxfad/porter/blob/master/doc/profiles.md)
 
 ```
-porter.id=节点编号，在集群中唯一
+#节点编号，在集群中唯一
+porter.id=1
 
-#集群配置
+#开启自动gc控制(4.0新增)
+porter.gc=true
+
+#zk集群配置
 porter.cluster.strategy=ZOOKEEPER
-porter.cluster.client.url=127.0.0.1:2181
+porter.cluster.client.url=127.0.0.1:2181,127.0.0.2:2181,127.0.0.3:2181
 porter.cluster.client.sessionTimeout=100000
 
-#统计指标数据上传目标端链接信息，与manager-cluster搭配使用,当上传到zookeeper时，manager-cluster无需部署。
-porter.cluster.statistic.sourceType=KAFKA_PRODUCE
-porter.cluster.statistic.servers=127.0.0.1:9200
-porter.cluster.statistic.topic=你的kafka主题
+#统计数据收集,与manager-cluster搭配使用,不配置kafka时默认上传到zookeeper
+porter.statistic.upload=true
+#使用kafka统计数据
+#porter.cluster.statistic.sourceType=KAFKA_PRODUCE
+#porter.cluster.statistic.servers=127.0.0.1:9200
+#porter.cluster.statistic.topic=你的kafka主题
 
 
-#单机配置
+#单机模式
 porter.cluster.strategy=STANDALONE
 porter.cluster.client.home=./.porter
 ```
