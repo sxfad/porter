@@ -79,12 +79,17 @@ public class TaskConfig {
     private WarningReceiver[] receiver = new WarningReceiver[0];
 
     /**
+     * 消费进度检查时间
      * 小于1时表示不进行消费进度检查
      * 单位秒
      */
     @Getter
     @Setter
     private long positionCheckInterval = -1;
+
+    /**
+     * 告警阀值
+     */
     @Getter
     @Setter
     private long alarmPositionCount = 10000;
